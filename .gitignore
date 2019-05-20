@@ -1,0 +1,36 @@
+
+# ignore compiled python
+*.pyc
+
+# ignore IDE metadata
+.idea/*
+*.komodoproject
+.settings/
+.project
+.pydevproject
+
+# ignore git merge artifacts
+*.orig
+
+# ignore sphinx build
+docs/build/
+
+# ignore crumbs
+*~
+
+# trial temp directory  
+_trial_temp/
+
+
+# ignore vim swp files
+*.swp
+
+# ignore egg info folder
+*.egg-info
+
+.coverage
+.noseids
+.ipynb_checkpoints
+
+*.ui
+*.png
