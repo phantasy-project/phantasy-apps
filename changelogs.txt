@@ -1,0 +1,8 @@
+Version 2.0.0
+-------------
+2019-05-20
+
+- Split phantasy/apps from phantasy repo to be as the new phantasy_apps repo.
+- First release of allison-scanner v0.9.
+- Initial imageviewer app.
+- The old changelogs see phantasy repo.
