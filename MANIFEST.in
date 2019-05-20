@@ -1,0 +1,5 @@
+include LICENSE
+recursive-include phantasy_apps/trajectory_viewer/config *
+recursive-include phantasy_apps/wire_scanner/config *
+recursive-include phantasy_apps/app_launcher/config *
+recursive-include phantasy_apps/allison_scanner/config *
