@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import requests
 import os
 import shutil
+
+import requests
 
 PORT_RANGE = (5000, 5050)
 

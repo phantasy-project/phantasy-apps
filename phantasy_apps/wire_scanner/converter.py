@@ -5,9 +5,9 @@
 """
 
 import json
+import logging
 import os
 import re
-import logging
 import sys
 from argparse import ArgumentParser
 

@@ -3,11 +3,10 @@
 
 import logging
 import os
+
 import numpy as np
-
-from phantasy import epoch2human
-
 from mpl4qt.widgets.utils import MatplotlibCurveWidgetSettings
+from phantasy import epoch2human
 
 _LOGGER = logging.getLogger(__name__)
 

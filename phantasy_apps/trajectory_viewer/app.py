@@ -15,8 +15,8 @@ from PyQt5.QtWidgets import QMessageBox
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import LatticeWidget
 
-from phantasy.apps.utils import get_open_filename
-from phantasy.apps.utils import get_save_filename
+from phantasy_apps.utils import get_open_filename
+from phantasy_apps.utils import get_save_filename
 from .app_elem_selection import ElementSelectionWidget
 from .app_help import HelpDialog
 from .ui.ui_app import Ui_MainWindow

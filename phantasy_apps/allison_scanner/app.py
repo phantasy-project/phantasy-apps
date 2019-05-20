@@ -16,8 +16,8 @@ from numpy import ndarray
 from phantasy_ui.templates import BaseAppForm
 
 from phantasy import Configuration
-from phantasy.apps.utils import get_open_filename
-from phantasy.apps.utils import get_save_filename
+from phantasy_apps.utils import get_open_filename
+from phantasy_apps.utils import get_save_filename
 from .device import Device
 from ._sim import SimDevice
 from .ui.ui_app import Ui_MainWindow

@@ -8,7 +8,7 @@ from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QToolButton
 
-from phantasy.apps.utils import get_open_filename
+from phantasy_apps.utils import get_open_filename
 from .ui.ui_add import Ui_Dialog
 
 

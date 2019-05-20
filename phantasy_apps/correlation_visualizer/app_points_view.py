@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QTableWidgetItem
 from PyQt5.QtWidgets import QToolButton
 from PyQt5.QtWidgets import QWidget
 
-from phantasy.apps.correlation_visualizer.ui.ui_points_view import Ui_Form
+from phantasy_apps.correlation_visualizer.ui.ui_points_view import Ui_Form
 
 
 class PointsViewWidget(QWidget, Ui_Form):

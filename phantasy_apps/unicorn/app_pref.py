@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
 
-import time
-import requests
-from PyQt5.QtWidgets import QDialog
-from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QDialog
 
 from .ui_app_pref import Ui_Dialog
+from .utils import PORT_RANGE
 from .utils import get_service_status
 from .utils import init_unicorn_database
 from .utils import start_unicorn_service
 from .utils import stop_unicorn_service
-from .utils import PORT_RANGE
 
 
 class PrefDialog(QDialog, Ui_Dialog):

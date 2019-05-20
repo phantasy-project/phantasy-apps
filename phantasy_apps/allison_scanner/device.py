@@ -13,7 +13,7 @@ from numpy import ndarray
 
 from phantasy import Configuration
 from phantasy import ensure_put
-from phantasy.apps.wire_scanner.utils import wait as _wait
+from phantasy_apps.wire_scanner.utils import wait as _wait
 from .utils import find_dconf
 
 _LOGGER = logging.getLogger(__name__)

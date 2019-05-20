@@ -2,12 +2,11 @@
 
 import os
 
-from PyQt5.QtGui import QStandardItem
-from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import QSize
+from PyQt5.QtGui import QStandardItem
+from PyQt5.QtGui import QStandardItemModel
 
 try:
     from configparser import ConfigParser
@@ -145,7 +144,7 @@ for k,v in conf.items():
 
 
 if __name__ == '__main__':
-    from PyQt5.QtWidgets import QWidget, QTableView, QTreeView, QTextEdit, QVBoxLayout
+    from PyQt5.QtWidgets import QWidget, QTableView, QTextEdit, QVBoxLayout
     from PyQt5.QtWidgets import QApplication
     from PyQt5.QtCore import QSize
     import sys

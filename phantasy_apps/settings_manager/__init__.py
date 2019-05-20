@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 
 import sys
+
 from phantasy_ui import QApp as QApplication
 
 from .app import SettingsManagerWindow

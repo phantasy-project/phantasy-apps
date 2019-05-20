@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QVariant
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
-
-from phantasy.apps.utils import get_open_filename
 from phantasy import generate_settings
 
+from phantasy_apps.utils import get_open_filename
 from .ui.ui_loadfrom import Ui_Dialog
 
 

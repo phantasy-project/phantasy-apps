@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from requests.adapters import HTTPAdapter
+from io import BytesIO
+
 import requests
 from epics import PV
-from io import BytesIO
+from requests.adapters import HTTPAdapter
 
 
 class DataSource(object):

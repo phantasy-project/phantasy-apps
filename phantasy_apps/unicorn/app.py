@@ -1,37 +1,36 @@
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QLabel
-from PyQt5.QtWidgets import QAction
-from PyQt5.QtWidgets import QShortcut
+import random
+import time
+
+from PyQt5.QtCore import QThread
 from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QThread
 from PyQt5.QtGui import QIcon
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QKeySequence
-import time
-import random
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QShortcut
+from phantasy_ui import BaseAppForm
 
-from .ui_app import Ui_mainWindow
-from .app_pref import PrefDialog
 from .app_help import HelpDialog
-from .utils import get_service_status
-from .utils import start_unicorn_service
-from .utils import stop_unicorn_service
+from .app_pref import PrefDialog
+from .resources import back_icon
+from .resources import forward_icon
+from .resources import home_icon
+from .resources import quit_icon
 from .resources import unicorn_icon
 from .resources import zoom_in_icon
 from .resources import zoom_out_icon
-from .resources import back_icon
-from .resources import forward_icon
-from .resources import quit_icon
-from .resources import home_icon
-
+from .ui_app import Ui_mainWindow
 from .utils import PORT_RANGE
-from phantasy_ui import BaseAppForm
+from .utils import get_service_status
+from .utils import start_unicorn_service
+from .utils import stop_unicorn_service
 
 
 class UnicornApp(BaseAppForm, Ui_mainWindow):

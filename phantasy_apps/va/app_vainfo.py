@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWidgets import QMessageBox
+import psutil
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import Qt
-
-import psutil
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QWidget
 
 from .ui.ui_vainfo import Ui_Form
 

@@ -2,19 +2,19 @@
 # -*- coding: utf-8 -*-
 """Class built upon a collection of CaField(s) attached to PM element.
 """
+import logging
 import os
 import time
-import numpy as np
-import logging
 from collections import OrderedDict
 
+import numpy as np
 from phantasy import Configuration
 from phantasy import epoch2human
-from phantasy.apps.correlation_visualizer.data import JSONDataSheet
 
-from .utils import wait
+from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 from .utils import find_dconf
 from .utils import get_value_with_timestamp
+from .utils import wait
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import QObject
-from PyQt5.QtCore import pyqtSignal
+import time
 
 import numpy as np
-import time
+from PyQt5.QtCore import QObject
+from PyQt5.QtCore import pyqtSignal
 
 
 class DeviceRunner(QObject):

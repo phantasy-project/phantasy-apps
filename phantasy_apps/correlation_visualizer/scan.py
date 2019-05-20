@@ -8,14 +8,14 @@ import numpy as np
 from PyQt5.QtCore import QObject
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import pyqtSignal
-
 from phantasy import CaField
 from phantasy import MachinePortal
 from phantasy import epoch2human
-from phantasy.apps.correlation_visualizer.data import JSONDataSheet
-from phantasy.apps.correlation_visualizer.utils import PVElement
-from phantasy.apps.correlation_visualizer.utils import PVElementReadonly
-from phantasy.apps.correlation_visualizer.utils import random_string
+
+from phantasy_apps.correlation_visualizer.data import JSONDataSheet
+from phantasy_apps.correlation_visualizer.utils import PVElement
+from phantasy_apps.correlation_visualizer.utils import PVElementReadonly
+from phantasy_apps.correlation_visualizer.utils import random_string
 
 TS_FMT = "%Y-%m-%d %H:%M:%S"
 

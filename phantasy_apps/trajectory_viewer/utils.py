@@ -17,10 +17,10 @@ from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import QComboBox
 from PyQt5.QtWidgets import QToolButton
 from mpl4qt.widgets.utils import MatplotlibCurveWidgetSettings
-
 from phantasy import MachinePortal
 from phantasy import epoch2human
-from phantasy.apps.correlation_visualizer.data import JSONDataSheet
+
+from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 from .ui import details_icon
 
 TS_FMT = "%Y-%m-%d %H:%M:%S"

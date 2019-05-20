@@ -3,17 +3,16 @@
 
 import os
 import time
-import numpy as np
 
+import numpy as np
+from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QCheckBox
-from PyQt5.QtCore import pyqtSlot
-
-from phantasy.apps.utils import get_save_filename
 from phantasy import epoch2human
 from phantasy.recipes import save_all_settings
 
+from phantasy_apps.utils import get_save_filename
 from .ui.ui_save import Ui_Dialog
 
 TS_FMT = "%Y-%m-%d %H:%M:%S"

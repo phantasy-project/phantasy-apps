@@ -14,7 +14,7 @@ from PyQt5.QtWidgets import QTableWidgetItem
 from PyQt5.QtWidgets import QToolButton
 from PyQt5.QtWidgets import QWidget
 
-from phantasy.apps.correlation_visualizer.ui.ui_monitors_view import Ui_Form
+from phantasy_apps.correlation_visualizer.ui.ui_monitors_view import Ui_Form
 
 TBTN_ICON_SIZE = QSize(20, 20)
 

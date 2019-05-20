@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import epics
-from numpy import ndarray
 import time
 from functools import partial
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import pyqtSignal
+
+import epics
 from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMessageBox
-
+from numpy import ndarray
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 

@@ -4,7 +4,6 @@ from PyQt5.QtWidgets import QDialog
 
 from .ui.ui_app_help import Ui_Dialog
 
-
 HELP_QNA = '''
 <div>
 <p><strong>What is Trajectory Viewer App?</strong></p>

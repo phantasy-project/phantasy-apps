@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from matplotlib import patches
 import numpy as np
+from matplotlib import patches
 
 
 def draw_beam_ellipse(ax, alpha, beta, gamma, epsilon, **kws):

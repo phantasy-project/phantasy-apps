@@ -14,13 +14,13 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
+from phantasy import limit_input
 from phantasy_ui import BaseAppForm
 
-from phantasy import limit_input
-from phantasy.apps.trajectory_viewer.utils import ElementListModel
-from phantasy.apps.utils import get_open_filename
-from phantasy.apps.utils import get_save_filename
-from phantasy.apps.utils import uptime
+from phantasy_apps.trajectory_viewer.utils import ElementListModel
+from phantasy_apps.utils import get_open_filename
+from phantasy_apps.utils import get_save_filename
+from phantasy_apps.utils import uptime
 from .app_settings_view import SettingsView
 from .ui.ui_app import Ui_MainWindow
 from .utils import ORMDataSheet

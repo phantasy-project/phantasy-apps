@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from .ui.ui_app import Ui_MainWindow
+from PyQt5.QtCore import QModelIndex
+from PyQt5.QtCore import QVariant
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSlot
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import LatticeDataModelFull
 
-from PyQt5.QtCore import QVariant
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtCore import QModelIndex
-from PyQt5.QtCore import Qt
+from .ui.ui_app import Ui_MainWindow
 
 
 class LatticeViewerWindow(BaseAppForm, Ui_MainWindow):

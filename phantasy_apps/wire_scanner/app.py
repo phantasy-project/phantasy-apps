@@ -3,43 +3,41 @@
 
 """GUI App for wire-scanner.
 """
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import Qt
+import json
+import os
+from collections import OrderedDict
+from functools import partial
+
+import numpy as np
 from PyQt5.QtCore import QThread
 from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import QVariant
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtGui import QDoubleValidator
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QKeySequence
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QShortcut
-
-from functools import partial
-import json
-import numpy as np
-import os
-from collections import OrderedDict
-
+from phantasy import Configuration
+from phantasy import MachinePortal
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import ElementWidget
-from phantasy import MachinePortal
-from phantasy import Configuration
-from phantasy.apps.wire_scanner.utils import find_dconf
-from phantasy.apps.wire_scanner.device import Device
-from phantasy.apps.wire_scanner.device import PMData
-from phantasy.apps.utils import get_open_filename
-from phantasy.apps.utils import get_save_filename
 
-from .app_utils import DeviceRunner
-from .app_utils import DataAnalyzer
-from .app_save import SaveDataDialog
+from phantasy_apps.utils import get_open_filename
+from phantasy_apps.utils import get_save_filename
+from phantasy_apps.wire_scanner.device import Device
+from phantasy_apps.wire_scanner.device import PMData
+from phantasy_apps.wire_scanner.utils import find_dconf
 from .app_dat2json import Dat2JsonDialog
-from .utils import apply_mplcurve_settings
+from .app_save import SaveDataDialog
+from .app_utils import DataAnalyzer
+from .app_utils import DeviceRunner
 from .ui.ui_app import Ui_MainWindow
+from .utils import apply_mplcurve_settings
 
 FIELD_OF_INTEREST_LIST = ["XCEN", "YCEN", "XRMS", "YRMS", "XYRMS", "CXY"]
 

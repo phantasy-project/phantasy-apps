@@ -1,25 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import numpy as np
 import time
 from collections import OrderedDict
 from functools import partial
 
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtCore import pyqtSlot
+import numpy as np
 from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import QVariant
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMessageBox
-
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from phantasy_ui.widgets import LatticeWidget
-from phantasy.apps.trajectory_viewer.app_elem_selection import ElementSelectionWidget
 
-from .ui.ui_app import Ui_MainWindow
+from phantasy_apps.trajectory_viewer.app_elem_selection import ElementSelectionWidget
 from .app_save import SaveDataDialog
+from .ui.ui_app import Ui_MainWindow
 from .utils import ElementListModelDV as ElementListModel
 
 DTYPE_LIST = ("BCM", "ND", "HMR", )

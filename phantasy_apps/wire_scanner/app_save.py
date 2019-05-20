@@ -4,17 +4,15 @@
 import json
 import os
 import re
-from collections import OrderedDict
 import time
-
-from phantasy import epoch2human
+from collections import OrderedDict
 
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
+from phantasy import epoch2human
 
-from phantasy.apps.utils import get_save_filename
-
+from phantasy_apps.utils import get_save_filename
 from .ui.ui_save import Ui_Dialog
 
 TS_FMT = "%Y-%m-%d %H:%M:%S"

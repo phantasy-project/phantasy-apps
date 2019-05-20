@@ -7,8 +7,8 @@ from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
 
-from phantasy.apps.correlation_visualizer.ui.ui_array_set import Ui_Dialog
-from phantasy.apps.utils import get_open_filename
+from phantasy_apps.correlation_visualizer.ui.ui_array_set import Ui_Dialog
+from phantasy_apps.utils import get_open_filename
 
 
 class ArraySetDialog(QDialog, Ui_Dialog):

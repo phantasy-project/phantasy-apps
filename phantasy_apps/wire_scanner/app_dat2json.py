@@ -4,17 +4,17 @@
 import os
 import re
 
-from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
 
-from phantasy.apps.utils import get_open_filename
-from phantasy.apps.utils import get_save_filename
-from .ui.ui_dat2json import Ui_Dialog
+from phantasy_apps.utils import get_open_filename
+from phantasy_apps.utils import get_save_filename
 from .converter import read_from_datfile
 from .converter import save_to_jsonfile
+from .ui.ui_dat2json import Ui_Dialog
 
 
 class Dat2JsonDialog(QDialog, Ui_Dialog):

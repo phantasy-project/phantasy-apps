@@ -1,26 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import numpy as np
 import lmfit
-
+import numpy as np
+from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import QVariant
+from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtGui import QDoubleValidator
-
-from .ui.ui_app import Ui_MainWindow
+from phantasy import MachinePortal
 from phantasy_ui import BaseAppForm
 
+from phantasy_apps.correlation_visualizer.data import JSONDataSheet
+from phantasy_apps.correlation_visualizer.data import ScanDataModel
+from phantasy_apps.utils import get_open_filename
+from .ui.ui_app import Ui_MainWindow
 from .utils import draw_beam_ellipse
-
-from phantasy.apps.utils import get_open_filename
-from phantasy.apps.correlation_visualizer.data import JSONDataSheet
-from phantasy.apps.correlation_visualizer.data import ScanDataModel
-
-from phantasy import MachinePortal
 
 LIGHT_SPEED = 299792458 # [m/s]
 ION_ES = 931.49432e+06  # rest energy [eV/u]

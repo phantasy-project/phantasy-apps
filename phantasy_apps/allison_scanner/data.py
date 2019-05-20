@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numpy import ndarray
 
-from phantasy.apps.quad_scan import draw_beam_ellipse
+from phantasy_apps.quad_scan import draw_beam_ellipse
 from .utils import point_in_ellipse
 
 

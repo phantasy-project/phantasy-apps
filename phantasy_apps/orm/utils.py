@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
 import getpass
 import time
 from collections import OrderedDict
+from datetime import datetime
 from functools import partial
 from threading import Thread
 
@@ -24,7 +24,7 @@ except:
 from phantasy import epoch2human
 from phantasy import get_orm_for_one_corrector
 from phantasy import MachinePortal
-from phantasy.apps.correlation_visualizer.data import JSONDataSheet
+from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 
 TS_FMT = "%Y-%m-%d %H:%M:%S"
 

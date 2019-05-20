@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import QSize
-from PyQt5.QtWidgets import QComboBox
-from PyQt5.QtWidgets import QToolButton
-from PyQt5.QtGui import QIcon
-from PyQt5.QtGui import QPixmap
-
 from functools import partial
 
-from phantasy.apps.trajectory_viewer.utils import ElementListModel
-from phantasy.apps.trajectory_viewer.ui import details_icon
+from PyQt5.QtCore import QSize
+from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QComboBox
+from PyQt5.QtWidgets import QToolButton
+
+from phantasy_apps.trajectory_viewer.ui import details_icon
+from phantasy_apps.trajectory_viewer.utils import ElementListModel
 
 
 class ElementListModelDV(ElementListModel):

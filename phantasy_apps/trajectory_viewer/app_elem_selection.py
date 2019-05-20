@@ -9,9 +9,9 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QWidget
 
-from phantasy.apps.trajectory_viewer.ui.ui_app_elem_selection import Ui_Form
-from phantasy.apps.trajectory_viewer.utils import DTYPE_HINT_MAP
-from phantasy.apps.trajectory_viewer.utils import LatticeDataModel
+from phantasy_apps.trajectory_viewer.ui.ui_app_elem_selection import Ui_Form
+from phantasy_apps.trajectory_viewer.utils import DTYPE_HINT_MAP
+from phantasy_apps.trajectory_viewer.utils import LatticeDataModel
 
 
 class ElementSelectionWidget(QWidget, Ui_Form):

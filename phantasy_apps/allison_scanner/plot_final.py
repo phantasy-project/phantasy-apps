@@ -4,7 +4,6 @@
 
 from PyQt5.QtWidgets import QWidget
 
-from .data import draw_beam_ellipse_with_params
 from .ui.ui_plot_results import Ui_Form
 
 

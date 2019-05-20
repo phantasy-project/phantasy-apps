@@ -1,11 +1,12 @@
 # -*- coding: utf8 -*-
 
 import sys
+
 from phantasy_ui import QApp as QApplication
 from phantasy_ui import set_mplstyle
-from .utils import draw_beam_ellipse
 
 from .app import QuadScanWindow
+from .utils import draw_beam_ellipse
 
 __authors__ = "Tong Zhang"
 __copyright__ = "(c) 2018-2019, Facility for Rare Isotope beams," \

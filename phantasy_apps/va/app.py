@@ -1,28 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import pyqtSignal
+import os
+import time
+from functools import partial
+
+import epics
 from PyQt5.QtCore import QProcess
 from PyQt5.QtCore import QProcessEnvironment
-from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QColor
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QToolButton
-from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QMessageBox
-import epics
-import time
-import os
-from functools import partial
-
 from phantasy_ui import BaseAppForm
-from phantasy.apps.utils import uptime
 
-from .ui.ui_app import Ui_MainWindow
+from phantasy_apps.utils import uptime
 from .app_vainfo import VAProcessInfoWidget
+from .ui.ui_app import Ui_MainWindow
 
 CURDIR = os.path.dirname(__file__)
 
