@@ -1133,7 +1133,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_Help.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.param_tbox.setCurrentIndex(0)
+        self.param_tbox.setCurrentIndex(2)
         self.actionAbout.triggered.connect(MainWindow.onAbout)
         self.actionAbout_Qt.triggered.connect(MainWindow.onAboutQt)
         self.actionE_xit.triggered.connect(MainWindow.close)
@@ -1288,7 +1288,7 @@ class Ui_MainWindow(object):
             self.param_tbox.indexOf(self.page),
             _translate("MainWindow", "Background Noise"))
         self.label_3.setText(_translate("MainWindow", "Ellipse Size Factor"))
-        self.plot_region_btn.setText(_translate("MainWindow", "Plot1"))
+        self.plot_region_btn.setText(_translate("MainWindow", "Plot"))
         self.label_49.setText(
             _translate(
                 "MainWindow",
