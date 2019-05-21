@@ -9,13 +9,15 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_Form(object):
-    def setupUi(self, Form):
-        Form.setObjectName("Form")
-        Form.resize(1400, 900)
-        self.horizontalLayout = QtWidgets.QHBoxLayout(Form)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.splitter = QtWidgets.QSplitter(Form)
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(1400, 900)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.gridLayout_3 = QtWidgets.QGridLayout(self.centralwidget)
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.splitter = QtWidgets.QSplitter(self.centralwidget)
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName("splitter")
         self.groupBox = QtWidgets.QGroupBox(self.splitter)
@@ -69,23 +71,24 @@ class Ui_Form(object):
         self.textEdit.setReadOnly(True)
         self.textEdit.setObjectName("textEdit")
         self.gridLayout_2.addWidget(self.textEdit, 0, 0, 1, 1)
-        self.horizontalLayout.addWidget(self.splitter)
+        self.gridLayout_3.addWidget(self.splitter, 0, 0, 1, 1)
+        MainWindow.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(Form)
-        QtCore.QMetaObject.connectSlotsByName(Form)
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def retranslateUi(self, Form):
+    def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.groupBox.setTitle(
-            _translate("Form", "Finalized Data and Analysis Results"))
+            _translate("MainWindow", "Finalized Data and Analysis Results"))
         self.matplotlibimageWidget.setFigureAspectRatio(
-            _translate("Form", "auto"))
+            _translate("MainWindow", "auto"))
         self.matplotlibimageWidget.setFigureXlabel(
-            _translate("Form", "$x\\,\\mathrm{[mm]}$"))
+            _translate("MainWindow", "$x\\,\\mathrm{[mm]}$"))
         self.matplotlibimageWidget.setFigureYlabel(
-            _translate("Form", "$x\'\\,\\mathrm{[mrad]}$"))
-        self.groupBox_2.setTitle(_translate("Form", "Parameter List"))
+            _translate("MainWindow", "$x\'\\,\\mathrm{[mrad]}$"))
+        self.groupBox_2.setTitle(_translate("MainWindow", "Parameter List"))
 
 
 from mpl4qt.widgets.mplimagewidget import MatplotlibImageWidget
@@ -93,8 +96,8 @@ from mpl4qt.widgets.mplimagewidget import MatplotlibImageWidget
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    Form = QtWidgets.QWidget()
-    ui = Ui_Form()
-    ui.setupUi(Form)
-    Form.show()
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
     sys.exit(app.exec_())

@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 
-from PyQt5.QtWidgets import QWidget
+from phantasy_ui import BaseAppForm
 
-from .ui.ui_plot_results import Ui_Form
+from .ui.ui_plot_results import Ui_MainWindow
 
 
-class PlotResults(QWidget, Ui_Form):
+class PlotResults(BaseAppForm, Ui_MainWindow):
 
     def __init__(self, parent=None):
         super(PlotResults, self).__init__()
@@ -16,6 +16,9 @@ class PlotResults(QWidget, Ui_Form):
         self._ax = self._o.axes
         self._parent = parent
         self._data = parent._data
+
+        self.setAppVersion(parent._version)
+        self.setAppTitle("{} - {}".format(parent.getAppTitle(), 'Results'))
 
     @property
     def results(self):
