@@ -314,6 +314,22 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._run()
 
     def _run(self):
+        is_valid = self._valid_device()
+        if is_valid is False:
+            return
+
+        self._device.data_changed.connect(self.on_update)
+        self._device.finished.connect(self.on_finished)
+
+        # start moving
+        if not self.is_valid_to_move():
+            QMessageBox.warning(self, "Starting Device",
+                    "Device is busy.",
+                    QMessageBox.Ok)
+            return
+        self._device.start()
+
+    def _valid_device(self):
         elem = self._ems_device.elem
         x1 = getattr(elem, self._pos_begin_fname)
         x2 = getattr(elem, self._pos_end_fname)
@@ -325,7 +341,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             QMessageBox.warning(self, "Scan Range Warning",
                 "Input scan range for position indicates non-integer points.",
                 QMessageBox.Ok)
-            return
+            return False
 
         y1 = getattr(elem, self._volt_begin_fname)
         y2 = getattr(elem, self._volt_end_fname)
@@ -339,18 +355,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         data_pv = elem.pv('DATA{}'.format(_id))[0]
         status_pv = elem.pv('SCAN_STATUS{}'.format(_id))[0]
         trigger_pv = elem.pv('START_SCAN{}'.format(_id))[0]
+        self._device = SimDevice(data_pv, status_pv, trigger_pv)
 
-        device = self._device = SimDevice(data_pv, status_pv, trigger_pv)
-        device.data_changed.connect(self.on_update)
-        device.finished.connect(self.on_finished)
-
-        # start moving
-        if not self.is_valid_to_move():
-            QMessageBox.warning(self, "Starting Device",
-                    "Device is busy.",
-                    QMessageBox.Ok)
-            return
-        device.start()
+        return True
 
     def is_valid_to_move(self):
         # if ok to move or not.
@@ -604,3 +611,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._plot_results_window.plot_data()
         self._plot_results_window.show()
         self._plot_results_window.setWindowTitle("Finalize Twiss Parameters")
+
+    @pyqtSlot()
+    def on_sync_data(self):
+        is_valid = self._valid_device()
+        if is_valid is False:
+            return
+        self.on_update(self._device._data_pv.value)
+        self.on_initial_data(mode=self._device_mode)
+        self.on_plot_raw_data()
+
