@@ -127,6 +127,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
         #
         self._plot_window = None
+        # auto analysis?
+        self._auto_analysis = True
 
     @pyqtSlot(float)
     def on_update_config(self, attr, x):
@@ -379,6 +381,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # initial data
         self.on_initial_data(mode=self._device_mode)
         self.on_plot_raw_data()
+        #
+        if self._auto_analysis:
+            self._auto_process()
 
     def closeEvent(self, e):
         BaseAppForm.closeEvent(self, e)
@@ -602,6 +607,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_update_ellipse_size_factor(self, x):
         self._ellipse_sf = x
         self.size_factor_changed.emit(x)
+        # noise th
+        o = self.noise_threshold_sbox
+        o.valueChanged.emit(o.value())
 
     @pyqtSlot()
     def on_finalize_results(self):
@@ -621,3 +629,19 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.on_initial_data(mode=self._device_mode)
         self.on_plot_raw_data()
 
+        if self._auto_analysis:
+            self._auto_process()
+
+    def _auto_process(self):
+        self.auto_update_image_chkbox.setChecked(True)
+        self.plot_region_btn.clicked.emit()
+        self._update_bkgd_noise()
+        self.on_update_results()
+        self.factor_dsbox.valueChanged.emit(self.factor_dsbox.value())
+        self.apply_noise_correction_btn.clicked.emit()
+        self.on_update_results()
+        self.show_results_btn.clicked.emit()
+
+    @pyqtSlot(bool)
+    def on_enable_auto_analysis(self, f):
+        self._auto_analysis = f
