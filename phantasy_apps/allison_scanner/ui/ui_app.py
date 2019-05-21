@@ -734,23 +734,17 @@ class Ui_MainWindow(object):
         self.label_37 = QtWidgets.QLabel(self.page_3)
         self.label_37.setObjectName("label_37")
         self.horizontalLayout_8.addWidget(self.label_37)
-        self.gridLayout_6.addLayout(self.horizontalLayout_8, 3, 0, 1, 2)
+        self.gridLayout_6.addLayout(self.horizontalLayout_8, 3, 1, 1, 1)
         self.label_34 = QtWidgets.QLabel(self.page_3)
         self.label_34.setObjectName("label_34")
         self.gridLayout_6.addWidget(self.label_34, 2, 0, 1, 1)
         spacerItem1 = QtWidgets.QSpacerItem(20, 40,
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_6.addItem(spacerItem1, 4, 0, 1, 1)
-        self.label_35 = QtWidgets.QLabel(self.page_3)
-        self.label_35.setObjectName("label_35")
-        self.gridLayout_6.addWidget(self.label_35, 2, 2, 1, 1)
+        self.gridLayout_6.addItem(spacerItem1, 5, 0, 1, 1)
         self.label_32 = QtWidgets.QLabel(self.page_3)
         self.label_32.setObjectName("label_32")
         self.gridLayout_6.addWidget(self.label_32, 0, 0, 1, 1)
-        self.ion_energy_lineEdit = QtWidgets.QLineEdit(self.page_3)
-        self.ion_energy_lineEdit.setObjectName("ion_energy_lineEdit")
-        self.gridLayout_6.addWidget(self.ion_energy_lineEdit, 2, 1, 1, 1)
         self.ion_charge_lineEdit = QtWidgets.QLineEdit(self.page_3)
         self.ion_charge_lineEdit.setObjectName("ion_charge_lineEdit")
         self.gridLayout_6.addWidget(self.ion_charge_lineEdit, 0, 1, 1, 1)
@@ -760,6 +754,18 @@ class Ui_MainWindow(object):
         self.ion_mass_lineEdit = QtWidgets.QLineEdit(self.page_3)
         self.ion_mass_lineEdit.setObjectName("ion_mass_lineEdit")
         self.gridLayout_6.addWidget(self.ion_mass_lineEdit, 1, 1, 1, 1)
+        self.label_24 = QtWidgets.QLabel(self.page_3)
+        self.label_24.setObjectName("label_24")
+        self.gridLayout_6.addWidget(self.label_24, 3, 0, 1, 1)
+        self.horizontalLayout_13 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_13.setObjectName("horizontalLayout_13")
+        self.ion_energy_lineEdit = QtWidgets.QLineEdit(self.page_3)
+        self.ion_energy_lineEdit.setObjectName("ion_energy_lineEdit")
+        self.horizontalLayout_13.addWidget(self.ion_energy_lineEdit)
+        self.label_35 = QtWidgets.QLabel(self.page_3)
+        self.label_35.setObjectName("label_35")
+        self.horizontalLayout_13.addWidget(self.label_35)
+        self.gridLayout_6.addLayout(self.horizontalLayout_13, 2, 1, 1, 1)
         self.param_tbox.addItem(self.page_3, "")
         self.page = QtWidgets.QWidget()
         self.page.setGeometry(QtCore.QRect(0, 0, 706, 522))
@@ -1235,15 +1241,11 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p>Ion Energy (<span style=\" font-style:italic;\">E</span><span style=\" font-style:italic; vertical-align:sub;\">k</span>)</p></body></html>"
             ))
-        self.label_35.setText(
-            _translate("MainWindow",
-                       "<html><head/><body><p>eV</p></body></html>"))
         self.label_32.setText(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Ion Charge (<span style=\" font-style:italic;\">Q</span>)</p></body></html>"
             ))
-        self.ion_energy_lineEdit.setText(_translate("MainWindow", "12000"))
         self.ion_charge_lineEdit.setText(_translate("MainWindow", "9"))
         self.label_33.setText(
             _translate(
@@ -1251,6 +1253,11 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Ion Mass (<span style=\" font-style:italic;\">A</span>)</p></body></html>"
             ))
         self.ion_mass_lineEdit.setText(_translate("MainWindow", "39.948"))
+        self.label_24.setText(_translate("MainWindow", "Conversion"))
+        self.ion_energy_lineEdit.setText(_translate("MainWindow", "12000"))
+        self.label_35.setText(
+            _translate("MainWindow",
+                       "<html><head/><body><p>eV</p></body></html>"))
         self.param_tbox.setItemText(
             self.param_tbox.indexOf(self.page_3),
             _translate("MainWindow", "Beam"))
