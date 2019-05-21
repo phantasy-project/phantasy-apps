@@ -1040,6 +1040,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addLayout(self.horizontalLayout_10)
         self.horizontalLayout_11 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
+        self.update_results_btn = QtWidgets.QToolButton(self.twiss_gbox)
+        self.update_results_btn.setObjectName("update_results_btn")
+        self.horizontalLayout_11.addWidget(self.update_results_btn)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
@@ -1047,9 +1050,6 @@ class Ui_MainWindow(object):
         self.show_results_btn = QtWidgets.QToolButton(self.twiss_gbox)
         self.show_results_btn.setObjectName("show_results_btn")
         self.horizontalLayout_11.addWidget(self.show_results_btn)
-        self.update_results_btn = QtWidgets.QToolButton(self.twiss_gbox)
-        self.update_results_btn.setObjectName("update_results_btn")
-        self.horizontalLayout_11.addWidget(self.update_results_btn)
         self.verticalLayout_3.addLayout(self.horizontalLayout_11)
         self.verticalLayout.addWidget(self.splitter_4)
         self.gridLayout_3.addWidget(self.v_splitter, 0, 0, 1, 1)
@@ -1182,7 +1182,10 @@ class Ui_MainWindow(object):
         self.label_14.setText(_translate("MainWindow", "Orientation"))
         self.ems_orientation_cbb.setItemText(0, _translate("MainWindow", "X"))
         self.ems_orientation_cbb.setItemText(1, _translate("MainWindow", "Y"))
+        self.run_btn.setToolTip(_translate("MainWindow", "Run device"))
         self.run_btn.setText(_translate("MainWindow", "Run"))
+        self.sync_data_btn.setToolTip(
+            _translate("MainWindow", "Fetch live data from device."))
         self.sync_data_btn.setText(_translate("MainWindow", "..."))
         self.label_16.setText(_translate("MainWindow", "Voltage [V]"))
         self.label_7.setText(
@@ -1320,8 +1323,9 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p>m<span style=\" vertical-align:super;\">-1</span></p></body></html>"
             ))
-        self.show_results_btn.setText(_translate("MainWindow", "Show"))
         self.update_results_btn.setText(_translate("MainWindow", "Update"))
+        self.show_results_btn.setText(
+            _translate("MainWindow", "Finalize Results"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menuConfiguration.setTitle(
