@@ -151,6 +151,15 @@ class Ui_MainWindow(object):
         self.run_btn.setIconSize(QtCore.QSize(24, 24))
         self.run_btn.setObjectName("run_btn")
         self.horizontalLayout.addWidget(self.run_btn)
+        self.sync_data_btn = QtWidgets.QToolButton(self.ctrl_gbox)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(
+            QtGui.QPixmap(":/icons/sync.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.sync_data_btn.setIcon(icon3)
+        self.sync_data_btn.setIconSize(QtCore.QSize(28, 28))
+        self.sync_data_btn.setObjectName("sync_data_btn")
+        self.horizontalLayout.addWidget(self.sync_data_btn)
         self.gridLayout.addLayout(self.horizontalLayout, 0, 2, 1, 1)
         self.splitter_3 = QtWidgets.QSplitter(self.ctrl_gbox)
         self.splitter_3.setOrientation(QtCore.Qt.Horizontal)
@@ -701,7 +710,7 @@ class Ui_MainWindow(object):
             "}")
         self.param_tbox.setObjectName("param_tbox")
         self.page_3 = QtWidgets.QWidget()
-        self.page_3.setGeometry(QtCore.QRect(0, 0, 767, 238))
+        self.page_3.setGeometry(QtCore.QRect(0, 0, 706, 522))
         self.page_3.setObjectName("page_3")
         self.gridLayout_6 = QtWidgets.QGridLayout(self.page_3)
         self.gridLayout_6.setObjectName("gridLayout_6")
@@ -753,7 +762,7 @@ class Ui_MainWindow(object):
         self.gridLayout_6.addWidget(self.ion_mass_lineEdit, 1, 1, 1, 1)
         self.param_tbox.addItem(self.page_3, "")
         self.page = QtWidgets.QWidget()
-        self.page.setGeometry(QtCore.QRect(0, 0, 767, 522))
+        self.page.setGeometry(QtCore.QRect(0, 0, 706, 522))
         self.page.setObjectName("page")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.page)
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -817,7 +826,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.auto_update_image_chkbox, 1, 2, 1, 1)
         self.param_tbox.addItem(self.page, "")
         self.page_2 = QtWidgets.QWidget()
-        self.page_2.setGeometry(QtCore.QRect(0, 0, 767, 522))
+        self.page_2.setGeometry(QtCore.QRect(0, 0, 706, 522))
         self.page_2.setObjectName("page_2")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.page_2)
         self.gridLayout_7.setObjectName("gridLayout_7")
@@ -1050,25 +1059,25 @@ class Ui_MainWindow(object):
         self.menu_Device.setObjectName("menu_Device")
         MainWindow.setMenuBar(self.menubar)
         self.actionE_xit = QtWidgets.QAction(MainWindow)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(
-            QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.actionE_xit.setIcon(icon3)
-        self.actionE_xit.setObjectName("actionE_xit")
-        self.actionAbout = QtWidgets.QAction(MainWindow)
         icon4 = QtGui.QIcon()
         icon4.addPixmap(
-            QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
+            QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionAbout.setIcon(icon4)
-        self.actionAbout.setObjectName("actionAbout")
-        self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
+        self.actionE_xit.setIcon(icon4)
+        self.actionE_xit.setObjectName("actionE_xit")
+        self.actionAbout = QtWidgets.QAction(MainWindow)
         icon5 = QtGui.QIcon()
         icon5.addPixmap(
+            QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.actionAbout.setIcon(icon5)
+        self.actionAbout.setObjectName("actionAbout")
+        self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(
             QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionAbout_Qt.setIcon(icon5)
+        self.actionAbout_Qt.setIcon(icon6)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionReload = QtWidgets.QAction(MainWindow)
         self.actionReload.setObjectName("actionReload")
@@ -1084,11 +1093,11 @@ class Ui_MainWindow(object):
         self.actionSimulation_Mode.setCheckable(True)
         self.actionSimulation_Mode.setObjectName("actionSimulation_Mode")
         self.actionOpen = QtWidgets.QAction(MainWindow)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(
             QtGui.QPixmap(":/icons/open.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionOpen.setIcon(icon6)
+        self.actionOpen.setIcon(icon7)
         self.actionOpen.setObjectName("actionOpen")
         self.menu_File.addAction(self.actionOpen)
         self.menu_File.addSeparator()
@@ -1141,6 +1150,7 @@ class Ui_MainWindow(object):
         self.noise_threshold_sbox.valueChanged['double'].connect(
             MainWindow.on_update_noise_threshold)
         self.show_results_btn.clicked.connect(MainWindow.on_finalize_results)
+        self.sync_data_btn.clicked.connect(MainWindow.on_sync_data)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1155,6 +1165,7 @@ class Ui_MainWindow(object):
         self.ems_orientation_cbb.setItemText(0, _translate("MainWindow", "X"))
         self.ems_orientation_cbb.setItemText(1, _translate("MainWindow", "Y"))
         self.run_btn.setText(_translate("MainWindow", "Run"))
+        self.sync_data_btn.setText(_translate("MainWindow", "..."))
         self.label_16.setText(_translate("MainWindow", "Voltage [V]"))
         self.label_7.setText(
             _translate(
