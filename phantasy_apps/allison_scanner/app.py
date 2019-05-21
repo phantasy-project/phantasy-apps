@@ -461,12 +461,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             return
         else:
             # show raw_data
-            #
             self.on_plot_raw_data()
             #
-            #inten1 = self._update_bkgd_noise()
-            # r1 = data.calculate_beam_parameters(inten1)
-            # print(r1)
+            if self._auto_analysis:
+                self._auto_process()
 
     def _update_bkgd_noise(self):
         if self._data is None:
