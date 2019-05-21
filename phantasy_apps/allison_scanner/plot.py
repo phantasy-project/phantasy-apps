@@ -49,10 +49,11 @@ class PlotWidget(QWidget, Ui_Form):
         self._update_plot()
 
     def _update_plot(self):
+        xoy = self._parent._ems_device.xoy.lower()
         self._ax1.patches = []
         ellipse, _, _ = draw_beam_ellipse_with_params(
                             self._r, color='w', factor=self._sf,
-                            ax=self._ax1)
+                            ax=self._ax1, xoy=xoy)
         self._o1.update_figure()
 
         # update classification
