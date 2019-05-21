@@ -74,6 +74,7 @@ setup(
     license=app_license,
     keywords=app_keywords,
     packages=find_packages(exclude=['utest', 'demo', 'example']),
+    include_package_data=True,
     entry_points=set_entry_points(),
     classifiers=[
         'Programming Language :: Python :: 3',
