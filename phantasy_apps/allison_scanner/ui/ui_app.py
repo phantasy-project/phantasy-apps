@@ -842,7 +842,8 @@ class Ui_MainWindow(object):
         self.factor_dsbox = QtWidgets.QDoubleSpinBox(self.page_2)
         self.factor_dsbox.setDecimals(1)
         self.factor_dsbox.setMaximum(20.0)
-        self.factor_dsbox.setProperty("value", 4.0)
+        self.factor_dsbox.setSingleStep(0.2)
+        self.factor_dsbox.setProperty("value", 8.0)
         self.factor_dsbox.setObjectName("factor_dsbox")
         self.gridLayout_7.addWidget(self.factor_dsbox, 0, 1, 1, 1)
         self.plot_region_btn = QtWidgets.QToolButton(self.page_2)
@@ -874,6 +875,7 @@ class Ui_MainWindow(object):
             self.noise_threshold_sbox.sizePolicy().hasHeightForWidth())
         self.noise_threshold_sbox.setSizePolicy(sizePolicy)
         self.noise_threshold_sbox.setDecimals(1)
+        self.noise_threshold_sbox.setSingleStep(0.2)
         self.noise_threshold_sbox.setProperty("value", 2.0)
         self.noise_threshold_sbox.setObjectName("noise_threshold_sbox")
         self.gridLayout_7.addWidget(self.noise_threshold_sbox, 1, 1, 1, 1)
@@ -1063,6 +1065,8 @@ class Ui_MainWindow(object):
         self.menuConfiguration.setObjectName("menuConfiguration")
         self.menu_Device = QtWidgets.QMenu(self.menubar)
         self.menu_Device.setObjectName("menu_Device")
+        self.menu_Data = QtWidgets.QMenu(self.menubar)
+        self.menu_Data.setObjectName("menu_Data")
         MainWindow.setMenuBar(self.menubar)
         self.actionE_xit = QtWidgets.QAction(MainWindow)
         icon4 = QtGui.QIcon()
@@ -1105,6 +1109,10 @@ class Ui_MainWindow(object):
             QtGui.QIcon.Off)
         self.actionOpen.setIcon(icon7)
         self.actionOpen.setObjectName("actionOpen")
+        self.actionAuto_Analysis = QtWidgets.QAction(MainWindow)
+        self.actionAuto_Analysis.setCheckable(True)
+        self.actionAuto_Analysis.setChecked(True)
+        self.actionAuto_Analysis.setObjectName("actionAuto_Analysis")
         self.menu_File.addAction(self.actionOpen)
         self.menu_File.addSeparator()
         self.menu_File.addAction(self.actionE_xit)
@@ -1117,8 +1125,10 @@ class Ui_MainWindow(object):
         self.menuConfiguration.addSeparator()
         self.menuConfiguration.addAction(self.actionLocate)
         self.menu_Device.addAction(self.actionSimulation_Mode)
+        self.menu_Data.addAction(self.actionAuto_Analysis)
         self.menubar.addAction(self.menu_File.menuAction())
         self.menubar.addAction(self.menuConfiguration.menuAction())
+        self.menubar.addAction(self.menu_Data.menuAction())
         self.menubar.addAction(self.menu_Device.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
 
@@ -1157,6 +1167,8 @@ class Ui_MainWindow(object):
             MainWindow.on_update_noise_threshold)
         self.show_results_btn.clicked.connect(MainWindow.on_finalize_results)
         self.sync_data_btn.clicked.connect(MainWindow.on_sync_data)
+        self.actionAuto_Analysis.toggled['bool'].connect(
+            MainWindow.on_enable_auto_analysis)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1315,6 +1327,7 @@ class Ui_MainWindow(object):
         self.menuConfiguration.setTitle(
             _translate("MainWindow", "&Configuration"))
         self.menu_Device.setTitle(_translate("MainWindow", "&Device"))
+        self.menu_Data.setTitle(_translate("MainWindow", "&Data"))
         self.actionE_xit.setText(_translate("MainWindow", "E&xit"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
         self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
@@ -1327,6 +1340,8 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Simulation Mode"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
         self.actionOpen.setShortcut(_translate("MainWindow", "Ctrl+O"))
+        self.actionAuto_Analysis.setText(
+            _translate("MainWindow", "Auto Analysis"))
 
 
 from mpl4qt.widgets.mplbasewidget import MatplotlibBaseWidget
