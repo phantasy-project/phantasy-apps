@@ -1113,7 +1113,15 @@ class Ui_MainWindow(object):
         self.actionAuto_Analysis.setCheckable(True)
         self.actionAuto_Analysis.setChecked(True)
         self.actionAuto_Analysis.setObjectName("actionAuto_Analysis")
+        self.actionSaveData = QtWidgets.QAction(MainWindow)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(
+            QtGui.QPixmap(":/icons/save.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.actionSaveData.setIcon(icon8)
+        self.actionSaveData.setObjectName("actionSaveData")
         self.menu_File.addAction(self.actionOpen)
+        self.menu_File.addAction(self.actionSaveData)
         self.menu_File.addSeparator()
         self.menu_File.addAction(self.actionE_xit)
         self.menu_Help.addAction(self.actionAbout)
@@ -1133,7 +1141,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_Help.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.param_tbox.setCurrentIndex(2)
+        self.param_tbox.setCurrentIndex(0)
         self.actionAbout.triggered.connect(MainWindow.onAbout)
         self.actionAbout_Qt.triggered.connect(MainWindow.onAboutQt)
         self.actionE_xit.triggered.connect(MainWindow.close)
@@ -1169,6 +1177,7 @@ class Ui_MainWindow(object):
         self.sync_data_btn.clicked.connect(MainWindow.on_sync_data)
         self.actionAuto_Analysis.toggled['bool'].connect(
             MainWindow.on_enable_auto_analysis)
+        self.actionSaveData.triggered.connect(MainWindow.on_save_data)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1333,7 +1342,9 @@ class Ui_MainWindow(object):
         self.menu_Device.setTitle(_translate("MainWindow", "&Device"))
         self.menu_Data.setTitle(_translate("MainWindow", "&Data"))
         self.actionE_xit.setText(_translate("MainWindow", "E&xit"))
+        self.actionE_xit.setShortcut(_translate("MainWindow", "Ctrl+W"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
+        self.actionAbout.setShortcut(_translate("MainWindow", "Ctrl+A"))
         self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
         self.actionReload.setText(_translate("MainWindow", "Reload"))
         self.actionSave.setText(_translate("MainWindow", "Save"))
@@ -1346,6 +1357,8 @@ class Ui_MainWindow(object):
         self.actionOpen.setShortcut(_translate("MainWindow", "Ctrl+O"))
         self.actionAuto_Analysis.setText(
             _translate("MainWindow", "Auto Analysis"))
+        self.actionSaveData.setText(_translate("MainWindow", "Save"))
+        self.actionSaveData.setShortcut(_translate("MainWindow", "Ctrl+S"))
 
 
 from mpl4qt.widgets.mplbasewidget import MatplotlibBaseWidget
