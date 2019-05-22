@@ -413,7 +413,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     def on_initial_data(self, mode="Live"):
         self._data = Data(model=self._model, array=self._current_array)
-        print(self._current_array.shape)
         if mode == "Simulation":
             pass
 
@@ -577,11 +576,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         m = self.matplotlibimageWidget.get_data()
         if self._plot_window is None:
             self._plot_window = PlotWidget(self)
-        self.data_changed.connect(self._plot_window.data_changed)
-        self.results_changed.connect(self._plot_window.on_ellipse_updated)
-        self.size_factor_changed.connect(self._plot_window.on_ellipse_size_updated)
+            self.data_changed.connect(self._plot_window.data_changed)
+            self.results_changed.connect(self._plot_window.on_ellipse_updated)
+            self.size_factor_changed.connect(self._plot_window.on_ellipse_size_updated)
+            self._plot_window.setWindowTitle("ROI for Noise Correction")
+        self._plot_window.plot()
         self._plot_window.show()
-        self._plot_window.setWindowTitle("ROI for Noise Correction")
 
     @pyqtSlot()
     def on_apply_noise_correction(self):
