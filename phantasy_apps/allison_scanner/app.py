@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from functools import partial
+from getpass import getuser
 
 import numpy as np
 from PyQt5.QtCore import QUrl
@@ -18,6 +19,7 @@ from phantasy_ui.templates import BaseAppForm
 from phantasy import Configuration
 from phantasy_apps.utils import get_open_filename
 from phantasy_apps.utils import get_save_filename
+from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 from .device import Device
 from ._sim import SimDevice
 from .ui.ui_app import Ui_MainWindow
@@ -129,6 +131,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._plot_window = None
         # auto analysis?
         self._auto_analysis = True
+        self._results = None
 
     @pyqtSlot(float)
     def on_update_config(self, attr, x):
@@ -643,3 +646,45 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(bool)
     def on_enable_auto_analysis(self, f):
         self._auto_analysis = f
+
+    @pyqtSlot()
+    def on_save_data(self):
+        # save data and results.
+        filepath, ext = get_save_filename(self, filter="JSON Files (*.json)")
+        if filepath is None:
+            return
+        self._save_data_to_file(filepath)
+
+    def _save_data_to_file(self, filepath):
+        ems = self._ems_device
+        xoy = ems.xoy.lower()
+        pos_begin = ems.pos_begin
+        pos_end = ems.pos_end
+        pos_step = ems.pos_step
+        volt_begin = ems.volt_begin
+        volt_end = ems.volt_end
+        volt_step = ems.volt_step
+        pos_size = int((pos_end - pos_begin) / pos_step) + 1
+        volt_size = int((volt_end - volt_begin) / volt_step) + 1
+        data = np.flipud(self._data.intensity)
+        ds = JSONDataSheet()
+        r = []
+        r.append(('xoy', xoy))
+        r.append(('position', {
+            'begin': pos_begin, 'end': pos_end, 'step': pos_step}))
+        r.append(('voltage', {
+            'begin': volt_begin, 'end': volt_end, 'step': volt_step}))
+        r.append(('data', {
+            'shape': (volt_size, pos_size),
+            'array': data.tolist()}))
+        ds.update(r)
+        if self._results is not None:
+            ds.update({'results': {k: str(v) for k,v in self._results.items()}})
+        ds.update({'info':
+                    {'user': getuser(),
+                     'app': self.getAppTitle(),
+                     'version': self.getAppVersion()}})
+        ds.write(filepath)
+        QMessageBox.information(self, "Save Data",
+                "Saved data to {}.".format(filepath),
+                QMessageBox.Ok)
