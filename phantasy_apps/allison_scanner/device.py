@@ -392,6 +392,24 @@ class Device(QObject):
         self.set_volt_end()
         self.set_volt_step()
 
+    def reset_interlock(self):
+        print("Reset interlock-{}...".format(self._id))
+        fld = self.elem.get_field('INTERLOCK{}'.format(self._id))
+        re_tries = 0
+        while fld.value != 0:
+            re_tries += 1
+            setattr(self.elem, 'RESET_ITLK', 1)
+            _wait(fld.readback_pv[0], 0, 5)
+            if re_tries > 3:
+                break
+                print("--- Cannot reset interlock...")
+                return
+        print("--- Reset interlock-{}: Done!".format(self._id))
+
+    def retract(self, pos0=152.0):
+        pos_fld = self.elem.get_field('POS{}'.format(self._id))
+        pos_fld.value = pos0
+
     def abort(self):
         setattr(self.elem, 'ABORT_SCAN{}'.format(self._id), 1)
 
@@ -424,6 +442,12 @@ class Device(QObject):
         self.set_params()
         self.move()
         print("Run-All-in-One is done.")
+
+    def init_run(self):
+        self.init_bias_voltage()
+        self.enable()
+        self.reset_interlock()
+        self.set_params()
 
     def init_data_cb(self):
         self._status_pv = self.elem.get_field('SCAN_STATUS{}'.format(self._id)).readback_pv[0]
