@@ -151,13 +151,34 @@ class Ui_MainWindow(object):
         self.run_btn.setIconSize(QtCore.QSize(24, 24))
         self.run_btn.setObjectName("run_btn")
         self.horizontalLayout.addWidget(self.run_btn)
-        self.sync_data_btn = QtWidgets.QToolButton(self.ctrl_gbox)
+        self.abort_btn = QtWidgets.QToolButton(self.ctrl_gbox)
         icon3 = QtGui.QIcon()
         icon3.addPixmap(
+            QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.abort_btn.setIcon(icon3)
+        self.abort_btn.setIconSize(QtCore.QSize(28, 28))
+        self.abort_btn.setAutoRaise(True)
+        self.abort_btn.setObjectName("abort_btn")
+        self.horizontalLayout.addWidget(self.abort_btn)
+        self.retract_btn = QtWidgets.QToolButton(self.ctrl_gbox)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(
+            QtGui.QPixmap(":/icons/retract.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.retract_btn.setIcon(icon4)
+        self.retract_btn.setIconSize(QtCore.QSize(28, 28))
+        self.retract_btn.setAutoRaise(True)
+        self.retract_btn.setObjectName("retract_btn")
+        self.horizontalLayout.addWidget(self.retract_btn)
+        self.sync_data_btn = QtWidgets.QToolButton(self.ctrl_gbox)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(
             QtGui.QPixmap(":/icons/sync.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.sync_data_btn.setIcon(icon3)
+        self.sync_data_btn.setIcon(icon5)
         self.sync_data_btn.setIconSize(QtCore.QSize(28, 28))
+        self.sync_data_btn.setAutoRaise(True)
         self.sync_data_btn.setObjectName("sync_data_btn")
         self.horizontalLayout.addWidget(self.sync_data_btn)
         self.gridLayout.addLayout(self.horizontalLayout, 0, 2, 1, 1)
@@ -1069,25 +1090,25 @@ class Ui_MainWindow(object):
         self.menu_Data.setObjectName("menu_Data")
         MainWindow.setMenuBar(self.menubar)
         self.actionE_xit = QtWidgets.QAction(MainWindow)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(
-            QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.actionE_xit.setIcon(icon4)
-        self.actionE_xit.setObjectName("actionE_xit")
-        self.actionAbout = QtWidgets.QAction(MainWindow)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(
-            QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.actionAbout.setIcon(icon5)
-        self.actionAbout.setObjectName("actionAbout")
-        self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         icon6 = QtGui.QIcon()
         icon6.addPixmap(
+            QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.actionE_xit.setIcon(icon6)
+        self.actionE_xit.setObjectName("actionE_xit")
+        self.actionAbout = QtWidgets.QAction(MainWindow)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(
+            QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.actionAbout.setIcon(icon7)
+        self.actionAbout.setObjectName("actionAbout")
+        self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(
             QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionAbout_Qt.setIcon(icon6)
+        self.actionAbout_Qt.setIcon(icon8)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionReload = QtWidgets.QAction(MainWindow)
         self.actionReload.setObjectName("actionReload")
@@ -1103,22 +1124,22 @@ class Ui_MainWindow(object):
         self.actionSimulation_Mode.setCheckable(True)
         self.actionSimulation_Mode.setObjectName("actionSimulation_Mode")
         self.actionOpen = QtWidgets.QAction(MainWindow)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(
             QtGui.QPixmap(":/icons/open.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionOpen.setIcon(icon7)
+        self.actionOpen.setIcon(icon9)
         self.actionOpen.setObjectName("actionOpen")
         self.actionAuto_Analysis = QtWidgets.QAction(MainWindow)
         self.actionAuto_Analysis.setCheckable(True)
         self.actionAuto_Analysis.setChecked(True)
         self.actionAuto_Analysis.setObjectName("actionAuto_Analysis")
         self.actionSaveData = QtWidgets.QAction(MainWindow)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(
             QtGui.QPixmap(":/icons/save.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionSaveData.setIcon(icon8)
+        self.actionSaveData.setIcon(icon10)
         self.actionSaveData.setObjectName("actionSaveData")
         self.menu_File.addAction(self.actionOpen)
         self.menu_File.addAction(self.actionSaveData)
@@ -1178,6 +1199,8 @@ class Ui_MainWindow(object):
         self.actionAuto_Analysis.toggled['bool'].connect(
             MainWindow.on_enable_auto_analysis)
         self.actionSaveData.triggered.connect(MainWindow.on_save_data)
+        self.abort_btn.clicked.connect(MainWindow.on_abort)
+        self.retract_btn.clicked.connect(MainWindow.on_retract)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1193,8 +1216,14 @@ class Ui_MainWindow(object):
         self.ems_orientation_cbb.setItemText(1, _translate("MainWindow", "Y"))
         self.run_btn.setToolTip(_translate("MainWindow", "Run device"))
         self.run_btn.setText(_translate("MainWindow", "Run"))
+        self.abort_btn.setToolTip(
+            _translate("MainWindow", "Abort current run"))
+        self.abort_btn.setText(_translate("MainWindow", "Abort"))
+        self.retract_btn.setToolTip(
+            _translate("MainWindow", "Retract device to out limit"))
+        self.retract_btn.setText(_translate("MainWindow", "Retract"))
         self.sync_data_btn.setToolTip(
-            _translate("MainWindow", "Fetch live data from device."))
+            _translate("MainWindow", "Fetch live data"))
         self.sync_data_btn.setText(_translate("MainWindow", "..."))
         self.label_16.setText(_translate("MainWindow", "Voltage [V]"))
         self.label_7.setText(
