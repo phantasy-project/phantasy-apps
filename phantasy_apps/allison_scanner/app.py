@@ -135,7 +135,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
         # vpos
         self.vpos_lineEdit.returnPressed.connect(partial(
-            self.on_retract(self.vpos_lineEdit.text())))
+            self.on_retract, self.vpos_lineEdit.text()))
         self.retract_btn.clicked.connect(partial(self.on_retract, None))
 
     @pyqtSlot(float)
