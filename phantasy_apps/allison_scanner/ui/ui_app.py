@@ -790,6 +790,10 @@ class Ui_MainWindow(object):
         self.label_35.setObjectName("label_35")
         self.horizontalLayout_13.addWidget(self.label_35)
         self.gridLayout_6.addLayout(self.horizontalLayout_13, 2, 1, 1, 1)
+        self.auto_fill_beam_params_btn = QtWidgets.QPushButton(self.page_3)
+        self.auto_fill_beam_params_btn.setObjectName(
+            "auto_fill_beam_params_btn")
+        self.gridLayout_6.addWidget(self.auto_fill_beam_params_btn, 4, 0, 1, 1)
         self.param_tbox.addItem(self.page_3, "")
         self.page = QtWidgets.QWidget()
         self.page.setGeometry(QtCore.QRect(0, 0, 706, 522))
@@ -1203,6 +1207,8 @@ class Ui_MainWindow(object):
             MainWindow.on_enable_auto_analysis)
         self.actionSaveData.triggered.connect(MainWindow.on_save_data)
         self.abort_btn.clicked.connect(MainWindow.on_abort)
+        self.auto_fill_beam_params_btn.clicked.connect(
+            MainWindow.on_auto_fill_beam_params)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1313,6 +1319,8 @@ class Ui_MainWindow(object):
         self.label_35.setText(
             _translate("MainWindow",
                        "<html><head/><body><p>eV</p></body></html>"))
+        self.auto_fill_beam_params_btn.setText(
+            _translate("MainWindow", "Auto Fill"))
         self.param_tbox.setItemText(
             self.param_tbox.indexOf(self.page_3),
             _translate("MainWindow", "Beam"))

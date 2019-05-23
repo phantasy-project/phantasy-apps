@@ -3,6 +3,7 @@
 
 from functools import partial
 from getpass import getuser
+from epics import caget
 
 import numpy as np
 from PyQt5.QtCore import QUrl
@@ -78,6 +79,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._post_init()
 
     def _post_init(self):
+        if self._device_mode == "Live":
+            self.on_auto_fill_beam_params()
         #
         self.installed_px = QPixmap(":/icons/installed.png")
         self.not_installed_px = QPixmap(":/icons/not-installed.png")
@@ -134,6 +137,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._results = None
 
         # vpos
+        self.vpos_lineEdit.setValidator(QDoubleValidator())
         self.vpos_lineEdit.returnPressed.connect(partial(
             self.on_retract, self.vpos_lineEdit.text()))
         self.retract_btn.clicked.connect(partial(self.on_retract, None))
@@ -716,3 +720,15 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         QMessageBox.information(self, "Save Data",
                 "Saved data to {}.".format(filepath),
                 QMessageBox.Ok)
+
+    @pyqtSlot()
+    def on_auto_fill_beam_params(self):
+        # Q, A, Ek
+        q = caget('FE_ISRC1:BEAM:Q_BOOK')
+        a = caget('FE_ISRC1:BEAM:A_BOOK')
+        ws = (self.ion_charge_lineEdit, self.ion_mass_lineEdit),
+        for v, w in zip((q, a), ws):
+            w.setText(str(caget(v)))
+        kv = caget('FE_SCS1:BEAM:HV_BOOK')
+        ek = kv * 1000 * q / a
+        self.ion_energy_lineEdit.setText(str(ek))
