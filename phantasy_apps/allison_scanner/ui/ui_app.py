@@ -1203,7 +1203,6 @@ class Ui_MainWindow(object):
             MainWindow.on_enable_auto_analysis)
         self.actionSaveData.triggered.connect(MainWindow.on_save_data)
         self.abort_btn.clicked.connect(MainWindow.on_abort)
-        self.retract_btn.clicked.connect(MainWindow.on_retract)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

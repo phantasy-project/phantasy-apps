@@ -133,6 +133,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._auto_analysis = True
         self._results = None
 
+        # vpos
+        self.vpos_lineEdit.returnPressed.connect(partial(
+            self.on_retract(self.vpos_lineEdit.text())))
+        self.retract_btn.clicked.connect(partial(self.on_retract, None))
+
     @pyqtSlot(float)
     def on_update_config(self, attr, x):
         # update attr of ems (1), live config (2) and _dconf (3)
@@ -341,13 +346,19 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._ems_device.abort()
 
     @pyqtSlot()
-    def on_retract(self):
-        _fld = self._ems_device.retract()
-        _pv = _fld.readback_pv[0]
-        _pv.clear_callbacks()
-        def _update(**kws):
-            self.vpos_lineEdit.setText('{0.3g}'.format(kws.get('value')))
-        _pv.add_callback(_update)
+    def on_retract(self, x):
+        try:
+            float(x)
+        except (ValueError, TypeError):
+            x = 152.0
+            self.vpos_lineEdit.setText('152.0')
+        else:
+            _fld = self._ems_device.retract(float(x))
+            _pv = _fld.readback_pv[0]
+            _pv.clear_callbacks()
+            def _update(**kws):
+                self.vpos_lineEdit.setText('{0.3g}'.format(kws.get('value')))
+            _pv.add_callback(_update)
 
     def _valid_device(self):
         elem = self._ems_device.elem
