@@ -332,7 +332,17 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                     "Device is busy.",
                     QMessageBox.Ok)
             return
+        if self._device_mode == "Live":
+            self._ems_device.init_run()
         self._device.start()
+
+    @pyqtSlot()
+    def on_abort(self):
+        self._ems_device.abort()
+
+    @pyqtSlot()
+    def on_retract(self):
+        self._ems_device.retract()
 
     def _valid_device(self):
         elem = self._ems_device.elem
@@ -397,6 +407,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._device_mode = "Simulation"
         else:
             self._device_mode = "Live"
+        for o in (self.retract_btn, self.abort_btn):
+            o.setEnabled(not f)
         self._initial_devices(self._device_mode)
 
     @pyqtSlot()
