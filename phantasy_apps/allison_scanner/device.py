@@ -409,6 +409,7 @@ class Device(QObject):
     def retract(self, pos0=152.0):
         pos_fld = self.elem.get_field('POS{}'.format(self._id))
         pos_fld.value = pos0
+        return pos_fld
 
     def abort(self):
         setattr(self.elem, 'ABORT_SCAN{}'.format(self._id), 1)

@@ -342,7 +342,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_retract(self):
-        self._ems_device.retract()
+        _fld = self._ems_device.retract()
+        _pv = _fld.readback_pv[0]
+        _pv.clear_callbacks()
+        def _update(**kws):
+            self.vpos_lineEdit.setText('{0.3g}'.format(kws.get('value')))
+        _pv.add_callback(_update)
 
     def _valid_device(self):
         elem = self._ems_device.elem

@@ -161,6 +161,9 @@ class Ui_MainWindow(object):
         self.abort_btn.setAutoRaise(True)
         self.abort_btn.setObjectName("abort_btn")
         self.horizontalLayout.addWidget(self.abort_btn)
+        self.vpos_lineEdit = QtWidgets.QLineEdit(self.ctrl_gbox)
+        self.vpos_lineEdit.setObjectName("vpos_lineEdit")
+        self.horizontalLayout.addWidget(self.vpos_lineEdit)
         self.retract_btn = QtWidgets.QToolButton(self.ctrl_gbox)
         icon4 = QtGui.QIcon()
         icon4.addPixmap(
