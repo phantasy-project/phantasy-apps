@@ -79,6 +79,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._post_init()
 
     def _post_init(self):
+        self._live_widgets = (self.retract_btn, self.abort_btn,
+                              self.auto_fill_beam_params_btn)
         if self._device_mode == "Live":
             self.on_auto_fill_beam_params()
         #
@@ -427,7 +429,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._device_mode = "Simulation"
         else:
             self._device_mode = "Live"
-        for o in (self.retract_btn, self.abort_btn):
+        for o in self._live_widgets:
             o.setEnabled(not f)
         self._initial_devices(self._device_mode)
 
@@ -710,6 +712,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             'shape': (volt_size, pos_size),
             'array': data.tolist()}))
         ds.update(r)
+        # ion species
+        if self._device_mode == "Live":
+            n, q, a, ek = self._get_ion_info()
+            ds.update({
+                "Beam Source": {'Ion Name': n,'Q': q, 'A': a, 'Ek': ek}})
+        #
         if self._results is not None:
             ds.update({'results': {k: str(v) for k,v in self._results.items()}})
         ds.update({'info':
@@ -724,11 +732,18 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_auto_fill_beam_params(self):
         # Q, A, Ek
-        q = caget('FE_ISRC1:BEAM:Q_BOOK')
-        a = caget('FE_ISRC1:BEAM:A_BOOK')
+        n, q, a, ek = self._get_ion_info()
         ws = (self.ion_charge_lineEdit, self.ion_mass_lineEdit)
         for v, w in zip((q, a), ws):
             w.setText(str(v))
+        self.ion_energy_lineEdit.setText(str(ek))
+        self.on_update_model()
+
+    def _get_ion_info(self):
+        # ion name, Q, A, Ek [eV]
+        n = caget('FE_ISRC1:BEAM:ELMT_BOOK')
+        q = caget('FE_ISRC1:BEAM:Q_BOOK')
+        a = caget('FE_ISRC1:BEAM:A_BOOK')
         kv = caget('FE_SCS1:BEAM:HV_BOOK')
         ek = kv * 1000.0 * q / a
-        self.ion_energy_lineEdit.setText(str(ek))
+        return (n, q, a, ek)
