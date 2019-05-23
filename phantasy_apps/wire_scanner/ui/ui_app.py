@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_app.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1693, 1508)
+        MainWindow.resize(1693, 1601)
         icon = QtGui.QIcon()
         icon.addPixmap(
             QtGui.QPixmap(":/icons/ws.png"), QtGui.QIcon.Normal,
@@ -1280,7 +1280,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.v_splitter, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1693, 29))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1693, 34))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -1687,7 +1687,7 @@ class Ui_MainWindow(object):
         self.label_30.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>σ<span style=\" vertical-align:super;\">90%</span></p></body></html>"
+                "<html><head/><body><p>R<span style=\" vertical-align:super;\">90%</span></p></body></html>"
             ))
         self.label_31.setText(
             _translate(
@@ -1713,13 +1713,13 @@ class Ui_MainWindow(object):
         self.label_32.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>σ<span style=\" vertical-align:super;\">99%</span></p></body></html>"
+                "<html><head/><body><p>R<span style=\" vertical-align:super;\">99%</span></p></body></html>"
             ))
         self.label_24.setText(_translate("MainWindow", "Y"))
         self.label_25.setText(_translate("MainWindow", "U"))
         self.label_28.setText(
             _translate("MainWindow",
-                       "<html><head/><body><p>&sigma;</p></body></html>"))
+                       "<html><head/><body><p>RMS</p></body></html>"))
         self.label_26.setText(_translate("MainWindow", "V"))
         self.label_34.setText(
             _translate(
