@@ -726,9 +726,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # Q, A, Ek
         q = caget('FE_ISRC1:BEAM:Q_BOOK')
         a = caget('FE_ISRC1:BEAM:A_BOOK')
-        ws = (self.ion_charge_lineEdit, self.ion_mass_lineEdit),
+        ws = (self.ion_charge_lineEdit, self.ion_mass_lineEdit)
         for v, w in zip((q, a), ws):
-            w.setText(str(caget(v)))
+            w.setText(str(v))
         kv = caget('FE_SCS1:BEAM:HV_BOOK')
-        ek = kv * 1000 * q / a
+        ek = kv * 1000.0 * q / a
         self.ion_energy_lineEdit.setText(str(ek))
