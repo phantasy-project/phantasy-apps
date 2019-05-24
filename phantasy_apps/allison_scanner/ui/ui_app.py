@@ -98,6 +98,11 @@ class Ui_MainWindow(object):
         self.ems_orientation_cbb.addItem("")
         self.ems_orientation_cbb.addItem("")
         self.horizontalLayout.addWidget(self.ems_orientation_cbb)
+        self.status_lbl = QtWidgets.QLabel(self.ctrl_gbox)
+        self.status_lbl.setText("")
+        self.status_lbl.setPixmap(QtGui.QPixmap(":/icons/inactive.png"))
+        self.status_lbl.setObjectName("status_lbl")
+        self.horizontalLayout.addWidget(self.status_lbl)
         self.run_btn = QtWidgets.QPushButton(self.ctrl_gbox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -664,11 +669,6 @@ class Ui_MainWindow(object):
         self.vpos_lineEdit.setObjectName("vpos_lineEdit")
         self.adv_ctrl_hbox.addWidget(self.vpos_lineEdit)
         self.retract_btn = QtWidgets.QPushButton(self.adv_ctrl_widget)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(
-            QtGui.QPixmap(":/icons/retract.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.retract_btn.setIcon(icon5)
         self.retract_btn.setIconSize(QtCore.QSize(28, 28))
         self.retract_btn.setObjectName("retract_btn")
         self.adv_ctrl_hbox.addWidget(self.retract_btn)
@@ -747,7 +747,7 @@ class Ui_MainWindow(object):
             "}")
         self.param_tbox.setObjectName("param_tbox")
         self.page_3 = QtWidgets.QWidget()
-        self.page_3.setGeometry(QtCore.QRect(0, 0, 706, 471))
+        self.page_3.setGeometry(QtCore.QRect(0, 0, 706, 447))
         self.page_3.setObjectName("page_3")
         self.gridLayout_6 = QtWidgets.QGridLayout(self.page_3)
         self.gridLayout_6.setObjectName("gridLayout_6")
@@ -809,7 +809,7 @@ class Ui_MainWindow(object):
         self.gridLayout_6.addWidget(self.auto_fill_beam_params_btn, 4, 0, 1, 1)
         self.param_tbox.addItem(self.page_3, "")
         self.page = QtWidgets.QWidget()
-        self.page.setGeometry(QtCore.QRect(0, 0, 706, 471))
+        self.page.setGeometry(QtCore.QRect(0, 0, 706, 447))
         self.page.setObjectName("page")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.page)
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -873,7 +873,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.auto_update_image_chkbox, 1, 2, 1, 1)
         self.param_tbox.addItem(self.page, "")
         self.page_2 = QtWidgets.QWidget()
-        self.page_2.setGeometry(QtCore.QRect(0, 0, 706, 471))
+        self.page_2.setGeometry(QtCore.QRect(0, 0, 706, 447))
         self.page_2.setObjectName("page_2")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.page_2)
         self.gridLayout_7.setObjectName("gridLayout_7")
@@ -1110,25 +1110,25 @@ class Ui_MainWindow(object):
         self.menu_Data.setObjectName("menu_Data")
         MainWindow.setMenuBar(self.menubar)
         self.actionE_xit = QtWidgets.QAction(MainWindow)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(
             QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionE_xit.setIcon(icon6)
+        self.actionE_xit.setIcon(icon5)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionAbout = QtWidgets.QAction(MainWindow)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(
             QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionAbout.setIcon(icon7)
+        self.actionAbout.setIcon(icon6)
         self.actionAbout.setObjectName("actionAbout")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(
             QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionAbout_Qt.setIcon(icon8)
+        self.actionAbout_Qt.setIcon(icon7)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionReload = QtWidgets.QAction(MainWindow)
         self.actionReload.setObjectName("actionReload")
@@ -1144,22 +1144,22 @@ class Ui_MainWindow(object):
         self.actionSimulation_Mode.setCheckable(True)
         self.actionSimulation_Mode.setObjectName("actionSimulation_Mode")
         self.actionOpen = QtWidgets.QAction(MainWindow)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(
             QtGui.QPixmap(":/icons/open.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionOpen.setIcon(icon9)
+        self.actionOpen.setIcon(icon8)
         self.actionOpen.setObjectName("actionOpen")
         self.actionAuto_Analysis = QtWidgets.QAction(MainWindow)
         self.actionAuto_Analysis.setCheckable(True)
         self.actionAuto_Analysis.setChecked(True)
         self.actionAuto_Analysis.setObjectName("actionAuto_Analysis")
         self.actionSaveData = QtWidgets.QAction(MainWindow)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(
             QtGui.QPixmap(":/icons/save.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionSaveData.setIcon(icon10)
+        self.actionSaveData.setIcon(icon9)
         self.actionSaveData.setObjectName("actionSaveData")
         self.menu_File.addAction(self.actionOpen)
         self.menu_File.addAction(self.actionSaveData)
@@ -1235,6 +1235,8 @@ class Ui_MainWindow(object):
         self.label_14.setText(_translate("MainWindow", "Orientation"))
         self.ems_orientation_cbb.setItemText(0, _translate("MainWindow", "X"))
         self.ems_orientation_cbb.setItemText(1, _translate("MainWindow", "Y"))
+        self.status_lbl.setToolTip(
+            _translate("MainWindow", "Motor movement status"))
         self.run_btn.setToolTip(_translate("MainWindow", "Run device"))
         self.run_btn.setText(_translate("MainWindow", "Run"))
         self.abort_btn.setToolTip(
