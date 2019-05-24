@@ -80,7 +80,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     def _post_init(self):
         self._live_widgets = (self.retract_btn, self.abort_btn,
-                              self.auto_fill_beam_params_btn)
+                              self.auto_fill_beam_params_btn,
+                              self.reset_itlk_btn)
         if self._device_mode == "Live":
             self.on_auto_fill_beam_params()
         #
@@ -143,6 +144,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.vpos_lineEdit.returnPressed.connect(partial(
             self.on_retract, self.vpos_lineEdit.text()))
         self.retract_btn.clicked.connect(partial(self.on_retract, None))
+        #
+        self.adv_ctrl_chkbox.toggled.emit(self.adv_ctrl_chkbox.isChecked())
 
     @pyqtSlot(float)
     def on_update_config(self, attr, x):
@@ -356,15 +359,19 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         try:
             float(x)
         except (ValueError, TypeError):
-            x = 152.0
+            v = 152.0
             self.vpos_lineEdit.setText('152.0')
         else:
-            _fld = self._ems_device.retract(float(x))
+            v = float(x)
+        finally:
+            _fld = self._ems_device.retract(v)
+
             _pv = _fld.readback_pv[0]
             _pv.clear_callbacks()
             def _update(**kws):
                 self.vpos_lineEdit.setText('{0.3g}'.format(kws.get('value')))
             _pv.add_callback(_update)
+
 
     def _valid_device(self):
         elem = self._ems_device.elem
@@ -747,3 +754,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         kv = caget('FE_SCS1:BEAM:HV_BOOK')
         ek = kv * 1000.0 * q / a
         return (n, q, a, ek)
+
+    @pyqtSlot()
+    def on_reset_interlock(self):
+        self._ems_device.reset_interlock()
+
+    @pyqtSlot(bool)
+    def on_enable_advctrl(self, f):
+        self.adv_ctrl_widget.setVisible(f)
+
