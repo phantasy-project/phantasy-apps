@@ -33,11 +33,9 @@ class SimDevice(QObject):
         self.finished.emit()
 
     def on_update_p(self, value, **kws):
-        print("POS NOW: ", value)
         self.pos_changed.emit(value)
 
     def on_update_s(self, value, **kws):
-        print(kws.get('pvname'), "value is: ", value)
         if value == 12:
             self.reset_data_cb()
 
