@@ -447,7 +447,6 @@ class Device(QObject):
     def init_run(self):
         self.init_bias_voltage()
         self.enable()
-        self.reset_interlock()
         self.set_params()
 
     def init_data_cb(self):
