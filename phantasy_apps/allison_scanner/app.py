@@ -9,6 +9,7 @@ import numpy as np
 from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QDoubleValidator
@@ -84,6 +85,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                               self.reset_itlk_btn)
         if self._device_mode == "Live":
             self.on_auto_fill_beam_params()
+        # st
+        self._active_px = QPixmap(":/icons/active.png")
+        self._inactive_px = QPixmap(":/icons/inactive.png")
         #
         self.installed_px = QPixmap(":/icons/installed.png")
         self.not_installed_px = QPixmap(":/icons/not-installed.png")
@@ -411,6 +415,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     def on_update_p(self, v):
         self.vpos_lineEdit.setText('{0:.3g}'.format(v))
+        self._beat_on(500)
 
     @pyqtSlot()
     def on_finished(self):
@@ -764,3 +769,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_enable_advctrl(self, f):
         self.adv_ctrl_widget.setVisible(f)
 
+    def _beat_on(self, dt):
+        self.status_lbl.setPixmap(self._active_px)
+        QTimer.singleShot(dt,
+                lambda:self.status_lbl.setPixmap(self._inactive_px))
