@@ -146,10 +146,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # vpos
         self.vpos_lineEdit.setValidator(QDoubleValidator())
         self.vpos_lineEdit.returnPressed.connect(partial(
-            self.on_retract, self.vpos_lineEdit.text()))
+            self.on_retract, 0))
         self.retract_btn.clicked.connect(partial(self.on_retract, None))
         #
         self.adv_ctrl_chkbox.toggled.emit(self.adv_ctrl_chkbox.isChecked())
+        self.reset_itlk_btn.clicked.connect(self.on_reset_interlock)
 
     @pyqtSlot(float)
     def on_update_config(self, attr, x):
@@ -343,6 +344,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
         self._device.data_changed.connect(self.on_update)
         self._device.pos_changed.connect(self.on_update_p)
+        if self._device_mode == "Live":
+            self._device.status_in_changed.connect(self.on_update_sin)
+            self._device.status_out_changed.connect(self.on_update_sout)
+            self._device.itlk_changed.connect(self.on_update_itlk)
+            self._device.status_enable_changed.connect(self.on_update_en)
         self._device.finished.connect(self.on_finished)
 
         # start moving
@@ -361,6 +367,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_retract(self, x):
+        if x == 0: x = self.vpos_lineEdit.text()
         try:
             float(x)
         except (ValueError, TypeError):
@@ -397,8 +404,16 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         data_pv = elem.pv('DATA{}'.format(_id))[0]
         status_pv = elem.pv('SCAN_STATUS{}'.format(_id))[0]
         trigger_pv = elem.pv('START_SCAN{}'.format(_id))[0]
-        pos_pv = elem.pv('POS{}'.format(_id))[0]
-        self._device = SimDevice(data_pv, status_pv, trigger_pv, pos_pv)
+        pos_pv = elem.pv('POS{}'.format(_id), handle='readback')[0]
+        if self._device_mode == "Simulation":
+            self._device = SimDevice(data_pv, status_pv, trigger_pv, pos_pv)
+        else:
+            in_pv = elem.pv('STATUS_IN{}'.format(_id))[0]
+            out_pv = elem.pv('STATUS_OUT{}'.format(_id))[0]
+            itlk_pv = elem.pv('INTERLOCK{}'.format(_id))[0]
+            en_pv = elem.pv('ENABLE_SCAN{}'.format(_id), handle='readback')[0]
+            self._device = SimDevice(data_pv, status_pv, trigger_pv, pos_pv,
+                                     in_pv, out_pv, itlk_pv, en_pv)
 
         return True
 
@@ -414,7 +429,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.image_data_changed.emit(m)
 
     def on_update_p(self, v):
-        self.vpos_lineEdit.setText('{0:.3g}'.format(v))
+        self.vpos_lineEdit.setText('{0:.3f}'.format(v))
         self._beat_on(500)
 
     @pyqtSlot()
@@ -773,3 +788,15 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.status_lbl.setPixmap(self._active_px)
         QTimer.singleShot(dt,
                 lambda:self.status_lbl.setPixmap(self._inactive_px))
+
+    def on_update_sin(self, s):
+        print(">>> STATUS IN: ", s)
+
+    def on_update_sout(self, s):
+        print(">>> STATUS OUT: ", s)
+
+    def on_update_en(self, s):
+        print(">>> ENABLED: ", s)
+
+    def on_update_itlk(self, s):
+        print(">>> INTERLOCK: ", s)
