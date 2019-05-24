@@ -338,6 +338,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             return
 
         self._device.data_changed.connect(self.on_update)
+        self._device.pos_changed.connect(self.on_update_p)
         self._device.finished.connect(self.on_finished)
 
         # start moving
@@ -364,14 +365,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         else:
             v = float(x)
         finally:
-            _fld = self._ems_device.retract(v)
-
-            _pv = _fld.readback_pv[0]
-            _pv.clear_callbacks()
-            def _update(**kws):
-                self.vpos_lineEdit.setText('{0.3g}'.format(kws.get('value')))
-            _pv.add_callback(_update)
-
+            self._ems_device.retract(v)
 
     def _valid_device(self):
         elem = self._ems_device.elem
@@ -399,7 +393,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         data_pv = elem.pv('DATA{}'.format(_id))[0]
         status_pv = elem.pv('SCAN_STATUS{}'.format(_id))[0]
         trigger_pv = elem.pv('START_SCAN{}'.format(_id))[0]
-        self._device = SimDevice(data_pv, status_pv, trigger_pv)
+        pos_pv = elem.pv('POS{}'.format(_id))[0]
+        self._device = SimDevice(data_pv, status_pv, trigger_pv, pos_pv)
 
         return True
 
@@ -413,6 +408,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         m = np.nan_to_num(m)
         self._current_array = m
         self.image_data_changed.emit(m)
+
+    def on_update_p(self, v):
+        self.vpos_lineEdit.setText('{0:.3g}'.format(v))
 
     @pyqtSlot()
     def on_finished(self):

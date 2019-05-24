@@ -657,6 +657,9 @@ class Ui_MainWindow(object):
         self.adv_ctrl_widget.setObjectName("adv_ctrl_widget")
         self.adv_ctrl_hbox = QtWidgets.QHBoxLayout(self.adv_ctrl_widget)
         self.adv_ctrl_hbox.setObjectName("adv_ctrl_hbox")
+        self.label_25 = QtWidgets.QLabel(self.adv_ctrl_widget)
+        self.label_25.setObjectName("label_25")
+        self.adv_ctrl_hbox.addWidget(self.label_25)
         self.vpos_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
         self.vpos_lineEdit.setObjectName("vpos_lineEdit")
         self.adv_ctrl_hbox.addWidget(self.vpos_lineEdit)
@@ -1298,6 +1301,7 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p><span style=\" font-style:italic;\">g</span></p></body></html>"
             ))
+        self.label_25.setText(_translate("MainWindow", "Motor Position [mm]"))
         self.retract_btn.setToolTip(
             _translate("MainWindow", "Retract device to out limit"))
         self.retract_btn.setText(_translate("MainWindow", "Retract"))
