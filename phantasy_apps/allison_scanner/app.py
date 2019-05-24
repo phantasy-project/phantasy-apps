@@ -744,7 +744,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         for v, w in zip((q, a), ws):
             w.setText(str(v))
         self.ion_energy_lineEdit.setText(str(ek))
-        self.on_update_model()
+        try:
+            self.on_update_model()
+        except:
+            pass
 
     def _get_ion_info(self):
         # ion name, Q, A, Ek [eV]
