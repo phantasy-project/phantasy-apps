@@ -88,6 +88,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # st
         self._active_px = QPixmap(":/icons/active.png")
         self._inactive_px = QPixmap(":/icons/inactive.png")
+        self._outlimit_px = QPixmap(":/icons/off.png")
+        self._enable_px = QPixmap(":/icons/on.png")
+        self._not_enable_px = QPixmap(":/icons/off.png")
+        self._itlk_px = QPixmap(":/icons/on.png")
+        self._not_itlk_px = QPixmap(":/icons/off.png")
         #
         self.installed_px = QPixmap(":/icons/installed.png")
         self.not_installed_px = QPixmap(":/icons/not-installed.png")
@@ -794,9 +799,24 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     def on_update_sout(self, s):
         print(">>> STATUS OUT: ", s)
+        if s == 1.0:
+            px = self._outlimit_px
+        else:
+            px = self._inactive_px
+        self.is_outlimit_lbl.setPixmap(px)
 
     def on_update_en(self, s):
         print(">>> ENABLED: ", s)
+        if s == 1.0:
+            px = self._enable_px
+        else:
+            px = self._not_enable_px
+        self.is_enable_lbl.setPixmap(px)
 
     def on_update_itlk(self, s):
         print(">>> INTERLOCK: ", s)
+        if s == 1.0:
+            px = self._itlk_px
+        else:
+            px = self._not_itlk_px
+        self.is_itlk_lbl.setPixmap(px)
