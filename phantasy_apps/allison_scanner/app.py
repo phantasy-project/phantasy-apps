@@ -157,6 +157,21 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.adv_ctrl_chkbox.toggled.emit(self.adv_ctrl_chkbox.isChecked())
         self.reset_itlk_btn.clicked.connect(self.on_reset_interlock)
 
+    def _init_device(self):
+        if self._device_mode == "Simulation":
+            self._device = SimDevice(self._data_pv, self._status_pv,
+                                     self._trigger_pv, self._pos_pv)
+        else:
+            self._device = SimDevice(self._data_pv, self._status_pv,
+                                     self._trigger_pv, self._pos_pv,
+                                     self._in_pv, self._out_pv,
+                                     self._itlk_pv, self._en_pv)
+        pvs = (self._in_pv, self._out_pv, self._itlk_pv, self._en_pv)
+        cbs = (self.on_update_sin, self.on_update_sout,
+               self.on_update_itlk, self.on_update_en)
+        for pv, cb in zip(pvs, cbs):
+            cb(caget(pv))
+
     @pyqtSlot(float)
     def on_update_config(self, attr, x):
         # update attr of ems (1), live config (2) and _dconf (3)
@@ -179,6 +194,19 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.sync_config()
         # update result keys
         self._update_result_keys(s)
+        
+        # pvs
+        _id = self._ems_device._id
+        elem = self._ems_device.elem
+        self._data_pv = elem.pv('DATA{}'.format(_id))[0]
+        self._status_pv = elem.pv('SCAN_STATUS{}'.format(_id))[0]
+        self._trigger_pv = elem.pv('START_SCAN{}'.format(_id))[0]
+        self._pos_pv = elem.pv('POS{}'.format(_id), handle='readback')[0]
+        self._in_pv = elem.pv('STATUS_IN{}'.format(_id))[0]
+        self._out_pv = elem.pv('STATUS_OUT{}'.format(_id))[0]
+        self._itlk_pv = elem.pv('INTERLOCK{}'.format(_id))[0]
+        self._en_pv = elem.pv('ENABLE_SCAN{}'.format(_id), handle='readback')[0]
+        self._init_device()
 
     def get_device_config(self, path=None):
         """Return device config from *path*.
@@ -404,21 +432,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         #
         xdim = self._xdim = int((x2 - x1) / dx) + 1
         ydim = self._ydim = int((y2 - y1) / dy) + 1
-
-        _id = self._ems_device._id
-        data_pv = elem.pv('DATA{}'.format(_id))[0]
-        status_pv = elem.pv('SCAN_STATUS{}'.format(_id))[0]
-        trigger_pv = elem.pv('START_SCAN{}'.format(_id))[0]
-        pos_pv = elem.pv('POS{}'.format(_id), handle='readback')[0]
-        if self._device_mode == "Simulation":
-            self._device = SimDevice(data_pv, status_pv, trigger_pv, pos_pv)
-        else:
-            in_pv = elem.pv('STATUS_IN{}'.format(_id))[0]
-            out_pv = elem.pv('STATUS_OUT{}'.format(_id))[0]
-            itlk_pv = elem.pv('INTERLOCK{}'.format(_id))[0]
-            en_pv = elem.pv('ENABLE_SCAN{}'.format(_id), handle='readback')[0]
-            self._device = SimDevice(data_pv, status_pv, trigger_pv, pos_pv,
-                                     in_pv, out_pv, itlk_pv, en_pv)
 
         return True
 
@@ -811,11 +824,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             px = self._enable_px
         else:
             px = self._not_enable_px
-        self.is_enable_lbl.setPixmap(px)
+        self.is_enabled_lbl.setPixmap(px)
 
     def on_update_itlk(self, s):
         print(">>> INTERLOCK: ", s)
-        if s == 1.0:
+        if s == 0.0:
             px = self._itlk_px
         else:
             px = self._not_itlk_px
