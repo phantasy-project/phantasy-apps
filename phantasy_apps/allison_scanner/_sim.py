@@ -13,7 +13,7 @@ class SimDevice(QObject):
     status_enable_changed = pyqtSignal(float)
     finished = pyqtSignal()
     def __init__(self, data_pv, status_pv, trigger_pv, pos_pv,
-                 in_pv=None, out_pv=None, itlk_pv=None, en_pv=None)
+                 in_pv=None, out_pv=None, itlk_pv=None, en_pv=None):
         super(self.__class__, self).__init__()
 
         # pv names --> PV
