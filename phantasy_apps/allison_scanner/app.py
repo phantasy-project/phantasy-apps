@@ -166,11 +166,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                                      self._trigger_pv, self._pos_pv,
                                      self._in_pv, self._out_pv,
                                      self._itlk_pv, self._en_pv)
-        pvs = (self._in_pv, self._out_pv, self._itlk_pv, self._en_pv)
-        cbs = (self.on_update_sin, self.on_update_sout,
-               self.on_update_itlk, self.on_update_en)
-        for pv, cb in zip(pvs, cbs):
-            cb(caget(pv))
+            pvs = (self._in_pv, self._out_pv, self._itlk_pv, self._en_pv)
+            cbs = (self.on_update_sin, self.on_update_sout,
+                   self.on_update_itlk, self.on_update_en)
+            for pv, cb in zip(pvs, cbs):
+                cb(caget(pv))
 
     @pyqtSlot(float)
     def on_update_config(self, attr, x):
@@ -194,7 +194,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.sync_config()
         # update result keys
         self._update_result_keys(s)
-        
+
         # pvs
         _id = self._ems_device._id
         elem = self._ems_device.elem
@@ -202,10 +202,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._status_pv = elem.pv('SCAN_STATUS{}'.format(_id))[0]
         self._trigger_pv = elem.pv('START_SCAN{}'.format(_id))[0]
         self._pos_pv = elem.pv('POS{}'.format(_id), handle='readback')[0]
-        self._in_pv = elem.pv('STATUS_IN{}'.format(_id))[0]
-        self._out_pv = elem.pv('STATUS_OUT{}'.format(_id))[0]
-        self._itlk_pv = elem.pv('INTERLOCK{}'.format(_id))[0]
-        self._en_pv = elem.pv('ENABLE_SCAN{}'.format(_id), handle='readback')[0]
+        if self._device_mode == "Live":
+            self._in_pv = elem.pv('STATUS_IN{}'.format(_id))[0]
+            self._out_pv = elem.pv('STATUS_OUT{}'.format(_id))[0]
+            self._itlk_pv = elem.pv('INTERLOCK{}'.format(_id))[0]
+            self._en_pv = elem.pv('ENABLE_SCAN{}'.format(_id), handle='readback')[0]
         self._init_device()
 
     def get_device_config(self, path=None):
