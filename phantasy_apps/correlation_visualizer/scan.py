@@ -441,7 +441,7 @@ class ScanWorker(QObject):
 
     def __init__(self, scantask, starting_index=0, index_array=None,
                  parent=None):
-        super(ScanWorker, self).__init__(parent)
+        super(ScanWorker, self).__init__()
         self.task = scantask
         self.parent = parent
         self.run_flag = True
@@ -511,8 +511,9 @@ class ScanWorker(QObject):
         readings = []
         for elem in all_elements:
             ename = elem.ename
-            if 'PM' in ename and 'BPM' not in ename:
-                self.process_ws(ename)
+            if not self.parent.is_virtual_mode():
+                if 'PM' in ename and 'BPM' not in ename:
+                    self.process_ws(ename)
             readings.append(elem.value)
         return readings
 
@@ -538,8 +539,8 @@ class ScanWorker(QObject):
 
         # test only
         from phantasy import MachinePortal
-        from phantasy.apps.wire_scanner.device import Device
-        from phantasy.apps.wire_scanner.device import PMData
+        from phantasy_apps.wire_scanner.device import Device
+        from phantasy_apps.wire_scanner.device import PMData
         #
 
         if "MEBT" in ename: segment = "MEBT"
@@ -572,7 +573,7 @@ class ScanWorker(QObject):
 
 
 def read_element(task, etype, mp):
-    """Read elemnt(field object to scan) from task config.
+    """Read element(field object to scan) from task config.
 
     Parameters
     ----------
