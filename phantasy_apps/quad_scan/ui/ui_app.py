@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_app.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -109,6 +109,19 @@ class Ui_MainWindow(object):
         self.monitors_cbb = QtWidgets.QComboBox(self.data_info_groupBox)
         self.monitors_cbb.setObjectName("monitors_cbb")
         self.gridLayout_2.addWidget(self.monitors_cbb, 3, 3, 1, 6)
+        self.label = QtWidgets.QLabel(self.data_info_groupBox)
+        self.label.setObjectName("label")
+        self.gridLayout_2.addWidget(self.label, 4, 2, 1, 1)
+        self.unit_meter_rbtn = QtWidgets.QRadioButton(self.data_info_groupBox)
+        self.unit_meter_rbtn.setObjectName("unit_meter_rbtn")
+        self.buttonGroup = QtWidgets.QButtonGroup(MainWindow)
+        self.buttonGroup.setObjectName("buttonGroup")
+        self.buttonGroup.addButton(self.unit_meter_rbtn)
+        self.gridLayout_2.addWidget(self.unit_meter_rbtn, 4, 3, 1, 1)
+        self.unit_mm_rbtn = QtWidgets.QRadioButton(self.data_info_groupBox)
+        self.unit_mm_rbtn.setObjectName("unit_mm_rbtn")
+        self.buttonGroup.addButton(self.unit_mm_rbtn)
+        self.gridLayout_2.addWidget(self.unit_mm_rbtn, 4, 4, 1, 1)
         self.verticalLayout_4.addWidget(self.data_info_groupBox)
         self.hsplitter = QtWidgets.QSplitter(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
@@ -143,9 +156,9 @@ class Ui_MainWindow(object):
         self.gridLayout.setObjectName("gridLayout")
         self.matplotliberrorbarWidget = MatplotlibErrorbarWidget(
             self.scan_data_plot_groupBox)
-        self.matplotliberrorbarWidget.setFigureAutoScale(True)
         self.matplotliberrorbarWidget.setFigureXlabel("")
         self.matplotliberrorbarWidget.setFigureYlabel("")
+        self.matplotliberrorbarWidget.setFigureAutoScale(True)
         self.matplotliberrorbarWidget.setObjectName("matplotliberrorbarWidget")
         self.gridLayout.addWidget(self.matplotliberrorbarWidget, 0, 0, 1, 1)
         self.beam_info_groupBox = QtWidgets.QGroupBox(self.vsplitter)
@@ -233,7 +246,7 @@ class Ui_MainWindow(object):
             "}")
         self.toolbox.setObjectName("toolbox")
         self.page_params = QtWidgets.QWidget()
-        self.page_params.setGeometry(QtCore.QRect(0, 0, 697, 1120))
+        self.page_params.setGeometry(QtCore.QRect(0, 0, 834, 1052))
         self.page_params.setObjectName("page_params")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.page_params)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
@@ -414,12 +427,14 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addLayout(self.horizontalLayout_7)
         self.beam_ellipse_plot = MatplotlibBaseWidget(
             self.twiss_output_groupBox)
+        self.beam_ellipse_plot.setFigureBorderVisible(True)
+        self.beam_ellipse_plot.setProperty("figureTightLayout", False)
         self.beam_ellipse_plot.setObjectName("beam_ellipse_plot")
         self.verticalLayout_3.addWidget(self.beam_ellipse_plot)
         self.verticalLayout_2.addWidget(self.twiss_output_groupBox)
         self.toolbox.addItem(self.page_params, "")
         self.page_formulae = QtWidgets.QWidget()
-        self.page_formulae.setGeometry(QtCore.QRect(0, 0, 854, 1107))
+        self.page_formulae.setGeometry(QtCore.QRect(0, 0, 944, 1039))
         self.page_formulae.setStyleSheet("QLabel {\n"
                                          "    padding: 5px 10px;\n"
                                          "}")
@@ -463,7 +478,7 @@ class Ui_MainWindow(object):
         self.gridLayout_6.addLayout(self.verticalLayout_4, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 30))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 34))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -528,6 +543,9 @@ class Ui_MainWindow(object):
         self.label_34.setText(_translate("MainWindow", "Scan Range"))
         self.label_5.setText(_translate("MainWindow", "Quadrupole"))
         self.label_6.setText(_translate("MainWindow", "Beam Size Monitor"))
+        self.label.setText(_translate("MainWindow", "Measurement Unit"))
+        self.unit_meter_rbtn.setText(_translate("MainWindow", "Meter"))
+        self.unit_mm_rbtn.setText(_translate("MainWindow", "Millimeter"))
         self.scan_data_plot_groupBox.setTitle(
             _translate("MainWindow", "Data Visualization"))
         self.beam_info_groupBox.setTitle(
