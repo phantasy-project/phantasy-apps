@@ -625,6 +625,13 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.scan_pb.setVisible(False)
 
+        # virtual diag?
+        self._enable_virtual_diag = False
+
+    def is_virtual_mode(self):
+        # if enabled, treat devices virtually, e.g. VA.
+        return self._enable_virtual_diag
+
     @pyqtSlot(int)
     def on_update_data_index(self, xoy, idx):
         setattr(self, '_id{}'.format(xoy), idx)
@@ -723,7 +730,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.thread = QThread()
         self.scan_worker = ScanWorker(self.scan_task,
                                       starting_index=starting_index,
-                                      index_array=index_array)
+                                      index_array=index_array, parent=self)
         self.scan_worker.moveToThread(self.thread)
         self.scan_worker.scanOneIterFinished.connect(self.on_one_iter_finished)
         self.scan_worker.scanAllDataReady.connect(self.on_scan_data_ready)
@@ -926,6 +933,11 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self._mp = o
         self.elementsTreeChanged.emit(o)
         self.segments_updated.emit(o.lattice_names)
+
+    @pyqtSlot(bool)
+    def onEnableVirtualDiag(self, f):
+        print("Enable Virtual Diag?", f)
+        self._enable_virtual_diag = f
 
     @pyqtSlot(bool)
     def onEnableMPSGuardian(self, f):
