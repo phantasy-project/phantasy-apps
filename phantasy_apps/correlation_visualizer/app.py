@@ -900,8 +900,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def onQuadScanAction(self):
         """Show Quad scan data analysis app.
         """
-        from phantasy.apps.quad_scan import QuadScanWindow
-        from phantasy.apps.quad_scan import __version__
+        from phantasy_apps.quad_scan import QuadScanWindow
+        from phantasy_apps.quad_scan import __version__
 
         if self.qs_window is None:
             try:
