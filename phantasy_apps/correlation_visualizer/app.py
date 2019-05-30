@@ -626,7 +626,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.scan_pb.setVisible(False)
 
         # virtual diag?
-        self._enable_virtual_diag = False
+        self.actionVirtual_diag.setChecked(True)
 
     def is_virtual_mode(self):
         # if enabled, treat devices virtually, e.g. VA.
