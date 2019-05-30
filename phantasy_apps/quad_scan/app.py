@@ -3,6 +3,7 @@
 
 import lmfit
 import numpy as np
+from functools import partial
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
@@ -24,6 +25,8 @@ ION_ES = 931.49432e+06  # rest energy [eV/u]
 # sample point for fitting curve
 N_SAMPLE = 100
 
+# unit
+UNIT_FAC = {"mm": 1.0e-3, "m": 1.0}
 
 class QuadScanWindow(BaseAppForm, Ui_MainWindow):
 
@@ -106,6 +109,21 @@ class QuadScanWindow(BaseAppForm, Ui_MainWindow):
         self.fitCurveChanged[QVariant, QVariant].connect(self.update_fitting_curve)
         self.matplotliberrorbarWidget.setYTickFormat("Custom", "%.3g")
 
+        # units
+        self.unit_mm_rbtn.toggled.connect(
+                partial(self.on_update_unit, 'mm'))
+        self.unit_meter_rbtn.toggled.connect(
+                partial(self.on_update_unit, 'm'))
+        self.unit_mm_rbtn.setChecked(True)
+        assert self._unit == "mm"
+
+    @pyqtSlot(bool)
+    def on_update_unit(self, unit, f):
+        if f:
+            self._unit = unit
+        if hasattr(self, '_scan_data_model'):
+            self.on_update_ydata(self.monitors_cbb.currentIndex())
+
     @pyqtSlot(QVariant, QVariant)
     def update_fitting_curve(self, x, y):
         """Update fitting line.
@@ -176,7 +194,7 @@ class QuadScanWindow(BaseAppForm, Ui_MainWindow):
         x, y = sm.get_xavg(), sm.get_yavg(ind=ind)
         xerr, yerr = sm.get_xerr(), sm.get_yerr(ind=ind)
 
-        self.x, self.y = x, (y*1e-3)**2
+        self.x, self.y = x, (y * UNIT_FAC[self._unit])**2
         self.matplotliberrorbarWidget.setEbLineID(0)
         self.matplotliberrorbarWidget.setLineID(0)
         self.curveUpdated.emit(self.x, self.y, xerr, yerr)
