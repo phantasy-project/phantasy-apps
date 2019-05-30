@@ -744,6 +744,9 @@ class Ui_MainWindow(object):
         self.actionSave.setObjectName("actionSave")
         self.actionLoad_Task = QtWidgets.QAction(MainWindow)
         self.actionLoad_Task.setObjectName("actionLoad_Task")
+        self.actionVirtual_diag = QtWidgets.QAction(MainWindow)
+        self.actionVirtual_diag.setCheckable(True)
+        self.actionVirtual_diag.setObjectName("actionVirtual_diag")
         self.menu_File.addAction(self.actionSave)
         self.menu_File.addSeparator()
         self.menu_File.addAction(self.actionE_xit)
@@ -754,6 +757,7 @@ class Ui_MainWindow(object):
         self.menuTools.addAction(self.actionQuad_Scan)
         self.menuTools.addAction(self.actionLoad_Lattice)
         self.menuTools.addAction(self.actionMPS_guardian)
+        self.menuTools.addAction(self.actionVirtual_diag)
         self.menu_Scan.addAction(self.actionSave_Task)
         self.menu_Scan.addAction(self.actionLoad_Task)
         self.menubar.addAction(self.menu_File.menuAction())
@@ -779,6 +783,8 @@ class Ui_MainWindow(object):
         self.actionSave.triggered.connect(MainWindow.on_save_data)
         self.actionSave_Task.triggered.connect(MainWindow.on_save_task)
         self.actionLoad_Task.triggered.connect(MainWindow.on_load_task)
+        self.actionVirtual_diag.toggled['bool'].connect(
+            MainWindow.onEnableVirtualDiag)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.alter_elem_lineEdit,
                                self.select_alter_elem_btn)
@@ -972,6 +978,10 @@ class Ui_MainWindow(object):
         self.actionSave.setText(_translate("MainWindow", "Save"))
         self.actionSave.setShortcut(_translate("MainWindow", "Ctrl+S"))
         self.actionLoad_Task.setText(_translate("MainWindow", "Load Task"))
+        self.actionVirtual_diag.setText(
+            _translate("MainWindow", "Virtual Diagnostics"))
+        self.actionVirtual_diag.setShortcut(
+            _translate("MainWindow", "Ctrl+Shift+V"))
 
 
 from mpl4qt.widgets.mplerrorbarwidget import MatplotlibErrorbarWidget
