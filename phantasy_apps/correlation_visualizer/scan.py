@@ -15,7 +15,7 @@ from phantasy import epoch2human
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 from phantasy_apps.correlation_visualizer.utils import PVElement
 from phantasy_apps.correlation_visualizer.utils import PVElementReadonly
-from phantasy_apps.correlation_visualizer.utils import random_string
+from phantasy_ui import random_string
 
 TS_FMT = "%Y-%m-%d %H:%M:%S"
 

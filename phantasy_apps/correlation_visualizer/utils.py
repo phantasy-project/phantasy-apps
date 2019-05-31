@@ -205,8 +205,3 @@ def delayed_check_pv_status(obj, pvelem, delay=1000):
                                 QMessageBox.Ok)
 
     QTimer.singleShot(delay, lambda: check_status(pvelem))
-
-
-def random_string(length=1):
-    chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz'
-    return ''.join([random.choice(chars) for _ in range(length)])

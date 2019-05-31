@@ -27,6 +27,7 @@ from PyQt5.QtWidgets import QPushButton
 from phantasy import CaField
 from phantasy.library.misc import epoch2human
 from phantasy_ui import BaseAppForm
+from phantasy_ui import random_string
 from phantasy_ui.widgets import ElementWidget
 from phantasy_ui.widgets import LatticeWidget
 
@@ -46,7 +47,6 @@ from .scan import load_task
 from .ui.ui_app import Ui_MainWindow
 from .utils import COLOR_DANGER, COLOR_INFO, COLOR_WARNING, COLOR_PRIMARY
 from .utils import delayed_exec
-from .utils import random_string
 
 TS_FMT = "%Y-%m-%d %H:%M:%S"
 BOTTOM_TBTN_ICON_SIZE = 32
