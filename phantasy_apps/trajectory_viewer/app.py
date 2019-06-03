@@ -389,8 +389,8 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
             cors_dict = m2._selected_elements
 
         if self._orm_window is None:
-            from phantasy.apps.orm import OrbitResponseMatrixWindow
-            from phantasy.apps.orm import __version__
+            from phantasy_apps.orm import OrbitResponseMatrixWindow
+            from phantasy_apps.orm import __version__
             self._orm_window = OrbitResponseMatrixWindow(self, __version__,
                                                          name_map=name_elem_map, mp=self.__mp,
                                                          bpms=bpms_dict, cors=cors_dict)
