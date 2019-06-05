@@ -30,7 +30,10 @@ class Ui_MainWindow(object):
         self.groupBox.setSizePolicy(sizePolicy)
         self.groupBox.setObjectName("groupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.groupBox)
+        self.gridLayout.setContentsMargins(8, 8, 8, 8)
         self.gridLayout.setObjectName("gridLayout")
+        self.verticalLayout = QtWidgets.QVBoxLayout()
+        self.verticalLayout.setObjectName("verticalLayout")
         self.matplotlibimageWidget = MatplotlibImageWidget(self.groupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Expanding)
@@ -47,7 +50,17 @@ class Ui_MainWindow(object):
         self.matplotlibimageWidget.setColorBarToggle(True)
         self.matplotlibimageWidget.setAutoColorLimit(True)
         self.matplotlibimageWidget.setObjectName("matplotlibimageWidget")
-        self.gridLayout.addWidget(self.matplotlibimageWidget, 0, 0, 1, 1)
+        self.verticalLayout.addWidget(self.matplotlibimageWidget)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.label = QtWidgets.QLabel(self.groupBox)
+        self.label.setObjectName("label")
+        self.horizontalLayout.addWidget(self.label)
+        self.label_2 = QtWidgets.QLabel(self.groupBox)
+        self.label_2.setObjectName("label_2")
+        self.horizontalLayout.addWidget(self.label_2)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
         self.groupBox_2 = QtWidgets.QGroupBox(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -88,6 +101,16 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "$x\\,\\mathrm{[mm]}$"))
         self.matplotlibimageWidget.setFigureYlabel(
             _translate("MainWindow", "$x\'\\,\\mathrm{[mrad]}$"))
+        self.label.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p><span style=\" color:#777975; vertical-align:super;\">*</span><span style=\" color:#777975;\">Beam ellipse area is shown with 4σ (and σ</span><span style=\" color:#777975; vertical-align:super;\">\'</span><span style=\" color:#777975;\">).</span></p></body></html>"
+            ))
+        self.label_2.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p><span style=\" color:#777975; vertical-align:super;\">**</span><span style=\" color:#777975;\">Intensity is normlized to 1.0.</span></p></body></html>"
+            ))
         self.groupBox_2.setTitle(_translate("MainWindow", "Parameter List"))
 
 
