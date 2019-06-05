@@ -20,6 +20,19 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
         self.setAppVersion(parent._version)
         self.setAppTitle("{} - {}".format(parent.getAppTitle(), 'Results'))
 
+        self.norm_chkbox.toggled.connect(self.on_norm_inten)
+        self.norm_chkbox.setChecked(True)
+
+    def on_norm_inten(self, f):
+        self._norm_inten = f
+        try:
+            if f:
+                self._o.update_image(self._raw_m / self._raw_m.max())
+            else:
+                self._o.update_image(self._raw_m)
+        except:
+            pass
+
     @property
     def results(self):
         return self._r
@@ -30,9 +43,13 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
 
     def plot_data(self):
         m = self._parent.matplotlibimageWidget.get_data()
+        self._raw_m = m
         self._o.setXData(self._data.x_grid)
         self._o.setYData(self._data.xp_grid)
-        self._o.update_image(m)
+        if self._norm_inten:
+            self._o.update_image(m / m.max())
+        else:
+            self._o.update_image(m)
         self._data.plot(m, results=self._r, ax=self._ax, image_on=False,
                 profile_on=True, profile_opt={'lw': 1.5, 'color': 'w'},
                 ellipse_on=True, ellipse_opt={'c': 'w', 'color': 'w'})
