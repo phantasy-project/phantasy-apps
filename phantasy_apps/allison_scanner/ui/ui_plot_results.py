@@ -56,9 +56,9 @@ class Ui_MainWindow(object):
         self.label = QtWidgets.QLabel(self.groupBox)
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
-        self.label_2 = QtWidgets.QLabel(self.groupBox)
-        self.label_2.setObjectName("label_2")
-        self.horizontalLayout.addWidget(self.label_2)
+        self.norm_chkbox = QtWidgets.QCheckBox(self.groupBox)
+        self.norm_chkbox.setObjectName("norm_chkbox")
+        self.horizontalLayout.addWidget(self.norm_chkbox)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
         self.groupBox_2 = QtWidgets.QGroupBox(self.splitter)
@@ -106,11 +106,8 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p><span style=\" color:#777975; vertical-align:super;\">*</span><span style=\" color:#777975;\">Beam ellipse area is shown with 4σ (and σ</span><span style=\" color:#777975; vertical-align:super;\">\'</span><span style=\" color:#777975;\">).</span></p></body></html>"
             ))
-        self.label_2.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p><span style=\" color:#777975; vertical-align:super;\">**</span><span style=\" color:#777975;\">Intensity is normlized to 1.0.</span></p></body></html>"
-            ))
+        self.norm_chkbox.setText(
+            _translate("MainWindow", "Normalize Intensity"))
         self.groupBox_2.setTitle(_translate("MainWindow", "Parameter List"))
 
 
