@@ -62,12 +62,14 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
                 u = k[-1]
                 break
 
-        ks = '{u}_cen,{u}p_cen,{u}_rms,{u}p_rms,alpha_{u},beta_{u},gamma_{u},emit_{u},emitn_{u}'.format(u=u).split(',')
+        ks = '{u}_cen,{u}p_cen,{u}_rms,{u}p_rms,alpha_{u},beta_{u},gamma_{u},emit_{u},emitn_{u},total_intensity'.format(u=u).split(',')
         names = ["{}<sub>{}</sub>".format(i, j) for (i, j) in
                  zip((u, u + "'", '&sigma;', '&sigma;', '&alpha;',
-                     '&beta;', '&gamma;', '&epsilon;', '&epsilon;'),
-                     (0, 0, u, u + "'", u, u, u, u, u + '<sup>n</sup>',))]
-        us = ("mm", "mrad", "mm", "mrad", "", "m", "m<sup>-1</sup>", "mm&middot;mrad", "mm&middot;mrad")
+                     '&beta;', '&gamma;', '&epsilon;', '&epsilon;',
+                     'Total Intensity'),
+                     (0, 0, u, u + "'", u, u, u, u, u + '<sup>n</sup>', ''))]
+        us = ("mm", "mrad", "mm", "mrad", "", "m", "m<sup>-1</sup>",
+              "mm&middot;mrad", "mm&middot;mrad", "&mu;A")
 
         s =['<h5>{0:<3s} = {1:.6f} {2}<h5>'.format(n, r.get(k), ui) for (n, k, ui) in zip(names, ks, us)]
         self.textEdit.setHtml("<html>{}</html>".format(''.join(s)))
