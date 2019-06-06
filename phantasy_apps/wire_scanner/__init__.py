@@ -12,7 +12,7 @@ __copyright__ = "(c) 2019, Facility for Rare Isotope beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
 __title__ = "Wire Scanner: High-level Device Controls and Post Data Analysis"
-__version__ = '2.7'
+__version__ = '2.8'
 
 
 def run(cli=False):
