@@ -1,3 +1,23 @@
+Version 2.1.0
+-------------
+2019-06-06
+
+- Quad Scan App
+  - Add option for beam size units, mm or m.
+
+- Correlation Visualizer
+  - Update auto-scale icon.
+  - Add option for to toggle virtual diag device for VA, if turning off,
+    real device operation logic should be invoked.
+
+- Allison Scanner
+  - Add button for data sync, device controls like reset interlock, retract, etc.
+  - Auto data analysis menu option is enabled by default.
+  - Support load data from file, save data to file.
+  - Add button to auto-fill beam species info.
+  - Fix simulation mode.
+  - Support showing device status by indicators.
+
 Version 2.0.2
 -------------
 2019-05-21
