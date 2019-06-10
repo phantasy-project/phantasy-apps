@@ -10,8 +10,8 @@ __authors__ = "Tong Zhang"
 __copyright__ = "(c) 2018-2019, Facility for Rare Isotope beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
-__title__ = "Beam Central Trajectory Response Matrix"
-__version__ = '3.2'
+__title__ = "Optics Response Matrix: Steer the Beam Trajectory Like A Master"
+__version__ = '3.3'
 
 
 def run(cli=False):
