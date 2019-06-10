@@ -262,10 +262,8 @@ class ElementListModel(QStandardItemModel):
             # fields
             elem = self.name_elem_map[ename]
             cbb = QComboBox()
-            if elem.family == 'BPM':
-                cbb.addItems(["X&Y", "X", "Y"])
-            else:
-                cbb.addItems(elem.fields)
+            cbb.addItems(elem.fields)
+            cbb.addItem('X&Y')  # To all monitors
             v.setIndexWidget(self.index(i, self.i_field), cbb)
             elem_item = self.item(i, self.i_name)
             cbb.currentTextChanged.connect(
@@ -376,12 +374,12 @@ def is_item_checked(item):
 
 
 def str2list(fname):
-    """Convert 'X' to ['X'], and 'X&Y' to ['X', 'Y']
-    """
-    if '&' in fname:
-        return fname.split('&')
-    else:
-        return [fname]
+    # 20190610: field mapping is required for non-BPMs.
+    # Convert 'X' to ['X'], and 'X&Y' to ['X', 'Y']
+    #if '&' in fname:
+    #    return fname.split('&')
+    #else:
+    return [fname]
 
 
 class MonitorReadingsDataSheet(JSONDataSheet):
