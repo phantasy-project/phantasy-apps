@@ -395,7 +395,7 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
                                                          name_map=name_elem_map, mp=self.__mp,
                                                          bpms=bpms_dict, cors=cors_dict)
             self._orm_window.setWindowTitle(
-                "Beam Central Trajectory Response Matrix (Trajectory Viewer)")
+                "Optics Response Matrix (Launched from Trajectory Viewer)")
             self.monitorsChanged.connect(
                 partial(self._orm_window.on_update_elements, 'bpm'))
             self.correctorsChanged.connect(

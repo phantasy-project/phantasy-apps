@@ -87,16 +87,16 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         self._version = version
 
         # window title
-        self.setWindowTitle("Trajectory Response Matrix")
+        self.setWindowTitle("Optics Response Matrix")
 
         # set app properties
-        self.setAppTitle("Trajectory Response Matrix")
+        self.setAppTitle("Optics Response Matrix")
         self.setAppVersion(self._version)
 
         # about info
         self.app_about_info = """
             <html>
-            <h4>About Beam Central Trajectory Response Matrix</h4>
+            <h4>About Optics Response Matrix</h4>
             <p>This app is created to measure, manage and visualize
             the response matrices for central trajectory correction,
             current version is {}.
