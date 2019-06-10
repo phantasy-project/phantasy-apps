@@ -27,8 +27,8 @@ CURDIR = os.path.dirname(__file__)
 MACHINE_DICT = {
     'VA_LEBT': ('LEBT',),
     'VA_MEBT': ('MEBT',),
-    #'VA_LS1FS1': ('LINAC', 'LS1', 'FS1',),
     'VA_LS1FS1': ('LINAC',),
+    'ReA': ('GPL_VA',),
 }
 
 MACHINE_LIST = sorted(list(MACHINE_DICT.keys()))
