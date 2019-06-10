@@ -22,6 +22,7 @@ from phantasy_apps.utils import get_open_filename
 from phantasy_apps.utils import get_save_filename
 from phantasy_apps.utils import uptime
 from .app_settings_view import SettingsView
+from .app_field_setup import FieldSetDialog
 from .ui.ui_app import Ui_MainWindow
 from .utils import ORMDataSheet
 from .utils import OrmWorker
@@ -192,6 +193,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         self.refresh_models_btn.clicked.connect(self.on_update_eta)
         self.refresh_models_btn.clicked.connect(self.on_set_srange_model)
         self.refresh_models_btn.clicked.connect(self.init_elements)
+        self.refresh_models_btn.clicked.connect(self.init_fields)
 
         # init params
         self.init_params()
@@ -341,6 +343,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         print("--- # of BPMs loaded: {}".format(len(self._bpms)))
         print("--- # of CORs loaded: {}".format(len(self._cors)))
         print("--- Field of CORs to write: {}".format(self._cor_field))
+        print("--- BPM Fields: ", self._orb_field)
         print("--- Field of BPMs to read : {}".format(self._xoy))
         print("--- Damping factor: {}".format(self._cor_dfac))
         print("--- # of iteration: {}".format(self._cor_niter))
@@ -349,7 +352,8 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         print("--- DAQ rate, nshot: {}, {}".format(self._eva_daq_rate, self._eva_daq_nshot))
 
         return (self._lat,), (self._bpms, self._cors), \
-               (self._xoy, self._cor_field, self._cor_dfac, self._cor_niter,
+               (self._xoy, self._cor_field, self._orb_field,
+                self._cor_dfac, self._cor_niter,
                 self._cor_wait_sec, self._lower_limit, self._upper_limit), \
                (self._eva_daq_rate, self._eva_daq_nshot)
 
@@ -362,6 +366,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         print("--- Alter Range: ", self._srange_list)
         print("--- Field of CORs to write: ", self._cor_field)
         print("--- Field of BPMs to read: ", self._xoy)
+        print("--- BPM Fields: ", self._orb_field)
         print("--- Wait second after alter: ", self._wait_sec)
         print("--- Wait second after reset: ", self._reset_wait_sec)
         print("--- # of Precison Digit: ", self._mprec)
@@ -369,7 +374,8 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         print("--- Keep ORM data?: ", self._keep_all)
         #
         return (self._bpms, self._cors), \
-               (self._source, self._srange_list, self._cor_field, self._xoy,
+               (self._source, self._srange_list,
+                self._cor_field, self._orb_field, self._xoy,
                 self._wait_sec, self._mprec), \
                (self._daq_rate, self._daq_nshot, self._reset_wait_sec,
                 self._keep_all)
@@ -607,7 +613,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         try:
             print("Change selected {} field to {}...".format(mode.upper(), s))
             model = getattr(self, '{}s_treeView'.format(mode)).model()
-            model.change_field(s)
+            model.change_field(self._mfield_map.get(s, s))
         except AttributeError:
             print("No worries, probably {}s are not ready, try to load the matrix file.".format(mode.upper()))
             # QMessageBox.warning(self, "Change {} Field".format(mode.upper()),
@@ -657,9 +663,9 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
     def get_settings_from_orm(params):
         """Get corrector settings from ORM based on *params*.
         """
-        (lat,), (bpms, cors), (xoy, cor_field, dfac, niter, wait, l_limit, u_limit), \
+        (lat,), (bpms, cors), (xoy, cor_field, orb_field, dfac, niter, wait, l_limit, u_limit), \
             (daq_rate, daq_nshot) = params
-        s = lat.get_settings_from_orm(cors, bpms,
+        s = lat.get_settings_from_orm(cors, bpms, orb_field=orb_field,
                                       cor_field=cor_field, cor_min=l_limit, cor_max=u_limit,
                                       damping_factor=dfac, nshot=daq_nshot, rate=daq_rate)
         return s
@@ -876,6 +882,11 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         self._eva_daq_nshot = self.eva_daq_nshot_sbox.value()
 
     def init_fields(self):
+        # monitor fields mapping
+        self._fld_mapping_dlg = None
+        self._mfield_map = {'X': 'X', 'Y': 'Y', 'X&Y': 'X&Y'}
+        self._orb_field = ('X', 'Y')
+        #
         for o in (self.monitor_fields_cbb, self.corrector_fields_cbb,):
             o.currentTextChanged.emit(o.currentText())
 
@@ -944,7 +955,6 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         else:
             xoy = s.lower()
         self._xoy = xoy
-        self._bpm_field = s
 
     @pyqtSlot('QString')
     def on_update_corrector_field(self, s):
@@ -1009,6 +1019,29 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         if r == QMessageBox.Yes:
             del self._settings_dq[idx.row()]
             self.on_set_shistory_model()
+
+    @pyqtSlot()
+    def on_config_monitor_fields(self):
+        # configure monitor fields
+        try:
+            elem = self._bpms[0]
+        except IndexError:
+            QMessageBox.warning(self, "Config Monitor Fields",
+                                "Cannot find valid monitor.",
+                                QMessageBox.Ok)
+        else:
+            fields = elem.fields
+            if self._fld_mapping_dlg is None:
+                self._fld_mapping_dlg = FieldSetDialog(self, fields)
+            r = self._fld_mapping_dlg.exec_()
+            if r == QDialog.Accepted:
+                xfld = self._fld_mapping_dlg.xfield_cbb.currentText()
+                yfld = self._fld_mapping_dlg.yfield_cbb.currentText()
+                print("Changed fields to, X: {}, Y:{}".format(xfld, yfld))
+                self._mfield_map = {'X': xfld, 'Y': yfld}
+                self._orb_field = (xfld, yfld)
+            else:
+                print("Not change fields.")
 
 
 def _str2float(s):
