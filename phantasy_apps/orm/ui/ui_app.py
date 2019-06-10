@@ -212,6 +212,16 @@ class Ui_MainWindow(object):
         self.monitor_fields_cbb.addItem("")
         self.monitor_fields_cbb.addItem("")
         self.horizontalLayout_9.addWidget(self.monitor_fields_cbb)
+        self.toolButton = QtWidgets.QToolButton(self.layoutWidget)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(
+            QtGui.QPixmap(":/icons/setting.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.toolButton.setIcon(icon5)
+        self.toolButton.setIconSize(QtCore.QSize(20, 20))
+        self.toolButton.setAutoRaise(True)
+        self.toolButton.setObjectName("toolButton")
+        self.horizontalLayout_9.addWidget(self.toolButton)
         self.nelem_selected_bpms_lineEdit = QtWidgets.QLineEdit(
             self.layoutWidget)
         self.nelem_selected_bpms_lineEdit.setReadOnly(True)
@@ -372,11 +382,11 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_7.addItem(spacerItem2)
         self.stop_measure_btn = QtWidgets.QPushButton(self.orm_measurement)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(
             QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.stop_measure_btn.setIcon(icon5)
+        self.stop_measure_btn.setIcon(icon6)
         self.stop_measure_btn.setIconSize(QtCore.QSize(24, 24))
         self.stop_measure_btn.setObjectName("stop_measure_btn")
         self.horizontalLayout_7.addWidget(self.stop_measure_btn)
@@ -388,11 +398,11 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.run_btn.sizePolicy().hasHeightForWidth())
         self.run_btn.setSizePolicy(sizePolicy)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(
             QtGui.QPixmap(":/icons/run.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.run_btn.setIcon(icon6)
+        self.run_btn.setIcon(icon7)
         self.run_btn.setIconSize(QtCore.QSize(24, 24))
         self.run_btn.setObjectName("run_btn")
         self.horizontalLayout_7.addWidget(self.run_btn)
@@ -554,11 +564,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.update_eta_btn = QtWidgets.QToolButton(self.orm_measurement)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(
             QtGui.QPixmap(":/icons/update.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.update_eta_btn.setIcon(icon7)
+        self.update_eta_btn.setIcon(icon8)
         self.update_eta_btn.setIconSize(QtCore.QSize(24, 24))
         self.update_eta_btn.setAutoRaise(True)
         self.update_eta_btn.setObjectName("update_eta_btn")
@@ -668,11 +678,11 @@ class Ui_MainWindow(object):
         self.cor_srange_tableView = QtWidgets.QTableView(self.orm_measurement)
         self.cor_srange_tableView.setObjectName("cor_srange_tableView")
         self.gridLayout_4.addWidget(self.cor_srange_tableView, 8, 0, 1, 3)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(
             QtGui.QPixmap(":/icons/measure.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.operations_toolBox.addItem(self.orm_measurement, icon8, "")
+        self.operations_toolBox.addItem(self.orm_measurement, icon9, "")
         self.orm_apply = QtWidgets.QWidget()
         self.orm_apply.setGeometry(QtCore.QRect(0, 0, 1438, 1049))
         self.orm_apply.setObjectName("orm_apply")
@@ -870,39 +880,39 @@ class Ui_MainWindow(object):
         self.label_16.setObjectName("label_16")
         self.cached_settings_hbox.addWidget(self.label_16)
         self.del_setting_btn = QtWidgets.QToolButton(self.orm_apply)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(
             QtGui.QPixmap(":/icons/del.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.del_setting_btn.setIcon(icon9)
+        self.del_setting_btn.setIcon(icon10)
         self.del_setting_btn.setIconSize(QtCore.QSize(24, 24))
         self.del_setting_btn.setAutoRaise(True)
         self.del_setting_btn.setObjectName("del_setting_btn")
         self.cached_settings_hbox.addWidget(self.del_setting_btn)
         self.add_setting_btn = QtWidgets.QToolButton(self.orm_apply)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(
             QtGui.QPixmap(":/icons/add.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.add_setting_btn.setIcon(icon10)
+        self.add_setting_btn.setIcon(icon11)
         self.add_setting_btn.setIconSize(QtCore.QSize(24, 24))
         self.add_setting_btn.setAutoRaise(True)
         self.add_setting_btn.setObjectName("add_setting_btn")
         self.cached_settings_hbox.addWidget(self.add_setting_btn)
         self.apply_selected_settings_btn = QtWidgets.QToolButton(
             self.orm_apply)
-        icon11 = QtGui.QIcon()
-        icon11.addPixmap(
+        icon12 = QtGui.QIcon()
+        icon12.addPixmap(
             QtGui.QPixmap(":/icons/apply.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.apply_selected_settings_btn.setIcon(icon11)
+        self.apply_selected_settings_btn.setIcon(icon12)
         self.apply_selected_settings_btn.setIconSize(QtCore.QSize(24, 24))
         self.apply_selected_settings_btn.setAutoRaise(True)
         self.apply_selected_settings_btn.setObjectName(
             "apply_selected_settings_btn")
         self.cached_settings_hbox.addWidget(self.apply_selected_settings_btn)
         self.reset_cached_settings_btn = QtWidgets.QToolButton(self.orm_apply)
-        self.reset_cached_settings_btn.setIcon(icon7)
+        self.reset_cached_settings_btn.setIcon(icon8)
         self.reset_cached_settings_btn.setIconSize(QtCore.QSize(24, 24))
         self.reset_cached_settings_btn.setAutoRaise(True)
         self.reset_cached_settings_btn.setObjectName(
@@ -927,16 +937,16 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_8.addItem(spacerItem7)
         self.stop_apply_btn = QtWidgets.QPushButton(self.orm_apply)
-        self.stop_apply_btn.setIcon(icon5)
+        self.stop_apply_btn.setIcon(icon6)
         self.stop_apply_btn.setIconSize(QtCore.QSize(24, 24))
         self.stop_apply_btn.setObjectName("stop_apply_btn")
         self.horizontalLayout_8.addWidget(self.stop_apply_btn)
         self.cor_eva_btn = QtWidgets.QPushButton(self.orm_apply)
-        icon12 = QtGui.QIcon()
-        icon12.addPixmap(
+        icon13 = QtGui.QIcon()
+        icon13.addPixmap(
             QtGui.QPixmap(":/icons/evaluate.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.cor_eva_btn.setIcon(icon12)
+        self.cor_eva_btn.setIcon(icon13)
         self.cor_eva_btn.setIconSize(QtCore.QSize(20, 20))
         self.cor_eva_btn.setObjectName("cor_eva_btn")
         self.horizontalLayout_8.addWidget(self.cor_eva_btn)
@@ -948,7 +958,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.cor_apply_btn.sizePolicy().hasHeightForWidth())
         self.cor_apply_btn.setSizePolicy(sizePolicy)
-        self.cor_apply_btn.setIcon(icon6)
+        self.cor_apply_btn.setIcon(icon7)
         self.cor_apply_btn.setIconSize(QtCore.QSize(24, 24))
         self.cor_apply_btn.setObjectName("cor_apply_btn")
         self.horizontalLayout_8.addWidget(self.cor_apply_btn)
@@ -1025,73 +1035,70 @@ class Ui_MainWindow(object):
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 34))
         self.menubar.setObjectName("menubar")
-        self.menu_Settings = QtWidgets.QMenu(self.menubar)
-        self.menu_Settings.setObjectName("menu_Settings")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
         MainWindow.setMenuBar(self.menubar)
         self.load_settings = QtWidgets.QAction(MainWindow)
-        icon13 = QtGui.QIcon()
-        icon13.addPixmap(
-            QtGui.QPixmap(":/icons/open.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.load_settings.setIcon(icon13)
-        self.load_settings.setObjectName("load_settings")
-        self.save_settings = QtWidgets.QAction(MainWindow)
         icon14 = QtGui.QIcon()
         icon14.addPixmap(
-            QtGui.QPixmap(":/icons/save.png"), QtGui.QIcon.Normal,
+            QtGui.QPixmap(":/icons/open.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.save_settings.setIcon(icon14)
-        self.save_settings.setObjectName("save_settings")
-        self.actionAbout = QtWidgets.QAction(MainWindow)
+        self.load_settings.setIcon(icon14)
+        self.load_settings.setObjectName("load_settings")
+        self.save_settings = QtWidgets.QAction(MainWindow)
         icon15 = QtGui.QIcon()
         icon15.addPixmap(
-            QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
+            QtGui.QPixmap(":/icons/save.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionAbout.setIcon(icon15)
-        self.actionAbout.setObjectName("actionAbout")
-        self.actionE_xit = QtWidgets.QAction(MainWindow)
+        self.save_settings.setIcon(icon15)
+        self.save_settings.setObjectName("save_settings")
+        self.actionAbout = QtWidgets.QAction(MainWindow)
         icon16 = QtGui.QIcon()
         icon16.addPixmap(
-            QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
+            QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionE_xit.setIcon(icon16)
-        self.actionE_xit.setObjectName("actionE_xit")
-        self.actionContents = QtWidgets.QAction(MainWindow)
+        self.actionAbout.setIcon(icon16)
+        self.actionAbout.setObjectName("actionAbout")
+        self.actionE_xit = QtWidgets.QAction(MainWindow)
         icon17 = QtGui.QIcon()
         icon17.addPixmap(
-            QtGui.QPixmap(":/icons/help.png"), QtGui.QIcon.Normal,
+            QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionContents.setIcon(icon17)
-        self.actionContents.setObjectName("actionContents")
-        self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
+        self.actionE_xit.setIcon(icon17)
+        self.actionE_xit.setObjectName("actionE_xit")
+        self.actionContents = QtWidgets.QAction(MainWindow)
         icon18 = QtGui.QIcon()
         icon18.addPixmap(
+            QtGui.QPixmap(":/icons/help.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.actionContents.setIcon(icon18)
+        self.actionContents.setObjectName("actionContents")
+        self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
+        icon19 = QtGui.QIcon()
+        icon19.addPixmap(
             QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionAbout_Qt.setIcon(icon18)
+        self.actionAbout_Qt.setIcon(icon19)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionSave = QtWidgets.QAction(MainWindow)
-        self.actionSave.setIcon(icon14)
+        self.actionSave.setIcon(icon15)
         self.actionSave.setObjectName("actionSave")
         self.actionOpen = QtWidgets.QAction(MainWindow)
-        self.actionOpen.setIcon(icon13)
+        self.actionOpen.setIcon(icon14)
         self.actionOpen.setObjectName("actionOpen")
-        self.menu_Settings.addAction(self.load_settings)
-        self.menu_Settings.addAction(self.save_settings)
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.actionAbout)
         self.menu_Help.addAction(self.actionAbout_Qt)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave)
+        self.menuFile.addAction(self.load_settings)
+        self.menuFile.addAction(self.save_settings)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionE_xit)
         self.menubar.addAction(self.menuFile.menuAction())
-        self.menubar.addAction(self.menu_Settings.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -1124,6 +1131,7 @@ class Ui_MainWindow(object):
             MainWindow.on_apply_selected_settings)
         self.add_setting_btn.clicked.connect(MainWindow.on_add_settings)
         self.del_setting_btn.clicked.connect(MainWindow.on_del_settings)
+        self.toolButton.clicked.connect(MainWindow.on_config_monitor_fields)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1152,6 +1160,12 @@ class Ui_MainWindow(object):
         self.monitor_fields_cbb.setItemText(0, _translate("MainWindow", "X&Y"))
         self.monitor_fields_cbb.setItemText(1, _translate("MainWindow", "X"))
         self.monitor_fields_cbb.setItemText(2, _translate("MainWindow", "Y"))
+        self.toolButton.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Configure Monitor Fields</p></body></html>"
+            ))
+        self.toolButton.setText(_translate("MainWindow", "..."))
         self.nelem_selected_bpms_lineEdit.setText(
             _translate("MainWindow", "0"))
         self.monitors_gbox.setTitle(_translate("MainWindow", "Monitors"))
@@ -1287,13 +1301,14 @@ class Ui_MainWindow(object):
             self.operations_toolBox.indexOf(self.orm_apply),
             _translate("MainWindow", "Central Trajectory Correction"))
         self.log_gbox.setTitle(_translate("MainWindow", "Log"))
-        self.menu_Settings.setTitle(_translate("MainWindow", "Settings"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menuFile.setTitle(_translate("MainWindow", "&File"))
-        self.load_settings.setText(_translate("MainWindow", "Load"))
+        self.load_settings.setText(
+            _translate("MainWindow", "Load Corrector Settings"))
         self.load_settings.setShortcut(
             _translate("MainWindow", "Ctrl+Shift+L"))
-        self.save_settings.setText(_translate("MainWindow", "Save"))
+        self.save_settings.setText(
+            _translate("MainWindow", "Save Corrector Settings"))
         self.save_settings.setIconText(_translate("MainWindow", "Measure ORM"))
         self.save_settings.setShortcut(
             _translate("MainWindow", "Ctrl+Shift+S"))
@@ -1304,9 +1319,9 @@ class Ui_MainWindow(object):
         self.actionContents.setText(_translate("MainWindow", "Contents"))
         self.actionContents.setShortcut(_translate("MainWindow", "F1"))
         self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
-        self.actionSave.setText(_translate("MainWindow", "Save"))
+        self.actionSave.setText(_translate("MainWindow", "Save ORM"))
         self.actionSave.setShortcut(_translate("MainWindow", "Ctrl+S"))
-        self.actionOpen.setText(_translate("MainWindow", "Open"))
+        self.actionOpen.setText(_translate("MainWindow", "Open ORM"))
         self.actionOpen.setShortcut(_translate("MainWindow", "Ctrl+O"))
 
 
