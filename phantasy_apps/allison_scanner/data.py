@@ -97,7 +97,7 @@ class Data(object):
 
         # ratio of grid unit size to resolution
         dxp = model.voltage_to_divergence(self._volt_step)[1]
-        self.grid_to_res_ratio = dxp * self._pos_step / 1000.0 / self.device.dxp0 / self.device.slit_width
+        self.grid_to_res_ratio = dxp * self._pos_step / 1000.0 / self.device.dxp0 / (self.device.slit_width / 1000.0)
 
         return x_grid, xp_grid, volt_grid, weight_grid,
 
