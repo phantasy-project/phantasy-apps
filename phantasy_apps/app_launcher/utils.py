@@ -17,13 +17,16 @@ except ImportError:
 DEFAULT_ICON_PATH = "/usr/share/phantasy/assets/icons/default.png"
 
 
-def find_dconf():
-    """Find parameter configuration file for wire-scanners.
+def find_dconf(path=None):
+    """Find parameter configuration for `app_launcher` if `path` is None.
     searching the following locations:
     * ~/.phantasy/app_launcher.ini
     * /etc/phantasy/app_launcher.ini
     * package location: apps/app_launcher/config/app_launcher.ini
     """
+    if path is not None:
+        return os.path.abspath(path)
+
     home_conf = os.path.expanduser('~/.phantasy/app_launcher.ini')
     sys_conf = '/etc/phantasy/app_launcher.ini'
     if os.path.isfile(home_conf):
@@ -127,21 +130,28 @@ class AppItem(object):
         self.icon_path = icon_path
         self.category = "Limited" if category is None else category
 
-# app conf
-path_conf = find_dconf()
-conf = ConfigParser()
-conf.read(path_conf)
 
-data = []
-for k,v in conf.items():
-    if k == 'DEFAULT':
-        continue
-    icon_path = v.get('icon', DEFAULT_ICON_PATH)
-    if not os.path.isfile(icon_path):
-        icon_path = DEFAULT_ICON_PATH
-    category = v.get('category', None)
-    app_item = AppItem(k, v.get('desc'), v.get('exec'), icon_path, category)
-    data.append(app_item)
+def get_app_data(path=None):
+    """Return a list of app data.
+    """
+
+    # app conf
+    path_conf = find_dconf(path)
+    conf = ConfigParser()
+    conf.read(path_conf)
+
+    data = []
+    for k,v in conf.items():
+        if k == 'DEFAULT':
+            continue
+        icon_path = v.get('icon', DEFAULT_ICON_PATH)
+        if not os.path.isfile(icon_path):
+            icon_path = DEFAULT_ICON_PATH
+        category = v.get('category', None)
+        app_item = AppItem(k, v.get('desc'), v.get('exec'), icon_path, category)
+        data.append(app_item)
+
+    return data
 
 
 if __name__ == '__main__':
@@ -150,6 +160,8 @@ if __name__ == '__main__':
     from PyQt5.QtCore import QSize
     import sys
     from subprocess import Popen
+
+    data = get_app_data()
 
     class MyApp(QWidget):
         def __init__(self):
