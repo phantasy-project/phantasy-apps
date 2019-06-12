@@ -20,8 +20,14 @@ def run(cli=False):
         logfile = arg[arg.index('--log') + 1]
     else:
         logfile = None
+    if '--config' in arg:
+        config_file = arg[arg.index('--config') + 1]
+    else:
+        config_file = None
 
-    w = AppLauncherWindow(version=__version__, logfile=logfile)
+    w = AppLauncherWindow(version=__version__,
+                          logfile=logfile,
+                          config=config_file)
     w.show()
     w.setWindowTitle(__title__)
     if cli:
