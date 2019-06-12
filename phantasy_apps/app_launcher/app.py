@@ -17,7 +17,7 @@ from phantasy_ui import BaseAppForm
 
 from .ui.ui_app import Ui_MainWindow
 from .app_add import AddLauncherDialog
-from .utils import data as app_data
+from .utils import get_app_data
 from .utils import AppDataModel
 from .app_log import LogWidget
 
@@ -36,6 +36,10 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         self._logfile = kws.get('logfile', None)
         #print("logfile: ", self._logfile)
         self._logwidget = None
+
+        # config filepath
+        config_file = kws.get('config', None)
+        self._app_data = get_app_data(config_file)
 
         # app version
         self._version = version
@@ -85,7 +89,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
     def set_apps(self):
         """Set apps defined in app_launcher.ini
         """
-        model = AppDataModel(self.v, app_data)
+        model = AppDataModel(self.v, self._app_data)
         model.set_model()
 
     def on_launch_app(self, index, **kws):
