@@ -1,3 +1,21 @@
+Version 2.2.0
+-------------
+2019-06-19
+
+- Trajectory Viewer
+  - Add support to select non-BPM devices as monitors
+
+- ORM
+  - Add support to get response readings from any dynamic fields
+
+- Allison Scanner App
+  - Bugfix when reading voltage value in v2d function
+  - Bugfix when computing grid to resolution ratio
+
+- App Launcher
+  - Add support to load app config file with '--config' option.
+
+
 Version 2.1.0
 -------------
 2019-06-06
