@@ -8,7 +8,7 @@ from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QToolButton
 
-from phantasy_apps.utils import get_open_filename
+from phantasy_ui import get_open_filename
 from .ui.ui_add import Ui_Dialog
 
 
@@ -44,7 +44,7 @@ class AddLauncherDialog(QDialog, Ui_Dialog):
         """
         filepath, ext = get_open_filename(self,
                 caption="Select PNG File As App Icon",
-                filter="PNG Files (*.png)")
+                type_filter="PNG Files (*.png)")
         if filepath is None:
             return
 
