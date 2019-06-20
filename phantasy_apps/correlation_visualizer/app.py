@@ -238,7 +238,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self._mps_pvname = MPS_PV_DEFAULT
         self.mps_pv = epics.PV(self._mps_pvname)
         # enable MPS guardian by default
-        delayed_exec(lambda: self.actionMPS_guardian.setChecked(True), 1.0)
+        delayed_exec(lambda: self.actionMPS_guardian.setChecked(True), 1000.0)
         # self.actionMPS_guardian.setChecked(True)
         #
         self.pauseScan[bool].connect(self.on_pause_scan)
@@ -1044,7 +1044,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             if self.actionMPS_guardian.isChecked():
                 self.actionMPS_guardian.setChecked(False)
                 delayed_exec(
-                    lambda: self.actionMPS_guardian.setChecked(True), 5.0)
+                    lambda: self.actionMPS_guardian.setChecked(True), 2000.0)
         #                self.actionMPS_guardian.toggled.emit(True)
         else:
             pass
