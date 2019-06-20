@@ -40,6 +40,7 @@ from .app_monitors_view import MonitorsViewWidget
 from .app_mps_config import MpsConfigWidget
 from .app_points_view import PointsViewWidget
 from .app_save import SaveDataDialog
+from .app_2d import TwoParamsScanWindow
 from .data import ScanDataModel
 from .scan import ScanTask
 from .scan import ScanWorker
@@ -215,6 +216,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
         # q-scan window
         self.qs_window = None
+
+        # 2dscan window
+        self._2dscan_window = None
 
         # lattice-load window
         self.init_attached_widget('lattice_load_window')
@@ -420,15 +424,17 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.on_show_extra_monitors()
 
     @pyqtSlot()
-    def on_show_elem_info(self, name):
+    def on_show_elem_info(self, name, container):
         """Show element obj info in a popup elementWidget.
 
         Parameters
         ----------
         name : str
-            Element name.
+            Name key of Element.
+        container : dict
+            Dict of element widgets.
         """
-        w = self.elem_widgets_dict[name]
+        w = container[name]
         w.setWindowTitle(name)
         w.show()
         self.add_attached_widget(w)
@@ -975,6 +981,19 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             btn.setToolTip("MPS guardian is not enabled")
 
     @pyqtSlot()
+    def on2DScanAction(self):
+        """Start up app with 2D scan feature.
+        """
+        msg = "Two-dimensional parameters scan is enabled."
+        self.scanlogTextColor.emit(COLOR_INFO)
+        self.scanlogUpdated.emit(msg)
+        if self._2dscan_window is None:
+            self._2dscan_window = TwoParamsScanWindow(self)
+        self._2dscan_window.show()
+
+
+
+    @pyqtSlot()
     def on_update_mps_status(self, change, reason='conn'):
         """Update MPS status button icon when MPS guardian is enabled.
         *change* is bool when *reason* is 'conn', while str when
@@ -1309,26 +1328,30 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self._current_arr = scan_task.scan_out_data
         self.init_xydata_cbbs()
 
-    def _create_element_btn(self, btn_lbl, sel_key):
+    def _create_element_btn(self, btn_lbl, sel_key, widgets_dict=None):
         # create push button from selected element.
         # btn_lbl: label on the button
         # sel_key: string for indexing ElementWidget
+        if widgets_dict is None:
+            widgets_dict = self.elem_widgets_dict
         elem_btn = QPushButton(btn_lbl)
         elem_btn.setAutoDefault(True)
-        elem_btn.clicked.connect(partial(self.on_show_elem_info, sel_key))
+        elem_btn.clicked.connect(
+            partial(self.on_show_elem_info, sel_key, widgets_dict))
         elem_btn.setCursor(Qt.PointingHandCursor)
         return elem_btn
 
-    def _place_element_btn(self, elem_btn, mode):
+    def _place_element_btn(self, elem_btn, mode, target=None):
         # place pushbutton for element widget
         # mode: alter, monitor
-        le = getattr(self, '{}_elem_lineEdit'.format(mode))
-        hbox0 = le.findChild(QHBoxLayout)
+        if target is None:
+            target = getattr(self, '{}_elem_lineEdit'.format(mode))
+        hbox0 = target.findChild(QHBoxLayout)
         if hbox0 is None:
             hbox = QHBoxLayout()
             hbox.addWidget(elem_btn)
             hbox.setContentsMargins(0, 0, 0, 0)
-            le.setLayout(hbox)
+            target.setLayout(hbox)
         else:
             hbox0.itemAt(0).widget().setParent(None)
             hbox0.addWidget(elem_btn)
