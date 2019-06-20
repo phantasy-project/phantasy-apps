@@ -95,6 +95,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     # segments updated, list of loaded segments
     segments_updated = pyqtSignal(list)
 
+    # out data from scan task updated
+    data_updated = pyqtSignal(QVariant)
+
     def __init__(self, version):
         super(CorrelationVisualizerWindow, self).__init__()
 
@@ -792,7 +795,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def on_scan_data_ready(self, arr):
         """Scan out data is ready.
         """
-        print(arr)
+        self.data_updated.emit(arr)
+        # print(arr)
 
     @pyqtSlot()
     def on_click_stop_btn(self):
@@ -1406,6 +1410,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
     # test slots
     def test_scan_started(self):
+        return
         print(self.scan_task)
         print("-" * 20)
         print("alter start : ", self.scan_task.alter_start)
@@ -1423,6 +1428,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         print("\n")
 
     def test_scan_finished(self):
+        return
         print(self.scan_task)
         print("-" * 20)
         print("alter start : ", self.scan_task.alter_start)
