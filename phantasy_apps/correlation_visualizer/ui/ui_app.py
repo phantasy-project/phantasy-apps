@@ -114,7 +114,7 @@ class Ui_MainWindow(object):
         self.select_monitor_elem_btn = QtWidgets.QPushButton(self.widget)
         self.select_monitor_elem_btn.setAutoDefault(True)
         self.select_monitor_elem_btn.setObjectName("select_monitor_elem_btn")
-        self.gridLayout_2.addWidget(self.select_monitor_elem_btn, 2, 6, 1, 1)
+        self.gridLayout_2.addWidget(self.select_monitor_elem_btn, 2, 4, 1, 1)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         spacerItem = QtWidgets.QSpacerItem(40, 20,
@@ -142,25 +142,6 @@ class Ui_MainWindow(object):
         self.show_extra_monitors_btn.setObjectName("show_extra_monitors_btn")
         self.horizontalLayout_5.addWidget(self.show_extra_monitors_btn)
         self.gridLayout_2.addLayout(self.horizontalLayout_5, 3, 3, 1, 1)
-        self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_6.setSpacing(3)
-        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
-        self.enable_arbitary_array_chkbox = QtWidgets.QCheckBox(self.widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.enable_arbitary_array_chkbox.sizePolicy().hasHeightForWidth())
-        self.enable_arbitary_array_chkbox.setSizePolicy(sizePolicy)
-        self.enable_arbitary_array_chkbox.setText("")
-        self.enable_arbitary_array_chkbox.setObjectName(
-            "enable_arbitary_array_chkbox")
-        self.horizontalLayout_6.addWidget(self.enable_arbitary_array_chkbox)
-        self.alter_array_btn = QtWidgets.QPushButton(self.widget)
-        self.alter_array_btn.setObjectName("alter_array_btn")
-        self.horizontalLayout_6.addWidget(self.alter_array_btn)
-        self.gridLayout_2.addLayout(self.horizontalLayout_6, 1, 6, 1, 1)
         self.upper_limit_lineEdit = QtWidgets.QLineEdit(self.widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -182,10 +163,29 @@ class Ui_MainWindow(object):
         self.label_9.setSizePolicy(sizePolicy)
         self.label_9.setObjectName("label_9")
         self.gridLayout_2.addWidget(self.label_9, 1, 0, 1, 1)
+        self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_6.setSpacing(3)
+        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
+        self.enable_arbitary_array_chkbox = QtWidgets.QCheckBox(self.widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.enable_arbitary_array_chkbox.sizePolicy().hasHeightForWidth())
+        self.enable_arbitary_array_chkbox.setSizePolicy(sizePolicy)
+        self.enable_arbitary_array_chkbox.setText("")
+        self.enable_arbitary_array_chkbox.setObjectName(
+            "enable_arbitary_array_chkbox")
+        self.horizontalLayout_6.addWidget(self.enable_arbitary_array_chkbox)
+        self.alter_array_btn = QtWidgets.QPushButton(self.widget)
+        self.alter_array_btn.setObjectName("alter_array_btn")
+        self.horizontalLayout_6.addWidget(self.alter_array_btn)
+        self.gridLayout_2.addLayout(self.horizontalLayout_6, 1, 4, 1, 1)
         self.select_alter_elem_btn = QtWidgets.QPushButton(self.widget)
         self.select_alter_elem_btn.setAutoDefault(True)
         self.select_alter_elem_btn.setObjectName("select_alter_elem_btn")
-        self.gridLayout_2.addWidget(self.select_alter_elem_btn, 0, 6, 1, 1)
+        self.gridLayout_2.addWidget(self.select_alter_elem_btn, 0, 4, 1, 1)
         self.label = QtWidgets.QLabel(self.widget)
         self.label.setObjectName("label")
         self.gridLayout_2.addWidget(self.label, 3, 0, 1, 1)
@@ -230,7 +230,7 @@ class Ui_MainWindow(object):
         self.select_more_monitor_elems_btn.setAutoDefault(True)
         self.select_more_monitor_elems_btn.setObjectName(
             "select_more_monitor_elems_btn")
-        self.gridLayout_2.addWidget(self.select_more_monitor_elems_btn, 3, 6,
+        self.gridLayout_2.addWidget(self.select_more_monitor_elems_btn, 3, 4,
                                     1, 1)
         self.verticalLayout_3.addWidget(self.widget)
         self.line_4 = QtWidgets.QFrame(self.scan_groupBox)
@@ -686,7 +686,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.addWidget(self.splitter_2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 34))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 32))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -747,6 +747,9 @@ class Ui_MainWindow(object):
         self.actionVirtual_diag = QtWidgets.QAction(MainWindow)
         self.actionVirtual_diag.setCheckable(True)
         self.actionVirtual_diag.setObjectName("actionVirtual_diag")
+        self.actionEnable_2D_Scan = QtWidgets.QAction(MainWindow)
+        self.actionEnable_2D_Scan.setCheckable(False)
+        self.actionEnable_2D_Scan.setObjectName("actionEnable_2D_Scan")
         self.menu_File.addAction(self.actionSave)
         self.menu_File.addSeparator()
         self.menu_File.addAction(self.actionE_xit)
@@ -758,6 +761,7 @@ class Ui_MainWindow(object):
         self.menuTools.addAction(self.actionLoad_Lattice)
         self.menuTools.addAction(self.actionMPS_guardian)
         self.menuTools.addAction(self.actionVirtual_diag)
+        self.menuTools.addAction(self.actionEnable_2D_Scan)
         self.menu_Scan.addAction(self.actionSave_Task)
         self.menu_Scan.addAction(self.actionLoad_Task)
         self.menubar.addAction(self.menu_File.menuAction())
@@ -785,6 +789,7 @@ class Ui_MainWindow(object):
         self.actionLoad_Task.triggered.connect(MainWindow.on_load_task)
         self.actionVirtual_diag.toggled['bool'].connect(
             MainWindow.onEnableVirtualDiag)
+        self.actionEnable_2D_Scan.triggered.connect(MainWindow.on2DScanAction)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.alter_elem_lineEdit,
                                self.select_alter_elem_btn)
@@ -843,6 +848,13 @@ class Ui_MainWindow(object):
                        "Show Extra Monitors After Each Selection"))
         self.auto_show_extra_chkbox.setText(_translate("MainWindow", "Auto"))
         self.show_extra_monitors_btn.setText(_translate("MainWindow", "Show"))
+        self.upper_limit_lineEdit.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Stop value of scan range</p></body></html>"
+            ))
+        self.upper_limit_lineEdit.setText(_translate("MainWindow", "1"))
+        self.label_9.setText(_translate("MainWindow", "Alter Range"))
         self.enable_arbitary_array_chkbox.setToolTip(
             _translate(
                 "MainWindow",
@@ -854,13 +866,6 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Set alter range by array</p></body></html>"
             ))
         self.alter_array_btn.setText(_translate("MainWindow", "Array"))
-        self.upper_limit_lineEdit.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Stop value of scan range</p></body></html>"
-            ))
-        self.upper_limit_lineEdit.setText(_translate("MainWindow", "1"))
-        self.label_9.setText(_translate("MainWindow", "Alter Range"))
         self.select_alter_elem_btn.setText(_translate("MainWindow", "Select"))
         self.label.setText(_translate("MainWindow", "Extra"))
         self.extra_monitors_counter_lbl.setText(
@@ -982,6 +987,8 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Virtual Diagnostics"))
         self.actionVirtual_diag.setShortcut(
             _translate("MainWindow", "Ctrl+Shift+V"))
+        self.actionEnable_2D_Scan.setText(
+            _translate("MainWindow", "Two Dimensional Analysis"))
 
 
 from mpl4qt.widgets.mplerrorbarwidget import MatplotlibErrorbarWidget
