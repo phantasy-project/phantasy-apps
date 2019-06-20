@@ -15,8 +15,8 @@ from PyQt5.QtWidgets import QMessageBox
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import LatticeWidget
 
-from phantasy_apps.utils import get_open_filename
-from phantasy_apps.utils import get_save_filename
+from phantasy_ui import get_open_filename
+from phantasy_ui import get_save_filename
 from .app_elem_selection import ElementSelectionWidget
 from .app_help import HelpDialog
 from .ui.ui_app import Ui_MainWindow
@@ -560,7 +560,7 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         print("Save reference trajectory (both X and Y) to file")
         filepath, ext = get_save_filename(self,
                                           cdir='.',
-                                          filter="JSON Files (*.json)")
+                                          type_filter="JSON Files (*.json)")
         if filepath is None:
             return
 
@@ -595,7 +595,7 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
     def on_load_trajectory(self):
         print("Load reference trajectory (both X and Y) from file")
         filepath, ext = get_open_filename(self,
-                                          filter="JSON Files (*.json)")
+                                          type_filter="JSON Files (*.json)")
         if filepath is None:
             return
 

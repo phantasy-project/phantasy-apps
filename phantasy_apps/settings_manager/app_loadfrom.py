@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
 from phantasy import generate_settings
 
-from phantasy_apps.utils import get_open_filename
+from phantasy_ui import get_open_filename
 from .ui.ui_loadfrom import Ui_Dialog
 
 
@@ -45,7 +45,7 @@ class LoadSettingsDialog(QDialog, Ui_Dialog):
         """open .snp file.
         """
         filepath, ext = get_open_filename(self,
-                filter="SNP Files (*.snp);;CSV Files (*.csv)")
+                type_filter="SNP Files (*.snp);;CSV Files (*.csv)")
         if filepath is None:
             return
         self.filepath_lineEdit.setText(filepath)

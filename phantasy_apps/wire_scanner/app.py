@@ -27,8 +27,8 @@ from phantasy import MachinePortal
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import ElementWidget
 
-from phantasy_apps.utils import get_open_filename
-from phantasy_apps.utils import get_save_filename
+from phantasy_ui import get_open_filename
+from phantasy_ui import get_save_filename
 from phantasy_apps.wire_scanner.device import Device
 from phantasy_apps.wire_scanner.device import PMData
 from phantasy_apps.wire_scanner.utils import find_dconf
@@ -368,7 +368,8 @@ class WireScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_loadfrom_config(self):
         """Load configuration from a file.
         """
-        filepath, ext = get_open_filename(self, filter="INI Files (*.ini)")
+        filepath, ext = get_open_filename(self,
+                                          type_filter="INI Files (*.ini)")
         if filepath is None:
             return
 
@@ -393,7 +394,8 @@ class WireScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_saveas_config(self):
         """Save configuration to a file.
         """
-        filepath, ext = get_save_filename(self, filter="INI Files (*.ini)")
+        filepath, ext = get_save_filename(self,
+                                          type_filter="INI Files (*.ini)")
         if filepath is None:
             return
         self.__save_config_to_file(filepath)
@@ -485,7 +487,7 @@ class WireScannerWindow(BaseAppForm, Ui_MainWindow):
         """
         print("Load data from file")
         filepath, ext = get_open_filename(self,
-                filter="JSON Files (*.json)")
+                                          type_filter="JSON Files (*.json)")
         if filepath is None:
             return
 

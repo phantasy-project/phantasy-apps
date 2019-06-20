@@ -31,8 +31,8 @@ from phantasy_ui import random_string
 from phantasy_ui.widgets import ElementWidget
 from phantasy_ui.widgets import LatticeWidget
 
-from phantasy_apps.utils import get_open_filename
-from phantasy_apps.utils import get_save_filename
+from phantasy_ui import get_open_filename
+from phantasy_ui import get_save_filename
 from .app_array_set import ArraySetDialog
 from .app_elem_select import ElementSelectDialog
 from .app_help import HelpDialog
@@ -442,8 +442,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         if self.scan_worker.is_running():
             return
 
-        filename, ext = get_save_filename(self, caption="Save data to file",
-                                          filter="JSON Files (*.json);;CSV Files (*.csv);;HDF5 Files (*.hdf5 *.h5)")
+        filename, ext = get_save_filename(self,
+                caption="Save data to file",
+                type_filter="JSON Files (*.json);;CSV Files (*.csv);;HDF5 Files (*.hdf5 *.h5)")
 
         if filename is None:
             return
@@ -1244,8 +1245,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_save_task(self):
         # save scan task into file, even scan is done.
-        filename, ext = get_save_filename(self, caption="Save Scan Task to file",
-                                          filter="JSON Files (*.json)")
+        filename, ext = get_save_filename(self,
+                caption="Save Scan Task to file",
+                type_filter="JSON Files (*.json)")
 
         if filename is None:
             return
@@ -1255,7 +1257,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def on_load_task(self):
         # load scan task.
         filepath, ext = get_open_filename(self,
-                                          filter="JSON Files (*.json)")
+                type_filter="JSON Files (*.json)")
         if filepath is None:
             return
         scan_task = load_task(filepath)

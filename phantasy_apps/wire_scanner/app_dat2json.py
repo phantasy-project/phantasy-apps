@@ -10,8 +10,8 @@ from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
 
-from phantasy_apps.utils import get_open_filename
-from phantasy_apps.utils import get_save_filename
+from phantasy_ui import get_open_filename
+from phantasy_ui import get_save_filename
 from .converter import read_from_datfile
 from .converter import save_to_jsonfile
 from .ui.ui_dat2json import Ui_Dialog
@@ -30,7 +30,7 @@ class Dat2JsonDialog(QDialog, Ui_Dialog):
     def on_open_datfile(self):
         print("open datfile")
         filepath, ext = get_open_filename(self,
-                filter="Dat Files (*.dat)")
+                                          type_filter="Dat Files (*.dat)")
         if filepath is None:
             return
         self.datfilepath_lineEdit.setText(filepath)
@@ -47,7 +47,7 @@ class Dat2JsonDialog(QDialog, Ui_Dialog):
     def on_save_jsonfile(self):
         print("save jsonfile")
         filepath, ext = get_save_filename(self,
-                filter="JSON Files (*.json)")
+                type_filter="JSON Files (*.json)")
         if filepath is None:
             return
         self.jsonfilepath_lineEdit.setText(filepath)

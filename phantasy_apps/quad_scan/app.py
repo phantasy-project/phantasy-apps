@@ -15,7 +15,7 @@ from phantasy_ui import BaseAppForm
 
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 from phantasy_apps.correlation_visualizer.data import ScanDataModel
-from phantasy_apps.utils import get_open_filename
+from phantasy_ui import get_open_filename
 from .ui.ui_app import Ui_MainWindow
 from .utils import draw_beam_ellipse
 
@@ -138,7 +138,7 @@ class QuadScanWindow(BaseAppForm, Ui_MainWindow):
         'Correlation Visualizer' app.
         """
         filepath, ext = get_open_filename(self,
-                filter="JSON Files (*.json);;HDF5 Files (*.hdf5 *.h5)")
+            type_filter="JSON Files (*.json);;HDF5 Files (*.hdf5 *.h5)")
         if filepath is None:
             return
         if ext.upper() == 'JSON':

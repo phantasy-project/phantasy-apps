@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QMessageBox
 from phantasy import epoch2human
 from phantasy.recipes import save_all_settings
 
-from phantasy_apps.utils import get_save_filename
+from phantasy_ui import get_save_filename
 from .ui.ui_save import Ui_Dialog
 
 TS_FMT = "%Y-%m-%d %H:%M:%S"
@@ -140,7 +140,7 @@ class SaveDataDialog(QDialog, Ui_Dialog):
         cdir = os.path.dirname(self.filepath_lineEdit.text())
         filepath, ext = get_save_filename(self,
                                           cdir=cdir,
-                                          filter="JSON Files (*.json);;CSV Files (*.csv)")
+                                          type_filter="JSON Files (*.json);;CSV Files (*.csv)")
         if filepath is None:
             return
         self.filepath_lineEdit.setText(filepath)

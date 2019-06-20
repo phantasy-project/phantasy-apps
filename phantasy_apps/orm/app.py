@@ -18,8 +18,8 @@ from phantasy import limit_input
 from phantasy_ui import BaseAppForm
 
 from phantasy_apps.trajectory_viewer.utils import ElementListModel
-from phantasy_apps.utils import get_open_filename
-from phantasy_apps.utils import get_save_filename
+from phantasy_ui import get_open_filename
+from phantasy_ui import get_save_filename
 from phantasy_apps.utils import uptime
 from .app_settings_view import SettingsView
 from .app_field_setup import FieldSetDialog
@@ -448,7 +448,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_open_orm(self):
         filepath, ext = get_open_filename(self,
-                                          filter="JSON Files (*.json)")
+                type_filter="JSON Files (*.json)")
         if filepath is None:
             return
 
@@ -509,9 +509,8 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_save_orm(self):
-        filepath, ext = get_save_filename(self,
-                                          cdir='.',
-                                          filter="JSON Files (*.json)")
+        filepath, ext = get_save_filename(self, cdir='.',
+                type_filter="JSON Files (*.json)")
         if filepath is None:
             return
 
@@ -744,7 +743,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
     def on_load_settings(self):
         print("Load settings from file.")
         filepath, ext = get_open_filename(self,
-                                          filter="JSON Files (*.json)")
+                type_filter="JSON Files (*.json)")
         if filepath is None:
             return
 

@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
 
 from phantasy_apps.correlation_visualizer.ui.ui_array_set import Ui_Dialog
-from phantasy_apps.utils import get_open_filename
+from phantasy_ui import get_open_filename
 
 
 class ArraySetDialog(QDialog, Ui_Dialog):
@@ -67,7 +67,7 @@ class ArraySetDialog(QDialog, Ui_Dialog):
         """Import array from external file.
         """
         filepath, ext = get_open_filename(self,
-                                          filter="TXT Files (*.txt);;NPY Files (*.npy);;CSV Files (*.csv)")
+            type_filter="TXT Files (*.txt);;NPY Files (*.npy);;CSV Files (*.csv)")
         if filepath is None:
             return
         if ext.upper() == 'TXT':

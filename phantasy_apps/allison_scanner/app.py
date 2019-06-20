@@ -19,8 +19,8 @@ from numpy import ndarray
 from phantasy_ui.templates import BaseAppForm
 
 from phantasy import Configuration
-from phantasy_apps.utils import get_open_filename
-from phantasy_apps.utils import get_save_filename
+from phantasy_ui import get_open_filename
+from phantasy_ui import get_save_filename
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 from .device import Device
 from ._sim import SimDevice
@@ -295,7 +295,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_loadfrom_config(self):
         """Load configuration from a file.
         """
-        filepath, ext = get_open_filename(self, filter="INI Files (*.ini)")
+        filepath, ext = get_open_filename(self,
+                                          type_filter="INI Files (*.ini)")
         if filepath is None:
             return
 
@@ -320,7 +321,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_saveas_config(self):
         """Save configuration to a file.
         """
-        filepath, ext = get_save_filename(self, filter="INI Files (*.ini)")
+        filepath, ext = get_save_filename(self,
+                                          type_filter="INI Files (*.ini)")
         if filepath is None:
             return
         self.__save_config_to_file(filepath)
@@ -529,7 +531,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_open_data(self,):
         # open data.
-        filepath, ext = get_open_filename(self, filter="JSON Files (*.json)")
+        filepath, ext = get_open_filename(self,
+                                          type_filter="JSON Files (*.json)")
         if filepath is None:
             return
 
@@ -728,7 +731,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_save_data(self):
         # save data and results.
-        filepath, ext = get_save_filename(self, filter="JSON Files (*.json)")
+        filepath, ext = get_save_filename(self,
+                                          type_filter="JSON Files (*.json)")
         if filepath is None:
             return
         self._save_data_to_file(filepath)
