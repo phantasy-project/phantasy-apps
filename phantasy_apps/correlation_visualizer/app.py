@@ -763,6 +763,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         # test
         self.scan_worker.scanFinished.connect(self.test_scan_finished)
 
+        self.scan_worker.scanFinished.connect(partial(self.set_scan_ctrl_status, 'stop'))
+
         self.thread.finished.connect(self.thread.deleteLater)
 
         # test
@@ -771,6 +773,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.thread.started.connect(lambda: self.set_btn_status(mode='start'))
         self.thread.started.connect(self.on_auto_labels)
         self.thread.started.connect(lambda: self.set_timestamp(type='start'))
+        self.thread.started.connect(partial(self.set_scan_ctrl_status, 'start'))
 
         self.thread.started.connect(self.scan_worker.run)
         self.thread.start()
@@ -837,6 +840,17 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             self.stop_btn.setEnabled(False)
             self.pause_btn.setEnabled(False)
             self.retake_btn.setEnabled(False)
+
+    @pyqtSlot()
+    def set_scan_ctrl_status(self, mode='start'):
+        ctrls = (self.niter_spinBox, self.nshot_spinBox,
+                 self.waitsec_dSpinBox, self.scanrate_dSpinBox, )
+        if mode=='start':
+            # disable ctrls
+            [o.setEnabled(False) for o in ctrls]
+        else:
+            # enable ctrls
+            [o.setEnabled(True) for o in ctrls]
 
     @pyqtSlot()
     def on_click_pause_btn(self):
