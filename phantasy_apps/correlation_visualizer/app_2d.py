@@ -70,6 +70,15 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         # data
         self._p.data_updated.connect(self.on_data_updated)
 
+        # lattice --> _sel_elem_dialogs {}
+        self._p.segments_updated.connect(self.on_lattice_updated)
+
+        # inner loop out data
+        for o in (self._p.niter_spinBox, self._p.nshot_spinBox):
+            o.valueChanged.connect(self.init_out_data)
+
+        self._p.extraMonitorsNumberChanged.connect(self.on_extra_moni_changes)
+
         # scan finish
         self.scanAllFinished.connect(self.on_finish)
         self.scanAllFinished.connect(self.reset_alter_element)
@@ -77,12 +86,26 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         # initial scan task
         self.init_scan_task()
 
+    def on_extra_moni_changes(self, i):
+        # workaround to ensure the extra moni counter is updated.
+        delayed_exec(lambda: self.init_out_data(), 10)
+
+    def init_out_data(self, *args):
+        # reset inner loop out data array
+        self._p.scan_task.init_out_data()
+
+        # debug
+        shape = self._p.scan_task.scan_out_data.shape
+        print("Inner out data shape is:", shape)
+        #
+        self.data = np.asarray(
+                [np.ones(shape) * np.nan] * self.scan_task.alter_number)
+        print("Whole data shape is:", self.data.shape)
+
+
     def init_scan_task(self):
         task_name = random_string(6)
         self.scan_task = ScanTask(task_name)
-
-        # reset inner loop out data array
-        self._p.scan_task.init_out_data()
 
         # init
         for o in (self.niter_spinBox, self.waitsec_dSpinBox):
@@ -136,12 +159,8 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(int)
     def on_update_niter(self, i):
         # total number of scan points
-        shape = self._p.scan_task.scan_out_data.shape
-        print("Inner out data shape is:", shape)
         self.scan_task.alter_number = i
-        self.data = np.asarray(
-                [np.ones(shape) * np.nan] * i)
-        print("Whole data shape is:", self.data.shape)
+        self.init_out_data()
 
     @pyqtSlot(float)
     def on_update_waitsec(self, x):
@@ -246,3 +265,6 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self._p.scanlogUpdated.emit(
             "[M] Alter element reaches {0:.3f}".format(x0))
 
+    @pyqtSlot(list)
+    def on_lattice_updated(self, l):
+        self._sel_elem_dialogs = {}
