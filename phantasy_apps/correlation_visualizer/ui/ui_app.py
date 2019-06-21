@@ -498,6 +498,12 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.start_btn.sizePolicy().hasHeightForWidth())
         self.start_btn.setSizePolicy(sizePolicy)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(
+            QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.start_btn.setIcon(icon6)
+        self.start_btn.setIconSize(QtCore.QSize(32, 32))
         self.start_btn.setAutoDefault(True)
         self.start_btn.setObjectName("start_btn")
         self.horizontalLayout_3.addWidget(self.start_btn)
@@ -509,6 +515,12 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.pause_btn.sizePolicy().hasHeightForWidth())
         self.pause_btn.setSizePolicy(sizePolicy)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(
+            QtGui.QPixmap(":/icons/pause.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.pause_btn.setIcon(icon7)
+        self.pause_btn.setIconSize(QtCore.QSize(32, 32))
         self.pause_btn.setAutoDefault(True)
         self.pause_btn.setObjectName("pause_btn")
         self.horizontalLayout_3.addWidget(self.pause_btn)
@@ -520,6 +532,12 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.stop_btn.sizePolicy().hasHeightForWidth())
         self.stop_btn.setSizePolicy(sizePolicy)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(
+            QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.stop_btn.setIcon(icon8)
+        self.stop_btn.setIconSize(QtCore.QSize(32, 32))
         self.stop_btn.setAutoDefault(True)
         self.stop_btn.setObjectName("stop_btn")
         self.horizontalLayout_3.addWidget(self.stop_btn)
@@ -531,6 +549,12 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.retake_btn.sizePolicy().hasHeightForWidth())
         self.retake_btn.setSizePolicy(sizePolicy)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(
+            QtGui.QPixmap(":/icons/retake.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.retake_btn.setIcon(icon9)
+        self.retake_btn.setIconSize(QtCore.QSize(32, 32))
         self.retake_btn.setAutoDefault(True)
         self.retake_btn.setObjectName("retake_btn")
         self.horizontalLayout_3.addWidget(self.retake_btn)
@@ -577,69 +601,69 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.autoscale_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(
             QtGui.QPixmap(":/icons/auto-scale.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.autoscale_tbtn.setIcon(icon6)
+        self.autoscale_tbtn.setIcon(icon10)
         self.autoscale_tbtn.setCheckable(True)
         self.autoscale_tbtn.setChecked(False)
         self.autoscale_tbtn.setAutoRaise(True)
         self.autoscale_tbtn.setObjectName("autoscale_tbtn")
         self.horizontalLayout.addWidget(self.autoscale_tbtn)
         self.save_data_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(
             QtGui.QPixmap(":/icons/save_figure.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.save_data_tbtn.setIcon(icon7)
+        self.save_data_tbtn.setIcon(icon11)
         self.save_data_tbtn.setAutoRaise(True)
         self.save_data_tbtn.setObjectName("save_data_tbtn")
         self.horizontalLayout.addWidget(self.save_data_tbtn)
         self.auto_title_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(
+        icon12 = QtGui.QIcon()
+        icon12.addPixmap(
             QtGui.QPixmap(":/icons/title.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.auto_title_tbtn.setIcon(icon8)
+        self.auto_title_tbtn.setIcon(icon12)
         self.auto_title_tbtn.setAutoRaise(True)
         self.auto_title_tbtn.setObjectName("auto_title_tbtn")
         self.horizontalLayout.addWidget(self.auto_title_tbtn)
         self.auto_labels_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(
+        icon13 = QtGui.QIcon()
+        icon13.addPixmap(
             QtGui.QPixmap(":/icons/xylabel.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.auto_labels_tbtn.setIcon(icon9)
+        self.auto_labels_tbtn.setIcon(icon13)
         self.auto_labels_tbtn.setAutoRaise(True)
         self.auto_labels_tbtn.setObjectName("auto_labels_tbtn")
         self.horizontalLayout.addWidget(self.auto_labels_tbtn)
         self.moveto_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(
+        icon14 = QtGui.QIcon()
+        icon14.addPixmap(
             QtGui.QPixmap(":/icons/moveto.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.moveto_tbtn.setIcon(icon10)
+        self.moveto_tbtn.setIcon(icon14)
         self.moveto_tbtn.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
         self.moveto_tbtn.setAutoRaise(True)
         self.moveto_tbtn.setArrowType(QtCore.Qt.NoArrow)
         self.moveto_tbtn.setObjectName("moveto_tbtn")
         self.horizontalLayout.addWidget(self.moveto_tbtn)
         self.set_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
-        icon11 = QtGui.QIcon()
-        icon11.addPixmap(
+        icon15 = QtGui.QIcon()
+        icon15.addPixmap(
             QtGui.QPixmap(":/icons/set.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.set_tbtn.setIcon(icon11)
+        self.set_tbtn.setIcon(icon15)
         self.set_tbtn.setAutoRaise(True)
         self.set_tbtn.setObjectName("set_tbtn")
         self.horizontalLayout.addWidget(self.set_tbtn)
         self.view_selected_pts_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
-        icon12 = QtGui.QIcon()
-        icon12.addPixmap(
+        icon16 = QtGui.QIcon()
+        icon16.addPixmap(
             QtGui.QPixmap(":/icons/points.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.view_selected_pts_tbtn.setIcon(icon12)
+        self.view_selected_pts_tbtn.setIcon(icon16)
         self.view_selected_pts_tbtn.setPopupMode(
             QtWidgets.QToolButton.MenuButtonPopup)
         self.view_selected_pts_tbtn.setAutoRaise(True)
@@ -698,41 +722,41 @@ class Ui_MainWindow(object):
         self.menu_Scan.setObjectName("menu_Scan")
         MainWindow.setMenuBar(self.menubar)
         self.actionE_xit = QtWidgets.QAction(MainWindow)
-        icon13 = QtGui.QIcon()
-        icon13.addPixmap(
+        icon17 = QtGui.QIcon()
+        icon17.addPixmap(
             QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionE_xit.setIcon(icon13)
+        self.actionE_xit.setIcon(icon17)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionContents = QtWidgets.QAction(MainWindow)
-        icon14 = QtGui.QIcon()
-        icon14.addPixmap(
+        icon18 = QtGui.QIcon()
+        icon18.addPixmap(
             QtGui.QPixmap(":/icons/help.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionContents.setIcon(icon14)
+        self.actionContents.setIcon(icon18)
         self.actionContents.setObjectName("actionContents")
         self.actionAbout = QtWidgets.QAction(MainWindow)
-        icon15 = QtGui.QIcon()
-        icon15.addPixmap(
+        icon19 = QtGui.QIcon()
+        icon19.addPixmap(
             QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionAbout.setIcon(icon15)
+        self.actionAbout.setIcon(icon19)
         self.actionAbout.setObjectName("actionAbout")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
-        icon16 = QtGui.QIcon()
-        icon16.addPixmap(
+        icon20 = QtGui.QIcon()
+        icon20.addPixmap(
             QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionAbout_Qt.setIcon(icon16)
+        self.actionAbout_Qt.setIcon(icon20)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionQuad_Scan = QtWidgets.QAction(MainWindow)
         self.actionQuad_Scan.setObjectName("actionQuad_Scan")
         self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
-        icon17 = QtGui.QIcon()
-        icon17.addPixmap(
+        icon21 = QtGui.QIcon()
+        icon21.addPixmap(
             QtGui.QPixmap(":/icons/load_lattice.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionLoad_Lattice.setIcon(icon17)
+        self.actionLoad_Lattice.setIcon(icon21)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
         self.actionMPS_guardian = QtWidgets.QAction(MainWindow)
         self.actionMPS_guardian.setCheckable(True)
@@ -740,7 +764,7 @@ class Ui_MainWindow(object):
         self.actionSave_Task = QtWidgets.QAction(MainWindow)
         self.actionSave_Task.setObjectName("actionSave_Task")
         self.actionSave = QtWidgets.QAction(MainWindow)
-        self.actionSave.setIcon(icon7)
+        self.actionSave.setIcon(icon11)
         self.actionSave.setObjectName("actionSave")
         self.actionLoad_Task = QtWidgets.QAction(MainWindow)
         self.actionLoad_Task.setObjectName("actionLoad_Task")
@@ -922,24 +946,24 @@ class Ui_MainWindow(object):
         self.start_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Start scan task</p></body></html>"))
+                "<html><head/><body><p>Start current task</p></body></html>"))
         self.start_btn.setText(_translate("MainWindow", "Start"))
         self.pause_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Pause scan task, click again to resume</p></body></html>"
+                "<html><head/><body><p>Pause task, click again to resume</p></body></html>"
             ))
         self.pause_btn.setText(_translate("MainWindow", "Pause"))
         self.stop_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Stop current running scan task</p></body></html>"
+                "<html><head/><body><p>Stop current running task</p></body></html>"
             ))
         self.stop_btn.setText(_translate("MainWindow", "Stop"))
         self.retake_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Re-do scan at selected points</p></body></html>"
+                "<html><head/><body><p>Redo DAQ at selected points</p></body></html>"
             ))
         self.retake_btn.setText(_translate("MainWindow", "Retake"))
         self.plot_groupBox.setTitle(
@@ -980,15 +1004,21 @@ class Ui_MainWindow(object):
         self.actionMPS_guardian.setShortcut(
             _translate("MainWindow", "Ctrl+Shift+M"))
         self.actionSave_Task.setText(_translate("MainWindow", "Save Task"))
+        self.actionSave_Task.setShortcut(
+            _translate("MainWindow", "Alt+Shift+S"))
         self.actionSave.setText(_translate("MainWindow", "Save"))
         self.actionSave.setShortcut(_translate("MainWindow", "Ctrl+S"))
         self.actionLoad_Task.setText(_translate("MainWindow", "Load Task"))
+        self.actionLoad_Task.setShortcut(
+            _translate("MainWindow", "Alt+Shift+L"))
         self.actionVirtual_diag.setText(
             _translate("MainWindow", "Virtual Diagnostics"))
         self.actionVirtual_diag.setShortcut(
             _translate("MainWindow", "Ctrl+Shift+V"))
         self.actionEnable_2D_Scan.setText(
             _translate("MainWindow", "Two Dimensional Analysis"))
+        self.actionEnable_2D_Scan.setShortcut(
+            _translate("MainWindow", "Ctrl+Shift+H"))
 
 
 from mpl4qt.widgets.mplerrorbarwidget import MatplotlibErrorbarWidget
