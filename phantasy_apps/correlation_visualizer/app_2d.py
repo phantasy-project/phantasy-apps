@@ -22,7 +22,7 @@ from .scan import load_task
 from phantasy_ui import random_string
 from .scan import ScanTask
 from .app_array_set import ArraySetDialog
-from .utils import COLOR_DANGER
+from .utils import COLOR_DANGER, COLOR_INFO
 from .utils import delayed_exec
 
 
@@ -72,6 +72,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
         # scan finish
         self.scanAllFinished.connect(self.on_finish)
+        self.scanAllFinished.connect(self.reset_alter_element)
 
         # initial scan task
         self.init_scan_task()
@@ -158,7 +159,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
             sval1, sval2 = float(srange_val1_str), float(srange_val2_str)
         except ValueError:
             self._p.scanlogTextColor.emit(COLOR_DANGER)
-            self._p.scanlogUpdated.emit("Empty input of scan range is invalid")
+            self._p.scanlogUpdated.emit("[M] Empty input of scan range is invalid")
         else:
             self.scan_task.alter_start = sval1
             self.scan_task.alter_stop = sval2
@@ -231,3 +232,17 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         # all finish
         print("Scan is done.")
         print(self.data)
+
+    @pyqtSlot()
+    def reset_alter_element(self):
+        x0 = self.scan_task.get_initial_setting()
+        # restore alter elem
+        self._p.scanlogTextColor.emit(COLOR_INFO)
+        self._p.scanlogUpdated.emit(
+            "[M] Scan task is done, reset alter element...")
+        self._p.scanlogUpdated.emit(
+            "[M] Setting alter element to {0:.3f}...".format(x0))
+        self.scan_task.alter_element.value = x0
+        self._p.scanlogUpdated.emit(
+            "[M] Alter element reaches {0:.3f}".format(x0))
+
