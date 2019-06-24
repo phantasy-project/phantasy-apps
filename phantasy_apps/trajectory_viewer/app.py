@@ -320,6 +320,10 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         # update name_map
         self.name_map_changed.emit(model.name_elem_map)
 
+        # update monitors
+        for o in (self.use_selected_bpms_rbtn, self.use_all_bpms_rbtn):
+            o.toggled.emit(o.isChecked())
+
     @pyqtSlot(QVariant)
     def update_lattice(self, o):
         self.__mp = o
@@ -489,7 +493,7 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         self.lineChanged.emit(line_id)
         field = getattr(self, '_field{}'.format(line_id + 1))
         xdata = [elem.sb for elem in self._bpms]
-        ydata = [getattr(elem, field) * ufac for elem in self._bpms]
+        ydata = [getattr(elem, field, np.nan) * ufac for elem in self._bpms]
         self.xdataChanged.emit(xdata)
         self.ydataChanged.emit(ydata)
         self.matplotlibcurveWidget.setLineLabel(field)
