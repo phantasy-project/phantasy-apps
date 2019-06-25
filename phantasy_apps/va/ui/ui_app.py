@@ -326,7 +326,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.control_groupBox, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 34))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 32))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
@@ -381,7 +381,7 @@ class Ui_MainWindow(object):
         self.va_run_tool = QtWidgets.QAction(MainWindow)
         icon7 = QtGui.QIcon()
         icon7.addPixmap(
-            QtGui.QPixmap(":/icons/play.png"), QtGui.QIcon.Normal,
+            QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
         self.va_run_tool.setIcon(icon7)
         self.va_run_tool.setObjectName("va_run_tool")
