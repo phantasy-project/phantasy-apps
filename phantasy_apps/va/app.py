@@ -25,10 +25,8 @@ from .ui.ui_app import Ui_MainWindow
 CURDIR = os.path.dirname(__file__)
 
 MACHINE_DICT = {
-    'VA_LEBT': ('LEBT',),
-    'VA_MEBT': ('MEBT',),
-    'VA_LS1FS1': ('LINAC',),
-    'ReA': ('GPL_VA',),
+    'FRIB_VA': ('LEBT', 'MEBT', 'LS1FS1', 'LS1', 'FS1', ),
+    'ReA': ('GPL_VA', ),
 }
 
 MACHINE_LIST = sorted(list(MACHINE_DICT.keys()))
