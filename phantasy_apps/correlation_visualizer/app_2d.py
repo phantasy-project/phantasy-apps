@@ -7,21 +7,24 @@ Tong Zhang <zhangt@frib.msu.edu>
 2019-06-20 10:59:21 AM EDT
 """
 import numpy as np
+from numpy import ndarray
 
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QVariant
 from PyQt5.QtWidgets import QDialog
 
+from phantasy import CaField
 from phantasy_ui import BaseAppForm
+from phantasy_ui import random_string
 from phantasy_ui.widgets import ElementWidget
 
-from .app_elem_select import ElementSelectDialog
-from .ui.ui_2dscan import Ui_MainWindow
-from .scan import load_task
-from phantasy_ui import random_string
-from .scan import ScanTask
 from .app_array_set import ArraySetDialog
+from .app_elem_select import ElementSelectDialog
+from .data import ScanDataModel
+from .scan import ScanTask
+from .scan import load_task
+from .ui.ui_2dscan import Ui_MainWindow
 from .utils import COLOR_DANGER, COLOR_INFO
 from .utils import delayed_exec
 
@@ -30,6 +33,21 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
     # scan finish
     scanAllFinished = pyqtSignal()
+
+    # image
+    image_data_changed = pyqtSignal(ndarray)
+    xdata_changed = pyqtSignal(ndarray)
+    ydata_changed = pyqtSignal(ndarray)
+    ylabel_changed = pyqtSignal('QString')
+    image_title_changed = pyqtSignal('QString')
+
+    # curve
+    curve_data_changed = pyqtSignal(QVariant, QVariant, QVariant, QVariant)
+    add_curve = pyqtSignal(QVariant, QVariant, QVariant, QVariant)
+    curve_ylabel_changed = pyqtSignal('QString')
+
+    # curve & image
+    xlabel_changed = pyqtSignal('QString')
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__()
@@ -80,6 +98,25 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self._p.extraMonitorsNumberChanged.connect(self.on_extra_moni_changes)
         self._p.start_btn.clicked.connect(self.update_progress)
 
+        # 3d data (image)
+        o = self.matplotlibimageWidget
+        self.image_data_changed.connect(o.update_image)
+        self.xdata_changed.connect(o.setXData)
+        self.ydata_changed.connect(o.setYData)
+        self.xlabel_changed.connect(o.setFigureXlabel)
+        self.ylabel_changed.connect(o.setFigureYlabel)
+        self.image_title_changed.connect(o.setFigureTitle)
+
+        # data (curve)
+        o1 = self.matplotliberrorbarWidget
+        self.curve_data_changed.connect(o1.update_curve)
+        self.add_curve.connect(o1.add_curve)
+        self.xlabel_changed.connect(o1.setFigureXlabel)
+        self.curve_ylabel_changed.connect(o1.setFigureYlabel)
+
+        # moi
+        self.moi_cbb.currentIndexChanged.connect(self.on_update_moi)
+
         # scan finish
         self.scanAllFinished.connect(self.on_finish)
         self.scanAllFinished.connect(self.reset_alter_element)
@@ -103,15 +140,97 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
                 [np.ones(shape) * np.nan] * self.scan_task.alter_number)
         print("Whole data shape is:", self.data.shape)
 
+
+    def init_moi(self):
+        """Initial monitor-of-interest
+        """
+        self._idx = 0
+        self._idy = 1  # moi
+
+        monitors = [self._p.scan_task.monitor_element, ] + \
+                    self._p.scan_task.get_extra_monitors()
+
+        flds = []
+        for o in monitors:
+            if isinstance(o, CaField):
+                fld = '{0} [{1}]'.format(o.ename, o.name)
+            else:
+                fld = o.ename
+            flds.append(fld)
+
+        o = self.moi_cbb
+        o.currentIndexChanged.disconnect()
+        o.clear()
+        o.addItems(flds)
+        o.currentIndexChanged.connect(self.on_update_moi)
+        # initial
+        o.currentIndexChanged.emit(0)
+
+    def _get_lbl(self, mode):
+        # get xlabel or ylabel
+        if mode == 'inner':
+            o = self._p.scan_task.alter_element
+        else:
+            o = self.scan_task.alter_element
+        if isinstance(o, CaField):
+            lbl = '{0} [{1}]'.format(o.ename, o.name)
+        else:
+            lbl = o.ename
+        return lbl
+
+    @pyqtSlot(int)
+    def on_update_moi(self, idx):
+        # the index of moi changed.
+        setattr(self, '_idy', idx + 1)
+        self.on_update_moi_labels()
+        self.on_update_data()
+
+    def on_update_data(self):
+        """Update image and curve data (live).
+
+        For image data, should refresh all the data, including the data
+        already acquired, only allowed when task is done.
+        """
+        pass
+
+    def on_update_moi_labels(self):
+        """Update ylabel of curve widget and title of image widget.
+        """
+        lbl = self.moi_cbb.currentText()
+        if not self._run:
+            self.image_title_changed.emit(lbl)
+        self.curve_ylabel_changed.emit(lbl)
+
     def init_scan_task(self):
         task_name = random_string(6)
         self.scan_task = ScanTask(task_name)
 
-        # init
+        # init out data
         for o in (self.niter_spinBox, self.waitsec_dSpinBox):
             o.valueChanged.emit(o.value())
+        # reset
+        self.reset_flags()
 
+    def reset_flags(self):
+        # init alter point
         self._iiter = 0
+        # initialized?
+        self._initialized = False
+        # task status
+        self._run = False
+
+    def init_dataviz(self):
+        # dataviz
+        inner_alter_array = self._p.scan_task.get_alter_array()
+        outer_alter_array = self.scan_task.get_alter_array()
+        xx, yy = np.meshgrid(inner_alter_array, outer_alter_array)
+        zdata = np.ones(xx.shape) * 0.0 # np.nan
+        self.xdata_changed.emit(xx)
+        self.ydata_changed.emit(yy)
+        self.xlabel_changed.emit(self._get_lbl('inner'))
+        self.ylabel_changed.emit(self._get_lbl('outer'))
+        self.image_data_changed.emit(zdata)
+        self.zdata = zdata
 
     @pyqtSlot()
     def on_set_alter_array(self):
@@ -230,6 +349,17 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         alter_array = self.scan_task.get_alter_array()
         # set outer element
         self.scan_task.alter_element.value = alter_array[self._iiter]
+
+        if not self._initialized:
+            # monitor-of-interest
+            self.init_moi()
+            # image data: zdata
+            self.init_dataviz()
+            self._initialized = True
+
+        if not self._run:
+            self._run = True
+
         # run inner loop
         delayed_exec(lambda: self._p.start_btn.clicked.emit(), self._dmsec)
 
@@ -237,6 +367,9 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
     def on_data_updated(self, arr):
         # collect data
         self.data[self._iiter] = arr
+
+        # updata dataviz
+        self._update_dataviz()
 
         # next iter
         self._iiter += 1
@@ -251,9 +384,13 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         # all finish
         print("Scan is done.")
         print(self.data)
+        # dump data
         import pickle
         with open('/tmp/data.pkl', 'wb') as f:
             pickle.dump(self.data, f)
+
+        self.reset_flags()
+
 
     @pyqtSlot()
     def reset_alter_element(self):
@@ -267,8 +404,6 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self.scan_task.alter_element.value = x0
         self._p.scanlogUpdated.emit(
             "[M] Alter element reaches {0:.3f}".format(x0))
-        # reset iter counter
-        self._iiter = 0
 
     @pyqtSlot(list)
     def on_lattice_updated(self, l):
@@ -278,3 +413,22 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self.alter_elem_val_lineEdit.setText("Value: {}, IITER: {}".format(
             self.scan_task.alter_element.value,
             self._iiter))
+
+    def _update_dataviz(self):
+        # update curve and image dataviz
+        # l: niter of outer loop
+        # n,m,k: niter,nshot, nmoni of inner loop
+        idx, idy = self._idx, self._idy
+
+        data = self.data
+        l, n, m, k = data.shape
+        #
+        sm = ScanDataModel(data[self._iiter, :])
+        # curve w/ eb
+        x, xerr = sm.get_xavg(ind=idx), sm.get_xerr(ind=idx)
+        y, yerr = sm.get_yavg(ind=idy), sm.get_yerr(ind=idy)
+
+        # image
+        self.zdata[self._iiter] = sm.get_yavg(ind=idy)
+        self.image_data_changed.emit(self.zdata)
+
