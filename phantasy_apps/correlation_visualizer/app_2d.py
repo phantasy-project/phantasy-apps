@@ -40,7 +40,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         app_title_p = parent.getAppTitle()
         self.setAppTitle("{}[{}]".format(app_title_p, '2D'))
         self.setWindowTitle("{}: {}".format(
-            app_title_p, "Extend to Higher Dimension"))
+            app_title_p, "Extend to Higher Dimensions"))
 
         #
         self.select_alter_elem_btn.clicked.connect(self.on_select_elem)
@@ -78,6 +78,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
             o.valueChanged.connect(self.init_out_data)
 
         self._p.extraMonitorsNumberChanged.connect(self.on_extra_moni_changes)
+        self._p.start_btn.clicked.connect(self.update_progress)
 
         # scan finish
         self.scanAllFinished.connect(self.on_finish)
@@ -102,7 +103,6 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
                 [np.ones(shape) * np.nan] * self.scan_task.alter_number)
         print("Whole data shape is:", self.data.shape)
 
-
     def init_scan_task(self):
         task_name = random_string(6)
         self.scan_task = ScanTask(task_name)
@@ -111,7 +111,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         for o in (self.niter_spinBox, self.waitsec_dSpinBox):
             o.valueChanged.emit(o.value())
 
-        self._i = 0
+        self._iiter = 0
 
     @pyqtSlot()
     def on_set_alter_array(self):
@@ -229,21 +229,21 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         """
         alter_array = self.scan_task.get_alter_array()
         # set outer element
-        self.scan_task.alter_element.value = alter_array[self._i]
+        self.scan_task.alter_element.value = alter_array[self._iiter]
         # run inner loop
         delayed_exec(lambda: self._p.start_btn.clicked.emit(), self._dmsec)
 
     @pyqtSlot(QVariant)
     def on_data_updated(self, arr):
         # collect data
-        self.data[self._i] = arr
+        self.data[self._iiter] = arr
 
         # next iter
-        self._i += 1
-        if self._i < self.scan_task.alter_number:
+        self._iiter += 1
+        if self._iiter < self.scan_task.alter_number:
             self.start_btn.clicked.emit()
         else:
-            self._i -= 1
+            self._iiter -= 1
             self.scanAllFinished.emit()
 
     @pyqtSlot()
@@ -251,6 +251,9 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         # all finish
         print("Scan is done.")
         print(self.data)
+        import pickle
+        with open('/tmp/data.pkl', 'wb') as f:
+            pickle.dump(self.data, f)
 
     @pyqtSlot()
     def reset_alter_element(self):
@@ -264,7 +267,14 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self.scan_task.alter_element.value = x0
         self._p.scanlogUpdated.emit(
             "[M] Alter element reaches {0:.3f}".format(x0))
+        # reset iter counter
+        self._iiter = 0
 
     @pyqtSlot(list)
     def on_lattice_updated(self, l):
         self._sel_elem_dialogs = {}
+
+    def update_progress(self):
+        self.alter_elem_val_lineEdit.setText("Value: {}, IITER: {}".format(
+            self.scan_task.alter_element.value,
+            self._iiter))
