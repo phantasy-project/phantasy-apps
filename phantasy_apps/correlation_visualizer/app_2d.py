@@ -142,10 +142,9 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
 
     def init_moi(self):
-        """Initial monitor-of-interest
+        """Initial monitor-of-interest cbb list.
         """
         self._idx = 0
-        self._idy = 1  # moi
 
         monitors = [self._p.scan_task.monitor_element, ] + \
                     self._p.scan_task.get_extra_monitors()
@@ -165,6 +164,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         o.currentIndexChanged.connect(self.on_update_moi)
         # initial
         o.currentIndexChanged.emit(0)
+        self.image_title_changed.emit(o.currentText())
 
     def _get_lbl(self, mode):
         # get xlabel or ylabel
@@ -191,7 +191,18 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         For image data, should refresh all the data, including the data
         already acquired, only allowed when task is done.
         """
-        pass
+        data = self.data
+        idy = self._idy
+        if not self._run:
+            # update image data
+            # l: niter of outer loop
+            # n,m,k: niter,nshot, nmoni of inner loop
+            l, n, m, k = data.shape
+            for i in range(l):
+                sm = ScanDataModel(data[i, :])
+                self.zdata[i] = sm.get_yavg(ind=idy)
+            self.image_data_changed.emit(self.zdata)
+        # update curve data
 
     def on_update_moi_labels(self):
         """Update ylabel of curve widget and title of image widget.
@@ -350,15 +361,15 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         # set outer element
         self.scan_task.alter_element.value = alter_array[self._iiter]
 
+        if not self._run:
+            self._run = True
+
         if not self._initialized:
             # monitor-of-interest
             self.init_moi()
             # image data: zdata
             self.init_dataviz()
             self._initialized = True
-
-        if not self._run:
-            self._run = True
 
         # run inner loop
         delayed_exec(lambda: self._p.start_btn.clicked.emit(), self._dmsec)
@@ -416,12 +427,9 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
     def _update_dataviz(self):
         # update curve and image dataviz
-        # l: niter of outer loop
-        # n,m,k: niter,nshot, nmoni of inner loop
         idx, idy = self._idx, self._idy
 
         data = self.data
-        l, n, m, k = data.shape
         #
         sm = ScanDataModel(data[self._iiter, :])
         # curve w/ eb
