@@ -1009,8 +1009,6 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             self._2dscan_window = TwoParamsScanWindow(self)
         self._2dscan_window.show()
 
-
-
     @pyqtSlot()
     def on_update_mps_status(self, change, reason='conn'):
         """Update MPS status button icon when MPS guardian is enabled.

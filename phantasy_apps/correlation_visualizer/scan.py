@@ -242,9 +242,7 @@ class ScanTask(object):
         ndim = 2 + len(self.get_extra_monitors())
         self._scan_out_per_iter = np.zeros((self.shotnum, ndim))
         self._scan_out_all = np.asarray([
-                                            [np.ones(
-                                                ndim) * np.nan] * self.shotnum
-                                        ] * self.alter_number)
+            [np.ones(ndim) * np.nan] * self.shotnum] * self.alter_number)
 
     @property
     def scan_out_data_per_iter(self):
