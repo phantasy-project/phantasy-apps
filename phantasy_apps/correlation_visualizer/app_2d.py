@@ -165,7 +165,6 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
                 [np.ones(shape) * np.nan] * self.scan_task.alter_number)
         print("Whole data shape is:", self.data.shape)
 
-
     def init_moi(self):
         """Initial monitor-of-interest cbb list.
         """
@@ -217,19 +216,30 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         already acquired, only allowed when task is done.
         """
         data = self.data
-        idy = self._idy
+        idx, idy = self._idx, self._idy
+        # l: niter of outer loop
+        # n,m,k: niter,nshot, nmoni of inner loop
+        l, n, m, k = data.shape
+        # update image data
         if not self._run:
-            # update image data
-            # l: niter of outer loop
-            # n,m,k: niter,nshot, nmoni of inner loop
-            l, n, m, k = data.shape
             for i in range(l):
                 sm = ScanDataModel(data[i, :])
                 self.avg_data[i] = sm.get_yavg(ind=idy)
                 self.std_data[i] = sm.get_yerr(ind=idy)
             self.image_avg_data_changed.emit(self.avg_data)
             self.image_std_data_changed.emit(self.std_data)
+
+        if np.all(np.isnan(self.data)):
+            return
         # update curve data
+        nn = self._iiter if self._run else l
+        for i in range(nn):
+            sm = ScanDataModel(data[i, :])
+            x, xerr = sm.get_xavg(ind=idx), sm.get_xerr(ind=idx)
+            y, yerr = sm.get_yavg(ind=idy), sm.get_yerr(ind=idy)
+            self.line_id_changed.emit(i)
+            self.curve_data_changed.emit(x, y, xerr, yerr)
+
 
     def on_update_moi_labels(self):
         """Update ylabel of curve widget and title of image widget.
