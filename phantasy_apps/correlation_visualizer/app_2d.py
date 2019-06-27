@@ -99,7 +99,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self._p.start_btn.clicked.connect(self.update_progress)
 
         # 3d data (image)
-        o = self.matplotlibimageWidget
+        o = self.avg_mplimagewidget
         self.image_data_changed.connect(o.update_image)
         self.xdata_changed.connect(o.setXData)
         self.ydata_changed.connect(o.setYData)
@@ -108,7 +108,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self.image_title_changed.connect(o.setFigureTitle)
 
         # data (curve)
-        o1 = self.matplotliberrorbarWidget
+        o1 = self.curve_mplebwidget
         self.curve_data_changed.connect(o1.update_curve)
         self.add_curve.connect(o1.add_curve)
         self.xlabel_changed.connect(o1.setFigureXlabel)
@@ -123,6 +123,12 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
         # initial scan task
         self.init_scan_task()
+
+        # post init
+        self.post_init()
+
+    def post_init(self):
+        pass
 
     def on_extra_moni_changes(self, i):
         # workaround to ensure the extra moni counter is updated.
@@ -235,7 +241,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         inner_alter_array = self._p.scan_task.get_alter_array()
         outer_alter_array = self.scan_task.get_alter_array()
         xx, yy = np.meshgrid(inner_alter_array, outer_alter_array)
-        zdata = np.ones(xx.shape) * 0.0 # np.nan
+        zdata = np.ones(xx.shape) * np.nan
         self.xdata_changed.emit(xx)
         self.ydata_changed.emit(yy)
         self.xlabel_changed.emit(self._get_lbl('inner'))
@@ -290,7 +296,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
     def on_update_niter(self, i):
         # total number of scan points
         self.scan_task.alter_number = i
-        self.init_out_data()
+        # self.init_out_data()
 
     @pyqtSlot(float)
     def on_update_waitsec(self, x):
@@ -358,6 +364,10 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         """Start scan.
         """
         alter_array = self.scan_task.get_alter_array()
+        # debug
+        print("Alter array: ", alter_array)
+        print("Current setting: ", alter_array[self._iiter])
+        #
         # set outer element
         self.scan_task.alter_element.value = alter_array[self._iiter]
 
@@ -365,6 +375,8 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
             self._run = True
 
         if not self._initialized:
+            # preset out data
+            self.init_out_data()
             # monitor-of-interest
             self.init_moi()
             # image data: zdata
@@ -400,8 +412,8 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         with open('/tmp/data.pkl', 'wb') as f:
             pickle.dump(self.data, f)
 
+        # reset flags
         self.reset_flags()
-
 
     @pyqtSlot()
     def reset_alter_element(self):
