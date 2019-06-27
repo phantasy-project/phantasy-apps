@@ -12,6 +12,7 @@ from numpy import ndarray
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QVariant
+from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QDialog
 
 from phantasy import CaField
@@ -35,16 +36,17 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
     scanAllFinished = pyqtSignal()
 
     # image
-    image_data_changed = pyqtSignal(ndarray)
+    image_title_changed = pyqtSignal('QString')
+    image_avg_data_changed = pyqtSignal(ndarray)
+    image_std_data_changed = pyqtSignal(ndarray)
     xdata_changed = pyqtSignal(ndarray)
     ydata_changed = pyqtSignal(ndarray)
     ylabel_changed = pyqtSignal('QString')
-    image_title_changed = pyqtSignal('QString')
 
     # curve
     curve_data_changed = pyqtSignal(QVariant, QVariant, QVariant, QVariant)
-    add_curve = pyqtSignal(QVariant, QVariant, QVariant, QVariant)
     curve_ylabel_changed = pyqtSignal('QString')
+    line_id_changed = pyqtSignal(int)
 
     # curve & image
     xlabel_changed = pyqtSignal('QString')
@@ -98,21 +100,26 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self._p.extraMonitorsNumberChanged.connect(self.on_extra_moni_changes)
         self._p.start_btn.clicked.connect(self.update_progress)
 
-        # 3d data (image)
-        o = self.avg_mplimagewidget
-        self.image_data_changed.connect(o.update_image)
-        self.xdata_changed.connect(o.setXData)
-        self.ydata_changed.connect(o.setYData)
-        self.xlabel_changed.connect(o.setFigureXlabel)
-        self.ylabel_changed.connect(o.setFigureYlabel)
-        self.image_title_changed.connect(o.setFigureTitle)
+        # 3d data (avg, std)
+        self._avg_img_widget = self.avg_mplimagewidget
+        self._std_img_widget = self.std_mplimagewidget
 
-        # data (curve)
-        o1 = self.curve_mplebwidget
-        self.curve_data_changed.connect(o1.update_curve)
-        self.add_curve.connect(o1.add_curve)
-        self.xlabel_changed.connect(o1.setFigureXlabel)
-        self.curve_ylabel_changed.connect(o1.setFigureYlabel)
+        self.image_avg_data_changed.connect(self._avg_img_widget.update_image)
+        self.image_std_data_changed.connect(self._std_img_widget.update_image)
+        for o in (self._avg_img_widget, self._std_img_widget):
+            self.xdata_changed.connect(o.setXData)
+            self.ydata_changed.connect(o.setYData)
+            self.xlabel_changed.connect(o.setFigureXlabel)
+            self.ylabel_changed.connect(o.setFigureYlabel)
+            self.image_title_changed.connect(o.setFigureTitle)
+
+        # data (curve w/ eb)
+        self._curve_widget = self.curve_mplebwidget
+        self.curve_data_changed.connect(self._curve_widget.update_curve)
+        self.xlabel_changed.connect(self._curve_widget.setFigureXlabel)
+        self.curve_ylabel_changed.connect(self._curve_widget.setFigureYlabel)
+        self.line_id_changed.connect(self._curve_widget.setLineID)
+        self.line_id_changed.connect(self._curve_widget.setEbLineID)
 
         # moi
         self.moi_cbb.currentIndexChanged.connect(self.on_update_moi)
@@ -128,7 +135,19 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self.post_init()
 
     def post_init(self):
-        pass
+        # clear dataviz widgets
+        for o in (self.avg_mplimagewidget, self.std_mplimagewidget,
+                  self.curve_mplebwidget, ):
+            o.clear_data()
+        # reset the line/mk style of curve w/ eb
+        o = self.curve_mplebwidget
+        c = QColor("#FF0000")
+        o.setLineColor(c)
+        o.setMkEdgeColor(c)
+        o.setMkFaceColor(c)
+        o.setEbMkEdgeColor(c)
+        o.setEbMkFaceColor(c)
+        o.setEbLineColor(c)
 
     def on_extra_moni_changes(self, i):
         # workaround to ensure the extra moni counter is updated.
@@ -192,7 +211,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self.on_update_data()
 
     def on_update_data(self):
-        """Update image and curve data (live).
+        """Update image and curve data (live), when switching monitors.
 
         For image data, should refresh all the data, including the data
         already acquired, only allowed when task is done.
@@ -206,8 +225,10 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
             l, n, m, k = data.shape
             for i in range(l):
                 sm = ScanDataModel(data[i, :])
-                self.zdata[i] = sm.get_yavg(ind=idy)
-            self.image_data_changed.emit(self.zdata)
+                self.avg_data[i] = sm.get_yavg(ind=idy)
+                self.std_data[i] = sm.get_yerr(ind=idy)
+            self.image_avg_data_changed.emit(self.avg_data)
+            self.image_std_data_changed.emit(self.std_data)
         # update curve data
 
     def on_update_moi_labels(self):
@@ -237,17 +258,35 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self._run = False
 
     def init_dataviz(self):
-        # dataviz
+        """Dataviz initialization.
+        """
+        # image
         inner_alter_array = self._p.scan_task.get_alter_array()
         outer_alter_array = self.scan_task.get_alter_array()
         xx, yy = np.meshgrid(inner_alter_array, outer_alter_array)
-        zdata = np.ones(xx.shape) * np.nan
+        avg_data = np.ones(xx.shape) * np.nan
+        std_data = np.ones(xx.shape) * np.nan
         self.xdata_changed.emit(xx)
         self.ydata_changed.emit(yy)
-        self.xlabel_changed.emit(self._get_lbl('inner'))
-        self.ylabel_changed.emit(self._get_lbl('outer'))
-        self.image_data_changed.emit(zdata)
-        self.zdata = zdata
+        inner_lbl = self._get_lbl('inner')
+        outer_lbl = self._get_lbl('outer')
+        self.xlabel_changed.emit(inner_lbl)
+        self.ylabel_changed.emit(outer_lbl)
+        self.image_avg_data_changed.emit(avg_data)
+        self.image_std_data_changed.emit(std_data)
+        self.avg_data = avg_data
+        self.std_data = std_data
+        # curve
+        o = self._curve_widget
+        o.setFigureTitle("v: {}".format(outer_lbl))
+        for i, v in enumerate(outer_alter_array):
+            if len(o.get_all_curves()) < i + 1:
+                # add new curve
+                o.add_curve(None, None, None, None)
+            # reset curve
+            self.line_id_changed.emit(i)
+            o.setLineLabel("$v={0:.3g}$".format(v))
+            o.clear_data()
 
     @pyqtSlot()
     def on_set_alter_array(self):
@@ -379,7 +418,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
             self.init_out_data()
             # monitor-of-interest
             self.init_moi()
-            # image data: zdata
+            # image data
             self.init_dataviz()
             self._initialized = True
 
@@ -447,8 +486,12 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         # curve w/ eb
         x, xerr = sm.get_xavg(ind=idx), sm.get_xerr(ind=idx)
         y, yerr = sm.get_yavg(ind=idy), sm.get_yerr(ind=idy)
+        self.line_id_changed.emit(self._iiter)
+        self.curve_data_changed.emit(x, y, xerr, yerr)
 
-        # image
-        self.zdata[self._iiter] = sm.get_yavg(ind=idy)
-        self.image_data_changed.emit(self.zdata)
+        # image, avg & std
+        self.avg_data[self._iiter] = sm.get_yavg(ind=idy)
+        self.std_data[self._iiter] = sm.get_yerr(ind=idy)
+        self.image_avg_data_changed.emit(self.avg_data)
+        self.image_std_data_changed.emit(self.std_data)
 
