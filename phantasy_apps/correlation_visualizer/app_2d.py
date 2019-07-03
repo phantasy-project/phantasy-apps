@@ -285,6 +285,13 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self.std_data = std_data
         # curve
         o = self._curve_widget
+
+        # clear curves (tmp solutiono)
+        for i, l in enumerate(o.get_all_curves()):
+            self.line_id_changed.emit(i)
+            o.setLineLabel("_line{}".format(i))
+            o.clear_data()
+
         o.setFigureTitle("v: {}".format(outer_lbl))
         for i, v in enumerate(outer_alter_array):
             if len(o.get_all_curves()) < i + 1:
@@ -293,7 +300,6 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
             # reset curve
             self.line_id_changed.emit(i)
             o.setLineLabel("$v={0:.3g}$".format(v))
-            o.clear_data()
 
     @pyqtSlot()
     def on_set_alter_array(self):
