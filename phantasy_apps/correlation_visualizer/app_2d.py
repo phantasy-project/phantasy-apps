@@ -14,6 +14,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QVariant
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QMessageBox
 
 from phantasy import CaField
 from phantasy_ui import BaseAppForm
@@ -87,9 +88,6 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self.lower_limit_lineEdit.textChanged.connect(self.set_alter_range)
         self.upper_limit_lineEdit.textChanged.connect(self.set_alter_range)
 
-        # data
-        self._p.data_updated.connect(self.on_data_updated)
-
         # lattice --> _sel_elem_dialogs {}
         self._p.segments_updated.connect(self.on_lattice_updated)
 
@@ -98,7 +96,6 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
             o.valueChanged.connect(self.init_out_data)
 
         self._p.extraMonitorsNumberChanged.connect(self.on_extra_moni_changes)
-        self._p.start_btn.clicked.connect(self.update_progress)
 
         # 3d data (avg, std)
         self._avg_img_widget = self.avg_mplimagewidget
@@ -424,6 +421,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
             self._run = True
 
         if not self._initialized:
+            self._connect_signals()
             # preset out data
             self.init_out_data()
             # monitor-of-interest
@@ -463,6 +461,8 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
         # reset flags
         self.reset_flags()
+        #
+        self._disconnect_signals()
 
     @pyqtSlot()
     def reset_alter_element(self):
@@ -505,3 +505,12 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self.image_avg_data_changed.emit(self.avg_data)
         self.image_std_data_changed.emit(self.std_data)
 
+    def _disconnect_signals(self):
+        # disconnect signals
+        self._p.start_btn.clicked.disconnect(self.update_progress)
+        self._p.data_updated.disconnect(self.on_data_updated)
+
+    def _connect_signals(self):
+        # reconnect signals
+        self._p.start_btn.clicked.connect(self.update_progress)
+        self._p.data_updated.connect(self.on_data_updated)
