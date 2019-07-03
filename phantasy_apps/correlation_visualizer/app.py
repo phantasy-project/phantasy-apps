@@ -820,13 +820,13 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         """Set control btns status for 'start' and 'stop'.
         """
         if mode == 'start':  # after push start button to start scan
-            print("Thread is started...")
+            print("Scan worker is started...")
             self.start_btn.setEnabled(False)
             self.stop_btn.setEnabled(True)
             self.pause_btn.setEnabled(True)
             self.retake_btn.setEnabled(True)
         elif mode == 'stop':  # scan is finished or stopped
-            print("Thread is stopped...")
+            print("Scan worker is stopped...")
             self.start_btn.setEnabled(True)
             self.stop_btn.setEnabled(False)
             self.pause_btn.setEnabled(False)
