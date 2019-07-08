@@ -59,6 +59,7 @@ SMALL_TBTN_ICON_QSIZE = QSize(SMALL_TBTN_ICON_SIZE, SMALL_TBTN_ICON_SIZE)
 # MPS status
 MPS_STATUS = ["Fault", "Disable", "Monitor", "Enable"]
 MPS_ENABLE_STATUS = "Enable"
+MPS_DISABLE_STATUS = "Disable"
 
 # default MPS pv name
 MPS_PV_DEFAULT = 'MPS_FPS:MSTR_N0001:MpsStatus'  # FRIB MPS
@@ -608,6 +609,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         mps_skipped_icon = QIcon(QPixmap(":/icons/mps_skipped.png"))
         mps_normal_icon = QIcon(QPixmap(":/icons/mps_normal.png"))
         mps_fault_icon = QIcon(QPixmap(":/icons/mps_fault.png"))
+        mps_disable_icon = QIcon(QPixmap(":/icons/mps_disable.png"))
         mps_disconnected_icon = QIcon(QPixmap(":/icons/mps_disconnected.png"))
         mps_connected_icon = QIcon(QPixmap(":/icons/mps_connected.png"))
         self._mps_status_icons = {
@@ -615,7 +617,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             'disconnected': mps_disconnected_icon,
             'connected': mps_connected_icon,
             'normal': mps_normal_icon,
-            'fault': mps_fault_icon
+            'fault': mps_fault_icon,
+            'disable': mps_disable_icon,
         }
 
         # data save dlg
@@ -1032,7 +1035,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         """Check MPS status readings, and set indicators.
         """
         btn = self.mps_status_btn
-        if v != MPS_ENABLE_STATUS:
+        if v == MPS_DISABLE_STATUS:
+            btn.setIcon(self._mps_status_icons['disable'])
+        elif v != MPS_ENABLE_STATUS:
             # print("set btn to fault icon")
             btn.setIcon(self._mps_status_icons['fault'])
             # pause scan
