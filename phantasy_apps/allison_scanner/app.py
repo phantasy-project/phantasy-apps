@@ -133,6 +133,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         for s in self._attr_names:
             o = getattr(self, s + '_dsbox')
             o.valueChanged.connect(partial(self.on_update_config, s))
+        # bias volt
+        self.bias_volt_dsbox.valueChanged.connect(self.on_update_bias_volt)
 
         #
         is_sim = self._device_mode=="Simulation"
@@ -181,6 +183,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # update attr of ems (1), live config (2) and _dconf (3)
         setattr(self._ems_device, attr, x)
         getattr(self._ems_device, 'set_{}'.format(attr))()
+        self._dconf = self._ems_device.dconf
+
+    @pyqtSlot(float)
+    def on_update_bias_volt(self, x):
+        self._ems_device.bias_volt_threshold = x
         self._dconf = self._ems_device.dconf
 
     @pyqtSlot('QString')
@@ -278,6 +285,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         for s in self._attr_names:
             o = getattr(self, s + '_dsbox')
             o.valueChanged.disconnect()
+        self.bias_volt_dsbox.valueChanged.disconnect()
         self.pos_begin_dsbox.setValue(ems.pos_begin)
         self.pos_end_dsbox.setValue(ems.pos_end)
         self.pos_step_dsbox.setValue(ems.pos_step)
@@ -286,9 +294,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.volt_end_dsbox.setValue(ems.volt_end)
         self.volt_step_dsbox.setValue(ems.volt_step)
         self.volt_settling_time_dsbox.setValue(ems.volt_settling_time)
+        # bias volt
+        self.bias_volt_dsbox.setValue((ems.bias_volt_threshold))
         for s in self._attr_names:
             o = getattr(self, s + '_dsbox')
             o.valueChanged.connect(partial(self.on_update_config, s))
+        self.bias_volt_dsbox.valueChanged(self.on_update_bias_volt)
 
     def sync_config(self):
         """Pull current device configuration from controls network, update

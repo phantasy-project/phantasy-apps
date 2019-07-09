@@ -662,6 +662,22 @@ class Ui_MainWindow(object):
         self.adv_ctrl_widget.setObjectName("adv_ctrl_widget")
         self.adv_ctrl_hbox = QtWidgets.QHBoxLayout(self.adv_ctrl_widget)
         self.adv_ctrl_hbox.setObjectName("adv_ctrl_hbox")
+        self.label_26 = QtWidgets.QLabel(self.adv_ctrl_widget)
+        self.label_26.setObjectName("label_26")
+        self.adv_ctrl_hbox.addWidget(self.label_26)
+        self.bias_volt_dsbox = QtWidgets.QDoubleSpinBox(self.adv_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.bias_volt_dsbox.sizePolicy().hasHeightForWidth())
+        self.bias_volt_dsbox.setSizePolicy(sizePolicy)
+        self.bias_volt_dsbox.setMinimum(-1000.0)
+        self.bias_volt_dsbox.setMaximum(1000.0)
+        self.bias_volt_dsbox.setProperty("value", -200.0)
+        self.bias_volt_dsbox.setObjectName("bias_volt_dsbox")
+        self.adv_ctrl_hbox.addWidget(self.bias_volt_dsbox)
         self.is_enabled_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
         self.is_enabled_lbl.setObjectName("is_enabled_lbl")
         self.adv_ctrl_hbox.addWidget(self.is_enabled_lbl)
@@ -757,7 +773,7 @@ class Ui_MainWindow(object):
             "}")
         self.param_tbox.setObjectName("param_tbox")
         self.page_3 = QtWidgets.QWidget()
-        self.page_3.setGeometry(QtCore.QRect(0, 0, 587, 447))
+        self.page_3.setGeometry(QtCore.QRect(0, 0, 555, 479))
         self.page_3.setObjectName("page_3")
         self.gridLayout_6 = QtWidgets.QGridLayout(self.page_3)
         self.gridLayout_6.setObjectName("gridLayout_6")
@@ -819,7 +835,7 @@ class Ui_MainWindow(object):
         self.gridLayout_6.addWidget(self.auto_fill_beam_params_btn, 4, 0, 1, 1)
         self.param_tbox.addItem(self.page_3, "")
         self.page = QtWidgets.QWidget()
-        self.page.setGeometry(QtCore.QRect(0, 0, 587, 447))
+        self.page.setGeometry(QtCore.QRect(0, 0, 555, 479))
         self.page.setObjectName("page")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.page)
         self.gridLayout_2.setObjectName("gridLayout_2")
@@ -883,7 +899,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.auto_update_image_chkbox, 1, 2, 1, 1)
         self.param_tbox.addItem(self.page, "")
         self.page_2 = QtWidgets.QWidget()
-        self.page_2.setGeometry(QtCore.QRect(0, 0, 587, 447))
+        self.page_2.setGeometry(QtCore.QRect(0, 0, 555, 479))
         self.page_2.setObjectName("page_2")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.page_2)
         self.gridLayout_7.setObjectName("gridLayout_7")
@@ -1106,7 +1122,7 @@ class Ui_MainWindow(object):
         self.gridLayout_3.addWidget(self.v_splitter, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 34))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 32))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -1313,6 +1329,12 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p><span style=\" font-style:italic;\">g</span></p></body></html>"
             ))
+        self.label_26.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p><span style=\" font-style:italic;\">V</span><span style=\" vertical-align:sub;\">bias</span></p></body></html>"
+            ))
+        self.bias_volt_dsbox.setSuffix(_translate("MainWindow", " V"))
         self.is_enabled_lbl.setText(_translate("MainWindow", "is_enable?"))
         self.label_25.setText(_translate("MainWindow", "Motor Position [mm]"))
         self.retract_btn.setToolTip(
