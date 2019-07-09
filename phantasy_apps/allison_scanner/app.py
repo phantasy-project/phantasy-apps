@@ -299,7 +299,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         for s in self._attr_names:
             o = getattr(self, s + '_dsbox')
             o.valueChanged.connect(partial(self.on_update_config, s))
-        self.bias_volt_dsbox.valueChanged(self.on_update_bias_volt)
+        self.bias_volt_dsbox.valueChanged.connect(self.on_update_bias_volt)
 
     def sync_config(self):
         """Pull current device configuration from controls network, update
