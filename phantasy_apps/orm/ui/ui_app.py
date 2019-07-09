@@ -212,16 +212,16 @@ class Ui_MainWindow(object):
         self.monitor_fields_cbb.addItem("")
         self.monitor_fields_cbb.addItem("")
         self.horizontalLayout_9.addWidget(self.monitor_fields_cbb)
-        self.toolButton = QtWidgets.QToolButton(self.layoutWidget)
+        self.config_fields_btn = QtWidgets.QToolButton(self.layoutWidget)
         icon5 = QtGui.QIcon()
         icon5.addPixmap(
             QtGui.QPixmap(":/icons/setting.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.toolButton.setIcon(icon5)
-        self.toolButton.setIconSize(QtCore.QSize(20, 20))
-        self.toolButton.setAutoRaise(True)
-        self.toolButton.setObjectName("toolButton")
-        self.horizontalLayout_9.addWidget(self.toolButton)
+        self.config_fields_btn.setIcon(icon5)
+        self.config_fields_btn.setIconSize(QtCore.QSize(20, 20))
+        self.config_fields_btn.setAutoRaise(True)
+        self.config_fields_btn.setObjectName("config_fields_btn")
+        self.horizontalLayout_9.addWidget(self.config_fields_btn)
         self.nelem_selected_bpms_lineEdit = QtWidgets.QLineEdit(
             self.layoutWidget)
         self.nelem_selected_bpms_lineEdit.setReadOnly(True)
@@ -350,7 +350,7 @@ class Ui_MainWindow(object):
         self.operations_toolBox.setFrameShadow(QtWidgets.QFrame.Plain)
         self.operations_toolBox.setObjectName("operations_toolBox")
         self.orm_measurement = QtWidgets.QWidget()
-        self.orm_measurement.setGeometry(QtCore.QRect(0, 0, 1438, 1049))
+        self.orm_measurement.setGeometry(QtCore.QRect(0, 0, 1438, 1054))
         self.orm_measurement.setObjectName("orm_measurement")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.orm_measurement)
         self.gridLayout_4.setObjectName("gridLayout_4")
@@ -684,7 +684,7 @@ class Ui_MainWindow(object):
             QtGui.QIcon.Off)
         self.operations_toolBox.addItem(self.orm_measurement, icon9, "")
         self.orm_apply = QtWidgets.QWidget()
-        self.orm_apply.setGeometry(QtCore.QRect(0, 0, 1438, 1049))
+        self.orm_apply.setGeometry(QtCore.QRect(0, 0, 1438, 1054))
         self.orm_apply.setObjectName("orm_apply")
         self.gridLayout = QtWidgets.QGridLayout(self.orm_apply)
         self.gridLayout.setObjectName("gridLayout")
@@ -1033,7 +1033,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.splitter_2, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 34))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 32))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
@@ -1131,7 +1131,8 @@ class Ui_MainWindow(object):
             MainWindow.on_apply_selected_settings)
         self.add_setting_btn.clicked.connect(MainWindow.on_add_settings)
         self.del_setting_btn.clicked.connect(MainWindow.on_del_settings)
-        self.toolButton.clicked.connect(MainWindow.on_config_monitor_fields)
+        self.config_fields_btn.clicked.connect(
+            MainWindow.on_config_monitor_fields)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1160,12 +1161,12 @@ class Ui_MainWindow(object):
         self.monitor_fields_cbb.setItemText(0, _translate("MainWindow", "X&Y"))
         self.monitor_fields_cbb.setItemText(1, _translate("MainWindow", "X"))
         self.monitor_fields_cbb.setItemText(2, _translate("MainWindow", "Y"))
-        self.toolButton.setToolTip(
+        self.config_fields_btn.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Configure Monitor Fields</p></body></html>"
             ))
-        self.toolButton.setText(_translate("MainWindow", "..."))
+        self.config_fields_btn.setText(_translate("MainWindow", "..."))
         self.nelem_selected_bpms_lineEdit.setText(
             _translate("MainWindow", "0"))
         self.monitors_gbox.setTitle(_translate("MainWindow", "Monitors"))
