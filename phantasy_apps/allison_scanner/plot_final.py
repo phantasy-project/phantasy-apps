@@ -3,6 +3,7 @@
 
 
 from phantasy_ui import BaseAppForm
+from phantasy_apps.correlation_visualizer.utils import delayed_exec
 
 from .ui.ui_plot_results import Ui_MainWindow
 
@@ -20,8 +21,9 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
         self.setAppVersion(parent._version)
         self.setAppTitle("{} - {}".format(parent.getAppTitle(), 'Results'))
 
+        self._norm_inten = False
         self.norm_chkbox.toggled.connect(self.on_norm_inten)
-        self.norm_chkbox.setChecked(True)
+        delayed_exec(lambda: self.norm_chkbox.setChecked(True), 0)
 
     def on_norm_inten(self, f):
         self._norm_inten = f
