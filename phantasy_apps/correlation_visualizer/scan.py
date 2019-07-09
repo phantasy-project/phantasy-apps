@@ -11,6 +11,7 @@ from PyQt5.QtCore import pyqtSignal
 from phantasy import CaField
 from phantasy import MachinePortal
 from phantasy import epoch2human
+from phantasy.library.physics.devices import process_devices
 
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 from phantasy_apps.correlation_visualizer.utils import PVElement
@@ -530,41 +531,37 @@ class ScanWorker(QObject):
         """
         return self.run_flag
 
-    def process_ws(self, ename, machine="FRIB", segment="LEBT"):
+    def process_ws(self, ename, machine="FRIB", segment="LINAC"):
         if ename in self._processed_ws:
             return
         print("Processing", ename)
 
-        # test only
         from phantasy import MachinePortal
-        from phantasy_apps.wire_scanner.device import Device
-        from phantasy_apps.wire_scanner.device import PMData
-        #
-
-        if "MEBT" in ename: segment = "MEBT"
-
         mp = MachinePortal(machine, segment)
-
-        # process wire-scanner
         elem = mp.get_elements(name=ename)[0]
+        process_devices((elem, ))
 
-        ws = Device(elem)
-        # online
-        print("Run device...")
-        ws.run_all()
-
-        print("Sync data...")
-        ws.sync_data(mode='live')
-
-        # offline
-        # ws.sync_data(mode='file', filename=fn)
-
-        print("Analyzing data...")
-        ws_data = PMData(ws)
-        ws_data.analyze()
-
-        print("Sync results to device...")
-        ws_data.sync_results_to_ioc()
+#        from phantasy import MachinePortal
+#        from phantasy_apps.wire_scanner.device import Device
+#        from phantasy_apps.wire_scanner.device import PMData
+#        #
+#        if "MEBT" in ename: segment = "MEBT"
+#        mp = MachinePortal(machine, segment)
+#        # process wire-scanner
+#        elem = mp.get_elements(name=ename)[0]
+#        ws = Device(elem)
+#        # online
+#        print("Run device...")
+#        ws.run_all()
+#        print("Sync data...")
+#        ws.sync_data(mode='live')
+#        # offline
+#        # ws.sync_data(mode='file', filename=fn)
+#        print("Analyzing data...")
+#        ws_data = PMData(ws)
+#        ws_data.analyze()
+#        print("Sync results to device...")
+#        ws_data.sync_results_to_ioc()
 
         # put processed flag
         self._processed_ws.append(ename)
