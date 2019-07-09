@@ -222,7 +222,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         # init bpm/cor models, set up models for BPMs and CORs
         self.refresh_models_btn.clicked.emit()
         # init _bpm_field, _cor_field, _xoy
-        self.init_fields()
+        # self.init_fields()
 
     @pyqtSlot()
     def on_refresh_models(self):
@@ -888,6 +888,8 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         #
         for o in (self.monitor_fields_cbb, self.corrector_fields_cbb,):
             o.currentTextChanged.emit(o.currentText())
+        # auto config monitor fields
+        self.config_fields_btn.clicked.emit()
 
     def init_settings_table(self):
         # WIP
