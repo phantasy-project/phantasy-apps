@@ -417,6 +417,15 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._ems_device.retract(v)
 
     def _valid_device(self):
+        # others
+        try:
+            caget('FE_SCS1:FC_D0739:LMPOS_LTCH_DRV') == 0
+        except AssertionError:
+            QMessageBox.warning(self, "Device Confilictions",
+                "Detect confliction with Faraday Cup D0738, pull it out first.",
+                QMessageBox.Ok)
+            return False
+        # self
         elem = self._ems_device.elem
         x1 = getattr(elem, self._pos_begin_fname)
         x2 = getattr(elem, self._pos_end_fname)
