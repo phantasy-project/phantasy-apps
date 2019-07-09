@@ -424,7 +424,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         dx = getattr(elem, self._pos_step_fname)
 
         try:
-            assert (x2 - x1) % dx == 0
+            assert int((x2 - x1) / dx) * dx == x2 - x1
         except AssertionError:
             QMessageBox.warning(self, "Scan Range Warning",
                 "Input scan range for position indicates non-integer points.",
