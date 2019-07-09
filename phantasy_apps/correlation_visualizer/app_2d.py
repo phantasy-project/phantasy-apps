@@ -7,7 +7,10 @@ Tong Zhang <zhangt@frib.msu.edu>
 2019-06-20 10:59:21 AM EDT
 """
 import numpy as np
+import pickle
+from datetime import datetime
 from numpy import ndarray
+import os
 
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
@@ -459,16 +462,28 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
     def on_finish(self):
         # all finish
         print("Scan is done.")
-        print(self.data)
         # dump data
-        import pickle
-        with open('/tmp/data.pkl', 'wb') as f:
-            pickle.dump(self.data, f)
-
+        self._dump_data(self.data)
         # reset flags
         self.reset_flags()
         #
         self._disconnect_signals()
+
+    def _dump_data(self, data, filepath=None):
+        # dump *data* to filepath.
+        if filepath is None:
+            filepath = "CV_2D_{}.pkl".format(
+                    datetime.now().strftime("%Y%m%dT%H%M%S"))
+        try:
+            with open(filepath, 'wb') as f:
+                pickle.dump(data, f)
+        except:
+            QMessageBox.warning(self, "Save Data", "Failed to dump data.",
+                    QMessageBox.Ok)
+        else:
+            QMessageBox.information(self, "Save Data",
+                    "Saved data to {}".format(os.path.abspath(filepath)),
+                    QMessageBox.Ok)
 
     @pyqtSlot()
     def reset_alter_element(self):
