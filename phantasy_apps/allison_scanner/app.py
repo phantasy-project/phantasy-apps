@@ -764,9 +764,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         r = []
         r.append(('xoy', xoy))
         r.append(('position', {
-            'begin': pos_begin, 'end': pos_end, 'step': pos_step}))
+            'begin': pos_begin, 'end': pos_end, 'step': pos_step,
+            'unit': 'mm'}))
         r.append(('voltage', {
-            'begin': volt_begin, 'end': volt_end, 'step': volt_step}))
+            'begin': volt_begin, 'end': volt_end, 'step': volt_step,
+            'unit': 'V'}))
         r.append(('data', {
             'shape': (volt_size, pos_size),
             'array': data.tolist()}))
