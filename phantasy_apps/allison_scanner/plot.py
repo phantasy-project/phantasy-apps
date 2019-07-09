@@ -48,6 +48,7 @@ class PlotWidget(QWidget, Ui_Form):
 
     def _update_plot(self):
         xoy = self._parent._ems_device.xoy.lower()
+        self._update_xylabels(xoy)
         self._ax1.patches = []
         ellipse, _, _ = draw_beam_ellipse_with_params(
                             self._r, color='w', factor=self._sf,
@@ -60,3 +61,10 @@ class PlotWidget(QWidget, Ui_Form):
                                 factor=1.0)
         self.boundary_changed.emit(noise_signal_arr)
         self._parent._noise_signal_arr = noise_signal_arr
+
+    def _update_xylabels(self, u):
+        xlbl = "${}\,\mathrm{{[mm]}}$".format(u)
+        ylbl = "${}'\,\mathrm{{[mm]}}$".format(u)
+        for o in (self._o1, self._o2):
+            o.setFigureXlabel(xlbl)
+            o.setFigureYlabel(ylbl)

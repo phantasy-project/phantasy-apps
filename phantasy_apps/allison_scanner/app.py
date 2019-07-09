@@ -191,7 +191,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._volt_end_fname = "STOP_VOLT{}".format(oid)
         self._volt_step_fname = "STEP_VOLT{}".format(oid)
         self._data_pv = self._ems_device.elem.pv("DATA{}".format(oid))[0]
+        # sync config
         self.sync_config()
+        # update xylabels
+        self._update_xylabels()
         # update result keys
         self._update_result_keys(s)
 
@@ -499,7 +502,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_plot_raw_data(self):
         # plot raw data, before processing.
         self.xdata_changed.emit(self._data.x_grid)
-        self.xlabel_changed.emit("$x\,\mathrm{[mm]}$")
+        xlbl = "${}\,\mathrm{{[mm]}}$".format(self._ems_orientation.lower())
+        self.xlabel_changed.emit(xlbl)
         self.image_data_changed.emit(self._data.intensity)
         self.raw_view_chkbox.toggled.emit(self.raw_view_chkbox.isChecked())
 
@@ -595,11 +599,18 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(bool)
     def on_enable_raw_view(self, f):
         if f: # show pos, volt, intensity
-            self.ydata_changed.emit(self._data.volt_grid)
+            try:
+                self.ydata_changed.emit(self._data.volt_grid)
+            except:
+                print("volt data is not ready..")
             self.ylabel_changed.emit("$\mathrm{Voltage}\,\mathrm{[V]}$")
         else: # show pos, angle, intensity
-            self.ydata_changed.emit(self._data.xp_grid)
-            self.ylabel_changed.emit("$x'\,\mathrm{[mrad]}$")
+            try:
+                self.ydata_changed.emit(self._data.xp_grid)
+            except:
+                print("xp data is not ready..")
+            self.ylabel_changed.emit("${}'\,\mathrm{{[mrad]}}$".format(
+                                     self._ems_orientation.lower()))
 
     def update_results_ui(self, res):
         ks = ('x_cen', 'xp_cen', 'x_rms', 'xp_rms',
@@ -838,3 +849,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         else:
             px = self._not_itlk_px
         self.is_itlk_lbl.setPixmap(px)
+
+    def _update_xylabels(self):
+        # update xylabels.
+        xlbl = "${}\,\mathrm{{[mm]}}$".format(self._ems_orientation.lower())
+        self.xlabel_changed.emit(xlbl)
+        self.raw_view_chkbox.toggled.emit(self.raw_view_chkbox.isChecked())
