@@ -188,6 +188,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(float)
     def on_update_bias_volt(self, x):
         self._ems_device.bias_volt_threshold = x
+        self._ems_device.set_bias_voltage()
         self._dconf = self._ems_device.dconf
 
     @pyqtSlot('QString')
