@@ -839,9 +839,12 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
     @staticmethod
     def _pb_msg_to_index(msg):
         #
-        # return corrector index from pb msg.
+        # return corrector index from pb msg, or -1.
         #
-        return int(msg.split()[3].replace('[', '').replace(']', '')) - 1
+        try:
+            return int(msg.split()[3].replace('[', '').replace(']', '')) - 1
+        except:
+            return -1
 
     def init_params(self):
         """Initialize parameters for matrix measurement/apply.
