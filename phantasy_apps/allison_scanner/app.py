@@ -166,6 +166,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                                      self._trigger_pv, self._pos_pv,
                                      self._in_pv, self._out_pv,
                                      self._itlk_pv, self._en_pv)
+            self._device.status_in_changed.connect(self.on_update_sin)
+            self._device.status_out_changed.connect(self.on_update_sout)
+            self._device.itlk_changed.connect(self.on_update_itlk)
+            self._device.status_enable_changed.connect(self.on_update_en)
             pvs = (self._in_pv, self._out_pv, self._itlk_pv, self._en_pv)
             cbs = (self.on_update_sin, self.on_update_sout,
                    self.on_update_itlk, self.on_update_en)
@@ -383,11 +387,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
         self._device.data_changed.connect(self.on_update)
         self._device.pos_changed.connect(self.on_update_p)
-        if self._device_mode == "Live":
-            self._device.status_in_changed.connect(self.on_update_sin)
-            self._device.status_out_changed.connect(self.on_update_sout)
-            self._device.itlk_changed.connect(self.on_update_itlk)
-            self._device.status_enable_changed.connect(self.on_update_en)
         self._device.finished.connect(self.on_finished)
 
         # start moving
@@ -398,7 +397,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             return
         if self._device_mode == "Live":
             self._ems_device.init_run()
-        self._device.start()
+        # self._device.start()
 
     @pyqtSlot()
     def on_abort(self):
@@ -832,25 +831,34 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         print(">>> STATUS OUT: ", s)
         if s == 1.0:
             px = self._outlimit_px
+            tt = "Device is at outlimit"
         else:
             px = self._inactive_px
+            tt = "Device is not at outlimit"
         self.is_outlimit_lbl.setPixmap(px)
+        self.is_outlimit_lbl.setToolTip(tt)
 
     def on_update_en(self, s):
         print(">>> ENABLED: ", s)
         if s == 1.0:
             px = self._enable_px
+            tt = "Device is enabled"
         else:
             px = self._not_enable_px
+            tt = "Device is not enabled"
         self.is_enabled_lbl.setPixmap(px)
+        self.is_enabled_lbl.setToolTip(tt)
 
     def on_update_itlk(self, s):
         print(">>> INTERLOCK: ", s)
         if s == 0.0:
             px = self._itlk_px
+            tt = "Device interlock is OK"
         else:
             px = self._not_itlk_px
+            tt = "Device interlock is not OK"
         self.is_itlk_lbl.setPixmap(px)
+        self.is_itlk_lbl.setToolTip(tt)
 
     def _update_xylabels(self):
         # update xylabels.
