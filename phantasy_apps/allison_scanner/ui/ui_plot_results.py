@@ -104,7 +104,7 @@ class Ui_MainWindow(object):
         self.label.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p><span style=\" color:#777975; vertical-align:super;\">*</span><span style=\" color:#777975;\">Beam ellipse area is shown with 4σ (and σ</span><span style=\" color:#777975; vertical-align:super;\">\'</span><span style=\" color:#777975;\">).</span></p></body></html>"
+                "<html><head/><body><p><span style=\" color:#777975; vertical-align:super;\">*</span><span style=\" color:#777975;\">Beam ellipse area is shown with 4 RMS of x and x\' or (y and y\').</span></p></body></html>"
             ))
         self.norm_chkbox.setText(
             _translate("MainWindow", "Normalize Intensity"))
