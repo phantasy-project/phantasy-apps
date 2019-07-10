@@ -116,7 +116,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         act2.triggered.connect(partial(self.on_launch_app, index, detached=True))
 
     def sizeHint(self):
-        return QSize(1150, 700)
+        return QSize(1250, 700)
 
     def post_init_ui(self):
         #self.textEdit.setHtml(DEFAULT_MSG)
