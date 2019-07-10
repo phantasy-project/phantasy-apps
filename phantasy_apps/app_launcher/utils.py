@@ -49,9 +49,9 @@ class AppDataModel(QStandardItemModel):
         self._app_items = app_items
 
         # header
-        self.header = self.h_name, self.h_cat, self.h_desc = \
-                ('Name', '', 'Description')
-        self.ids = self.i_name, self.i_cat, self.i_desc = \
+        self.header = self.h_name, self.h_cat, self.h_desc, self.h_ver = \
+                ('Name', '', 'Description', 'Version')
+        self.ids = self.i_name, self.i_cat, self.i_desc, self.i_ver = \
                 range(len(self.header))
 
         #
@@ -85,7 +85,9 @@ class AppDataModel(QStandardItemModel):
             item_cat.setData(px.scaled(32, 32), Qt.DecorationRole)
 
             item_desc = QStandardItem(app.desc)
-            row = (item_name, item_cat, item_desc)
+            item_ver = QStandardItem(app.ver)
+            #
+            row = (item_name, item_cat, item_desc, item_ver)
             [i.setEditable(False) for i in row]
             self.appendRow(row)
 
@@ -117,7 +119,7 @@ class AppDataModel(QStandardItemModel):
 
 
 class AppItem(object):
-    def __init__(self, name, desc, cmd, icon_path, category=None):
+    def __init__(self, name, desc, cmd, icon_path, category=None, version=None):
         # name : app name
         # desc : app descriptiono
         # cmd : command to start up app
@@ -129,6 +131,39 @@ class AppItem(object):
         self.cmd = cmd
         self.icon_path = icon_path
         self.category = "Limited" if category is None else category
+        if version is None:
+            try:
+                self.ver = get_app_version(name)
+            except RuntimeError:
+                self.ver = "0"
+        else:
+            self.ver = version
+
+
+def get_app_version(name):
+    if name == 'Correlation Visualizer':
+        from phantasy_apps.correlation_visualizer import __version__ as ver
+    elif name == 'Quad Scan App':
+        from phantasy_apps.quad_scan import __version__ as ver
+    elif name == 'Wire Scanner App':
+        from phantasy_apps.wire_scanner import __version__ as ver
+    elif name == 'Allison Scanner App':
+        from phantasy_apps.allison_scanner import __version__ as ver
+    elif name == 'Virtual Accelerator Launcher':
+        from phantasy_apps.va import __version__ as ver
+    elif name == 'Trajectory Viewer':
+        from phantasy_apps.trajectory_viewer import __version__ as ver
+    elif name == 'Trajectory Correction':
+        from phantasy_apps.orm import __version__ as ver
+    elif name == 'Unicorn App':
+        from phantasy_apps.unicorn import __version__ as ver
+    elif name == 'Lattice Viewer':
+        from phantasy_apps.lattice_viewer import __version__ as ver
+    elif name == 'Device Viewer':
+        from phantasy_apps.diag_viewer import __version__ as ver
+    else:
+        raise RuntimeError
+    return ver
 
 
 def get_app_data(path=None):
@@ -148,7 +183,9 @@ def get_app_data(path=None):
         if not os.path.isfile(icon_path):
             icon_path = DEFAULT_ICON_PATH
         category = v.get('category', None)
-        app_item = AppItem(k, v.get('desc'), v.get('exec'), icon_path, category)
+        version = v.get('version', None)
+        app_item = AppItem(k, v.get('desc'), v.get('exec'), icon_path,
+                           category, version)
         data.append(app_item)
 
     return data
