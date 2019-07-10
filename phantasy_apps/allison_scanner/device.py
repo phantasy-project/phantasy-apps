@@ -383,6 +383,9 @@ class Device(QObject):
             v = getattr(self, 'get_{}'.format(s))()
             setattr(self, s, v)
             _LOGGER.info("Sync '{}' with '{}'.".format(s, v))
+        # bias volt
+        self.bias_volt_threshold = v = self.elem.BIAS_VOLT
+        _LOGGER.info("Sync BIAS_VOLT with {}".format(v))
 
     def set_params(self):
         self.set_pos_begin()

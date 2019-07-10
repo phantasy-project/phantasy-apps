@@ -188,7 +188,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(float)
     def on_update_bias_volt(self, x):
         self._ems_device.bias_volt_threshold = x
-        self._ems_device.set_bias_voltage()
+        self._ems_device.set_bias_voltage(0.1)
         self._dconf = self._ems_device.dconf
 
     @pyqtSlot('QString')
@@ -296,7 +296,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.volt_step_dsbox.setValue(ems.volt_step)
         self.volt_settling_time_dsbox.setValue(ems.volt_settling_time)
         # bias volt
-        self.bias_volt_dsbox.setValue((ems.bias_volt_threshold))
+        self.bias_volt_dsbox.setValue(ems.bias_volt_threshold)
         for s in self._attr_names:
             o = getattr(self, s + '_dsbox')
             o.valueChanged.connect(partial(self.on_update_config, s))
