@@ -7,6 +7,7 @@ import os
 import numpy as np
 from mpl4qt.widgets.utils import MatplotlibCurveWidgetSettings
 from phantasy import epoch2human
+from phantasy_apps.utils import find_dconf as _find_dconf
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -50,15 +51,7 @@ def find_dconf():
     * /etc/phantasy/ws.ini
     * package location: apps/wire_scanner/config/ws.ini
     """
-    home_conf = os.path.expanduser('~/.phantasy/ws.ini')
-    sys_conf = '/etc/phantasy/ws.ini'
-    if os.path.isfile(home_conf):
-        return home_conf
-    elif os.path.isfile(sys_conf):
-        return sys_conf
-    else:
-        basedir = os.path.abspath(os.path.dirname(__file__))
-        return os.path.join(basedir, 'config/ws.ini')
+    return _find_dconf('wire_scanner', 'ws.ini')
 
 
 def find_mplconf():

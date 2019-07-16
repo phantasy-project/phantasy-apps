@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 
 
 def uptime(t):
@@ -25,6 +26,42 @@ def uptime(t):
         s += str(days) + " " + (days == 1 and "day" or "days") + ", "
     s += '{:02d}:{:02d}:{:02d}'.format(hours, minutes, seconds)
     return s
+
+
+def find_dconf(app_name, app_ini_file):
+    """Find parameter configuration file, searching the following locations:
+    * ~/.phantasy/<app_ini_file>
+    * /etc/phantasy/<app_ini_file>
+    * package location: <app>/config/<app_ini_file>
+
+    Parameters
+    ----------
+    app_name : str
+        Name of app sub-package.
+    app_ini_file : str
+        Name of app ini config file.
+
+    Returns
+    -------
+    r : str
+        App config path or None.
+    """
+    home_conf = os.path.expanduser("~/.phantasy/{}".format(app_ini_file))
+    sys_conf = "/etc/phantasy/{}".format(app_ini_file)
+    if os.path.isfile(home_conf):
+        return home_conf
+    elif os.path.isfile(sys_conf):
+        return sys_conf
+    else:
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        path = os.path.join(basedir, '{}/config/{}'.format(
+            app_name, app_ini_file))
+        try:
+            assert os.path.isfile(path)
+        except AssertionError:
+            return None
+        else:
+            return path
 
 
 if __name__ == '__main__':

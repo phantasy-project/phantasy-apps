@@ -7,6 +7,7 @@ from collections import OrderedDict
 import numpy as np
 
 from phantasy import MachinePortal
+from phantasy_apps.utils import find_dconf as _find_dconf
 
 
 def find_dconf():
@@ -16,15 +17,7 @@ def find_dconf():
     * /etc/phantasy/ems.ini
     * package location: apps/allison_scanner/config/ems.ini
     """
-    home_conf = os.path.expanduser('~/.phantasy/ems.ini')
-    sys_conf = '/etc/phantasy/ems.ini'
-    if os.path.isfile(home_conf):
-        return home_conf
-    elif os.path.isfile(sys_conf):
-        return sys_conf
-    else:
-        basedir = os.path.abspath(os.path.dirname(__file__))
-        return os.path.join(basedir, 'config/ems.ini')
+    return _find_dconf('allison_scanner', 'ems.ini')
 
 
 def get_all_devices(machine="FRIB", segment="LEBT", type="EMS"):

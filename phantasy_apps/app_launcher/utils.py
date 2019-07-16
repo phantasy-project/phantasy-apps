@@ -9,6 +9,8 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
 
+from phantasy_apps.utils import find_dconf as _find_dconf
+
 try:
     from configparser import ConfigParser
 except ImportError:
@@ -26,16 +28,7 @@ def find_dconf(path=None):
     """
     if path is not None:
         return os.path.abspath(path)
-
-    home_conf = os.path.expanduser('~/.phantasy/app_launcher.ini')
-    sys_conf = '/etc/phantasy/app_launcher.ini'
-    if os.path.isfile(home_conf):
-        return home_conf
-    elif os.path.isfile(sys_conf):
-        return sys_conf
-    else:
-        basedir = os.path.abspath(os.path.dirname(__file__))
-        return os.path.join(basedir, 'config/app_launcher.ini')
+    return _find_dconf('app_launcher', 'app_launcher.ini')
 
 
 class AppDataModel(QStandardItemModel):
