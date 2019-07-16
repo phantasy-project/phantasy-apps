@@ -156,8 +156,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self.on_retract, 0))
         self.retract_btn.clicked.connect(partial(self.on_retract, None))
         #
-        self.adv_ctrl_chkbox.toggled.emit(self.adv_ctrl_chkbox.isChecked())
         self.reset_itlk_btn.clicked.connect(self.on_reset_interlock)
+        # check adv ctrl by default
+        self.adv_ctrl_chkbox.setChecked(True)
+        self.adv_ctrl_chkbox.toggled.emit(self.adv_ctrl_chkbox.isChecked())
 
     def _init_device(self):
         if self._device_mode == "Simulation":
