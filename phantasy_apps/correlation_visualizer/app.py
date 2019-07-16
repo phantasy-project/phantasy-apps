@@ -1013,6 +1013,13 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self._2dscan_window.show()
 
     @pyqtSlot()
+    def onConfigDeviceProcessor(self):
+        """Customize processing routine for device operation.
+        """
+        QMessageBox.warning(self, "Customize Device Processor",
+                "To be implemented.", QMessageBox.Ok)
+
+    @pyqtSlot()
     def on_update_mps_status(self, change, reason='conn'):
         """Update MPS status button icon when MPS guardian is enabled.
         *change* is bool when *reason* is 'conn', while str when

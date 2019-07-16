@@ -774,6 +774,8 @@ class Ui_MainWindow(object):
         self.actionEnable_2D_Scan = QtWidgets.QAction(MainWindow)
         self.actionEnable_2D_Scan.setCheckable(False)
         self.actionEnable_2D_Scan.setObjectName("actionEnable_2D_Scan")
+        self.actionDevice_Processor = QtWidgets.QAction(MainWindow)
+        self.actionDevice_Processor.setObjectName("actionDevice_Processor")
         self.menu_File.addAction(self.actionSave)
         self.menu_File.addSeparator()
         self.menu_File.addAction(self.actionE_xit)
@@ -786,6 +788,7 @@ class Ui_MainWindow(object):
         self.menuTools.addAction(self.actionMPS_guardian)
         self.menuTools.addAction(self.actionVirtual_diag)
         self.menuTools.addAction(self.actionEnable_2D_Scan)
+        self.menuTools.addAction(self.actionDevice_Processor)
         self.menu_Scan.addAction(self.actionSave_Task)
         self.menu_Scan.addAction(self.actionLoad_Task)
         self.menubar.addAction(self.menu_File.menuAction())
@@ -814,6 +817,8 @@ class Ui_MainWindow(object):
         self.actionVirtual_diag.toggled['bool'].connect(
             MainWindow.onEnableVirtualDiag)
         self.actionEnable_2D_Scan.triggered.connect(MainWindow.on2DScanAction)
+        self.actionDevice_Processor.triggered.connect(
+            MainWindow.onConfigDeviceProcessor)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.alter_elem_lineEdit,
                                self.select_alter_elem_btn)
@@ -1019,6 +1024,8 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Two Dimensional Analysis"))
         self.actionEnable_2D_Scan.setShortcut(
             _translate("MainWindow", "Ctrl+Shift+H"))
+        self.actionDevice_Processor.setText(
+            _translate("MainWindow", "Device Processor"))
 
 
 from mpl4qt.widgets.mplerrorbarwidget import MatplotlibErrorbarWidget
