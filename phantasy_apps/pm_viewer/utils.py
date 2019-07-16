@@ -13,6 +13,7 @@ from phantasy_apps.utils import find_dconf
 class DataModel(QStandardItemModel):
 
     itemSelected = pyqtSignal('QString')
+    item_changed = pyqtSignal(QVariant)
 
     def __init__(self, parent, devices=None, **kws):
         super(self.__class__, self).__init__(parent)
@@ -34,6 +35,7 @@ class DataModel(QStandardItemModel):
                 range(len(self.header))
 
         self._selected_items = set()
+        self.item_changed.connect(self.update_item)
 
     def set_header(self):
         for i, s in zip(self.ids, self.header):
@@ -90,6 +92,21 @@ class DataModel(QStandardItemModel):
         else:
             self._selected_items.remove(ename)
         self.itemSelected.emit(ename)
+
+    def set_cbs(self):
+        def _cb(row, col, fld, **kws):
+            item = QStandardItem(self.fmt.format(fld.value))
+            self.item_changed.emit((row, col, item))
+
+        for i, (c, f) in enumerate(self._data):
+            row, col = i, self.i_rd
+            fld = c.get_field(f)
+            pv = fld.readback_pv[0]
+            pv.add_callback(partial(_cb, row, col, fld))
+            self._pvs.append(pv)
+
+    def update_item(self, p):
+        self.setItem(*p)
 
 
 def init_devices(conf_path=None, machine='FRIB', segment='LINAC'):
