@@ -3,6 +3,7 @@
 
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
+from phantasy.library.physics.devices import process_devices
 
 from .utils import DataModel
 from .ui.ui_app import Ui_MainWindow
@@ -48,9 +49,10 @@ class PMViewerWindow(BaseAppForm, Ui_MainWindow):
         """Run selected devices.
         """
         m = self.v.model()
-        self.selected_devices = sorted(m._selected_items, key=lambda x:x[-4:])
+        self.selected_elems = m.get_selection()
+        n = len(self.selected_elems)
 
-        self.daq_th = DAQT(daq_func=self.daq_single, daq_seq=range(1))
+        self.daq_th = DAQT(daq_func=self.daq_single, daq_seq=range(n))
         self.daq_th.started.connect(partial(self.set_widgets_status, "START"))
         self.daq_th.progressUpdated.connect(self.on_update_daq_status)
         self.daq_th.resultsReady.connect(self.on_daq_results_ready)
@@ -58,16 +60,15 @@ class PMViewerWindow(BaseAppForm, Ui_MainWindow):
         self.daq_th.start()
 
     def on_daq_results_ready(self, r):
-        data = r[0]
         print("Running is done...")
 
     def daq_single(self, iiter):
-        for i in self.selected_devices:
-            t0 = time.time()
-            print("-- Processing device: {}".format(i))
-            time.sleep(2.0)
-            dt = time.time() - t0
-            print("-- Execution Time: {} ms".format(dt * 1000))
+        t0 = time.time()
+        elem = self.selected_elems[iiter]
+        print("-- Processing device: {}".format(elem.name))
+        process_devices((elem,)) 
+        dt = time.time() - t0
+        print("-- Execution Time: {0:.2} sec".format(dt))
 
     def on_update_daq_status(self, f, s):
         print('Progress: {}, {}'.format(f, s))

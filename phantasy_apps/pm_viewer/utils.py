@@ -8,11 +8,14 @@ from PyQt5.QtGui import QStandardItem
 from phantasy_apps.wire_scanner.device import Device
 from phantasy import Configuration, MachinePortal
 from phantasy_apps.utils import find_dconf
+from epics import caget, PV
+from functools import partial
+
+FMT = "{0:.3g}"
 
 
 class DataModel(QStandardItemModel):
 
-    itemSelected = pyqtSignal('QString')
     item_changed = pyqtSignal(QVariant)
 
     def __init__(self, parent, devices=None, **kws):
@@ -33,9 +36,12 @@ class DataModel(QStandardItemModel):
                    self.i_x0, self.i_y0, self.i_xrms, self.i_yrms, \
                    self.i_cxy, self.i_ts = \
                 range(len(self.header))
+        self.fnames = ('XCEN', 'YCEN', 'XRMS', 'YRMS', 'CXY')
+        self.fname_ids = (self.i_x0, self.i_y0, self.i_xrms, self.i_yrms,
+                          self.i_cxy)
 
-        self._selected_items = set()
         self.item_changed.connect(self.update_item)
+        self._pvs = [] # w/ cbs.
 
     def set_header(self):
         for i, s in zip(self.ids, self.header):
@@ -45,17 +51,18 @@ class DataModel(QStandardItemModel):
         for device in self._devices:
             elem = device.elem
             i_name = QStandardItem(device.name)
-            i_name.setProperty('elem', elem)
+            i_name.elem = elem
             i_name.setCheckable(True)
             i_dtype = QStandardItem(device.dtype)
             i_info = QStandardItem(device.misc_info)
-            i_x0 = QStandardItem(elem.XCEN)
-            i_y0 = QStandardItem(elem.YCEN)
-            i_xrms = QStandardItem(elem.XRMS)
-            i_yrms = QStandardItem(elem.YRMS)
-            i_cxy = QStandardItem(elem.CXY)
-            i_ts = QStandardItem('TS')
-            row = [i0, i1, i2, i_x0, i_y0, i_xrms, i_yrms, i_cxy, i_ts]
+            i_x0 = QStandardItem(FMT.format(elem.XCEN))
+            i_y0 = QStandardItem(FMT.format(elem.YCEN))
+            i_xrms = QStandardItem(FMT.format(elem.XRMS))
+            i_yrms = QStandardItem(FMT.format(elem.YRMS))
+            i_cxy = QStandardItem(FMT.format(elem.CXY))
+            i_ts = QStandardItem(get_ts(elem.name))
+            row = [i_name, i_dtype, i_info,
+                   i_x0, i_y0, i_xrms, i_yrms, i_cxy, i_ts]
             [i.setEditable(False) for i in row]
             self.appendRow(row)
 
@@ -64,8 +71,7 @@ class DataModel(QStandardItemModel):
         self.set_header()
         self._v.setModel(self)
         self.__post_init_ui(self._v)
-        # model item is changed: line is selected (first item is checked)
-        self.itemChanged.connect(self.on_item_changed)
+        self.set_cbs()
 
     def __post_init_ui(self, v):
         # view properties
@@ -78,40 +84,49 @@ class DataModel(QStandardItemModel):
         except:
             # table
             v.horizontalHeader().setStretchLastSection(True)
-        v.setSortingEnabled(True)
-        self.sort(self.i_name, Qt.AscendingOrder)
+        # v.setSortingEnabled(True)
+        # self.sort(self.i_name, Qt.AscendingOrder)
         for i in self.ids:
             v.resizeColumnToContents(i)
 
-    def on_item_changed(self, item):
-        # slot
-        # emit: ename
-        ename = item.text()
-        if ename not in self._selected_items:
-            self._selected_items.add(ename)
-        else:
-            self._selected_items.remove(ename)
-        self.itemSelected.emit(ename)
-
     def set_cbs(self):
         def _cb(row, col, fld, **kws):
-            item = QStandardItem(self.fmt.format(fld.value))
+            if col == self.i_ts:
+                fmt = "{}"
+            else:
+                fmt = FMT
+            item = QStandardItem(fmt.format(fld.value))
             self.item_changed.emit((row, col, item))
 
-        for i, (c, f) in enumerate(self._data):
-            row, col = i, self.i_rd
-            fld = c.get_field(f)
-            pv = fld.readback_pv[0]
-            pv.add_callback(partial(_cb, row, col, fld))
-            self._pvs.append(pv)
+        for i in range(self.rowCount()):
+            item = self.item(i, 0)
+            elem = item.elem
+            for j, fname in zip(self.fname_ids, self.fnames):
+                _it = self.item(i, j)
+                fld = elem.get_field(fname)
+                pv = fld.readback_pv[0]
+                pv.add_callback(partial(_cb, i, j, fld))
+                self._pvs.append(pv)
+            ts_pv = PV("{}:DRV2_LTIME".format(elem.name))
+            ts_pv.add_callback(partial(_cb, i, self.i_ts, ts_pv))
+            self._pvs.append(ts_pv)
 
     def update_item(self, p):
         self.setItem(*p)
+
+    def get_selection(self,):
+        r = []
+        for i in range(self.rowCount()):
+            item = self.item(i, self.i_name)
+            if item.checkState() == Qt.Checked:
+                r.append(item.elem)
+        return r
 
 
 def init_devices(conf_path=None, machine='FRIB', segment='LINAC'):
     """Initial list of wire-scanner Devices.
     """
+    print("Initial devices...")
     mp = MachinePortal(machine=machine, segment=segment)
     pms = mp.get_elements(type='PM')
     pms_dict = {o.name: o for o in pms}
@@ -120,7 +135,12 @@ def init_devices(conf_path=None, machine='FRIB', segment='LINAC'):
         conf_path = find_dconf('wire_scanner', 'ws.ini')
     conf = Configuration(conf_path)
 
-    ks = [i for i in conf.keys() if i != 'DEFAULT' and i in pms_dict]
+    ks = [i for i in conf.keys() if i != 'DEFAULT' and i in pms_dict \
+          and conf[i]['info'] == 'Installed']
     devices = [Device(pms_dict[k], conf) for k in ks]
-
+    print("Initial devices...done")
     return devices
+
+
+def get_ts(ename,):
+    return caget("{}:DRV2_LTIME".format(ename))
