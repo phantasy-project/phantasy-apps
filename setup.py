@@ -59,6 +59,7 @@ def set_entry_points():
         'app_launcher=phantasy_apps.app_launcher:run',
         'device_viewer=phantasy_apps.diag_viewer:run',
         'image_viewer=phantasy_apps.imageviewer:run',
+        'pm_viewer=phantasy_apps.pm_viewer:run',
     ]
     return r
 
