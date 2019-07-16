@@ -42,6 +42,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.matplotlibimageWidget.sizePolicy().hasHeightForWidth())
         self.matplotlibimageWidget.setSizePolicy(sizePolicy)
+        self.matplotlibimageWidget.setFigureXlabel("")
         font = QtGui.QFont()
         font.setFamily("aakar")
         font.setPointSize(14)
@@ -97,10 +98,6 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Finalized Data and Analysis Results"))
         self.matplotlibimageWidget.setFigureAspectRatio(
             _translate("MainWindow", "auto"))
-        self.matplotlibimageWidget.setFigureXlabel(
-            _translate("MainWindow", "$x\\,\\mathrm{[mm]}$"))
-        self.matplotlibimageWidget.setFigureYlabel(
-            _translate("MainWindow", "$x\'\\,\\mathrm{[mrad]}$"))
         self.label.setText(
             _translate(
                 "MainWindow",

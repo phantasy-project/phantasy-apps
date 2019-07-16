@@ -57,12 +57,16 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
                 ellipse_on=True, ellipse_opt={'c': 'w', 'color': 'w'})
         # results
         self._show_results(self._r)
+        # set xylabels
+        self._o.setFigureXlabel("${}\,\mathrm{{[mm]}}$".format(self._u))
+        self._o.setFigureYlabel("${}'\,\mathrm{{[mrad]}}$".format(self._u))
 
     def _show_results(self, r):
         for k in r:
             if k.startswith('alpha'):
                 u = k[-1]
                 break
+        self._u = u
 
         ks = '{u}_cen,{u}p_cen,{u}_rms,{u}p_rms,alpha_{u},beta_{u},gamma_{u},emit_{u},emitn_{u},total_intensity'.format(u=u).split(',')
         names = ["{}<sub>{}</sub>".format(i, j) for (i, j) in
