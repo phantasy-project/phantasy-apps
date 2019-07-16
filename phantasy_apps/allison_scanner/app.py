@@ -696,6 +696,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._plot_window.setWindowTitle("ROI for Noise Correction")
         self._plot_window.plot()
         self._plot_window.show()
+        #
+        self.add_attached_widget(self._plot_window)
 
     @pyqtSlot()
     def on_apply_noise_correction(self):
@@ -734,6 +736,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._plot_results_window.plot_data()
         self._plot_results_window.show()
         self._plot_results_window.setWindowTitle("Finalize Twiss Parameters")
+        #
+        self.add_attached_widget(self._plot_results_window)
 
     @pyqtSlot()
     def on_sync_data(self):
