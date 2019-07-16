@@ -385,7 +385,7 @@ class ScanRangeModel(QStandardItemModel):
         self._v.setModel(self)
         #
         # does not work with Python 3.5
-        # self.set_cbs()
+        self.set_cbs()
         self.__post_init_ui(self._v)
         #
 
