@@ -154,6 +154,8 @@ def get_app_version(name):
         from phantasy_apps.lattice_viewer import __version__ as ver
     elif name == 'Device Viewer':
         from phantasy_apps.diag_viewer import __version__ as ver
+    elif name == 'PM Viewer':
+        from phantasy_apps.pm_viewer import __version__ as ver
     else:
         raise RuntimeError
     return ver
