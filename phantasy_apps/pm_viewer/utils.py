@@ -65,6 +65,7 @@ class DataModel(QStandardItemModel):
     def set_data(self):
         for device in self._devices:
             elem = device.elem
+            print("Setting {}...".format(elem.name))
             i_name = QStandardItem("{0:<20s}".format(device.name))
             i_name.elem = elem
             i_name.setCheckable(True)
@@ -185,5 +186,5 @@ def init_devices(conf_path=None, machine='FRIB', segment='LINAC'):
 def get_ts(fld):
     """Return the timestamp for the most recent (approx) updating.
     """
-    ts = fld.setpoint_pv[0].timestamp
-    return epoch2human(ts, fmt="%Y-%m-%dT%H:%M:%S")
+    ts = fld.readback_pv[0].timestamp
+    return epoch2human(ts, fmt="%Y-%m-%d %H:%M:%S")
