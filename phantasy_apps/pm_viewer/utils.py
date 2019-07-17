@@ -101,7 +101,7 @@ class DataModel(QStandardItemModel):
             item = QStandardItem(fmt.format(fld.value))
             item.setEditable(False)
             self.item_changed.emit((row, col, item))
-            self.update_ts(row, col, fld)
+            self.update_ts(row, self.i_ts, fld)
 
         for i in range(self.rowCount()):
             item = self.item(i, 0)
