@@ -79,3 +79,6 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
 
         s =['<h5>{0:<3s} = {1:.6f} {2}<h5>'.format(n, r.get(k), ui) for (n, k, ui) in zip(names, ks, us)]
         self.textEdit.setHtml("<html>{}</html>".format(''.join(s)))
+
+    def closeEvent(self, e):
+        pass
