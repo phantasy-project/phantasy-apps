@@ -11,18 +11,20 @@ from phantasy_apps.utils import find_dconf
 from epics import caget, PV
 from functools import partial
 
-FMT = "{0:.3g}"
+FMT = "{0:.4g}    "
 
 
 class DataModel(QStandardItemModel):
 
     item_changed = pyqtSignal(QVariant)
 
+    # kws: segment (LINAC), machine (FRIB)
     def __init__(self, parent, devices=None, **kws):
         super(self.__class__, self).__init__(parent)
         self._v = parent
         if devices is None:
             self._devices = init_devices(
+                    machine=kws.get('machine', 'FRIB'),
                     segment=kws.get('segment', 'LEBT'))
         else:
             self._devices = devices
@@ -30,7 +32,7 @@ class DataModel(QStandardItemModel):
         self.header = self.h_name, self.h_dtype, self.h_info, \
                       self.h_x0, self.h_y0, self.h_xrms, self.h_yrms, \
                       self.h_cxy, self.h_ts = \
-                ('Name', 'Type', 'Info', 'x0', 'y0', 'xrms', 'yrms', 'cxy',
+                ('Name', 'Type', 'Info', 'XCEN', 'YCEN', 'XRMS', 'YRMS', 'CXY',
                  'Last Updated')
         self.ids = self.i_name, self.i_dtype, self.i_info, \
                    self.i_x0, self.i_y0, self.i_xrms, self.i_yrms, \
@@ -60,7 +62,7 @@ class DataModel(QStandardItemModel):
             i_xrms = QStandardItem(FMT.format(elem.XRMS))
             i_yrms = QStandardItem(FMT.format(elem.YRMS))
             i_cxy = QStandardItem(FMT.format(elem.CXY))
-            i_ts = QStandardItem(get_ts(elem.name))
+            i_ts = QStandardItem(get_ts(elem))
             row = [i_name, i_dtype, i_info,
                    i_x0, i_y0, i_xrms, i_yrms, i_cxy, i_ts]
             [i.setEditable(False) for i in row]
@@ -142,5 +144,10 @@ def init_devices(conf_path=None, machine='FRIB', segment='LINAC'):
     return devices
 
 
-def get_ts(ename,):
-    return caget("{}:DRV2_LTIME".format(ename))
+def get_ts(elem):
+    """Return the timestamp for the most recent (approx) updating.
+    """
+    # return caget("{}:DRV2_LTIME".format(ename))
+    fld = elem.get_field('XCEN')
+    dt = fld.get(timeout=0.1, with_timestamp=True)['timestamp'][0]
+    return dt.strftime("%Y-%m-%dT%H:%M:%S")
