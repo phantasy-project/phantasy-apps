@@ -3,11 +3,12 @@
 
 from PyQt5.QtCore import Qt, QSize, pyqtSignal, QVariant
 from PyQt5.QtGui import QStandardItemModel
-from PyQt5.QtGui import QStandardItem
+from PyQt5.QtGui import QStandardItem, QPixmap, QIcon
 
 from phantasy_apps.wire_scanner.device import Device
 from phantasy import Configuration, MachinePortal
 from phantasy_apps.utils import find_dconf
+from phantasy_apps.correlation_visualizer.utils import delayed_exec
 from epics import caget, PV
 from functools import partial
 from phantasy import epoch2human
@@ -30,12 +31,12 @@ class DataModel(QStandardItemModel):
         else:
             self._devices = devices
 
-        self.header = self.h_name, self.h_dtype, self.h_info, \
+        self.header = self.h_name, self.h_dtype, \
                       self.h_x0, self.h_y0, self.h_xrms, self.h_yrms, \
                       self.h_cxy, self.h_ts = \
-                ('Name', 'Type', 'Info', 'XCEN', 'YCEN', 'XRMS', 'YRMS', 'CXY',
+                ('Name', 'Type', 'XCEN', 'YCEN', 'XRMS', 'YRMS', 'CXY',
                  'Last Updated')
-        self.ids = self.i_name, self.i_dtype, self.i_info, \
+        self.ids = self.i_name, self.i_dtype, \
                    self.i_x0, self.i_y0, self.i_xrms, self.i_yrms, \
                    self.i_cxy, self.i_ts = \
                 range(len(self.header))
@@ -46,6 +47,10 @@ class DataModel(QStandardItemModel):
         self.item_changed.connect(self.update_item)
         self._pvs = [] # w/ cbs.
 
+        # status pix
+        self.px_current = QPixmap(":/icons/current.png")
+        self.px_new = QPixmap(":/icons/new.png")
+
     def set_header(self):
         for i, s in zip(self.ids, self.header):
             self.setHeaderData(i, Qt.Horizontal, s)
@@ -54,17 +59,17 @@ class DataModel(QStandardItemModel):
         for device in self._devices:
             elem = device.elem
             i_name = QStandardItem(device.name)
+            i_name.setIcon(QIcon(self.px_current))
             i_name.elem = elem
             i_name.setCheckable(True)
             i_dtype = QStandardItem(device.dtype)
-            i_info = QStandardItem(device.misc_info)
             i_x0 = QStandardItem(FMT.format(elem.XCEN))
             i_y0 = QStandardItem(FMT.format(elem.YCEN))
             i_xrms = QStandardItem(FMT.format(elem.XRMS))
             i_yrms = QStandardItem(FMT.format(elem.YRMS))
             i_cxy = QStandardItem(FMT.format(elem.CXY))
             i_ts = QStandardItem(get_ts(elem.get_field('XCEN')))
-            row = [i_name, i_dtype, i_info,
+            row = [i_name, i_dtype,
                    i_x0, i_y0, i_xrms, i_yrms, i_cxy, i_ts]
             [i.setEditable(False) for i in row]
             self.appendRow(row)
@@ -112,7 +117,7 @@ class DataModel(QStandardItemModel):
                 pv = fld.readback_pv[0]
                 pv.add_callback(partial(_cb, i, j, fld))
                 self._pvs.append(pv)
-    
+
     def update_ts(self, row, col, fld):
         # update ts col
         print("Updating...", row, col, fld)
@@ -120,6 +125,13 @@ class DataModel(QStandardItemModel):
         item = QStandardItem(ts)
         item.setEditable(False)
         self.item_changed.emit((row, col, item))
+        # new??
+        self._setup_new_flag(row)
+
+    def _setup_new_flag(self):
+        nitem = self.item(row, self.i_name)
+        nitem.setIcon(QIcon(self.px_new))
+        delayed_exec(lambda:nitem.setIcon(QIcon(self.px_current)), 15000)
 
     def update_item(self, p):
         self.setItem(*p)
