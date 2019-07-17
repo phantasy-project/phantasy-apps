@@ -433,7 +433,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def _valid_device(self):
         # others
         try:
-            caget('FE_SCS1:FC_D0739:LMPOS_LTCH_DRV') == 0
+            assert caget('FE_SCS1:FC_D0739:LMPOS_LTCH_DRV') == 0
         except AssertionError:
             QMessageBox.warning(self, "Device Confilictions",
                 "Detect confliction with Faraday Cup D0738, pull it out first.",
@@ -697,7 +697,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._plot_window.plot()
         self._plot_window.show()
         #
-        self.add_attached_widget(self._plot_window)
+        # self.add_attached_widget(self._plot_window)
 
     @pyqtSlot()
     def on_apply_noise_correction(self):
@@ -737,7 +737,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._plot_results_window.show()
         self._plot_results_window.setWindowTitle("Finalize Twiss Parameters")
         #
-        self.add_attached_widget(self._plot_results_window)
+        # self.add_attached_widget(self._plot_results_window)
 
     @pyqtSlot()
     def on_sync_data(self):
