@@ -26,9 +26,9 @@ class Ui_MainWindow(object):
         self.treeView.setObjectName("treeView")
         self.gridLayout.addWidget(self.treeView, 0, 0, 1, 1)
         self.verticalLayout.addWidget(self.groupBox)
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setObjectName("label")
-        self.verticalLayout.addWidget(self.label)
+        self.footnote_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.footnote_lbl.setObjectName("footnote_lbl")
+        self.verticalLayout.addWidget(self.footnote_lbl)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         spacerItem = QtWidgets.QSpacerItem(40, 20,
@@ -36,9 +36,22 @@ class Ui_MainWindow(object):
                                            QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.run_btn = QtWidgets.QPushButton(self.centralwidget)
+        icon = QtGui.QIcon()
+        icon.addPixmap(
+            QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.run_btn.setIcon(icon)
+        self.run_btn.setIconSize(QtCore.QSize(32, 32))
         self.run_btn.setObjectName("run_btn")
         self.horizontalLayout.addWidget(self.run_btn)
         self.stop_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.stop_btn.setEnabled(False)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(
+            QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.stop_btn.setIcon(icon1)
+        self.stop_btn.setIconSize(QtCore.QSize(32, 32))
         self.stop_btn.setObjectName("stop_btn")
         self.horizontalLayout.addWidget(self.stop_btn)
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -54,25 +67,25 @@ class Ui_MainWindow(object):
         self.menu_Preferences.setObjectName("menu_Preferences")
         MainWindow.setMenuBar(self.menubar)
         self.actionE_xit = QtWidgets.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(
-            QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.actionE_xit.setIcon(icon)
-        self.actionE_xit.setObjectName("actionE_xit")
-        self.actionAbout = QtWidgets.QAction(MainWindow)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(
-            QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.actionAbout.setIcon(icon1)
-        self.actionAbout.setObjectName("actionAbout")
-        self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         icon2 = QtGui.QIcon()
         icon2.addPixmap(
+            QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.actionE_xit.setIcon(icon2)
+        self.actionE_xit.setObjectName("actionE_xit")
+        self.actionAbout = QtWidgets.QAction(MainWindow)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(
+            QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
+            QtGui.QIcon.Off)
+        self.actionAbout.setIcon(icon3)
+        self.actionAbout.setObjectName("actionAbout")
+        self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(
             QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
-        self.actionAbout_Qt.setIcon(icon2)
+        self.actionAbout_Qt.setIcon(icon4)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionApp_Settings = QtWidgets.QAction(MainWindow)
         self.actionApp_Settings.setObjectName("actionApp_Settings")
@@ -97,10 +110,10 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.groupBox.setTitle(_translate("MainWindow", "Profile Monitors"))
-        self.label.setText(
+        self.footnote_lbl.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p><span style=\" vertical-align:super;\">*</span>The units for beam center and size are all millimeter.</p></body></html>"
+                "<html><head/><body><p><span style=\" vertical-align:super;\">*</span>The units for beam center and size are all millimeter.</p><p><span style=\" vertical-align:super;\">*</span>Last updates in the past 300 seconds will be marked.</p></body></html>"
             ))
         self.run_btn.setText(_translate("MainWindow", "RUN"))
         self.stop_btn.setText(_translate("MainWindow", "STOP"))
