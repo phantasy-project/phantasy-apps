@@ -15,6 +15,7 @@ from phantasy import epoch2human
 import logging
 
 FMT = "{0:<12.6g}"
+NEW_DURATION_IN_SEC = 5
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,7 +33,7 @@ class DataModel(QStandardItemModel):
         if devices is None:
             self._devices = init_devices(
                     machine=kws.get('machine', 'FRIB'),
-                    segment=kws.get('segment', 'LEBT'))
+                    segment=kws.get('segment', 'LINAC'))
         else:
             self._devices = devices
 
@@ -45,9 +46,9 @@ class DataModel(QStandardItemModel):
                    self.i_x0, self.i_y0, self.i_xrms, self.i_yrms, \
                    self.i_cxy, self.i_ts = \
                 range(len(self.header))
-        self.fnames = ('XCEN', 'YCEN', 'XRMS', 'YRMS', 'CXY')
+        self.fnames = ('XCEN', 'YCEN', 'XRMS', 'YRMS', 'CXY', 'LTIME')
         self.fname_ids = (self.i_x0, self.i_y0, self.i_xrms, self.i_yrms,
-                          self.i_cxy)
+                          self.i_cxy, self.i_ts)
 
         self.item_changed.connect(self.update_item)
         self._pvs = [] # w/ cbs.
@@ -74,7 +75,7 @@ class DataModel(QStandardItemModel):
             i_xrms = QStandardItem(FMT.format(elem.XRMS))
             i_yrms = QStandardItem(FMT.format(elem.YRMS))
             i_cxy = QStandardItem(FMT.format(elem.CXY))
-            i_ts = QStandardItem(get_ts(elem.get_field('XCEN')))
+            i_ts = QStandardItem(get_ts(elem.get_field('LTIME')))
             i_ts.setIcon(QIcon(self.px_current))
             row = [i_name, i_dtype,
                    i_x0, i_y0, i_xrms, i_yrms, i_cxy, i_ts]
@@ -113,13 +114,12 @@ class DataModel(QStandardItemModel):
     def set_cbs(self):
         def _cb(row, col, fld, **kws):
             if col == self.i_ts:
-                fmt = "{}"
+                self.update_ts(row, col, fld)
             else:
                 fmt = FMT
-            item = QStandardItem(fmt.format(fld.value))
-            item.setEditable(False)
-            self.item_changed.emit((row, col, item))
-            self.update_ts(row, self.i_ts, fld)
+                item = QStandardItem(fmt.format(fld.value))
+                item.setEditable(False)
+                self.item_changed.emit((row, col, item))
 
         for i in range(self.rowCount()):
             item = self.item(i, 0)
@@ -133,11 +133,11 @@ class DataModel(QStandardItemModel):
 
     def update_ts(self, row, col, fld):
         # update ts col
-        _LOGGER.info("Updating ({0},{1}) [{2}] with {3:.6g}..".format(
-            row, col, fld.name, fld.value))
-        print("Updating...", row, col, fld)
-        ts = get_ts(fld)
-        item = QStandardItem(ts)
+        msg = "Updating ({0},{1}) [{2}] with {3:.6g}..".format(
+                row, col, fld.name, fld.value)
+        _LOGGER.info(msg)
+        print(msg)
+        item = QStandardItem(get_ts(fld))
         item.setEditable(False)
         self.item_changed.emit((row, col, item))
         # new??
@@ -147,7 +147,7 @@ class DataModel(QStandardItemModel):
     def mark_new_flag(self, row):
         self._i = self.item(row, self.i_ts)
         self._i.setIcon(QIcon(self.px_new))
-        delayed_exec(lambda:self._i.setIcon(QIcon(self.px_current)), 120000)
+        delayed_exec(lambda:self._i.setIcon(QIcon(self.px_current)), NEW_DURATION_IN_SEC * 1000)
 
     def update_item(self, p):
         self.setItem(*p)
