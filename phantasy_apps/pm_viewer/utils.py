@@ -1,19 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import Qt, QSize, pyqtSignal, QVariant, pyqtSlot
-from PyQt5.QtGui import QStandardItemModel
-from PyQt5.QtGui import QStandardItem, QPixmap, QIcon
-
-from phantasy_apps.wire_scanner.device import Device
-from phantasy import Configuration, MachinePortal
-from phantasy_apps.utils import find_dconf
-from phantasy_apps.correlation_visualizer.utils import delayed_exec
-from epics import caget, PV
 from functools import partial
-from phantasy import epoch2human
 import logging
 import time
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QVariant
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QStandardItemModel
+from PyQt5.QtGui import QStandardItem
+
+from phantasy import epoch2human
+from phantasy import Configuration
+from phantasy import MachinePortal
+from phantasy_apps.correlation_visualizer.utils import delayed_exec
+from phantasy_apps.wire_scanner.device import Device
+from phantasy_apps.utils import find_dconf
 
 FMT = "{0:<12.6g}"
 NEW_DURATION_IN_SEC = 300
@@ -30,9 +37,11 @@ class DataModel(QStandardItemModel):
     status_changed = pyqtSignal(int)
 
     # kws: segment (LINAC), machine (FRIB)
-    def __init__(self, parent, devices=None, **kws):
+    def __init__(self, parent, devices=None, fresh_duration=None, **kws):
         super(self.__class__, self).__init__(parent)
         self._v = parent
+        self._fresh_duration = NEW_DURATION_IN_SEC if fresh_duration is \
+                                    None else fresh_duration
         if devices is None:
             self._devices = init_devices(
                     machine=kws.get('machine', 'FRIB'),
@@ -96,7 +105,8 @@ class DataModel(QStandardItemModel):
         else:
             px = self.px_current
         i_ts.setIcon(QIcon(px))
-        delayed_exec(lambda:i_ts.setIcon(QIcon(self.px_current)), NEW_DURATION_IN_SEC * 1000)
+        delayed_exec(lambda:i_ts.setIcon(QIcon(self.px_current)),
+                     self._fresh_duration * 1000)
         return i_ts
 
     def set_model(self):
@@ -164,7 +174,8 @@ class DataModel(QStandardItemModel):
     def mark_new_flag(self, row):
         self._i = self.item(row, self.i_ts)
         self._i.setIcon(QIcon(self.px_new))
-        delayed_exec(lambda:self._i.setIcon(QIcon(self.px_current)), NEW_DURATION_IN_SEC * 1000)
+        delayed_exec(lambda:self._i.setIcon(QIcon(self.px_current)),
+                     self._fresh_duration * 1000)
 
     def update_item(self, p):
         self.setItem(*p)

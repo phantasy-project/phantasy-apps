@@ -1,15 +1,24 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import time
+from functools import partial
+
+from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QDialog
+
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from phantasy.library.physics.devices import process_devices
 
-from .utils import DataModel
+from .app_settings import AppSettingsWidget
 from .ui.ui_app import Ui_MainWindow
+from .utils import DataModel
 
-import time
-from functools import partial
+NEW_DURATION_IN_SEC = 300
+
+FOOTNOTE_TEMPLATE = '<html><head/><body><p><span style="vertical-align:super;">*</span>The units for beam center and size are all millimeter.</p><p><span style="vertical-align:super;">*</span>Last updates in the past {} seconds will be marked as NEW.</p></body></html>'
 
 
 class PMViewerWindow(BaseAppForm, Ui_MainWindow):
@@ -26,7 +35,7 @@ class PMViewerWindow(BaseAppForm, Ui_MainWindow):
         self.app_about_info = """
             <html>
             <h4>About Profile Monitors Viewer</h4>
-            <p>Run and see a bunch of profile monitors in one window,
+            <p>Inspect and operate a bunch of profile monitors in one window,
             current version is {}.
             </p>
             <p>Copyright (C) 2019 Facility for Rare Isotope Beams and other contributors.</p>
@@ -36,13 +45,19 @@ class PMViewerWindow(BaseAppForm, Ui_MainWindow):
         # UI
         self.setupUi(self)
 
+        # vars
+        self._app_settings_widget = None
+        self._fresh_duration = NEW_DURATION_IN_SEC
+        self.footnote_lbl.setText(FOOTNOTE_TEMPLATE.format(self._fresh_duration))
+
         self.v = self.treeView
         self.set_viewer()
 
     def set_viewer(self):
         """Set up viewer.
         """
-        m = DataModel(self.v, segment='LINAC')
+        m = DataModel(self.v, segment='LINAC',
+                      fresh_duration=self._fresh_duration)
         m.set_model()
 
     def on_run_devices(self):
@@ -51,6 +66,11 @@ class PMViewerWindow(BaseAppForm, Ui_MainWindow):
         m = self.v.model()
         self.selected_elems = m.get_selection()
         n = len(self.selected_elems)
+        if n == 0:
+            QMessageBox.warning(self, "Run Devices",
+                    "Not any devices are selected.",
+                    QMessageBox.Ok)
+            return
 
         self.daq_th = DAQT(daq_func=self.daq_single, daq_seq=range(n))
         self.daq_th.started.connect(partial(self.set_widgets_status, "START"))
@@ -66,7 +86,7 @@ class PMViewerWindow(BaseAppForm, Ui_MainWindow):
         t0 = time.time()
         elem = self.selected_elems[iiter]
         print("-- Processing device: {}".format(elem.name))
-        process_devices((elem,)) 
+        process_devices((elem,))
         dt = time.time() - t0
         print("-- Execution Time: {0:.2f} sec".format(dt))
 
@@ -74,11 +94,24 @@ class PMViewerWindow(BaseAppForm, Ui_MainWindow):
         print('Progress: {}, {}'.format(f, s))
 
     def set_widgets_status(self, status):
-        olist1 = (self.run_btn,)
+        olist1 = (self.run_btn, )
         olist2 = (self.stop_btn, )
-        if status != "START":
+        if status != "START": # not running
             [o.setEnabled(True) for o in olist1]
             [o.setEnabled(False) for o in olist2]
-        else:
+        else: # running
             [o.setEnabled(False) for o in olist1]
             [o.setEnabled(True) for o in olist2]
+
+    @pyqtSlot()
+    def onLaunchAppSettings(self):
+        """Launch widget for app settings.
+        """
+        if self._app_settings_widget is None:
+            self._app_settings_widget = AppSettingsWidget(self)
+        self._app_settings_widget.dtsec_dsbox.setValue(NEW_DURATION_IN_SEC)
+        r = self._app_settings_widget.exec_()
+        if r == QDialog.Accepted:
+            self._fresh_duration = self._app_settings_widget.dtsec_dsbox.value()
+            self.footnote_lbl.setText(FOOTNOTE_TEMPLATE.format(self._fresh_duration))
+            self.set_viewer()
