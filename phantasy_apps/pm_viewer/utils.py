@@ -25,7 +25,7 @@ from phantasy_apps.utils import find_dconf
 FMT = "{0:<12.6g}"
 NEW_DURATION_IN_SEC = 300
 LTIME_ATTR = 'LTIME'
-LTIME_ATTR = 'XCEN' # for testing
+# LTIME_ATTR = 'XCEN' # for testing
 
 _LOGGER = logging.getLogger(__name__)
 
