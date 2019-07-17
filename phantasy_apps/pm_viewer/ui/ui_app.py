@@ -26,6 +26,9 @@ class Ui_MainWindow(object):
         self.treeView.setObjectName("treeView")
         self.gridLayout.addWidget(self.treeView, 0, 0, 1, 1)
         self.verticalLayout.addWidget(self.groupBox)
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setObjectName("label")
+        self.verticalLayout.addWidget(self.label)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         spacerItem = QtWidgets.QSpacerItem(40, 20,
@@ -86,6 +89,11 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.groupBox.setTitle(_translate("MainWindow", "Profile Monitors"))
+        self.label.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p><span style=\" vertical-align:super;\">*</span>The units for beam center and size are all millimeter.</p></body></html>"
+            ))
         self.run_btn.setText(_translate("MainWindow", "RUN"))
         self.stop_btn.setText(_translate("MainWindow", "STOP"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
