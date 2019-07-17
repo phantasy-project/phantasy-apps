@@ -10,6 +10,7 @@ from phantasy import Configuration, MachinePortal
 from phantasy_apps.utils import find_dconf
 from epics import caget, PV
 from functools import partial
+from phantasy import epoch2human
 
 FMT = "{0:.4g}    "
 
@@ -62,7 +63,7 @@ class DataModel(QStandardItemModel):
             i_xrms = QStandardItem(FMT.format(elem.XRMS))
             i_yrms = QStandardItem(FMT.format(elem.YRMS))
             i_cxy = QStandardItem(FMT.format(elem.CXY))
-            i_ts = QStandardItem(get_ts(elem))
+            i_ts = QStandardItem(get_ts(elem.get_field('XCEN')))
             row = [i_name, i_dtype, i_info,
                    i_x0, i_y0, i_xrms, i_yrms, i_cxy, i_ts]
             [i.setEditable(False) for i in row]
@@ -98,7 +99,10 @@ class DataModel(QStandardItemModel):
             else:
                 fmt = FMT
             item = QStandardItem(fmt.format(fld.value))
+            item.setEditable(False)
             self.item_changed.emit((row, col, item))
+            if col == self.i_x0:
+                self.update_ts(row, col, fld)
 
         for i in range(self.rowCount()):
             item = self.item(i, 0)
@@ -109,9 +113,13 @@ class DataModel(QStandardItemModel):
                 pv = fld.readback_pv[0]
                 pv.add_callback(partial(_cb, i, j, fld))
                 self._pvs.append(pv)
-            ts_pv = PV("{}:DRV2_LTIME".format(elem.name))
-            ts_pv.add_callback(partial(_cb, i, self.i_ts, ts_pv))
-            self._pvs.append(ts_pv)
+    
+    def update_ts(self, row, col, fld):
+        # update ts col
+        ts = get_ts(fld)
+        item = QStandardItem(ts)
+        item.setEditable(False)
+        self.update_item((row, col, item))
 
     def update_item(self, p):
         self.setItem(*p)
@@ -144,10 +152,8 @@ def init_devices(conf_path=None, machine='FRIB', segment='LINAC'):
     return devices
 
 
-def get_ts(elem):
+def get_ts(fld):
     """Return the timestamp for the most recent (approx) updating.
     """
-    # return caget("{}:DRV2_LTIME".format(ename))
-    fld = elem.get_field('XCEN')
-    dt = fld.get(timeout=0.1, with_timestamp=True)['timestamp'][0]
-    return dt.strftime("%Y-%m-%dT%H:%M:%S")
+    ts = fld.setpoint_pv[0].timestamp
+    return epoch2human(ts, fmt="%Y-%m-%dT%H:%M:%S")
