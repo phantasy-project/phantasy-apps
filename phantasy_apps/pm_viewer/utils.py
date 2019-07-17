@@ -13,7 +13,7 @@ from epics import caget, PV
 from functools import partial
 from phantasy import epoch2human
 
-FMT = "{0:.4g}    "
+FMT = "{0:<12.6g}"
 
 
 class DataModel(QStandardItemModel):
@@ -61,11 +61,12 @@ class DataModel(QStandardItemModel):
     def set_data(self):
         for device in self._devices:
             elem = device.elem
-            i_name = QStandardItem(device.name)
+            i_name = QStandardItem("{0:<20s}".format(device.name))
             i_name.setIcon(QIcon(self.px_current))
             i_name.elem = elem
             i_name.setCheckable(True)
-            i_dtype = QStandardItem(device.dtype)
+            i_dtype = QStandardItem(
+                '{0:<10s}'.format(device.dtype.upper()))
             i_x0 = QStandardItem(FMT.format(elem.XCEN))
             i_y0 = QStandardItem(FMT.format(elem.YCEN))
             i_xrms = QStandardItem(FMT.format(elem.XRMS))
