@@ -13,6 +13,17 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1606, 1144)
+        MainWindow.setStyleSheet("QProgressBar {\n"
+                                 "    border: 1px solid gray;\n"
+                                 "    border-radius: 10px;\n"
+                                 "    text-align: center;\n"
+                                 "}\n"
+                                 "\n"
+                                 "QProgressBar::chunk {\n"
+                                 "    background-color: #05B8CC;\n"
+                                 "    width: 20px;\n"
+                                 "    margin: 0.5px;\n"
+                                 "}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -31,11 +42,28 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.footnote_lbl)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
+        self.pb = QtWidgets.QProgressBar(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pb.sizePolicy().hasHeightForWidth())
+        self.pb.setSizePolicy(sizePolicy)
+        self.pb.setProperty("value", 24)
+        self.pb.setObjectName("pb")
+        self.horizontalLayout.addWidget(self.pb)
         spacerItem = QtWidgets.QSpacerItem(40, 20,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.run_btn = QtWidgets.QPushButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.run_btn.sizePolicy().hasHeightForWidth())
+        self.run_btn.setSizePolicy(sizePolicy)
         icon = QtGui.QIcon()
         icon.addPixmap(
             QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
@@ -46,6 +74,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.run_btn)
         self.stop_btn = QtWidgets.QPushButton(self.centralwidget)
         self.stop_btn.setEnabled(False)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.stop_btn.sizePolicy().hasHeightForWidth())
+        self.stop_btn.setSizePolicy(sizePolicy)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(
             QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
