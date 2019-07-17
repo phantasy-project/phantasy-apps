@@ -68,7 +68,7 @@ class PMViewerWindow(BaseAppForm, Ui_MainWindow):
         print("-- Processing device: {}".format(elem.name))
         process_devices((elem,)) 
         dt = time.time() - t0
-        print("-- Execution Time: {0:.2} sec".format(dt))
+        print("-- Execution Time: {0:.2f} sec".format(dt))
 
     def on_update_daq_status(self, f, s):
         print('Progress: {}, {}'.format(f, s))

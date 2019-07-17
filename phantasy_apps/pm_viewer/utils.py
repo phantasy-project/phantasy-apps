@@ -101,8 +101,7 @@ class DataModel(QStandardItemModel):
             item = QStandardItem(fmt.format(fld.value))
             item.setEditable(False)
             self.item_changed.emit((row, col, item))
-            if col == self.i_x0:
-                self.update_ts(row, col, fld)
+            self.update_ts(row, col, fld)
 
         for i in range(self.rowCount()):
             item = self.item(i, 0)
@@ -116,10 +115,11 @@ class DataModel(QStandardItemModel):
     
     def update_ts(self, row, col, fld):
         # update ts col
+        print("Updating...", row, col, fld)
         ts = get_ts(fld)
         item = QStandardItem(ts)
         item.setEditable(False)
-        self.update_item((row, col, item))
+        self.item_changed.emit((row, col, item))
 
     def update_item(self, p):
         self.setItem(*p)
