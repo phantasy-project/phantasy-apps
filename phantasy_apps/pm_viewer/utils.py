@@ -128,10 +128,10 @@ class DataModel(QStandardItemModel):
         # new??
         self._setup_new_flag(row)
 
-    def _setup_new_flag(self):
-        nitem = self.item(row, self.i_name)
-        nitem.setIcon(QIcon(self.px_new))
-        delayed_exec(lambda:nitem.setIcon(QIcon(self.px_current)), 15000)
+    def _setup_new_flag(self, row):
+        self._i = self.item(row, self.i_name)
+        self._i.setIcon(QIcon(self.px_new))
+        delayed_exec(lambda:self._i.setIcon(QIcon(self.px_current)), 15000)
 
     def update_item(self, p):
         self.setItem(*p)
