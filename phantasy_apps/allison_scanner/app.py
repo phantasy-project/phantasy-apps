@@ -411,7 +411,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             return
         if self._device_mode == "Live":
             self._ems_device.init_run()
-        # self._device.start()
+        self._device.start()
 
     @pyqtSlot()
     def on_abort(self):
