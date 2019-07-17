@@ -395,6 +395,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._run()
 
     def _run(self):
+        if not self._validate():
+            return
+
         is_valid = self._valid_device()
         if is_valid is False:
             return
@@ -430,7 +433,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         finally:
             self._ems_device.retract(v)
 
-    def _valid_device(self):
+    def _validate(self):
         # others
         try:
             assert caget('FE_SCS1:FC_D0739:LMPOS_LTCH_DRV') == 0
@@ -439,6 +442,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 "Detect confliction with Faraday Cup D0738, pull it out first.",
                 QMessageBox.Ok)
             return False
+        else:
+            return True
+
+    def _valid_device(self):
+        
         # self
         elem = self._ems_device.elem
         x1 = getattr(elem, self._pos_begin_fname)
@@ -697,7 +705,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._plot_window.plot()
         self._plot_window.show()
         #
-        # self.add_attached_widget(self._plot_window)
+        self.add_attached_widget(self._plot_window)
 
     @pyqtSlot()
     def on_apply_noise_correction(self):
@@ -737,7 +745,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._plot_results_window.show()
         self._plot_results_window.setWindowTitle("Finalize Twiss Parameters")
         #
-        # self.add_attached_widget(self._plot_results_window)
+        self.add_attached_widget(self._plot_results_window)
 
     @pyqtSlot()
     def on_sync_data(self):
