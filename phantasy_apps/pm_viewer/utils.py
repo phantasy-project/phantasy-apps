@@ -62,7 +62,6 @@ class DataModel(QStandardItemModel):
         for device in self._devices:
             elem = device.elem
             i_name = QStandardItem("{0:<20s}".format(device.name))
-            i_name.setIcon(QIcon(self.px_current))
             i_name.elem = elem
             i_name.setCheckable(True)
             i_dtype = QStandardItem(
@@ -73,6 +72,7 @@ class DataModel(QStandardItemModel):
             i_yrms = QStandardItem(FMT.format(elem.YRMS))
             i_cxy = QStandardItem(FMT.format(elem.CXY))
             i_ts = QStandardItem(get_ts(elem.get_field('XCEN')))
+            i_ts.setIcon(QIcon(self.px_current))
             row = [i_name, i_dtype,
                    i_x0, i_y0, i_xrms, i_yrms, i_cxy, i_ts]
             [i.setEditable(False) for i in row]
@@ -88,7 +88,7 @@ class DataModel(QStandardItemModel):
     def __post_init_ui(self, v):
         # view properties
         v.setStyleSheet("font-family: monospace;")
-        v.setIconSize(QSize(24, 24))
+        v.setIconSize(QSize(28, 28))
         v.setAlternatingRowColors(True)
         try:
             # tree
@@ -100,6 +100,12 @@ class DataModel(QStandardItemModel):
         # self.sort(self.i_name, Qt.AscendingOrder)
         for i in self.ids:
             v.resizeColumnToContents(i)
+
+        m = v.model()
+        for i in range(self.rowCount()):
+            for j in self.ids:
+                idx = m.index(i, j)
+                m.setData(idx, QSize(48, 48), Qt.SizeHintRole)
 
     def set_cbs(self):
         def _cb(row, col, fld, **kws):
@@ -134,7 +140,7 @@ class DataModel(QStandardItemModel):
 
     @pyqtSlot(int)
     def mark_new_flag(self, row):
-        self._i = self.item(row, self.i_name)
+        self._i = self.item(row, self.i_ts)
         self._i.setIcon(QIcon(self.px_new))
         delayed_exec(lambda:self._i.setIcon(QIcon(self.px_current)), 120000)
 
