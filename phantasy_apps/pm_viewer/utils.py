@@ -13,9 +13,12 @@ from epics import caget, PV
 from functools import partial
 from phantasy import epoch2human
 import logging
+import time
 
 FMT = "{0:<12.6g}"
-NEW_DURATION_IN_SEC = 5
+NEW_DURATION_IN_SEC = 300
+LTIME_ATTR = 'LTIME'
+LTIME_ATTR = 'XCEN' # for testing
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -46,7 +49,7 @@ class DataModel(QStandardItemModel):
                    self.i_x0, self.i_y0, self.i_xrms, self.i_yrms, \
                    self.i_cxy, self.i_ts = \
                 range(len(self.header))
-        self.fnames = ('XCEN', 'YCEN', 'XRMS', 'YRMS', 'CXY', 'LTIME')
+        self.fnames = ('XCEN', 'YCEN', 'XRMS', 'YRMS', 'CXY', LTIME_ATTR)
         self.fname_ids = (self.i_x0, self.i_y0, self.i_xrms, self.i_yrms,
                           self.i_cxy, self.i_ts)
 
@@ -76,12 +79,25 @@ class DataModel(QStandardItemModel):
             i_xrms = QStandardItem(FMT.format(elem.XRMS))
             i_yrms = QStandardItem(FMT.format(elem.YRMS))
             i_cxy = QStandardItem(FMT.format(elem.CXY))
-            i_ts = QStandardItem(get_ts(elem.get_field('LTIME')))
-            i_ts.setIcon(QIcon(self.px_current))
+            i_ts = self.init_ts_item(elem.get_field(LTIME_ATTR))
             row = [i_name, i_dtype,
                    i_x0, i_y0, i_xrms, i_yrms, i_cxy, i_ts]
             [i.setEditable(False) for i in row]
             self.appendRow(row)
+
+    def init_ts_item(self, fld):
+        """Initialize last updated item.
+        """
+        ts = get_ts(fld, formated=False)
+        ts_as_str = epoch2human(ts, fmt="%Y-%m-%d %H:%M:%S")
+        i_ts = QStandardItem(ts_as_str)
+        if time.time() - ts < NEW_DURATION_IN_SEC:
+            px = self.px_new
+        else:
+            px = self.px_current
+        i_ts.setIcon(QIcon(px))
+        delayed_exec(lambda:i_ts.setIcon(QIcon(self.px_current)), NEW_DURATION_IN_SEC * 1000)
+        return i_ts
 
     def set_model(self):
         self.set_data()
@@ -183,8 +199,11 @@ def init_devices(conf_path=None, machine='FRIB', segment='LINAC'):
     return devices
 
 
-def get_ts(fld):
+def get_ts(fld, formated=True):
     """Return the timestamp for the most recent (approx) updating.
     """
     ts = fld.readback_pv[0].timestamp
-    return epoch2human(ts, fmt="%Y-%m-%d %H:%M:%S")
+    if formated:
+        return epoch2human(ts, fmt="%Y-%m-%d %H:%M:%S")
+    else:
+        return ts
