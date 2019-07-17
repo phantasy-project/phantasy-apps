@@ -12,8 +12,11 @@ from phantasy_apps.correlation_visualizer.utils import delayed_exec
 from epics import caget, PV
 from functools import partial
 from phantasy import epoch2human
+import logging
 
 FMT = "{0:<12.6g}"
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class DataModel(QStandardItemModel):
@@ -130,6 +133,8 @@ class DataModel(QStandardItemModel):
 
     def update_ts(self, row, col, fld):
         # update ts col
+        _LOGGER.info("Updating ({0},{1}) [{2}] with {3:.6g}..".format(
+            row, col, fld.name, fld.value))
         print("Updating...", row, col, fld)
         ts = get_ts(fld)
         item = QStandardItem(ts)
@@ -159,6 +164,7 @@ class DataModel(QStandardItemModel):
 def init_devices(conf_path=None, machine='FRIB', segment='LINAC'):
     """Initial list of wire-scanner Devices.
     """
+    _LOGGER.info("Initial devices...")
     print("Initial devices...")
     mp = MachinePortal(machine=machine, segment=segment)
     pms = mp.get_elements(type='PM')
@@ -171,7 +177,8 @@ def init_devices(conf_path=None, machine='FRIB', segment='LINAC'):
     ks = [i for i in conf.keys() if i != 'DEFAULT' and i in pms_dict \
           and conf[i]['info'] == 'Installed']
     devices = [Device(pms_dict[k], conf) for k in ks]
-    print("Initial devices...done")
+    _LOGGER.info("Initial devices... done!")
+    print("Initial devices... done!")
     return devices
 
 
