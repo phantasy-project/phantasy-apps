@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import Qt, QSize, pyqtSignal, QVariant
+from PyQt5.QtCore import Qt, QSize, pyqtSignal, QVariant, pyqtSlot
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtGui import QStandardItem, QPixmap, QIcon
 
@@ -19,6 +19,8 @@ FMT = "{0:.4g}    "
 class DataModel(QStandardItemModel):
 
     item_changed = pyqtSignal(QVariant)
+    # status changed at i-th row, mark new flag
+    status_changed = pyqtSignal(int)
 
     # kws: segment (LINAC), machine (FRIB)
     def __init__(self, parent, devices=None, **kws):
@@ -50,6 +52,7 @@ class DataModel(QStandardItemModel):
         # status pix
         self.px_current = QPixmap(":/icons/current.png")
         self.px_new = QPixmap(":/icons/new.png")
+        self.status_changed.connect(self.mark_new_flag)
 
     def set_header(self):
         for i, s in zip(self.ids, self.header):
@@ -126,12 +129,13 @@ class DataModel(QStandardItemModel):
         item.setEditable(False)
         self.item_changed.emit((row, col, item))
         # new??
-        self._setup_new_flag(row)
+        self.status_changed.emit(row)
 
-    def _setup_new_flag(self, row):
+    @pyqtSlot(int)
+    def mark_new_flag(self, row):
         self._i = self.item(row, self.i_name)
         self._i.setIcon(QIcon(self.px_new))
-        delayed_exec(lambda:self._i.setIcon(QIcon(self.px_current)), 15000)
+        delayed_exec(lambda:self._i.setIcon(QIcon(self.px_current)), 120000)
 
     def update_item(self, p):
         self.setItem(*p)
