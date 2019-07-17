@@ -42,7 +42,7 @@ class PMViewerWindow(BaseAppForm, Ui_MainWindow):
     def set_viewer(self):
         """Set up viewer.
         """
-        m = DataModel(self.v, segment='LEBT')
+        m = DataModel(self.v, segment='LINAC')
         m.set_model()
 
     def on_run_devices(self):
