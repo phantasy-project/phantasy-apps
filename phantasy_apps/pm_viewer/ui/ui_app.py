@@ -50,6 +50,8 @@ class Ui_MainWindow(object):
         self.menu_File.setObjectName("menu_File")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
+        self.menu_Preferences = QtWidgets.QMenu(self.menubar)
+        self.menu_Preferences.setObjectName("menu_Preferences")
         MainWindow.setMenuBar(self.menubar)
         self.actionE_xit = QtWidgets.QAction(MainWindow)
         icon = QtGui.QIcon()
@@ -72,10 +74,14 @@ class Ui_MainWindow(object):
             QtGui.QIcon.Off)
         self.actionAbout_Qt.setIcon(icon2)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
+        self.actionApp_Settings = QtWidgets.QAction(MainWindow)
+        self.actionApp_Settings.setObjectName("actionApp_Settings")
         self.menu_File.addAction(self.actionE_xit)
         self.menu_Help.addAction(self.actionAbout)
         self.menu_Help.addAction(self.actionAbout_Qt)
+        self.menu_Preferences.addAction(self.actionApp_Settings)
         self.menubar.addAction(self.menu_File.menuAction())
+        self.menubar.addAction(self.menu_Preferences.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -83,6 +89,8 @@ class Ui_MainWindow(object):
         self.actionAbout_Qt.triggered.connect(MainWindow.onAboutQt)
         self.actionE_xit.triggered.connect(MainWindow.close)
         self.run_btn.clicked.connect(MainWindow.on_run_devices)
+        self.actionApp_Settings.triggered.connect(
+            MainWindow.onLaunchAppSettings)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -98,9 +106,13 @@ class Ui_MainWindow(object):
         self.stop_btn.setText(_translate("MainWindow", "STOP"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
+        self.menu_Preferences.setTitle(
+            _translate("MainWindow", "&Preferences"))
         self.actionE_xit.setText(_translate("MainWindow", "E&xit"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
         self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
+        self.actionApp_Settings.setText(
+            _translate("MainWindow", "App Settings"))
 
 
 from . import resources_rc
