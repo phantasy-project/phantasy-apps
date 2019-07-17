@@ -45,6 +45,8 @@ class PMViewerWindow(BaseAppForm, Ui_MainWindow):
         # UI
         self.setupUi(self)
 
+        self.pb.setValue(0)
+        self.pb.setVisible(False)
         # vars
         self._app_settings_widget = None
         self._fresh_duration = NEW_DURATION_IN_SEC
@@ -73,13 +75,14 @@ class PMViewerWindow(BaseAppForm, Ui_MainWindow):
             return
 
         self.daq_th = DAQT(daq_func=self.daq_single, daq_seq=range(n))
-        self.daq_th.started.connect(partial(self.set_widgets_status, "START"))
+        self.daq_th.daqStarted.connect(partial(self.set_widgets_status, "START"))
         self.daq_th.progressUpdated.connect(self.on_update_daq_status)
         self.daq_th.resultsReady.connect(self.on_daq_results_ready)
-        self.daq_th.finished.connect(partial(self.set_widgets_status, "STOP"))
+        self.daq_th.daqFinished.connect(partial(self.set_widgets_status, "STOP"))
         self.daq_th.start()
 
     def on_daq_results_ready(self, r):
+        self.pb.setVisible(False)
         print("Running is done...")
 
     def daq_single(self, iiter):
@@ -92,6 +95,7 @@ class PMViewerWindow(BaseAppForm, Ui_MainWindow):
 
     def on_update_daq_status(self, f, s):
         print('Progress: {}, {}'.format(f, s))
+        self.pb.setValue(f * 100)
 
     def set_widgets_status(self, status):
         olist1 = (self.run_btn, )
@@ -100,6 +104,7 @@ class PMViewerWindow(BaseAppForm, Ui_MainWindow):
             [o.setEnabled(True) for o in olist1]
             [o.setEnabled(False) for o in olist2]
         else: # running
+            self.pb.setVisible(True)
             [o.setEnabled(False) for o in olist1]
             [o.setEnabled(True) for o in olist2]
 
