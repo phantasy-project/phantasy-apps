@@ -114,7 +114,7 @@ class PMViewerWindow(BaseAppForm, Ui_MainWindow):
         """
         if self._app_settings_widget is None:
             self._app_settings_widget = AppSettingsWidget(self)
-        self._app_settings_widget.dtsec_dsbox.setValue(NEW_DURATION_IN_SEC)
+        self._app_settings_widget.dtsec_dsbox.setValue(self._fresh_duration)
         r = self._app_settings_widget.exec_()
         if r == QDialog.Accepted:
             self._fresh_duration = self._app_settings_widget.dtsec_dsbox.value()
