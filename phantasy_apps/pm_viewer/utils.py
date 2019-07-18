@@ -99,15 +99,15 @@ class DataModel(QStandardItemModel):
         """
         ts = get_ts(fld, formated=False)
         ts_as_str = epoch2human(ts, fmt="%Y-%m-%d %H:%M:%S")
-        i_ts = QStandardItem(ts_as_str)
+        self._i_ts = QStandardItem(ts_as_str)
         if time.time() - ts < NEW_DURATION_IN_SEC:
             px = self.px_new
         else:
             px = self.px_current
-        i_ts.setIcon(QIcon(px))
-        delayed_exec(lambda:i_ts.setIcon(QIcon(self.px_current)),
+        self._i_ts.setIcon(QIcon(px))
+        delayed_exec(lambda:self._i_ts.setIcon(QIcon(self.px_current)),
                      self._fresh_duration * 1000)
-        return i_ts
+        return self._i_ts
 
     def set_model(self):
         self.set_data()
@@ -160,7 +160,7 @@ class DataModel(QStandardItemModel):
 
     def update_ts(self, row, col, fld):
         # update ts col
-        msg = "Updating ({0},{1}) [{2}] with {3:.6g}..".format(
+        msg = "Updating ({0},{1}) [{2}] with {3:10s}..".format(
                 row, col, fld.name, fld.value)
         _LOGGER.info(msg)
         print(msg)
