@@ -446,7 +446,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             return True
 
     def _valid_device(self):
-        
         # self
         elem = self._ems_device.elem
         x1 = getattr(elem, self._pos_begin_fname)
@@ -476,6 +475,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         return self._ems_device.check_status() == 0
 
     def on_update(self, data):
+        print("Data from {} is updating...".format(self._data_pv))
         m = data.reshape(self._ydim, self._xdim)
         m = np.flipud(m)
         m = np.nan_to_num(m)
