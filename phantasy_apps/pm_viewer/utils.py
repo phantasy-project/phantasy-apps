@@ -51,16 +51,18 @@ class DataModel(QStandardItemModel):
 
         self.header = self.h_name, self.h_dtype, \
                       self.h_x0, self.h_y0, self.h_xrms, self.h_yrms, \
-                      self.h_cxy, self.h_ts = \
+                      self.h_cxy, self.h_pos1, self.h_pos2, self.h_ts = \
                 ('Name', 'Type', 'XCEN', 'YCEN', 'XRMS', 'YRMS', 'CXY',
-                 'Last Updated')
+                 'POS1', 'POS2', 'Last Updated')
         self.ids = self.i_name, self.i_dtype, \
                    self.i_x0, self.i_y0, self.i_xrms, self.i_yrms, \
-                   self.i_cxy, self.i_ts = \
+                   self.i_cxy, self.i_pos1, self.i_pos2, self.i_ts = \
                 range(len(self.header))
-        self.fnames = ('XCEN', 'YCEN', 'XRMS', 'YRMS', 'CXY', LTIME_ATTR)
+        self.fnames = ('XCEN', 'YCEN', 'XRMS', 'YRMS', 'CXY',
+                       'MOTOR_POS1', 'MOTOR_POS2',
+                       LTIME_ATTR, )
         self.fname_ids = (self.i_x0, self.i_y0, self.i_xrms, self.i_yrms,
-                          self.i_cxy, self.i_ts)
+                          self.i_cxy, self.i_pos1, self.i_pos2, self.i_ts)
 
         self.item_changed.connect(self.update_item)
         self._pvs = [] # w/ cbs.
@@ -89,8 +91,16 @@ class DataModel(QStandardItemModel):
             i_yrms = QStandardItem(FMT.format(elem.YRMS))
             i_cxy = QStandardItem(FMT.format(elem.CXY))
             i_ts = self.init_ts_item(elem.get_field(LTIME_ATTR))
+            i_pos1 = QStandardItem(FMT.format(elem.MOTOR_POS1))
+            if device.dtype == 'small':
+                v_pos2 = ''
+            else:
+                v_pos2 = FMT.format(elem.MOTOR_POS2)
+            i_pos2 = QStandardItem(v_pos2)
+            #
             row = [i_name, i_dtype,
-                   i_x0, i_y0, i_xrms, i_yrms, i_cxy, i_ts]
+                   i_x0, i_y0, i_xrms, i_yrms, i_cxy,
+                   i_pos1, i_pos2, i_ts]
             [i.setEditable(False) for i in row]
             self.appendRow(row)
 
@@ -152,6 +162,8 @@ class DataModel(QStandardItemModel):
             item = self.item(i, 0)
             elem = item.elem
             for j, fname in zip(self.fname_ids, self.fnames):
+                if not hasattr(elem, fname):
+                    continue
                 _it = self.item(i, j)
                 fld = elem.get_field(fname)
                 pv = fld.readback_pv[0]
@@ -167,7 +179,6 @@ class DataModel(QStandardItemModel):
         item = QStandardItem(get_ts(fld))
         item.setEditable(False)
         self.item_changed.emit((row, col, item))
-        self._v.clearSelection()
         # new??
         self.status_changed.emit(row)
 
@@ -179,6 +190,7 @@ class DataModel(QStandardItemModel):
                      self._fresh_duration * 1000)
 
     def update_item(self, p):
+        self._v.clearSelection()
         self.setItem(*p)
 
     def get_selection(self,):
