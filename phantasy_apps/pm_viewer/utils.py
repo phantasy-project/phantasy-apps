@@ -167,6 +167,7 @@ class DataModel(QStandardItemModel):
         item = QStandardItem(get_ts(fld))
         item.setEditable(False)
         self.item_changed.emit((row, col, item))
+        self._v.clearSelection()
         # new??
         self.status_changed.emit(row)
 
