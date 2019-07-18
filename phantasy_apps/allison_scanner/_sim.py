@@ -49,8 +49,8 @@ class SimDevice(QObject):
         epics.caput(self._trigger_pv, 1)
 
     def reset_data_cb(self):
-        self._data_pv.remove_callback(self._dcid)
-        self._status_pv.remove_callback(self._scid)
+        # self._data_pv.remove_callback(self._dcid)
+        # self._status_pv.remove_callback(self._scid)
         # self._pos_pv.remove_callback(self._pcid)
         self.finished.emit()
 
