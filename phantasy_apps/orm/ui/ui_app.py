@@ -941,13 +941,16 @@ class Ui_MainWindow(object):
         self.stop_apply_btn.setIconSize(QtCore.QSize(24, 24))
         self.stop_apply_btn.setObjectName("stop_apply_btn")
         self.horizontalLayout_8.addWidget(self.stop_apply_btn)
-        self.cor_eva_btn = QtWidgets.QPushButton(self.orm_apply)
+        self.cor_eva_btn = QtWidgets.QToolButton(self.orm_apply)
         icon13 = QtGui.QIcon()
         icon13.addPixmap(
             QtGui.QPixmap(":/icons/evaluate.png"), QtGui.QIcon.Normal,
             QtGui.QIcon.Off)
         self.cor_eva_btn.setIcon(icon13)
-        self.cor_eva_btn.setIconSize(QtCore.QSize(20, 20))
+        self.cor_eva_btn.setIconSize(QtCore.QSize(24, 24))
+        self.cor_eva_btn.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
+        self.cor_eva_btn.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+        self.cor_eva_btn.setArrowType(QtCore.Qt.NoArrow)
         self.cor_eva_btn.setObjectName("cor_eva_btn")
         self.horizontalLayout_8.addWidget(self.cor_eva_btn)
         self.cor_apply_btn = QtWidgets.QPushButton(self.orm_apply)
@@ -1119,8 +1122,6 @@ class Ui_MainWindow(object):
             self.lower_limit_lineEdit.setEnabled)
         self.enable_limit_change_chkbox.toggled['bool'].connect(
             self.upper_limit_lineEdit.setEnabled)
-        self.cor_eva_btn.clicked.connect(
-            MainWindow.on_evaluate_settings_from_orm)
         self.reset_cached_settings_btn.clicked.connect(
             MainWindow.on_reset_cached_settings)
         self.save_settings.triggered.connect(MainWindow.on_save_settings)
@@ -1133,6 +1134,8 @@ class Ui_MainWindow(object):
         self.del_setting_btn.clicked.connect(MainWindow.on_del_settings)
         self.config_fields_btn.clicked.connect(
             MainWindow.on_config_monitor_fields)
+        self.cor_eva_btn.clicked.connect(
+            MainWindow.on_evaluate_settings_from_orm)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

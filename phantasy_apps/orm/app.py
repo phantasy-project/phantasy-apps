@@ -12,7 +12,9 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QMessageBox
 from phantasy import limit_input
 from phantasy_ui import BaseAppForm
@@ -195,6 +197,9 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         self.refresh_models_btn.clicked.connect(self.init_elements)
         self.refresh_models_btn.clicked.connect(self.init_fields)
 
+        # evalution btn
+        self._init_evaluation_action()
+
         # init params
         self.init_params()
 
@@ -223,6 +228,24 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         self.refresh_models_btn.clicked.emit()
         # init _bpm_field, _cor_field, _xoy
         # self.init_fields()
+
+    def _init_evaluation_action(self):
+        # initialize evaluation action.
+        self._slow_mode_on = False
+        m = QMenu(self)
+        # slow_mode_on
+        smo_act = QAction("Trigger Monitors", self)
+        smo_act.setToolTip("Trigger slow monitors like PMs before evaluation.")
+        smo_act.setCheckable(True)
+        smo_act.toggled.connect(self.on_slow_mode_on)
+        m.addAction(smo_act)
+        m.setToolTipsVisible(True)
+        self.cor_eva_btn.setMenu(m)
+
+    @pyqtSlot(bool)
+    def on_slow_mode_on(self, f):
+        self._slow_mode_on = f
+        print("Slow mode on? ", self._slow_mode_on)
 
     @pyqtSlot()
     def on_refresh_models(self):
@@ -666,7 +689,8 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
             (daq_rate, daq_nshot) = params
         s = lat.get_settings_from_orm(cors, bpms, orb_field=orb_field,
                                       cor_field=cor_field, cor_min=l_limit, cor_max=u_limit,
-                                      damping_factor=dfac, nshot=daq_nshot, rate=daq_rate)
+                                      damping_factor=dfac, nshot=daq_nshot, rate=daq_rate,
+                                      slow_mode_on=self._slow_mode_on)
         return s
 
     @pyqtSlot()
