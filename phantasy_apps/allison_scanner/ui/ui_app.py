@@ -1187,6 +1187,8 @@ class Ui_MainWindow(object):
             QtGui.QIcon.Off)
         self.actionSaveData.setIcon(icon9)
         self.actionSaveData.setObjectName("actionSaveData")
+        self.actionRunXY = QtWidgets.QAction(MainWindow)
+        self.actionRunXY.setObjectName("actionRunXY")
         self.menu_File.addAction(self.actionOpen)
         self.menu_File.addAction(self.actionSaveData)
         self.menu_File.addSeparator()
@@ -1200,6 +1202,7 @@ class Ui_MainWindow(object):
         self.menuConfiguration.addSeparator()
         self.menuConfiguration.addAction(self.actionLocate)
         self.menu_Device.addAction(self.actionSimulation_Mode)
+        self.menu_Device.addAction(self.actionRunXY)
         self.menu_Data.addAction(self.actionAuto_Analysis)
         self.menubar.addAction(self.menu_File.menuAction())
         self.menubar.addAction(self.menuConfiguration.menuAction())
@@ -1250,6 +1253,7 @@ class Ui_MainWindow(object):
             MainWindow.on_auto_fill_beam_params)
         self.adv_ctrl_chkbox.toggled['bool'].connect(
             MainWindow.on_enable_advctrl)
+        self.actionRunXY.triggered.connect(MainWindow.onRunXnY)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1454,6 +1458,7 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Auto Analysis"))
         self.actionSaveData.setText(_translate("MainWindow", "Save"))
         self.actionSaveData.setShortcut(_translate("MainWindow", "Ctrl+S"))
+        self.actionRunXY.setText(_translate("MainWindow", "Run X and Y"))
 
 
 from mpl4qt.widgets.mplbasewidget import MatplotlibBaseWidget
