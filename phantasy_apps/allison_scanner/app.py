@@ -10,6 +10,7 @@ from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QEventLoop
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QDoubleValidator
@@ -42,6 +43,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     ylabel_changed = pyqtSignal('QString')
     results_changed = pyqtSignal(dict)
     size_factor_changed = pyqtSignal(float)
+    finished = pyqtSignal()
     def __init__(self, version, mode="Live"):
         super(AllisonScannerWindow, self).__init__()
 
@@ -392,6 +394,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_run(self):
+        self._abort = False
         self._run()
 
     def _run(self):
@@ -419,6 +422,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_abort(self):
         self._ems_device.abort()
+        self._abort = True
 
     @pyqtSlot()
     def on_retract(self, x):
@@ -498,6 +502,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         #
         if self._auto_analysis:
             self._auto_process()
+        #
+        self.finished.emit()
 
     def closeEvent(self, e):
         BaseAppForm.closeEvent(self, e)
@@ -900,3 +906,26 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         xlbl = "${}\,\mathrm{{[mm]}}$".format(self._ems_orientation.lower())
         self.xlabel_changed.emit(xlbl)
         self.raw_view_chkbox.toggled.emit(self.raw_view_chkbox.isChecked())
+
+    @pyqtSlot()
+    def onRunXnY(self):
+        """Run X and Y in a sequence.
+        """
+        self.actionAuto_Analysis.setChecked(False)
+
+        def on_finished():
+            ori = self.ems_orientation_cbb.currentText()
+            if ori == 'Y':
+                loop.quit()
+            else:
+                self.ems_orientation_cbb.setCurrentText('Y')
+                self.run_btn.clicked.emit()
+
+        self.ems_orientation_cbb.setCurrentText('X')
+        self.run_btn.clicked.emit()
+
+        loop = QEventLoop()
+        self.finished.connect(on_finished)
+        loop.exec_()
+
+        self.actionAuto_Analysis.setChecked(True)
