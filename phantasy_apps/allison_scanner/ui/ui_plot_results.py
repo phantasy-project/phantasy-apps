@@ -98,6 +98,7 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Finalized Data and Analysis Results"))
         self.matplotlibimageWidget.setFigureAspectRatio(
             _translate("MainWindow", "auto"))
+        self.matplotlibimageWidget.setColorMap(_translate("MainWindow", "jet"))
         self.label.setText(
             _translate(
                 "MainWindow",
