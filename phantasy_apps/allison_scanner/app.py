@@ -3,7 +3,7 @@
 
 from functools import partial
 from getpass import getuser
-from epics import caget
+from epics import caget, caput
 
 import numpy as np
 from PyQt5.QtCore import QUrl
@@ -442,9 +442,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         try:
             assert caget('FE_SCS1:FC_D0739:LMPOS_LTCH_DRV') == 0
         except AssertionError:
-            QMessageBox.warning(self, "Device Confilictions",
-                "Detect confliction with Faraday Cup D0738, pull it out first.",
-                QMessageBox.Ok)
+            r = QMessageBox.warning(self, "Device Confilictions",
+                    "Detect confliction with Faraday Cup (D0738), before pulling it out, try to reset interlock?",
+                    QMessageBox.Yes | QMessageBox.Cancel)
+            if r == QMessageBox.Yes:
+                caput('FE_SCS1:FC_D0739:RST_CMD', 1)
             return False
         else:
             return True
