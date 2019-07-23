@@ -290,8 +290,8 @@ class Data(object):
         Parameters
         ----------
         noise_signal_array : array
-            Boolean array with True as signal, and False as False tagging.
-        intensity : array:
+            Boolean array with True as signal, and False as noise tagging.
+        intensity : array
             Intensity array, if not defined, use the initial one.
 
         Keyword Arguments

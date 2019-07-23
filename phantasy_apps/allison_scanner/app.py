@@ -705,8 +705,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self._plot_window is None:
             self._plot_window = PlotWidget(self)
             self.data_changed.connect(self._plot_window.data_changed)
-            self.results_changed.connect(self._plot_window.on_ellipse_updated)
-            self.size_factor_changed.connect(self._plot_window.on_ellipse_size_updated)
+            self._plot_window.auto_boundary_chkbox.toggled.emit(
+                    self._plot_window.auto_boundary_chkbox.isChecked())
             self._plot_window.setWindowTitle("ROI for Noise Correction")
         self._plot_window.plot()
         self._plot_window.show()
@@ -916,6 +916,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         def on_finished():
             ori = self.ems_orientation_cbb.currentText()
             if ori == 'Y':
+                self.retract_btn.clicked.emit()
                 loop.quit()
             else:
                 self.ems_orientation_cbb.setCurrentText('Y')
