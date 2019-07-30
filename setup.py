@@ -60,6 +60,7 @@ def set_entry_points():
         'device_viewer=phantasy_apps.diag_viewer:run',
         'image_viewer=phantasy_apps.imageviewer:run',
         'pm_viewer=phantasy_apps.pm_viewer:run',
+        'phy_model=phantasy_apps.online_model:run',
     ]
     return r
 
