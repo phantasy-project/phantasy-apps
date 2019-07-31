@@ -197,6 +197,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot('QString')
     def on_update_orientation(self, s):
+        r = QMessageBox.information(self, "Switching Measurement",
+                "Be sure do retraction and reset interlock before switching.",
+                QMessageBox.Ok)
+
         self._ems_orientation = s
         self._ems_device.xoy = s
         self._oid = oid = self._ems_device._id
@@ -452,8 +456,17 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             return True
 
     def _valid_device(self):
-        # self
         elem = self._ems_device.elem
+        # bias volt
+        try:
+            assert elem.BIAS_VOLT <= -200.0
+        except AssertionError:
+            QMessageBox.warning(self, "Bias Voltage Warning",
+                "Bias Voltage is not in range of < {}.".format(-200.0),
+                QMessageBox.Ok)
+            return False
+
+        # range
         x1 = getattr(elem, self._pos_begin_fname)
         x2 = getattr(elem, self._pos_end_fname)
         dx = getattr(elem, self._pos_step_fname)
@@ -469,6 +482,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         y1 = getattr(elem, self._volt_begin_fname)
         y2 = getattr(elem, self._volt_end_fname)
         dy = getattr(elem, self._volt_step_fname)
+
+        try:
+            assert int((y2 - y1) / dy) * dy == y2 - y1
+        except AssertionError:
+            QMessageBox.warning(self, "Scan Range Warning",
+                "Input scan range for voltage indicates non-integer points.",
+                QMessageBox.Ok)
+            return False
 
         #
         xdim = self._xdim = int((x2 - x1) / dx) + 1
@@ -508,6 +529,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.finished.emit()
 
     def closeEvent(self, e):
+        r = QMessageBox.information(self, "Close Application",
+                "Have you saved the data?",
+                QMessageBox.Yes | QMessageBox.No)
+        if r == QMessageBox.No:
+            self.on_save_data()
         BaseAppForm.closeEvent(self, e)
 
     @pyqtSlot(bool)
