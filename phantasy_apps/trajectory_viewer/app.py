@@ -14,15 +14,14 @@ from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import QMessageBox
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import LatticeWidget
-
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
+from phantasy_apps.utils import apply_mplcurve_settings
 from .app_elem_selection import ElementSelectionWidget
 from .app_help import HelpDialog
 from .ui.ui_app import Ui_MainWindow
 from .utils import ElementListModel
 from .utils import MonitorReadingsDataSheet
-from .utils import apply_mplcurve_settings
 from .utils import load_readings_sheet
 
 BPM_UNIT_FAC = {"mm": 1.0, "m": 1e3}
@@ -222,8 +221,10 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         # load default figure config
         p = self.matplotlibcurveWidget
         o = self.bpms_magplot
-        apply_mplcurve_settings(p)
-        apply_mplcurve_settings(o, filename='mpl_settings_mag.json')
+        apply_mplcurve_settings(p, 'trajectory_viewer',
+                                filename='tv_mpl_settings_traj.json')
+        apply_mplcurve_settings(o, 'trajectory_viewer',
+                                filename='tv_mpl_settings_mag.json')
 
         # init data viz
         self.__init_data_viz()
