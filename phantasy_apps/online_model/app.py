@@ -238,6 +238,12 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         mach, segm = o.last_machine_name, o.last_lattice_name
         self.machine_lineEdit.setText(mach)
         self.segment_lineEdit.setText(segm)
+        self.init_latinfo()
+
+    def init_latinfo(self):
+        # initial lattice info view
+        self._lv = None
+        self.lattice_info_btn.clicked.connect(self.on_show_latinfo)
 
     @pyqtSlot(bool)
     def on_set_stop_signal(self, f):
@@ -252,6 +258,27 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         if filepath is None:
             return
         self._fm.generate_latfile(latfile=filepath)
+
+    @pyqtSlot()
+    def on_show_latinfo(self):
+        machine = self.machine_lineEdit.text()
+        lattice = self.segment_lineEdit.text()
+        if machine == '' or lattice == '':
+            return
+
+        from phantasy_apps.lattice_viewer import LatticeViewerWindow
+        from phantasy_apps.lattice_viewer import __version__
+        from phantasy_apps.lattice_viewer import __title__
+
+        if self._lv is None:
+            self._lv = LatticeViewerWindow(__version__)
+            self._lv.setWindowTitle("{} ({})".format(__title__, self.getAppTitle()))
+        lw = self._lv.latticeWidget
+        lw.mach_cbb.setCurrentText(machine)
+        lw.seg_cbb.setCurrentText(lattice)
+        lw.load_btn.clicked.emit()
+        lw.setEnabled(False)
+        self._lv.show()
 
 
 if __name__ == "__main__":
