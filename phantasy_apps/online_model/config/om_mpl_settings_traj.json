@@ -1,0 +1,78 @@
+{
+  "curve": [
+    {
+      "label": "X",
+      "line": {
+        "color": "#0000FF",
+        "style": "-",
+        "width": 2.0
+      },
+      "line_id": 0,
+      "marker": {
+        "edgecolor": "#0000FF",
+        "facecolor": "#FFFFFF",
+        "size": 3.0,
+        "style": "None",
+        "width": 1.0
+      }
+    },
+    {
+      "label": "Y",
+      "line": {
+        "color": "#FF0000",
+        "style": "-",
+        "width": 2.0
+      },
+      "line_id": 1,
+      "marker": {
+        "edgecolor": "#FF0000",
+        "facecolor": "#FF0000",
+        "size": 6.0,
+        "style": "None",
+        "width": 1.0
+      }
+    }
+  ],
+  "figure": {
+    "labels": {
+      "font": "Sans,14,-1,5,50,0,0,0,0,0,Regular",
+      "xlabel": "$s$ [m]",
+      "ylabel": "Center Position [mm]"
+    },
+    "legend": {
+      "location": 2,
+      "show": true
+    },
+    "title": {
+      "font": "Sans,16,-1,5,50,0,0,0,0,0,Regular",
+      "value": "Central Beam Trajectory"
+    },
+    "xy_range": {
+      "auto_scale": false,
+      "xmax": 31.5272,
+      "xmin": -1.50129,
+      "ymax": 1.67078,
+      "ymin": -0.907097
+    }
+  },
+  "style": {
+    "background": {
+      "color": "#f0f0f0"
+    },
+    "figsize": {
+      "dpi": 100.0,
+      "height": 4.8,
+      "width": 6.4
+    },
+    "layout": {
+      "grid_color": "#808080",
+      "grid_on": true,
+      "tight_on": false
+    },
+    "ticks": {
+      "color": "#4a4a4a",
+      "font": "sans-serif,10,-1,5,50,0,0,0,0,0",
+      "mticks_on": true
+    }
+  }
+}
