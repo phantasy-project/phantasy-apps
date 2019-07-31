@@ -814,9 +814,9 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         if machine == '' or lattice == '':
             return
 
-        from phantasy.apps.lattice_viewer import LatticeViewerWindow
-        from phantasy.apps.lattice_viewer import __version__
-        from phantasy.apps.lattice_viewer import __title__
+        from phantasy_apps.lattice_viewer import LatticeViewerWindow
+        from phantasy_apps.lattice_viewer import __version__
+        from phantasy_apps.lattice_viewer import __title__
 
         if self._lv is None:
             self._lv = LatticeViewerWindow(__version__)
