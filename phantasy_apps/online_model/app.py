@@ -5,21 +5,29 @@
 is required to make it executable as a PyQt5 app.
 """
 
-from functools import partial
+import os
 import time
+from functools import partial
 from numpy import ndarray
 
-from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QVariant
 from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMessageBox
 
 from phantasy_ui import BaseAppForm
 from phantasy_ui import get_open_filename
+from phantasy_ui import get_save_filename
 from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 
 from phantasy_apps.correlation_visualizer.utils import delayed_exec
+from phantasy_apps.utils import apply_mplcurve_settings
+
+from flame import Machine
+from flame_utils import ModelFlame
+from flame_utils import generate_source
 
 from .ui.ui_app import Ui_MainWindow
 
@@ -69,8 +77,13 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.start_btn.clicked.connect(self.on_start)
         self.stop_btn.clicked.connect(self.on_stop)
 
+        # export latfile
+        self.export_btn.clicked.connect(self.on_export)
+
         # load latfile for reading initial condition
+        self._beam_state_conf = None
         self.browse_btn.clicked.connect(self.on_open_latfile)
+        self.latpath_lineEdit.returnPressed.connect(self.on_update_beamstate)
 
         #
         self._init_data_viz()
@@ -96,6 +109,11 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
                 getattr(self, '{}_xdataChanged'.format(s)).emit([])
                 getattr(self, '{}_ydataChanged'.format(s)).emit([])
 
+        # mpl settings
+        apply_mplcurve_settings(o1, 'online_model',
+                                filename='om_mpl_settings_traj.json')
+        apply_mplcurve_settings(o2, 'online_model',
+                                filename='om_mpl_settings_env.json')
 
     @pyqtSlot()
     def on_start(self):
@@ -135,7 +153,10 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self._lat.sync_settings()
         print("-- Run physics model...")
         _, fm = self._lat.run()
+        if self._beam_state_conf is not None:
+            fm.configure(econf=self._beam_state_conf)
         r, s = fm.run(monitor='all')
+        self._fm = fm
         data = fm.collect_data(r, pos=True, x0=True, y0=True,
                                xrms=True, yrms=True)
         s = data['pos']
@@ -168,13 +189,39 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_open_latfile(self):
-        """Open latfile.
+        """Open lattice file to reading initial beam conditions.
         """
         filepath, ext = get_open_filename(self,
                 type_filter="FLAME Lattice Files (*.lat)")
         if filepath is None:
             return
         self.latpath_lineEdit.setText(filepath)
+        self.on_update_beamstate()
+
+    @pyqtSlot()
+    def on_update_beamstate(self):
+        """Update initial beam conditions.
+        """
+        latfile = self.latpath_lineEdit.text()
+        if not os.path.isfile(latfile):
+            QMessageBox.warning(self, "Read Beam States",
+                    "Invalid lattice file.", QMessageBox.Ok)
+            return
+        #
+        fm = ModelFlame(lat_file=latfile)
+        bs = fm.bmstate
+        # additional process
+        drf_lat = {'sim_type': 'MomentMatrix',
+                   'elements': [{
+                       'name': 'drift01',
+                       'type': 'drift',
+                       'L': 1.49541187}]
+        }
+        drf_m = Machine(drf_lat)
+        drf_m.propagate(bs.state)
+        s0 = generate_source(state=bs)
+        print(s0)
+        self._beam_state_conf = s0
 
     @pyqtSlot()
     def onLoadLatticeAction(self):
@@ -196,6 +243,15 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
     def on_set_stop_signal(self, f):
         self._stop = f
 
+    @pyqtSlot()
+    def on_export(self):
+        """Export lattice file for current modeling.
+        """
+        filepath, ext = get_save_filename(self,
+                type_filter="FLAME Lattice Files (*.lat)")
+        if filepath is None:
+            return
+        self._fm.generate_latfile(latfile=filepath)
 
 
 if __name__ == "__main__":
