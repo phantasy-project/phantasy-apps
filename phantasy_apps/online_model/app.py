@@ -85,6 +85,9 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.browse_btn.clicked.connect(self.on_open_latfile)
         self.latpath_lineEdit.returnPressed.connect(self.on_update_beamstate)
 
+        # beam ellipse btn
+        self.show_twiss_btn.clicked.connect(self.on_show_beam_ellipse)
+
         #
         self._init_data_viz()
 
@@ -279,6 +282,24 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         lw.load_btn.clicked.emit()
         lw.setEnabled(False)
         self._lv.show()
+
+    @pyqtSlot()
+    def onSnapshotAction(self):
+        """Show results in a popup window.
+        """
+        QMessageBox.warning(self, "", "To be implemented.", QMessageBox.Ok)
+        #from flame_utils import hplot
+        #hplot('xcen', 'ycen', 'xrms', 'yrms', machine=self._fm)
+
+    @pyqtSlot()
+    def on_show_beam_ellipse(self):
+        """Show beam ellipse based on twiss parameters.
+        """
+        QMessageBox.warning(self, "", "To be implemented.", QMessageBox.Ok)
+        # if self._ellipse_widget is None:
+        #    self._ellipse_widget = EllipseWindow(self)
+        # self._ellipse_widget.show()
+
 
 
 if __name__ == "__main__":

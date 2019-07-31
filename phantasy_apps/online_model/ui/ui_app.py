@@ -135,11 +135,16 @@ class Ui_MainWindow(object):
         self.browse_btn.setSizePolicy(sizePolicy)
         self.browse_btn.setObjectName("browse_btn")
         self.horizontalLayout.addWidget(self.browse_btn)
+        self.show_twiss_btn = QtWidgets.QToolButton(self.groupBox)
+        self.show_twiss_btn.setIcon(icon2)
+        self.show_twiss_btn.setAutoRaise(True)
+        self.show_twiss_btn.setObjectName("show_twiss_btn")
+        self.horizontalLayout.addWidget(self.show_twiss_btn)
         self.gridLayout.addLayout(self.horizontalLayout, 2, 1, 1, 1)
         self.verticalLayout_2.addWidget(self.groupBox)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 34))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 36))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -163,12 +168,15 @@ class Ui_MainWindow(object):
             QtGui.QIcon.Off)
         self.actionLoad_Lattice.setIcon(icon3)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
+        self.actionSnapshot = QtWidgets.QAction(MainWindow)
+        self.actionSnapshot.setObjectName("actionSnapshot")
         self.menu_File.addAction(self.actionE_xit)
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.action_About)
         self.menu_Help.addAction(self.actionAbout_Qt)
         self.menu_Tools.addAction(self.actionLoad_Lattice)
+        self.menu_Tools.addAction(self.actionSnapshot)
         self.menubar.addAction(self.menu_File.menuAction())
         self.menubar.addAction(self.menu_Tools.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
@@ -179,6 +187,7 @@ class Ui_MainWindow(object):
         self.action_About.triggered.connect(MainWindow.onAbout)
         self.actionLoad_Lattice.triggered.connect(
             MainWindow.onLoadLatticeAction)
+        self.actionSnapshot.triggered.connect(MainWindow.onSnapshotAction)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -202,6 +211,8 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Stop online modeling"))
         self.stop_btn.setText(_translate("MainWindow", "STOP"))
         self.dtsec_dsbox.setSuffix(_translate("MainWindow", " Second"))
+        self.lattice_info_btn.setToolTip(
+            _translate("MainWindow", "Show Lattice Viewer"))
         self.lattice_info_btn.setText(_translate("MainWindow", "..."))
         self.label_4.setText(_translate("MainWindow", "Machine"))
         self.label_5.setText(_translate("MainWindow", "Segment"))
@@ -209,6 +220,9 @@ class Ui_MainWindow(object):
         self.latpath_lineEdit.setPlaceholderText(
             _translate("MainWindow", "Read initial beam conditions"))
         self.browse_btn.setText(_translate("MainWindow", "Browse"))
+        self.show_twiss_btn.setToolTip(
+            _translate("MainWindow", "Show Beam Ellipse"))
+        self.show_twiss_btn.setText(_translate("MainWindow", "..."))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menu_Tools.setTitle(_translate("MainWindow", "&Tools"))
@@ -221,6 +235,7 @@ class Ui_MainWindow(object):
         self.actionContents.setShortcut(_translate("MainWindow", "F1"))
         self.actionLoad_Lattice.setText(
             _translate("MainWindow", "Load Lattice"))
+        self.actionSnapshot.setText(_translate("MainWindow", "Snapshot"))
 
 
 from mpl4qt.widgets.mplcurvewidget import MatplotlibCurveWidget
