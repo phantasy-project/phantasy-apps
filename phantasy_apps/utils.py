@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+
 import os
+
+from mpl4qt.widgets.utils import MatplotlibCurveWidgetSettings
 
 
 def uptime(t):
@@ -28,26 +31,26 @@ def uptime(t):
     return s
 
 
-def find_dconf(app_name, app_ini_file):
-    """Find parameter configuration file, searching the following locations:
-    * ~/.phantasy/<app_ini_file>
-    * /etc/phantasy/<app_ini_file>
-    * package location: <app>/config/<app_ini_file>
+def find_dconf(app_name, conf_file):
+    """Find app configuration file, searching the following locations:
+    * ~/.phantasy/<conf_file>
+    * /etc/phantasy/<conf_file>
+    * package location: <app_name>/config/<conf_file>
 
     Parameters
     ----------
     app_name : str
         Name of app sub-package.
-    app_ini_file : str
-        Name of app ini config file.
+    conf_file : str
+        Name of app config file, e.g. .ini or .json (for mpl widgets).
 
     Returns
     -------
     r : str
         App config path or None.
     """
-    home_conf = os.path.expanduser("~/.phantasy/{}".format(app_ini_file))
-    sys_conf = "/etc/phantasy/{}".format(app_ini_file)
+    home_conf = os.path.expanduser("~/.phantasy/{}".format(conf_file))
+    sys_conf = "/etc/phantasy/{}".format(conf_file)
     if os.path.isfile(home_conf):
         return home_conf
     elif os.path.isfile(sys_conf):
@@ -55,13 +58,32 @@ def find_dconf(app_name, app_ini_file):
     else:
         basedir = os.path.abspath(os.path.dirname(__file__))
         path = os.path.join(basedir, '{}/config/{}'.format(
-            app_name, app_ini_file))
+            app_name, conf_file))
         try:
             assert os.path.isfile(path)
         except AssertionError:
             return None
         else:
             return path
+
+
+def apply_mplcurve_settings(widget, app_name, json_path=None, filename=None):
+    """Apply JSON settings read from *json_path* to *widget*.
+
+    Parameters
+    ----------
+    widget : MatplotlibCurveWidget
+        Instance of MatplotlibCurveWidget.
+    app_name : str
+        Name of app sub-package.
+    json_path : str
+        Path of JSON settings file.
+    """
+    if json_path is None:
+        json_path = find_dconf(app_name, filename)
+    s = MatplotlibCurveWidgetSettings(json_path)
+    widget.apply_mpl_settings(s)
+
 
 
 if __name__ == '__main__':
