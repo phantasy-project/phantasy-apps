@@ -502,10 +502,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         return self._ems_device.check_status() == 0
 
     def on_update(self, data):
+        data = mask_array(data)
         print("Data from {} is updating...".format(self._data_pv))
         m = data.reshape(self._ydim, self._xdim)
         m = np.flipud(m)
-        m = np.nan_to_num(m)
         self._current_array = m
         self.image_data_changed.emit(m)
 
@@ -627,6 +627,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         except (IndexError, ValueError):
             pass
         else:
+            inten1 = mask_array(inten1)
             self.plot_noise(self.bkgd_noise_plot, bkgd_noise,
                                  self._bkgd_noise_nsigma)
             if self._auto_bkgd_noise_filter:
@@ -646,6 +647,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._intensity_clean_bkgd = self._update_bkgd_noise()
 
     def plot_noise(self, o, m, n):
+        m = mask_array(m)
         ax = o.axes
         ax.clear()
         m = m.flatten()
@@ -958,3 +960,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         loop.exec_()
 
         self.actionAuto_Analysis.setChecked(True)
+
+
+def mask_array(a):
+    if np.any(np.isnan(a)):
+        return np.ma.masked_invalid(a)
+    else:
+        return a
