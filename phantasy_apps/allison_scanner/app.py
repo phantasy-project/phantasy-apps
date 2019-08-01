@@ -33,6 +33,9 @@ from .model import Model
 from .plot import PlotWidget
 from .plot_final import PlotResults
 
+CMAP_FAVLIST = ('flag', 'jet', 'nipy_spectral', 'gist_earth',
+                'viridis', 'Greys')
+
 
 class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     image_data_changed = pyqtSignal(ndarray)
@@ -162,6 +165,23 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # check adv ctrl by default
         self.adv_ctrl_chkbox.setChecked(True)
         self.adv_ctrl_chkbox.toggled.emit(self.adv_ctrl_chkbox.isChecked())
+
+        # fav cmap cbb/chkbox
+        self.cmap_fav_cbb.addItems(CMAP_FAVLIST)
+        self.set_cmap_chkbox.toggled.connect(self.set_fav_cmap)
+
+    @pyqtSlot(bool)
+    def set_fav_cmap(self, set):
+        """Set favored cmap if checked, or fallback with current one.
+        """
+        o = self.matplotlibimageWidget
+        self._cmap_now = o.getColorMap()
+        if set:
+            cmap = self.cmap_fav_cbb.currentText()
+            o.im.set_cmap(cmap)
+            o.update_figure()
+        else:
+            o.setColorMap(o.getColorMap())
 
     def _init_device(self):
         if self._device_mode == "Simulation":
