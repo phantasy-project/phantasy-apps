@@ -795,6 +795,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_finalize_results(self):
         # show Twiss parameters as figure.
+        if hasattr(self, '_plot_results_window'):
+            self._plot_results_window.close()
         self._plot_results_window = PlotResults(self)
         self._plot_results_window.results = self._results
         self._plot_results_window.plot_data()
