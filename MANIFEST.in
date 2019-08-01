@@ -3,6 +3,7 @@ recursive-include phantasy_apps/allison_scanner/config *
 recursive-include phantasy_apps/app_launcher/config *
 recursive-include phantasy_apps/trajectory_viewer/config *
 recursive-include phantasy_apps/wire_scanner/config *
+recursive-include phantasy_apps/online_model/config *
 recursive-include phantasy_apps/app_launcher/launcher *
 recursive-include phantasy_apps/correlation_visualizer/launcher *
 recursive-include phantasy_apps/diag_viewer/launcher *
