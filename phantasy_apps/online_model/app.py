@@ -154,6 +154,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         t0 = time.time()
         print("-- Sync live settings...")
         self._lat.sync_settings()
+        print("-- Sync live settings...done: {0:.3f} s".format(time.time() - t0))
         print("-- Run physics model...")
         _, fm = self._lat.run()
         if self._beam_state_conf is not None:
@@ -167,6 +168,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         env_x, env_y = data['xrms'], data['yrms']
         self.data_updated.emit(s, traj_x, traj_y, env_x, env_y)
         dt = self._settling_sec - (time.time() - t0)
+        print("-- Run physics model...done: {0:.3f} s".format(dt))
         if dt >= 0:
             time.sleep(dt)
 
@@ -188,7 +190,8 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         """Stop modeling.
         """
         self.stop_signal.emit(True)
-        delayed_exec(lambda:self.stop_signal.emit(False), 2000)
+        delayed_exec(lambda:self.stop_signal.emit(False),
+                     self._settling_sec * 1000)
 
     @pyqtSlot()
     def on_open_latfile(self):
