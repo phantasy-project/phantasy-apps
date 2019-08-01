@@ -330,6 +330,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             o.valueChanged.connect(partial(self.on_update_config, s))
         self.bias_volt_dsbox.valueChanged.connect(self.on_update_bias_volt)
 
+    @pyqtSlot()
     def sync_config(self):
         """Pull current device configuration from controls network, update
         on the UI.
@@ -418,11 +419,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_run(self):
+        self.sync_config()
         self._abort = False
         self._run()
 
     def _run(self):
-        if not self._validate():
+        if not self._validate_conflicts():
             return
 
         is_valid = self._valid_device()
@@ -461,8 +463,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         finally:
             self._ems_device.retract(v)
 
-    def _validate(self):
-        # others
+    def _validate_conflicts(self):
+        # check if any conflicts with other devices.
         try:
             assert caget('FE_SCS1:FC_D0739:LMPOS_LTCH_DRV') == 0
         except AssertionError:
@@ -476,6 +478,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             return True
 
     def _valid_device(self):
+        # check if device settings correct or not.
         elem = self._ems_device.elem
         # bias volt
         try:
@@ -486,7 +489,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 QMessageBox.Ok)
             return False
 
-        # range
+        # scan ranges
         x1 = getattr(elem, self._pos_begin_fname)
         x2 = getattr(elem, self._pos_end_fname)
         dx = getattr(elem, self._pos_step_fname)
@@ -512,8 +515,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             return False
 
         #
-        xdim = self._xdim = int((x2 - x1) / dx) + 1
-        ydim = self._ydim = int((y2 - y1) / dy) + 1
+        self._xdim = int((x2 - x1) / dx) + 1
+        self._ydim = int((y2 - y1) / dy) + 1
 
         return True
 

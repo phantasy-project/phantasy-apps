@@ -57,16 +57,18 @@ class Data(object):
         self._pos_begin = conf['begin']
         self._pos_end = conf['end']
         self._pos_step = conf['step']
-        assert (self._pos_end - self._pos_begin) % self._pos_step == 0
-        self._pos_dim = int((self._pos_end - self._pos_begin) / self._pos_step) + 1
+        n = int((self._pos_end - self._pos_begin) / self._pos_step)
+        assert n * self._pos_step == self._pos_end - self._pos_begin
+        self._pos_dim = n + 1
 
     def update_volt_conf(self, conf):
         # update voltage config.
         self._volt_begin = conf['begin']
         self._volt_end = conf['end']
         self._volt_step = conf['step']
-        assert (self._volt_end - self._volt_begin) % self._volt_step == 0
-        self._volt_dim = int((self._volt_end - self._volt_begin) / self._volt_step) + 1
+        n = int((self._volt_end - self._volt_begin) / self._volt_step)
+        assert n * self._volt_step == self._volt_end - self._volt_begin
+        self._volt_dim =  n + 1
 
     def initial_data_grid(self):
         """Initial data grid.
