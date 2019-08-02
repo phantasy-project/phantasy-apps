@@ -209,7 +209,7 @@ class Ui_MainWindow(object):
         self.label_16.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setBold(False)
-        font.setUnderline(True)
+        font.setUnderline(False)
         font.setWeight(50)
         self.label_16.setFont(font)
         self.label_16.setAlignment(QtCore.Qt.AlignRight
@@ -229,6 +229,9 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.label_7.sizePolicy().hasHeightForWidth())
         self.label_7.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Serif")
+        self.label_7.setFont(font)
         self.label_7.setObjectName("label_7")
         self.horizontalLayout_4.addWidget(self.label_7)
         self.length_lineEdit = QtWidgets.QLineEdit(self.gridWidget)
@@ -250,6 +253,9 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.label_13.sizePolicy().hasHeightForWidth())
         self.label_13.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Serif")
+        self.label_13.setFont(font)
         self.label_13.setObjectName("label_13")
         self.horizontalLayout_4.addWidget(self.label_13)
         self.length1_lineEdit = QtWidgets.QLineEdit(self.gridWidget)
@@ -271,6 +277,9 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.label_12.sizePolicy().hasHeightForWidth())
         self.label_12.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Serif")
+        self.label_12.setFont(font)
         self.label_12.setObjectName("label_12")
         self.horizontalLayout_4.addWidget(self.label_12)
         self.length2_lineEdit = QtWidgets.QLineEdit(self.gridWidget)
@@ -295,7 +304,7 @@ class Ui_MainWindow(object):
         self.label_8.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setBold(False)
-        font.setUnderline(True)
+        font.setUnderline(False)
         font.setWeight(50)
         self.label_8.setFont(font)
         self.label_8.setAlignment(QtCore.Qt.AlignRight
@@ -381,6 +390,9 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.label_23.sizePolicy().hasHeightForWidth())
         self.label_23.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Serif")
+        self.label_23.setFont(font)
         self.label_23.setObjectName("label_23")
         self.horizontalLayout_6.addWidget(self.label_23)
         self.volt_settling_time_dsbox = QtWidgets.QDoubleSpinBox(
@@ -392,7 +404,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.volt_settling_time_dsbox.sizePolicy().hasHeightForWidth())
         self.volt_settling_time_dsbox.setSizePolicy(sizePolicy)
-        self.volt_settling_time_dsbox.setDecimals(3)
+        self.volt_settling_time_dsbox.setDecimals(2)
         self.volt_settling_time_dsbox.setSingleStep(0.01)
         self.volt_settling_time_dsbox.setObjectName("volt_settling_time_dsbox")
         self.horizontalLayout_6.addWidget(self.volt_settling_time_dsbox)
@@ -411,6 +423,12 @@ class Ui_MainWindow(object):
         self.label_11.setSizePolicy(sizePolicy)
         self.label_11.setObjectName("label_11")
         self.horizontalLayout_3.addWidget(self.label_11)
+        self.label_28 = QtWidgets.QLabel(self.gridWidget)
+        font = QtGui.QFont()
+        font.setFamily("Serif")
+        self.label_28.setFont(font)
+        self.label_28.setObjectName("label_28")
+        self.horizontalLayout_3.addWidget(self.label_28)
         self.slit_thickness_lineEdit = QtWidgets.QLineEdit(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -445,7 +463,7 @@ class Ui_MainWindow(object):
         self.label_15.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setBold(False)
-        font.setUnderline(True)
+        font.setUnderline(False)
         font.setWeight(50)
         self.label_15.setFont(font)
         self.label_15.setAlignment(QtCore.Qt.AlignRight
@@ -463,8 +481,9 @@ class Ui_MainWindow(object):
         self.label_6.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setBold(False)
-        font.setUnderline(True)
+        font.setUnderline(False)
         font.setWeight(50)
+        font.setKerning(True)
         self.label_6.setFont(font)
         self.label_6.setAlignment(QtCore.Qt.AlignRight
                                   | QtCore.Qt.AlignTrailing
@@ -552,6 +571,9 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.label_5.sizePolicy().hasHeightForWidth())
         self.label_5.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Serif")
+        self.label_5.setFont(font)
         self.label_5.setObjectName("label_5")
         self.horizontalLayout_5.addWidget(self.label_5)
         self.pos_settling_time_dsbox = QtWidgets.QDoubleSpinBox(
@@ -563,7 +585,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.pos_settling_time_dsbox.sizePolicy().hasHeightForWidth())
         self.pos_settling_time_dsbox.setSizePolicy(sizePolicy)
-        self.pos_settling_time_dsbox.setDecimals(3)
+        self.pos_settling_time_dsbox.setDecimals(2)
         self.pos_settling_time_dsbox.setSingleStep(0.01)
         self.pos_settling_time_dsbox.setObjectName("pos_settling_time_dsbox")
         self.horizontalLayout_5.addWidget(self.pos_settling_time_dsbox)
@@ -578,7 +600,7 @@ class Ui_MainWindow(object):
         self.label_9.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setBold(False)
-        font.setUnderline(True)
+        font.setUnderline(False)
         font.setWeight(50)
         self.label_9.setFont(font)
         self.label_9.setAlignment(QtCore.Qt.AlignRight
@@ -600,6 +622,12 @@ class Ui_MainWindow(object):
         self.label_10.setSizePolicy(sizePolicy)
         self.label_10.setObjectName("label_10")
         self.horizontalLayout_2.addWidget(self.label_10)
+        self.label_27 = QtWidgets.QLabel(self.gridWidget)
+        font = QtGui.QFont()
+        font.setFamily("Serif")
+        self.label_27.setFont(font)
+        self.label_27.setObjectName("label_27")
+        self.horizontalLayout_2.addWidget(self.label_27)
         self.slit_width_lineEdit = QtWidgets.QLineEdit(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -624,6 +652,9 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.label_4.sizePolicy().hasHeightForWidth())
         self.label_4.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Serif")
+        self.label_4.setFont(font)
         self.label_4.setObjectName("label_4")
         self.horizontalLayout_7.addWidget(self.label_4)
         self.gap_lineEdit = QtWidgets.QLineEdit(self.gridWidget)
@@ -702,6 +733,11 @@ class Ui_MainWindow(object):
         self.is_itlk_lbl.setObjectName("is_itlk_lbl")
         self.adv_ctrl_hbox.addWidget(self.is_itlk_lbl)
         self.gridLayout.addWidget(self.adv_ctrl_widget, 1, 3, 1, 1)
+        self.line_5 = QtWidgets.QFrame(self.ctrl_gbox)
+        self.line_5.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_5.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_5.setObjectName("line_5")
+        self.gridLayout.addWidget(self.line_5, 1, 1, 1, 1)
         self.h_splitter = QtWidgets.QSplitter(self.v_splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -797,6 +833,38 @@ class Ui_MainWindow(object):
         self.page_3.setObjectName("page_3")
         self.gridLayout_6 = QtWidgets.QGridLayout(self.page_3)
         self.gridLayout_6.setObjectName("gridLayout_6")
+        spacerItem1 = QtWidgets.QSpacerItem(20, 40,
+                                            QtWidgets.QSizePolicy.Minimum,
+                                            QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_6.addItem(spacerItem1, 5, 0, 1, 1)
+        self.label_32 = QtWidgets.QLabel(self.page_3)
+        self.label_32.setObjectName("label_32")
+        self.gridLayout_6.addWidget(self.label_32, 0, 0, 1, 1)
+        self.auto_fill_beam_params_btn = QtWidgets.QPushButton(self.page_3)
+        self.auto_fill_beam_params_btn.setObjectName(
+            "auto_fill_beam_params_btn")
+        self.gridLayout_6.addWidget(self.auto_fill_beam_params_btn, 4, 0, 1, 1)
+        self.ion_charge_lineEdit = QtWidgets.QLineEdit(self.page_3)
+        self.ion_charge_lineEdit.setObjectName("ion_charge_lineEdit")
+        self.gridLayout_6.addWidget(self.ion_charge_lineEdit, 0, 2, 1, 1)
+        self.label_33 = QtWidgets.QLabel(self.page_3)
+        self.label_33.setObjectName("label_33")
+        self.gridLayout_6.addWidget(self.label_33, 1, 0, 1, 1)
+        self.horizontalLayout_13 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_13.setObjectName("horizontalLayout_13")
+        self.ion_energy_lineEdit = QtWidgets.QLineEdit(self.page_3)
+        self.ion_energy_lineEdit.setObjectName("ion_energy_lineEdit")
+        self.horizontalLayout_13.addWidget(self.ion_energy_lineEdit)
+        self.label_35 = QtWidgets.QLabel(self.page_3)
+        self.label_35.setObjectName("label_35")
+        self.horizontalLayout_13.addWidget(self.label_35)
+        self.gridLayout_6.addLayout(self.horizontalLayout_13, 2, 2, 1, 1)
+        self.ion_mass_lineEdit = QtWidgets.QLineEdit(self.page_3)
+        self.ion_mass_lineEdit.setObjectName("ion_mass_lineEdit")
+        self.gridLayout_6.addWidget(self.ion_mass_lineEdit, 1, 2, 1, 1)
+        self.label_24 = QtWidgets.QLabel(self.page_3)
+        self.label_24.setObjectName("label_24")
+        self.gridLayout_6.addWidget(self.label_24, 3, 0, 1, 1)
         self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
         self.voltage_lineEdit = QtWidgets.QLineEdit(self.page_3)
@@ -817,42 +885,28 @@ class Ui_MainWindow(object):
         self.label_37 = QtWidgets.QLabel(self.page_3)
         self.label_37.setObjectName("label_37")
         self.horizontalLayout_8.addWidget(self.label_37)
-        self.gridLayout_6.addLayout(self.horizontalLayout_8, 3, 1, 1, 1)
+        self.gridLayout_6.addLayout(self.horizontalLayout_8, 3, 2, 1, 1)
         self.label_34 = QtWidgets.QLabel(self.page_3)
         self.label_34.setObjectName("label_34")
         self.gridLayout_6.addWidget(self.label_34, 2, 0, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40,
-                                            QtWidgets.QSizePolicy.Minimum,
-                                            QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_6.addItem(spacerItem1, 5, 0, 1, 1)
-        self.label_32 = QtWidgets.QLabel(self.page_3)
-        self.label_32.setObjectName("label_32")
-        self.gridLayout_6.addWidget(self.label_32, 0, 0, 1, 1)
-        self.ion_charge_lineEdit = QtWidgets.QLineEdit(self.page_3)
-        self.ion_charge_lineEdit.setObjectName("ion_charge_lineEdit")
-        self.gridLayout_6.addWidget(self.ion_charge_lineEdit, 0, 1, 1, 1)
-        self.label_33 = QtWidgets.QLabel(self.page_3)
-        self.label_33.setObjectName("label_33")
-        self.gridLayout_6.addWidget(self.label_33, 1, 0, 1, 1)
-        self.ion_mass_lineEdit = QtWidgets.QLineEdit(self.page_3)
-        self.ion_mass_lineEdit.setObjectName("ion_mass_lineEdit")
-        self.gridLayout_6.addWidget(self.ion_mass_lineEdit, 1, 1, 1, 1)
-        self.label_24 = QtWidgets.QLabel(self.page_3)
-        self.label_24.setObjectName("label_24")
-        self.gridLayout_6.addWidget(self.label_24, 3, 0, 1, 1)
-        self.horizontalLayout_13 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_13.setObjectName("horizontalLayout_13")
-        self.ion_energy_lineEdit = QtWidgets.QLineEdit(self.page_3)
-        self.ion_energy_lineEdit.setObjectName("ion_energy_lineEdit")
-        self.horizontalLayout_13.addWidget(self.ion_energy_lineEdit)
-        self.label_35 = QtWidgets.QLabel(self.page_3)
-        self.label_35.setObjectName("label_35")
-        self.horizontalLayout_13.addWidget(self.label_35)
-        self.gridLayout_6.addLayout(self.horizontalLayout_13, 2, 1, 1, 1)
-        self.auto_fill_beam_params_btn = QtWidgets.QPushButton(self.page_3)
-        self.auto_fill_beam_params_btn.setObjectName(
-            "auto_fill_beam_params_btn")
-        self.gridLayout_6.addWidget(self.auto_fill_beam_params_btn, 4, 0, 1, 1)
+        self.label_29 = QtWidgets.QLabel(self.page_3)
+        font = QtGui.QFont()
+        font.setFamily("Serif")
+        self.label_29.setFont(font)
+        self.label_29.setObjectName("label_29")
+        self.gridLayout_6.addWidget(self.label_29, 0, 1, 1, 1)
+        self.label_30 = QtWidgets.QLabel(self.page_3)
+        font = QtGui.QFont()
+        font.setFamily("Serif")
+        self.label_30.setFont(font)
+        self.label_30.setObjectName("label_30")
+        self.gridLayout_6.addWidget(self.label_30, 1, 1, 1, 1)
+        self.label_31 = QtWidgets.QLabel(self.page_3)
+        font = QtGui.QFont()
+        font.setFamily("Serif")
+        self.label_31.setFont(font)
+        self.label_31.setObjectName("label_31")
+        self.gridLayout_6.addWidget(self.label_31, 2, 1, 1, 1)
         self.param_tbox.addItem(self.page_3, "")
         self.page = QtWidgets.QWidget()
         self.page.setGeometry(QtCore.QRect(0, 0, 588, 419))
@@ -1302,17 +1356,17 @@ class Ui_MainWindow(object):
         self.label_7.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p><span style=\" font-style:italic;\">L</span></p></body></html>"
+                "<html><head/><body><p><span style=\" font-style:italic;\">l</span></p></body></html>"
             ))
         self.label_13.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p><span style=\" font-style:italic;\">L</span><span style=\" vertical-align:sub;\">1</span></p></body></html>"
+                "<html><head/><body><p><span style=\" font-style:italic;\">l</span><span style=\" vertical-align:sub;\">1</span></p></body></html>"
             ))
         self.label_12.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p><span style=\" font-style:italic;\">L</span><span style=\" vertical-align:sub;\">2</span></p></body></html>"
+                "<html><head/><body><p><span style=\" font-style:italic;\">l</span><span style=\" vertical-align:sub;\">2</span></p></body></html>"
             ))
         self.label_8.setText(_translate("MainWindow", "Gap [mm]"))
         self.label_20.setText(_translate("MainWindow", "Begin"))
@@ -1326,9 +1380,12 @@ class Ui_MainWindow(object):
         self.volt_settling_time_dsbox.setSuffix(
             _translate("MainWindow", " sec"))
         self.label_11.setText(
+            _translate("MainWindow",
+                       "<html><head/><body><p>Thickness</p></body></html>"))
+        self.label_28.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Thickness (<span style=\" font-style:italic;\">d</span>)</p></body></html>"
+                "<html><head/><body><p><span style=\" font-style:italic;\">d</span></p></body></html>"
             ))
         self.label_15.setText(_translate("MainWindow", "Position [mm]"))
         self.label_6.setText(_translate("MainWindow", "Lengths [mm]"))
@@ -1344,9 +1401,12 @@ class Ui_MainWindow(object):
             _translate("MainWindow", " sec"))
         self.label_9.setText(_translate("MainWindow", "Slit [mm]"))
         self.label_10.setText(
+            _translate("MainWindow",
+                       "<html><head/><body><p>Width</p></body></html>"))
+        self.label_27.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Width (<span style=\" font-style:italic;\">s</span>)</p></body></html>"
+                "<html><head/><body><p><span style=\" font-style:italic;\">s</span></p></body></html>"
             ))
         self.label_4.setText(
             _translate(
@@ -1376,33 +1436,42 @@ class Ui_MainWindow(object):
         self.checkBox.setText(_translate("MainWindow", "Show Colorbar"))
         self.set_cmap_chkbox.setText(_translate("MainWindow", "Set Color Map"))
         self.groupBox_3.setTitle(_translate("MainWindow", "Data Analysis"))
-        self.voltage_lineEdit.setText(_translate("MainWindow", "100"))
-        self.label_36.setText(_translate("MainWindow", "V"))
-        self.label_37.setText(_translate("MainWindow", "mrad"))
-        self.label_34.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Ion Energy (<span style=\" font-style:italic;\">E</span><span style=\" font-style:italic; vertical-align:sub;\">k</span>)</p></body></html>"
-            ))
         self.label_32.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Ion Charge (<span style=\" font-style:italic;\">Q</span>)</p></body></html>"
-            ))
+            _translate("MainWindow",
+                       "<html><head/><body><p>Ion Charge</p></body></html>"))
+        self.auto_fill_beam_params_btn.setText(
+            _translate("MainWindow", "Auto Fill"))
         self.ion_charge_lineEdit.setText(_translate("MainWindow", "9"))
         self.label_33.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Ion Mass (<span style=\" font-style:italic;\">A</span>)</p></body></html>"
-            ))
-        self.ion_mass_lineEdit.setText(_translate("MainWindow", "39.948"))
-        self.label_24.setText(_translate("MainWindow", "Conversion"))
+            _translate("MainWindow",
+                       "<html><head/><body><p>Ion Mass</p></body></html>"))
         self.ion_energy_lineEdit.setText(_translate("MainWindow", "12000"))
         self.label_35.setText(
             _translate("MainWindow",
                        "<html><head/><body><p>eV</p></body></html>"))
-        self.auto_fill_beam_params_btn.setText(
-            _translate("MainWindow", "Auto Fill"))
+        self.ion_mass_lineEdit.setText(_translate("MainWindow", "39.948"))
+        self.label_24.setText(_translate("MainWindow", "Conversion"))
+        self.voltage_lineEdit.setText(_translate("MainWindow", "100"))
+        self.label_36.setText(_translate("MainWindow", "V"))
+        self.label_37.setText(_translate("MainWindow", "mrad"))
+        self.label_34.setText(
+            _translate("MainWindow",
+                       "<html><head/><body><p>Ion Energy</p></body></html>"))
+        self.label_29.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>(<span style=\" font-style:italic;\">Q</span>)</p></body></html>"
+            ))
+        self.label_30.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>(<span style=\" font-style:italic;\">A</span>)</p></body></html>"
+            ))
+        self.label_31.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>(<span style=\" font-style:italic;\">E</span><span style=\" vertical-align:sub;\">k</span>)</p></body></html>"
+            ))
         self.param_tbox.setItemText(
             self.param_tbox.indexOf(self.page_3),
             _translate("MainWindow", "Beam"))
