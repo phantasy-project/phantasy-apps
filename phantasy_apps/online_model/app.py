@@ -163,7 +163,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self._fm = fm
         data = fm.collect_data(r, pos=True, x0=True, y0=True,
                                xrms=True, yrms=True)
-        s = data['pos']
+        s = data['pos'] + self._pos_offset
         traj_x, traj_y = data['x0'], data['y0']
         env_x, env_y = data['xrms'], data['yrms']
         self.data_updated.emit(s, traj_x, traj_y, env_x, env_y)
@@ -241,6 +241,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
     def update_mp(self, o):
         self._mp = o
         self._lat = o.work_lattice_conf
+        self._pos_offset = self._lat.s_begin
         mach, segm = o.last_machine_name, o.last_lattice_name
         self.machine_lineEdit.setText(mach)
         self.segment_lineEdit.setText(segm)
