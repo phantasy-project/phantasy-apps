@@ -43,11 +43,10 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab), _translate("Dialog", "Q && A"))
-        self.tabWidget.setTabText(
-            self.tabWidget.indexOf(self.tab_2), _translate(
-                "Dialog", "License"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab),
+                                  _translate("Dialog", "Q && A"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2),
+                                  _translate("Dialog", "License"))
 
 
 if __name__ == "__main__":

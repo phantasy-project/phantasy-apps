@@ -14,9 +14,8 @@ class Ui_MainWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1920, 1440)
         icon = QtGui.QIcon()
-        icon.addPixmap(
-            QtGui.QPixmap(":/icons/app.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/app.png"), QtGui.QIcon.Normal,
+                       QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setToolTip("")
         MainWindow.setStyleSheet("QProgressBar {\n"
@@ -34,16 +33,23 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.centralwidget)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.splitter_2 = QtWidgets.QSplitter(self.centralwidget)
-        self.splitter_2.setOrientation(QtCore.Qt.Horizontal)
-        self.splitter_2.setObjectName("splitter_2")
-        self.splitter = QtWidgets.QSplitter(self.splitter_2)
-        self.splitter.setMinimumSize(QtCore.QSize(200, 0))
-        self.splitter.setOrientation(QtCore.Qt.Vertical)
-        self.splitter.setObjectName("splitter")
-        self.scan_groupBox = QtWidgets.QGroupBox(self.splitter)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
+        self.h_splitter = QtWidgets.QSplitter(self.centralwidget)
+        self.h_splitter.setOrientation(QtCore.Qt.Horizontal)
+        self.h_splitter.setObjectName("h_splitter")
+        self.v_splitter = QtWidgets.QSplitter(self.h_splitter)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.v_splitter.sizePolicy().hasHeightForWidth())
+        self.v_splitter.setSizePolicy(sizePolicy)
+        self.v_splitter.setMinimumSize(QtCore.QSize(600, 0))
+        self.v_splitter.setOrientation(QtCore.Qt.Vertical)
+        self.v_splitter.setObjectName("v_splitter")
+        self.scan_groupBox = QtWidgets.QGroupBox(self.v_splitter)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(1)
         sizePolicy.setHeightForWidth(
@@ -133,9 +139,8 @@ class Ui_MainWindow(object):
             self.show_extra_monitors_btn.sizePolicy().hasHeightForWidth())
         self.show_extra_monitors_btn.setSizePolicy(sizePolicy)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(
-            QtGui.QPixmap(":/icons/show.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(":/icons/show.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.show_extra_monitors_btn.setIcon(icon1)
         self.show_extra_monitors_btn.setIconSize(QtCore.QSize(24, 24))
         self.show_extra_monitors_btn.setAutoRaise(True)
@@ -272,27 +277,24 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addItem(spacerItem1)
         self.inc_fontsize_tbtn = QtWidgets.QToolButton(self.scan_groupBox)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(
-            QtGui.QPixmap(":/icons/increase-font.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(":/icons/increase-font.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.inc_fontsize_tbtn.setIcon(icon2)
         self.inc_fontsize_tbtn.setAutoRaise(True)
         self.inc_fontsize_tbtn.setObjectName("inc_fontsize_tbtn")
         self.horizontalLayout_2.addWidget(self.inc_fontsize_tbtn)
         self.dec_fontsize_tbtn = QtWidgets.QToolButton(self.scan_groupBox)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(
-            QtGui.QPixmap(":/icons/decrease-font.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(":/icons/decrease-font.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.dec_fontsize_tbtn.setIcon(icon3)
         self.dec_fontsize_tbtn.setAutoRaise(True)
         self.dec_fontsize_tbtn.setObjectName("dec_fontsize_tbtn")
         self.horizontalLayout_2.addWidget(self.dec_fontsize_tbtn)
         self.clear_log_tbtn = QtWidgets.QToolButton(self.scan_groupBox)
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(
-            QtGui.QPixmap(":/icons/clean.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon4.addPixmap(QtGui.QPixmap(":/icons/clean.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.clear_log_tbtn.setIcon(icon4)
         self.clear_log_tbtn.setAutoRaise(True)
         self.clear_log_tbtn.setObjectName("clear_log_tbtn")
@@ -309,7 +311,7 @@ class Ui_MainWindow(object):
         self.scan_log_textEdit.setObjectName("scan_log_textEdit")
         self.verticalLayout_2.addWidget(self.scan_log_textEdit)
         self.verticalLayout_3.addLayout(self.verticalLayout_2)
-        self.daq_groupBox = QtWidgets.QGroupBox(self.splitter)
+        self.daq_groupBox = QtWidgets.QGroupBox(self.v_splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -473,9 +475,8 @@ class Ui_MainWindow(object):
         self.mps_status_btn.setMaximumSize(QtCore.QSize(36, 36))
         self.mps_status_btn.setText("")
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(
-            QtGui.QPixmap(":/icons/mps_skipped.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon5.addPixmap(QtGui.QPixmap(":/icons/mps_skipped.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.mps_status_btn.setIcon(icon5)
         self.mps_status_btn.setIconSize(QtCore.QSize(36, 36))
         self.mps_status_btn.setAutoRaise(True)
@@ -499,9 +500,8 @@ class Ui_MainWindow(object):
             self.start_btn.sizePolicy().hasHeightForWidth())
         self.start_btn.setSizePolicy(sizePolicy)
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(
-            QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon6.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.start_btn.setIcon(icon6)
         self.start_btn.setIconSize(QtCore.QSize(32, 32))
         self.start_btn.setAutoDefault(True)
@@ -516,9 +516,8 @@ class Ui_MainWindow(object):
             self.pause_btn.sizePolicy().hasHeightForWidth())
         self.pause_btn.setSizePolicy(sizePolicy)
         icon7 = QtGui.QIcon()
-        icon7.addPixmap(
-            QtGui.QPixmap(":/icons/pause.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon7.addPixmap(QtGui.QPixmap(":/icons/pause.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.pause_btn.setIcon(icon7)
         self.pause_btn.setIconSize(QtCore.QSize(32, 32))
         self.pause_btn.setAutoDefault(True)
@@ -533,9 +532,8 @@ class Ui_MainWindow(object):
             self.stop_btn.sizePolicy().hasHeightForWidth())
         self.stop_btn.setSizePolicy(sizePolicy)
         icon8 = QtGui.QIcon()
-        icon8.addPixmap(
-            QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon8.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.stop_btn.setIcon(icon8)
         self.stop_btn.setIconSize(QtCore.QSize(32, 32))
         self.stop_btn.setAutoDefault(True)
@@ -550,16 +548,15 @@ class Ui_MainWindow(object):
             self.retake_btn.sizePolicy().hasHeightForWidth())
         self.retake_btn.setSizePolicy(sizePolicy)
         icon9 = QtGui.QIcon()
-        icon9.addPixmap(
-            QtGui.QPixmap(":/icons/retake.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon9.addPixmap(QtGui.QPixmap(":/icons/retake.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.retake_btn.setIcon(icon9)
         self.retake_btn.setIconSize(QtCore.QSize(32, 32))
         self.retake_btn.setAutoDefault(True)
         self.retake_btn.setObjectName("retake_btn")
         self.horizontalLayout_3.addWidget(self.retake_btn)
         self.gridLayout.addLayout(self.horizontalLayout_3, 5, 0, 1, 3)
-        self.plot_groupBox = QtWidgets.QGroupBox(self.splitter_2)
+        self.plot_groupBox = QtWidgets.QGroupBox(self.h_splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(3)
@@ -602,9 +599,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.autoscale_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
         icon10 = QtGui.QIcon()
-        icon10.addPixmap(
-            QtGui.QPixmap(":/icons/auto-scale.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon10.addPixmap(QtGui.QPixmap(":/icons/auto-scale.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.autoscale_tbtn.setIcon(icon10)
         self.autoscale_tbtn.setCheckable(True)
         self.autoscale_tbtn.setChecked(False)
@@ -613,36 +609,32 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.autoscale_tbtn)
         self.save_data_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
         icon11 = QtGui.QIcon()
-        icon11.addPixmap(
-            QtGui.QPixmap(":/icons/save_figure.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon11.addPixmap(QtGui.QPixmap(":/icons/save_figure.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.save_data_tbtn.setIcon(icon11)
         self.save_data_tbtn.setAutoRaise(True)
         self.save_data_tbtn.setObjectName("save_data_tbtn")
         self.horizontalLayout.addWidget(self.save_data_tbtn)
         self.auto_title_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
         icon12 = QtGui.QIcon()
-        icon12.addPixmap(
-            QtGui.QPixmap(":/icons/title.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon12.addPixmap(QtGui.QPixmap(":/icons/title.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.auto_title_tbtn.setIcon(icon12)
         self.auto_title_tbtn.setAutoRaise(True)
         self.auto_title_tbtn.setObjectName("auto_title_tbtn")
         self.horizontalLayout.addWidget(self.auto_title_tbtn)
         self.auto_labels_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
         icon13 = QtGui.QIcon()
-        icon13.addPixmap(
-            QtGui.QPixmap(":/icons/xylabel.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon13.addPixmap(QtGui.QPixmap(":/icons/xylabel.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.auto_labels_tbtn.setIcon(icon13)
         self.auto_labels_tbtn.setAutoRaise(True)
         self.auto_labels_tbtn.setObjectName("auto_labels_tbtn")
         self.horizontalLayout.addWidget(self.auto_labels_tbtn)
         self.moveto_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
         icon14 = QtGui.QIcon()
-        icon14.addPixmap(
-            QtGui.QPixmap(":/icons/moveto.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon14.addPixmap(QtGui.QPixmap(":/icons/moveto.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.moveto_tbtn.setIcon(icon14)
         self.moveto_tbtn.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
         self.moveto_tbtn.setAutoRaise(True)
@@ -651,18 +643,16 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.moveto_tbtn)
         self.set_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
         icon15 = QtGui.QIcon()
-        icon15.addPixmap(
-            QtGui.QPixmap(":/icons/set.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon15.addPixmap(QtGui.QPixmap(":/icons/set.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.set_tbtn.setIcon(icon15)
         self.set_tbtn.setAutoRaise(True)
         self.set_tbtn.setObjectName("set_tbtn")
         self.horizontalLayout.addWidget(self.set_tbtn)
         self.view_selected_pts_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
         icon16 = QtGui.QIcon()
-        icon16.addPixmap(
-            QtGui.QPixmap(":/icons/points.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon16.addPixmap(QtGui.QPixmap(":/icons/points.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.view_selected_pts_tbtn.setIcon(icon16)
         self.view_selected_pts_tbtn.setPopupMode(
             QtWidgets.QToolButton.MenuButtonPopup)
@@ -707,10 +697,10 @@ class Ui_MainWindow(object):
         self.ydata_cbb.setObjectName("ydata_cbb")
         self.horizontalLayout.addWidget(self.ydata_cbb)
         self.verticalLayout.addLayout(self.horizontalLayout)
-        self.horizontalLayout_4.addWidget(self.splitter_2)
+        self.horizontalLayout_4.addWidget(self.h_splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 32))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 34))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -723,39 +713,34 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menubar)
         self.actionE_xit = QtWidgets.QAction(MainWindow)
         icon17 = QtGui.QIcon()
-        icon17.addPixmap(
-            QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon17.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.actionE_xit.setIcon(icon17)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionContents = QtWidgets.QAction(MainWindow)
         icon18 = QtGui.QIcon()
-        icon18.addPixmap(
-            QtGui.QPixmap(":/icons/help.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon18.addPixmap(QtGui.QPixmap(":/icons/help.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.actionContents.setIcon(icon18)
         self.actionContents.setObjectName("actionContents")
         self.actionAbout = QtWidgets.QAction(MainWindow)
         icon19 = QtGui.QIcon()
-        icon19.addPixmap(
-            QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon19.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.actionAbout.setIcon(icon19)
         self.actionAbout.setObjectName("actionAbout")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         icon20 = QtGui.QIcon()
-        icon20.addPixmap(
-            QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon20.addPixmap(QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.actionAbout_Qt.setIcon(icon20)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionQuad_Scan = QtWidgets.QAction(MainWindow)
         self.actionQuad_Scan.setObjectName("actionQuad_Scan")
         self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
         icon21 = QtGui.QIcon()
-        icon21.addPixmap(
-            QtGui.QPixmap(":/icons/load_lattice.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon21.addPixmap(QtGui.QPixmap(":/icons/load_lattice.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionLoad_Lattice.setIcon(icon21)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
         self.actionMPS_guardian = QtWidgets.QAction(MainWindow)
@@ -870,8 +855,8 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Start value of scan range</p></body></html>"
             ))
         self.lower_limit_lineEdit.setText(_translate("MainWindow", "0"))
-        self.select_monitor_elem_btn.setText(
-            _translate("MainWindow", "Select"))
+        self.select_monitor_elem_btn.setText(_translate(
+            "MainWindow", "Select"))
         self.auto_show_extra_chkbox.setToolTip(
             _translate("MainWindow",
                        "Show Extra Monitors After Each Selection"))

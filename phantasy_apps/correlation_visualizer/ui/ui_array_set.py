@@ -55,9 +55,8 @@ class Ui_Dialog(object):
             self.sort_asc_tbtn.sizePolicy().hasHeightForWidth())
         self.sort_asc_tbtn.setSizePolicy(sizePolicy)
         icon = QtGui.QIcon()
-        icon.addPixmap(
-            QtGui.QPixmap(":/icons/sort-asc.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/sort-asc.png"),
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.sort_asc_tbtn.setIcon(icon)
         self.sort_asc_tbtn.setObjectName("sort_asc_tbtn")
         self.horizontalLayout_3.addWidget(self.sort_asc_tbtn)
@@ -70,9 +69,8 @@ class Ui_Dialog(object):
             self.sort_desc_tbtn.sizePolicy().hasHeightForWidth())
         self.sort_desc_tbtn.setSizePolicy(sizePolicy)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(
-            QtGui.QPixmap(":/icons/sort-desc.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(":/icons/sort-desc.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.sort_desc_tbtn.setIcon(icon1)
         self.sort_desc_tbtn.setObjectName("sort_desc_tbtn")
         self.horizontalLayout_3.addWidget(self.sort_desc_tbtn)

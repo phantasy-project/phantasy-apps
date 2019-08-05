@@ -197,9 +197,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addItem(spacerItem)
         self.start_btn = QtWidgets.QPushButton(self.centralwidget)
         icon = QtGui.QIcon()
-        icon.addPixmap(
-            QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
+                       QtGui.QIcon.Off)
         self.start_btn.setIcon(icon)
         self.start_btn.setIconSize(QtCore.QSize(32, 32))
         self.start_btn.setObjectName("start_btn")
@@ -242,17 +241,15 @@ class Ui_MainWindow(object):
         self.groupBox.setTitle(_translate("MainWindow", "Data Visualization"))
         self.avg_mplimagewidget.setFigureAspectRatio(
             _translate("MainWindow", "auto"))
-        self.tabWidget_3.setTabText(
-            self.tabWidget_3.indexOf(self.tab1),
-            _translate("MainWindow", "Average"))
+        self.tabWidget_3.setTabText(self.tabWidget_3.indexOf(self.tab1),
+                                    _translate("MainWindow", "Average"))
         self.std_mplimagewidget.setFigureAspectRatio(
             _translate("MainWindow", "auto"))
         self.tabWidget_3.setTabText(
             self.tabWidget_3.indexOf(self.tab2),
             _translate("MainWindow", "Standard Deviation"))
-        self.tabWidget_2.setTabText(
-            self.tabWidget_2.indexOf(self.tab),
-            _translate("MainWindow", "Curve"))
+        self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab),
+                                    _translate("MainWindow", "Curve"))
         self.label.setText(_translate("MainWindow", "Current Settings"))
         self.label_2.setText(_translate("MainWindow", "Monitor of Interest"))
         self.start_btn.setText(_translate("MainWindow", "Start"))

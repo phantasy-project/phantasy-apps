@@ -35,9 +35,8 @@ class Ui_Form(object):
             self.update_btn.sizePolicy().hasHeightForWidth())
         self.update_btn.setSizePolicy(sizePolicy)
         icon = QtGui.QIcon()
-        icon.addPixmap(
-            QtGui.QPixmap(":/icons/update.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/update.png"), QtGui.QIcon.Normal,
+                       QtGui.QIcon.Off)
         self.update_btn.setIcon(icon)
         self.update_btn.setIconSize(QtCore.QSize(24, 24))
         self.update_btn.setObjectName("update_btn")

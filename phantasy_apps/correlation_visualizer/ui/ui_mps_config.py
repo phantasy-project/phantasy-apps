@@ -65,9 +65,8 @@ class Ui_Dialog(object):
         self.label.setText(_translate("Dialog", "PV Name of MPS Status"))
         self.mps_pv_name_cbb.setItemText(
             0, _translate("Dialog", "MPS_FPS:MSTR_N0001:MpsStatus"))
-        self.mps_pv_name_cbb.setItemText(1,
-                                         _translate("Dialog",
-                                                    "VA:SVR:MpsStatus"))
+        self.mps_pv_name_cbb.setItemText(
+            1, _translate("Dialog", "VA:SVR:MpsStatus"))
         self.cancel_btn.setText(_translate("Dialog", "Cancel"))
         self.ok_btn.setText(_translate("Dialog", "OK"))
 

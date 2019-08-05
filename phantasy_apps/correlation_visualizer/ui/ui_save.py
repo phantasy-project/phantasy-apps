@@ -207,8 +207,8 @@ class Ui_Dialog(object):
         self.figure_format_cbb.setItemText(0, _translate("Dialog", "png"))
         self.figure_format_cbb.setItemText(1, _translate("Dialog", "jpg"))
         self.figure_format_cbb.setItemText(2, _translate("Dialog", "eps"))
-        self.save_settings_chkbox.setText(
-            _translate("Dialog", "Save Settings"))
+        self.save_settings_chkbox.setText(_translate("Dialog",
+                                                     "Save Settings"))
         self.seg_lbl.setText(_translate("Dialog", "Segments"))
         self.label_4.setText(_translate("Dialog", "File Path"))
         self.label_5.setText(_translate("Dialog", "File Path"))
