@@ -591,7 +591,7 @@ class Ui_MainWindow(object):
         self.scan_plot_widget.setFigureMTicksToggle(True)
         self.scan_plot_widget.setFigureGridToggle(True)
         self.scan_plot_widget.setProperty("figureBackgroundColor",
-                                          QtGui.QColor(240, 240, 240))
+                                          QtGui.QColor(239, 235, 231))
         self.scan_plot_widget.setFigureAutoScale(True)
         self.scan_plot_widget.setObjectName("scan_plot_widget")
         self.verticalLayout.addWidget(self.scan_plot_widget)
