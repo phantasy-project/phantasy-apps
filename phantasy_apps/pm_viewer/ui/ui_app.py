@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1606, 1144)
+        MainWindow.resize(1950, 1200)
         MainWindow.setStyleSheet("QProgressBar {\n"
                                  "    border: 1px solid gray;\n"
                                  "    border-radius: 10px;\n"
@@ -65,9 +65,8 @@ class Ui_MainWindow(object):
             self.run_btn.sizePolicy().hasHeightForWidth())
         self.run_btn.setSizePolicy(sizePolicy)
         icon = QtGui.QIcon()
-        icon.addPixmap(
-            QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
+                       QtGui.QIcon.Off)
         self.run_btn.setIcon(icon)
         self.run_btn.setIconSize(QtCore.QSize(32, 32))
         self.run_btn.setObjectName("run_btn")
@@ -82,9 +81,8 @@ class Ui_MainWindow(object):
             self.stop_btn.sizePolicy().hasHeightForWidth())
         self.stop_btn.setSizePolicy(sizePolicy)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(
-            QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.stop_btn.setIcon(icon1)
         self.stop_btn.setIconSize(QtCore.QSize(32, 32))
         self.stop_btn.setObjectName("stop_btn")
@@ -92,7 +90,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(self.horizontalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1606, 32))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1950, 34))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -103,23 +101,20 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menubar)
         self.actionE_xit = QtWidgets.QAction(MainWindow)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(
-            QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.actionE_xit.setIcon(icon2)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionAbout = QtWidgets.QAction(MainWindow)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(
-            QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.actionAbout.setIcon(icon3)
         self.actionAbout.setObjectName("actionAbout")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(
-            QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon4.addPixmap(QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.actionAbout_Qt.setIcon(icon4)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionApp_Settings = QtWidgets.QAction(MainWindow)
@@ -154,8 +149,8 @@ class Ui_MainWindow(object):
         self.stop_btn.setText(_translate("MainWindow", "STOP"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
-        self.menu_Preferences.setTitle(
-            _translate("MainWindow", "&Preferences"))
+        self.menu_Preferences.setTitle(_translate("MainWindow",
+                                                  "&Preferences"))
         self.actionE_xit.setText(_translate("MainWindow", "E&xit"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
         self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
