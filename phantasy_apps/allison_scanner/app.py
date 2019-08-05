@@ -18,6 +18,7 @@ from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QMessageBox
 from numpy import ndarray
 from phantasy_ui.templates import BaseAppForm
+from phantasy_ui.widgets import ElementWidget
 
 from phantasy import Configuration
 from phantasy_ui import get_open_filename
@@ -169,6 +170,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # fav cmap cbb/chkbox
         self.cmap_fav_cbb.addItems(CMAP_FAVLIST)
         self.set_cmap_chkbox.toggled.connect(self.set_fav_cmap)
+
+        # detail info
+        self.ems_detail_btn.clicked.connect(self.on_show_ems)
+        self._device_widget = None
 
     @pyqtSlot(bool)
     def set_fav_cmap(self, set):
@@ -961,6 +966,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         xlbl = "${}\,\mathrm{{[mm]}}$".format(self._ems_orientation.lower())
         self.xlabel_changed.emit(xlbl)
         self.raw_view_chkbox.toggled.emit(self.raw_view_chkbox.isChecked())
+
+    @pyqtSlot()
+    def on_show_ems(self):
+        """Show EMS element detail info.
+        """
+        if self._device_widget is None:
+            self._device_widget = ElementWidget(self._ems_device.elem)
+        self._device_widget.show()
 
     @pyqtSlot()
     def onRunXnY(self):
