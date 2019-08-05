@@ -477,15 +477,15 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         else:
             return True
 
-    def _valid_device(self):
+    def _valid_device(self, bv=-200.0):
         # check if device settings correct or not.
         elem = self._ems_device.elem
         # bias volt
         try:
-            assert elem.BIAS_VOLT <= -200.0
+            assert elem.BIAS_VOLT <= bv
         except AssertionError:
             QMessageBox.warning(self, "Bias Voltage Warning",
-                "Bias Voltage is not in range of < {}.".format(-200.0),
+                "Bias Voltage is not in range of < {}.".format(bv),
                 QMessageBox.Ok)
             return False
 
@@ -810,7 +810,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_sync_data(self):
-        is_valid = self._valid_device()
+        is_valid = self._valid_device(100)
         if is_valid is False:
             return
         self.on_update(self._device._data_pv.value)
