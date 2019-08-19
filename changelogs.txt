@@ -1,3 +1,49 @@
+Version 2.3.0
+-------------
+2019-08-19
+
+- App Launcher
+  - Add one column to show app versions.
+
+- Allison Scanner App
+  - Fix xy labels / units when orientation is changed.
+  - Fix % issue, use fmod instead.
+  - Add controls for bias voltage.
+  - Support draw signal/noise boundary by lasso tool.
+  - Check conflicts with other devices before running.
+  - Add callback to show device info.
+
+- Correlation Visualizer
+  - Add two-dimensional scan feature.
+  - Update DAQ for slow devices like PM.
+  - Update UIs.
+
+- ORM:
+  - Add support for measuring slow device response.
+  - Add support for arbitrary monitoring fields selection.
+  - Update UIs.
+
+- [NEW] Online Model App
+  - Support live modeling LEBT section with FLAME.
+
+- [NEW] PM Viewer
+  - Visualize the profile monitor devices, with measurement status, and
+    processed results;
+  - Operate PM devices.
+
+- Trajectory Viewer
+  - REF: Split apply_mplcurve_settings() function to phantasy_app.utils.
+  - MNT: Rename mpl setting files.
+
+- Wire Scanner App
+  - The configuration for FS1_CSS:PM_D2385 is finished, mark as installed.
+
+Other refactorings:
+  - Use get_open_filename(), get_save_filename() to 'phantasy_ui' package.
+  - Consolidate function for locating config files.
+  - find_dconf() and apply_mplcurve_settings().
+
+
 Version 2.2.0
 -------------
 2019-06-19
