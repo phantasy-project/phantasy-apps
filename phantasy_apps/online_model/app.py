@@ -108,6 +108,10 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
             o.setValidator(QDoubleValidator())
             o.textChanged.connect(partial(self.on_limit_changed, s))
 
+        # beam init state
+        self.beamstate_from_file_rbtn.setChecked(True)
+        self.beamstate_from_config_rbtn.toggled.emit(False)
+
     @pyqtSlot('QString')
     def on_limit_changed(self, s, sv):
         v = float(self.sender().text())
