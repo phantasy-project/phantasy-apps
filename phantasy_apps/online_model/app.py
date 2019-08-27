@@ -13,6 +13,7 @@ from numpy import ndarray
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QVariant
+from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QMessageBox
 
@@ -42,6 +43,10 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
     env_xdataChanged = pyqtSignal(QVariant)
     env_ydataChanged = pyqtSignal(QVariant)
     data_updated = pyqtSignal(ndarray, ndarray, ndarray, ndarray, ndarray)
+    xmin_changed = pyqtSignal(float)
+    xmax_changed = pyqtSignal(float)
+    ymin_changed = pyqtSignal(float)
+    ymax_changed = pyqtSignal(float)
 
     def __init__(self, version, **kws):
         super(self.__class__, self).__init__()
@@ -90,6 +95,23 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
         #
         self._init_data_viz()
+        # xylimts
+        for o in (self.envelope_plot, self.trajectory_plot, self.layout_plot):
+            self.xmin_changed.connect(o.setXLimitMin)
+            self.xmax_changed.connect(o.setXLimitMax)
+
+        self.ymin_changed.connect(self.layout_plot.setYLimitMin)
+        self.ymax_changed.connect(self.layout_plot.setYLimitMax)
+
+        for s in ('xmin', 'xmax', 'ymin', 'ymax'):
+            o = getattr(self, '{}_lineEdit'.format(s))
+            o.setValidator(QDoubleValidator())
+            o.textChanged.connect(partial(self.on_limit_changed, s))
+
+    @pyqtSlot('QString')
+    def on_limit_changed(self, s, sv):
+        v = float(self.sender().text())
+        getattr(self, '{}_changed'.format(s)).emit(v)
 
     def _init_data_viz(self):
         # init data viz
@@ -246,11 +268,19 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.machine_lineEdit.setText(mach)
         self.segment_lineEdit.setText(segm)
         self.init_latinfo()
+        self.init_layout()
 
     def init_latinfo(self):
         # initial lattice info view
         self._lv = None
         self.lattice_info_btn.clicked.connect(self.on_show_latinfo)
+
+    def init_layout(self):
+        # initial lattice layout view
+        layout = self._lat.layout
+        ax = self.layout_plot.axes
+        layout.draw(ax=ax, span=(1.05, 1.05))
+        self.layout_plot.update_figure()
 
     @pyqtSlot(bool)
     def on_set_stop_signal(self, f):
