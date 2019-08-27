@@ -19,11 +19,26 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.groupBox_2 = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox_2.setObjectName("groupBox_2")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.groupBox_2)
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.groupBox_2)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.splitter = QtWidgets.QSplitter(self.groupBox_2)
+        self.splitter.setOrientation(QtCore.Qt.Vertical)
+        self.splitter.setObjectName("splitter")
+        self.widget = QtWidgets.QWidget(self.splitter)
+        self.widget.setObjectName("widget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.widget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.trajectory_plot = MatplotlibCurveWidget(self.groupBox_2)
+        self.trajectory_plot = MatplotlibCurveWidget(self.widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(
+            self.trajectory_plot.sizePolicy().hasHeightForWidth())
+        self.trajectory_plot.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
-        font.setFamily("Noto Sans")
+        font.setFamily("Sans Serif")
         font.setPointSize(16)
         font.setBold(False)
         font.setItalic(False)
@@ -32,9 +47,16 @@ class Ui_MainWindow(object):
         self.trajectory_plot.setProperty("figureToolbarToggle", False)
         self.trajectory_plot.setObjectName("trajectory_plot")
         self.verticalLayout.addWidget(self.trajectory_plot)
-        self.envelope_plot = MatplotlibCurveWidget(self.groupBox_2)
+        self.envelope_plot = MatplotlibCurveWidget(self.widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(
+            self.envelope_plot.sizePolicy().hasHeightForWidth())
+        self.envelope_plot.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
-        font.setFamily("Noto Sans")
+        font.setFamily("Sans Serif")
         font.setPointSize(16)
         font.setBold(False)
         font.setItalic(False)
@@ -43,6 +65,45 @@ class Ui_MainWindow(object):
         self.envelope_plot.setProperty("figureToolbarToggle", False)
         self.envelope_plot.setObjectName("envelope_plot")
         self.verticalLayout.addWidget(self.envelope_plot)
+        self.layout_plot = MatplotlibBaseWidget(self.splitter)
+        font = QtGui.QFont()
+        font.setFamily("Sans Serif")
+        font.setPointSize(16)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(50)
+        self.layout_plot.setFigureTitleFont(font)
+        self.layout_plot.setProperty("figureDPI", 120.0)
+        self.layout_plot.setObjectName("layout_plot")
+        self.gridLayout_2.addWidget(self.splitter, 0, 0, 1, 1)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.label_6 = QtWidgets.QLabel(self.groupBox_2)
+        self.label_6.setObjectName("label_6")
+        self.horizontalLayout_3.addWidget(self.label_6)
+        self.xmin_lineEdit = QtWidgets.QLineEdit(self.groupBox_2)
+        self.xmin_lineEdit.setObjectName("xmin_lineEdit")
+        self.horizontalLayout_3.addWidget(self.xmin_lineEdit)
+        self.label_7 = QtWidgets.QLabel(self.groupBox_2)
+        self.label_7.setObjectName("label_7")
+        self.horizontalLayout_3.addWidget(self.label_7)
+        self.xmax_lineEdit = QtWidgets.QLineEdit(self.groupBox_2)
+        self.xmax_lineEdit.setObjectName("xmax_lineEdit")
+        self.horizontalLayout_3.addWidget(self.xmax_lineEdit)
+        self.label_8 = QtWidgets.QLabel(self.groupBox_2)
+        self.label_8.setObjectName("label_8")
+        self.horizontalLayout_3.addWidget(self.label_8)
+        self.ymin_lineEdit = QtWidgets.QLineEdit(self.groupBox_2)
+        self.ymin_lineEdit.setObjectName("ymin_lineEdit")
+        self.horizontalLayout_3.addWidget(self.ymin_lineEdit)
+        self.label_9 = QtWidgets.QLabel(self.groupBox_2)
+        self.label_9.setObjectName("label_9")
+        self.horizontalLayout_3.addWidget(self.label_9)
+        self.ymax_lineEdit = QtWidgets.QLineEdit(self.groupBox_2)
+        self.ymax_lineEdit.setObjectName("ymax_lineEdit")
+        self.horizontalLayout_3.addWidget(self.ymax_lineEdit)
+        self.gridLayout_2.addLayout(self.horizontalLayout_3, 1, 0, 1, 1)
         self.verticalLayout_2.addWidget(self.groupBox_2)
         self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox.setObjectName("groupBox")
@@ -50,9 +111,8 @@ class Ui_MainWindow(object):
         self.gridLayout.setObjectName("gridLayout")
         self.start_btn = QtWidgets.QPushButton(self.groupBox)
         icon = QtGui.QIcon()
-        icon.addPixmap(
-            QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
+                       QtGui.QIcon.Off)
         self.start_btn.setIcon(icon)
         self.start_btn.setObjectName("start_btn")
         self.gridLayout.addWidget(self.start_btn, 1, 4, 1, 1)
@@ -67,9 +127,8 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.export_btn, 0, 4, 1, 1)
         self.stop_btn = QtWidgets.QPushButton(self.groupBox)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(
-            QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.stop_btn.setIcon(icon1)
         self.stop_btn.setObjectName("stop_btn")
         self.gridLayout.addWidget(self.stop_btn, 2, 4, 1, 1)
@@ -85,9 +144,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.lattice_info_btn = QtWidgets.QToolButton(self.groupBox)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(
-            QtGui.QPixmap(":/icons/view-details.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(":/icons/view-details.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.lattice_info_btn.setIcon(icon2)
         self.lattice_info_btn.setIconSize(QtCore.QSize(24, 24))
         self.lattice_info_btn.setAutoRaise(True)
@@ -144,7 +202,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.groupBox)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 36))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 29))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -163,9 +221,8 @@ class Ui_MainWindow(object):
         self.actionContents.setObjectName("actionContents")
         self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(
-            QtGui.QPixmap(":/icons/load_lattice.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(":/icons/load_lattice.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionLoad_Lattice.setIcon(icon3)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
         self.actionSnapshot = QtWidgets.QAction(MainWindow)
@@ -198,6 +255,12 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Central Beam Trajectory"))
         self.envelope_plot.setFigureTitle(
             _translate("MainWindow", "Beam Envelope"))
+        self.layout_plot.setFigureXlabel(_translate("MainWindow", "s [m]"))
+        self.layout_plot.setFigureTitle(_translate("MainWindow", "Layout"))
+        self.label_6.setText(_translate("MainWindow", "x-min"))
+        self.label_7.setText(_translate("MainWindow", "x-max"))
+        self.label_8.setText(_translate("MainWindow", "y-min"))
+        self.label_9.setText(_translate("MainWindow", "y-max"))
         self.groupBox.setTitle(_translate("MainWindow", "Online Modeling"))
         self.start_btn.setToolTip(
             _translate("MainWindow", "Start online modeling"))
@@ -235,9 +298,12 @@ class Ui_MainWindow(object):
         self.actionContents.setShortcut(_translate("MainWindow", "F1"))
         self.actionLoad_Lattice.setText(
             _translate("MainWindow", "Load Lattice"))
+        self.actionLoad_Lattice.setShortcut(
+            _translate("MainWindow", "Ctrl+Shift+L"))
         self.actionSnapshot.setText(_translate("MainWindow", "Snapshot"))
 
 
+from mpl4qt.widgets.mplbasewidget import MatplotlibBaseWidget
 from mpl4qt.widgets.mplcurvewidget import MatplotlibCurveWidget
 from . import resources_rc
 
