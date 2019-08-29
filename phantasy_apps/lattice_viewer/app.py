@@ -62,6 +62,16 @@ class LatticeViewerWindow(BaseAppForm, Ui_MainWindow):
         model.set_model()
         # update meta info
         self.on_update_metainfo(o)
+        # update layout drawing
+        self.init_layout()
+
+    def init_layout(self):
+        # initial lattice layout view
+        lat = self.__mp.work_lattice_conf
+        layout = lat.layout
+        ax = self.layout_plot.axes
+        layout.draw(ax=ax, span=(1.05, 1.1))
+        self.layout_plot.update_figure()
 
     def on_update_metainfo(self, o):
         """Update meta info of loaded lattice.
