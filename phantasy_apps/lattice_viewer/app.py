@@ -34,7 +34,7 @@ class LatticeViewerWindow(BaseAppForm, Ui_MainWindow):
             <html>
             <h4>About Lattice Viewer</h4>
             <p>This app is created to visualize the FRIB accelerator
-            hierarchical structure, current version is {}.
+            structure, investigate devices, current version is {}.
             </p>
             <p>Copyright (C) 2018 Facility for Rare Isotope Beams and other contributors.</p>
             </html>
