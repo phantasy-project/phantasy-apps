@@ -681,8 +681,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         else:
             print('Cancel')
 
-    @staticmethod
-    def get_settings_from_orm(params):
+    def get_settings_from_orm(self, params):
         """Get corrector settings from ORM based on *params*.
         """
         (lat,), (bpms, cors), (xoy, cor_field, orb_field, dfac, niter, wait, l_limit, u_limit), \
