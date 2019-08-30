@@ -743,7 +743,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
 
         filepath, ext = get_save_filename(self,
                                           cdir='.',
-                                          filter="JSON Files (*.json)")
+                                          type_filter="JSON Files (*.json)")
         if filepath is None:
             return
 
