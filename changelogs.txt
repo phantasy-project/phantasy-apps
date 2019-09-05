@@ -1,3 +1,16 @@
+Version 2.3.2
+-------------
+2019-09-05
+
+- ORM:
+  - Fix bugs after code refactoring.
+
+- Lattice Viewer:
+  - Implement layout drawing feature.
+
+- Online Model App:
+  - Add layout drawing.
+
 Version 2.3.1
 -------------
 2019-08-23
