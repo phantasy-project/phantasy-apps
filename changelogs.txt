@@ -1,3 +1,10 @@
+Version 2.3.3
+-------------
+2019-09-05
+
+- Online Model App:
+  - Fix missing __init__ file.
+
 Version 2.3.2
 -------------
 2019-09-05
