@@ -31,6 +31,38 @@
         "style": "None",
         "width": 1.0
       }
+    },
+    {
+      "label": "X (ref)",
+      "line": {
+        "color": "#FF7F0E",
+        "style": "None",
+        "width": 1.5
+      },
+      "line_id": 2,
+      "marker": {
+        "edgecolor": "#0000FF",
+        "facecolor": "#0000FF",
+        "size": 6.0,
+        "style": "s",
+        "width": 1.0
+      }
+    },
+    {
+      "label": "Y (ref)",
+      "line": {
+        "color": "#2CA02C",
+        "style": "None",
+        "width": 1.5
+      },
+      "line_id": 3,
+      "marker": {
+        "edgecolor": "#FF0000",
+        "facecolor": "#FF0000",
+        "size": 6.0,
+        "style": "o",
+        "width": 1.0
+      }
     }
   ],
   "figure": {
@@ -72,7 +104,7 @@
     "ticks": {
       "color": "#4a4a4a",
       "font": "sans-serif,10,-1,5,50,0,0,0,0,0",
-      "mticks_on": true
+      "mticks_on": false
     }
   }
 }
