@@ -3,6 +3,7 @@
 
 from functools import partial
 from getpass import getuser
+from datetime import datetime
 from epics import caget, caput
 
 import numpy as np
@@ -48,6 +49,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     results_changed = pyqtSignal(dict)
     size_factor_changed = pyqtSignal(float)
     finished = pyqtSignal()
+    title_changed = pyqtSignal('QString')
     def __init__(self, version, mode="Live"):
         super(AllisonScannerWindow, self).__init__()
 
@@ -81,6 +83,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.ydata_changed.connect(self.matplotlibimageWidget.setYData)
         self.xlabel_changed.connect(self.matplotlibimageWidget.setFigureXlabel)
         self.ylabel_changed.connect(self.matplotlibimageWidget.setFigureYlabel)
+        self.title_changed.connect(self.matplotlibimageWidget.setFigureTitle)
 
         self._device_mode = mode.capitalize()
         self._post_init()
@@ -552,6 +555,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         QMessageBox.information(self, "EMS DAQ",
                                 "Data readiness is approaching...",
                                 QMessageBox.Ok)
+        self.on_title_with_ts(self._device._data_pv.timestamp)
         self.on_update(self._device._data_pv.value)
         # initial data
         self.on_initial_data(mode=self._device_mode)
@@ -819,11 +823,19 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.add_attached_widget(self._plot_results_window)
 
+    def on_title_with_ts(self, ts):
+        """Title with human readable timestamp of the current data.
+        """
+        fmtedts = datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        title = "Data generated at {}".format(fmtedts)
+        self.title_changed.emit(title)
+
     @pyqtSlot()
     def on_sync_data(self):
         is_valid = self._valid_device(100)
         if is_valid is False:
             return
+        self.on_title_with_ts(self._device._data_pv.timestamp)
         self.on_update(self._device._data_pv.value)
         self.on_initial_data(mode=self._device_mode)
         self.on_plot_raw_data()
