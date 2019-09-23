@@ -7,6 +7,7 @@ is required to make it executable as a PyQt5 app.
 
 import os
 import time
+from collections import OrderedDict
 from functools import partial
 from numpy import ndarray
 
@@ -25,6 +26,8 @@ from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 
 from phantasy_apps.correlation_visualizer.utils import delayed_exec
 from phantasy_apps.utils import apply_mplcurve_settings
+from phantasy_apps.trajectory_viewer.utils import ElementListModel
+from phantasy_apps.trajectory_viewer.app_elem_selection import ElementSelectionWidget
 
 from flame import Machine
 from flame_utils import ModelFlame
@@ -47,6 +50,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
     xmax_changed = pyqtSignal(float)
     ymin_changed = pyqtSignal(float)
     ymax_changed = pyqtSignal(float)
+    diags_changed = pyqtSignal(dict) # selected diag devices
 
     def __init__(self, version, **kws):
         super(self.__class__, self).__init__()
@@ -73,6 +77,11 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self._post_init()
 
     def _post_init(self):
+        #
+        self._mp = None
+        self._elem_sel_widgets = {}
+        self._diag_elems = []
+        self._name_map = {}
         #
         self.lattice_load_window = None
         self._stop = False
@@ -112,6 +121,112 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.beamstate_from_file_rbtn.setChecked(True)
         self.beamstate_from_config_rbtn.toggled.emit(False)
 
+        # diag device selection
+        self.select_device_btn.clicked.connect(
+                partial(self.on_select_elements, 'diag', ['PM']))
+        self.diags_changed.connect(self.on_update_diag_viz)
+
+        self.select_all_device_btn.clicked.connect(
+            partial(self.on_select_all_elems, "diag"))
+        self.inverse_device_selection_btn.clicked.connect(
+            partial(self.on_inverse_current_elem_selection, "diag"))
+
+
+    @pyqtSlot()
+    def on_select_all_elems(self, mode):
+        """Select all diags in *mode*s_treeView.
+        """
+        try:
+            print("Select All {}s".format(mode.upper()))
+            model = getattr(self, '{}s_treeView'.format(mode)).model()
+            model.select_all_items()
+        except AttributeError:
+            QMessageBox.warning(self, "Element Selection",
+                                "Selection error, Choose elements first.",
+                                QMessageBox.Ok)
+
+    @pyqtSlot()
+    def on_inverse_current_elem_selection(self, mode):
+        """Inverse current diag selection in *mode*s_treeView.
+        """
+        try:
+            print("Inverse {} selection".format(mode.upper()))
+            model = getattr(self, '{}s_treeView'.format(mode)).model()
+            model.inverse_current_selection()
+        except AttributeError:
+            QMessageBox.warning(self, "Element Selection",
+                                "Selection error, Choose elements first.",
+                                QMessageBox.Ok)
+
+    @pyqtSlot(dict)
+    def on_update_diag_viz(self, d):
+        # update selected diag_elements and dataviz.
+        # print("Selected diag devices:")
+        if d is not None:
+            self._diag_elems = [self._name_map[i] for i in d]
+
+        diag_s = [elem.sb for elem in self._diag_elems]
+        diag_x = [elem.XCEN for elem in self._diag_elems]
+        diag_y = [elem.YCEN for elem in self._diag_elems]
+        diag_rmsx = [elem.XRMS for elem in self._diag_elems]
+        diag_rmsy = [elem.YRMS for elem in self._diag_elems]
+
+        self.traj_lineChanged.emit(2)
+        self.traj_xdataChanged.emit(diag_s)
+        self.traj_ydataChanged.emit(diag_x)
+        self.traj_lineChanged.emit(3)
+        self.traj_xdataChanged.emit(diag_s)
+        self.traj_ydataChanged.emit(diag_y)
+
+        self.env_lineChanged.emit(2)
+        self.env_xdataChanged.emit(diag_s)
+        self.env_ydataChanged.emit(diag_rmsx)
+        self.env_lineChanged.emit(3)
+        self.env_xdataChanged.emit(diag_s)
+        self.env_ydataChanged.emit(diag_rmsy)
+
+
+    @pyqtSlot()
+    def on_select_elements(self, mode, dtype_list):
+        """Select devices.
+        """
+        if self._mp is None:
+            QMessageBox.warning(self, "Select Element",
+                                "Cannot find loaded lattice, try to load first, either by clicking Tools > Load Lattice or Ctrl+Shift+L.",
+                                QMessageBox.Ok)
+            return
+        w = self._elem_sel_widgets.setdefault(mode,
+                                              ElementSelectionWidget(self, self._mp, dtypes=dtype_list))
+        w.elementsSelected.connect(partial(self.on_update_elems, mode))
+        w.show()
+
+    @pyqtSlot(OrderedDict)
+    def on_elem_selection_updated(self, mode, d):
+        # mode 'diag':
+        #   selection (diags_treeView) is updated
+        #   * trigger the update of self._diags (trigger data viz update (timeout))
+        model = getattr(self, '{}s_treeView'.format(mode)).model()
+        if mode == 'diag':
+            #
+            print("[OM] Diag device selction is changed...")
+            # emit selected monitors
+            self.diags_changed.emit(model._selected_elements)
+        else:
+            pass
+
+    @pyqtSlot(list)
+    def on_update_elems(self, mode, enames):
+        """Selected element names list updated, mode: 'bpm'/'cor'
+        """
+        tv = getattr(self, "{}s_treeView".format(mode))
+        model = ElementListModel(tv, self._mp, enames)
+        # list of fields of selected element type
+        model.set_model()
+
+        # selection is changed (elementlistmodel)
+        m = tv.model()
+        m.elementSelected.connect(partial(self.on_elem_selection_updated, mode))
+
     @pyqtSlot('QString')
     def on_limit_changed(self, s, sv):
         v = float(self.sender().text())
@@ -130,6 +245,10 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.data_updated.connect(self.on_data_updated)
 
         self.trajectory_plot.add_curve()
+        self.trajectory_plot.add_curve()
+        self.trajectory_plot.add_curve()
+        self.envelope_plot.add_curve()
+        self.envelope_plot.add_curve()
         self.envelope_plot.add_curve()
 
         for s in ('traj', 'env'):
@@ -161,6 +280,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.mth.start()
 
     def on_data_updated(self, s, x, y, rx, ry):
+        # simulations
         self.traj_lineChanged.emit(0)
         self.traj_xdataChanged.emit(s)
         self.traj_ydataChanged.emit(x)
@@ -174,6 +294,9 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.env_lineChanged.emit(1)
         self.env_xdataChanged.emit(s)
         self.env_ydataChanged.emit(ry)
+
+        # diag
+        self.on_update_diag_viz(None)
 
     def model_single(self, iiter):
         # model with live settings.
@@ -273,6 +396,10 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.segment_lineEdit.setText(segm)
         self.init_latinfo()
         self.init_layout()
+        self.update_name_map(o)
+
+    def update_name_map(self, o):
+        self._name_map = {i.name:i for i in o.work_lattice_conf}
 
     def init_latinfo(self):
         # initial lattice info view
@@ -337,7 +464,6 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         # if self._ellipse_widget is None:
         #    self._ellipse_widget = EllipseWindow(self)
         # self._ellipse_widget.show()
-
 
 
 if __name__ == "__main__":
