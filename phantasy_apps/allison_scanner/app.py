@@ -86,6 +86,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._post_init()
 
     def _post_init(self):
+        # disable freezed configuration controls
+        for w in (self.length_lineEdit, self.length1_lineEdit,
+                  self.length2_lineEdit, self.gap_lineEdit,
+                  self.slit_width_lineEdit, self.slit_thickness_lineEdit):
+            w.setDisabled(True)
+        #
         self._live_widgets = (self.retract_btn, self.abort_btn,
                               self.auto_fill_beam_params_btn,
                               self.reset_itlk_btn)
