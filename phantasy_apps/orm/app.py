@@ -25,6 +25,7 @@ from phantasy_ui import get_save_filename
 from phantasy_apps.utils import uptime
 from .app_settings_view import SettingsView
 from .app_field_setup import FieldSetDialog
+from .app_ormviz import MVizDialog
 from .ui.ui_app import Ui_MainWindow
 from .utils import ORMDataSheet
 from .utils import OrmWorker
@@ -197,6 +198,10 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         self.refresh_models_btn.clicked.connect(self.init_elements)
         self.refresh_models_btn.clicked.connect(self.init_fields)
 
+        # mviz btn
+        self._mviz_dlg = None
+        self.mviz_btn.clicked.connect(self.on_viz_matrix)
+
         # evalution btn
         self._init_evaluation_action()
 
@@ -228,6 +233,15 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         self.refresh_models_btn.clicked.emit()
         # init _bpm_field, _cor_field, _xoy
         # self.init_fields()
+
+    @pyqtSlot()
+    def on_viz_matrix(self):
+        # visualize orm
+        if self._mviz_dlg is None:
+            self._mviz_dlg = MVizDialog(self)
+        self._mviz_dlg.matrix = self._orm
+        self._mviz_dlg.plot()
+        self._mviz_dlg.show()
 
     def _init_evaluation_action(self):
         # initialize evaluation action.
