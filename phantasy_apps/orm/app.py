@@ -239,6 +239,11 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         # visualize orm
         if self._mviz_dlg is None:
             self._mviz_dlg = MVizDialog(self)
+        if self._orm.tolist() == []:
+            QMessageBox.warning(self, "Matrix Visualization",
+                                "Matrix is not ready.",
+                                QMessageBox.Ok)
+            return
         self._mviz_dlg.matrix = self._orm
         self._mviz_dlg.plot()
         self._mviz_dlg.show()
