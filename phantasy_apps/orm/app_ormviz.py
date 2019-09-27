@@ -21,8 +21,8 @@ class MVizDialog(QDialog, Ui_Dialog):
 
     def _post_init(self):
         self._o = self.matplotlibimageWidget
-        self._o.setFigureXlabel("BPM ID")
-        self._o.setFigureYlabel("Corrector ID")
+        self._o.setFigureYlabel("BPM ID")
+        self._o.setFigureXlabel("Corrector ID")
 
     @property
     def matrix(self):
