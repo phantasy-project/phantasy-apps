@@ -117,7 +117,8 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
     def post_init(self):
         #
         for o in (self.rel_range_lineEdit,
-                  self.lower_limit_lineEdit, self.upper_limit_lineEdit):
+                  self.lower_limit_lineEdit, self.upper_limit_lineEdit,
+                  self.scaling_factor_lineEdit):
             o.setValidator(QDoubleValidator())
         #
         # source, mode
@@ -151,6 +152,9 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
             partial(self.on_value_changed, '_lower_limit'))
         self.upper_limit_lineEdit.returnPressed.connect(
             partial(self.on_value_changed, '_upper_limit'))
+        # scaling factor
+        self.scaling_factor_lineEdit.returnPressed.connect(
+            partial(self.on_value_changed, '_sf'))
         # cor damping factor
         self.cor_damping_fac_dsbox.valueChanged.connect(
             partial(self.on_float_changed, '_cor_dfac', False))
@@ -708,7 +712,8 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         s = lat.get_settings_from_orm(cors, bpms, orb_field=orb_field,
                                       cor_field=cor_field, cor_min=l_limit, cor_max=u_limit,
                                       damping_factor=dfac, nshot=daq_nshot, rate=daq_rate,
-                                      slow_mode_on=self._slow_mode_on)
+                                      slow_mode_on=self._slow_mode_on,
+                                      sf=self._sf)
         return s
 
     @pyqtSlot()
@@ -913,6 +918,8 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         # lower/upper limits
         self._lower_limit = float(self.lower_limit_lineEdit.text())
         self._upper_limit = float(self.upper_limit_lineEdit.text())
+        # scaling factor
+        self._sf = float(self.scaling_factor_lineEdit.text())
         # cor damping factor
         self._cor_dfac = self.cor_damping_fac_dsbox.value()
         # cor nter
@@ -981,6 +988,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         print("rel_range ", self._rel_range)
         print("lower limit: ", self._lower_limit)
         print("upper limit: ", self._upper_limit)
+        print('scaling factor: ', self._sf)
 
     @pyqtSlot(float)
     def on_float_changed(self, var_str, update_eta, x):
