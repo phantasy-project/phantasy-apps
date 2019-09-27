@@ -17,7 +17,7 @@ class SettingsView(QDialog, Ui_Dialog):
         self.data = data
 
         self.setupUi(self)
-        self.setWindowTitle("Settings Overview")
+        self.setWindowTitle("Corrector Settings Overview")
         self.v = self.treeView
 
         model = SettingsModel(self.v, self.data, **kws)
