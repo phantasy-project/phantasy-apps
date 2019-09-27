@@ -29,7 +29,7 @@ from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 TS_FMT = "%Y-%m-%d %H:%M:%S"
 
 CP = ['#EF2929', '#CC0000', '#A40000']
-CN = ['#8AE234', '#73D216', '#4E9A06']
+CN = ['#729FCF', '#3465A4', '#204A87']
 
 
 class OrmWorker(QObject):
@@ -161,7 +161,7 @@ def load_orm_sheet(filepath):
     mp = MachinePortal(machine, segment)
     name_elem_map = {i.name: i for i in mp.work_lattice_conf}
     #
-    print("Loading {} of {}".format(segment, machine))
+    # print("Loading {} of {}".format(segment, machine))
     #
     orm_conf = (orm, cor_field, bpm_field,
                 t_wait, reset_wait, ndigits, srange,
@@ -296,7 +296,7 @@ class SettingsModel(QStandardItemModel):
             item_ilim = QStandardItem(str(is_hit_limit))
             item_dset = QStandardItem(self.fmt.format(set2 - set0))
             if is_hit_limit == 'YES':
-                item_ilim.setForeground(QBrush(QColor('#CE5C00')))
+                item_ilim.setForeground(QBrush(QColor('#F57900')))
             else:
                 item_ilim.setForeground(QBrush(QColor('#888A85')))
             if set2 - set0 >= 0:
