@@ -553,6 +553,9 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         #
         self.init_lattice()
 
+        #
+        self.on_set_srange_model()
+
     @pyqtSlot()
     def on_save_orm(self):
         filepath, ext = get_save_filename(self, cdir='.',
@@ -855,6 +858,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         # set up settings w/ scan range model view.
         data = [(self._name_map[ename], fname[0])
                 for ename, fname in self._cors_dict.items()]
+
 
         model = ScanRangeModel(self.cor_srange_tableView, data,
                                self._rel_range,
