@@ -226,7 +226,8 @@ class ElementListModel(QStandardItemModel):
             elem = self.name_elem_map[ename]
             cbb = QComboBox()
             cbb.addItems(elem.fields)
-            cbb.addItem('X&Y')  # To all monitors
+            if elem.family == 'BPM':
+                cbb.addItem('X&Y')  # To all monitors
             v.setIndexWidget(self.index(i, self.i_field), cbb)
             elem_item = self.item(i, self.i_name)
             cbb.currentTextChanged.connect(
