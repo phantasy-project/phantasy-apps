@@ -586,7 +586,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         orm_conf['reset_wait_seconds'] = self._reset_wait_sec
         orm_conf['set_precision'] = self._mprec
         orm_conf['alter_range'] = {
-            'relative range': self._rel_range,
+            'relative_range': self._rel_range,
             'total_steps': self._ssteps
         }
         orm_conf['daq_nshot'] = self._daq_nshot
