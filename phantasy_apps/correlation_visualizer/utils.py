@@ -37,7 +37,7 @@ class PVElement(object):
     def fname(self):
         """Default CA field name.
         """
-        return "<generic>"
+        return "<generic>[{}]".format(self.pvname[0])
 
     name = fname
 
