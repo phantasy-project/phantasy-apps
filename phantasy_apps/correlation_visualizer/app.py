@@ -439,7 +439,6 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             Dict of element widgets.
         """
         w = container[name]
-        w.setWindowTitle(name)
         w.show()
         self.add_attached_widget(w)
 
@@ -1270,7 +1269,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             if isinstance(o, CaField):
                 fld = '{0} [{1}]'.format(o.ename, o.name)
             else:
-                fld = o.ename
+                fld = o.fname
             flds.append(fld)
 
         for i, o in zip(('x', 'y'), (self.xdata_cbb, self.ydata_cbb)):
