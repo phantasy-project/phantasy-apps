@@ -122,11 +122,8 @@ class Ui_MainWindow(object):
         self.select_monitor_elem_btn.setObjectName("select_monitor_elem_btn")
         self.gridLayout_2.addWidget(self.select_monitor_elem_btn, 2, 4, 1, 1)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_5.setSpacing(9)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        spacerItem = QtWidgets.QSpacerItem(40, 20,
-                                           QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_5.addItem(spacerItem)
         self.auto_show_extra_chkbox = QtWidgets.QCheckBox(self.widget)
         self.auto_show_extra_chkbox.setObjectName("auto_show_extra_chkbox")
         self.horizontalLayout_5.addWidget(self.auto_show_extra_chkbox)
@@ -271,10 +268,10 @@ class Ui_MainWindow(object):
         self.label_12.setAlignment(QtCore.Qt.AlignCenter)
         self.label_12.setObjectName("label_12")
         self.horizontalLayout_2.addWidget(self.label_12)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
-                                            QtWidgets.QSizePolicy.Expanding,
-                                            QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem1)
+        spacerItem = QtWidgets.QSpacerItem(40, 20,
+                                           QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
         self.inc_fontsize_tbtn = QtWidgets.QToolButton(self.scan_groupBox)
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap(":/icons/increase-font.png"),
@@ -482,10 +479,10 @@ class Ui_MainWindow(object):
         self.mps_status_btn.setAutoRaise(True)
         self.mps_status_btn.setObjectName("mps_status_btn")
         self.horizontalLayout_3.addWidget(self.mps_status_btn)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 20,
+        spacerItem1 = QtWidgets.QSpacerItem(20, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem2)
+        self.horizontalLayout_3.addItem(spacerItem1)
         self.line_2 = QtWidgets.QFrame(self.daq_groupBox)
         self.line_2.setFrameShape(QtWidgets.QFrame.VLine)
         self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -972,7 +969,7 @@ class Ui_MainWindow(object):
             ))
         self.retake_btn.setText(_translate("MainWindow", "Retake"))
         self.plot_groupBox.setTitle(
-            _translate("MainWindow", "Correlation Plot"))
+            _translate("MainWindow", "Data Visualization"))
         self.autoscale_tbtn.setText(_translate("MainWindow", "..."))
         self.save_data_tbtn.setText(_translate("MainWindow", "save_data"))
         self.auto_title_tbtn.setText(_translate("MainWindow", "auto_title"))
