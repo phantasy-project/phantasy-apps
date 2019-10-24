@@ -337,6 +337,8 @@ class ScanTask(object):
         }
         dev_dict['monitors'] = []
         for elem in [self.monitor_element] + self.get_extra_monitors():
+            if elem is None:
+                continue
             dev_dict['monitors'].append({
                 'name': elem.ename,
                 'field': elem.name,
