@@ -461,15 +461,15 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
     def _save_data(self, filename, ext):
         if ext.upper() == 'JSON':
-            self.__save_data_as_json(filename)
+            self._save_data_as_json(filename)
         elif ext.upper() == 'CSV':
-            self.__save_data_as_array(filename)
+            self._save_data_as_array(filename)
         elif ext.upper() == 'H5':
             QMessageBox.warning(self, "", "TBI", QMessageBox.Ok)
             return
         QMessageBox.information(self, "", "Save data to {}".format(filename))
 
-    def __save_data_as_json(self, filename):
+    def _save_data_as_json(self, filename):
         """Save scan data as json datasheet.
         """
         data_sheet = self.scan_task.to_datasheet()
@@ -490,7 +490,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         data_sheet.write(filename)
         # return flag to indicate success or fail.
 
-    def __save_data_as_array(self, filename):
+    def _save_data_as_array(self, filename):
         """csv/txt"""
         sm = ScanDataModel(self.scan_task.scan_out_data)
         ynerr = []  # [yi, yi_err, ...], y0:x, y1:y
