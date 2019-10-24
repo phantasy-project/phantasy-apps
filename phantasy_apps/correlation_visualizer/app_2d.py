@@ -9,6 +9,7 @@ Tong Zhang <zhangt@frib.msu.edu>
 import numpy as np
 import pickle
 from datetime import datetime
+from getpass import getuser
 from numpy import ndarray
 import os
 
@@ -21,6 +22,7 @@ from PyQt5.QtWidgets import QMessageBox
 
 from phantasy import CaField
 from phantasy_ui import BaseAppForm
+from phantasy_ui import get_save_filename
 from phantasy_ui import random_string
 from phantasy_ui.widgets import ElementWidget
 
@@ -62,7 +64,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
         self.setAppVersion(parent._version)
         app_title_p = parent.getAppTitle()
-        self.setAppTitle("{}[{}]".format(app_title_p, '2D'))
+        self.setAppTitle(app_title_p)
         self.setWindowTitle("{}: {}".format(
             app_title_p, "Extend to Higher Dimensions"))
 
@@ -86,6 +88,9 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
         # start scan
         self.start_btn.clicked.connect(self.on_start_scan)
+
+        # stop scan
+        self.stop_btn.clicked.connect(self.on_stop_scan)
 
         # alter range
         self.lower_limit_lineEdit.textChanged.connect(self.set_alter_range)
@@ -250,11 +255,13 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self.curve_ylabel_changed.emit(lbl)
 
     def init_scan_task(self):
-        task_name = random_string(6)
+        # task_name = random_string(6)
+        task_name = self._p.scan_task.name
         self.scan_task = ScanTask(task_name)
 
         # init out data
-        for o in (self.niter_spinBox, self.waitsec_dSpinBox):
+        for o in (self.niter_spinBox, self.waitsec_dSpinBox,
+                  self._p.niter_spinBox, self._p.nshot_spinBox):
             o.valueChanged.emit(o.value())
         # reset
         self.reset_flags()
@@ -431,6 +438,8 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
         if not self._initialized:
             self._connect_signals()
+            # scan task info
+            self.init_task_info()
             # preset out data
             self.init_out_data()
             # monitor-of-interest
@@ -441,6 +450,17 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
         # run inner loop
         delayed_exec(lambda: self._p.start_btn.clicked.emit(), self._dmsec)
+
+    def init_task_info(self):
+        """Update scan task config.
+        """
+        self.scan_task.name = self._p.scan_task.name + '-2D'
+
+    @pyqtSlot()
+    def on_stop_scan(self):
+        """Stop scan.
+        """
+        print("[2D] Stop scan...")
 
     @pyqtSlot(QVariant)
     def on_data_updated(self, arr):
@@ -484,6 +504,63 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
             QMessageBox.information(self, "Save Data",
                     "Saved data to {}".format(os.path.abspath(filepath)),
                     QMessageBox.Ok)
+
+    @pyqtSlot()
+    def on_save_task(self):
+        """Save task configuration.
+        """
+        print("[2D] Save task configuration...")
+
+        filename, ext = get_save_filename(self,
+                caption="Save Scan Task (2D) to file",
+                type_filter="JSON Files (*.json)")
+
+        if filename is None:
+            return
+
+        self.init_task_info()
+        data_sheet = self.scan_task.to_datasheet()
+        data_sheet['data'].update({'filepath': filename})
+        # update result array
+        data_sheet['data']['shape'] = self.data.shape
+        data_sheet['data']['array'] = self.data.tolist()
+        print(self.data.shape)
+        # info
+        data_sheet.update({'info': {}})
+        data_sheet['info'].update({'user': getuser(),
+                                   'app': self.getAppTitle(),
+                                   'version': self.getAppVersion(),
+                                   'mode': '2D'})
+        data_sheet['task'].update(
+            {'array_mode': self.enable_arbitary_array_chkbox.isChecked()})
+        if self._p._mp is not None:
+            mp_conf = {'machine': self._p._mp.last_machine_name,
+                       'segment': self._p._mp.last_lattice_name}
+            data_sheet['task'].update(mp_conf)
+        # 1D configs
+        fn, ext = filename.rsplit('.', 1)
+        filepath_inner_loop = "{}.{}".format(fn + '_1d', ext)
+        self._p._save_data_as_json(filepath_inner_loop)
+        data_sheet['task']['nested_task'] = {'filepath': filepath_inner_loop}
+        # remove invalid keys from 'task'
+        [data_sheet['task'].pop(k) for k in ('n_dim', 'n_shot', 'daq_rate')]
+        # save
+        data_sheet.write(filename)
+
+        QMessageBox.information(self, "",
+                                "Save 2D scan task config to {}".format(filename))
+
+    @pyqtSlot()
+    def on_load_task(self):
+        """Load task configuration.
+        """
+        print("[2D] Load task configuration...")
+
+    @pyqtSlot()
+    def on_save_data(self):
+        """Save data after scan.
+        """
+        print("[2D] Save data...")
 
     @pyqtSlot()
     def reset_alter_element(self):
