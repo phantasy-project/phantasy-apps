@@ -9,6 +9,7 @@ Tong Zhang <zhangt@frib.msu.edu>
 import numpy as np
 import pickle
 from datetime import datetime
+from functools import partial
 from getpass import getuser
 from numpy import ndarray
 import os
@@ -92,6 +93,12 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
         # stop scan
         self.stop_btn.clicked.connect(self.on_stop_scan)
+
+        # set start/stop btns status after scan is started
+        self._p.start_btn.clicked.connect(partial(self.set_btn_status, 'start'))
+
+        # init btn status
+        self.set_btn_status('init')
 
         # alter range
         self.lower_limit_lineEdit.textChanged.connect(self.set_alter_range)
@@ -454,6 +461,17 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         # run inner loop
         delayed_exec(lambda: self._p.start_btn.clicked.emit(), self._dmsec)
 
+    def set_btn_status(self, mode='start'):
+        if mode == 'start':
+            self.start_btn.setEnabled(False)
+            self.stop_btn.setEnabled(True)
+        elif mode == 'stop':
+            self.start_btn.setEnabled(True)
+            self.stop_btn.setEnabled(False)
+        elif mode == 'init':
+            self.start_btn.setEnabled(True)
+            self.stop_btn.setEnabled(False)
+
     def init_task_info(self):
         """Update scan task config.
         """
@@ -464,6 +482,8 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         """Stop scan.
         """
         print("[2D] Stop scan...")
+        self._p.stop_btn.clicked.emit()
+        delayed_exec(lambda: self.scanAllFinished.emit(), 1000)
 
     @pyqtSlot(QVariant)
     def on_data_updated(self, arr):
@@ -491,6 +511,8 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self.reset_flags()
         #
         self._disconnect_signals()
+        #
+        self.set_btn_status("stop")
 
     def _dump_data(self, data, filepath=None):
         # dump *data* to filepath.
@@ -587,9 +609,9 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self._sel_elem_dialogs = {}
 
     def update_progress(self):
-        self.alter_elem_val_lineEdit.setText("Value: {}, IITER: {}".format(
+        self.alter_elem_val_lineEdit.setText("Value: {0:.6g}, ITER: {1}/{2}".format(
             self.scan_task.alter_element.value,
-            self._iiter))
+            self._iiter, self.scan_task.alter_number))
 
     def _update_dataviz(self):
         # update curve and image dataviz
