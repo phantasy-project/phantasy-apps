@@ -25,9 +25,15 @@ class ScanTask(object):
     """Class to abstract scan routine.
     """
 
-    def __init__(self, name):
+    def __init__(self, name, mode="1D"):
         # task name identifier
         self.name = name
+
+        # mode: 1D or 2D
+        self.mode = mode
+
+        # nested task for 2D
+        self._nested_task = None
 
         # start timestamp
         self._ts_start = time.time()
@@ -68,6 +74,16 @@ class ScanTask(object):
         self.init_out_data()
         # set alter array
         self.set_alter_array()
+
+    @property
+    def mode(self):
+        """str: Mode of scan task.
+        """
+        return self._mode
+
+    @mode.setter
+    def mode(self, s):
+        self._mode = "1D" if s is None else s
 
     @property
     def name(self):
@@ -258,32 +274,74 @@ class ScanTask(object):
         self._scan_out_all = arr
 
     def __repr__(self):
-        return "Scan Task: {name}\n" \
-               "Wait Sec: {twait}\n" \
-               "Shot Num: {nshot}\n" \
-               "DAQ Rate: {rate}\n" \
-               "Array mode: {array_mode}\n" \
-               "Alter array: {array}\n" \
-               "Alter Number: {niter}\n" \
-               "Alter start: {sstart}\n" \
-               "Alter stop: {sstop}\n" \
-               "Alter element: {alter}\n" \
-               "Monitor element: {moni}\n" \
-               "Extra monitors: {extra_moni}\n" \
-            .format(
-            name=self.name,
-            niter=self.alter_number,
-            twait=self.t_wait,
-            nshot=self.shotnum,
-            rate=self.daq_rate,
-            sstart=self.alter_start,
-            sstop=self.alter_stop,
-            array_mode=self.array_mode,
-            array=str(self.get_alter_array()),
-            alter=self.print_element(self.alter_element),
-            moni=self.print_element(self.monitor_element),
-            extra_moni=[self.print_element(i) for i in self.get_extra_monitors()],
-        )
+        if self.mode == "1D":
+            return "Scan Task: {name}\n" \
+                   "Task Mode: 1D\n" \
+                   "Wait Sec: {twait}\n" \
+                   "Shot Num: {nshot}\n" \
+                   "DAQ Rate: {rate}\n" \
+                   "Array mode: {array_mode}\n" \
+                   "Alter array: {array}\n" \
+                   "Alter Number: {niter}\n" \
+                   "Alter start: {sstart}\n" \
+                   "Alter stop: {sstop}\n" \
+                   "Alter element: {alter}\n" \
+                   "Monitor element: {moni}\n" \
+                   "Extra monitors: {extra_moni}\n" \
+                .format(
+                name=self.name,
+                niter=self.alter_number,
+                twait=self.t_wait,
+                nshot=self.shotnum,
+                rate=self.daq_rate,
+                sstart=self.alter_start,
+                sstop=self.alter_stop,
+                array_mode=self.array_mode,
+                array=str(self.get_alter_array()),
+                alter=self.print_element(self.alter_element),
+                moni=self.print_element(self.monitor_element),
+                extra_moni=[self.print_element(i) for i in self.get_extra_monitors()],)
+        else:
+            nested_task = self.get_nested_task()
+            if nested_task is None:
+                nested_task_name = 'undefined'
+            else:
+                nested_task_name = nested_task.name
+            return "Scan Task: {name}\n" \
+                   "Task Mode: 2D\n" \
+                   "Wait Sec: {twait}\n" \
+                   "Array mode: {array_mode}\n" \
+                   "Alter array: {array}\n" \
+                   "Alter Number: {niter}\n" \
+                   "Alter start: {sstart}\n" \
+                   "Alter stop: {sstop}\n" \
+                   "Alter element: {alter}\n" \
+                   "Nested Task: {nname}\n" \
+                .format(
+                name=self.name,
+                niter=self.alter_number,
+                twait=self.t_wait,
+                sstart=self.alter_start,
+                sstop=self.alter_stop,
+                array_mode=self.array_mode,
+                array=str(self.get_alter_array()),
+                alter=self.print_element(self.alter_element),
+                nname=nested_task_name)
+
+    def get_nested_task(self):
+        """Return nested task, only for 2D mode.
+        """
+        return self._nested_task
+
+    def set_nested_task(self, scan_task):
+        """Set 1D scan task as inner loop, only for 2D mode.
+
+        Parameters
+        ----------
+        scan_task :
+            1D scan task instance.
+        """
+        self._nested_task = scan_task
 
     def is_valid(self):
         """Check scan task, if valid return True, otherwise return False.
@@ -374,17 +432,19 @@ class ScanTask(object):
         self._lattice = o
 
 
-def load_task(filepath):
+def load_task(filepath, mode="1D"):
     """Instantiate ScanTask from the saved JSON file from CV app.
     """
     task = JSONDataSheet(filepath)
 
     name = task['task'].get('name', None)
-    scan_task = ScanTask(name)
+    scan_task = ScanTask(name, mode=mode)
+    mode = scan_task.mode
     scan_task.alter_number = task['task']['n_iteration']
-    scan_task.shotnum = task['task']['n_shot']
-    scan_task.daq_rate = task['task']['daq_rate']
     scan_task.t_wait = task['task']['t_wait']
+    if mode == "1D":
+        scan_task.shotnum = task['task']['n_shot']
+        scan_task.daq_rate = task['task']['daq_rate']
     array_mode = task['task'].get('array_mode', False)
     array = task['task']['scan_range']
     scan_task.set_alter_array(array)
@@ -404,14 +464,15 @@ def load_task(filepath):
     alter_objs = read_element(task, 'alter_element', mp)
     scan_task.alter_element = alter_objs[0][0]
     scan_task._alter_element_display = alter_objs[1][0]
-    # monitor
-    moni_objs = read_element(task, 'monitor', mp)
-    scan_task.monitor_element = moni_objs[0][0]
-    scan_task._monitor_element_display = moni_objs[1][0]
-    # extra monitor
-    extra_moni_objs = read_element(task, 'extra', mp)
-    scan_task.add_extra_monitors(extra_moni_objs[0])
-    scan_task._extra_moni_display = extra_moni_objs[1]
+    if mode == "1D":
+        # monitor
+        moni_objs = read_element(task, 'monitor', mp)
+        scan_task.monitor_element = moni_objs[0][0]
+        scan_task._monitor_element_display = moni_objs[1][0]
+        # extra monitor
+        extra_moni_objs = read_element(task, 'extra', mp)
+        scan_task.add_extra_monitors(extra_moni_objs[0])
+        scan_task._extra_moni_display = extra_moni_objs[1]
 
     return scan_task
 
