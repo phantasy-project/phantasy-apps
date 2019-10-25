@@ -374,15 +374,17 @@ class ScanTask(object):
         # task
         task_dict = OrderedDict()
         task_dict['name'] = self.name
+        task_dict['mode'] = mode = self.mode
         task_dict['start'] = epoch2human(self.ts_start, fmt=TS_FMT)
         task_dict['stop'] = epoch2human(self.ts_stop, fmt=TS_FMT)
         task_dict['duration'] = self.ts_stop - self.ts_start
         task_dict['n_iteration'] = self.alter_number
-        task_dict['n_shot'] = self.shotnum
-        task_dict['n_dim'] = 2 + len(self.get_extra_monitors())
+        if mode == '1D':
+            task_dict['n_shot'] = self.shotnum
+            task_dict['n_dim'] = 2 + len(self.get_extra_monitors())
+            task_dict['daq_rate'] = self.daq_rate
         task_dict['scan_range'] = self.get_alter_array().tolist()
         task_dict['t_wait'] = self.t_wait
-        task_dict['daq_rate'] = self.daq_rate
         data_sheet.update({'task': task_dict})
 
         # devices
@@ -432,14 +434,14 @@ class ScanTask(object):
         self._lattice = o
 
 
-def load_task(filepath, mode="1D"):
+def load_task(filepath):
     """Instantiate ScanTask from the saved JSON file from CV app.
     """
     task = JSONDataSheet(filepath)
 
     name = task['task'].get('name', None)
+    mode = task['task'].get('mode', '1D')
     scan_task = ScanTask(name, mode=mode)
-    mode = scan_task.mode
     scan_task.alter_number = task['task']['n_iteration']
     scan_task.t_wait = task['task']['t_wait']
     if mode == "1D":
