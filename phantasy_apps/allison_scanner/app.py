@@ -227,6 +227,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         setattr(self._ems_device, attr, x)
         getattr(self._ems_device, 'set_{}'.format(attr))()
         self._dconf = self._ems_device.dconf
+        # update steps once begin/end is changed
+        for i in ('pos', 'volt'):
+            if attr in ['{}_{}'.format(i, v) for v in ('begin', 'end')]:
+                o = getattr(self, '{}_step'.format(i))
+                o.valueChanged.emit(o.value())
+                print("Updated {}".format('{}_step'.format(i)))
 
     @pyqtSlot(float)
     def on_update_bias_volt(self, x):
