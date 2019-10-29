@@ -153,6 +153,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         for s in self._attr_names:
             o = getattr(self, s + '_dsbox')
             o.valueChanged.connect(partial(self.on_update_config, s))
+
         # bias volt
         self.bias_volt_dsbox.valueChanged.connect(self.on_update_bias_volt)
 
@@ -230,9 +231,23 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # update steps once begin/end is changed
         for i in ('pos', 'volt'):
             if attr in ['{}_{}'.format(i, v) for v in ('begin', 'end')]:
-                o = getattr(self, '{}_step'.format(i))
+                o = getattr(self, '{}_step_dsbox'.format(i))
                 o.valueChanged.emit(o.value())
-                print("Updated {}".format('{}_step'.format(i)))
+                print("Updated {}".format('{}_step_dsbox'.format(i)))
+
+        # update steps counter
+        if 'pos' in attr: # pos_begin, pos_end, pos_step
+            x1 = self.pos_begin_dsbox.value()
+            x2 = self.pos_end_dsbox.value()
+            dx = self.pos_step_dsbox.value()
+            o = self.pos_steps_lbl
+        else: # volt_begin, volt_end, volt_step
+            x1 = self.volt_begin_dsbox.value()
+            x2 = self.volt_end_dsbox.value()
+            dx = self.volt_step_dsbox.value()
+            o = self.volt_steps_lbl
+        cnt = int((x2 - x1) / dx) + 1
+        o.setText('[{0:03d}]'.format(int((x2 - x1) / dx) + 1))
 
     @pyqtSlot(float)
     def on_update_bias_volt(self, x):
@@ -344,10 +359,16 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.pos_end_dsbox.setValue(ems.pos_end)
         self.pos_step_dsbox.setValue(ems.pos_step)
         self.pos_settling_time_dsbox.setValue(ems.pos_settling_time)
+        self.pos_steps_lbl.setText('[{0:03d}]'.format(
+            int((ems.pos_end - ems.pos_begin) / ems.pos_step) + 1))
+
         self.volt_begin_dsbox.setValue(ems.volt_begin)
         self.volt_end_dsbox.setValue(ems.volt_end)
         self.volt_step_dsbox.setValue(ems.volt_step)
         self.volt_settling_time_dsbox.setValue(ems.volt_settling_time)
+        self.volt_steps_lbl.setText('[{0:03d}]'.format(
+            int((ems.volt_end - ems.volt_begin) / ems.volt_step) + 1))
+
         # bias volt
         self.bias_volt_dsbox.setValue(ems.bias_volt_threshold)
         for s in self._attr_names:
