@@ -40,6 +40,7 @@ CMAP_FAVLIST = ('flag', 'jet', 'nipy_spectral', 'gist_earth',
 
 
 class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
+
     image_data_changed = pyqtSignal(ndarray)
     data_changed = pyqtSignal(ndarray)
     xdata_changed = pyqtSignal(ndarray)
@@ -50,6 +51,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     size_factor_changed = pyqtSignal(float)
     finished = pyqtSignal()
     title_changed = pyqtSignal('QString')
+
     def __init__(self, version, mode="Live"):
         super(AllisonScannerWindow, self).__init__()
 
@@ -111,6 +113,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.installed_px = QPixmap(":/icons/installed.png")
         self.not_installed_px = QPixmap(":/icons/not-installed.png")
+        # lbls
+        [o.setPixmap(QPixmap(":/icons/rightarrow.png")) for o in
+                (self.slit_info_lbl, self.len_info_lbl, self.gap_info_lbl)]
         # conf
         self._dconf = self.get_device_config()
 
@@ -172,8 +177,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.retract_btn.clicked.connect(partial(self.on_retract, None))
         #
         self.reset_itlk_btn.clicked.connect(self.on_reset_interlock)
-        # check adv ctrl by default
-        self.adv_ctrl_chkbox.setChecked(True)
+        # uncheck adv ctrl by default
+        self.adv_ctrl_chkbox.setChecked(False)
         self.adv_ctrl_chkbox.toggled.emit(self.adv_ctrl_chkbox.isChecked())
 
         # fav cmap cbb/chkbox
@@ -479,6 +484,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     def _validate_conflicts(self):
         # check if any conflicts with other devices.
+        if self._device_mode != 'Live':
+            return True
         try:
             assert caget('FE_SCS1:FC_D0739:LMPOS_LTCH_DRV') == 0
         except AssertionError:
