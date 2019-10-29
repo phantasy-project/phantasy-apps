@@ -144,18 +144,18 @@ class Ui_MainWindow(object):
         self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_4.setObjectName("line_4")
         self.gridLayout.addWidget(self.line_4, 0, 1, 1, 1)
-        self.pushButton = QtWidgets.QPushButton(self.ctrl_gbox)
+        self.sync_config_btn = QtWidgets.QPushButton(self.ctrl_gbox)
         font = QtGui.QFont()
         font.setBold(True)
         font.setWeight(75)
-        self.pushButton.setFont(font)
+        self.sync_config_btn.setFont(font)
         icon4 = QtGui.QIcon()
         icon4.addPixmap(QtGui.QPixmap(":/icons/update.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton.setIcon(icon4)
-        self.pushButton.setIconSize(QtCore.QSize(20, 20))
-        self.pushButton.setObjectName("pushButton")
-        self.gridLayout.addWidget(self.pushButton, 6, 0, 1, 1)
+        self.sync_config_btn.setIcon(icon4)
+        self.sync_config_btn.setIconSize(QtCore.QSize(20, 20))
+        self.sync_config_btn.setObjectName("sync_config_btn")
+        self.gridLayout.addWidget(self.sync_config_btn, 6, 0, 1, 1)
         self.label = QtWidgets.QLabel(self.ctrl_gbox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -217,6 +217,16 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.setContentsMargins(4, -1, -1, -1)
         self.horizontalLayout_6.setSpacing(8)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
+        self.volt_steps_lbl = QtWidgets.QLabel(self.gridWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.volt_steps_lbl.sizePolicy().hasHeightForWidth())
+        self.volt_steps_lbl.setSizePolicy(sizePolicy)
+        self.volt_steps_lbl.setObjectName("volt_steps_lbl")
+        self.horizontalLayout_6.addWidget(self.volt_steps_lbl)
         self.label_20 = QtWidgets.QLabel(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -345,6 +355,16 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.setContentsMargins(4, -1, -1, -1)
         self.horizontalLayout_5.setSpacing(8)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
+        self.pos_steps_lbl = QtWidgets.QLabel(self.gridWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.pos_steps_lbl.sizePolicy().hasHeightForWidth())
+        self.pos_steps_lbl.setSizePolicy(sizePolicy)
+        self.pos_steps_lbl.setObjectName("pos_steps_lbl")
+        self.horizontalLayout_5.addWidget(self.pos_steps_lbl)
         self.label_17 = QtWidgets.QLabel(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -1343,7 +1363,7 @@ class Ui_MainWindow(object):
         self.actionSave.triggered.connect(MainWindow.on_save_config)
         self.actionSave_As.triggered.connect(MainWindow.on_saveas_config)
         self.actionLocate.triggered.connect(MainWindow.on_locate_config)
-        self.pushButton.clicked.connect(MainWindow.sync_config)
+        self.sync_config_btn.clicked.connect(MainWindow.sync_config)
         self.actionSimulation_Mode.toggled['bool'].connect(
             MainWindow.on_enable_simulation_mode)
         self.update_results_btn.clicked.connect(MainWindow.on_update_results)
@@ -1399,9 +1419,10 @@ class Ui_MainWindow(object):
         self.adv_ctrl_chkbox.setToolTip(
             _translate("MainWindow", "Show additional configuration panel"))
         self.adv_ctrl_chkbox.setText(_translate("MainWindow", "Advanced"))
-        self.pushButton.setText(_translate("MainWindow", "Configuration"))
+        self.sync_config_btn.setText(_translate("MainWindow", "Config"))
         self.label.setText(_translate("MainWindow", "Select Device"))
         self.label_16.setText(_translate("MainWindow", "Voltage [Volt]"))
+        self.volt_steps_lbl.setText(_translate("MainWindow", "[#]"))
         self.label_20.setText(_translate("MainWindow", "Begin"))
         self.label_21.setText(_translate("MainWindow", "End"))
         self.label_22.setText(_translate("MainWindow", "Step"))
@@ -1413,6 +1434,7 @@ class Ui_MainWindow(object):
         self.volt_settling_time_dsbox.setSuffix(
             _translate("MainWindow", " sec"))
         self.label_15.setText(_translate("MainWindow", "Position [mm]"))
+        self.pos_steps_lbl.setText(_translate("MainWindow", "[#]"))
         self.label_17.setText(_translate("MainWindow", "Begin"))
         self.label_18.setText(_translate("MainWindow", "End"))
         self.label_19.setText(_translate("MainWindow", "Step"))
