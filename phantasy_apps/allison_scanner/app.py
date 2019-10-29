@@ -512,7 +512,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             assert int((x2 - x1) / dx) * dx == x2 - x1
         except AssertionError:
             QMessageBox.warning(self, "Scan Range Warning",
-                "Input scan range for position indicates non-integer points.",
+                "Input scan range for position indicates non-integer total steps.",
                 QMessageBox.Ok)
             return False
 
@@ -524,7 +524,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             assert int((y2 - y1) / dy) * dy == y2 - y1
         except AssertionError:
             QMessageBox.warning(self, "Scan Range Warning",
-                "Input scan range for voltage indicates non-integer points.",
+                "Input scan range for voltage indicates non-integer total steps.",
                 QMessageBox.Ok)
             return False
 
@@ -832,11 +832,15 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_sync_data(self):
-        is_valid = self._valid_device(100)
-        if is_valid is False:
+        if self._valid_device(100) is False:
             return
         self.on_title_with_ts(self._device._data_pv.timestamp)
-        self.on_update(self._device._data_pv.value)
+        arr = self._device._data_pv.value
+        if arr.size == 0:
+            QMessageBox.warning(self, "Fetch Measurement Data",
+                    "Measurement data is empty.", QMessageBox.Ok)
+            return
+        self.on_update(arr)
         self.on_initial_data(mode=self._device_mode)
         self.on_plot_raw_data()
 
