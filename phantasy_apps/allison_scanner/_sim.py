@@ -5,6 +5,7 @@ from numpy import ndarray
 
 
 class SimDevice(QObject):
+
     data_changed = pyqtSignal(ndarray)
     pos_changed = pyqtSignal(float)
     status_in_changed = pyqtSignal(float)
@@ -12,7 +13,16 @@ class SimDevice(QObject):
     itlk_changed = pyqtSignal(float)
     status_enable_changed = pyqtSignal(float)
     finished = pyqtSignal()
+    pb_changed = pyqtSignal(float)
+    pe_changed = pyqtSignal(float)
+    ps_changed = pyqtSignal(float)
+    vb_changed = pyqtSignal(float)
+    ve_changed = pyqtSignal(float)
+    vs_changed = pyqtSignal(float)
+
     def __init__(self, data_pv, status_pv, trigger_pv, pos_pv,
+                 pos_begin_pv, pos_end_pv, pos_step_pv,
+                 volt_begin_pv, volt_end_pv, volt_step_pv,
                  in_pv=None, out_pv=None, itlk_pv=None, en_pv=None):
         super(self.__class__, self).__init__()
 
@@ -41,6 +51,19 @@ class SimDevice(QObject):
         self._scid = self._status_pv.add_callback(self.on_update_s)
         self._dcid = self._data_pv.add_callback(self.on_update)
         self._pcid = self._pos_pv.add_callback(self.on_update_p)
+
+        self._pos_begin_pv = epics.PV(pos_begin_pv)
+        self._pos_end_pv = epics.PV(pos_end_pv)
+        self._pos_step_pv = epics.PV(pos_step_pv)
+        self._volt_begin_pv = epics.PV(volt_begin_pv)
+        self._volt_end_pv = epics.PV(volt_end_pv)
+        self._volt_step_pv = epics.PV(volt_step_pv)
+        self._pbcid = self._pos_begin_pv.add_callback(self.on_update_pb)
+        self._pecid = self._pos_end_pv.add_callback(self.on_update_pe)
+        self._pscid = self._pos_step_pv.add_callback(self.on_update_ps)
+        self._vbcid = self._volt_begin_pv.add_callback(self.on_update_vb)
+        self._vecid = self._volt_end_pv.add_callback(self.on_update_ve)
+        self._vscid = self._volt_step_pv.add_callback(self.on_update_vs)
 
     def on_update(self, value, **kws):
         self.data_changed.emit(value)
@@ -72,3 +95,21 @@ class SimDevice(QObject):
 
     def on_update_en(self, value, **kws):
         self.status_enable_changed.emit(value)
+
+    def on_update_pb(self, value, **kws):
+        self.pb_changed.emit(value)
+
+    def on_update_pe(self, value, **kws):
+        self.pe_changed.emit(value)
+
+    def on_update_ps(self, value, **kws):
+        self.ps_changed.emit(value)
+
+    def on_update_vb(self, value, **kws):
+        self.vb_changed.emit(value)
+
+    def on_update_ve(self, value, **kws):
+        self.ve_changed.emit(value)
+
+    def on_update_vs(self, value, **kws):
+        self.vs_changed.emit(value)

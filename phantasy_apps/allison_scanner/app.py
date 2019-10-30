@@ -1,23 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from functools import partial
-from getpass import getuser
 from datetime import datetime
 from epics import caget, caput
-
+from functools import partial
+from getpass import getuser
 import numpy as np
+
 from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import QEventLoop
 from PyQt5.QtGui import QDesktopServices
+from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QMessageBox
+
 from numpy import ndarray
+from numpy.testing import assert_almost_equal
 from phantasy_ui.templates import BaseAppForm
 from phantasy_ui.widgets import ElementWidget
 
@@ -37,6 +40,9 @@ from .plot_final import PlotResults
 
 CMAP_FAVLIST = ('flag', 'jet', 'nipy_spectral', 'gist_earth',
                 'viridis', 'Greys')
+
+POS_VOLT_NAME_MAP = {'pb': 'pos_begin', 'pe': 'pos_end', 'ps': 'pos_step',
+                     'vb': 'volt_begin', 've': 'volt_end', 'vs': 'volt_step'}
 
 
 class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
@@ -110,6 +116,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._not_enable_px = QPixmap(":/icons/off.png")
         self._itlk_px = QPixmap(":/icons/on.png")
         self._not_itlk_px = QPixmap(":/icons/off.png")
+        #
+        self._fetch_red_px = QPixmap(":/icons/fetch_red.png")
+        self._fetch_px = QPixmap(":/icons/fetch.png")
         #
         self.installed_px = QPixmap(":/icons/installed.png")
         self.not_installed_px = QPixmap(":/icons/not-installed.png")
@@ -206,10 +215,22 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def _init_device(self):
         if self._device_mode == "Simulation":
             self._device = SimDevice(self._data_pv, self._status_pv,
-                                     self._trigger_pv, self._pos_pv)
+                                     self._trigger_pv, self._pos_pv,
+                                     self._pos_begin_pv,
+                                     self._pos_end_pv,
+                                     self._pos_step_pv,
+                                     self._volt_begin_pv,
+                                     self._volt_end_pv,
+                                     self._volt_step_pv)
         else:
             self._device = SimDevice(self._data_pv, self._status_pv,
                                      self._trigger_pv, self._pos_pv,
+                                     self._pos_begin_pv,
+                                     self._pos_end_pv,
+                                     self._pos_step_pv,
+                                     self._volt_begin_pv,
+                                     self._volt_end_pv,
+                                     self._volt_step_pv,
                                      self._in_pv, self._out_pv,
                                      self._itlk_pv, self._en_pv)
             self._device.status_in_changed.connect(self.on_update_sin)
@@ -221,6 +242,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                    self.on_update_itlk, self.on_update_en)
             for pv, cb in zip(pvs, cbs):
                 cb(caget(pv))
+        for (ii, jj) in ((i, j) for i in ('p', 'v') for j in ('b', 'e', 's')):
+            n = "{}{}".format(ii, jj)
+            o = getattr(self._device, '{}_changed'.format(n))
+            o.connect(partial(self.on_update_pos_volt_conf, n))
 
     @pyqtSlot(float)
     def on_update_config(self, attr, x):
@@ -285,6 +310,15 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._status_pv = elem.pv('SCAN_STATUS{}'.format(_id))[0]
         self._trigger_pv = elem.pv('START_SCAN{}'.format(_id))[0]
         self._pos_pv = elem.pv('POS{}'.format(_id), handle='readback')[0]
+
+        self._pos_begin_pv = elem.pv(self._pos_begin_fname, handle='readback')[0]
+        self._pos_end_pv = elem.pv(self._pos_end_fname, handle='readback')[0]
+        self._pos_step_pv = elem.pv(self._pos_step_fname, handle='readback')[0]
+
+        self._volt_begin_pv = elem.pv(self._volt_begin_fname, handle='readback')[0]
+        self._volt_end_pv = elem.pv(self._volt_end_fname, handle='readback')[0]
+        self._volt_step_pv = elem.pv(self._volt_step_fname, handle='readback')[0]
+
         if self._device_mode == "Live":
             self._in_pv = elem.pv('STATUS_IN{}'.format(_id))[0]
             self._out_pv = elem.pv('STATUS_OUT{}'.format(_id))[0]
@@ -375,6 +409,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             o = getattr(self, s + '_dsbox')
             o.valueChanged.connect(partial(self.on_update_config, s))
         self.bias_volt_dsbox.valueChanged.connect(self.on_update_bias_volt)
+
+        #
+        self.set_fetch_config_btn(0, 0)
 
     @pyqtSlot()
     def sync_config(self):
@@ -1054,6 +1091,32 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         loop.exec_()
 
         self.actionAuto_Analysis.setChecked(True)
+
+    @pyqtSlot()
+    def on_load_default_config(self):
+        """Load default scan ranges to device.
+        """
+        pass
+
+    @pyqtSlot(float)
+    def on_update_pos_volt_conf(self, name, v):
+        w_name = '{}_dsbox'.format(POS_VOLT_NAME_MAP[name])
+        w_value = getattr(self, w_name).value()
+        self.set_fetch_config_btn(w_value, v)
+
+    def set_fetch_config_btn(self, x, y):
+        # set fetch config btn icon
+        try:
+            assert_almost_equal(x, y)
+        except AssertionError:
+            px = self._fetch_red_px
+            tt = "Scan ranges configuration are changed, click to fetch updates."
+        else:
+            px = self._fetch_px
+            tt = "Scan ranges configuration are synchronized."
+        finally:
+            self.fetch_config_btn.setIcon(QIcon(px))
+            self.fetch_config_btn.setToolTip(tt)
 
 
 def mask_array(a):
