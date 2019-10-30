@@ -610,8 +610,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         return self._ems_device.check_status() == 0
 
     def on_update(self, data):
-        data = mask_array(data)
         print("Data from {} is updating...".format(self._data_pv))
+        data = mask_array(data)
         m = data.reshape(self._ydim, self._xdim)
         m = np.flipud(m)
         self._current_array = m
@@ -911,12 +911,28 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             QMessageBox.warning(self, "Fetch Measurement Data",
                     "Measurement data is empty.", QMessageBox.Ok)
             return
+        try:
+            self.check_data_size(arr)
+        except DataSizeNotMatchError:
+            QMessageBox.warning(self, "Update Data",
+                    "Data size ({}) is not consistent with the scan settings ({}x{}).".format(arr.size,
+                        self._ydim, self._xdim),
+                    QMessageBox.Ok)
+            return
         self.on_update(arr)
         self.on_initial_data(mode=self._device_mode)
         self.on_plot_raw_data()
 
         if self._auto_analysis:
             self._auto_process()
+
+    def check_data_size(self, data):
+        if data.size != self._xdim * self._ydim:
+            QMessageBox.warning(self, "Update Data",
+                    "Data size ({}) is not consistent with the scan settings ({}x{}).".format(data.size,
+                        self._ydim, self._xdim),
+                    QMessageBox.Ok)
+            raise DataSizeNotMatchError
 
     def _auto_process(self):
         self.auto_update_image_chkbox.setChecked(True)
@@ -1124,3 +1140,8 @@ def mask_array(a):
         return np.ma.masked_invalid(a)
     else:
         return a
+
+
+class DataSizeNotMatchError(Exception):
+    def __init__(self, *args, **kws):
+        super(self.__class__, self).__init__(*args, **kws)
