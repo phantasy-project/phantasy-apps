@@ -9,6 +9,7 @@ from numpy import ndarray
 
 from phantasy_apps.quad_scan import draw_beam_ellipse
 from .utils import point_in_ellipse
+from .utils import is_integer
 
 
 class Data(object):
@@ -57,18 +58,18 @@ class Data(object):
         self._pos_begin = conf['begin']
         self._pos_end = conf['end']
         self._pos_step = conf['step']
-        n = int((self._pos_end - self._pos_begin) / self._pos_step)
-        assert n * self._pos_step == self._pos_end - self._pos_begin
-        self._pos_dim = n + 1
+        n = (self._pos_end - self._pos_begin) / self._pos_step
+        assert is_integer(n) == True
+        self._pos_dim = int(n) + 1
 
     def update_volt_conf(self, conf):
         # update voltage config.
         self._volt_begin = conf['begin']
         self._volt_end = conf['end']
         self._volt_step = conf['step']
-        n = int((self._volt_end - self._volt_begin) / self._volt_step)
-        assert n * self._volt_step == self._volt_end - self._volt_begin
-        self._volt_dim =  n + 1
+        n = (self._volt_end - self._volt_begin) / self._volt_step
+        assert is_integer(n) == True
+        self._volt_dim =  int(n) + 1
 
     def initial_data_grid(self):
         """Initial data grid.

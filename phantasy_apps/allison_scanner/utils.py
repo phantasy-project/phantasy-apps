@@ -5,6 +5,7 @@ import os
 from collections import OrderedDict
 
 import numpy as np
+from numpy.testing import assert_almost_equal
 
 from phantasy import MachinePortal
 from phantasy_apps.utils import find_dconf as _find_dconf
@@ -52,3 +53,15 @@ def point_in_ellipse(x, y, ellipse, factor=1.0):
     x1 = np.cos(theta) * x + np.sin(theta) * y
     y1 = -np.sin(theta) * x + np.cos(theta) * y
     return (x1 * x1 / w / w + y1 * y1 / h / h) <= 0.25 * factor * factor
+
+
+def is_integer(a):
+    """Test if float(a) == int(a).
+    e.g. is_integer(4.0) returns True, while is_integer(4.01) returns False.
+    """
+    try:
+        assert_almost_equal(a, int(a))
+    except AssertionError:
+        return False
+    else:
+        return True
