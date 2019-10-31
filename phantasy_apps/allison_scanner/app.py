@@ -716,6 +716,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # update data
         if self._data is not None:
             self._data.model = self._model
+            self.refresh_main_view()
+
+    def refresh_main_view(self):
+        """Refresh the image view on the main window.
+        """
+        o = self.raw_view_chkbox
+        o.toggled.emit(o.isChecked())
 
     @pyqtSlot('QString')
     def on_v2d(self, s):
