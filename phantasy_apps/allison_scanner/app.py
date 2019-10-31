@@ -1142,8 +1142,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_load_default_config(self):
         """Load default scan ranges to device.
+        TODO: pop up dialog window for confirmation
         """
-        pass
+        # reload default configuration file
+        # push scan ranges shown in the panel
+        self.actionReload.triggered.emit()
+        for s in self._attr_names:
+            o = getattr(self, s + '_dsbox')
+            o.valueChanged.emit(o.value())
 
     @pyqtSlot(float)
     def on_update_pos_volt_conf(self, name, v):
