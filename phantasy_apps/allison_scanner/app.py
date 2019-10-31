@@ -33,6 +33,7 @@ from ._sim import SimDevice
 from .ui.ui_app import Ui_MainWindow
 from .utils import find_dconf
 from .utils import get_all_devices
+from .utils import is_integer
 from .data import Data
 from .model import Model
 from .plot import PlotWidget
@@ -43,6 +44,24 @@ CMAP_FAVLIST = ('flag', 'jet', 'nipy_spectral', 'gist_earth',
 
 POS_VOLT_NAME_MAP = {'pb': 'pos_begin', 'pe': 'pos_end', 'ps': 'pos_step',
                      'vb': 'volt_begin', 've': 'volt_end', 'vs': 'volt_step'}
+
+# red
+CNT_NOT_INT_STY = """
+    QLabel {
+        background-color: #DC3545;
+        color: white;
+        border-radius: 3px;
+    }
+"""
+
+# green
+CNT_IS_INT_STY = """
+    QLabel {
+        background-color: #28A745;
+        color: white;
+        border-radius: 3px;
+    }
+"""
 
 
 class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
@@ -259,20 +278,27 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 o = getattr(self, '{}_step_dsbox'.format(i))
                 o.valueChanged.emit(o.value())
                 print("Updated {}".format('{}_step_dsbox'.format(i)))
+        self.update_cnts()
 
+    def update_cnts(self):
         # update steps counter
-        if 'pos' in attr: # pos_begin, pos_end, pos_step
-            x1 = self.pos_begin_dsbox.value()
-            x2 = self.pos_end_dsbox.value()
-            dx = self.pos_step_dsbox.value()
-            o = self.pos_steps_lbl
-        else: # volt_begin, volt_end, volt_step
-            x1 = self.volt_begin_dsbox.value()
-            x2 = self.volt_end_dsbox.value()
-            dx = self.volt_step_dsbox.value()
-            o = self.volt_steps_lbl
-        cnt = int((x2 - x1) / dx) + 1
-        o.setText('[{0:03d}]'.format(int((x2 - x1) / dx) + 1))
+        for p in ('pos', 'volt'):
+            o_b = getattr(self, '{}_begin_dsbox'.format(p))
+            o_e = getattr(self, '{}_end_dsbox'.format(p))
+            o_s = getattr(self, '{}_step_dsbox'.format(p))
+            x1 = o_b.value()
+            x2 = o_e.value()
+            dx = o_s.value()
+            o = getattr(self, '{}_steps_lbl'.format(p))
+            cnt = (x2 - x1) / dx + 1
+            cnt_is_int = is_integer(cnt)
+            o.setText('[{0:03d}]'.format(int(cnt)))
+            if not cnt_is_int:
+                o.setStyleSheet(CNT_NOT_INT_STY)
+                o.setToolTip(
+                    "The number of total steps ({0:.1f}) is not an integer!".format(cnt))
+            else:
+                o.setStyleSheet(CNT_IS_INT_STY)
 
     @pyqtSlot(float)
     def on_update_bias_volt(self, x):
@@ -393,15 +419,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.pos_end_dsbox.setValue(ems.pos_end)
         self.pos_step_dsbox.setValue(ems.pos_step)
         self.pos_settling_time_dsbox.setValue(ems.pos_settling_time)
-        self.pos_steps_lbl.setText('[{0:03d}]'.format(
-            int((ems.pos_end - ems.pos_begin) / ems.pos_step) + 1))
 
         self.volt_begin_dsbox.setValue(ems.volt_begin)
         self.volt_end_dsbox.setValue(ems.volt_end)
         self.volt_step_dsbox.setValue(ems.volt_step)
         self.volt_settling_time_dsbox.setValue(ems.volt_settling_time)
-        self.volt_steps_lbl.setText('[{0:03d}]'.format(
-            int((ems.volt_end - ems.volt_begin) / ems.volt_step) + 1))
+
+        self.update_cnts()
 
         # bias volt
         self.bias_volt_dsbox.setValue(ems.bias_volt_threshold)
