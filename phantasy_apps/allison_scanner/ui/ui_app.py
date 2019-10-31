@@ -259,6 +259,11 @@ class Ui_MainWindow(object):
         self.gridLayout_4.setHorizontalSpacing(10)
         self.gridLayout_4.setVerticalSpacing(12)
         self.gridLayout_4.setObjectName("gridLayout_4")
+        self.fetch_config_btn = QtWidgets.QToolButton(self.gridWidget)
+        self.fetch_config_btn.setIcon(icon3)
+        self.fetch_config_btn.setIconSize(QtCore.QSize(28, 28))
+        self.fetch_config_btn.setObjectName("fetch_config_btn")
+        self.gridLayout_4.addWidget(self.fetch_config_btn, 6, 0, 1, 1)
         self.label_16 = QtWidgets.QLabel(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -277,7 +282,7 @@ class Ui_MainWindow(object):
                                    | QtCore.Qt.AlignTrailing
                                    | QtCore.Qt.AlignVCenter)
         self.label_16.setObjectName("label_16")
-        self.gridLayout_4.addWidget(self.label_16, 6, 2, 1, 1)
+        self.gridLayout_4.addWidget(self.label_16, 6, 3, 1, 1)
         self.label_15 = QtWidgets.QLabel(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -296,7 +301,7 @@ class Ui_MainWindow(object):
                                    | QtCore.Qt.AlignTrailing
                                    | QtCore.Qt.AlignVCenter)
         self.label_15.setObjectName("label_15")
-        self.gridLayout_4.addWidget(self.label_15, 5, 2, 1, 1)
+        self.gridLayout_4.addWidget(self.label_15, 5, 3, 1, 1)
         self.line_2 = QtWidgets.QFrame(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -308,7 +313,7 @@ class Ui_MainWindow(object):
         self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_2.setObjectName("line_2")
-        self.gridLayout_4.addWidget(self.line_2, 4, 2, 1, 3)
+        self.gridLayout_4.addWidget(self.line_2, 4, 3, 1, 3)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setContentsMargins(4, -1, -1, -1)
         self.horizontalLayout_5.setSpacing(8)
@@ -419,7 +424,7 @@ class Ui_MainWindow(object):
         self.pos_settling_time_dsbox.setSingleStep(0.01)
         self.pos_settling_time_dsbox.setObjectName("pos_settling_time_dsbox")
         self.horizontalLayout_5.addWidget(self.pos_settling_time_dsbox)
-        self.gridLayout_4.addLayout(self.horizontalLayout_5, 5, 3, 1, 2)
+        self.gridLayout_4.addLayout(self.horizontalLayout_5, 5, 4, 1, 2)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setContentsMargins(4, -1, -1, -1)
         self.horizontalLayout_6.setSpacing(8)
@@ -526,7 +531,7 @@ class Ui_MainWindow(object):
         self.volt_settling_time_dsbox.setSingleStep(0.01)
         self.volt_settling_time_dsbox.setObjectName("volt_settling_time_dsbox")
         self.horizontalLayout_6.addWidget(self.volt_settling_time_dsbox)
-        self.gridLayout_4.addLayout(self.horizontalLayout_6, 6, 3, 1, 2)
+        self.gridLayout_4.addLayout(self.horizontalLayout_6, 6, 4, 1, 2)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setContentsMargins(4, -1, -1, -1)
         self.horizontalLayout_4.setSpacing(8)
@@ -632,7 +637,7 @@ class Ui_MainWindow(object):
         self.length2_lineEdit.setReadOnly(True)
         self.length2_lineEdit.setObjectName("length2_lineEdit")
         self.horizontalLayout_4.addWidget(self.length2_lineEdit)
-        self.gridLayout_4.addLayout(self.horizontalLayout_4, 0, 2, 1, 3)
+        self.gridLayout_4.addLayout(self.horizontalLayout_4, 0, 3, 1, 3)
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_7.setContentsMargins(4, -1, -1, -1)
         self.horizontalLayout_7.setSpacing(8)
@@ -790,22 +795,16 @@ class Ui_MainWindow(object):
         self.slit_thickness_lineEdit.setReadOnly(True)
         self.slit_thickness_lineEdit.setObjectName("slit_thickness_lineEdit")
         self.horizontalLayout_7.addWidget(self.slit_thickness_lineEdit)
-        self.gridLayout_4.addLayout(self.horizontalLayout_7, 2, 2, 1, 3)
-        self.default_config_btn = QtWidgets.QPushButton(self.gridWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.default_config_btn.sizePolicy().hasHeightForWidth())
-        self.default_config_btn.setSizePolicy(sizePolicy)
+        self.gridLayout_4.addLayout(self.horizontalLayout_7, 2, 3, 1, 3)
+        self.default_config_btn = QtWidgets.QToolButton(self.gridWidget)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/icons/reset.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.default_config_btn.setIcon(icon4)
+        self.default_config_btn.setIconSize(QtCore.QSize(28, 28))
+        self.default_config_btn.setAutoRaise(False)
         self.default_config_btn.setObjectName("default_config_btn")
         self.gridLayout_4.addWidget(self.default_config_btn, 5, 0, 1, 1)
-        self.fetch_config_btn = QtWidgets.QToolButton(self.gridWidget)
-        self.fetch_config_btn.setIcon(icon3)
-        self.fetch_config_btn.setIconSize(QtCore.QSize(28, 28))
-        self.fetch_config_btn.setObjectName("fetch_config_btn")
-        self.gridLayout_4.addWidget(self.fetch_config_btn, 6, 0, 1, 1)
         self.as_drawing = QtWidgets.QLabel(self.splitter)
         self.as_drawing.setText("")
         self.as_drawing.setPixmap(QtGui.QPixmap(":/icons/as_schematic.png"))
@@ -835,6 +834,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.dataviz_gbox.sizePolicy().hasHeightForWidth())
         self.dataviz_gbox.setSizePolicy(sizePolicy)
+        self.dataviz_gbox.setFlat(False)
         self.dataviz_gbox.setObjectName("dataviz_gbox")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.dataviz_gbox)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -1311,22 +1311,22 @@ class Ui_MainWindow(object):
         self.menu_Data.setObjectName("menu_Data")
         MainWindow.setMenuBar(self.menubar)
         self.actionE_xit = QtWidgets.QAction(MainWindow)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.actionE_xit.setIcon(icon4)
+        self.actionE_xit.setIcon(icon5)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionAbout = QtWidgets.QAction(MainWindow)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.actionAbout.setIcon(icon5)
+        self.actionAbout.setIcon(icon6)
         self.actionAbout.setObjectName("actionAbout")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.actionAbout_Qt.setIcon(icon6)
+        self.actionAbout_Qt.setIcon(icon7)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionReload = QtWidgets.QAction(MainWindow)
         self.actionReload.setObjectName("actionReload")
@@ -1342,20 +1342,20 @@ class Ui_MainWindow(object):
         self.actionSimulation_Mode.setCheckable(True)
         self.actionSimulation_Mode.setObjectName("actionSimulation_Mode")
         self.actionOpen = QtWidgets.QAction(MainWindow)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(":/icons/open.png"), QtGui.QIcon.Normal,
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/icons/open.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.actionOpen.setIcon(icon7)
+        self.actionOpen.setIcon(icon8)
         self.actionOpen.setObjectName("actionOpen")
         self.actionAuto_Analysis = QtWidgets.QAction(MainWindow)
         self.actionAuto_Analysis.setCheckable(True)
         self.actionAuto_Analysis.setChecked(True)
         self.actionAuto_Analysis.setObjectName("actionAuto_Analysis")
         self.actionSaveData = QtWidgets.QAction(MainWindow)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(":/icons/save.png"), QtGui.QIcon.Normal,
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/icons/save.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.actionSaveData.setIcon(icon8)
+        self.actionSaveData.setIcon(icon9)
         self.actionSaveData.setObjectName("actionSaveData")
         self.actionRunXY = QtWidgets.QAction(MainWindow)
         self.actionRunXY.setObjectName("actionRunXY")
@@ -1433,20 +1433,22 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.ctrl_gbox.setTitle(_translate("MainWindow", "Device"))
         self.ems_names_cbb.setToolTip(
-            _translate("MainWindow", "Select Allison scanner device"))
+            _translate("MainWindow", "Select Allison scanner device."))
         self.info_lbl.setText(_translate("MainWindow", "info"))
         self.ems_detail_btn.setText(_translate("MainWindow", "..."))
         self.label_14.setText(_translate("MainWindow", "Orientation"))
+        self.ems_orientation_cbb.setToolTip(
+            _translate("MainWindow", "Select measurement orientation."))
         self.ems_orientation_cbb.setItemText(0, _translate("MainWindow", "X"))
         self.ems_orientation_cbb.setItemText(1, _translate("MainWindow", "Y"))
         self.status_lbl.setToolTip(
             _translate("MainWindow", "Motor movement status"))
-        self.run_btn.setToolTip(_translate("MainWindow", "Run device"))
+        self.run_btn.setToolTip(_translate("MainWindow", "Run device."))
         self.run_btn.setText(_translate("MainWindow", "Run"))
-        self.abort_btn.setToolTip(_translate("MainWindow", "Abort running"))
+        self.abort_btn.setToolTip(_translate("MainWindow", "Abort running."))
         self.abort_btn.setText(_translate("MainWindow", "Abort"))
         self.fetch_data_btn.setToolTip(
-            _translate("MainWindow", "Fetch measured data"))
+            _translate("MainWindow", "Fetch measured data."))
         self.fetch_data_btn.setText(_translate("MainWindow", "Data"))
         self.adv_ctrl_chkbox.setToolTip(
             _translate("MainWindow", "Show additional configuration panel"))
@@ -1466,6 +1468,9 @@ class Ui_MainWindow(object):
         self.reset_itlk_btn.setText(_translate("MainWindow",
                                                "Reset Interlock"))
         self.is_itlk_lbl.setText(_translate("MainWindow", "is_itlk?"))
+        self.fetch_config_btn.setToolTip(
+            _translate("MainWindow", "Click me when I\'m RED."))
+        self.fetch_config_btn.setText(_translate("MainWindow", "..."))
         self.label_16.setText(_translate("MainWindow", "Voltage [Volt]"))
         self.label_15.setText(_translate("MainWindow", "Position [mm]"))
         self.pos_steps_lbl.setText(_translate("MainWindow", "[#]"))
@@ -1533,9 +1538,8 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p><span style=\" font-style:italic;\">d</span></p></body></html>"
             ))
         self.default_config_btn.setToolTip(
-            _translate("MainWindow", "Apply default device configuration"))
-        self.default_config_btn.setText(_translate("MainWindow", "Default"))
-        self.fetch_config_btn.setText(_translate("MainWindow", "..."))
+            _translate("MainWindow", "Reset to default scan configuration."))
+        self.default_config_btn.setText(_translate("MainWindow", "..."))
         self.dataviz_gbox.setTitle(
             _translate("MainWindow", "Data Visualization"))
         self.matplotlibimageWidget.setFigureAspectRatio(
@@ -1548,6 +1552,8 @@ class Ui_MainWindow(object):
         self.label_32.setText(
             _translate("MainWindow",
                        "<html><head/><body><p>Ion Charge</p></body></html>"))
+        self.auto_fill_beam_params_btn.setToolTip(
+            _translate("MainWindow", "Fetch live beam species  infomation."))
         self.auto_fill_beam_params_btn.setText(
             _translate("MainWindow", "Auto Fill"))
         self.ion_charge_lineEdit.setText(_translate("MainWindow", "9"))
