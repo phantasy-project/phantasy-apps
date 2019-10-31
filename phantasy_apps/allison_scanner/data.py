@@ -19,7 +19,17 @@ class Data(object):
     # kws: array, file
     def __init__(self, model, **kws):
         self.model = model
-        self.device = device = model.device
+        # raw intensity array
+        self.intensity = self.read_data(**kws)
+
+    @property
+    def model(self):
+        return self._model
+
+    @model.setter
+    def model(self, m):
+        self._model = m
+        self.device = device = m.device
         self.xoy = device.xoy
         self.update_pos_conf(
             {"begin": device.pos_begin,
@@ -29,8 +39,6 @@ class Data(object):
             {"begin": device.volt_begin,
              "end": device.volt_end,
              "step": device.volt_step})
-        # raw intensity array
-        self.intensity = self.read_data(**kws)
         #
         self.x_grid, self.xp_grid, self.volt_grid, self.weight_grid = \
             self.initial_data_grid()
