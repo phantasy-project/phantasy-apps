@@ -158,6 +158,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         ve = self.voltage_lineEdit
         ve.setValidator(QDoubleValidator())
         ve.textChanged.connect(self.on_v2d)
+        self.ion_name_lineEdit.textChanged.connect(
+                self.ion_name_display_lbl.setText)
+        self.ion_charge_lineEdit.textChanged.connect(
+                self.ion_charge_display_lbl.setText)
+        self.ion_mass_lineEdit.textChanged.connect(
+                self.ion_mass_display_lbl.setText)
 
         # data
         self._data = None
@@ -719,6 +725,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._model.ion_energy = ione
         self.on_v2d(self.voltage_lineEdit.text())
         self.charge_mass_ratio_lineEdit.setText("{0:.3f}".format(ionc/ionm))
+        
         # update data
         if self._data is not None:
             self._data.model = self._model
@@ -1039,7 +1046,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_auto_fill_beam_params(self, mode):
         # mode: Live, Simulation
         n, q, a, ek = self._get_ion_info(mode)
-        ws = (self.ion_name_lbl,
+        ws = (self.ion_name_lineEdit,
               self.ion_charge_lineEdit,
               self.ion_mass_lineEdit)
         for v, w in zip((n, q, a), ws):
