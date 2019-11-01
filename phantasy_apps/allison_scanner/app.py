@@ -297,15 +297,22 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             x2 = o_e.value()
             dx = o_s.value()
             o = getattr(self, '{}_steps_lbl'.format(p))
-            cnt = (x2 - x1) / dx + 1
-            cnt_is_int = is_integer(cnt)
-            o.setText('[{0:03d}]'.format(int(cnt)))
-            if not cnt_is_int:
-                o.setStyleSheet(CNT_NOT_INT_STY)
-                o.setToolTip(
-                    "The number of total steps ({0:.1f}) is not an integer!".format(cnt))
+            try:
+                cnt = (x2 - x1) / dx + 1
+            except ZeroDivisionError:
+                cnt_is_int = False
+                o.setText('[INF]')
+                tt = "Invalid step size."
             else:
-                o.setStyleSheet(CNT_IS_INT_STY)
+                cnt_is_int = is_integer(cnt)
+                o.setText('[{0:03d}]'.format(int(cnt)))
+                tt = "Total steps: {0:.1f}".format(cnt)
+            finally:
+                if not cnt_is_int:
+                    o.setStyleSheet(CNT_NOT_INT_STY)
+                else:
+                    o.setStyleSheet(CNT_IS_INT_STY)
+                o.setToolTip(tt)
 
     @pyqtSlot(float)
     def on_update_bias_volt(self, x):
