@@ -125,8 +125,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._live_widgets = (self.retract_btn, self.abort_btn,
                               self.auto_fill_beam_params_btn,
                               self.reset_itlk_btn)
-        if self._device_mode == "Live":
-            self.on_auto_fill_beam_params()
+        self.on_auto_fill_beam_params(self._device_mode)
         # st
         self._active_px = QPixmap(":/icons/active.png")
         self._inactive_px = QPixmap(":/icons/inactive.png")
@@ -155,11 +154,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         for o in (self.ion_charge_lineEdit, self.ion_mass_lineEdit,
                   self.ion_energy_lineEdit, ):
             o.setValidator(QDoubleValidator(0, 99999999, 6))
-            o.returnPressed.connect(self.on_update_model)
+            o.textChanged.connect(self.on_update_model)
         ve = self.voltage_lineEdit
         ve.setValidator(QDoubleValidator())
         ve.textChanged.connect(self.on_v2d)
-        ve.returnPressed.connect(lambda:self.on_v2d(ve.text()))
 
         # data
         self._data = None
@@ -217,6 +215,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # detail info
         self.ems_detail_btn.clicked.connect(self.on_show_ems)
         self._device_widget = None
+
+        # init model
+        self.ion_charge_lineEdit.textChanged.emit('')
 
     @pyqtSlot(bool)
     def set_fav_cmap(self, set):
@@ -706,13 +707,18 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_update_model(self):
-        ionc = float(self.ion_charge_lineEdit.text())
-        ionm = float(self.ion_mass_lineEdit.text())
-        ione = float(self.ion_energy_lineEdit.text())
+        try:
+            ionc = float(self.ion_charge_lineEdit.text())
+            ionm = float(self.ion_mass_lineEdit.text())
+            ione = float(self.ion_energy_lineEdit.text())
+        except ValueError:
+            print("Invalid input of Q, A, Ek...")
+            return
         self._model.ion_charge = ionc
         self._model.ion_mass = ionm
         self._model.ion_energy = ione
         self.on_v2d(self.voltage_lineEdit.text())
+        self.charge_mass_ratio_lineEdit.setText("{0:.3f}".format(ionc/ionm))
         # update data
         if self._data is not None:
             self._data.model = self._model
@@ -1031,9 +1037,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 QMessageBox.Ok)
 
     @pyqtSlot()
-    def on_auto_fill_beam_params(self):
-        # Q, A, Ek
-        n, q, a, ek = self._get_ion_info()
+    def on_auto_fill_beam_params(self, mode):
+        # mode: Live, Simulation
+        n, q, a, ek = self._get_ion_info(mode)
         ws = (self.ion_charge_lineEdit, self.ion_mass_lineEdit)
         for v, w in zip((q, a), ws):
             w.setText(str(v))
@@ -1043,12 +1049,19 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         except:
             pass
 
-    def _get_ion_info(self):
+    def _get_ion_info(self, mode="Live"):
         # ion name, Q, A, Ek [eV]
-        n = caget('FE_ISRC1:BEAM:ELMT_BOOK')
-        q = caget('FE_ISRC1:BEAM:Q_BOOK')
-        a = caget('FE_ISRC1:BEAM:A_BOOK')
-        kv = caget('FE_SCS1:BEAM:HV_BOOK')
+        # Q, A, Ek
+        # mode:
+        #  - Live, pull from PVs
+        #  - Simulation, load from UI or roll back with default ones
+        if mode == "Live":
+            n = caget('FE_ISRC1:BEAM:ELMT_BOOK')
+            q = caget('FE_ISRC1:BEAM:Q_BOOK')
+            a = caget('FE_ISRC1:BEAM:A_BOOK')
+            kv = caget('FE_SCS1:BEAM:HV_BOOK')
+        else: # Simulation
+            n, q, a, kv = 'Ar', 9, 40, 53.333
         ek = kv * 1000.0 * q / a
         return (n, q, a, ek)
 
