@@ -1020,11 +1020,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             'array': data.tolist()}))
         ds.update(r)
         # ion species
-        if self._device_mode == "Live":
-            n, q, a, ek = self._get_ion_info()
-            ds.update({
-                "Beam Source": {'Ion Name': n,'Q': q, 'A': a, 'Ek': ek}})
-        #
+        n, q, a, ek = self._get_ion_info(mode=self._device_mode)
+        ds.update({
+            "Beam Source": {'Ion Name': n,'Q': q, 'A': a, 'Ek': ek}})
+    #
         if self._results is not None:
             ds.update({'results': {k: str(v) for k,v in self._results.items()}})
         ds.update({'info':
@@ -1040,8 +1039,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_auto_fill_beam_params(self, mode):
         # mode: Live, Simulation
         n, q, a, ek = self._get_ion_info(mode)
-        ws = (self.ion_charge_lineEdit, self.ion_mass_lineEdit)
-        for v, w in zip((q, a), ws):
+        ws = (self.ion_name_lbl,
+              self.ion_charge_lineEdit,
+              self.ion_mass_lineEdit)
+        for v, w in zip((n, q, a), ws):
             w.setText(str(v))
         self.ion_energy_lineEdit.setText(str(ek))
         try:
