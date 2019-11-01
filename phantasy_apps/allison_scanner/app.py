@@ -1043,7 +1043,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 QMessageBox.Ok)
 
     @pyqtSlot()
-    def on_auto_fill_beam_params(self, mode):
+    def on_auto_fill_beam_params(self, mode="Live"):
         # mode: Live, Simulation
         n, q, a, ek = self._get_ion_info(mode)
         ws = (self.ion_name_lineEdit,
