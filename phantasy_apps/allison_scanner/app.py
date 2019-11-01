@@ -223,7 +223,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._device_widget = None
 
         # init model
-        self.ion_charge_lineEdit.textChanged.emit('')
+        self.ion_charge_lineEdit.textChanged.emit(self.ion_charge_lineEdit.text())
 
     @pyqtSlot(bool)
     def set_fav_cmap(self, set):
