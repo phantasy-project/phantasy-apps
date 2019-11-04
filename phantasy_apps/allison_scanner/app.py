@@ -16,7 +16,9 @@ from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QMessageBox
 
 from numpy import ndarray
@@ -225,6 +227,28 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
         # init model
         self.ion_charge_lineEdit.textChanged.emit(self.ion_charge_lineEdit.text())
+
+        # default config btn, menu --> history settings
+        self._init_revert_config_btn()
+        self._init_scan_settings()
+
+    def _init_revert_config_btn(self):
+        # main action: revert to default config
+        # dropdown: pop-up a list of saved history settings
+        m = QMenu(self)
+        settings_act = QAction("Settings List", self)
+        settings_act.triggered.connect(self._pop_settings_list)
+        m.addAction(settings_act)
+        self.default_config_btn.setMenu(m)
+
+    def _init_scan_settings(self):
+        self._scan_settings_list = []
+        self._scan_settings_list.append(self.build_default_scan_settings())
+
+    @pyqtSlot()
+    def _pop_settings_list(self):
+        for i in self._scan_settings_list:
+            print(i.items())
 
     @pyqtSlot(bool)
     def set_fav_cmap(self, set):
@@ -1220,6 +1244,39 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.actionAuto_Analysis.setChecked(True)
 
     @pyqtSlot()
+    def on_add_current_config(self):
+        """Add current device scan settings into settings list.
+        """
+        is_synced = self.fetch_config_btn.property('is_synced')
+        if not is_synced:
+            QMessageBox.warning(self, "Add Current Settings",
+                    "Device settings is not consistent between GUI and IOC.",
+                    QMessageBox.Ok)
+            return
+        self._scan_settings_list.append(self.build_current_scan_settings())
+
+    def build_current_scan_settings(self):
+        """Return a dict of current scan settings.
+        """
+        pb = self.pos_begin_dsbox.value()
+        pe = self.pos_end_dsbox.value()
+        ps = self.pos_step_dsbox.value()
+        vb = self.volt_begin_dsbox.value()
+        ve = self.volt_end_dsbox.value()
+        vs = self.volt_step_dsbox.value()
+        name = self._ems_device.name
+        xoy = self._ems_orientation
+        return build_scan_settings_dict(name, xoy, pb, pe, ps, vb, ve, vs)
+
+    def build_default_scan_settings(self):
+        """Return a dict of default scan settings.
+        """
+        dconf = Configuration(self._dconf.config_path)
+        xoy = self._ems_orientation
+        name = self._ems_device.name
+        return get_scan_settings_from_config(xoy, name, dconf)
+
+    @pyqtSlot()
     def on_load_default_config(self):
         """Load default scan ranges to device.
         TODO: pop up dialog window for confirmation
@@ -1244,12 +1301,15 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         except AssertionError:
             px = self._fetch_red_px
             tt = "Scan ranges configuration are changed, click to fetch updates."
+            is_synced = False
         else:
             px = self._fetch_px
             tt = "Scan ranges configuration are synchronized."
+            is_synced = True
         finally:
             self.fetch_config_btn.setIcon(QIcon(px))
             self.fetch_config_btn.setToolTip(tt)
+            self.fetch_config_btn.setProperty("is_synced", is_synced)
 
 
 def mask_array(a):
@@ -1262,3 +1322,32 @@ def mask_array(a):
 class DataSizeNotMatchError(Exception):
     def __init__(self, *args, **kws):
         super(self.__class__, self).__init__(*args, **kws)
+
+
+def build_scan_settings_dict(name, xoy, pb, pe, ps, vb, ve, vs):
+    return {
+        'name': name, 'xoy': xoy,
+        'timestamp': datetime.now(),
+        'pos_begin': pb, 'pos_end': pe, 'pos_step': ps,
+        'volt_begin': vb, 'volt_end': ve, 'volt_step': vs,
+    }
+
+
+def get_scan_settings_from_config(xoy, name, dconf):
+    # xoy: 'X' or 'Y'
+    # name: device name
+    # default pos/volt alter ranges, [mm], [V], settling time: [sec]
+    kxoy = kxoy = "{}.{}".format(name, xoy)
+    pos_begin = float(dconf.get(kxoy, 'pos_begin'))
+    pos_end = float(dconf.get(kxoy, 'pos_end'))
+    pos_step = float(dconf.get(kxoy, 'pos_step'))
+    pos_settling_time = float(dconf.get(kxoy, 'pos_settling_time'))
+    volt_begin = float(dconf.get(kxoy, 'volt_begin'))
+    volt_end = float(dconf.get(kxoy, 'volt_end'))
+    volt_step = float(dconf.get(kxoy, 'volt_step'))
+    volt_settling_time = float(dconf.get(kxoy, 'volt_settling_time'))
+    return build_scan_settings_dict(
+                name, xoy,
+                pos_begin, pos_end, pos_step,
+                volt_begin, volt_end, volt_step)
+
