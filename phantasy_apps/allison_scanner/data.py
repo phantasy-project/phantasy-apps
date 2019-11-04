@@ -497,3 +497,46 @@ def noise_correction(intensity, noise_signal_array, threshold_sigma=2.0):
     m = arr_flat.reshape(shape)
     m[noise_signal_array == False] = 0
     return m, noise_arr
+
+
+def reading_params(filepath, ftype='json'):
+    """Reading parameters from *filepath*.
+
+    Returns
+    -------
+    r : tuple of strings
+        ion_name, ion_charge (Q), ion_mass (A), ion_energy (Ek, in kV),
+        bkgd_noise_nelem, bkgd_noise_nsigma, ellipse_sf, noise_threshold
+    """
+    with open(filepath, 'r') as fp:
+        d = json.load(fp)
+        # ion species
+        beam_source_conf = d.get('Beam Source', {})
+        name = beam_source_conf.get('Ion Name', 'Ar')
+        charge = beam_source_conf.get('Q', 9)
+        mass = beam_source_conf.get('A', 40)
+        ek_conf = beam_source_conf.get('Ek', {'value': 12000, 'unit': 'kV'})
+        if isinstance(ek_conf, dict):
+            ek = ek_conf['value']
+        else: # float
+            ek = ek_conf
+
+        # processing
+        param_conf = d.get('analysis parameters', {})
+        bkgd_noise_nelem = param_conf.get(
+                'background noise corner sampling points', '2')
+        bkgd_noise_nsigma = param_conf.get(
+                'background noise corner sampling threshold', '5')
+        ellipse_sf = param_conf.get(
+                'ellipse size factor', '8.0')
+        noise_threshold = param_conf.get(
+                'noise threshold', '2.0')
+
+        return name, \
+               str(charge), \
+               str(mass), \
+               str(ek), \
+               bkgd_noise_nelem, \
+               bkgd_noise_nsigma, \
+               ellipse_sf, \
+               noise_threshold
