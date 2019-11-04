@@ -853,8 +853,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         ax.axhline(avg + n * std, ls='--', color='m')
         t = r'$\mathrm{{Average}}: {0:.3g}, \sigma: {1:.3g}, \mathrm{{threshold}}: {2:.3g}$'.format(
                 avg, std, avg + n * std)
-        ax.set_title(t)
-        ax.xaxis.set_visible(False)
+        ax.set_xlabel(t)
         o.update_figure()
 
     @pyqtSlot(bool)
