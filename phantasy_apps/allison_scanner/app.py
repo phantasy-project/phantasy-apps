@@ -770,7 +770,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             # ion species and model
             ion_name, ion_charge, ion_mass, ion_energy, \
                 bkgd_noise_nelem, bkgd_noise_nsigma, \
-                ellipse_sf, noise_threshold = reading_params(filepath)
+                ellipse_sf, noise_threshold, \
+                xoy, pos_scan_conf, volt_scan_conf = reading_params(filepath)
             self.ion_name_lineEdit.setText(ion_name)
             self.ion_charge_lineEdit.setText(ion_charge)
             self.ion_mass_lineEdit.setText(ion_mass)
@@ -781,6 +782,17 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self.bkgd_noise_threshold_sbox.setValue(int(bkgd_noise_nsigma))
             self.factor_dsbox.setValue(float(ellipse_sf))
             self.noise_threshold_sbox.setValue(float(noise_threshold))
+
+            # set up scan ranges
+            self.ems_orientation_cbb.setCurrentText(xoy.upper())
+            pb, pe, ps = pos_scan_conf['begin'], pos_scan_conf['end'], pos_scan_conf['step']
+            vb, ve, vs = volt_scan_conf['begin'], volt_scan_conf['end'], volt_scan_conf['step']
+            self.pos_begin_dsbox.setValue(pb)
+            self.pos_end_dsbox.setValue(pe)
+            self.pos_step_dsbox.setValue(ps)
+            self.volt_begin_dsbox.setValue(vb)
+            self.volt_end_dsbox.setValue(ve)
+            self.volt_step_dsbox.setValue(vs)
 
             # data
             data = self._data = Data(self._model, file=filepath)

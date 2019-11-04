@@ -504,9 +504,12 @@ def reading_params(filepath, ftype='json'):
 
     Returns
     -------
-    r : tuple of strings
-        ion_name, ion_charge (Q), ion_mass (A), ion_energy (Ek, in kV),
-        bkgd_noise_nelem, bkgd_noise_nsigma, ellipse_sf, noise_threshold
+    r : tuple
+        ion_name: str, ion_charge (Q): str, ion_mass (A): str,
+        ion_energy (Ek, in kV): str,
+        bkgd_noise_nelem: str, bkgd_noise_nsigma: str,
+        ellipse_sf: str, noise_threshold: str,
+        orientation: str, pos_scan_conf: dict, volt_scan_conf: dict
     """
     with open(filepath, 'r') as fp:
         d = json.load(fp)
@@ -532,6 +535,11 @@ def reading_params(filepath, ftype='json'):
         noise_threshold = param_conf.get(
                 'noise threshold', '2.0')
 
+        # device scan config
+        xoy = d.get('xoy')
+        pos_scan_conf = d.get('position')
+        volt_scan_conf = d.get('voltage')
+
         return name, \
                str(charge), \
                str(mass), \
@@ -539,4 +547,7 @@ def reading_params(filepath, ftype='json'):
                bkgd_noise_nelem, \
                bkgd_noise_nsigma, \
                ellipse_sf, \
-               noise_threshold
+               noise_threshold, \
+               xoy, \
+               pos_scan_conf, \
+               volt_scan_conf
