@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import time
 from datetime import datetime
 from epics import caget, caput
 from functools import partial
@@ -41,6 +42,7 @@ from .data import Data
 from .model import Model
 from .plot import PlotWidget
 from .plot_final import PlotResults
+from .settings_view import SettingsView
 
 CMAP_FAVLIST = ('flag', 'jet', 'nipy_spectral', 'gist_earth',
                 'viridis', 'Greys')
@@ -237,7 +239,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # dropdown: pop-up a list of saved history settings
         m = QMenu(self)
         settings_act = QAction("Settings List", self)
-        settings_act.triggered.connect(self._pop_settings_list)
+        settings_act.triggered.connect(self.show_settings_list)
         m.addAction(settings_act)
         self.default_config_btn.setMenu(m)
 
@@ -246,9 +248,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._scan_settings_list.append(self.build_default_scan_settings())
 
     @pyqtSlot()
-    def _pop_settings_list(self):
-        for i in self._scan_settings_list:
-            print(i.items())
+    def show_settings_list(self):
+        self._slw = SettingsView(self._scan_settings_list)
+        self._slw.show()
+        m = self._slw.treeView.model()
+        m.remove_settings.connect(self.on_delete_settings)
+        m.apply_settings.connect(self.on_apply_settings)
 
     @pyqtSlot(bool)
     def set_fav_cmap(self, set):
@@ -1254,6 +1259,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                     QMessageBox.Ok)
             return
         self._scan_settings_list.append(self.build_current_scan_settings())
+        self.show_settings_list()
 
     def build_current_scan_settings(self):
         """Return a dict of current scan settings.
@@ -1279,7 +1285,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_load_default_config(self):
         """Load default scan ranges to device.
-        TODO: pop up dialog window for confirmation
         """
         # reload default configuration file
         # push scan ranges shown in the panel
@@ -1311,6 +1316,35 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self.fetch_config_btn.setToolTip(tt)
             self.fetch_config_btn.setProperty("is_synced", is_synced)
 
+    @pyqtSlot(float)
+    def on_delete_settings(self, ts):
+        """Delete settings by timestamp *ts*.
+        """
+        print("delete ", ts)
+        for i, d in enumerate(self._scan_settings_list):
+            if d['timestamp'] == ts:
+                self._scan_settings_list.pop(i)
+        self.show_settings_list()
+
+    @pyqtSlot(float)
+    def on_apply_settings(self, ts):
+        """Apply settings by timestamp *ts*.
+        """
+        print("apply ", ts)
+        for i, d in enumerate(self._scan_settings_list):
+            if d['timestamp'] == ts:
+                self.set_scan_settings(d)
+
+    def set_scan_settings(self, d):
+        """Apply scan settings from dict *d*.
+        """
+        self.pos_begin_dsbox.setValue(d['pos_begin'])
+        self.pos_end_dsbox.setValue(d['pos_end'])
+        self.pos_step_dsbox.setValue(d['pos_step'])
+        self.volt_begin_dsbox.setValue(d['volt_begin'])
+        self.volt_end_dsbox.setValue(d['volt_end'])
+        self.volt_step_dsbox.setValue(d['volt_step'])
+
 
 def mask_array(a):
     if np.any(np.isnan(a)):
@@ -1327,7 +1361,7 @@ class DataSizeNotMatchError(Exception):
 def build_scan_settings_dict(name, xoy, pb, pe, ps, vb, ve, vs):
     return {
         'name': name, 'xoy': xoy,
-        'timestamp': datetime.now(),
+        'timestamp': time.time(),
         'pos_begin': pb, 'pos_end': pe, 'pos_step': ps,
         'volt_begin': vb, 'volt_end': ve, 'volt_step': vs,
     }
