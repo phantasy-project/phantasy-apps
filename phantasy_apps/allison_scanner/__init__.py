@@ -17,7 +17,7 @@ __copyright__ = "(c) 2019, Facility for Rare Isotope beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
 __title__ = "Allison Scanner: Beam Twiss Parameters Measurement"
-__version__ = '2.3'
+__version__ = '3.0'
 
 
 def run(cli=False):
