@@ -30,6 +30,9 @@ class Ui_MainWindow(object):
             self.ctrl_gbox.sizePolicy().hasHeightForWidth())
         self.ctrl_gbox.setSizePolicy(sizePolicy)
         self.ctrl_gbox.setSizeIncrement(QtCore.QSize(0, 0))
+        self.ctrl_gbox.setStyleSheet("QComboBox {\n"
+                                     "    font-family: monospace;\n"
+                                     "}")
         self.ctrl_gbox.setObjectName("ctrl_gbox")
         self.gridLayout = QtWidgets.QGridLayout(self.ctrl_gbox)
         self.gridLayout.setContentsMargins(8, 8, 8, 8)
@@ -50,9 +53,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.ems_names_cbb.sizePolicy().hasHeightForWidth())
         self.ems_names_cbb.setSizePolicy(sizePolicy)
-        self.ems_names_cbb.setStyleSheet("QComboBox {\n"
-                                         "    font-family: monospace;\n"
-                                         "}")
+        self.ems_names_cbb.setStyleSheet("")
         self.ems_names_cbb.setObjectName("ems_names_cbb")
         self.device_hbox.addWidget(self.ems_names_cbb)
         self.info_lbl = QtWidgets.QLabel(self.ctrl_gbox)
@@ -101,9 +102,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.ems_orientation_cbb.sizePolicy().hasHeightForWidth())
         self.ems_orientation_cbb.setSizePolicy(sizePolicy)
-        self.ems_orientation_cbb.setStyleSheet("QComboBox {\n"
-                                               "    font-family: monospace;\n"
-                                               "}")
+        self.ems_orientation_cbb.setStyleSheet("")
         self.ems_orientation_cbb.setObjectName("ems_orientation_cbb")
         self.ems_orientation_cbb.addItem("")
         self.ems_orientation_cbb.addItem("")
@@ -262,8 +261,7 @@ class Ui_MainWindow(object):
         self.gridLayout_4.setSizeConstraint(
             QtWidgets.QLayout.SetDefaultConstraint)
         self.gridLayout_4.setContentsMargins(4, 0, 4, 4)
-        self.gridLayout_4.setHorizontalSpacing(4)
-        self.gridLayout_4.setVerticalSpacing(8)
+        self.gridLayout_4.setSpacing(4)
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.fetch_config_btn = QtWidgets.QToolButton(self.gridWidget)
         self.fetch_config_btn.setIcon(icon3)
@@ -841,15 +839,6 @@ class Ui_MainWindow(object):
         self.slit_thickness_lineEdit.setObjectName("slit_thickness_lineEdit")
         self.horizontalLayout_7.addWidget(self.slit_thickness_lineEdit)
         self.gridLayout_4.addLayout(self.horizontalLayout_7, 2, 3, 1, 3)
-        self.default_config_btn = QtWidgets.QToolButton(self.gridWidget)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/icons/reset.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.default_config_btn.setIcon(icon4)
-        self.default_config_btn.setIconSize(QtCore.QSize(28, 28))
-        self.default_config_btn.setAutoRaise(True)
-        self.default_config_btn.setObjectName("default_config_btn")
-        self.gridLayout_4.addWidget(self.default_config_btn, 5, 0, 1, 1)
         self.line_2 = QtWidgets.QFrame(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -862,6 +851,27 @@ class Ui_MainWindow(object):
         self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_2.setObjectName("line_2")
         self.gridLayout_4.addWidget(self.line_2, 4, 3, 1, 3)
+        self.default_config_btn = QtWidgets.QToolButton(self.gridWidget)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/icons/reset.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.default_config_btn.setIcon(icon4)
+        self.default_config_btn.setIconSize(QtCore.QSize(28, 28))
+        self.default_config_btn.setPopupMode(
+            QtWidgets.QToolButton.MenuButtonPopup)
+        self.default_config_btn.setAutoRaise(True)
+        self.default_config_btn.setArrowType(QtCore.Qt.NoArrow)
+        self.default_config_btn.setObjectName("default_config_btn")
+        self.gridLayout_4.addWidget(self.default_config_btn, 0, 0, 1, 1)
+        self.toolButton = QtWidgets.QToolButton(self.gridWidget)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/icons/add.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.toolButton.setIcon(icon5)
+        self.toolButton.setIconSize(QtCore.QSize(28, 28))
+        self.toolButton.setAutoRaise(True)
+        self.toolButton.setObjectName("toolButton")
+        self.gridLayout_4.addWidget(self.toolButton, 2, 0, 1, 1)
         self.as_drawing = QtWidgets.QLabel(self.splitter)
         self.as_drawing.setText("")
         self.as_drawing.setPixmap(QtGui.QPixmap(":/icons/as_schematic.png"))
@@ -886,7 +896,7 @@ class Ui_MainWindow(object):
         self.dataviz_gbox = QtWidgets.QGroupBox(self.h_splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(8)
+        sizePolicy.setHorizontalStretch(7)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.dataviz_gbox.sizePolicy().hasHeightForWidth())
@@ -955,7 +965,7 @@ class Ui_MainWindow(object):
         self.analysis_gbox = QtWidgets.QGroupBox(self.h_splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(3)
+        sizePolicy.setHorizontalStretch(2)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.analysis_gbox.sizePolicy().hasHeightForWidth())
@@ -1623,22 +1633,22 @@ class Ui_MainWindow(object):
         self.menu_Data.setObjectName("menu_Data")
         MainWindow.setMenuBar(self.menubar)
         self.actionE_xit = QtWidgets.QAction(MainWindow)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.actionE_xit.setIcon(icon5)
+        self.actionE_xit.setIcon(icon6)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionAbout = QtWidgets.QAction(MainWindow)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.actionAbout.setIcon(icon6)
+        self.actionAbout.setIcon(icon7)
         self.actionAbout.setObjectName("actionAbout")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.actionAbout_Qt.setIcon(icon7)
+        self.actionAbout_Qt.setIcon(icon8)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionReload = QtWidgets.QAction(MainWindow)
         self.actionReload.setObjectName("actionReload")
@@ -1654,20 +1664,20 @@ class Ui_MainWindow(object):
         self.actionSimulation_Mode.setCheckable(True)
         self.actionSimulation_Mode.setObjectName("actionSimulation_Mode")
         self.actionOpen = QtWidgets.QAction(MainWindow)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(":/icons/open.png"), QtGui.QIcon.Normal,
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/icons/open.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.actionOpen.setIcon(icon8)
+        self.actionOpen.setIcon(icon9)
         self.actionOpen.setObjectName("actionOpen")
         self.actionAuto_Analysis = QtWidgets.QAction(MainWindow)
         self.actionAuto_Analysis.setCheckable(True)
         self.actionAuto_Analysis.setChecked(True)
         self.actionAuto_Analysis.setObjectName("actionAuto_Analysis")
         self.actionSaveData = QtWidgets.QAction(MainWindow)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(":/icons/save.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.actionSaveData.setIcon(icon9)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap(":/icons/save.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
+        self.actionSaveData.setIcon(icon10)
         self.actionSaveData.setObjectName("actionSaveData")
         self.actionRunXY = QtWidgets.QAction(MainWindow)
         self.actionRunXY.setObjectName("actionRunXY")
@@ -1738,7 +1748,79 @@ class Ui_MainWindow(object):
         self.fetch_config_btn.clicked.connect(MainWindow.sync_config)
         self.default_config_btn.clicked.connect(
             MainWindow.on_load_default_config)
+        self.toolButton.clicked.connect(MainWindow.on_add_current_config)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        MainWindow.setTabOrder(self.ems_names_cbb, self.ems_detail_btn)
+        MainWindow.setTabOrder(self.ems_detail_btn, self.ems_orientation_cbb)
+        MainWindow.setTabOrder(self.ems_orientation_cbb, self.run_btn)
+        MainWindow.setTabOrder(self.run_btn, self.abort_btn)
+        MainWindow.setTabOrder(self.abort_btn, self.fetch_data_btn)
+        MainWindow.setTabOrder(self.fetch_data_btn, self.adv_ctrl_chkbox)
+        MainWindow.setTabOrder(self.adv_ctrl_chkbox, self.bias_volt_dsbox)
+        MainWindow.setTabOrder(self.bias_volt_dsbox, self.vpos_lineEdit)
+        MainWindow.setTabOrder(self.vpos_lineEdit, self.retract_btn)
+        MainWindow.setTabOrder(self.retract_btn, self.reset_itlk_btn)
+        MainWindow.setTabOrder(self.reset_itlk_btn, self.fetch_config_btn)
+        MainWindow.setTabOrder(self.fetch_config_btn, self.pos_begin_dsbox)
+        MainWindow.setTabOrder(self.pos_begin_dsbox, self.pos_end_dsbox)
+        MainWindow.setTabOrder(self.pos_end_dsbox, self.pos_step_dsbox)
+        MainWindow.setTabOrder(self.pos_step_dsbox,
+                               self.pos_settling_time_dsbox)
+        MainWindow.setTabOrder(self.pos_settling_time_dsbox,
+                               self.volt_begin_dsbox)
+        MainWindow.setTabOrder(self.volt_begin_dsbox, self.volt_end_dsbox)
+        MainWindow.setTabOrder(self.volt_end_dsbox, self.volt_step_dsbox)
+        MainWindow.setTabOrder(self.volt_step_dsbox,
+                               self.volt_settling_time_dsbox)
+        MainWindow.setTabOrder(self.volt_settling_time_dsbox,
+                               self.auto_fill_beam_params_btn)
+        MainWindow.setTabOrder(self.auto_fill_beam_params_btn,
+                               self.ion_name_lineEdit)
+        MainWindow.setTabOrder(self.ion_name_lineEdit,
+                               self.ion_charge_lineEdit)
+        MainWindow.setTabOrder(self.ion_charge_lineEdit,
+                               self.ion_mass_lineEdit)
+        MainWindow.setTabOrder(self.ion_mass_lineEdit,
+                               self.charge_mass_ratio_lineEdit)
+        MainWindow.setTabOrder(self.charge_mass_ratio_lineEdit,
+                               self.ion_energy_lineEdit)
+        MainWindow.setTabOrder(self.ion_energy_lineEdit, self.voltage_lineEdit)
+        MainWindow.setTabOrder(self.voltage_lineEdit, self.divergence_lineEdit)
+        MainWindow.setTabOrder(self.divergence_lineEdit, self.raw_view_chkbox)
+        MainWindow.setTabOrder(self.raw_view_chkbox, self.checkBox)
+        MainWindow.setTabOrder(self.checkBox, self.set_cmap_chkbox)
+        MainWindow.setTabOrder(self.set_cmap_chkbox, self.cmap_fav_cbb)
+        MainWindow.setTabOrder(self.cmap_fav_cbb, self.x_cen_lineEdit)
+        MainWindow.setTabOrder(self.x_cen_lineEdit, self.x_rms_lineEdit)
+        MainWindow.setTabOrder(self.x_rms_lineEdit, self.xp_cen_lineEdit)
+        MainWindow.setTabOrder(self.xp_cen_lineEdit, self.xp_rms_lineEdit)
+        MainWindow.setTabOrder(self.xp_rms_lineEdit, self.emit_x_lineEdit)
+        MainWindow.setTabOrder(self.emit_x_lineEdit, self.emitn_x_lineEdit)
+        MainWindow.setTabOrder(self.emitn_x_lineEdit, self.alpha_x_lineEdit)
+        MainWindow.setTabOrder(self.alpha_x_lineEdit, self.beta_x_lineEdit)
+        MainWindow.setTabOrder(self.beta_x_lineEdit, self.gamma_x_lineEdit)
+        MainWindow.setTabOrder(self.gamma_x_lineEdit, self.update_results_btn)
+        MainWindow.setTabOrder(self.update_results_btn, self.show_results_btn)
+        MainWindow.setTabOrder(self.show_results_btn,
+                               self.bkgd_noise_nelem_sbox)
+        MainWindow.setTabOrder(self.bkgd_noise_nelem_sbox,
+                               self.bkgd_noise_threshold_sbox)
+        MainWindow.setTabOrder(self.bkgd_noise_threshold_sbox,
+                               self.auto_update_image_chkbox)
+        MainWindow.setTabOrder(self.auto_update_image_chkbox,
+                               self.factor_dsbox)
+        MainWindow.setTabOrder(self.factor_dsbox, self.plot_region_btn)
+        MainWindow.setTabOrder(self.plot_region_btn, self.noise_threshold_sbox)
+        MainWindow.setTabOrder(self.noise_threshold_sbox,
+                               self.apply_noise_correction_btn)
+        MainWindow.setTabOrder(self.apply_noise_correction_btn,
+                               self.length_lineEdit)
+        MainWindow.setTabOrder(self.length_lineEdit, self.length1_lineEdit)
+        MainWindow.setTabOrder(self.length1_lineEdit, self.length2_lineEdit)
+        MainWindow.setTabOrder(self.length2_lineEdit, self.gap_lineEdit)
+        MainWindow.setTabOrder(self.gap_lineEdit, self.slit_width_lineEdit)
+        MainWindow.setTabOrder(self.slit_width_lineEdit,
+                               self.slit_thickness_lineEdit)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -1850,8 +1932,11 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p><span style=\" font-style:italic;\">d</span></p></body></html>"
             ))
         self.default_config_btn.setToolTip(
-            _translate("MainWindow", "Reset to default scan configuration."))
+            _translate("MainWindow", "Revert device settings."))
         self.default_config_btn.setText(_translate("MainWindow", "..."))
+        self.toolButton.setToolTip(
+            _translate("MainWindow", "Remember current device settings."))
+        self.toolButton.setText(_translate("MainWindow", "..."))
         self.dataviz_gbox.setTitle(
             _translate("MainWindow", "Data Visualization"))
         self.matplotlibimageWidget.setFigureAspectRatio(
