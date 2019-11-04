@@ -1092,7 +1092,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         })
         # results
         if self._results is not None:
-            ds.update({'results': {k: str(v) for k,v in self._results.items()}})
+            ds.update({'results': {k: '{0:.6g}'.format(v) for k,v in self._results.items()}})
         ds.update({'info':
                     {'user': getuser(),
                      'app': self.getAppTitle(),
