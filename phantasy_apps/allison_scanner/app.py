@@ -6,6 +6,7 @@ from epics import caget, caput
 from functools import partial
 from getpass import getuser
 import numpy as np
+import json
 
 from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import pyqtSignal
@@ -732,7 +733,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._model.ion_energy = ione
         self.on_v2d(self.voltage_lineEdit.text())
         self.charge_mass_ratio_lineEdit.setText("{0:.3f}".format(ionc/ionm))
-        
+
         # update data
         if self._data is not None:
             self._data.model = self._model
@@ -765,6 +766,26 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             return
 
         try:
+            # UI config
+            # ion species and model
+            with open(filepath, 'r') as fp:
+                d = json.load(fp)
+                beam_source_conf = d['Beam Source']
+                name, charge, mass = beam_source_conf['Ion Name'], \
+                    beam_source_conf['Q'], beam_source_conf['A']
+                ek_conf = beam_source_conf['Ek']
+                if isinstance(ek_conf, dict):
+                    ek = ek_conf['value']
+                else:
+                    ek = ek_conf
+                self.ion_name_lineEdit.setText(name)
+                self.ion_charge_lineEdit.setText(str(charge))
+                self.ion_mass_lineEdit.setText(str(mass))
+                self.ion_energy_lineEdit.setText(str(ek))
+                # model is updated
+            # processing
+
+            # data
             data = self._data = Data(self._model, file=filepath)
         except KeyError:
             QMessageBox.warning(self, "Open Data", "Failed to open data.",
@@ -1036,8 +1057,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # ion species
         n, q, a, ek = self._get_ion_info(mode=self._device_mode)
         ds.update({
-            "Beam Source": {'Ion Name': n,'Q': q, 'A': a, 'Ek': ek}})
-    #
+            "Beam Source": {
+                'Ion Name': n,
+                'Q': q,
+                'A': a,
+                'Ek': {'value': ek, 'unit': 'eV'}}})
+
         if self._results is not None:
             ds.update({'results': {k: str(v) for k,v in self._results.items()}})
         ds.update({'info':
@@ -1075,9 +1100,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             q = caget('FE_ISRC1:BEAM:Q_BOOK')
             a = caget('FE_ISRC1:BEAM:A_BOOK')
             kv = caget('FE_SCS1:BEAM:HV_BOOK')
+            ek = kv * 1000.0 * q / a
         else: # Simulation
-            n, q, a, kv = 'Ar', 9, 40, 53.333
-        ek = kv * 1000.0 * q / a
+            # get from UI
+            n = self.ion_name_lineEdit.text()
+            q = self.ion_charge_lineEdit.text()
+            a = self.ion_mass_lineEdit.text()
+            ek = self.ion_energy_lineEdit.text()
+            # n, q, a, kv = 'Ar', 9, 40, 53.333
         return (n, q, a, ek)
 
     @pyqtSlot()
