@@ -991,7 +991,7 @@ class Ui_MainWindow(object):
             "}")
         self.data_analysis_tbox.setObjectName("data_analysis_tbox")
         self.page_beam_params = QtWidgets.QWidget()
-        self.page_beam_params.setGeometry(QtCore.QRect(0, 0, 519, 565))
+        self.page_beam_params.setGeometry(QtCore.QRect(0, 0, 602, 565))
         self.page_beam_params.setObjectName("page_beam_params")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.page_beam_params)
         self.verticalLayout_6.setContentsMargins(4, 4, 4, 4)
@@ -1255,7 +1255,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.addItem(spacerItem4)
         self.data_analysis_tbox.addItem(self.page_beam_params, "")
         self.page_bkgd_noise = QtWidgets.QWidget()
-        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 519, 565))
+        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 602, 565))
         self.page_bkgd_noise.setObjectName("page_bkgd_noise")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.page_bkgd_noise)
         self.gridLayout_2.setContentsMargins(-1, 4, 4, 4)
@@ -1272,7 +1272,14 @@ class Ui_MainWindow(object):
         self.label_39.setObjectName("label_39")
         self.gridLayout_2.addWidget(self.label_39, 0, 0, 1, 1)
         self.bkgd_noise_plot = MatplotlibBaseWidget(self.page_bkgd_noise)
-        self.bkgd_noise_plot.setProperty("figureTightLayout", True)
+        self.bkgd_noise_plot.setProperty("figureTightLayout", False)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        font.setPointSize(10)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(50)
+        self.bkgd_noise_plot.setFigureXYlabelFont(font)
         self.bkgd_noise_plot.setObjectName("bkgd_noise_plot")
         self.gridLayout_2.addWidget(self.bkgd_noise_plot, 3, 0, 1, 3)
         self.bkgd_noise_threshold_sbox = QtWidgets.QSpinBox(
@@ -1329,7 +1336,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.auto_update_image_chkbox, 1, 2, 1, 1)
         self.data_analysis_tbox.addItem(self.page_bkgd_noise, "")
         self.page_noise_correction = QtWidgets.QWidget()
-        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 519, 565))
+        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 602, 565))
         self.page_noise_correction.setObjectName("page_noise_correction")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.page_noise_correction)
         self.gridLayout_7.setContentsMargins(-1, 4, 4, 4)
@@ -1401,7 +1408,14 @@ class Ui_MainWindow(object):
         self.gridLayout_7.addWidget(self.apply_noise_correction_btn, 1, 2, 1,
                                     1)
         self.noise_plot = MatplotlibBaseWidget(self.page_noise_correction)
-        self.noise_plot.setProperty("figureTightLayout", True)
+        self.noise_plot.setProperty("figureTightLayout", False)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        font.setPointSize(10)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(50)
+        self.noise_plot.setFigureXYlabelFont(font)
         self.noise_plot.setObjectName("noise_plot")
         self.gridLayout_7.addWidget(self.noise_plot, 2, 0, 1, 3)
         self.data_analysis_tbox.addItem(self.page_noise_correction, "")
@@ -1417,7 +1431,7 @@ class Ui_MainWindow(object):
         self.twiss_gbox.setCheckable(False)
         self.twiss_gbox.setObjectName("twiss_gbox")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.twiss_gbox)
-        self.verticalLayout_3.setContentsMargins(4, 4, 4, 4)
+        self.verticalLayout_3.setContentsMargins(4, 12, 4, 4)
         self.verticalLayout_3.setSpacing(8)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.twiss_gridLayout = QtWidgets.QGridLayout()
@@ -1749,7 +1763,7 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Fetch measured data."))
         self.fetch_data_btn.setText(_translate("MainWindow", "Data"))
         self.adv_ctrl_chkbox.setToolTip(
-            _translate("MainWindow", "Show additional configuration panel"))
+            _translate("MainWindow", "Show additional configuration panel."))
         self.adv_ctrl_chkbox.setText(_translate("MainWindow", "Advanced"))
         self.label_26.setText(
             _translate(
@@ -1849,7 +1863,7 @@ class Ui_MainWindow(object):
         self.set_cmap_chkbox.setText(_translate("MainWindow", "Set Color Map"))
         self.analysis_gbox.setTitle(_translate("MainWindow", "Data Analysis"))
         self.auto_fill_beam_params_btn.setToolTip(
-            _translate("MainWindow", "Fetch live beam species  infomation."))
+            _translate("MainWindow", "Fetch live beam species infomation."))
         self.auto_fill_beam_params_btn.setText(
             _translate("MainWindow", "Auto Fill"))
         self.ion_name_display_lbl.setText(_translate("MainWindow", "Ar"))
@@ -1896,6 +1910,7 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p>(<span style=\" font-style:italic;\">E</span><span style=\" vertical-align:sub;\">k</span>)</p></body></html>"
             ))
+        self.ion_name_lineEdit.setText(_translate("MainWindow", "Ar"))
         self.data_analysis_tbox.setItemText(
             self.data_analysis_tbox.indexOf(self.page_beam_params),
             _translate("MainWindow", "Ion Species"))
