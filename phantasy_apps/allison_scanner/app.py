@@ -785,7 +785,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 # model is updated
 
                 # processing
-                param_conf = d['analysis parameters']
+                param_conf = d.get('analysis parameters', {})
                 bkgd_noise_nelem = param_conf.get(
                         'background noise corner sampling points', '2')
                 bkgd_noise_nsigma = param_conf.get(
