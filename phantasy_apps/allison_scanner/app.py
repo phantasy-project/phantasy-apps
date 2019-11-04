@@ -249,11 +249,15 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def show_settings_list(self):
+        if hasattr(self, '_slw'):
+            self._slw.close()
         self._slw = SettingsView(self._scan_settings_list)
         self._slw.show()
         m = self._slw.treeView.model()
         m.remove_settings.connect(self.on_delete_settings)
         m.apply_settings.connect(self.on_apply_settings)
+        #
+        self.add_attached_widget(self._slw)
 
     @pyqtSlot(bool)
     def set_fav_cmap(self, set):
