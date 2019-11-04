@@ -783,7 +783,21 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 self.ion_mass_lineEdit.setText(str(mass))
                 self.ion_energy_lineEdit.setText(str(ek))
                 # model is updated
-            # processing
+
+                # processing
+                param_conf = d['analysis parameters']
+                bkgd_noise_nelem = param_conf.get(
+                        'background noise corner sampling points', '2')
+                bkgd_noise_nsigma = param_conf.get(
+                        'background noise corner sampling threshold', '5')
+                ellipse_sf = param_conf.get(
+                        'ellipse size factor', '8.0')
+                noise_threshold = param_conf.get(
+                        'noise threshold', '2.0')
+                self.bkgd_noise_nelem_sbox.setValue(int(bkgd_noise_nelem))
+                self.bkgd_noise_threshold_sbox.setValue(int(bkgd_noise_nsigma))
+                self.factor_dsbox.setValue(float(ellipse_sf))
+                self.noise_threshold_sbox.setValue(float(noise_threshold))
 
             # data
             data = self._data = Data(self._model, file=filepath)
@@ -1062,7 +1076,21 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 'Q': q,
                 'A': a,
                 'Ek': {'value': ek, 'unit': 'eV'}}})
-
+        # data-processing params
+        bkgd_noise_nelem = '{0:d}'.format(self.bkgd_noise_nelem_sbox.value())
+        bkgd_noise_nsigma = '{0:d}'.format(self.bkgd_noise_threshold_sbox.value())
+        ellipse_sf = '{0:.1f}'.format(self.factor_dsbox.value())
+        noise_threshold = '{0:.1f}'.format(self.noise_threshold_sbox.value())
+        ds.update({
+            'analysis parameters':
+            {
+                'background noise corner sampling points': bkgd_noise_nelem,
+                'background noise corner sampling threshold': bkgd_noise_nsigma,
+                'ellipse size factor': ellipse_sf,
+                'noise threshold': noise_threshold,
+            }
+        })
+        # results
         if self._results is not None:
             ds.update({'results': {k: str(v) for k,v in self._results.items()}})
         ds.update({'info':
