@@ -540,6 +540,9 @@ def reading_params(filepath, ftype='json'):
         pos_scan_conf = d.get('position')
         volt_scan_conf = d.get('voltage')
 
+        # note
+        note = d.get('note', '')
+
         return name, \
                str(charge), \
                str(mass), \
@@ -550,4 +553,5 @@ def reading_params(filepath, ftype='json'):
                noise_threshold, \
                xoy, \
                pos_scan_conf, \
-               volt_scan_conf
+               volt_scan_conf, \
+               note
