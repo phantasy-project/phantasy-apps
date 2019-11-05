@@ -28,6 +28,7 @@ from phantasy_ui.templates import BaseAppForm
 from phantasy_ui.widgets import ElementWidget
 
 from phantasy import Configuration
+from phantasy_apps.utils import uptime
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet
@@ -324,10 +325,22 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 o = getattr(self, '{}_step_dsbox'.format(i))
                 o.valueChanged.emit(o.value())
                 print("Updated {}".format('{}_step_dsbox'.format(i)))
-        self.update_cnts()
+        cnt_list = self.update_cnts()
+        self.update_time_cost(cnt_list)
+
+    def update_time_cost(self, cnt_list):
+        # update required time.
+        if None in cnt_list:
+            return
+        cnt_pos, cnt_volt = cnt_list
+        dt_pos = self.pos_settling_time_dsbox.value()
+        dt_volt = self.volt_settling_time_dsbox.value()
+        t_sec = ( dt_volt * cnt_volt + dt_pos ) * cnt_pos
+        self.time_cost_lineEdit.setText(uptime(t_sec))
 
     def update_cnts(self):
         # update steps counter
+        cnt_list = []
         for p in ('pos', 'volt'):
             o_b = getattr(self, '{}_begin_dsbox'.format(p))
             o_e = getattr(self, '{}_end_dsbox'.format(p))
@@ -342,6 +355,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 cnt_is_int = False
                 o.setText('[INF]')
                 tt = "Invalid step size."
+                cnt = None
             else:
                 cnt_is_int = is_integer(cnt)
                 o.setText('[{0:03d}]'.format(int(cnt)))
@@ -352,6 +366,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 else:
                     o.setStyleSheet(CNT_IS_INT_STY)
                 o.setToolTip(tt)
+            cnt_list.append(cnt)
+        return cnt_list
 
     @pyqtSlot(float)
     def on_update_bias_volt(self, x):
@@ -478,7 +494,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.volt_step_dsbox.setValue(ems.volt_step)
         self.volt_settling_time_dsbox.setValue(ems.volt_settling_time)
 
-        self.update_cnts()
+        cnt_list = self.update_cnts()
+        self.update_time_cost(cnt_list)
 
         # bias volt
         self.bias_volt_dsbox.setValue(ems.bias_volt_threshold)
@@ -1309,6 +1326,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """
         # reload default configuration file
         # push scan ranges shown in the panel
+        self.on_add_current_config()
         self.actionReload.triggered.emit()
         for s in self._attr_names:
             o = getattr(self, s + '_dsbox')
