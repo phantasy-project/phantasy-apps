@@ -210,6 +210,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._results = None
         # save dlg
         self._data_save_dlg = None
+        # loading mode (open data from file)
+        self._last_loading = False
 
         # vpos
         self.vpos_lineEdit.setValidator(QDoubleValidator())
@@ -808,7 +810,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             ion_name, ion_charge, ion_mass, ion_energy, \
                 bkgd_noise_nelem, bkgd_noise_nsigma, \
                 ellipse_sf, noise_threshold, \
-                xoy, pos_scan_conf, volt_scan_conf = reading_params(filepath)
+                xoy, pos_scan_conf, volt_scan_conf, \
+                note = reading_params(filepath)
+            #
+            self._last_loading = True
+            self._loading_note = note
+            self._loading_filepath = filepath
+            #
             self.ion_name_lineEdit.setText(ion_name)
             self.ion_charge_lineEdit.setText(ion_charge)
             self.ion_mass_lineEdit.setText(ion_mass)
@@ -1044,6 +1052,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self._auto_analysis:
             self._auto_process()
 
+        #
+        self._last_loading = False
+
     def check_data_size(self, data):
         if data.size != self._xdim * self._ydim:
             QMessageBox.warning(self, "Update Data",
@@ -1070,9 +1081,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_save_data(self):
         if self._data_save_dlg is None:
             self._data_save_dlg = SaveDataDialog(self)
+        if self._last_loading:
+            self._data_save_dlg.filepath_lineEdit.setText(self._loading_filepath)
+            self._data_save_dlg.note_plainTextEdit.setPlainText(self._loading_note)
         self._data_save_dlg.exec_()
 
-    def _save_data_to_file(self, filepath, ftype='json'):
+    def _save_data_to_file(self, filepath, ftype='json', **kws):
         ems = self._ems_device
         xoy = ems.xoy.lower()
         pos_begin = ems.pos_begin
@@ -1126,6 +1140,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                     {'user': getuser(),
                      'app': self.getAppTitle(),
                      'version': self.getAppVersion()}})
+        # note
+        ds.update({'note':
+                    kws.get('note')})
         ds.write(filepath)
 
     @pyqtSlot()

@@ -56,14 +56,16 @@ class SaveDataDialog(QDialog, Ui_Dialog):
     @pyqtSlot()
     def on_save_data(self):
         print("SaveDataDialog: Save Data")
-        self._save_data()
+        note = self.note_plainTextEdit.toPlainText()
+        print(note)
+        self._save_data(note=note)
 
     def _save_data(self, **kws):
         # save data.
         try:
             filepath = self.filepath_lineEdit.text()
             ext = filepath.rsplit('.', 1)[-1]
-            self.parent._save_data_to_file(filepath, ext)
+            self.parent._save_data_to_file(filepath, ftype=ext, **kws)
         except:
             QMessageBox.warning(self, "Save Data",
                     "Failed to save data to {}.".format(filepath),
