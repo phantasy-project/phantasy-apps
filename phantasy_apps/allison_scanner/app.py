@@ -42,6 +42,7 @@ from .data import Data
 from .model import Model
 from .plot import PlotWidget
 from .plot_final import PlotResults
+from .save import SaveDataDialog
 from .settings_view import SettingsView
 
 CMAP_FAVLIST = ('flag', 'jet', 'nipy_spectral', 'gist_earth',
@@ -207,6 +208,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # auto analysis?
         self._auto_analysis = True
         self._results = None
+        # save dlg
+        self._data_save_dlg = None
 
         # vpos
         self.vpos_lineEdit.setValidator(QDoubleValidator())
@@ -1063,14 +1066,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_save_data(self):
-        # save data and results.
-        filepath, ext = get_save_filename(self,
-                                          type_filter="JSON Files (*.json)")
-        if filepath is None:
-            return
-        self._save_data_to_file(filepath)
+        if self._data_save_dlg is None:
+            self._data_save_dlg = SaveDataDialog(self)
+        self._data_save_dlg.show()
 
-    def _save_data_to_file(self, filepath):
+    def _save_data_to_file(self, filepath, ftype='json'):
         ems = self._ems_device
         xoy = ems.xoy.lower()
         pos_begin = ems.pos_begin
@@ -1125,9 +1125,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                      'app': self.getAppTitle(),
                      'version': self.getAppVersion()}})
         ds.write(filepath)
-        QMessageBox.information(self, "Save Data",
-                "Saved data to {}.".format(filepath),
-                QMessageBox.Ok)
 
     @pyqtSlot()
     def on_auto_fill_beam_params(self, mode="Live"):
