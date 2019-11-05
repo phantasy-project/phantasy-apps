@@ -263,13 +263,6 @@ class Ui_MainWindow(object):
         self.gridLayout_4.setContentsMargins(4, 0, 4, 4)
         self.gridLayout_4.setSpacing(4)
         self.gridLayout_4.setObjectName("gridLayout_4")
-        self.fetch_config_btn = QtWidgets.QToolButton(self.gridWidget)
-        self.fetch_config_btn.setIcon(icon3)
-        self.fetch_config_btn.setIconSize(QtCore.QSize(28, 28))
-        self.fetch_config_btn.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
-        self.fetch_config_btn.setAutoRaise(True)
-        self.fetch_config_btn.setObjectName("fetch_config_btn")
-        self.gridLayout_4.addWidget(self.fetch_config_btn, 6, 0, 1, 1)
         self.label_16 = QtWidgets.QLabel(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -284,11 +277,10 @@ class Ui_MainWindow(object):
         font.setUnderline(False)
         font.setWeight(50)
         self.label_16.setFont(font)
-        self.label_16.setAlignment(QtCore.Qt.AlignRight
-                                   | QtCore.Qt.AlignTrailing
+        self.label_16.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft
                                    | QtCore.Qt.AlignVCenter)
         self.label_16.setObjectName("label_16")
-        self.gridLayout_4.addWidget(self.label_16, 6, 3, 1, 1)
+        self.gridLayout_4.addWidget(self.label_16, 6, 2, 1, 1)
         self.label_15 = QtWidgets.QLabel(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -303,11 +295,10 @@ class Ui_MainWindow(object):
         font.setUnderline(False)
         font.setWeight(50)
         self.label_15.setFont(font)
-        self.label_15.setAlignment(QtCore.Qt.AlignRight
-                                   | QtCore.Qt.AlignTrailing
+        self.label_15.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft
                                    | QtCore.Qt.AlignVCenter)
         self.label_15.setObjectName("label_15")
-        self.gridLayout_4.addWidget(self.label_15, 5, 3, 1, 1)
+        self.gridLayout_4.addWidget(self.label_15, 5, 2, 1, 1)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setContentsMargins(4, -1, 4, -1)
         self.horizontalLayout_5.setSpacing(8)
@@ -433,7 +424,7 @@ class Ui_MainWindow(object):
         self.pos_settling_time_dsbox.setSingleStep(0.01)
         self.pos_settling_time_dsbox.setObjectName("pos_settling_time_dsbox")
         self.horizontalLayout_5.addWidget(self.pos_settling_time_dsbox)
-        self.gridLayout_4.addLayout(self.horizontalLayout_5, 5, 4, 1, 2)
+        self.gridLayout_4.addLayout(self.horizontalLayout_5, 5, 3, 1, 2)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setContentsMargins(4, -1, 4, -1)
         self.horizontalLayout_6.setSpacing(8)
@@ -555,10 +546,10 @@ class Ui_MainWindow(object):
         self.volt_settling_time_dsbox.setSingleStep(0.01)
         self.volt_settling_time_dsbox.setObjectName("volt_settling_time_dsbox")
         self.horizontalLayout_6.addWidget(self.volt_settling_time_dsbox)
-        self.gridLayout_4.addLayout(self.horizontalLayout_6, 6, 4, 1, 2)
+        self.gridLayout_4.addLayout(self.horizontalLayout_6, 6, 3, 1, 2)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setContentsMargins(4, -1, 4, -1)
-        self.horizontalLayout_4.setSpacing(8)
+        self.horizontalLayout_4.setSpacing(2)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.label_6 = QtWidgets.QLabel(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -671,11 +662,11 @@ class Ui_MainWindow(object):
         self.length2_lineEdit.setReadOnly(True)
         self.length2_lineEdit.setObjectName("length2_lineEdit")
         self.horizontalLayout_4.addWidget(self.length2_lineEdit)
-        self.gridLayout_4.addLayout(self.horizontalLayout_4, 0, 3, 1, 3)
-        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_7.setContentsMargins(4, -1, 4, -1)
-        self.horizontalLayout_7.setSpacing(8)
-        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
+        self.line_3 = QtWidgets.QFrame(self.gridWidget)
+        self.line_3.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_3.setObjectName("line_3")
+        self.horizontalLayout_4.addWidget(self.line_3)
         self.label_8 = QtWidgets.QLabel(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -693,7 +684,7 @@ class Ui_MainWindow(object):
                                   | QtCore.Qt.AlignTrailing
                                   | QtCore.Qt.AlignVCenter)
         self.label_8.setObjectName("label_8")
-        self.horizontalLayout_7.addWidget(self.label_8)
+        self.horizontalLayout_4.addWidget(self.label_8)
         self.gap_info_lbl = QtWidgets.QLabel(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -703,7 +694,7 @@ class Ui_MainWindow(object):
             self.gap_info_lbl.sizePolicy().hasHeightForWidth())
         self.gap_info_lbl.setSizePolicy(sizePolicy)
         self.gap_info_lbl.setObjectName("gap_info_lbl")
-        self.horizontalLayout_7.addWidget(self.gap_info_lbl)
+        self.horizontalLayout_4.addWidget(self.gap_info_lbl)
         self.label_4 = QtWidgets.QLabel(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -716,7 +707,7 @@ class Ui_MainWindow(object):
         font.setFamily("Serif")
         self.label_4.setFont(font)
         self.label_4.setObjectName("label_4")
-        self.horizontalLayout_7.addWidget(self.label_4)
+        self.horizontalLayout_4.addWidget(self.label_4)
         self.gap_lineEdit = QtWidgets.QLineEdit(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -730,12 +721,12 @@ class Ui_MainWindow(object):
         self.gap_lineEdit.setFont(font)
         self.gap_lineEdit.setReadOnly(True)
         self.gap_lineEdit.setObjectName("gap_lineEdit")
-        self.horizontalLayout_7.addWidget(self.gap_lineEdit)
-        self.line_5 = QtWidgets.QFrame(self.gridWidget)
-        self.line_5.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line_5.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_5.setObjectName("line_5")
-        self.horizontalLayout_7.addWidget(self.line_5)
+        self.horizontalLayout_4.addWidget(self.gap_lineEdit)
+        self.line_4 = QtWidgets.QFrame(self.gridWidget)
+        self.line_4.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_4.setObjectName("line_4")
+        self.horizontalLayout_4.addWidget(self.line_4)
         self.label_9 = QtWidgets.QLabel(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -753,7 +744,7 @@ class Ui_MainWindow(object):
                                   | QtCore.Qt.AlignTrailing
                                   | QtCore.Qt.AlignVCenter)
         self.label_9.setObjectName("label_9")
-        self.horizontalLayout_7.addWidget(self.label_9)
+        self.horizontalLayout_4.addWidget(self.label_9)
         self.slit_info_lbl = QtWidgets.QLabel(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -763,54 +754,7 @@ class Ui_MainWindow(object):
             self.slit_info_lbl.sizePolicy().hasHeightForWidth())
         self.slit_info_lbl.setSizePolicy(sizePolicy)
         self.slit_info_lbl.setObjectName("slit_info_lbl")
-        self.horizontalLayout_7.addWidget(self.slit_info_lbl)
-        self.label_10 = QtWidgets.QLabel(self.gridWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_10.sizePolicy().hasHeightForWidth())
-        self.label_10.setSizePolicy(sizePolicy)
-        self.label_10.setObjectName("label_10")
-        self.horizontalLayout_7.addWidget(self.label_10)
-        self.label_27 = QtWidgets.QLabel(self.gridWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_27.sizePolicy().hasHeightForWidth())
-        self.label_27.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Serif")
-        self.label_27.setFont(font)
-        self.label_27.setObjectName("label_27")
-        self.horizontalLayout_7.addWidget(self.label_27)
-        self.slit_width_lineEdit = QtWidgets.QLineEdit(self.gridWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.slit_width_lineEdit.sizePolicy().hasHeightForWidth())
-        self.slit_width_lineEdit.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.slit_width_lineEdit.setFont(font)
-        self.slit_width_lineEdit.setReadOnly(True)
-        self.slit_width_lineEdit.setObjectName("slit_width_lineEdit")
-        self.horizontalLayout_7.addWidget(self.slit_width_lineEdit)
-        self.label_11 = QtWidgets.QLabel(self.gridWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_11.sizePolicy().hasHeightForWidth())
-        self.label_11.setSizePolicy(sizePolicy)
-        self.label_11.setObjectName("label_11")
-        self.horizontalLayout_7.addWidget(self.label_11)
+        self.horizontalLayout_4.addWidget(self.slit_info_lbl)
         self.label_28 = QtWidgets.QLabel(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -823,7 +767,17 @@ class Ui_MainWindow(object):
         font.setFamily("Serif")
         self.label_28.setFont(font)
         self.label_28.setObjectName("label_28")
-        self.horizontalLayout_7.addWidget(self.label_28)
+        self.horizontalLayout_4.addWidget(self.label_28)
+        self.label_11 = QtWidgets.QLabel(self.gridWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_11.sizePolicy().hasHeightForWidth())
+        self.label_11.setSizePolicy(sizePolicy)
+        self.label_11.setObjectName("label_11")
+        self.horizontalLayout_4.addWidget(self.label_11)
         self.slit_thickness_lineEdit = QtWidgets.QLineEdit(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -837,8 +791,45 @@ class Ui_MainWindow(object):
         self.slit_thickness_lineEdit.setFont(font)
         self.slit_thickness_lineEdit.setReadOnly(True)
         self.slit_thickness_lineEdit.setObjectName("slit_thickness_lineEdit")
-        self.horizontalLayout_7.addWidget(self.slit_thickness_lineEdit)
-        self.gridLayout_4.addLayout(self.horizontalLayout_7, 2, 3, 1, 3)
+        self.horizontalLayout_4.addWidget(self.slit_thickness_lineEdit)
+        self.label_10 = QtWidgets.QLabel(self.gridWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_10.sizePolicy().hasHeightForWidth())
+        self.label_10.setSizePolicy(sizePolicy)
+        self.label_10.setObjectName("label_10")
+        self.horizontalLayout_4.addWidget(self.label_10)
+        self.label_27 = QtWidgets.QLabel(self.gridWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_27.sizePolicy().hasHeightForWidth())
+        self.label_27.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Serif")
+        self.label_27.setFont(font)
+        self.label_27.setObjectName("label_27")
+        self.horizontalLayout_4.addWidget(self.label_27)
+        self.slit_width_lineEdit = QtWidgets.QLineEdit(self.gridWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.slit_width_lineEdit.sizePolicy().hasHeightForWidth())
+        self.slit_width_lineEdit.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.slit_width_lineEdit.setFont(font)
+        self.slit_width_lineEdit.setReadOnly(True)
+        self.slit_width_lineEdit.setObjectName("slit_width_lineEdit")
+        self.horizontalLayout_4.addWidget(self.slit_width_lineEdit)
+        self.gridLayout_4.addLayout(self.horizontalLayout_4, 0, 2, 1, 3)
         self.line_2 = QtWidgets.QFrame(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -850,7 +841,65 @@ class Ui_MainWindow(object):
         self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_2.setObjectName("line_2")
-        self.gridLayout_4.addWidget(self.line_2, 4, 3, 1, 3)
+        self.gridLayout_4.addWidget(self.line_2, 1, 2, 1, 3)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setSpacing(8)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.label_43 = QtWidgets.QLabel(self.gridWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_43.sizePolicy().hasHeightForWidth())
+        self.label_43.setSizePolicy(sizePolicy)
+        self.label_43.setObjectName("label_43")
+        self.horizontalLayout.addWidget(self.label_43)
+        self.time_cost_lbl = QtWidgets.QLabel(self.gridWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.time_cost_lbl.sizePolicy().hasHeightForWidth())
+        self.time_cost_lbl.setSizePolicy(sizePolicy)
+        self.time_cost_lbl.setStyleSheet("QLabel {\n"
+                                         "    font-family: monospace;\n"
+                                         "    color: #007BFF;\n"
+                                         "    padding: 4px 2px 0 0;\n"
+                                         "}")
+        self.time_cost_lbl.setObjectName("time_cost_lbl")
+        self.horizontalLayout.addWidget(self.time_cost_lbl)
+        self.label_45 = QtWidgets.QLabel(self.gridWidget)
+        self.label_45.setObjectName("label_45")
+        self.horizontalLayout.addWidget(self.label_45)
+        self.time_elapsed_lbl = QtWidgets.QLabel(self.gridWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.time_elapsed_lbl.sizePolicy().hasHeightForWidth())
+        self.time_elapsed_lbl.setSizePolicy(sizePolicy)
+        self.time_elapsed_lbl.setStyleSheet("QLabel {\n"
+                                            "    font-family: monospace;\n"
+                                            "    color: #DC3545;\n"
+                                            "    padding: 4px 2px 0 0;\n"
+                                            "}")
+        self.time_elapsed_lbl.setObjectName("time_elapsed_lbl")
+        self.horizontalLayout.addWidget(self.time_elapsed_lbl)
+        self.line_5 = QtWidgets.QFrame(self.gridWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.line_5.sizePolicy().hasHeightForWidth())
+        self.line_5.setSizePolicy(sizePolicy)
+        self.line_5.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_5.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_5.setObjectName("line_5")
+        self.horizontalLayout.addWidget(self.line_5)
         self.default_config_btn = QtWidgets.QToolButton(self.gridWidget)
         icon4 = QtGui.QIcon()
         icon4.addPixmap(QtGui.QPixmap(":/icons/reset.png"), QtGui.QIcon.Normal,
@@ -862,7 +911,7 @@ class Ui_MainWindow(object):
         self.default_config_btn.setAutoRaise(True)
         self.default_config_btn.setArrowType(QtCore.Qt.NoArrow)
         self.default_config_btn.setObjectName("default_config_btn")
-        self.gridLayout_4.addWidget(self.default_config_btn, 0, 0, 1, 1)
+        self.horizontalLayout.addWidget(self.default_config_btn)
         self.toolButton = QtWidgets.QToolButton(self.gridWidget)
         icon5 = QtGui.QIcon()
         icon5.addPixmap(QtGui.QPixmap(":/icons/add.png"), QtGui.QIcon.Normal,
@@ -871,7 +920,24 @@ class Ui_MainWindow(object):
         self.toolButton.setIconSize(QtCore.QSize(28, 28))
         self.toolButton.setAutoRaise(True)
         self.toolButton.setObjectName("toolButton")
-        self.gridLayout_4.addWidget(self.toolButton, 2, 0, 1, 1)
+        self.horizontalLayout.addWidget(self.toolButton)
+        spacerItem = QtWidgets.QSpacerItem(40, 20,
+                                           QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.fetch_config_btn = QtWidgets.QToolButton(self.gridWidget)
+        self.fetch_config_btn.setIcon(icon3)
+        self.fetch_config_btn.setIconSize(QtCore.QSize(28, 28))
+        self.fetch_config_btn.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+        self.fetch_config_btn.setAutoRaise(True)
+        self.fetch_config_btn.setObjectName("fetch_config_btn")
+        self.horizontalLayout.addWidget(self.fetch_config_btn)
+        self.gridLayout_4.addLayout(self.horizontalLayout, 2, 2, 1, 3)
+        self.line_6 = QtWidgets.QFrame(self.gridWidget)
+        self.line_6.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_6.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_6.setObjectName("line_6")
+        self.gridLayout_4.addWidget(self.line_6, 3, 2, 1, 3)
         self.as_drawing = QtWidgets.QLabel(self.splitter)
         self.as_drawing.setText("")
         self.as_drawing.setPixmap(QtGui.QPixmap(":/icons/as_schematic.png"))
@@ -885,7 +951,7 @@ class Ui_MainWindow(object):
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(10)
+        sizePolicy.setVerticalStretch(12)
         sizePolicy.setHeightForWidth(
             self.h_splitter.sizePolicy().hasHeightForWidth())
         self.h_splitter.setSizePolicy(sizePolicy)
@@ -1001,7 +1067,7 @@ class Ui_MainWindow(object):
             "}")
         self.data_analysis_tbox.setObjectName("data_analysis_tbox")
         self.page_beam_params = QtWidgets.QWidget()
-        self.page_beam_params.setGeometry(QtCore.QRect(0, 0, 602, 565))
+        self.page_beam_params.setGeometry(QtCore.QRect(0, 0, 494, 565))
         self.page_beam_params.setObjectName("page_beam_params")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.page_beam_params)
         self.verticalLayout_6.setContentsMargins(4, 4, 4, 4)
@@ -1023,15 +1089,15 @@ class Ui_MainWindow(object):
         self.auto_fill_beam_params_btn.setObjectName(
             "auto_fill_beam_params_btn")
         self.horizontalLayout_2.addWidget(self.auto_fill_beam_params_btn)
-        spacerItem = QtWidgets.QSpacerItem(40, 20,
-                                           QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem1)
         self.gridLayout_6.addLayout(self.horizontalLayout_2, 2, 0, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40,
+        spacerItem2 = QtWidgets.QSpacerItem(20, 40,
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_6.addItem(spacerItem1, 0, 1, 2, 1)
+        self.gridLayout_6.addItem(spacerItem2, 0, 1, 2, 1)
         self.ion_name_display_lbl = QtWidgets.QLabel(self.page_beam_params)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -1049,10 +1115,10 @@ class Ui_MainWindow(object):
         self.ion_name_display_lbl.setAlignment(QtCore.Qt.AlignCenter)
         self.ion_name_display_lbl.setObjectName("ion_name_display_lbl")
         self.gridLayout_6.addWidget(self.ion_name_display_lbl, 0, 2, 3, 1)
-        spacerItem2 = QtWidgets.QSpacerItem(388, 20,
+        spacerItem3 = QtWidgets.QSpacerItem(388, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_6.addItem(spacerItem2, 0, 0, 1, 1)
+        self.gridLayout_6.addItem(spacerItem3, 0, 0, 1, 1)
         self.ion_mass_display_lbl = QtWidgets.QLabel(self.page_beam_params)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -1103,10 +1169,10 @@ class Ui_MainWindow(object):
         self.label_50.setObjectName("label_50")
         self.horizontalLayout_3.addWidget(self.label_50)
         self.gridLayout_6.addLayout(self.horizontalLayout_3, 0, 3, 1, 1)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 40,
+        spacerItem4 = QtWidgets.QSpacerItem(20, 40,
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_6.addItem(spacerItem3, 2, 3, 1, 1)
+        self.gridLayout_6.addItem(spacerItem4, 2, 3, 1, 1)
         self.verticalLayout_6.addLayout(self.gridLayout_6)
         self.gridLayout_8 = QtWidgets.QGridLayout()
         self.gridLayout_8.setObjectName("gridLayout_8")
@@ -1259,13 +1325,13 @@ class Ui_MainWindow(object):
         self.ion_name_lineEdit.setObjectName("ion_name_lineEdit")
         self.gridLayout_8.addWidget(self.ion_name_lineEdit, 1, 4, 1, 1)
         self.verticalLayout_6.addLayout(self.gridLayout_8)
-        spacerItem4 = QtWidgets.QSpacerItem(20, 500,
+        spacerItem5 = QtWidgets.QSpacerItem(20, 500,
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_6.addItem(spacerItem4)
+        self.verticalLayout_6.addItem(spacerItem5)
         self.data_analysis_tbox.addItem(self.page_beam_params, "")
         self.page_bkgd_noise = QtWidgets.QWidget()
-        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 602, 565))
+        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 494, 565))
         self.page_bkgd_noise.setObjectName("page_bkgd_noise")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.page_bkgd_noise)
         self.gridLayout_2.setContentsMargins(-1, 4, 4, 4)
@@ -1346,7 +1412,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.auto_update_image_chkbox, 1, 2, 1, 1)
         self.data_analysis_tbox.addItem(self.page_bkgd_noise, "")
         self.page_noise_correction = QtWidgets.QWidget()
-        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 602, 565))
+        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 494, 565))
         self.page_noise_correction.setObjectName("page_noise_correction")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.page_noise_correction)
         self.gridLayout_7.setContentsMargins(-1, 4, 4, 4)
@@ -1607,10 +1673,10 @@ class Ui_MainWindow(object):
         self.update_results_btn = QtWidgets.QToolButton(self.twiss_gbox)
         self.update_results_btn.setObjectName("update_results_btn")
         self.horizontalLayout_11.addWidget(self.update_results_btn)
-        spacerItem5 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem6 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_11.addItem(spacerItem5)
+        self.horizontalLayout_11.addItem(spacerItem6)
         self.show_results_btn = QtWidgets.QToolButton(self.twiss_gbox)
         self.show_results_btn.setObjectName("show_results_btn")
         self.horizontalLayout_11.addWidget(self.show_results_btn)
@@ -1760,8 +1826,7 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.bias_volt_dsbox, self.vpos_lineEdit)
         MainWindow.setTabOrder(self.vpos_lineEdit, self.retract_btn)
         MainWindow.setTabOrder(self.retract_btn, self.reset_itlk_btn)
-        MainWindow.setTabOrder(self.reset_itlk_btn, self.fetch_config_btn)
-        MainWindow.setTabOrder(self.fetch_config_btn, self.pos_begin_dsbox)
+        MainWindow.setTabOrder(self.reset_itlk_btn, self.pos_begin_dsbox)
         MainWindow.setTabOrder(self.pos_begin_dsbox, self.pos_end_dsbox)
         MainWindow.setTabOrder(self.pos_end_dsbox, self.pos_step_dsbox)
         MainWindow.setTabOrder(self.pos_step_dsbox,
@@ -1817,10 +1882,6 @@ class Ui_MainWindow(object):
                                self.length_lineEdit)
         MainWindow.setTabOrder(self.length_lineEdit, self.length1_lineEdit)
         MainWindow.setTabOrder(self.length1_lineEdit, self.length2_lineEdit)
-        MainWindow.setTabOrder(self.length2_lineEdit, self.gap_lineEdit)
-        MainWindow.setTabOrder(self.gap_lineEdit, self.slit_width_lineEdit)
-        MainWindow.setTabOrder(self.slit_width_lineEdit,
-                               self.slit_thickness_lineEdit)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -1862,9 +1923,6 @@ class Ui_MainWindow(object):
         self.reset_itlk_btn.setText(_translate("MainWindow",
                                                "Reset Interlock"))
         self.is_itlk_lbl.setText(_translate("MainWindow", "is_itlk?"))
-        self.fetch_config_btn.setToolTip(
-            _translate("MainWindow", "Click me when I\'m RED."))
-        self.fetch_config_btn.setText(_translate("MainWindow", "..."))
         self.label_16.setText(_translate("MainWindow", "Voltage [Volt]"))
         self.label_15.setText(_translate("MainWindow", "Position [mm]"))
         self.pos_steps_lbl.setText(_translate("MainWindow", "[#]"))
@@ -1915,6 +1973,14 @@ class Ui_MainWindow(object):
             ))
         self.label_9.setText(_translate("MainWindow", "Slit [mm]"))
         self.slit_info_lbl.setText(_translate("MainWindow", ">"))
+        self.label_28.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p><span style=\" font-style:italic;\">d</span></p></body></html>"
+            ))
+        self.label_11.setText(
+            _translate("MainWindow",
+                       "<html><head/><body><p>Thickness</p></body></html>"))
         self.label_10.setText(
             _translate("MainWindow",
                        "<html><head/><body><p>Width</p></body></html>"))
@@ -1923,20 +1989,25 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p><span style=\" font-style:italic;\">s</span></p></body></html>"
             ))
-        self.label_11.setText(
+        self.label_43.setText(_translate("MainWindow", "Estimated Time Cost"))
+        self.time_cost_lbl.setToolTip(
+            _translate("MainWindow", "Estimated time required in HH:MM:SS."))
+        self.time_cost_lbl.setText(
             _translate("MainWindow",
-                       "<html><head/><body><p>Thickness</p></body></html>"))
-        self.label_28.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p><span style=\" font-style:italic;\">d</span></p></body></html>"
-            ))
+                       "<html><head/><body><p>00:00:00</p></body></html>"))
+        self.label_45.setText(_translate("MainWindow", "Time Elapsed"))
+        self.time_elapsed_lbl.setToolTip(
+            _translate("MainWindow", "Elapsed time in HH:MM:SS."))
+        self.time_elapsed_lbl.setText(_translate("MainWindow", "00:00:00"))
         self.default_config_btn.setToolTip(
             _translate("MainWindow", "Revert device settings."))
         self.default_config_btn.setText(_translate("MainWindow", "..."))
         self.toolButton.setToolTip(
             _translate("MainWindow", "Remember current device settings."))
         self.toolButton.setText(_translate("MainWindow", "..."))
+        self.fetch_config_btn.setToolTip(
+            _translate("MainWindow", "Click me when I\'m RED."))
+        self.fetch_config_btn.setText(_translate("MainWindow", "..."))
         self.dataviz_gbox.setTitle(
             _translate("MainWindow", "Data Visualization"))
         self.matplotlibimageWidget.setFigureAspectRatio(
