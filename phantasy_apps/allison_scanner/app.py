@@ -801,6 +801,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if filepath is None:
             return
 
+        self.on_add_current_config(show=False)
         try:
             # UI config
             # ion species and model
@@ -1021,6 +1022,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_sync_data(self):
         if self._valid_device(100) is False:
             return
+        self.on_add_current_config(show=False)
         self.on_title_with_ts(self._device._data_pv.timestamp)
         arr = self._device._data_pv.value
         if arr.size == 0:
@@ -1068,7 +1070,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_save_data(self):
         if self._data_save_dlg is None:
             self._data_save_dlg = SaveDataDialog(self)
-        self._data_save_dlg.show()
+        self._data_save_dlg.exec_()
 
     def _save_data_to_file(self, filepath, ftype='json'):
         ems = self._ems_device
@@ -1250,7 +1252,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.actionAuto_Analysis.setChecked(True)
 
     @pyqtSlot()
-    def on_add_current_config(self):
+    def on_add_current_config(self, show=True):
         """Add current device scan settings into settings list.
         """
         is_synced = self.fetch_config_btn.property('is_synced')
@@ -1260,7 +1262,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                     QMessageBox.Ok)
             return
         self._scan_settings_list.append(self.build_current_scan_settings())
-        self.show_settings_list()
+        if show:
+            self.show_settings_list()
 
     def build_current_scan_settings(self):
         """Return a dict of current scan settings.
