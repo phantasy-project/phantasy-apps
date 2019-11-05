@@ -336,7 +336,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         dt_pos = self.pos_settling_time_dsbox.value()
         dt_volt = self.volt_settling_time_dsbox.value()
         t_sec = ( dt_volt * cnt_volt + dt_pos ) * cnt_pos
-        self.time_cost_lineEdit.setText(uptime(t_sec))
+        self.time_cost_lbl.setText(uptime(t_sec))
 
     def update_cnts(self):
         # update steps counter
@@ -620,12 +620,26 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             return
         if self._device_mode == "Live":
             self._ems_device.init_run()
+        self._init_elapsed_timer()
         self._device.start()
+        self._elapsed_timer.start(1000)
+
+    def _init_elapsed_timer(self):
+        # initialize elapsed timer.
+        self.time_elapsed_lbl.setText('00:00:00')
+        self._elapsed_timer = QTimer(self)
+        self._time_elapsed = 0 # sec
+        self._elapsed_timer.timeout.connect(self.on_update_elapsed_time)
+
+    def on_update_elapsed_time(self):
+        self._time_elapsed += 1
+        self.time_elapsed_lbl.setText(uptime(self._time_elapsed))
 
     @pyqtSlot()
     def on_abort(self):
         self._ems_device.abort()
         self._abort = True
+        self._elapsed_timer.stop()
 
     @pyqtSlot()
     def on_retract(self, x):
@@ -730,6 +744,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._auto_process()
         #
         self.finished.emit()
+        #
+        self._elapsed_timer.stop()
 
     def closeEvent(self, e):
         r = QMessageBox.information(self, "Close Application",
