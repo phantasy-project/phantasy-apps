@@ -1117,6 +1117,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self._last_loading:
             self._data_save_dlg.filepath_lineEdit.setText(self._loading_filepath)
             self._data_save_dlg.note_plainTextEdit.setPlainText(self._loading_note)
+            self._last_loading = False
         self._data_save_dlg.exec_()
 
     def _save_data_to_file(self, filepath, ftype='json', **kws):
