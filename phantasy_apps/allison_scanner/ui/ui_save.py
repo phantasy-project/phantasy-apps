@@ -63,9 +63,9 @@ class Ui_Dialog(object):
         self.groupBox.setObjectName("groupBox")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.groupBox)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.plainTextEdit = QtWidgets.QPlainTextEdit(self.groupBox)
-        self.plainTextEdit.setObjectName("plainTextEdit")
-        self.gridLayout_2.addWidget(self.plainTextEdit, 0, 0, 1, 1)
+        self.note_plainTextEdit = QtWidgets.QPlainTextEdit(self.groupBox)
+        self.note_plainTextEdit.setObjectName("note_plainTextEdit")
+        self.gridLayout_2.addWidget(self.note_plainTextEdit, 0, 0, 1, 1)
         self.gridLayout.addWidget(self.groupBox, 2, 0, 1, 4)
         self.save_btn = QtWidgets.QPushButton(Dialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
@@ -116,6 +116,10 @@ class Ui_Dialog(object):
         self.browse_filepath_btn.clicked.connect(Dialog.on_get_filepath)
         self.pushButton.clicked.connect(Dialog.auto_fill_filepath)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+        Dialog.setTabOrder(self.filepath_lineEdit, self.browse_filepath_btn)
+        Dialog.setTabOrder(self.browse_filepath_btn, self.pushButton)
+        Dialog.setTabOrder(self.pushButton, self.note_plainTextEdit)
+        Dialog.setTabOrder(self.note_plainTextEdit, self.cancel_btn)
         Dialog.setTabOrder(self.cancel_btn, self.save_btn)
 
     def retranslateUi(self, Dialog):
@@ -123,7 +127,7 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.cancel_btn.setText(_translate("Dialog", "Cancel"))
         self.groupBox.setTitle(_translate("Dialog", "Note"))
-        self.plainTextEdit.setToolTip(
+        self.note_plainTextEdit.setToolTip(
             _translate("Dialog", "Input additional note for saved data file."))
         self.save_btn.setText(_translate("Dialog", "Save"))
         self.label.setText(_translate("Dialog", "File Path"))
