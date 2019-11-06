@@ -1388,7 +1388,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         tp = "Element to {}, click to see details".format(mode)
         elem_btn.setToolTip(tp)
 
-    def _setup_element_btn_from_scan_task(self, scan_task, mode):
+    def _setup_element_btn_from_scan_task(self, scan_task, mode,
+                                          widgets_dict=None, target=None):
         # set up element buttons for alter/monitor element(s)
         # with info from *scan_task*.
         elem = getattr(scan_task, '{}_element'.format(mode))
@@ -1400,11 +1401,13 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         print("-- Field Label:", elem_lbl)
         print("-- Field Name:", elem.name)
         sel_key = ' '.join((elem_dis.ename, elem.name, mode))
-        self.elem_widgets_dict.setdefault(
+        if widgets_dict is None:
+            widgets_dict = self.elem_widgets_dict
+        widgets_dict.setdefault(
             sel_key, ElementWidget(elem_dis, fields=elem.name))
-        elem_btn = self._create_element_btn(elem_lbl, sel_key)
+        elem_btn = self._create_element_btn(elem_lbl, sel_key, widgets_dict)
         print("-- Created Element Button")
-        self._place_element_btn(elem_btn, mode)
+        self._place_element_btn(elem_btn, mode, target)
         print("-- Placed Element Button")
 
     def _setup_extra_monitors(self, elems, flds):
