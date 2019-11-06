@@ -475,6 +475,10 @@ def load_task(filepath):
         extra_moni_objs = read_element(task, 'extra', mp)
         scan_task.add_extra_monitors(extra_moni_objs[0])
         scan_task._extra_moni_display = extra_moni_objs[1]
+    else:  # 2D
+        nested_task_filepath = task['task']['nested_task']['filepath']
+        nested_task = load_task(nested_task_filepath)
+        scan_task.set_nested_task(nested_task)
 
     return scan_task
 
