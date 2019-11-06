@@ -59,6 +59,9 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
     # curve & image
     xlabel_changed = pyqtSignal('QString')
 
+    # nested task loaded, i.e. 1d task
+    nested_task_loaded = pyqtSignal(ScanTask)
+
     def __init__(self, parent=None):
         super(self.__class__, self).__init__()
         self.setupUi(self)
@@ -146,6 +149,9 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
         # post init
         self.post_init()
+
+        # connections to main window
+        self.nested_task_loaded.connect(self._p.init_ui_with_scan_task)
 
     def post_init(self):
         # clear dataviz widgets
@@ -582,8 +588,10 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         if filepath is None:
             return
         # set task, i.e. outer loop
-        scan_task = load_task(filepath, mode="2D")
+        scan_task = load_task(filepath)
         # set nested task, i.e. inner loop
+        scan_task_1d = scan_task.get_nested_task()
+        self.nested_task_loaded.emit(scan_task_1d)
 
     @pyqtSlot()
     def on_save_data(self):
