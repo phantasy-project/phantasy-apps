@@ -1307,13 +1307,15 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         if filepath is None:
             return
         scan_task = load_task(filepath)
-        self.scan_task = scan_task
-        print(scan_task)
         # initial UI widgets with loaded scan_task
         self.init_ui_with_scan_task(scan_task)
 
     def init_ui_with_scan_task(self, scan_task):
         # initial UI widgets with *scan_task*.
+
+        # update scan_task obj
+        self.scan_task = scan_task
+        # print(scan_task)
 
         # set UI only
         self.enable_arbitary_array_chkbox.setChecked(True)
