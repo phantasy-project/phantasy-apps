@@ -333,9 +333,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if None in cnt_list:
             return
         cnt_pos, cnt_volt = cnt_list
+        dx = self.pos_step_dsbox.value()
         dt_pos = self.pos_settling_time_dsbox.value()
         dt_volt = self.volt_settling_time_dsbox.value()
-        t_sec = ( dt_volt * cnt_volt + dt_pos ) * cnt_pos
+        x1, x2, x3 = 0.0053, 0.028, 3.84
+        t_sec = ((dt_volt + x1)*cnt_volt + dx*x2 + x3 + dt_pos)*cnt_pos
         self.time_cost_lbl.setText(uptime(t_sec))
 
     def update_cnts(self):
