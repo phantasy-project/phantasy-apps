@@ -49,9 +49,9 @@ class Ui_MainWindow(object):
         self.v_splitter.setObjectName("v_splitter")
         self.scan_groupBox = QtWidgets.QGroupBox(self.v_splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Expanding)
+                                           QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setVerticalStretch(10)
         sizePolicy.setHeightForWidth(
             self.scan_groupBox.sizePolicy().hasHeightForWidth())
         self.scan_groupBox.setSizePolicy(sizePolicy)
@@ -76,13 +76,14 @@ class Ui_MainWindow(object):
             "}")
         self.scan_groupBox.setObjectName("scan_groupBox")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.scan_groupBox)
+        self.verticalLayout_3.setContentsMargins(6, 12, 6, 6)
+        self.verticalLayout_3.setSpacing(6)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.widget = QtWidgets.QWidget(self.scan_groupBox)
         self.widget.setObjectName("widget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.widget)
         self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.gridLayout_2.setHorizontalSpacing(6)
-        self.gridLayout_2.setVerticalSpacing(9)
+        self.gridLayout_2.setSpacing(6)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.label_8 = QtWidgets.QLabel(self.widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
@@ -310,9 +311,9 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addLayout(self.verticalLayout_2)
         self.daq_groupBox = QtWidgets.QGroupBox(self.v_splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
+                                           QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setVerticalStretch(1)
         sizePolicy.setHeightForWidth(
             self.daq_groupBox.sizePolicy().hasHeightForWidth())
         self.daq_groupBox.setSizePolicy(sizePolicy)
@@ -337,7 +338,105 @@ class Ui_MainWindow(object):
             "}")
         self.daq_groupBox.setObjectName("daq_groupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.daq_groupBox)
+        self.gridLayout.setContentsMargins(6, 12, 6, 6)
+        self.gridLayout.setVerticalSpacing(6)
         self.gridLayout.setObjectName("gridLayout")
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setSpacing(10)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.mps_status_btn = QtWidgets.QToolButton(self.daq_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.mps_status_btn.sizePolicy().hasHeightForWidth())
+        self.mps_status_btn.setSizePolicy(sizePolicy)
+        self.mps_status_btn.setMinimumSize(QtCore.QSize(36, 36))
+        self.mps_status_btn.setMaximumSize(QtCore.QSize(36, 36))
+        self.mps_status_btn.setText("")
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/icons/mps_skipped.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.mps_status_btn.setIcon(icon5)
+        self.mps_status_btn.setIconSize(QtCore.QSize(36, 36))
+        self.mps_status_btn.setAutoRaise(True)
+        self.mps_status_btn.setObjectName("mps_status_btn")
+        self.horizontalLayout_3.addWidget(self.mps_status_btn)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem1)
+        self.line_2 = QtWidgets.QFrame(self.daq_groupBox)
+        self.line_2.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_2.setObjectName("line_2")
+        self.horizontalLayout_3.addWidget(self.line_2)
+        self.start_btn = QtWidgets.QPushButton(self.daq_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.start_btn.sizePolicy().hasHeightForWidth())
+        self.start_btn.setSizePolicy(sizePolicy)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.start_btn.setIcon(icon6)
+        self.start_btn.setIconSize(QtCore.QSize(32, 32))
+        self.start_btn.setAutoDefault(True)
+        self.start_btn.setObjectName("start_btn")
+        self.horizontalLayout_3.addWidget(self.start_btn)
+        self.pause_btn = QtWidgets.QPushButton(self.daq_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.pause_btn.sizePolicy().hasHeightForWidth())
+        self.pause_btn.setSizePolicy(sizePolicy)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(":/icons/pause.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.pause_btn.setIcon(icon7)
+        self.pause_btn.setIconSize(QtCore.QSize(32, 32))
+        self.pause_btn.setAutoDefault(True)
+        self.pause_btn.setObjectName("pause_btn")
+        self.horizontalLayout_3.addWidget(self.pause_btn)
+        self.stop_btn = QtWidgets.QPushButton(self.daq_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.stop_btn.sizePolicy().hasHeightForWidth())
+        self.stop_btn.setSizePolicy(sizePolicy)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.stop_btn.setIcon(icon8)
+        self.stop_btn.setIconSize(QtCore.QSize(32, 32))
+        self.stop_btn.setAutoDefault(True)
+        self.stop_btn.setObjectName("stop_btn")
+        self.horizontalLayout_3.addWidget(self.stop_btn)
+        self.retake_btn = QtWidgets.QPushButton(self.daq_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.retake_btn.sizePolicy().hasHeightForWidth())
+        self.retake_btn.setSizePolicy(sizePolicy)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/icons/retake.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.retake_btn.setIcon(icon9)
+        self.retake_btn.setIconSize(QtCore.QSize(32, 32))
+        self.retake_btn.setAutoDefault(True)
+        self.retake_btn.setObjectName("retake_btn")
+        self.horizontalLayout_3.addWidget(self.retake_btn)
+        self.gridLayout.addLayout(self.horizontalLayout_3, 5, 0, 1, 3)
         self.niter_label = QtWidgets.QLabel(self.daq_groupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -458,101 +557,6 @@ class Ui_MainWindow(object):
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
         self.gridLayout.addWidget(self.line, 4, 0, 1, 3)
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.mps_status_btn = QtWidgets.QToolButton(self.daq_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mps_status_btn.sizePolicy().hasHeightForWidth())
-        self.mps_status_btn.setSizePolicy(sizePolicy)
-        self.mps_status_btn.setMinimumSize(QtCore.QSize(36, 36))
-        self.mps_status_btn.setMaximumSize(QtCore.QSize(36, 36))
-        self.mps_status_btn.setText("")
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/icons/mps_skipped.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.mps_status_btn.setIcon(icon5)
-        self.mps_status_btn.setIconSize(QtCore.QSize(36, 36))
-        self.mps_status_btn.setAutoRaise(True)
-        self.mps_status_btn.setObjectName("mps_status_btn")
-        self.horizontalLayout_3.addWidget(self.mps_status_btn)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 20,
-                                            QtWidgets.QSizePolicy.Expanding,
-                                            QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem1)
-        self.line_2 = QtWidgets.QFrame(self.daq_groupBox)
-        self.line_2.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_2.setObjectName("line_2")
-        self.horizontalLayout_3.addWidget(self.line_2)
-        self.start_btn = QtWidgets.QPushButton(self.daq_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.start_btn.sizePolicy().hasHeightForWidth())
-        self.start_btn.setSizePolicy(sizePolicy)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.start_btn.setIcon(icon6)
-        self.start_btn.setIconSize(QtCore.QSize(32, 32))
-        self.start_btn.setAutoDefault(True)
-        self.start_btn.setObjectName("start_btn")
-        self.horizontalLayout_3.addWidget(self.start_btn)
-        self.pause_btn = QtWidgets.QPushButton(self.daq_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.pause_btn.sizePolicy().hasHeightForWidth())
-        self.pause_btn.setSizePolicy(sizePolicy)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(":/icons/pause.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.pause_btn.setIcon(icon7)
-        self.pause_btn.setIconSize(QtCore.QSize(32, 32))
-        self.pause_btn.setAutoDefault(True)
-        self.pause_btn.setObjectName("pause_btn")
-        self.horizontalLayout_3.addWidget(self.pause_btn)
-        self.stop_btn = QtWidgets.QPushButton(self.daq_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.stop_btn.sizePolicy().hasHeightForWidth())
-        self.stop_btn.setSizePolicy(sizePolicy)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.stop_btn.setIcon(icon8)
-        self.stop_btn.setIconSize(QtCore.QSize(32, 32))
-        self.stop_btn.setAutoDefault(True)
-        self.stop_btn.setObjectName("stop_btn")
-        self.horizontalLayout_3.addWidget(self.stop_btn)
-        self.retake_btn = QtWidgets.QPushButton(self.daq_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.retake_btn.sizePolicy().hasHeightForWidth())
-        self.retake_btn.setSizePolicy(sizePolicy)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(":/icons/retake.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.retake_btn.setIcon(icon9)
-        self.retake_btn.setIconSize(QtCore.QSize(32, 32))
-        self.retake_btn.setAutoDefault(True)
-        self.retake_btn.setObjectName("retake_btn")
-        self.horizontalLayout_3.addWidget(self.retake_btn)
-        self.gridLayout.addLayout(self.horizontalLayout_3, 5, 0, 1, 3)
         self.plot_groupBox = QtWidgets.QGroupBox(self.h_splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -583,6 +587,8 @@ class Ui_MainWindow(object):
             "}")
         self.plot_groupBox.setObjectName("plot_groupBox")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.plot_groupBox)
+        self.verticalLayout.setContentsMargins(6, 12, 6, 6)
+        self.verticalLayout.setSpacing(6)
         self.verticalLayout.setObjectName("verticalLayout")
         self.scan_plot_widget = MatplotlibErrorbarWidget(self.plot_groupBox)
         font = QtGui.QFont()
@@ -712,7 +718,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.addWidget(self.h_splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 35))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 31))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -913,33 +919,6 @@ class Ui_MainWindow(object):
         self.clear_log_tbtn.setText(_translate("MainWindow", "Clear"))
         self.daq_groupBox.setTitle(
             _translate("MainWindow", "DAQ Configuration"))
-        self.niter_label.setText(_translate("MainWindow", "Iteration Number"))
-        self.niter_spinBox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Total number of points to scan</p></body></html>"
-            ))
-        self.label_2.setText(_translate("MainWindow", "Shot Number"))
-        self.nshot_spinBox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Number of records to be taken at each scan point</p></body></html>"
-            ))
-        self.label_5.setText(_translate("MainWindow", "per iteration"))
-        self.label_3.setText(_translate("MainWindow", "Additional Wait Time"))
-        self.waitsec_dSpinBox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Additional wait time after set new scan point</p></body></html>"
-            ))
-        self.label_4.setText(_translate("MainWindow", "Second"))
-        self.label_7.setText(_translate("MainWindow", "Scan DAQ Rate"))
-        self.scanrate_dSpinBox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Record number to be taken within one second.</p></body></html>"
-            ))
-        self.label_6.setText(_translate("MainWindow", "Hz"))
         self.mps_status_btn.setToolTip(
             _translate(
                 "MainWindow",
@@ -968,6 +947,33 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Redo DAQ at selected points</p></body></html>"
             ))
         self.retake_btn.setText(_translate("MainWindow", "Retake"))
+        self.niter_label.setText(_translate("MainWindow", "Iteration Number"))
+        self.niter_spinBox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Total number of points to scan</p></body></html>"
+            ))
+        self.label_2.setText(_translate("MainWindow", "Shot Number"))
+        self.nshot_spinBox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Number of records to be taken at each scan point</p></body></html>"
+            ))
+        self.label_5.setText(_translate("MainWindow", "per iteration"))
+        self.label_3.setText(_translate("MainWindow", "Additional Wait Time"))
+        self.waitsec_dSpinBox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Additional wait time after set new scan point</p></body></html>"
+            ))
+        self.label_4.setText(_translate("MainWindow", "Second"))
+        self.label_7.setText(_translate("MainWindow", "Scan DAQ Rate"))
+        self.scanrate_dSpinBox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Record number to be taken within one second.</p></body></html>"
+            ))
+        self.label_6.setText(_translate("MainWindow", "Hz"))
         self.plot_groupBox.setTitle(
             _translate("MainWindow", "Data Visualization"))
         self.autoscale_tbtn.setText(_translate("MainWindow", "..."))
