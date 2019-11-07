@@ -592,6 +592,38 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         # set nested task, i.e. inner loop
         scan_task_1d = scan_task.get_nested_task()
         self.nested_task_loaded.emit(scan_task_1d)
+        # ensure inner loop setup is done (tmp workaround)
+        delayed_exec(lambda: self.init_ui_with_scan_task(scan_task), 1000)
+
+    def init_ui_with_scan_task(self, scan_task):
+        self.scan_task = scan_task
+        # ui
+        # alter element
+        self._p._setup_element_btn_from_scan_task(
+                scan_task, 'alter', widgets_dict=self.elem_widgets_dict,
+                target=self.alter_elem_lineEdit)
+        # scan range
+        self.lower_limit_lineEdit.setText(str(scan_task.alter_start))
+        self.upper_limit_lineEdit.setText(str(scan_task.alter_stop))
+        # nite, t_wait
+        self.niter_spinBox.setValue(scan_task.alter_number)
+        self.waitsec_dSpinBox.setValue(scan_task.t_wait)
+
+        # array mode
+        self._set_alter_array_dialogs = {}
+        self.enable_arbitary_array_chkbox.setChecked(scan_task.array_mode)
+
+        # init data
+        self.init_dataviz()
+        # set data
+        self.data = self.scan_task.scan_out_data
+        # init moi
+        self.init_moi()
+        # show data
+        for i in range(self.scan_task.alter_number):
+            self._iiter = i
+            self._update_dataviz()
+        self._iiter = 0
 
     @pyqtSlot()
     def on_save_data(self):
@@ -619,7 +651,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
     def update_progress(self):
         self.alter_elem_val_lineEdit.setText("Value: {0:.6g}, ITER: {1}/{2}".format(
             self.scan_task.alter_element.value,
-            self._iiter, self.scan_task.alter_number))
+            self._iiter + 1, self.scan_task.alter_number))
 
     def _update_dataviz(self):
         # update curve and image dataviz
