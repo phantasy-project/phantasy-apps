@@ -592,6 +592,13 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
     def _load_task(self, filepath):
         # set task, i.e. outer loop
         scan_task = load_task(filepath)
+        try:
+            assert scan_task.mode == "2D"
+        except AssertionError:
+            QMessageBox.warning(self, "Load 2D Task",
+                    "The task trying to load is not 2D task, please select correct one or load 1D task in the main window of Correlation Visualizer.",
+                    QMessageBox.Ok)
+            return
         # set nested task, i.e. inner loop
         scan_task_1d = scan_task.get_nested_task()
         self.nested_task_loaded.emit(scan_task_1d)
