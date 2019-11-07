@@ -1307,8 +1307,11 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         if filepath is None:
             return
         scan_task = load_task(filepath)
-        # initial UI widgets with loaded scan_task
-        self.init_ui_with_scan_task(scan_task)
+        if scan_task.mode == '2D':
+            self.load_2D_task(filepath)
+        else:
+            # initial UI widgets with loaded scan_task
+            self.init_ui_with_scan_task(scan_task)
 
     def init_ui_with_scan_task(self, scan_task):
         # initial UI widgets with *scan_task*.
@@ -1435,6 +1438,18 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.extraMonitorsNumberChanged.emit(len(self._extra_monitors))
 
         return new_monis
+
+    def load_2D_task(self, filepath):
+        """Initial 2D scan task window with task file from *filepath*.
+
+        Parameters
+        ----------
+        filepath : str
+            Filepath of 2D task.
+        """
+        self.actionEnable_2D_Scan.triggered.emit()
+        self._2dscan_window._load_task(filepath)
+
 
     # test slots
     def test_scan_started(self):
