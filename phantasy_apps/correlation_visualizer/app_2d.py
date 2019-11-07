@@ -587,6 +587,9 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
                 type_filter="JSON Files (*.json)")
         if filepath is None:
             return
+        self._load_task(filepath)
+
+    def _load_task(self, filepath):
         # set task, i.e. outer loop
         scan_task = load_task(filepath)
         # set nested task, i.e. inner loop
