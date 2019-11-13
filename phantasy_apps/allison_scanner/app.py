@@ -153,6 +153,17 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # conf
         self._dconf = self.get_device_config()
 
+        # vpos
+        self.vpos_lineEdit.setValidator(QDoubleValidator())
+        self.vpos_lineEdit.returnPressed.connect(partial(
+            self.on_retract, 0))
+        self.retract_btn.clicked.connect(partial(self.on_retract, None))
+        #
+        self.reset_itlk_btn.clicked.connect(self.on_reset_interlock)
+        # uncheck adv ctrl by default
+        self.adv_ctrl_chkbox.setChecked(False)
+        self.adv_ctrl_chkbox.toggled.emit(self.adv_ctrl_chkbox.isChecked())
+
         # orientation
         self._ems_orientation = "X"
         self.ems_orientation_cbb.currentTextChanged.connect(self.on_update_orientation)
@@ -213,17 +224,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._data_save_dlg = None
         # loading mode (open data from file)
         self._last_loading = False
-
-        # vpos
-        self.vpos_lineEdit.setValidator(QDoubleValidator())
-        self.vpos_lineEdit.returnPressed.connect(partial(
-            self.on_retract, 0))
-        self.retract_btn.clicked.connect(partial(self.on_retract, None))
-        #
-        self.reset_itlk_btn.clicked.connect(self.on_reset_interlock)
-        # uncheck adv ctrl by default
-        self.adv_ctrl_chkbox.setChecked(False)
-        self.adv_ctrl_chkbox.toggled.emit(self.adv_ctrl_chkbox.isChecked())
 
         # fav cmap cbb/chkbox
         self.cmap_fav_cbb.addItems(CMAP_FAVLIST)
@@ -422,6 +422,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._itlk_pv = elem.pv('INTERLOCK{}'.format(_id))[0]
             self._en_pv = elem.pv('ENABLE_SCAN{}'.format(_id), handle='readback')[0]
         self._init_device()
+
+        # show current pos value.
+        self.vpos_lineEdit.returnPressed.emit()
 
     def get_device_config(self, path=None):
         """Return device config from *path*.
