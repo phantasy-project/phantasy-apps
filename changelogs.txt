@@ -1,3 +1,44 @@
+Version 2.3.4
+-------------
+2019-11-13
+
+- Allison Scanner App
+  - Add timestamp as the figure title of the plotting of fetched live data
+  - Set the device geometry settings as readonly
+  - Improved simulation mode
+  - Fix crashes due to empty data, mismatched dimensions, zero division error
+  - Update UI for device control
+  - Add estimated time required
+  - Add the feature to support keep/set device history settings
+  - Add widget for beam species display
+  - Fix step setting issue, step values do not need to set again now
+  - Keep only six digits for the processed results
+  - Add support to save/load all data including data processing parameters
+  - Support to add note when saving data
+
+- App Launcher
+  - Update default .ini config file
+  - Update UI
+
+- Online Model App
+  - Add support to show diagnostic device measurement results
+  - Update default figure plot widget settings
+
+- ORM
+  - Add new future for orbit response matrix visualization
+  - Add support to apply scaling factor before applying corrections
+  - Fix bug in data saving method, 'relative range' should be 'relative_range'
+  - Set corrector scan range after loading ORM
+
+- Trajectory Viewer
+  - Fix bug, only add 'X&Y' field to BPMs, not all elements
+  - Update data plot widget background color
+
+- Correlation Visualizer
+  - Implement features to save/load 1D and 2D scan task
+  - Update UIs
+  - Fix the event logic between 1D and 2D task controls
+
 Version 2.3.3
 -------------
 2019-09-05
@@ -22,7 +63,7 @@ Version 2.3.1
 -------------
 2019-08-23
 
-- Fix missing module issue when Debian packaging. 
+- Fix missing module issue when Debian packaging.
 
 Version 2.3.0
 -------------
