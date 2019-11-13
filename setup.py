@@ -12,7 +12,7 @@ def read_license():
     with open('LICENSE') as f:
         return f.read()
 
-app_version = "2.3.3"
+app_version = "2.3.4"
 app_name = "phantasy_apps"
 app_description = 'Physics high-level applications and toolkits for accelerator system -- applications'
 app_long_description = readme() + '\n\n'
@@ -20,7 +20,7 @@ app_platform = ["Linux"]
 app_author = "Tong Zhang"
 app_author_email = "zhangt@frib.msu.edu"
 app_license = read_license()
-# app_url = "https://controls.frib.msu.edu/phantasy/"
+app_url = "https://github.com/phantasy-project/phantasy-apps"
 app_keywords = "phantasy high-level python"
 installrequires = [
     'numpy',
@@ -71,7 +71,7 @@ setup(
     long_description=app_long_description,
     author=app_author,
     author_email=app_author_email,
-    # url = app_url,
+    url = app_url,
     platforms=app_platform,
     license=app_license,
     keywords=app_keywords,
