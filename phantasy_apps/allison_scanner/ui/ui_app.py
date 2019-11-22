@@ -38,6 +38,7 @@ class Ui_MainWindow(object):
         self.gridLayout.setContentsMargins(8, 8, 8, 8)
         self.gridLayout.setObjectName("gridLayout")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_5.setSpacing(8)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setSpacing(4)
@@ -155,7 +156,7 @@ class Ui_MainWindow(object):
         self.adv_ctrl_widget = QtWidgets.QWidget(self.ctrl_gbox)
         self.adv_ctrl_widget.setObjectName("adv_ctrl_widget")
         self.adv_ctrl_hbox = QtWidgets.QHBoxLayout(self.adv_ctrl_widget)
-        self.adv_ctrl_hbox.setContentsMargins(0, 0, 0, 0)
+        self.adv_ctrl_hbox.setContentsMargins(4, 2, 0, 0)
         self.adv_ctrl_hbox.setSpacing(6)
         self.adv_ctrl_hbox.setObjectName("adv_ctrl_hbox")
         self.label_26 = QtWidgets.QLabel(self.adv_ctrl_widget)
@@ -261,7 +262,8 @@ class Ui_MainWindow(object):
         self.gridLayout_4.setSizeConstraint(
             QtWidgets.QLayout.SetDefaultConstraint)
         self.gridLayout_4.setContentsMargins(4, 0, 4, 4)
-        self.gridLayout_4.setSpacing(4)
+        self.gridLayout_4.setHorizontalSpacing(4)
+        self.gridLayout_4.setVerticalSpacing(9)
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.label_16 = QtWidgets.QLabel(self.gridWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -1093,11 +1095,7 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
-        self.gridLayout_6.addLayout(self.horizontalLayout_2, 2, 0, 1, 1)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 40,
-                                            QtWidgets.QSizePolicy.Minimum,
-                                            QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_6.addItem(spacerItem2, 0, 1, 2, 1)
+        self.gridLayout_6.addLayout(self.horizontalLayout_2, 3, 0, 1, 1)
         self.ion_name_display_lbl = QtWidgets.QLabel(self.page_beam_params)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -1114,28 +1112,15 @@ class Ui_MainWindow(object):
         self.ion_name_display_lbl.setFont(font)
         self.ion_name_display_lbl.setAlignment(QtCore.Qt.AlignCenter)
         self.ion_name_display_lbl.setObjectName("ion_name_display_lbl")
-        self.gridLayout_6.addWidget(self.ion_name_display_lbl, 0, 2, 3, 1)
-        spacerItem3 = QtWidgets.QSpacerItem(388, 20,
+        self.gridLayout_6.addWidget(self.ion_name_display_lbl, 1, 3, 3, 1)
+        spacerItem2 = QtWidgets.QSpacerItem(388, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_6.addItem(spacerItem3, 0, 0, 1, 1)
-        self.ion_mass_display_lbl = QtWidgets.QLabel(self.page_beam_params)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.ion_mass_display_lbl.sizePolicy().hasHeightForWidth())
-        self.ion_mass_display_lbl.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Cantarell")
-        font.setPointSize(14)
-        self.ion_mass_display_lbl.setFont(font)
-        self.ion_mass_display_lbl.setAlignment(QtCore.Qt.AlignRight
-                                               | QtCore.Qt.AlignTrailing
-                                               | QtCore.Qt.AlignVCenter)
-        self.ion_mass_display_lbl.setObjectName("ion_mass_display_lbl")
-        self.gridLayout_6.addWidget(self.ion_mass_display_lbl, 2, 1, 1, 1)
+        self.gridLayout_6.addItem(spacerItem2, 1, 0, 1, 1)
+        spacerItem3 = QtWidgets.QSpacerItem(20, 40,
+                                            QtWidgets.QSizePolicy.Minimum,
+                                            QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_6.addItem(spacerItem3, 3, 4, 1, 1)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setContentsMargins(0, -1, -1, -1)
         self.horizontalLayout_3.setSpacing(1)
@@ -1168,11 +1153,28 @@ class Ui_MainWindow(object):
         self.label_50.setFont(font)
         self.label_50.setObjectName("label_50")
         self.horizontalLayout_3.addWidget(self.label_50)
-        self.gridLayout_6.addLayout(self.horizontalLayout_3, 0, 3, 1, 1)
+        self.gridLayout_6.addLayout(self.horizontalLayout_3, 1, 4, 1, 1)
         spacerItem4 = QtWidgets.QSpacerItem(20, 40,
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_6.addItem(spacerItem4, 2, 3, 1, 1)
+        self.gridLayout_6.addItem(spacerItem4, 3, 2, 1, 1)
+        self.ion_mass_display_lbl = QtWidgets.QLabel(self.page_beam_params)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.ion_mass_display_lbl.sizePolicy().hasHeightForWidth())
+        self.ion_mass_display_lbl.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Cantarell")
+        font.setPointSize(14)
+        self.ion_mass_display_lbl.setFont(font)
+        self.ion_mass_display_lbl.setAlignment(QtCore.Qt.AlignRight
+                                               | QtCore.Qt.AlignTrailing
+                                               | QtCore.Qt.AlignVCenter)
+        self.ion_mass_display_lbl.setObjectName("ion_mass_display_lbl")
+        self.gridLayout_6.addWidget(self.ion_mass_display_lbl, 1, 2, 1, 1)
         self.verticalLayout_6.addLayout(self.gridLayout_6)
         self.gridLayout_8 = QtWidgets.QGridLayout()
         self.gridLayout_8.setObjectName("gridLayout_8")
@@ -2023,13 +2025,13 @@ class Ui_MainWindow(object):
         self.auto_fill_beam_params_btn.setText(
             _translate("MainWindow", "Auto Fill"))
         self.ion_name_display_lbl.setText(_translate("MainWindow", "Ar"))
-        self.ion_mass_display_lbl.setText(_translate("MainWindow", "40"))
         self.ion_charge_display_lbl.setText(_translate("MainWindow", "9"))
         self.label_50.setText(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p><span style=\" vertical-align:super;\">+</span></p></body></html>"
             ))
+        self.ion_mass_display_lbl.setText(_translate("MainWindow", "40"))
         self.label_33.setText(
             _translate("MainWindow",
                        "<html><head/><body><p>Ion Mass</p></body></html>"))
