@@ -30,6 +30,7 @@ from phantasy_ui.widgets import ElementWidget
 
 from .app_array_set import ArraySetDialog
 from .app_elem_select import ElementSelectDialog
+from .app_plot3d import Plot3dData
 from .data import ScanDataModel
 from .scan import ScanTask
 from .scan import load_task
@@ -184,6 +185,33 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
                 [np.ones(shape) * np.nan] * self.scan_task.alter_number)
         self.scan_task.scan_out_data = self.data
         print("Whole data shape is:", self.data.shape)
+
+    def init_all_elements(self):
+        """Initial all the elemetns (alter elements and all the monitors) for
+        final 3D data visualization.
+        """
+        elems = [self.scan_task.alter_element, \
+                 self._p.scan_task.alter_element, ] + \
+                [self._p.scan_task.monitor_element, ] + \
+                 self._p.scan_task.get_extra_monitors()
+        flds = []
+        for o in elems:
+            if isinstance(o, CaField):
+                fld = '{0} [{1}]'.format(o.ename, o.name)
+            else:
+                fld = o.ename
+            flds.append(fld)
+
+        cbbs = (self.ydata_cbb, self.xdata_cbb, self.zdata_cbb,)
+        for i, icbb in enumerate(cbbs):
+            icbb.clear()
+            icbb.addItems(flds)
+            icbb.setCurrentIndex(i)
+        # interp init
+        self.interp_nx_sbox.setValue(self._p.niter_spinBox.value())
+        self.interp_ny_sbox.setValue(self.niter_spinBox.value())
+        #
+        self._plot3d_window = None
 
     def init_moi(self):
         """Initial monitor-of-interest cbb list.
@@ -460,6 +488,8 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
             self.init_out_data()
             # monitor-of-interest
             self.init_moi()
+            # elements for final data visualization
+            self.init_all_elements()
             # image data
             self.init_dataviz()
             self._initialized = True
@@ -512,7 +542,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         # all finish
         print("Scan is done.")
         # dump data
-        self._dump_data(self.data)
+        # self._dump_data(self.data)
         # reset flags
         self.reset_flags()
         #
@@ -629,6 +659,8 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self.data = self.scan_task.scan_out_data
         # init moi
         self.init_moi()
+        # elements for final data visualization
+        self.init_all_elements()
         # show data
         for i in range(self.scan_task.alter_number):
             self._iiter = i
@@ -691,3 +723,50 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         # reconnect signals
         self._p.start_btn.clicked.connect(self.update_progress)
         self._p.data_updated.connect(self.on_data_updated)
+
+    def make_data(self):
+        """Make data for 3D plot.
+        """
+        idy = self.ydata_cbb.currentIndex() # outer y: 0
+        idx = self.xdata_cbb.currentIndex() # inner x: 1 --> 0 (ScanDataModel)
+        idz = self.zdata_cbb.currentIndex() # inner z,... 2... --> 1...
+        data = {idx: [], idy: [], idz: []}
+
+        outdata = self.scan_task.scan_out_data
+        l, n, m, k = outdata.shape
+
+        for iid in (idx, idy, idz):
+            if iid == 0: # outer iterator
+                x2 = self.scan_task.get_alter_array()
+                data[iid] = [v for v in x2 for _ in range(n)]
+            elif iid == 1: # inner iterator
+                x1 = self._p.scan_task.get_alter_array()
+                data[iid] = [v for _ in range(l) for v in x1]
+                # for i in range(l):
+                #     sm = ScanDataModel(outdata[i, :])
+                #     data[iid].extend(sm.get_xavg(ind=0))
+            else:
+                for i in range(l):
+                    sm = ScanDataModel(outdata[i, :])
+                    data[iid].extend(sm.get_yavg(ind=iid - 1))
+
+        return map(np.asarray, (data[idx], data[idy], data[idz]))
+
+    @pyqtSlot()
+    def on_plot_data(self):
+        """Visulize final 3D data, based on selected X, Y and Z.
+        """
+        xdata, ydata, zdata = self.make_data()
+        if self._plot3d_window is None:
+            self._plot3d_window = Plot3dData(self)
+        o = self._plot3d_window
+        m = self.interp_method_cbb.currentText()
+        nx = self.interp_nx_sbox.value()
+        ny = self.interp_ny_sbox.value()
+        o.set_interp(m, nx, ny)
+        o.set_xdata(xdata)
+        o.set_ydata(ydata)
+        o.set_zdata(zdata)
+        o.plot_data()
+        o.show()
+        self.add_attached_widget(o)
