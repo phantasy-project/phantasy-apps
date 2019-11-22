@@ -1010,6 +1010,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         if self._2dscan_window is None:
             self._2dscan_window = TwoParamsScanWindow(self)
         self._2dscan_window.show()
+        self.add_attached_widget(self._2dscan_window)
 
     @pyqtSlot()
     def onConfigDeviceProcessor(self):
