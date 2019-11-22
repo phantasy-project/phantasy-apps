@@ -501,9 +501,11 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         if mode == 'start':
             self.start_btn.setEnabled(False)
             self.stop_btn.setEnabled(True)
+            self.enable_post_processing_ctrls(False)
         elif mode == 'stop':
             self.start_btn.setEnabled(True)
             self.stop_btn.setEnabled(False)
+            self.enable_post_processing_ctrls(True)
         elif mode == 'init':
             self.start_btn.setEnabled(True)
             self.stop_btn.setEnabled(False)
@@ -770,3 +772,8 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         o.plot_data()
         o.show()
         self.add_attached_widget(o)
+
+    def enable_post_processing_ctrls(self, enable):
+        """Enable/disable widgets for post processing.
+        """
+        self.analysis_gbox.setEnabled(enable)
