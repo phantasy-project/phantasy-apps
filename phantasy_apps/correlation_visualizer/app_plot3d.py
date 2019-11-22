@@ -68,9 +68,14 @@ class Plot3dData(BaseAppForm, Ui_MainWindow):
             self._o.update_image(m / m.max())
         else:
             self._o.update_image(m)
-        # set xylabels
-        # self._o.setFigureXlabel()
-        # self._o.setFigureYlabel()
+
+        # set xylabels and title
+        xlbl = self._parent.xdata_cbb.currentText()
+        ylbl = self._parent.ydata_cbb.currentText()
+        tl = self._parent.zdata_cbb.currentText()
+        self._o.setFigureXlabel(xlbl)
+        self._o.setFigureYlabel(ylbl)
+        self._o.setFigureTitle(tl)
 
     def closeEvent(self, e):
         pass
