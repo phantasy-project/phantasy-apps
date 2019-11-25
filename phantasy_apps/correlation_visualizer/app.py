@@ -63,9 +63,11 @@ MPS_DISABLE_STATUS = "Disable"
 
 # default MPS pv name
 MPS_PV_DEFAULT = 'MPS_FPS:MSTR_N0001:MpsStatus'  # FRIB MPS
-
-
 # MPS_PV_DEFAULT = 'VA:SVR:MpsStatus' # VA MPS
+
+# machine/segment for preloading
+MACH, SEGM = 'FRIB', 'LINAC'
+
 
 class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     # scan log
@@ -221,12 +223,18 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         # q-scan window
         self.qs_window = None
 
+        # lattice viewer
+        self._lv = None
+        self.lv_view.clicked.connect(self.on_show_latinfo)
+
         # 2dscan window
         self._2dscan_window = None
 
         # lattice-load window
         self.init_attached_widget('lattice_load_window')
         self._mp = None
+        # preload machine/segment
+        self.pre_load_mach_segm(MACH, SEGM)
 
         # moveto flag, set True when moveto some point.
         self._moveto_flag = False
@@ -960,6 +968,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self._mp = o
         self.elementsTreeChanged.emit(o)
         self.segments_updated.emit(o.lattice_names)
+        #
+        self.lv_mach.setText(o.last_machine_name)
+        self.lv_segm.setText(o.last_lattice_name)
 
     @pyqtSlot(bool)
     def onEnableVirtualDiag(self, f):
@@ -1451,6 +1462,35 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.actionEnable_2D_Scan.triggered.emit()
         self._2dscan_window._load_task(filepath)
 
+    def pre_load_mach_segm(self, mach, segm):
+        """Preload machine and segment.
+        """
+        self.actionLoad_Lattice.triggered.emit()
+        self.lattice_load_window.mach_cbb.setCurrentText(mach)
+        self.lattice_load_window.seg_cbb.setCurrentText(segm)
+        self.lattice_load_window.load_btn.clicked.emit()
+        self.lattice_load_window.close()
+
+    @pyqtSlot()
+    def on_show_latinfo(self):
+        machine = self.lv_mach.text()
+        lattice = self.lv_segm.text()
+        if machine == '' or lattice == '':
+            return
+
+        from phantasy_apps.lattice_viewer import LatticeViewerWindow
+        from phantasy_apps.lattice_viewer import __version__
+        from phantasy_apps.lattice_viewer import __title__
+
+        if self._lv is None:
+            self._lv = LatticeViewerWindow(__version__)
+            self._lv.setWindowTitle("{} ({})".format(__title__, self.getAppTitle()))
+        lw = self._lv.latticeWidget
+        lw.mach_cbb.setCurrentText(machine)
+        lw.seg_cbb.setCurrentText(lattice)
+        lw.load_btn.clicked.emit()
+        lw.setEnabled(False)
+        self._lv.show()
 
     # test slots
     def test_scan_started(self):
