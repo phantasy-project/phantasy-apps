@@ -85,28 +85,18 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_2.setSpacing(6)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.label_8 = QtWidgets.QLabel(self.widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_8.sizePolicy().hasHeightForWidth())
-        self.label_8.setSizePolicy(sizePolicy)
-        self.label_8.setObjectName("label_8")
-        self.gridLayout_2.addWidget(self.label_8, 0, 0, 1, 1)
-        self.alter_elem_lineEdit = QtWidgets.QLineEdit(self.widget)
+        self.monitor_elem_lineEdit = QtWidgets.QLineEdit(self.widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.alter_elem_lineEdit.sizePolicy().hasHeightForWidth())
-        self.alter_elem_lineEdit.setSizePolicy(sizePolicy)
-        self.alter_elem_lineEdit.setText("")
-        self.alter_elem_lineEdit.setReadOnly(True)
-        self.alter_elem_lineEdit.setObjectName("alter_elem_lineEdit")
-        self.gridLayout_2.addWidget(self.alter_elem_lineEdit, 0, 1, 1, 3)
+            self.monitor_elem_lineEdit.sizePolicy().hasHeightForWidth())
+        self.monitor_elem_lineEdit.setSizePolicy(sizePolicy)
+        self.monitor_elem_lineEdit.setText("")
+        self.monitor_elem_lineEdit.setReadOnly(True)
+        self.monitor_elem_lineEdit.setObjectName("monitor_elem_lineEdit")
+        self.gridLayout_2.addWidget(self.monitor_elem_lineEdit, 2, 1, 1, 3)
         self.lower_limit_lineEdit = QtWidgets.QLineEdit(self.widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -118,10 +108,6 @@ class Ui_MainWindow(object):
         self.lower_limit_lineEdit.setPlaceholderText("")
         self.lower_limit_lineEdit.setObjectName("lower_limit_lineEdit")
         self.gridLayout_2.addWidget(self.lower_limit_lineEdit, 1, 1, 1, 1)
-        self.select_monitor_elem_btn = QtWidgets.QPushButton(self.widget)
-        self.select_monitor_elem_btn.setAutoDefault(True)
-        self.select_monitor_elem_btn.setObjectName("select_monitor_elem_btn")
-        self.gridLayout_2.addWidget(self.select_monitor_elem_btn, 2, 4, 1, 1)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setSpacing(9)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
@@ -145,6 +131,56 @@ class Ui_MainWindow(object):
         self.show_extra_monitors_btn.setObjectName("show_extra_monitors_btn")
         self.horizontalLayout_5.addWidget(self.show_extra_monitors_btn)
         self.gridLayout_2.addLayout(self.horizontalLayout_5, 3, 3, 1, 1)
+        self.label_8 = QtWidgets.QLabel(self.widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_8.sizePolicy().hasHeightForWidth())
+        self.label_8.setSizePolicy(sizePolicy)
+        self.label_8.setObjectName("label_8")
+        self.gridLayout_2.addWidget(self.label_8, 0, 0, 1, 1)
+        self.label_9 = QtWidgets.QLabel(self.widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_9.sizePolicy().hasHeightForWidth())
+        self.label_9.setSizePolicy(sizePolicy)
+        self.label_9.setObjectName("label_9")
+        self.gridLayout_2.addWidget(self.label_9, 1, 0, 1, 1)
+        self.select_more_monitor_elems_btn = QtWidgets.QPushButton(self.widget)
+        self.select_more_monitor_elems_btn.setAutoDefault(True)
+        self.select_more_monitor_elems_btn.setObjectName(
+            "select_more_monitor_elems_btn")
+        self.gridLayout_2.addWidget(self.select_more_monitor_elems_btn, 3, 4,
+                                    1, 1)
+        self.select_monitor_elem_btn = QtWidgets.QPushButton(self.widget)
+        self.select_monitor_elem_btn.setAutoDefault(True)
+        self.select_monitor_elem_btn.setObjectName("select_monitor_elem_btn")
+        self.gridLayout_2.addWidget(self.select_monitor_elem_btn, 2, 4, 1, 1)
+        self.select_alter_elem_btn = QtWidgets.QPushButton(self.widget)
+        self.select_alter_elem_btn.setToolTip("")
+        self.select_alter_elem_btn.setAutoDefault(True)
+        self.select_alter_elem_btn.setObjectName("select_alter_elem_btn")
+        self.gridLayout_2.addWidget(self.select_alter_elem_btn, 0, 4, 1, 1)
+        self.alter_elem_lineEdit = QtWidgets.QLineEdit(self.widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.alter_elem_lineEdit.sizePolicy().hasHeightForWidth())
+        self.alter_elem_lineEdit.setSizePolicy(sizePolicy)
+        self.alter_elem_lineEdit.setText("")
+        self.alter_elem_lineEdit.setReadOnly(True)
+        self.alter_elem_lineEdit.setObjectName("alter_elem_lineEdit")
+        self.gridLayout_2.addWidget(self.alter_elem_lineEdit, 0, 1, 1, 3)
+        self.label_10 = QtWidgets.QLabel(self.widget)
+        self.label_10.setObjectName("label_10")
+        self.gridLayout_2.addWidget(self.label_10, 1, 2, 1, 1)
         self.upper_limit_lineEdit = QtWidgets.QLineEdit(self.widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -156,16 +192,31 @@ class Ui_MainWindow(object):
         self.upper_limit_lineEdit.setPlaceholderText("")
         self.upper_limit_lineEdit.setObjectName("upper_limit_lineEdit")
         self.gridLayout_2.addWidget(self.upper_limit_lineEdit, 1, 3, 1, 1)
-        self.label_9 = QtWidgets.QLabel(self.widget)
+        self.label_11 = QtWidgets.QLabel(self.widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.label_9.sizePolicy().hasHeightForWidth())
-        self.label_9.setSizePolicy(sizePolicy)
-        self.label_9.setObjectName("label_9")
-        self.gridLayout_2.addWidget(self.label_9, 1, 0, 1, 1)
+            self.label_11.sizePolicy().hasHeightForWidth())
+        self.label_11.setSizePolicy(sizePolicy)
+        self.label_11.setObjectName("label_11")
+        self.gridLayout_2.addWidget(self.label_11, 2, 0, 1, 1)
+        self.extra_monitors_counter_lbl = QtWidgets.QLabel(self.widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.extra_monitors_counter_lbl.sizePolicy().hasHeightForWidth())
+        self.extra_monitors_counter_lbl.setSizePolicy(sizePolicy)
+        self.extra_monitors_counter_lbl.setObjectName(
+            "extra_monitors_counter_lbl")
+        self.gridLayout_2.addWidget(self.extra_monitors_counter_lbl, 3, 1, 1,
+                                    2)
+        self.label = QtWidgets.QLabel(self.widget)
+        self.label.setObjectName("label")
+        self.gridLayout_2.addWidget(self.label, 3, 0, 1, 1)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setSpacing(3)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
@@ -185,56 +236,24 @@ class Ui_MainWindow(object):
         self.alter_array_btn.setObjectName("alter_array_btn")
         self.horizontalLayout_6.addWidget(self.alter_array_btn)
         self.gridLayout_2.addLayout(self.horizontalLayout_6, 1, 4, 1, 1)
-        self.select_alter_elem_btn = QtWidgets.QPushButton(self.widget)
-        self.select_alter_elem_btn.setAutoDefault(True)
-        self.select_alter_elem_btn.setObjectName("select_alter_elem_btn")
-        self.gridLayout_2.addWidget(self.select_alter_elem_btn, 0, 4, 1, 1)
-        self.label = QtWidgets.QLabel(self.widget)
-        self.label.setObjectName("label")
-        self.gridLayout_2.addWidget(self.label, 3, 0, 1, 1)
-        self.extra_monitors_counter_lbl = QtWidgets.QLabel(self.widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.extra_monitors_counter_lbl.sizePolicy().hasHeightForWidth())
-        self.extra_monitors_counter_lbl.setSizePolicy(sizePolicy)
-        self.extra_monitors_counter_lbl.setObjectName(
-            "extra_monitors_counter_lbl")
-        self.gridLayout_2.addWidget(self.extra_monitors_counter_lbl, 3, 1, 1,
-                                    2)
-        self.monitor_elem_lineEdit = QtWidgets.QLineEdit(self.widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.monitor_elem_lineEdit.sizePolicy().hasHeightForWidth())
-        self.monitor_elem_lineEdit.setSizePolicy(sizePolicy)
-        self.monitor_elem_lineEdit.setText("")
-        self.monitor_elem_lineEdit.setReadOnly(True)
-        self.monitor_elem_lineEdit.setObjectName("monitor_elem_lineEdit")
-        self.gridLayout_2.addWidget(self.monitor_elem_lineEdit, 2, 1, 1, 3)
-        self.label_11 = QtWidgets.QLabel(self.widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_11.sizePolicy().hasHeightForWidth())
-        self.label_11.setSizePolicy(sizePolicy)
-        self.label_11.setObjectName("label_11")
-        self.gridLayout_2.addWidget(self.label_11, 2, 0, 1, 1)
-        self.label_10 = QtWidgets.QLabel(self.widget)
-        self.label_10.setObjectName("label_10")
-        self.gridLayout_2.addWidget(self.label_10, 1, 2, 1, 1)
-        self.select_more_monitor_elems_btn = QtWidgets.QPushButton(self.widget)
-        self.select_more_monitor_elems_btn.setAutoDefault(True)
-        self.select_more_monitor_elems_btn.setObjectName(
-            "select_more_monitor_elems_btn")
-        self.gridLayout_2.addWidget(self.select_more_monitor_elems_btn, 3, 4,
-                                    1, 1)
+        self.lv_lbl = QtWidgets.QLabel(self.widget)
+        self.lv_lbl.setObjectName("lv_lbl")
+        self.gridLayout_2.addWidget(self.lv_lbl, 4, 0, 1, 1)
+        self.lv_mach = QtWidgets.QLabel(self.widget)
+        self.lv_mach.setStyleSheet("QLabel {\n" "    color: #007BFF;\n" "}")
+        self.lv_mach.setObjectName("lv_mach")
+        self.gridLayout_2.addWidget(self.lv_mach, 4, 1, 1, 1)
+        self.lv_segm = QtWidgets.QLabel(self.widget)
+        self.lv_segm.setStyleSheet("QLabel {\n" "    color: #DC3545;\n" "}")
+        self.lv_segm.setObjectName("lv_segm")
+        self.gridLayout_2.addWidget(self.lv_segm, 4, 3, 1, 1)
+        self.lv_view = QtWidgets.QPushButton(self.widget)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/icons/view-details.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.lv_view.setIcon(icon2)
+        self.lv_view.setObjectName("lv_view")
+        self.gridLayout_2.addWidget(self.lv_view, 4, 4, 1, 1)
         self.verticalLayout_3.addWidget(self.widget)
         self.line_4 = QtWidgets.QFrame(self.scan_groupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -274,26 +293,26 @@ class Ui_MainWindow(object):
                                            QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
         self.inc_fontsize_tbtn = QtWidgets.QToolButton(self.scan_groupBox)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/icons/increase-font.png"),
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/icons/increase-font.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.inc_fontsize_tbtn.setIcon(icon2)
+        self.inc_fontsize_tbtn.setIcon(icon3)
         self.inc_fontsize_tbtn.setAutoRaise(True)
         self.inc_fontsize_tbtn.setObjectName("inc_fontsize_tbtn")
         self.horizontalLayout_2.addWidget(self.inc_fontsize_tbtn)
         self.dec_fontsize_tbtn = QtWidgets.QToolButton(self.scan_groupBox)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/icons/decrease-font.png"),
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/icons/decrease-font.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.dec_fontsize_tbtn.setIcon(icon3)
+        self.dec_fontsize_tbtn.setIcon(icon4)
         self.dec_fontsize_tbtn.setAutoRaise(True)
         self.dec_fontsize_tbtn.setObjectName("dec_fontsize_tbtn")
         self.horizontalLayout_2.addWidget(self.dec_fontsize_tbtn)
         self.clear_log_tbtn = QtWidgets.QToolButton(self.scan_groupBox)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/icons/clean.png"), QtGui.QIcon.Normal,
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/icons/clean.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.clear_log_tbtn.setIcon(icon4)
+        self.clear_log_tbtn.setIcon(icon5)
         self.clear_log_tbtn.setAutoRaise(True)
         self.clear_log_tbtn.setObjectName("clear_log_tbtn")
         self.horizontalLayout_2.addWidget(self.clear_log_tbtn)
@@ -355,10 +374,10 @@ class Ui_MainWindow(object):
         self.mps_status_btn.setMinimumSize(QtCore.QSize(36, 36))
         self.mps_status_btn.setMaximumSize(QtCore.QSize(36, 36))
         self.mps_status_btn.setText("")
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/icons/mps_skipped.png"),
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/icons/mps_skipped.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.mps_status_btn.setIcon(icon5)
+        self.mps_status_btn.setIcon(icon6)
         self.mps_status_btn.setIconSize(QtCore.QSize(36, 36))
         self.mps_status_btn.setAutoRaise(True)
         self.mps_status_btn.setObjectName("mps_status_btn")
@@ -380,10 +399,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.start_btn.sizePolicy().hasHeightForWidth())
         self.start_btn.setSizePolicy(sizePolicy)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.start_btn.setIcon(icon6)
+        self.start_btn.setIcon(icon7)
         self.start_btn.setIconSize(QtCore.QSize(32, 32))
         self.start_btn.setAutoDefault(True)
         self.start_btn.setObjectName("start_btn")
@@ -396,10 +415,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.pause_btn.sizePolicy().hasHeightForWidth())
         self.pause_btn.setSizePolicy(sizePolicy)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(":/icons/pause.png"), QtGui.QIcon.Normal,
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/icons/pause.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.pause_btn.setIcon(icon7)
+        self.pause_btn.setIcon(icon8)
         self.pause_btn.setIconSize(QtCore.QSize(32, 32))
         self.pause_btn.setAutoDefault(True)
         self.pause_btn.setObjectName("pause_btn")
@@ -412,10 +431,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.stop_btn.sizePolicy().hasHeightForWidth())
         self.stop_btn.setSizePolicy(sizePolicy)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.stop_btn.setIcon(icon8)
+        self.stop_btn.setIcon(icon9)
         self.stop_btn.setIconSize(QtCore.QSize(32, 32))
         self.stop_btn.setAutoDefault(True)
         self.stop_btn.setObjectName("stop_btn")
@@ -428,10 +447,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.retake_btn.sizePolicy().hasHeightForWidth())
         self.retake_btn.setSizePolicy(sizePolicy)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(":/icons/retake.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.retake_btn.setIcon(icon9)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap(":/icons/retake.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.retake_btn.setIcon(icon10)
         self.retake_btn.setIconSize(QtCore.QSize(32, 32))
         self.retake_btn.setAutoDefault(True)
         self.retake_btn.setObjectName("retake_btn")
@@ -616,62 +635,62 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.autoscale_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap(":/icons/auto-scale.png"),
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap(":/icons/auto-scale.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.autoscale_tbtn.setIcon(icon10)
+        self.autoscale_tbtn.setIcon(icon11)
         self.autoscale_tbtn.setCheckable(True)
         self.autoscale_tbtn.setChecked(False)
         self.autoscale_tbtn.setAutoRaise(True)
         self.autoscale_tbtn.setObjectName("autoscale_tbtn")
         self.horizontalLayout.addWidget(self.autoscale_tbtn)
         self.save_data_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
-        icon11 = QtGui.QIcon()
-        icon11.addPixmap(QtGui.QPixmap(":/icons/save_figure.png"),
+        icon12 = QtGui.QIcon()
+        icon12.addPixmap(QtGui.QPixmap(":/icons/save_figure.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.save_data_tbtn.setIcon(icon11)
+        self.save_data_tbtn.setIcon(icon12)
         self.save_data_tbtn.setAutoRaise(True)
         self.save_data_tbtn.setObjectName("save_data_tbtn")
         self.horizontalLayout.addWidget(self.save_data_tbtn)
         self.auto_title_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
-        icon12 = QtGui.QIcon()
-        icon12.addPixmap(QtGui.QPixmap(":/icons/title.png"),
+        icon13 = QtGui.QIcon()
+        icon13.addPixmap(QtGui.QPixmap(":/icons/title.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.auto_title_tbtn.setIcon(icon12)
+        self.auto_title_tbtn.setIcon(icon13)
         self.auto_title_tbtn.setAutoRaise(True)
         self.auto_title_tbtn.setObjectName("auto_title_tbtn")
         self.horizontalLayout.addWidget(self.auto_title_tbtn)
         self.auto_labels_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
-        icon13 = QtGui.QIcon()
-        icon13.addPixmap(QtGui.QPixmap(":/icons/xylabel.png"),
+        icon14 = QtGui.QIcon()
+        icon14.addPixmap(QtGui.QPixmap(":/icons/xylabel.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.auto_labels_tbtn.setIcon(icon13)
+        self.auto_labels_tbtn.setIcon(icon14)
         self.auto_labels_tbtn.setAutoRaise(True)
         self.auto_labels_tbtn.setObjectName("auto_labels_tbtn")
         self.horizontalLayout.addWidget(self.auto_labels_tbtn)
         self.moveto_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
-        icon14 = QtGui.QIcon()
-        icon14.addPixmap(QtGui.QPixmap(":/icons/moveto.png"),
+        icon15 = QtGui.QIcon()
+        icon15.addPixmap(QtGui.QPixmap(":/icons/moveto.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.moveto_tbtn.setIcon(icon14)
+        self.moveto_tbtn.setIcon(icon15)
         self.moveto_tbtn.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
         self.moveto_tbtn.setAutoRaise(True)
         self.moveto_tbtn.setArrowType(QtCore.Qt.NoArrow)
         self.moveto_tbtn.setObjectName("moveto_tbtn")
         self.horizontalLayout.addWidget(self.moveto_tbtn)
         self.set_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
-        icon15 = QtGui.QIcon()
-        icon15.addPixmap(QtGui.QPixmap(":/icons/set.png"), QtGui.QIcon.Normal,
+        icon16 = QtGui.QIcon()
+        icon16.addPixmap(QtGui.QPixmap(":/icons/set.png"), QtGui.QIcon.Normal,
                          QtGui.QIcon.Off)
-        self.set_tbtn.setIcon(icon15)
+        self.set_tbtn.setIcon(icon16)
         self.set_tbtn.setAutoRaise(True)
         self.set_tbtn.setObjectName("set_tbtn")
         self.horizontalLayout.addWidget(self.set_tbtn)
         self.view_selected_pts_tbtn = QtWidgets.QToolButton(self.plot_groupBox)
-        icon16 = QtGui.QIcon()
-        icon16.addPixmap(QtGui.QPixmap(":/icons/points.png"),
+        icon17 = QtGui.QIcon()
+        icon17.addPixmap(QtGui.QPixmap(":/icons/points.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.view_selected_pts_tbtn.setIcon(icon16)
+        self.view_selected_pts_tbtn.setIcon(icon17)
         self.view_selected_pts_tbtn.setPopupMode(
             QtWidgets.QToolButton.MenuButtonPopup)
         self.view_selected_pts_tbtn.setAutoRaise(True)
@@ -730,36 +749,36 @@ class Ui_MainWindow(object):
         self.menu_Scan.setObjectName("menu_Scan")
         MainWindow.setMenuBar(self.menubar)
         self.actionE_xit = QtWidgets.QAction(MainWindow)
-        icon17 = QtGui.QIcon()
-        icon17.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
+        icon18 = QtGui.QIcon()
+        icon18.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
                          QtGui.QIcon.Off)
-        self.actionE_xit.setIcon(icon17)
+        self.actionE_xit.setIcon(icon18)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionContents = QtWidgets.QAction(MainWindow)
-        icon18 = QtGui.QIcon()
-        icon18.addPixmap(QtGui.QPixmap(":/icons/help.png"), QtGui.QIcon.Normal,
+        icon19 = QtGui.QIcon()
+        icon19.addPixmap(QtGui.QPixmap(":/icons/help.png"), QtGui.QIcon.Normal,
                          QtGui.QIcon.Off)
-        self.actionContents.setIcon(icon18)
+        self.actionContents.setIcon(icon19)
         self.actionContents.setObjectName("actionContents")
         self.actionAbout = QtWidgets.QAction(MainWindow)
-        icon19 = QtGui.QIcon()
-        icon19.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
+        icon20 = QtGui.QIcon()
+        icon20.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
                          QtGui.QIcon.Off)
-        self.actionAbout.setIcon(icon19)
+        self.actionAbout.setIcon(icon20)
         self.actionAbout.setObjectName("actionAbout")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
-        icon20 = QtGui.QIcon()
-        icon20.addPixmap(QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
+        icon21 = QtGui.QIcon()
+        icon21.addPixmap(QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
                          QtGui.QIcon.Off)
-        self.actionAbout_Qt.setIcon(icon20)
+        self.actionAbout_Qt.setIcon(icon21)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionQuad_Scan = QtWidgets.QAction(MainWindow)
         self.actionQuad_Scan.setObjectName("actionQuad_Scan")
         self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
-        icon21 = QtGui.QIcon()
-        icon21.addPixmap(QtGui.QPixmap(":/icons/load_lattice.png"),
+        icon22 = QtGui.QIcon()
+        icon22.addPixmap(QtGui.QPixmap(":/icons/load_lattice.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Lattice.setIcon(icon21)
+        self.actionLoad_Lattice.setIcon(icon22)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
         self.actionMPS_guardian = QtWidgets.QAction(MainWindow)
         self.actionMPS_guardian.setCheckable(True)
@@ -767,7 +786,7 @@ class Ui_MainWindow(object):
         self.actionSave_Task = QtWidgets.QAction(MainWindow)
         self.actionSave_Task.setObjectName("actionSave_Task")
         self.actionSave = QtWidgets.QAction(MainWindow)
-        self.actionSave.setIcon(icon11)
+        self.actionSave.setIcon(icon12)
         self.actionSave.setObjectName("actionSave")
         self.actionLoad_Task = QtWidgets.QAction(MainWindow)
         self.actionLoad_Task.setObjectName("actionLoad_Task")
@@ -864,44 +883,6 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.scan_groupBox.setTitle(
             _translate("MainWindow", "Scan Configuration"))
-        self.label_8.setText(_translate("MainWindow", "Alter Element"))
-        self.alter_elem_lineEdit.setPlaceholderText(
-            _translate("MainWindow", "Click \'Select\' to set element"))
-        self.lower_limit_lineEdit.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Start value of scan range</p></body></html>"
-            ))
-        self.lower_limit_lineEdit.setText(_translate("MainWindow", "0"))
-        self.select_monitor_elem_btn.setText(_translate(
-            "MainWindow", "Select"))
-        self.auto_show_extra_chkbox.setToolTip(
-            _translate("MainWindow",
-                       "Show Extra Monitors After Each Selection"))
-        self.auto_show_extra_chkbox.setText(_translate("MainWindow", "Auto"))
-        self.show_extra_monitors_btn.setText(_translate("MainWindow", "Show"))
-        self.upper_limit_lineEdit.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Stop value of scan range</p></body></html>"
-            ))
-        self.upper_limit_lineEdit.setText(_translate("MainWindow", "1"))
-        self.label_9.setText(_translate("MainWindow", "Alter Range"))
-        self.enable_arbitary_array_chkbox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Check to enable altering with arbitary array</p></body></html>"
-            ))
-        self.alter_array_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Set alter range by array</p></body></html>"
-            ))
-        self.alter_array_btn.setText(_translate("MainWindow", "Array"))
-        self.select_alter_elem_btn.setText(_translate("MainWindow", "Select"))
-        self.label.setText(_translate("MainWindow", "Extra"))
-        self.extra_monitors_counter_lbl.setText(
-            _translate("MainWindow", "Monitors (0)"))
         self.monitor_elem_lineEdit.setToolTip(
             _translate(
                 "MainWindow",
@@ -909,10 +890,53 @@ class Ui_MainWindow(object):
         )
         self.monitor_elem_lineEdit.setPlaceholderText(
             _translate("MainWindow", "Click \'Select\' to set element"))
-        self.label_11.setText(_translate("MainWindow", "Monitor"))
-        self.label_10.setText(_translate("MainWindow", "To"))
+        self.lower_limit_lineEdit.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Start value of scan range</p></body></html>"
+            ))
+        self.lower_limit_lineEdit.setText(_translate("MainWindow", "0"))
+        self.auto_show_extra_chkbox.setToolTip(
+            _translate("MainWindow",
+                       "Show Extra Monitors After Each Selection"))
+        self.auto_show_extra_chkbox.setText(_translate("MainWindow", "Auto"))
+        self.show_extra_monitors_btn.setText(_translate("MainWindow", "Show"))
+        self.label_8.setText(_translate("MainWindow", "Alter Element"))
+        self.label_9.setText(_translate("MainWindow", "Alter Range"))
+        self.select_more_monitor_elems_btn.setToolTip(
+            _translate("MainWindow", "Select more elements as monitors."))
         self.select_more_monitor_elems_btn.setText(
             _translate("MainWindow", "More"))
+        self.select_monitor_elem_btn.setText(_translate(
+            "MainWindow", "Select"))
+        self.select_alter_elem_btn.setText(_translate("MainWindow", "Select"))
+        self.alter_elem_lineEdit.setPlaceholderText(
+            _translate("MainWindow", "Click \'Select\' to set element"))
+        self.label_10.setText(_translate("MainWindow", "To"))
+        self.upper_limit_lineEdit.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Stop value of scan range</p></body></html>"
+            ))
+        self.upper_limit_lineEdit.setText(_translate("MainWindow", "1"))
+        self.label_11.setText(_translate("MainWindow", "Monitor"))
+        self.extra_monitors_counter_lbl.setText(
+            _translate("MainWindow", "Monitors (0)"))
+        self.label.setText(_translate("MainWindow", "Extra"))
+        self.enable_arbitary_array_chkbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Check to enable altering with arbitary array</p></body></html>"
+            ))
+        self.alter_array_btn.setToolTip(
+            _translate("MainWindow", "Set alter range by array."))
+        self.alter_array_btn.setText(_translate("MainWindow", "Array"))
+        self.lv_lbl.setText(_translate("MainWindow", "Lattice"))
+        self.lv_mach.setToolTip(_translate("MainWindow", "Machine name."))
+        self.lv_segm.setToolTip(_translate("MainWindow", "Segment name."))
+        self.lv_view.setToolTip(
+            _translate("MainWindow", "See the details of loaded lattice."))
+        self.lv_view.setText(_translate("MainWindow", "View"))
         self.label_12.setText(_translate("MainWindow", "Event Log"))
         self.inc_fontsize_tbtn.setText(_translate("MainWindow", "FS+"))
         self.dec_fontsize_tbtn.setText(_translate("MainWindow", "FS-"))
