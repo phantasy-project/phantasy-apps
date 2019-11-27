@@ -6,9 +6,9 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
-from phantasy import generate_settings
-
+from phantasy.library.settings import generate_settings
 from phantasy_ui import get_open_filename
+
 from .ui.ui_loadfrom import Ui_Dialog
 
 
@@ -71,6 +71,7 @@ class LoadSettingsDialog(QDialog, Ui_Dialog):
 
 def convert_settings(settings_read, mp):
     """Convert settings to flat.
+    TODO: pre-create name:object mapping, to replace get_elements()
     """
     flat_settings = []
     for ename, econf in settings_read.items():
