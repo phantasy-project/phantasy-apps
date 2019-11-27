@@ -30,7 +30,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.app_about_info = """
             <html>
             <h4>About Settings Manager</h4>
-            <p>This app is created to manage the device settings for
+            <p>This app is created to manage the physics optics settings for
             the accelerator system, current version is {}.
             </p>
             <p>Copyright (C) 2019 Facility for Rare Isotope Beams and other contributors.</p>
@@ -39,6 +39,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # UI
         self.setupUi(self)
+        self.postInitUi()
 
         # post init ui
         self.__post_init_ui()
@@ -61,6 +62,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # visualize settings
         model = SettingsModel(self.treeView, self.__flat_settings)
         model.set_model()
+        self._pvs = model._pvs
 
     def __post_init_ui(self):
         # placeholders
@@ -103,3 +105,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             QMessageBox.information(self, "Apply Settings",
                     "Successfully applied settings to accelerator.",
                     QMessageBox.Ok)
+
+    def closeEvent(self, e):
+        for pv in self._pvs:
+            pv.clear_callbacks()
+        BaseAppForm.closeEvent(self, e)
