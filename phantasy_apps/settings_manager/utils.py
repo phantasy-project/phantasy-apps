@@ -28,7 +28,7 @@ COLUMN_SFIELD_MAP = OrderedDict((
 COLUMN_NAMES_ATTR = list(COLUMN_SFIELD_MAP.keys())
 SFIELD_NAMES_ATTR = list(COLUMN_SFIELD_MAP.values())
 
-COLUMN_NAMES = COLUMN_NAMES1 + COLUMN_NAMES_ATTR
+COLUMN_NAMES = [''] + COLUMN_NAMES1 + COLUMN_NAMES_ATTR
 
 
 class SettingsModel(QStandardItemModel):
@@ -52,10 +52,10 @@ class SettingsModel(QStandardItemModel):
         self._pvs = []
 
         # header
-        self.header = self.h_name, self.h_field, self.h_val0, self.h_rd, self.h_cset, \
+        self.header = self.h_id, self.h_name, self.h_field, self.h_val0, self.h_rd, self.h_cset, \
                       self.h_type, self.h_pos, self.h_len, self.h_index \
             = COLUMN_NAMES
-        self.ids = self.i_name, self.i_field, self.i_val0, self.i_rd, self.i_cset, \
+        self.ids = self.i_id, self.i_name, self.i_field, self.i_val0, self.i_rd, self.i_cset, \
                    self.i_type, self.i_pos, self.i_len, self.i_index \
             = range(len(self.header))
 
@@ -73,10 +73,12 @@ class SettingsModel(QStandardItemModel):
         self.setItem(*p)
 
     def set_data(self):
-        for elem, fname, fval0 in self._settings:
+        for ii, (elem, fname, fval0) in enumerate(self._settings, 1):
             item_ename = QStandardItem(elem.name)
 
-            print('{}[{}]'.format(elem.name, fname))
+            # debug
+            print('{0:02d}:{1}[{2}]'.format(ii, elem.name, fname))
+            #
             fld = elem.get_field(fname)
             item_ename.fobj = fld
             if fld is None:
@@ -85,11 +87,11 @@ class SettingsModel(QStandardItemModel):
 
             item_fname = QStandardItem(fname)
             item_val0 = QStandardItem(FMT.format(fval0))
-            item_rd = QStandardItem(FMT.format(fld.value))
-            # item_rd = QStandardItem('Current Readback')
-            item_cset = QStandardItem(FMT.format(elem.current_setting(fname)))
-            # item_cset = QStandardItem('Current Setpoint')
-            row = [item_ename, item_fname, item_val0, item_rd, item_cset, ]
+            # item_rd = QStandardItem(FMT.format(fld.value))
+            item_rd = QStandardItem('Current Readback')
+            # item_cset = QStandardItem(FMT.format(elem.current_setting(fname)))
+            item_cset = QStandardItem('Current Setpoint')
+            row = [QStandardItem('{0:03d}'.format(ii)), item_ename, item_fname, item_val0, item_rd, item_cset, ]
             for i, f in enumerate(COLUMN_NAMES):
                 if f in COLUMN_NAMES_ATTR:
                     v = getattr(elem, COLUMN_SFIELD_MAP[f])
@@ -105,7 +107,7 @@ class SettingsModel(QStandardItemModel):
         # set model, set field column
         self._tv.setModel(self)
         #
-        self.set_cbs()
+        # self.set_cbs()
         self.__post_init_ui(self._tv)
 
     def set_cbs(self):
