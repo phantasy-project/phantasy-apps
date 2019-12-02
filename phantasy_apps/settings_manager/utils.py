@@ -111,13 +111,14 @@ class SettingsModel(QStandardItemModel):
         self.__post_init_ui(self._tv)
 
     def set_cbs(self):
-        def _cb(row, col, fld, vtyp, **kws):
+        def _cb(item_name, icol, fld, vtyp, **kws):
             if vtyp == 'rd':
                 val = fld.value
             else:
                 val = fld.current_setting()
             item = QStandardItem(FMT.format(val))
-            self.item_changed.emit((row, col, item))
+            idx = item_name.index()
+            self.item_changed.emit((idx.row(), icol, item))
 
         for irow in range(self.rowCount()):
             item0 = self.item(irow, self.i_name)
@@ -130,7 +131,7 @@ class SettingsModel(QStandardItemModel):
                     (self.i_rd, self.i_cset),
                     (rd_pv0, sp_pv0),
                     ('rd', 'sp')):
-                pv.add_callback(partial(_cb, irow, icol, fld, vtyp))
+                pv.add_callback(partial(_cb, item0, icol, fld, vtyp))
                 self._pvs.append(pv)
 
     def __post_init_ui(self, tv):
