@@ -87,10 +87,10 @@ class SettingsModel(QStandardItemModel):
 
             item_fname = QStandardItem(fname)
             item_val0 = QStandardItem(FMT.format(fval0))
-            # item_rd = QStandardItem(FMT.format(fld.value))
-            item_rd = QStandardItem('Current Readback')
-            # item_cset = QStandardItem(FMT.format(elem.current_setting(fname)))
-            item_cset = QStandardItem('Current Setpoint')
+            item_rd = QStandardItem(FMT.format(fld.value))
+            # item_rd = QStandardItem('Current Readback')
+            item_cset = QStandardItem(FMT.format(elem.current_setting(fname)))
+            # item_cset = QStandardItem('Current Setpoint')
             row = [QStandardItem('{0:03d}'.format(ii)), item_ename, item_fname, item_val0, item_rd, item_cset, ]
             for i, f in enumerate(COLUMN_NAMES):
                 if f in COLUMN_NAMES_ATTR:
@@ -107,7 +107,7 @@ class SettingsModel(QStandardItemModel):
         # set model, set field column
         self._tv.setModel(self)
         #
-        # self.set_cbs()
+        self.set_cbs()
         self.__post_init_ui(self._tv)
 
     def set_cbs(self):
