@@ -24,7 +24,6 @@ COLUMN_NAMES1 = ['Device', 'Field', 'Setpoint', 'Live Readback', 'Live Setpoint'
 COLUMN_SFIELD_MAP = OrderedDict((
     ('Type', 'family'),
     ('Pos [m]', 'sb'),
-    ('Length [m]', 'length'),
 ))
 COLUMN_NAMES_ATTR = list(COLUMN_SFIELD_MAP.keys())
 SFIELD_NAMES_ATTR = list(COLUMN_SFIELD_MAP.values())
@@ -43,7 +42,7 @@ class SettingsModel(QStandardItemModel):
         saved field value of setpoint.
     """
 
-    item_changed = pyqtSignal(QVariant)
+    data_changed = pyqtSignal(QVariant)
 
     def __init__(self, parent, flat_settings):
         super(self.__class__, self).__init__(parent)
@@ -54,10 +53,10 @@ class SettingsModel(QStandardItemModel):
 
         # header
         self.header = self.h_name, self.h_field, self.h_val0, self.h_rd, self.h_cset, \
-                      self.h_type, self.h_pos, self.h_len \
+                      self.h_type, self.h_pos \
             = COLUMN_NAMES
         self.ids = self.i_name, self.i_field, self.i_val0, self.i_rd, self.i_cset, \
-                   self.i_type, self.i_pos, self.i_len \
+                   self.i_type, self.i_pos \
             = range(len(self.header))
 
         # set data (pure)
@@ -68,14 +67,13 @@ class SettingsModel(QStandardItemModel):
             self.setHeaderData(i, Qt.Horizontal, s)
 
         #
-        self.item_changed.connect(self.update_item)
+        self.data_changed.connect(self.update_data)
 
-    def update_item(self, p):
-        self.setItem(*p)
+    def update_data(self, p):
+        self.setData(*p)
 
     def set_data(self):
         ii = 1
-        root_pt = self.invisibleRootItem()
         for elem, fname, fval0 in self._settings:
             item_ename = QStandardItem(elem.name)
 
@@ -89,6 +87,14 @@ class SettingsModel(QStandardItemModel):
                 print("{} [{}] is invalid.".format(elem.name, fname))
                 continue
 
+            def _cb(item_val, item_ename, icol, **kws):
+                val = FMT.format(kws.get('value'))
+                idx_p = item_ename.index()
+                idx_c = item_val.index()
+                idx = self.index(idx_c.row(), idx_c.column(), idx_p)
+                self.data_changed.emit((idx_c, val, Qt.DisplayRole))
+                self._tv.clearSelection()
+
             # PVs, setpoint and readback
             for sp_obj, rd_obj in zip(fld.setpoint_pv, fld.readback_pv):
                 it_sp_n = QStandardItem(sp_obj.pvname)
@@ -99,6 +105,12 @@ class SettingsModel(QStandardItemModel):
                 item_ename.appendRow((it_sp_n, it_sp_v))
                 item_ename.appendRow((it_rd_n, it_rd_v))
 
+                # cbs
+                sp_obj.add_callback(partial(_cb, it_sp_v, item_ename, 1))
+                rd_obj.add_callback(partial(_cb, it_rd_v, item_ename, 1))
+                self._pvs.append(sp_obj)
+                self._pvs.append(rd_obj)
+
             #
 
 
@@ -106,10 +118,7 @@ class SettingsModel(QStandardItemModel):
             item_val0 = QStandardItem(FMT.format(fval0))
 
             item_rd = QStandardItem(FMT.format(fld.value))
-            # item_rd = QStandardItem('Current Readback')
-
             item_cset = QStandardItem(FMT.format(elem.current_setting(fname)))
-            # item_cset = QStandardItem('Current Setpoint')
 
             row = [item_ename, item_fname, item_val0, item_rd, item_cset, ]
             for i, f in enumerate(COLUMN_NAMES):
@@ -136,9 +145,11 @@ class SettingsModel(QStandardItemModel):
                 val = fld.value
             else:
                 val = fld.current_setting()
-            item = QStandardItem(FMT.format(val))
             idx = item_name.index()
-            self.item_changed.emit((idx.row(), icol, item))
+            self.data_changed.emit(
+                    (self.index(idx.row(), icol),
+                    FMT.format(val), Qt.DisplayRole))
+            self._tv.clearSelection()
 
         for irow in range(self.rowCount()):
             item0 = self.item(irow, self.i_name)
@@ -158,13 +169,13 @@ class SettingsModel(QStandardItemModel):
         # view properties
         tv.setStyleSheet("font-family: monospace;")
         tv.setAlternatingRowColors(True)
+        tv.expandAll()
         for i in self.ids:
             tv.resizeColumnToContents(i)
         tv.setSortingEnabled(True)
         self.sort(self.i_pos, Qt.AscendingOrder)
         tv.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
-        # tv.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        # tv.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        tv.collapseAll()
 
 
 class _SortProxyModel(QSortFilterProxyModel):
