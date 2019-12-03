@@ -24,7 +24,6 @@ COLUMN_SFIELD_MAP = OrderedDict((
     ('Type', 'family'),
     ('Pos [m]', 'sb'),
     ('Length [m]', 'length'),
-    ('Index', 'index'),
 ))
 COLUMN_NAMES_ATTR = list(COLUMN_SFIELD_MAP.keys())
 SFIELD_NAMES_ATTR = list(COLUMN_SFIELD_MAP.values())
@@ -54,10 +53,10 @@ class SettingsModel(QStandardItemModel):
 
         # header
         self.header = self.h_id, self.h_name, self.h_field, self.h_val0, self.h_rd, self.h_cset, \
-                      self.h_type, self.h_pos, self.h_len, self.h_index \
+                      self.h_type, self.h_pos, self.h_len \
             = COLUMN_NAMES
         self.ids = self.i_id, self.i_name, self.i_field, self.i_val0, self.i_rd, self.i_cset, \
-                   self.i_type, self.i_pos, self.i_len, self.i_index \
+                   self.i_type, self.i_pos, self.i_len \
             = range(len(self.header))
 
         # set data (pure)
@@ -97,8 +96,6 @@ class SettingsModel(QStandardItemModel):
             for i, f in enumerate(COLUMN_NAMES):
                 if f in COLUMN_NAMES_ATTR:
                     v = getattr(elem, COLUMN_SFIELD_MAP[f])
-                    if i == self.i_index:
-                        v = '{0:04d}'.format(v)
                     if not isinstance(v, basestring):
                         v = '{0:.4f}'.format(v)
                     item = QStandardItem(v)
