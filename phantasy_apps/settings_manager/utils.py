@@ -3,6 +3,7 @@
 
 from collections import OrderedDict
 from functools import partial
+import re
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QSortFilterProxyModel
@@ -28,7 +29,7 @@ COLUMN_SFIELD_MAP = OrderedDict((
 COLUMN_NAMES_ATTR = list(COLUMN_SFIELD_MAP.keys())
 SFIELD_NAMES_ATTR = list(COLUMN_SFIELD_MAP.values())
 
-COLUMN_NAMES = [''] + COLUMN_NAMES1 + COLUMN_NAMES_ATTR
+COLUMN_NAMES = COLUMN_NAMES1 + COLUMN_NAMES_ATTR
 
 
 class SettingsModel(QStandardItemModel):
@@ -52,10 +53,10 @@ class SettingsModel(QStandardItemModel):
         self._pvs = []
 
         # header
-        self.header = self.h_id, self.h_name, self.h_field, self.h_val0, self.h_rd, self.h_cset, \
+        self.header = self.h_name, self.h_field, self.h_val0, self.h_rd, self.h_cset, \
                       self.h_type, self.h_pos, self.h_len \
             = COLUMN_NAMES
-        self.ids = self.i_id, self.i_name, self.i_field, self.i_val0, self.i_rd, self.i_cset, \
+        self.ids = self.i_name, self.i_field, self.i_val0, self.i_rd, self.i_cset, \
                    self.i_type, self.i_pos, self.i_len \
             = range(len(self.header))
 
@@ -74,25 +75,43 @@ class SettingsModel(QStandardItemModel):
 
     def set_data(self):
         ii = 1
+        root_pt = self.invisibleRootItem()
         for elem, fname, fval0 in self._settings:
             item_ename = QStandardItem(elem.name)
 
             # debug
             print('{0}:{1}[{2}]'.format(ii, elem.name, fname))
             #
+
             fld = elem.get_field(fname)
             item_ename.fobj = fld
             if fld is None:
                 print("{} [{}] is invalid.".format(elem.name, fname))
                 continue
 
+            # PVs, setpoint and readback
+            for sp_obj, rd_obj in zip(fld.setpoint_pv, fld.readback_pv):
+                it_sp_n = QStandardItem(sp_obj.pvname)
+                it_sp_v = QStandardItem(FMT.format(sp_obj.value))
+                it_rd_n = QStandardItem(rd_obj.pvname)
+                it_rd_v = QStandardItem(FMT.format(rd_obj.value))
+
+                item_ename.appendRow((it_sp_n, it_sp_v))
+                item_ename.appendRow((it_rd_n, it_rd_v))
+
+            #
+
+
             item_fname = QStandardItem(fname)
             item_val0 = QStandardItem(FMT.format(fval0))
+
             item_rd = QStandardItem(FMT.format(fld.value))
             # item_rd = QStandardItem('Current Readback')
+
             item_cset = QStandardItem(FMT.format(elem.current_setting(fname)))
             # item_cset = QStandardItem('Current Setpoint')
-            row = [QStandardItem('{0:d}'.format(ii)), item_ename, item_fname, item_val0, item_rd, item_cset, ]
+
+            row = [item_ename, item_fname, item_val0, item_rd, item_cset, ]
             for i, f in enumerate(COLUMN_NAMES):
                 if f in COLUMN_NAMES_ATTR:
                     v = getattr(elem, COLUMN_SFIELD_MAP[f])
@@ -142,7 +161,7 @@ class SettingsModel(QStandardItemModel):
         for i in self.ids:
             tv.resizeColumnToContents(i)
         tv.setSortingEnabled(True)
-        self.sort(self.i_id, Qt.AscendingOrder)
+        self.sort(self.i_pos, Qt.AscendingOrder)
         tv.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         # tv.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         # tv.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -158,9 +177,18 @@ class _SortProxyModel(QSortFilterProxyModel):
         left_data = left.data(Qt.DisplayRole)
         right_data = right.data(Qt.DisplayRole)
 
+        if left_data is None or right_data is None:
+            return True
+
         try:
             r = float(left_data) < float(right_data)
         except ValueError:
+            if left.column() == 0:  # ename
+                r_left = re.match(r'.*_(D[0-9]{4}).*', left_data)
+                r_right = re.match(r'.*_(D[0-9]{4}).*', right_data)
+                if r_left is not None and r_right is not None:
+                    left_data = r_left.group(1)
+                    right_data = r_right.group(1)
             r = left_data < right_data
 
         return not r
