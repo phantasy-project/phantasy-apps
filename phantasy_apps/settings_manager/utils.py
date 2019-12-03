@@ -5,6 +5,7 @@ from collections import OrderedDict
 from functools import partial
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QVariant
 from PyQt5.QtGui import QStandardItem
@@ -73,11 +74,12 @@ class SettingsModel(QStandardItemModel):
         self.setItem(*p)
 
     def set_data(self):
-        for ii, (elem, fname, fval0) in enumerate(self._settings, 1):
+        ii = 1
+        for elem, fname, fval0 in self._settings:
             item_ename = QStandardItem(elem.name)
 
             # debug
-            print('{0:02d}:{1}[{2}]'.format(ii, elem.name, fname))
+            print('{0}:{1}[{2}]'.format(ii, elem.name, fname))
             #
             fld = elem.get_field(fname)
             item_ename.fobj = fld
@@ -91,7 +93,7 @@ class SettingsModel(QStandardItemModel):
             # item_rd = QStandardItem('Current Readback')
             item_cset = QStandardItem(FMT.format(elem.current_setting(fname)))
             # item_cset = QStandardItem('Current Setpoint')
-            row = [QStandardItem('{0:03d}'.format(ii)), item_ename, item_fname, item_val0, item_rd, item_cset, ]
+            row = [QStandardItem('{0:d}'.format(ii)), item_ename, item_fname, item_val0, item_rd, item_cset, ]
             for i, f in enumerate(COLUMN_NAMES):
                 if f in COLUMN_NAMES_ATTR:
                     v = getattr(elem, COLUMN_SFIELD_MAP[f])
@@ -102,10 +104,12 @@ class SettingsModel(QStandardItemModel):
                     item = QStandardItem(v)
                     row.append(item)
             self.appendRow(row)
+            ii += 1
 
     def set_model(self):
         # set model, set field column
-        self._tv.setModel(self)
+        proxy_model = _SortProxyModel(self)
+        self._tv.setModel(proxy_model)
         #
         self.set_cbs()
         self.__post_init_ui(self._tv)
@@ -141,7 +145,26 @@ class SettingsModel(QStandardItemModel):
         for i in self.ids:
             tv.resizeColumnToContents(i)
         tv.setSortingEnabled(True)
-        self.sort(self.i_index, Qt.AscendingOrder)
+        self.sort(self.i_id, Qt.AscendingOrder)
         tv.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         # tv.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         # tv.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+
+class _SortProxyModel(QSortFilterProxyModel):
+
+    def __init__(self, model):
+        super(self.__class__, self).__init__()
+        self.setSourceModel(model)
+
+    def lessThan(self, left, right):
+        left_data = left.data(Qt.DisplayRole)
+        right_data = right.data(Qt.DisplayRole)
+
+        try:
+            r = float(left_data) < float(right_data)
+        except ValueError:
+            r = left_data < right_data
+
+        return not r
+
