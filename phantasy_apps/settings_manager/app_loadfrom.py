@@ -16,8 +16,6 @@ class LoadSettingsDialog(QDialog, Ui_Dialog):
 
     # signal: settings loaded, emit flat_settings and settings.
     settingsLoaded = pyqtSignal(QVariant, QVariant)
-    # signal: lattice changed, emit mp.
-    latticeChanged = pyqtSignal(QVariant)
 
     def __init__(self, parent=None):
         super(LoadSettingsDialog, self).__init__()
@@ -26,19 +24,6 @@ class LoadSettingsDialog(QDialog, Ui_Dialog):
         # UI
         self.setupUi(self)
         self.setWindowTitle("Load Settings From File")
-
-        # mp
-        self.__mp = None
-
-        # events
-        self.latticeWidget.latticeChanged.connect(self.on_lattice_changed)
-
-    @pyqtSlot(QVariant)
-    def on_lattice_changed(self, o):
-        """Lattice loaded.
-        """
-        self.__mp = o
-        self.latticeChanged.emit(o)
 
     @pyqtSlot()
     def on_open_snpfile(self):
@@ -54,16 +39,17 @@ class LoadSettingsDialog(QDialog, Ui_Dialog):
     def on_load(self):
         """Click OK to load settings.
         """
-        if self.__mp is None:
+        mp = self.parent._mp
+        if mp is None:
             QMessageBox.warning(self, "Load Settings",
                     "Please load lattice first.",
                     QMessageBox.Ok)
         else:
             snpfile = self.filepath_lineEdit.text()
             settings = generate_settings(snpfile=snpfile,
-                    lattice=self.__mp.work_lattice_conf,
+                    lattice=mp.work_lattice_conf,
                     only_physics=False)
-            flat_settings = convert_settings(settings, self.__mp)
+            flat_settings = convert_settings(settings, mp)
             self.settingsLoaded.emit(flat_settings, settings)
 
             self.accept()
