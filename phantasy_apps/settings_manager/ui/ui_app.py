@@ -111,44 +111,47 @@ class Ui_MainWindow(object):
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionE_xit = QtWidgets.QAction(MainWindow)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/sm-icons/exit.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionE_xit.setIcon(icon1)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionContents = QtWidgets.QAction(MainWindow)
         self.actionContents.setObjectName("actionContents")
         self.action_Save = QtWidgets.QAction(MainWindow)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/sm-icons/save.png"),
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/save.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.action_Save.setIcon(icon1)
+        self.action_Save.setIcon(icon2)
         self.action_Save.setObjectName("action_Save")
         self.actionLoad_From_Snapshot = QtWidgets.QAction(MainWindow)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_From_Snapshot.setIcon(icon2)
+        self.actionLoad_From_Snapshot.setIcon(icon3)
         self.actionLoad_From_Snapshot.setObjectName("actionLoad_From_Snapshot")
         self.actionPhysics_Fields = QtWidgets.QAction(MainWindow)
         self.actionPhysics_Fields.setCheckable(True)
         self.actionPhysics_Fields.setChecked(True)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/physics.png"),
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/physics.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionPhysics_Fields.setIcon(icon3)
+        self.actionPhysics_Fields.setIcon(icon4)
         self.actionPhysics_Fields.setObjectName("actionPhysics_Fields")
         self.actionEngineering_Fields = QtWidgets.QAction(MainWindow)
         self.actionEngineering_Fields.setCheckable(True)
         self.actionEngineering_Fields.setChecked(True)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/engineering.png"),
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/engineering.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionEngineering_Fields.setIcon(icon4)
+        self.actionEngineering_Fields.setIcon(icon5)
         self.actionEngineering_Fields.setObjectName("actionEngineering_Fields")
         self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/load_lattice.png"),
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/sm-icons/load_lattice.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Lattice.setIcon(icon5)
+        self.actionLoad_Lattice.setIcon(icon6)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
-        self.menu_File.addAction(self.actionE_xit)
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.action_About)
@@ -160,6 +163,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionLoad_From_Snapshot)
         self.toolBar.addAction(self.actionPhysics_Fields)
         self.toolBar.addAction(self.actionEngineering_Fields)
+        self.toolBar.addAction(self.actionE_xit)
 
         self.retranslateUi(MainWindow)
         self.actionAbout_Qt.triggered.connect(MainWindow.onAboutQt)
@@ -174,6 +178,7 @@ class Ui_MainWindow(object):
         self.actionEngineering_Fields.toggled['bool'].connect(
             MainWindow.on_toggle_engfields)
         self.actionLoad_Lattice.triggered.connect(MainWindow.on_load_lattice)
+        self.treeView.clicked['QModelIndex'].connect(MainWindow.on_click_view)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -195,6 +200,8 @@ class Ui_MainWindow(object):
         self.action_About.setShortcut(_translate("MainWindow", "Ctrl+A"))
         self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
         self.actionE_xit.setText(_translate("MainWindow", "E&xit"))
+        self.actionE_xit.setToolTip(
+            _translate("MainWindow", "Exit application."))
         self.actionE_xit.setShortcut(_translate("MainWindow", "Ctrl+W"))
         self.actionContents.setText(_translate("MainWindow", "Contents"))
         self.actionContents.setShortcut(_translate("MainWindow", "F1"))
