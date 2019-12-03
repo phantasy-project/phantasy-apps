@@ -20,13 +20,69 @@ class Ui_MainWindow(object):
         self.treeView = QtWidgets.QTreeView(self.centralwidget)
         self.treeView.setObjectName("treeView")
         self.gridLayout.addWidget(self.treeView, 0, 0, 1, 2)
-        spacerItem = QtWidgets.QSpacerItem(1482, 20,
-                                           QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem, 1, 0, 1, 1)
         self.apply_btn = QtWidgets.QPushButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.apply_btn.sizePolicy().hasHeightForWidth())
+        self.apply_btn.setSizePolicy(sizePolicy)
         self.apply_btn.setObjectName("apply_btn")
         self.gridLayout.addWidget(self.apply_btn, 1, 1, 1, 1)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setSizeConstraint(
+            QtWidgets.QLayout.SetDefaultConstraint)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.lv_lbl = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.lv_lbl.sizePolicy().hasHeightForWidth())
+        self.lv_lbl.setSizePolicy(sizePolicy)
+        self.lv_lbl.setObjectName("lv_lbl")
+        self.horizontalLayout.addWidget(self.lv_lbl)
+        self.lv_mach_lbl = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.lv_mach_lbl.sizePolicy().hasHeightForWidth())
+        self.lv_mach_lbl.setSizePolicy(sizePolicy)
+        self.lv_mach_lbl.setStyleSheet("QLabel {\n"
+                                       "    color: #007BFF;\n"
+                                       "}")
+        self.lv_mach_lbl.setObjectName("lv_mach_lbl")
+        self.horizontalLayout.addWidget(self.lv_mach_lbl)
+        self.lv_segm_lbl = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.lv_segm_lbl.sizePolicy().hasHeightForWidth())
+        self.lv_segm_lbl.setSizePolicy(sizePolicy)
+        self.lv_segm_lbl.setStyleSheet("QLabel {\n"
+                                       "    color: #DC3545;\n"
+                                       "}")
+        self.lv_segm_lbl.setObjectName("lv_segm_lbl")
+        self.horizontalLayout.addWidget(self.lv_segm_lbl)
+        self.lv_view_btn = QtWidgets.QToolButton(self.centralwidget)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/sm-icons/view-details.png"),
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.lv_view_btn.setIcon(icon)
+        self.lv_view_btn.setAutoRaise(True)
+        self.lv_view_btn.setObjectName("lv_view_btn")
+        self.horizontalLayout.addWidget(self.lv_view_btn)
+        spacerItem = QtWidgets.QSpacerItem(40, 20,
+                                           QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 31))
@@ -37,6 +93,17 @@ class Ui_MainWindow(object):
         self.menu_Help.setObjectName("menu_Help")
         MainWindow.setMenuBar(self.menubar)
         self.toolBar = QtWidgets.QToolBar(MainWindow)
+        self.toolBar.setStyleSheet("QToolBar {\n"
+                                   "    padding: 4px;\n"
+                                   "    spacing: 4px;\n"
+                                   "}\n"
+                                   "\n"
+                                   "QToolBar::handle {\n"
+                                   "    image: url(handle.png);\n"
+                                   "}QToolb")
+        self.toolBar.setOrientation(QtCore.Qt.Horizontal)
+        self.toolBar.setIconSize(QtCore.QSize(36, 36))
+        self.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.action_About = QtWidgets.QAction(MainWindow)
@@ -48,17 +115,39 @@ class Ui_MainWindow(object):
         self.actionContents = QtWidgets.QAction(MainWindow)
         self.actionContents.setObjectName("actionContents")
         self.action_Save = QtWidgets.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/sm-icons/save.png"),
-                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.action_Save.setIcon(icon)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/sm-icons/save.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.action_Save.setIcon(icon1)
         self.action_Save.setObjectName("action_Save")
         self.actionLoad_From_Snapshot = QtWidgets.QAction(MainWindow)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_From_Snapshot.setIcon(icon1)
+        self.actionLoad_From_Snapshot.setIcon(icon2)
         self.actionLoad_From_Snapshot.setObjectName("actionLoad_From_Snapshot")
+        self.actionPhysics_Fields = QtWidgets.QAction(MainWindow)
+        self.actionPhysics_Fields.setCheckable(True)
+        self.actionPhysics_Fields.setChecked(True)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/physics.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionPhysics_Fields.setIcon(icon3)
+        self.actionPhysics_Fields.setObjectName("actionPhysics_Fields")
+        self.actionEngineering_Fields = QtWidgets.QAction(MainWindow)
+        self.actionEngineering_Fields.setCheckable(True)
+        self.actionEngineering_Fields.setChecked(True)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/engineering.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionEngineering_Fields.setIcon(icon4)
+        self.actionEngineering_Fields.setObjectName("actionEngineering_Fields")
+        self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/load_lattice.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionLoad_Lattice.setIcon(icon5)
+        self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
         self.menu_File.addAction(self.actionE_xit)
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
@@ -66,8 +155,11 @@ class Ui_MainWindow(object):
         self.menu_Help.addAction(self.actionAbout_Qt)
         self.menubar.addAction(self.menu_File.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
+        self.toolBar.addAction(self.actionLoad_Lattice)
         self.toolBar.addAction(self.action_Save)
         self.toolBar.addAction(self.actionLoad_From_Snapshot)
+        self.toolBar.addAction(self.actionPhysics_Fields)
+        self.toolBar.addAction(self.actionEngineering_Fields)
 
         self.retranslateUi(MainWindow)
         self.actionAbout_Qt.triggered.connect(MainWindow.onAboutQt)
@@ -77,12 +169,25 @@ class Ui_MainWindow(object):
         self.actionLoad_From_Snapshot.triggered.connect(
             MainWindow.on_load_from_snp)
         self.action_Save.triggered.connect(MainWindow.on_save)
+        self.actionPhysics_Fields.toggled['bool'].connect(
+            MainWindow.on_toggle_phyfields)
+        self.actionEngineering_Fields.toggled['bool'].connect(
+            MainWindow.on_toggle_engfields)
+        self.actionLoad_Lattice.triggered.connect(MainWindow.on_load_lattice)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.apply_btn.setText(_translate("MainWindow", "Apply"))
+        self.lv_lbl.setText(_translate("MainWindow", "Loaded Lattice"))
+        self.lv_mach_lbl.setToolTip(_translate("MainWindow", "Machine name."))
+        self.lv_mach_lbl.setText(_translate("MainWindow", "machine"))
+        self.lv_segm_lbl.setToolTip(_translate("MainWindow", "Segment name."))
+        self.lv_segm_lbl.setText(_translate("MainWindow", "segment"))
+        self.lv_view_btn.setToolTip(
+            _translate("MainWindow", "See the details of loaded lattice."))
+        self.lv_view_btn.setText(_translate("MainWindow", "..."))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
@@ -94,8 +199,33 @@ class Ui_MainWindow(object):
         self.actionContents.setText(_translate("MainWindow", "Contents"))
         self.actionContents.setShortcut(_translate("MainWindow", "F1"))
         self.action_Save.setText(_translate("MainWindow", "&Save"))
+        self.action_Save.setIconText(_translate("MainWindow", "Save Settings"))
+        self.action_Save.setToolTip(
+            _translate("MainWindow", "Save settings into a file."))
         self.actionLoad_From_Snapshot.setText(
             _translate("MainWindow", "Load From Snapshot"))
+        self.actionLoad_From_Snapshot.setIconText(
+            _translate("MainWindow", "Load Snapshot"))
+        self.actionLoad_From_Snapshot.setToolTip(
+            _translate("MainWindow",
+                       "Load settings from a snapshot (.snp) file."))
+        self.actionPhysics_Fields.setText(_translate("MainWindow", "Physics"))
+        self.actionPhysics_Fields.setIconText(
+            _translate("MainWindow", "Physics Fields"))
+        self.actionPhysics_Fields.setToolTip(
+            _translate("MainWindow", "Show physics fields."))
+        self.actionEngineering_Fields.setText(
+            _translate("MainWindow", "Engineering"))
+        self.actionEngineering_Fields.setIconText(
+            _translate("MainWindow", "Engineering Fields"))
+        self.actionEngineering_Fields.setToolTip(
+            _translate("MainWindow", "Show engineering fields."))
+        self.actionLoad_Lattice.setText(
+            _translate("MainWindow", "Load Lattice"))
+        self.actionLoad_Lattice.setIconText(
+            _translate("MainWindow", "Load Lattice"))
+        self.actionLoad_Lattice.setToolTip(
+            _translate("MainWindow", "Load Lattice."))
 
 
 from . import resources_rc
