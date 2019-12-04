@@ -648,7 +648,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_retract(self, x):
-        if x == 0: x = self.vpos_lineEdit.text()
+        if x == 0:
+            elem = self._ems_device.elem
+            pos_fld = 'POS{}'.format(self._ems_device._id)
+            x = getattr(elem, pos_fld)
+            self.vpos_lineEdit.setText('{0:.2f}'.format(x))
         try:
             float(x)
         except (ValueError, TypeError):
