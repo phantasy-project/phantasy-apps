@@ -156,6 +156,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lattice_load_window.show()
         self._lattice_load_window.latticeChanged.connect(
                 self.on_lattice_changed)
+        self._lattice_load_window.latticeChanged.connect(self._lattice_load_window.close)
 
     @pyqtSlot()
     def on_show_latinfo(self):
@@ -177,3 +178,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         lw.load_btn.clicked.emit()
         lw.setEnabled(False)
         self._lv.show()
+
+
+    def on_click_view(self, idx):
+        print("Clicked: ({}, {}), item is expanded? ({})".format(
+            idx.row(), idx.column(), self.treeView.isExpanded(idx)))
