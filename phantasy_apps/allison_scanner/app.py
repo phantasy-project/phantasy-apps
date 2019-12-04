@@ -156,7 +156,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # vpos
         self.vpos_lineEdit.setValidator(QDoubleValidator())
         self.vpos_lineEdit.returnPressed.connect(partial(
-            self.on_retract, 0))
+            self.on_retract, -1))
         self.retract_btn.clicked.connect(partial(self.on_retract, None))
         #
         self.reset_itlk_btn.clicked.connect(self.on_reset_interlock)
@@ -424,7 +424,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._init_device()
 
         # show current pos value.
-        self.vpos_lineEdit.returnPressed.emit()
+        self.on_retract(0)
 
     def get_device_config(self, path=None):
         """Return device config from *path*.
@@ -648,6 +648,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_retract(self, x):
+        if x == -1:
+            x = float(self.vpos_lineEdit.text())
         if x == 0:
             elem = self._ems_device.elem
             pos_fld = 'POS{}'.format(self._ems_device._id)
