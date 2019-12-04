@@ -96,6 +96,10 @@ class LatticeViewerWindow(BaseAppForm, Ui_MainWindow):
         elem = self.__mp.get_elements(name=ename)[0]
         self.elementSelected.emit(elem)
 
+    def closeEvent(self, e):
+        self.probeWidget.reset_cbs()
+        BaseAppForm.closeEvent(self, e)
+
 
 if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
