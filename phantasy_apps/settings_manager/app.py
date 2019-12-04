@@ -5,6 +5,7 @@ from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QMessageBox
 from phantasy_ui import BaseAppForm
+from phantasy_ui.widgets import LatticeWidget
 
 from .app_loadfrom import LoadSettingsDialog
 from .ui.ui_app import Ui_MainWindow
@@ -30,7 +31,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.app_about_info = """
             <html>
             <h4>About Settings Manager</h4>
-            <p>This app is created to manage the device settings for
+            <p>This app is created to manage the physics optics settings for
             the accelerator system, current version is {}.
             </p>
             <p>Copyright (C) 2019 Facility for Rare Isotope Beams and other contributors.</p>
@@ -39,6 +40,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # UI
         self.setupUi(self)
+        self.postInitUi()
 
         # post init ui
         self.__post_init_ui()
@@ -47,7 +49,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_lattice_changed(self, o):
         """Lattice is changed, mp.
         """
-        self.__mp = o
+        self._mp = o
+        snpload_status = True if self._mp is not None else False
+        self.actionLoad_From_Snapshot.setEnabled(snpload_status)
+        try:
+            self.update_lattice_info_lbls(o.last_machine_name, o.last_lattice_name)
+        except:
+            pass
+
+    def update_lattice_info_lbls(self, mach, segm):
+        for w in (self.lv_lbl, self.lv_mach_lbl, self.lv_segm_lbl,
+                  self.lv_view_btn):
+            w.setVisible(True)
+        self.lv_mach_lbl.setText(mach)
+        self.lv_segm_lbl.setText(segm)
 
     @pyqtSlot(QVariant, QVariant)
     def on_settings_loaded(self, flat_settings, settings):
@@ -61,13 +76,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # visualize settings
         model = SettingsModel(self.treeView, self.__flat_settings)
         model.set_model()
+        self._pvs = model._pvs
 
     def __post_init_ui(self):
-        # placeholders
         self._load_from_dlg = None
-        self.__mp = None
+        self._lattice_load_window = None
+        self._mp = None
         self.__settings = None
         self.__flat_settings = None
+        self._pvs = []
+        self.on_lattice_changed(self._mp)
+
+        # lattice viewer
+        for w in (self.lv_lbl, self.lv_mach_lbl, self.lv_segm_lbl,
+                  self.lv_view_btn):
+            w.setVisible(False)
+        self._lv = None
+        self.lv_view_btn.clicked.connect(self.on_show_latinfo)
 
     def on_save(self):
         """Save settings to file.
@@ -79,9 +104,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Load settings from .snp file.
         """
         if self._load_from_dlg is None:
-            self._load_from_dlg = LoadSettingsDialog()
+            self._load_from_dlg = LoadSettingsDialog(self)
         self._load_from_dlg.settingsLoaded.connect(self.on_settings_loaded)
-        self._load_from_dlg.latticeChanged.connect(self.on_lattice_changed)
         self._load_from_dlg.show()
 
     @pyqtSlot()
@@ -91,7 +115,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if self.__settings is None:
             return
         try:
-            lat = self.__mp.work_lattice_conf
+            lat = self._mp.work_lattice_conf
             lat.settings = self.__settings
             lat.sync_settings(data_source='model')
         except:
@@ -103,3 +127,53 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             QMessageBox.information(self, "Apply Settings",
                     "Successfully applied settings to accelerator.",
                     QMessageBox.Ok)
+
+    def closeEvent(self, e):
+        for pv in self._pvs:
+            pv.clear_callbacks()
+        BaseAppForm.closeEvent(self, e)
+
+    @pyqtSlot(bool)
+    def on_toggle_phyfields(self, f):
+        if f:
+            print("Show PHY fields...")
+        else:
+            print("Hide PHY fields...")
+
+    @pyqtSlot(bool)
+    def on_toggle_engfields(self, f):
+        if f:
+            print("Show ENG fields...")
+        else:
+            print("Hide ENG fields...")
+
+    @pyqtSlot()
+    def on_load_lattice(self):
+        """Load lattice.
+        """
+        if self._lattice_load_window is None:
+            self._lattice_load_window = LatticeWidget()
+        self._lattice_load_window.show()
+        self._lattice_load_window.latticeChanged.connect(
+                self.on_lattice_changed)
+
+    @pyqtSlot()
+    def on_show_latinfo(self):
+        machine = self.lv_mach_lbl.text()
+        lattice = self.lv_segm_lbl.text()
+        if machine == '' or lattice == '':
+            return
+
+        from phantasy_apps.lattice_viewer import LatticeViewerWindow
+        from phantasy_apps.lattice_viewer import __version__
+        from phantasy_apps.lattice_viewer import __title__
+
+        if self._lv is None:
+            self._lv = LatticeViewerWindow(__version__)
+            self._lv.setWindowTitle("{} ({})".format(__title__, self.getAppTitle()))
+        lw = self._lv.latticeWidget
+        lw.mach_cbb.setCurrentText(machine)
+        lw.seg_cbb.setCurrentText(lattice)
+        lw.load_btn.clicked.emit()
+        lw.setEnabled(False)
+        self._lv.show()

@@ -224,6 +224,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.qs_window = None
 
         # lattice viewer
+        for w in (self.lv_lbl, self.lv_mach, self.lv_segm, self.lv_view):
+            w.setVisible(False)
         self._lv = None
         self.lv_view.clicked.connect(self.on_show_latinfo)
 
@@ -234,7 +236,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.init_attached_widget('lattice_load_window')
         self._mp = None
         # preload machine/segment
-        self.pre_load_mach_segm(MACH, SEGM)
+        #self.pre_load_lattice(MACH, SEGM)
 
         # moveto flag, set True when moveto some point.
         self._moveto_flag = False
@@ -969,8 +971,13 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.elementsTreeChanged.emit(o)
         self.segments_updated.emit(o.lattice_names)
         #
-        self.lv_mach.setText(o.last_machine_name)
-        self.lv_segm.setText(o.last_lattice_name)
+        self.update_lattice_info_lbls(o.last_machine_name, o.last_lattice_name)
+
+    def update_lattice_info_lbls(self, mach, segm):
+        for w in (self.lv_lbl, self.lv_mach, self.lv_segm, self.lv_view):
+            w.setVisible(True)
+        self.lv_mach.setText(mach)
+        self.lv_segm.setText(segm)
 
     @pyqtSlot(bool)
     def onEnableVirtualDiag(self, f):
@@ -1462,8 +1469,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.actionEnable_2D_Scan.triggered.emit()
         self._2dscan_window._load_task(filepath)
 
-    def pre_load_mach_segm(self, mach, segm):
-        """Preload machine and segment.
+    def pre_load_lattice(self, mach, segm):
+        """Preload machine and segment (timing issue?)
         """
         self.actionLoad_Lattice.triggered.emit()
         self.lattice_load_window.mach_cbb.setCurrentText(mach)

@@ -17,7 +17,7 @@ def run(cli=False):
     app = QApplication(sys.argv)
     w = SettingsManagerWindow(version=__version__)
     w.show()
-    w.setWindowTitle("Settings Manager for Accelerator System")
+    w.setWindowTitle("Settings Manager: Manage Physics Configurations of Accelerator System")
     if cli:
         app.exec_()
     else:
