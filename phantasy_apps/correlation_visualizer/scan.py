@@ -665,7 +665,7 @@ def read_element(task, etype, mp):
     for conf in elem_confs:
         ename = conf.get('name')
         fname = conf.get('field')
-        if not fname.startswith('<'):
+        if not ':' in fname:
             elem = mp.get_elements(name=ename)[0]
             fld = elem.get_field(fname)
         else:
