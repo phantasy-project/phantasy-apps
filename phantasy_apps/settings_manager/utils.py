@@ -70,6 +70,7 @@ class SettingsModel(QStandardItemModel):
         self.data_changed.connect(self.update_data)
 
     def update_data(self, p):
+        self._tv.clearSelection()
         self.setData(*p)
 
     def set_data(self):
@@ -93,7 +94,6 @@ class SettingsModel(QStandardItemModel):
                 idx_c = item_val.index()
                 idx = self.index(idx_c.row(), idx_c.column(), idx_p)
                 self.data_changed.emit((idx_c, val, Qt.DisplayRole))
-                self._tv.clearSelection()
 
             # PVs, setpoint and readback
             for sp_obj, rd_obj in zip(fld.setpoint_pv, fld.readback_pv):
@@ -149,7 +149,6 @@ class SettingsModel(QStandardItemModel):
             self.data_changed.emit(
                     (self.index(idx.row(), icol),
                     FMT.format(val), Qt.DisplayRole))
-            self._tv.clearSelection()
 
         for irow in range(self.rowCount()):
             item0 = self.item(irow, self.i_name)
