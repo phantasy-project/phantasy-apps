@@ -255,7 +255,10 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         # the index of moi changed.
         setattr(self, '_idy', idx + 1)
         self.on_update_moi_labels()
-        self.on_update_data()
+        try:
+            self.on_update_data()
+        except: # if not data to update, then just do nothing.
+            pass
 
     def on_update_data(self):
         """Update image and curve data (live), when switching monitors.
