@@ -199,7 +199,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
             if isinstance(o, CaField):
                 fld = '{0} [{1}]'.format(o.ename, o.name)
             else:
-                fld = o.ename
+                fld = o.fname
             flds.append(fld)
 
         cbbs = (self.ydata_cbb, self.xdata_cbb, self.zdata_cbb,)
