@@ -135,6 +135,7 @@ class SettingsModel(QStandardItemModel):
         # set model, set field column
         proxy_model = _SortProxyModel(self)
         self._tv.setModel(proxy_model)
+        proxy_model.sort(self.i_name)
         #
         self.set_cbs()
         self.__post_init_ui(self._tv)
@@ -172,7 +173,6 @@ class SettingsModel(QStandardItemModel):
         for i in self.ids:
             tv.resizeColumnToContents(i)
         tv.setSortingEnabled(True)
-        self.sort(self.i_pos, Qt.AscendingOrder)
         tv.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         tv.collapseAll()
 
@@ -203,3 +203,23 @@ class _SortProxyModel(QSortFilterProxyModel):
 
         return not r
 
+
+def convert_settings(settings_read, mp):
+    """Convert settings to flat.
+    TODO: pre-create name:object mapping, to replace get_elements()
+    """
+    flat_settings = []
+    for ename, econf in settings_read.items():
+        elem = mp.get_elements(name=ename)[0]
+        for fname, fval0 in econf.items():
+            confline = (elem, fname, fval0)
+            flat_settings.append(confline)
+    return flat_settings
+
+
+def pack_lattice_settings(lat, only_physics=False):
+    """Pack up element settings of lattice object as a tuple to return.
+    """
+    settings = lat.get_settings(only_physics=only_physics)
+    flat_settings = convert_settings(settings, lat)
+    return flat_settings, settings
