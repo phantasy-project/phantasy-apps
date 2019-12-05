@@ -135,7 +135,6 @@ class SettingsModel(QStandardItemModel):
         # set model, set field column
         proxy_model = _SortProxyModel(self)
         self._tv.setModel(proxy_model)
-        proxy_model.sort(self.i_name)
         #
         self.set_cbs()
         self.__post_init_ui(self._tv)
@@ -173,6 +172,7 @@ class SettingsModel(QStandardItemModel):
         for i in self.ids:
             tv.resizeColumnToContents(i)
         tv.setSortingEnabled(True)
+        tv.model().sort(self.i_name)
         tv.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         tv.collapseAll()
 
@@ -201,7 +201,7 @@ class _SortProxyModel(QSortFilterProxyModel):
                     right_data = r_right.group(1)
             r = left_data < right_data
 
-        return not r
+        return r
 
 
 def convert_settings(settings_read, mp):
