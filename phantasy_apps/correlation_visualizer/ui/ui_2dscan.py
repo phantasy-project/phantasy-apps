@@ -104,6 +104,16 @@ class Ui_MainWindow(object):
         self.waitsec_dSpinBox.setProperty("value", 2.0)
         self.waitsec_dSpinBox.setObjectName("waitsec_dSpinBox")
         self.horizontalLayout_8.addWidget(self.waitsec_dSpinBox)
+        self.label_18 = QtWidgets.QLabel(self.layoutWidget)
+        self.label_18.setObjectName("label_18")
+        self.horizontalLayout_8.addWidget(self.label_18)
+        self.tol_dSpinBox = QtWidgets.QDoubleSpinBox(self.layoutWidget)
+        self.tol_dSpinBox.setDecimals(4)
+        self.tol_dSpinBox.setMaximum(20.0)
+        self.tol_dSpinBox.setSingleStep(0.05)
+        self.tol_dSpinBox.setProperty("value", 0.1)
+        self.tol_dSpinBox.setObjectName("tol_dSpinBox")
+        self.horizontalLayout_8.addWidget(self.tol_dSpinBox)
         self.gridLayout_conf.addLayout(self.horizontalLayout_8, 2, 1, 1, 1)
         self.horizontalLayout_10 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
@@ -607,12 +617,17 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p>Total number of points to scan</p></body></html>"
             ))
-        self.label_3.setText(
-            _translate("MainWindow", "Additional Wait Time [second]"))
+        self.label_3.setText(_translate("MainWindow",
+                                        "Max Wait Time [second]"))
         self.waitsec_dSpinBox.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Additional wait time after set new scan point</p></body></html>"
+            ))
+        self.label_18.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Tolerance of <span style=\" font-style:italic;\">Δ</span><span style=\" font-style:italic; vertical-align:sub;\">rd, set</span></p></body></html>"
             ))
         self.label_17.setText(_translate("MainWindow", "To"))
         self.alter_array_btn.setText(_translate("MainWindow", "Array"))
