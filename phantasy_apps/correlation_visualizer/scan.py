@@ -11,6 +11,7 @@ from PyQt5.QtCore import pyqtSignal
 from phantasy import CaField
 from phantasy import MachinePortal
 from phantasy import epoch2human
+from phantasy import ensure_put
 from phantasy.library.physics.devices import process_devices
 
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet
@@ -227,6 +228,17 @@ class ScanTask(object):
         self._daq_rate = x
 
     @property
+    def tolerance(self):
+        """float: The tolerated discrepancy between readback and set value
+        of alter element.
+        """
+        return self._tol
+
+    @tolerance.setter
+    def tolerance(self, x):
+        self._tol = x
+
+    @property
     def array_mode(self):
         return self._array_mode
 
@@ -385,6 +397,7 @@ class ScanTask(object):
             task_dict['daq_rate'] = self.daq_rate
         task_dict['scan_range'] = self.get_alter_array().tolist()
         task_dict['t_wait'] = self.t_wait
+        task_dict['tolerance'] = self.tolerance
         data_sheet.update({'task': task_dict})
 
         # devices
@@ -444,6 +457,7 @@ def load_task(filepath):
     scan_task = ScanTask(name, mode=mode)
     scan_task.alter_number = task['task']['n_iteration']
     scan_task.t_wait = task['task']['t_wait']
+    scan_task.tolerance = task['task'].get('tolerance', 0.10)
     if mode == "1D":
         scan_task.shotnum = task['task']['n_shot']
         scan_task.daq_rate = task['task']['daq_rate']
@@ -529,6 +543,7 @@ class ScanWorker(QObject):
         out_data = self.task.scan_out_data
         tmp_data = self.task.scan_out_data_per_iter
         wait_sec = self.task.t_wait
+        tol = self.task.tolerance
         daq_rate = self.task.daq_rate
         daq_delt = 1.0 / daq_rate
 
@@ -558,8 +573,15 @@ class ScanWorker(QObject):
                 self.scanPausedAtIndex.emit(idx)
                 break
 
-            alter_elem.value = x
-            time.sleep(wait_sec)
+            # set alter element, apply ensure put
+            print("[{}] {} RD: {} SP: {}".format(
+                current_datetime(),
+                alter_elem.ename, alter_elem.value, x))
+            ensure_put(alter_elem, goal=x, tol=tol, timeout=wait_sec)
+            print("[{}] {} RD: {} SP: {}".format(
+                current_datetime(),
+                alter_elem.ename, alter_elem.value, x))
+
             # DAQ
             for i in range(nshot):
                 # tmp_data[i, :] = [elem.value for elem in all_monitors]
@@ -679,6 +701,10 @@ def read_element(task, etype, mp):
         flds.append(fld)
         elems.append(elem)
     return flds, elems
+
+
+def current_datetime():
+    return epoch2human(time.time(), fmt=TS_FMT)
 
 
 if __name__ == '__main__':
