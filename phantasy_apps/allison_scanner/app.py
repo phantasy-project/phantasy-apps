@@ -655,6 +655,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             pos_fld = 'POS{}'.format(self._ems_device._id)
             x = getattr(elem, pos_fld)
             self.vpos_lineEdit.setText('{0:.2f}'.format(x))
+            return
         try:
             float(x)
         except (ValueError, TypeError):
