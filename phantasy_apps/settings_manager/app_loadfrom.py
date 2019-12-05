@@ -10,6 +10,7 @@ from phantasy.library.settings import generate_settings
 from phantasy_ui import get_open_filename
 
 from .ui.ui_loadfrom import Ui_Dialog
+from .utils import convert_settings
 
 
 class LoadSettingsDialog(QDialog, Ui_Dialog):
@@ -53,16 +54,3 @@ class LoadSettingsDialog(QDialog, Ui_Dialog):
             self.settingsLoaded.emit(flat_settings, settings)
 
             self.accept()
-
-
-def convert_settings(settings_read, mp):
-    """Convert settings to flat.
-    TODO: pre-create name:object mapping, to replace get_elements()
-    """
-    flat_settings = []
-    for ename, econf in settings_read.items():
-        elem = mp.get_elements(name=ename)[0]
-        for fname, fval0 in econf.items():
-            confline = (elem, fname, fval0)
-            flat_settings.append(confline)
-    return flat_settings
