@@ -3,6 +3,7 @@
 
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import LatticeWidget
@@ -10,9 +11,13 @@ from phantasy_ui.widgets import LatticeWidget
 from .app_loadfrom import LoadSettingsDialog
 from .ui.ui_app import Ui_MainWindow
 from .utils import SettingsModel
+from .utils import pack_lattice_settings
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
+
+    # signal: settings loaded, emit flat_settings and settings.
+    settingsLoaded = pyqtSignal(QVariant, QVariant)
 
     def __init__(self, version):
         super(SettingsManagerWindow, self).__init__()
@@ -47,15 +52,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(QVariant)
     def on_lattice_changed(self, o):
-        """Lattice is changed, mp.
+        """Lattice is loaded.
+        1. Update status of snp load tool
+        2. Update lattice info labels
+        3. Show the current element settings
         """
         self._mp = o
+        #
         snpload_status = True if self._mp is not None else False
         self.actionLoad_From_Snapshot.setEnabled(snpload_status)
-        try:
-            self.update_lattice_info_lbls(o.last_machine_name, o.last_lattice_name)
-        except:
-            pass
+        #
+        if o is None:
+            return
+        #
+        self.update_lattice_info_lbls(o.last_machine_name, o.last_lattice_name)
+        # show element settings
+        flat_settings, settings = pack_lattice_settings(o.work_lattice_conf)
+        self.settingsLoaded.emit(flat_settings, settings)
 
     def update_lattice_info_lbls(self, mach, segm):
         for w in (self.lv_lbl, self.lv_mach_lbl, self.lv_segm_lbl,
@@ -93,6 +106,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             w.setVisible(False)
         self._lv = None
         self.lv_view_btn.clicked.connect(self.on_show_latinfo)
+
+        # show lattice settings
+        self.settingsLoaded.connect(self.on_settings_loaded)
 
     def on_save(self):
         """Save settings to file.
@@ -156,6 +172,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lattice_load_window.show()
         self._lattice_load_window.latticeChanged.connect(
                 self.on_lattice_changed)
+        self._lattice_load_window.latticeChanged.connect(self._lattice_load_window.close)
 
     @pyqtSlot()
     def on_show_latinfo(self):
@@ -177,3 +194,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         lw.load_btn.clicked.emit()
         lw.setEnabled(False)
         self._lv.show()
+
+
+    def on_click_view(self, idx):
+        print("Clicked: ({}, {}), item is expanded? ({})".format(
+            idx.row(), idx.column(), self.treeView.isExpanded(idx)))
