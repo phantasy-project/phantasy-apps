@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 import time
 from collections import OrderedDict
 
@@ -491,7 +492,8 @@ def load_task(filepath):
         scan_task._extra_moni_display = extra_moni_objs[1]
     else:  # 2D
         nested_task_filepath = task['task']['nested_task']['filepath']
-        nested_task = load_task(nested_task_filepath)
+        nested_task = load_task(
+                locate_nested_datafile(filepath, nested_task_filepath))
         scan_task.set_nested_task(nested_task)
 
     return scan_task
@@ -705,6 +707,28 @@ def read_element(task, etype, mp):
 
 def current_datetime():
     return epoch2human(time.time(), fmt=TS_FMT)
+
+
+def locate_nested_datafile(filepath1, filepath2):
+    """Locate the fullpath of 1D scan task data file.
+
+    Parameters
+    ----------
+    filepath1: str
+        Fullpath of 2D scan task data file.
+    filepath2: str
+        Relative path of 1D scan task.
+
+    Returns
+    -------
+    r : str
+        Fullpath of nested 1D scan task data file.
+    """
+    if os.path.isabs(filepath2):
+        filename = os.path.basename(filepath2)
+    else:
+        filename = filepath2
+    return os.path.join(os.path.dirname(filepath1), filename)
 
 
 if __name__ == '__main__':
