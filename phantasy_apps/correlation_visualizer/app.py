@@ -139,6 +139,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.nshot_spinBox.valueChanged.connect(self.on_update_nshot)
         self.waitsec_dSpinBox.valueChanged.connect(self.on_update_waitsec)
         self.scanrate_dSpinBox.valueChanged.connect(self.on_update_daqrate)
+        self.tol_dSpinBox.valueChanged.connect(self.on_update_tol)
         # output scan data
         self.save_data_tbtn.clicked.connect(self.save_data)
         # auto xylabels
@@ -856,7 +857,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def set_scan_ctrl_status(self, mode='start'):
         ctrls = (self.niter_spinBox, self.nshot_spinBox,
-                 self.waitsec_dSpinBox, self.scanrate_dSpinBox, )
+                 self.waitsec_dSpinBox, self.scanrate_dSpinBox,
+                 self.tol_dSpinBox)
         if mode=='start':
             # disable ctrls
             [o.setEnabled(False) for o in ctrls]
@@ -916,6 +918,11 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def on_update_daqrate(self, x):
         # scan DAQ rate, in Hz
         self.scan_task.daq_rate = x
+
+    @pyqtSlot(float)
+    def on_update_tol(self, x):
+        # tolerance of delta(rd, set)
+        self.scan_task.tolerance = x
 
     def set_scan_daq(self):
         for o in (self.niter_spinBox, self.nshot_spinBox,
@@ -1369,6 +1376,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.waitsec_dSpinBox.setValue(scan_task.t_wait)
         # daq_rate
         self.scanrate_dSpinBox.setValue(scan_task.daq_rate)
+        # tolerance
+        self.tol_dSpinBox.setValue(scan_task.tolerance)
 
         # reset set array mode
         self._set_alter_array_dialogs = {}

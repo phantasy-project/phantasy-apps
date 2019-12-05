@@ -22,6 +22,7 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
 
 from phantasy import CaField
+from phantasy import ensure_put
 from phantasy_ui import BaseAppForm
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
@@ -34,6 +35,7 @@ from .app_plot3d import Plot3dData
 from .data import ScanDataModel
 from .scan import ScanTask
 from .scan import load_task
+from .scan import current_datetime
 from .ui.ui_2dscan import Ui_MainWindow
 from .utils import COLOR_DANGER, COLOR_INFO
 from .utils import delayed_exec
@@ -88,6 +90,9 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
         # outer loop step counter
         self.niter_spinBox.valueChanged.connect(self.on_update_niter)
+
+        # outer alter element rd/set tolerance
+        self.tol_dSpinBox.valueChanged.connect(self.on_update_tol)
 
         # outer_element settling time
         self.waitsec_dSpinBox.valueChanged.connect(self.on_update_waitsec)
@@ -413,6 +418,11 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         self.scan_task.t_wait = x
         self._dmsec = x * 1000
 
+    @pyqtSlot(float)
+    def on_update_tol(self, x):
+        # tolerance of delta(rd, set)
+        self.scan_task.tolerance = x
+
     @pyqtSlot()
     def set_alter_range(self):
         """Set scan alter vars range.
@@ -478,8 +488,18 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         print("Current setting: ", alter_array[self._iiter])
         #
         # set outer element
-        self.scan_task.alter_element.value = alter_array[self._iiter]
-
+        # self.scan_task.alter_element.value = alter_array[self._iiter]
+        elem = self.scan_task.alter_element
+        x = alter_array[self._iiter]
+        tol, wait_sec = self.scan_task.tolerance, self.scan_task.t_wait
+        print("[{}] {} RD: {} SP: {}".format(
+            current_datetime(),
+            elem.ename, elem.value, x))
+        ensure_put(elem, goal=x, tol=tol, timeout=wait_sec)
+        print("[{}] {} RD: {} SP: {}".format(
+            current_datetime(),
+            elem.ename, elem.value, x))
+        #
         if not self._run:
             self._run = True
 
@@ -498,6 +518,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
             self._initialized = True
 
         # run inner loop
+        self._dmsec = 0
         delayed_exec(lambda: self._p.start_btn.clicked.emit(), self._dmsec)
 
     def set_btn_status(self, mode='start'):
@@ -653,6 +674,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         # nite, t_wait
         self.niter_spinBox.setValue(scan_task.alter_number)
         self.waitsec_dSpinBox.setValue(scan_task.t_wait)
+        self.tol_dSpinBox.setValue(scan_task.tolerance)
 
         # array mode
         self._set_alter_array_dialogs = {}
