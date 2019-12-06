@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import os
-
+import time
+from phantasy import epoch2human
 from mpl4qt.widgets.utils import MatplotlibCurveWidgetSettings
+
+TS_FMT = "%Y-%m-%d %H:%M:%S"
 
 
 def uptime(t):
@@ -84,6 +87,17 @@ def apply_mplcurve_settings(widget, app_name, json_path=None, filename=None):
     s = MatplotlibCurveWidgetSettings(json_path)
     widget.apply_mpl_settings(s)
 
+
+def current_datetime(ctime=None, fmt=None):
+    """Return the human readable datetime string from epoch time ticks.
+
+    See Also
+    --------
+    :func:`~phantasy.library.misc.epoch2human`
+    """
+    t = time.time() if ctime is None else ctime
+    f = TS_FMT if fmt is None else fmt
+    return epoch2human(t, fmt=f)
 
 
 if __name__ == '__main__':

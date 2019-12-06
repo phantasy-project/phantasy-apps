@@ -25,7 +25,6 @@ from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QPushButton
 from phantasy import CaField
-from phantasy.library.misc import epoch2human
 from phantasy_ui import BaseAppForm
 from phantasy_ui import random_string
 from phantasy_ui.widgets import ElementWidget
@@ -45,11 +44,11 @@ from .data import ScanDataModel
 from .scan import ScanTask
 from .scan import ScanWorker
 from .scan import load_task
+from .scan import current_datetime
 from .ui.ui_app import Ui_MainWindow
 from .utils import COLOR_DANGER, COLOR_INFO, COLOR_WARNING, COLOR_PRIMARY
 from .utils import delayed_exec
 
-TS_FMT = "%Y-%m-%d %H:%M:%S"
 BOTTOM_TBTN_ICON_SIZE = 32
 SMALL_TBTN_ICON_SIZE = 20
 
@@ -510,8 +509,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             ynerr.append(sm.get_err()[:, i])
 
         header = 'App: Correlation Visualizer {}\n'.format(self._version)
-        header += 'Data table saved on {}\n'.format(epoch2human(time.time(), fmt=TS_FMT))
-        header += 'Scan job is done on {}\n'.format(epoch2human(self.scan_task.ts_stop, fmt=TS_FMT))
+        header += 'Data table saved on {}\n'.format(current_datetime())
+        header += 'Scan job is done on {}\n'.format(current_datetime(self.scan_task.ts_stop))
         header += 'Columns ({}) definitions: standard error comes after average reading\n'.format(2 * sm.shape[-1])
         header += '<x> x_std <y> y_std <y1> y1_std ...\n'
         header += 'x: {}\ny: {}\n'.format(
@@ -1129,7 +1128,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         ts_start = self.scan_task.ts_start
         ts_stop = self.scan_task.ts_stop
         title = "Completed at {ts}\nSCAN Duration: {t:.2f} s".format(
-            ts=epoch2human(ts_stop, fmt=TS_FMT),
+            ts=current_datetime(ts_stop),
             t=ts_stop - ts_start)
         self.scan_plot_widget.setFigureTitle(title)
 
@@ -1212,7 +1211,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def on_update_log(self, s):
         """Update scan event log.
         """
-        msg = '[{0}] {1}'.format(epoch2human(time.time(), fmt=TS_FMT), s)
+        msg = '[{0}] {1}'.format(current_datetime(), s)
         self.scan_log_textEdit.append(msg)
 
     @pyqtSlot(float)
@@ -1332,7 +1331,10 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
                 type_filter="JSON Files (*.json)")
         if filepath is None:
             return
+        print("[{}] Loading task from {}.".format(current_datetime(), filepath))
         scan_task = load_task(filepath)
+        print("[{}] Loading task is done.".format(current_datetime()))
+
         if scan_task.mode == '2D':
             self.load_2D_task(filepath)
         else:

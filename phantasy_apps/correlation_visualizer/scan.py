@@ -11,16 +11,14 @@ from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import pyqtSignal
 from phantasy import CaField
 from phantasy import MachinePortal
-from phantasy import epoch2human
 from phantasy import ensure_put
 from phantasy.library.physics.devices import process_devices
 
+from phantasy_apps.utils import current_datetime
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 from phantasy_apps.correlation_visualizer.utils import PVElement
 from phantasy_apps.correlation_visualizer.utils import PVElementReadonly
 from phantasy_ui import random_string
-
-TS_FMT = "%Y-%m-%d %H:%M:%S"
 
 
 class ScanTask(object):
@@ -388,8 +386,8 @@ class ScanTask(object):
         task_dict = OrderedDict()
         task_dict['name'] = self.name
         task_dict['mode'] = mode = self.mode
-        task_dict['start'] = epoch2human(self.ts_start, fmt=TS_FMT)
-        task_dict['stop'] = epoch2human(self.ts_stop, fmt=TS_FMT)
+        task_dict['start'] = current_datetime(self.ts_start)
+        task_dict['stop'] = current_datetime(self.ts_stop)
         task_dict['duration'] = self.ts_stop - self.ts_start
         task_dict['n_iteration'] = self.alter_number
         if mode == '1D':
@@ -422,7 +420,7 @@ class ScanTask(object):
 
         # data
         data_dict = OrderedDict()
-        data_dict['created'] = epoch2human(time.time(), fmt=TS_FMT)
+        data_dict['created'] = current_datetime()
         data_dict['shape'] = self.scan_out_data.shape
         data_dict['array'] = self.scan_out_data.tolist()
         data_sheet.update({'data': data_dict})
@@ -703,10 +701,6 @@ def read_element(task, etype, mp):
         flds.append(fld)
         elems.append(elem)
     return flds, elems
-
-
-def current_datetime():
-    return epoch2human(time.time(), fmt=TS_FMT)
 
 
 def locate_nested_datafile(filepath1, filepath2):
