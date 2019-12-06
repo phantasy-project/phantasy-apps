@@ -611,7 +611,7 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "Click \'Select\' to set element as another higher dimension"))
         self.select_alter_elem_btn.setText(_translate("MainWindow", "Select"))
-        self.niter_label.setText(_translate("MainWindow", "Iteration Number"))
+        self.niter_label.setText(_translate("MainWindow", "Total Steps"))
         self.niter_spinBox.setToolTip(
             _translate("MainWindow", "Total number of points to scan."))
         self.label_3.setText(_translate("MainWindow",

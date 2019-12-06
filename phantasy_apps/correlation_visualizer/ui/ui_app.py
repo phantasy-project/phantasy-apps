@@ -949,7 +949,7 @@ class Ui_MainWindow(object):
         self.clear_log_tbtn.setText(_translate("MainWindow", "Clear"))
         self.daq_groupBox.setTitle(
             _translate("MainWindow", "DAQ Configuration"))
-        self.niter_label.setText(_translate("MainWindow", "Iteration Number"))
+        self.niter_label.setText(_translate("MainWindow", "Total Steps"))
         self.mps_status_btn.setToolTip(
             _translate(
                 "MainWindow",
@@ -991,7 +991,7 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "Maximum wait time in second after setting alter element."))
         self.label_4.setText(_translate("MainWindow", "Second"))
-        self.label_5.setText(_translate("MainWindow", "per iteration"))
+        self.label_5.setText(_translate("MainWindow", "per step"))
         self.label_2.setText(_translate("MainWindow", "Shot Number"))
         self.scanrate_dSpinBox.setToolTip(
             _translate("MainWindow",
