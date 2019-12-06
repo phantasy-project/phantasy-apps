@@ -925,7 +925,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
     def set_scan_daq(self):
         for o in (self.niter_spinBox, self.nshot_spinBox,
-                  self.waitsec_dSpinBox, self.scanrate_dSpinBox):
+                  self.waitsec_dSpinBox, self.scanrate_dSpinBox,
+                  self.tol_dSpinBox):
             o.valueChanged.emit(o.value())
 
     def update_curve(self, arr):
