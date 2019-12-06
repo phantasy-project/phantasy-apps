@@ -5,7 +5,7 @@ import time
 from phantasy import epoch2human
 from mpl4qt.widgets.utils import MatplotlibCurveWidgetSettings
 
-TS_FMT = "%Y-%m-%d %H:%M:%S"
+TS_FMT = "%Y-%m-%d %H:%M:%S.%f"
 
 
 def uptime(t):
