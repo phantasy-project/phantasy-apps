@@ -536,20 +536,20 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         # toolbtns
         # save data
         self.save_data_tbtn.setIconSize(BOTTOM_TBTN_ICON_QSIZE)
-        self.save_data_tbtn.setToolTip("Save data to file")
+        self.save_data_tbtn.setToolTip("Save data to file.")
         # auto labels
         self.auto_labels_tbtn.setIconSize(BOTTOM_TBTN_ICON_QSIZE)
-        self.auto_labels_tbtn.setToolTip("Auto set xy labels")
+        self.auto_labels_tbtn.setToolTip("Auto set X/Y labels.")
         # auto title
         self.auto_title_tbtn.setIconSize(BOTTOM_TBTN_ICON_QSIZE)
-        self.auto_title_tbtn.setToolTip("Auto set figure title")
+        self.auto_title_tbtn.setToolTip("Auto set figure title.")
         # move to
         self.moveto_tbtn.setIconSize(BOTTOM_TBTN_ICON_QSIZE)
         self.moveto_tbtn.setToolTip("Move cross-ruler to...")
 
         # auto scale toggle button
         self.autoscale_tbtn.setIconSize(BOTTOM_TBTN_ICON_QSIZE)
-        self.autoscale_tbtn.setToolTip("Auto X/Y Scale")
+        self.autoscale_tbtn.setToolTip("Auto X/Y Scale.")
         self.autoscale_tbtn.setChecked(self.scan_plot_widget.getFigureAutoScale())
 
         menu = QMenu(self)
@@ -575,22 +575,22 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         # scan event log textedit
         # clear log btn
         self.clear_log_tbtn.setIconSize(SMALL_TBTN_ICON_QSIZE)
-        self.clear_log_tbtn.setToolTip("Clear scan event log")
+        self.clear_log_tbtn.setToolTip("Clear scan event log.")
 
         # fontsize + btn
         self.inc_fontsize_tbtn.setIconSize(SMALL_TBTN_ICON_QSIZE)
-        self.inc_fontsize_tbtn.setToolTip("Increase Fontsize")
+        self.inc_fontsize_tbtn.setToolTip("Increase Fontsize.")
         # fontsize - btn
         self.dec_fontsize_tbtn.setIconSize(SMALL_TBTN_ICON_QSIZE)
-        self.dec_fontsize_tbtn.setToolTip("Decrease Fontsize")
+        self.dec_fontsize_tbtn.setToolTip("Decrease Fontsize.")
 
         # set btn
         self.set_tbtn.setIconSize(BOTTOM_TBTN_ICON_QSIZE)
-        self.set_tbtn.setToolTip("Set with value cross-ruler pointed")
+        self.set_tbtn.setToolTip("Set with value cross-ruler pointed.")
 
         # view retake points btn
         self.view_selected_pts_tbtn.setIconSize(BOTTOM_TBTN_ICON_QSIZE)
-        self.view_selected_pts_tbtn.setToolTip("Show selected points to retake")
+        self.view_selected_pts_tbtn.setToolTip("Show selected points to retake.")
 
         menu_pts = QMenu(self)
         # show all selected points
@@ -1023,7 +1023,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             self.mpsConnectionChanged.disconnect()
             self.mpsStatusChanged.disconnect()
             btn.setIcon(self._mps_status_icons['skipped'])
-            btn.setToolTip("MPS guardian is not enabled")
+            btn.setToolTip("MPS guardian is not enabled.")
 
     @pyqtSlot()
     def on2DScanAction(self):
@@ -1055,11 +1055,11 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             if change:  # MPS is connected
                 # print("set btn to connected icon")
                 btn.setIcon(self._mps_status_icons['connected'])
-                btn.setToolTip("MPS guardian is enabled, connection is established")
+                btn.setToolTip("MPS guardian is enabled, connection is established.")
             else:  # MPS is disconnected
                 # print("set btn to disconnected icon")
                 btn.setIcon(self._mps_status_icons['disconnected'])
-                btn.setToolTip("MPS guardian is enabled, connection is lost")
+                btn.setToolTip("MPS guardian is enabled, connection is lost.")
         else:  # val
             self._set_mps_status_btn(change)
 
@@ -1077,7 +1077,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         else:
             # print("set btn to normal icon")
             btn.setIcon(self._mps_status_icons['normal'])
-        btn.setToolTip("MPS guardian is enabled, status is {}".format(v))
+        btn.setToolTip("MPS guardian is enabled, status is {}.".format(v))
 
     @pyqtSlot()
     def on_config_mps(self):
@@ -1416,7 +1416,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             hbox0.itemAt(0).widget().setParent(None)
             hbox0.addWidget(elem_btn)
             hbox0.update()
-        tp = "Element to {}, click to see details".format(mode)
+        tp = "Element to {}, click to see details.".format(mode)
         elem_btn.setToolTip(tp)
 
     def _setup_element_btn_from_scan_task(self, scan_task, mode,

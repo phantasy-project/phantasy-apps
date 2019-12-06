@@ -613,28 +613,45 @@ class Ui_MainWindow(object):
         self.select_alter_elem_btn.setText(_translate("MainWindow", "Select"))
         self.niter_label.setText(_translate("MainWindow", "Iteration Number"))
         self.niter_spinBox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Total number of points to scan</p></body></html>"
-            ))
+            _translate("MainWindow", "Total number of points to scan."))
         self.label_3.setText(_translate("MainWindow",
                                         "Max Wait Time [second]"))
         self.waitsec_dSpinBox.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Additional wait time after set new scan point</p></body></html>"
-            ))
+                "Maximum wait time in second after setting alter element."))
         self.label_18.setText(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Tolerance of <span style=\" font-style:italic;\">Δ</span><span style=\" font-style:italic; vertical-align:sub;\">rd, set</span></p></body></html>"
             ))
+        self.tol_dSpinBox.setToolTip(
+            _translate(
+                "MainWindow",
+                "Discrepancy tolerance between set and get of alter element."))
+        self.lower_limit_lineEdit.setToolTip(
+            _translate("MainWindow", "Start value of the scan range."))
         self.label_17.setText(_translate("MainWindow", "To"))
+        self.upper_limit_lineEdit.setToolTip(
+            _translate("MainWindow", "Stop value of the scan range."))
+        self.enable_arbitary_array_chkbox.setToolTip(
+            _translate("MainWindow",
+                       "Check to enable altering with arbitary array."))
+        self.alter_array_btn.setToolTip(
+            _translate("MainWindow", "Set scan range by array."))
         self.alter_array_btn.setText(_translate("MainWindow", "Array"))
         self.label_5.setText(_translate("MainWindow", "Scan Config"))
         self.label_2.setText(_translate("MainWindow", "Monitor of Interest"))
+        self.moi_cbb.setToolTip(
+            _translate(
+                "MainWindow",
+                "Interested monitor to show in the data visualization area."))
         self.label.setText(_translate("MainWindow", "Current Settings"))
+        self.alter_elem_val_lineEdit.setToolTip(
+            _translate("MainWindow", "Current setting of alter element."))
+        self.stop_btn.setToolTip(_translate("MainWindow", "Stop task."))
         self.stop_btn.setText(_translate("MainWindow", "Stop"))
+        self.start_btn.setToolTip(_translate("MainWindow", "Start task."))
         self.start_btn.setText(_translate("MainWindow", "Start"))
         self.dataviz_gbox.setTitle(
             _translate("MainWindow", "Data Visualization"))

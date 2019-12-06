@@ -901,15 +901,16 @@ class Ui_MainWindow(object):
         self.monitor_elem_lineEdit.setPlaceholderText(
             _translate("MainWindow", "Click \'Select\' to set element"))
         self.lower_limit_lineEdit.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Start value of scan range</p></body></html>"
-            ))
+            _translate("MainWindow", "Start value of the scan range."))
         self.lower_limit_lineEdit.setText(_translate("MainWindow", "0"))
         self.auto_show_extra_chkbox.setToolTip(
-            _translate("MainWindow",
-                       "Show Extra Monitors After Each Selection"))
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Show extra monitors after each selection.</p></body></html>"
+            ))
         self.auto_show_extra_chkbox.setText(_translate("MainWindow", "Auto"))
+        self.show_extra_monitors_btn.setToolTip(
+            _translate("MainWindow", "Show selected extra monitors."))
         self.show_extra_monitors_btn.setText(_translate("MainWindow", "Show"))
         self.label_8.setText(_translate("MainWindow", "Alter Element"))
         self.label_9.setText(_translate("MainWindow", "Alter Range"))
@@ -924,22 +925,17 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Click \'Select\' to set element"))
         self.label_10.setText(_translate("MainWindow", "To"))
         self.upper_limit_lineEdit.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Stop value of scan range</p></body></html>"
-            ))
+            _translate("MainWindow", "Stop value of the scan range."))
         self.upper_limit_lineEdit.setText(_translate("MainWindow", "1"))
         self.label_11.setText(_translate("MainWindow", "Monitor"))
         self.extra_monitors_counter_lbl.setText(
             _translate("MainWindow", "Monitors (0)"))
         self.label.setText(_translate("MainWindow", "Extra"))
         self.enable_arbitary_array_chkbox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Check to enable altering with arbitary array</p></body></html>"
-            ))
+            _translate("MainWindow",
+                       "Check to enable altering with arbitary array."))
         self.alter_array_btn.setToolTip(
-            _translate("MainWindow", "Set alter range by array."))
+            _translate("MainWindow", "Set scan range by array."))
         self.alter_array_btn.setText(_translate("MainWindow", "Array"))
         self.lv_lbl.setText(_translate("MainWindow", "Lattice"))
         self.lv_mach.setToolTip(_translate("MainWindow", "Machine name."))
@@ -984,35 +980,31 @@ class Ui_MainWindow(object):
         self.retake_btn.setText(_translate("MainWindow", "Retake"))
         self.label_6.setText(_translate("MainWindow", "Hz"))
         self.nshot_spinBox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Number of records to be taken at each scan point</p></body></html>"
-            ))
+            _translate("MainWindow",
+                       "Number of records to be taken at each scan point."))
         self.label_7.setText(_translate("MainWindow", "Scan DAQ Rate"))
         self.label_3.setText(_translate("MainWindow", "Max Wait Time"))
         self.niter_spinBox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Total number of points to scan</p></body></html>"
-            ))
+            _translate("MainWindow", "Total number of points to scan."))
         self.waitsec_dSpinBox.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Additional wait time after set new scan point</p></body></html>"
-            ))
+                "Maximum wait time in second after setting alter element."))
         self.label_4.setText(_translate("MainWindow", "Second"))
         self.label_5.setText(_translate("MainWindow", "per iteration"))
         self.label_2.setText(_translate("MainWindow", "Shot Number"))
         self.scanrate_dSpinBox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Record number to be taken within one second.</p></body></html>"
-            ))
+            _translate("MainWindow",
+                       "Record number to be taken within one second."))
         self.label_15.setText(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Tolerance of <span style=\" font-style:italic;\">Δ</span><span style=\" font-style:italic; vertical-align:sub;\">rd, set</span></p></body></html>"
             ))
+        self.tol_dSpinBox.setToolTip(
+            _translate(
+                "MainWindow",
+                "Discrepancy tolerance between set and get of alter element."))
         self.plot_groupBox.setTitle(
             _translate("MainWindow", "Data Visualization"))
         self.autoscale_tbtn.setText(_translate("MainWindow", "..."))
