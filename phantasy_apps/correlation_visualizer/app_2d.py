@@ -23,6 +23,7 @@ from PyQt5.QtWidgets import QMessageBox
 
 from phantasy import CaField
 from phantasy import ensure_put
+from phantasy_apps.utils import current_datetime
 from phantasy_ui import BaseAppForm
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
@@ -35,7 +36,6 @@ from .app_plot3d import Plot3dData
 from .data import ScanDataModel
 from .scan import ScanTask
 from .scan import load_task
-from .scan import current_datetime
 from .ui.ui_2dscan import Ui_MainWindow
 from .utils import COLOR_DANGER, COLOR_INFO
 from .utils import delayed_exec
@@ -184,12 +184,14 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
         # debug
         shape = self._p.scan_task.scan_out_data.shape
-        print("Inner out data shape is:", shape)
+        print("[{}] Inner out data shape is: {}".format(
+            current_datetime(), shape))
         #
         self.data = np.asarray(
                 [np.ones(shape) * np.nan] * self.scan_task.alter_number)
         self.scan_task.scan_out_data = self.data
-        print("Whole data shape is:", self.data.shape)
+        print("[{}] Whole data shape is: {}".format(
+            current_datetime(), self.data.shape))
 
     def init_all_elements(self):
         """Initial all the elemetns (alter elements and all the monitors) for
@@ -329,6 +331,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
     def init_dataviz(self):
         """Dataviz initialization.
         """
+        print("[{}] Initialize 3D data visualization.".format(current_datetime()))
         # image
         inner_alter_array = self._p.scan_task.get_alter_array()
         outer_alter_array = self.scan_task.get_alter_array()
@@ -689,6 +692,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         # elements for final data visualization
         self.init_all_elements()
         # show data
+        print("[{}] Show 3D data on image widgets.".format(current_datetime()))
         for i in range(self.scan_task.alter_number):
             self._iiter = i
             self._update_dataviz()

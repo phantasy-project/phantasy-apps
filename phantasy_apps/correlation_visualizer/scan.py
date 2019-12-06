@@ -471,9 +471,13 @@ def load_task(filepath):
     # mp
     machine = task['task'].get('machine', 'FRIB')
     segment = task['task'].get('segment', 'LINAC')
+    print("[{}] Starting to load lattice for task '{}'.".format(
+        current_datetime(), scan_task.name))
     mp = MachinePortal(machine, segment)
     if mp.last_load_success:
         scan_task.lattice = mp
+    print("[{}] Loaded {}/{} for task '{}'.".format(
+        current_datetime(), machine, segment, scan_task.name))
 
     # alter device
     alter_objs = read_element(task, 'alter_element', mp)
@@ -562,13 +566,13 @@ class ScanWorker(QObject):
                 continue
 
             if not self.run_flag:
-                print("Break scan by STOP button")
+                print("[{}] Break scan by STOP button.".format(current_datetime()))
                 self.scanStopped.emit()
                 break
 
             if self.pause_flag:
                 # save current idx, resume at this idx
-                print("Break scan by PAUSE button")
+                print("[{}] Break scan by PAUSE button.".format(current_datetime()))
                 self.scanPaused.emit()
                 self.scanPausedAtIndex.emit(idx)
                 break
