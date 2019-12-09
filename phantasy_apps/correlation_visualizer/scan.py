@@ -446,7 +446,29 @@ class ScanTask(object):
         self._lattice = o
 
 
-def load_task(filepath):
+def load_lattice(mach, segm, o):
+    if o is None:
+        mp = MachinePortal(mach, segm)
+        print("[{}] Loading new machine: {}/{}.".format(
+            current_datetime(), mach, segm))
+    elif mach == o.last_machine_name:
+        o.load_lattice(segm)
+        if segm != o.last_lattice_name:
+            msg = "[{}] Loading new segment: {}/{}.".format(
+                    current_datetime(), mach, segm)
+        else:
+            msg = "[{}] Reloading segment: {}/{}.".format(
+                    current_datetime(), mach, segm)
+        print(msg)
+        mp = o
+    else:
+        mp = MachinePortal(mach, segm)
+        print("[{}] Loading new machine: {}/{}.".format(
+            current_datetime(), mach, segm))
+    return mp
+
+
+def load_task(filepath, o):
     """Instantiate ScanTask from the saved JSON file from CV app.
     """
     task = JSONDataSheet(filepath)
@@ -473,7 +495,7 @@ def load_task(filepath):
     segment = task['task'].get('segment', 'LINAC')
     print("[{}] Starting to load lattice for task '{}'.".format(
         current_datetime(), scan_task.name))
-    mp = MachinePortal(machine, segment)
+    mp = load_lattice(machine, segment, o)
     if mp.last_load_success:
         scan_task.lattice = mp
     print("[{}] Loaded {}/{} for task '{}'.".format(
@@ -495,7 +517,8 @@ def load_task(filepath):
     else:  # 2D
         nested_task_filepath = task['task']['nested_task']['filepath']
         nested_task = load_task(
-                locate_nested_datafile(filepath, nested_task_filepath))
+                locate_nested_datafile(filepath, nested_task_filepath),
+                mp) # 1D and 2D widget only load the same lattice.
         scan_task.set_nested_task(nested_task)
 
     return scan_task

@@ -1331,7 +1331,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         if filepath is None:
             return
         print("[{}] Loading task from {}.".format(current_datetime(), filepath))
-        scan_task = load_task(filepath)
+        scan_task = load_task(filepath, self._mp)
+        if hasattr(scan_task, '_lattice'):
+            self._mp = scan_task._lattice
         print("[{}] Loading task is done.".format(current_datetime()))
 
         if scan_task.mode == '2D':
@@ -1465,11 +1467,11 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         new_monis = []
         for k, elem, fld in zip(sel_keys, elems, flds):
             if k not in self.elem_widgets_dict:
-                print("[{}] - Add '{}' to element widget dict with key of '{}'.".format(
+                print("[{}] - Add '{}' to element widget dict as key: '{}'.".format(
                     current_datetime(), elem.name, k))
                 self.elem_widgets_dict[k] = ElementWidget(elem, fields=fld.name)
             if k not in self._extra_monitors:
-                print("[{}] - Add '{}' to extra monitors.".format(
+                print("[{}] - Add '{}' to extra monitors list.".format(
                     current_datetime(), k))
                 self._extra_monitors.append(k)
                 new_monis.append(fld)

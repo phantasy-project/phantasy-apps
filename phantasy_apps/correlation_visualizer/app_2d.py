@@ -650,7 +650,9 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
     def _load_task(self, filepath):
         # set task, i.e. outer loop
-        scan_task = load_task(filepath)
+        scan_task = load_task(filepath, self._p._mp)
+        if hasattr(scan_task, '_lattice'):
+            self._p._mp = scan_task._lattice
         try:
             assert scan_task.mode == "2D"
         except AssertionError:
