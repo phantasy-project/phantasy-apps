@@ -12,12 +12,12 @@ from PyQt5.QtCore import pyqtSignal
 from phantasy import CaField
 from phantasy import MachinePortal
 from phantasy import ensure_put
+from phantasy import PVElement
+from phantasy import PVElementReadonly
 from phantasy.library.physics.devices import process_devices
 
 from phantasy_apps.utils import current_datetime
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet
-from phantasy_apps.correlation_visualizer.utils import PVElement
-from phantasy_apps.correlation_visualizer.utils import PVElementReadonly
 from phantasy_ui import random_string
 
 

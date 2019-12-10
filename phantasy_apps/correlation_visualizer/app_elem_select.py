@@ -12,9 +12,10 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
 from phantasy_ui.widgets.utils import LatticeDataModel
 
+from phantasy import PVElement
+from phantasy import PVElementReadonly
+
 from phantasy_apps.correlation_visualizer.ui.ui_elem_select import Ui_Dialog
-from phantasy_apps.correlation_visualizer.utils import PVElement
-from phantasy_apps.correlation_visualizer.utils import PVElementReadonly
 from phantasy_apps.correlation_visualizer.utils import delayed_check_pv_status
 from phantasy_apps.correlation_visualizer.utils import milli_sleep1
 
