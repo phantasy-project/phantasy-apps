@@ -157,12 +157,14 @@ class SettingsModel(QStandardItemModel):
                 continue
             rd_pv0 = fld.readback_pv[0]
             sp_pv0 = fld.setpoint_pv[0]
+            fld.set_auto_monitor()
             for (icol, pv, vtyp) in zip(
                     (self.i_rd, self.i_cset),
                     (rd_pv0, sp_pv0),
                     ('rd', 'sp')):
                 pv.add_callback(partial(_cb, item0, icol, fld, vtyp))
-                self._pvs.append(pv)
+            for i in fld.readback_pv + fld.setpoint_pv:
+                self._pvs.append(i)
 
     def __post_init_ui(self, tv):
         # view properties

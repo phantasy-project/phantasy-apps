@@ -145,9 +145,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     QMessageBox.Ok)
 
     def closeEvent(self, e):
-        for pv in self._pvs:
-            pv.clear_callbacks()
         BaseAppForm.closeEvent(self, e)
+        for pv in self._pvs:
+            pv.auto_monitor = False
+            pv.clear_callbacks()
 
     @pyqtSlot(bool)
     def on_toggle_phyfields(self, f):
