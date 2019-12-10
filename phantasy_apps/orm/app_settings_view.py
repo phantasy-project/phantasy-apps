@@ -35,9 +35,10 @@ class SettingsView(QDialog, Ui_Dialog):
         self.resize(w * 1.05, h * 1.05)
 
     def closeEvent(self, e):
-        for pv in self._pvs:
-            pv.clear_callbacks()
         QDialog.closeEvent(self, e)
+        for pv in self._pvs:
+            pv.auto_monitor = False
+            pv.clear_callbacks()
 
     @pyqtSlot()
     def on_click_ok(self):

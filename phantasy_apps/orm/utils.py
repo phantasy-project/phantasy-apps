@@ -323,8 +323,10 @@ class SettingsModel(QStandardItemModel):
             row, col = i, self.i_read
             fld = c.get_field(f)
             pv = fld.readback_pv[0]
+            fld.set_auto_monitor()
             pv.add_callback(partial(_cb, row, col, fld))
-            self._pvs.append(pv)
+            for i in fld.readback_pv:
+                self._pvs.append(i)
 
     def __post_init_ui(self, tv):
         # view properties
@@ -423,8 +425,10 @@ class ScanRangeModel(QStandardItemModel):
             row, col = i, self.i_rd
             fld = c.get_field(f)
             pv = fld.readback_pv[0]
+            fld.set_auto_monitor()
             pv.add_callback(partial(_cb, row, col, fld))
-            self._pvs.append(pv)
+            for i in fld.readback_pv:
+                self._pvs.append(i)
 
     def __post_init_ui(self, tv):
         # view properties
