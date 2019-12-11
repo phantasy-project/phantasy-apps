@@ -44,6 +44,14 @@ class Ui_MainWindow(object):
         self.lv_lbl.setSizePolicy(sizePolicy)
         self.lv_lbl.setObjectName("lv_lbl")
         self.horizontalLayout.addWidget(self.lv_lbl)
+        self.lv_view_btn = QtWidgets.QToolButton(self.centralwidget)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/sm-icons/view-details.png"),
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.lv_view_btn.setIcon(icon)
+        self.lv_view_btn.setAutoRaise(True)
+        self.lv_view_btn.setObjectName("lv_view_btn")
+        self.horizontalLayout.addWidget(self.lv_view_btn)
         self.lv_mach_lbl = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -70,14 +78,36 @@ class Ui_MainWindow(object):
                                        "}")
         self.lv_segm_lbl.setObjectName("lv_segm_lbl")
         self.horizontalLayout.addWidget(self.lv_segm_lbl)
-        self.lv_view_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/sm-icons/view-details.png"),
-                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.lv_view_btn.setIcon(icon)
-        self.lv_view_btn.setAutoRaise(True)
-        self.lv_view_btn.setObjectName("lv_view_btn")
-        self.horizontalLayout.addWidget(self.lv_view_btn)
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setObjectName("label")
+        self.horizontalLayout.addWidget(self.label)
+        self.total_elem_number_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.total_elem_number_lbl.setStyleSheet("QLabel {\n"
+                                                 "    color: #28A745;\n"
+                                                 "}")
+        self.total_elem_number_lbl.setText("")
+        self.total_elem_number_lbl.setObjectName("total_elem_number_lbl")
+        self.horizontalLayout.addWidget(self.total_elem_number_lbl)
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setObjectName("label_2")
+        self.horizontalLayout.addWidget(self.label_2)
+        self.total_sppv_number_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.total_sppv_number_lbl.setStyleSheet("QLabel {\n"
+                                                 "    color: #28A745;\n"
+                                                 "}")
+        self.total_sppv_number_lbl.setText("")
+        self.total_sppv_number_lbl.setObjectName("total_sppv_number_lbl")
+        self.horizontalLayout.addWidget(self.total_sppv_number_lbl)
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout.addWidget(self.label_3)
+        self.total_rdpv_number_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.total_rdpv_number_lbl.setStyleSheet("QLabel {\n"
+                                                 "    color: #28A745;\n"
+                                                 "}")
+        self.total_rdpv_number_lbl.setText("")
+        self.total_rdpv_number_lbl.setObjectName("total_rdpv_number_lbl")
+        self.horizontalLayout.addWidget(self.total_rdpv_number_lbl)
         spacerItem = QtWidgets.QSpacerItem(40, 20,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
@@ -186,13 +216,16 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.apply_btn.setText(_translate("MainWindow", "Apply"))
         self.lv_lbl.setText(_translate("MainWindow", "Loaded Lattice"))
+        self.lv_view_btn.setToolTip(
+            _translate("MainWindow", "See the details of loaded lattice."))
+        self.lv_view_btn.setText(_translate("MainWindow", "..."))
         self.lv_mach_lbl.setToolTip(_translate("MainWindow", "Machine name."))
         self.lv_mach_lbl.setText(_translate("MainWindow", "machine"))
         self.lv_segm_lbl.setToolTip(_translate("MainWindow", "Segment name."))
         self.lv_segm_lbl.setText(_translate("MainWindow", "segment"))
-        self.lv_view_btn.setToolTip(
-            _translate("MainWindow", "See the details of loaded lattice."))
-        self.lv_view_btn.setText(_translate("MainWindow", "..."))
+        self.label.setText(_translate("MainWindow", "Total Elements"))
+        self.label_2.setText(_translate("MainWindow", "Setpoint PVs"))
+        self.label_3.setText(_translate("MainWindow", "Readback PVs"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
