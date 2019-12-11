@@ -198,6 +198,7 @@ class ElementSelectDialog(QDialog, Ui_Dialog):
     def on_update_elem_tree(self, o):
         tv = self.elem_treeView
         model = LatticeDataModel(tv, o)
+        model.set_selection_mode(self.mode)
         model.set_model()
         tv.model().itemSelected.connect(self.on_element_selected)
 
