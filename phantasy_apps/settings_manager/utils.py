@@ -13,6 +13,8 @@ from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import QAbstractScrollArea
 
+from phantasy_apps.utils import printlog
+
 try:
     basestring
 except NameError:
@@ -43,6 +45,7 @@ class SettingsModel(QStandardItemModel):
     """
 
     data_changed = pyqtSignal(QVariant)
+    settings_sts = pyqtSignal(int, int, int)
 
     def __init__(self, parent, flat_settings):
         super(self.__class__, self).__init__(parent)
@@ -59,13 +62,6 @@ class SettingsModel(QStandardItemModel):
                    self.i_type, self.i_pos \
             = range(len(self.header))
 
-        # set data (pure)
-        self.set_data()
-
-        # set headers
-        for i, s in zip(self.ids, self.header):
-            self.setHeaderData(i, Qt.Horizontal, s)
-
         #
         self.data_changed.connect(self.update_data)
 
@@ -74,26 +70,30 @@ class SettingsModel(QStandardItemModel):
         self.setData(*p)
 
     def set_data(self):
-        ii = 1
-        for elem, fname, fval0 in self._settings:
-            item_ename = QStandardItem(elem.name)
 
-            # debug
-            print('{0}:{1}[{2}]'.format(ii, elem.name, fname))
-            #
-
-            fld = elem.get_field(fname)
-            item_ename.fobj = fld
-            if fld is None:
-                print("{} [{}] is invalid.".format(elem.name, fname))
-                continue
-
-            def _cb(item_val, item_ename, icol, **kws):
+        def _cb(item_val, item_ename, icol, **kws):
                 val = FMT.format(kws.get('value'))
                 idx_p = item_ename.index()
                 idx_c = item_val.index()
                 idx = self.index(idx_c.row(), idx_c.column(), idx_p)
                 self.data_changed.emit((idx_c, val, Qt.DisplayRole))
+
+        elem_cnt = 1
+        sppv_cnt = 1
+        rdpv_cnt = 1
+
+        for elem, fname, fval0 in self._settings:
+            item_ename = QStandardItem(elem.name)
+
+            # debug
+            printlog('{0:03d}:{1} [{2}]'.format(elem_cnt, elem.name, fname))
+            #
+
+            fld = elem.get_field(fname)
+            item_ename.fobj = fld
+            if fld is None:
+                printlog("{} [{}] is invalid.".format(elem.name, fname))
+                continue
 
             # PVs, setpoint and readback
             for sp_obj, rd_obj in zip(fld.setpoint_pv, fld.readback_pv):
@@ -101,6 +101,9 @@ class SettingsModel(QStandardItemModel):
                 it_sp_v = QStandardItem(FMT.format(sp_obj.value))
                 it_rd_n = QStandardItem(rd_obj.pvname)
                 it_rd_v = QStandardItem(FMT.format(rd_obj.value))
+
+                [i.setEditable(False) for i in (it_sp_n, it_sp_v,
+                                                it_rd_n, it_rd_v)]
 
                 item_ename.appendRow((it_sp_n, it_sp_v))
                 item_ename.appendRow((it_rd_n, it_rd_v))
@@ -110,10 +113,10 @@ class SettingsModel(QStandardItemModel):
                 rd_obj.add_callback(partial(_cb, it_rd_v, item_ename, 1))
                 self._pvs.append(sp_obj)
                 self._pvs.append(rd_obj)
+                sppv_cnt += 1
+                rdpv_cnt += 1
 
             #
-
-
             item_fname = QStandardItem(fname)
             item_val0 = QStandardItem(FMT.format(fval0))
 
@@ -128,10 +131,15 @@ class SettingsModel(QStandardItemModel):
                         v = '{0:.4f}'.format(v)
                     item = QStandardItem(v)
                     row.append(item)
+            [i.setEditable(False) for i in row]
             self.appendRow(row)
-            ii += 1
+            elem_cnt += 1
+
+        self.settings_sts.emit(elem_cnt, sppv_cnt, rdpv_cnt)
 
     def set_model(self):
+        # set data
+        self.set_data()
         # set model, set field column
         proxy_model = _SortProxyModel(self)
         self._tv.setModel(proxy_model)
@@ -167,6 +175,10 @@ class SettingsModel(QStandardItemModel):
                 self._pvs.append(i)
 
     def __post_init_ui(self, tv):
+        # set headers
+        for i, s in zip(self.ids, self.header):
+            self.setHeaderData(i, Qt.Horizontal, s)
+
         # view properties
         tv.setStyleSheet("font-family: monospace;")
         tv.setAlternatingRowColors(True)

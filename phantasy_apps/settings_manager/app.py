@@ -7,6 +7,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import LatticeWidget
+from phantasy_apps.utils import printlog
 
 from .app_loadfrom import LoadSettingsDialog
 from .ui.ui_app import Ui_MainWindow
@@ -88,8 +89,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def __on_show_settings(self):
         # visualize settings
         model = SettingsModel(self.treeView, self.__flat_settings)
+        model.settings_sts.connect(self.on_settings_sts)
         model.set_model()
         self._pvs = model._pvs
+
+    @pyqtSlot(int, int, int)
+    def on_settings_sts(self, i, j, k):
+        print(i,j,k)
+        for s, v in zip(('elem', 'sppv', 'rdpv'), (i, j, k)):
+            o = getattr(self, 'total_{}_number_lbl'.format(s))
+            o.setText(str(v))
 
     def __post_init_ui(self):
         self._load_from_dlg = None
@@ -198,5 +207,5 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
 
     def on_click_view(self, idx):
-        print("Clicked: ({}, {}), item is expanded? ({})".format(
+        printlog("Clicked: ({}, {}), item is expanded? ({})".format(
             idx.row(), idx.column(), self.treeView.isExpanded(idx)))
