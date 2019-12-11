@@ -16,6 +16,7 @@ from phantasy import PVElement
 from phantasy import PVElementReadonly
 from phantasy.library.physics.devices import process_devices
 
+from phantasy_apps.utils import printlog
 from phantasy_apps.utils import current_datetime
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 from phantasy_ui import random_string
@@ -449,22 +450,18 @@ class ScanTask(object):
 def load_lattice(mach, segm, o):
     if o is None:
         mp = MachinePortal(mach, segm)
-        print("[{}] Loading new machine: {}/{}.".format(
-            current_datetime(), mach, segm))
+        printlog("Loading new machine: {}/{}.".format(mach, segm))
     elif mach == o.last_machine_name:
         o.load_lattice(segm)
         if segm != o.last_lattice_name:
-            msg = "[{}] Loading new segment: {}/{}.".format(
-                    current_datetime(), mach, segm)
+            msg = "Loading new segment: {}/{}.".format(mach, segm)
         else:
-            msg = "[{}] Reloading segment: {}/{}.".format(
-                    current_datetime(), mach, segm)
-        print(msg)
+            msg = "Reloading segment: {}/{}.".format(mach, segm)
+        printlog(msg)
         mp = o
     else:
         mp = MachinePortal(mach, segm)
-        print("[{}] Loading new machine: {}/{}.".format(
-            current_datetime(), mach, segm))
+        printlog("Loading new machine: {}/{}.".format(mach, segm))
     return mp
 
 
@@ -493,13 +490,11 @@ def load_task(filepath, o):
     # mp
     machine = task['task'].get('machine', 'FRIB')
     segment = task['task'].get('segment', 'LINAC')
-    print("[{}] Starting to load lattice for task '{}'.".format(
-        current_datetime(), scan_task.name))
+    printlog("Starting to load lattice for task '{}'.".format(scan_task.name))
     mp = load_lattice(machine, segment, o)
     if mp.last_load_success:
         scan_task.lattice = mp
-    print("[{}] Loaded {}/{} for task '{}'.".format(
-        current_datetime(), machine, segment, scan_task.name))
+    printlog("Loaded {}/{} for task '{}'.".format(machine, segment, scan_task.name))
 
     # alter device
     alter_objs = read_element(task, 'alter_element', mp)
@@ -589,25 +584,20 @@ class ScanWorker(QObject):
                 continue
 
             if not self.run_flag:
-                print("[{}] Break scan by STOP button.".format(current_datetime()))
+                printlog("Break scan by STOP button.")
                 self.scanStopped.emit()
                 break
 
             if self.pause_flag:
                 # save current idx, resume at this idx
-                print("[{}] Break scan by PAUSE button.".format(current_datetime()))
+                printlog("Break scan by PAUSE button.")
                 self.scanPaused.emit()
                 self.scanPausedAtIndex.emit(idx)
                 break
 
             # set alter element, apply ensure put
-            print("[{}] {} RD: {} SP: {}".format(
-                current_datetime(),
-                alter_elem.ename, alter_elem.value, x))
             ensure_put(alter_elem, goal=x, tol=tol, timeout=wait_sec)
-            print("[{}] {} RD: {} SP: {}".format(
-                current_datetime(),
-                alter_elem.ename, alter_elem.value, x))
+            printlog("{} RD: {} SP: {}".format(alter_elem.ename, alter_elem.value, x))
 
             # DAQ
             for i in range(nshot):

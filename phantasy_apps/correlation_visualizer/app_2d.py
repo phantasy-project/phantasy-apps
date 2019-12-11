@@ -23,7 +23,7 @@ from PyQt5.QtWidgets import QMessageBox
 
 from phantasy import CaField
 from phantasy import ensure_put
-from phantasy_apps.utils import current_datetime
+from phantasy_apps.utils import printlog
 from phantasy_ui import BaseAppForm
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
@@ -184,14 +184,12 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
         # debug
         shape = self._p.scan_task.scan_out_data.shape
-        print("[{}] Inner out data shape is: {}".format(
-            current_datetime(), shape))
+        printlog("Inner out data shape is: {}".format(shape))
         #
         self.data = np.asarray(
                 [np.ones(shape) * np.nan] * self.scan_task.alter_number)
         self.scan_task.scan_out_data = self.data
-        print("[{}] Whole data shape is: {}".format(
-            current_datetime(), self.data.shape))
+        printlog("Whole data shape is: {}".format(self.data.shape))
 
     def init_all_elements(self):
         """Initial all the elemetns (alter elements and all the monitors) for
@@ -315,7 +313,8 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
         # init out data
         for o in (self.niter_spinBox, self.waitsec_dSpinBox,
-                  self._p.niter_spinBox, self._p.nshot_spinBox):
+                  self._p.niter_spinBox, self._p.nshot_spinBox,
+                  self.tol_dSpinBox):
             o.valueChanged.emit(o.value())
         # reset
         self.reset_flags()
@@ -331,7 +330,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
     def init_dataviz(self):
         """Dataviz initialization.
         """
-        print("[{}] Initialize 3D data visualization.".format(current_datetime()))
+        printlog("Initialize 3D data visualization.")
         # image
         inner_alter_array = self._p.scan_task.get_alter_array()
         outer_alter_array = self.scan_task.get_alter_array()
@@ -495,13 +494,8 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         elem = self.scan_task.alter_element
         x = alter_array[self._iiter]
         tol, wait_sec = self.scan_task.tolerance, self.scan_task.t_wait
-        print("[{}] {} RD: {} SP: {}".format(
-            current_datetime(),
-            elem.ename, elem.value, x))
         ensure_put(elem, goal=x, tol=tol, timeout=wait_sec)
-        print("[{}] {} RD: {} SP: {}".format(
-            current_datetime(),
-            elem.ename, elem.value, x))
+        printlog("{} RD: {} SP: {}".format(elem.ename, elem.value, x))
         #
         if not self._run:
             self._run = True
@@ -694,7 +688,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         # elements for final data visualization
         self.init_all_elements()
         # show data
-        print("[{}] Show 3D data on image widgets.".format(current_datetime()))
+        printlog("Show 3D data on image widgets.")
         for i in range(self.scan_task.alter_number):
             self._iiter = i
             self._update_dataviz()

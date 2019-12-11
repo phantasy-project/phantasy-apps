@@ -5,7 +5,7 @@ import time
 from phantasy import epoch2human
 from mpl4qt.widgets.utils import MatplotlibCurveWidgetSettings
 
-TS_FMT = "%Y-%m-%d %H:%M:%S.%f"
+TS_FMT = "%Y-%m-%dT%H:%M:%S.%f"
 
 
 def uptime(t):
@@ -98,6 +98,10 @@ def current_datetime(ctime=None, fmt=None):
     t = time.time() if ctime is None else ctime
     f = TS_FMT if fmt is None else fmt
     return epoch2human(t, fmt=f)
+
+
+def printlog(msg):
+    print("[{}] {}".format(current_datetime(), msg))
 
 
 if __name__ == '__main__':

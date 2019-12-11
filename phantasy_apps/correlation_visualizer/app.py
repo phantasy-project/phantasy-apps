@@ -29,9 +29,11 @@ from phantasy_ui import BaseAppForm
 from phantasy_ui import random_string
 from phantasy_ui.widgets import ElementWidget
 from phantasy_ui.widgets import LatticeWidget
-
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
+from phantasy_apps.utils import printlog
+from phantasy_apps.utils import current_datetime
+
 from .app_array_set import ArraySetDialog
 from .app_elem_select import ElementSelectDialog
 from .app_help import HelpDialog
@@ -44,7 +46,6 @@ from .data import ScanDataModel
 from .scan import ScanTask
 from .scan import ScanWorker
 from .scan import load_task
-from .scan import current_datetime
 from .ui.ui_app import Ui_MainWindow
 from .utils import COLOR_DANGER, COLOR_INFO, COLOR_WARNING, COLOR_PRIMARY
 from .utils import delayed_exec
@@ -799,7 +800,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
         niter = self.scan_task.alter_number
         self.scanlogTextColor.emit(COLOR_INFO)
-        msg = 'Iter:{0:>3d}/[{1:d}] is done at value: {2:>9.2f}'.format(
+        msg = 'Step:{0:>3d}/{1:d} is done at value: {2:>9.3g}'.format(
             idx + 1, niter, x)
         self.scanlogUpdated.emit(msg)
         self.scanProgressUpdated.emit((idx + 1.0) / niter)
@@ -986,7 +987,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(bool)
     def onEnableVirtualDiag(self, f):
-        print("[{}] Enable Virtual Diag? {}".format(current_datetime(), f))
+        printlog("Enable Virtual Diag? {}".format(f))
         self._enable_virtual_diag = f
 
     @pyqtSlot(bool)
@@ -1028,7 +1029,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         """Start up app with 2D scan feature.
         """
         msg = "Two-dimensional parameters scan is enabled."
-        self.scanlogTextColor.emit(COLOR_INFO)
+        self.scanlogTextColor.emit(COLOR_DANGER)
         self.scanlogUpdated.emit(msg)
         if self._2dscan_window is None:
             self._2dscan_window = TwoParamsScanWindow(self)
@@ -1200,7 +1201,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def set_timestamp(self, type='start'):
         """Update start timestamp of scan task.
         """
-        print("[{}] Set timestamp for '{}'...".format(current_datetime(), type))
+        printlog("Set timestamp for '{}'...".format(type))
         if type == 'start':
             self.scan_task.ts_start = time.time()
         elif type == 'stop':
@@ -1210,7 +1211,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def on_update_log(self, s):
         """Update scan event log.
         """
-        msg = '[{0}] {1}'.format(current_datetime(), s)
+        msg = '[{0}] {1}'.format(current_datetime(fmt="%H:%M:%S"), s)
         self.scan_log_textEdit.append(msg)
 
     @pyqtSlot(float)
@@ -1330,16 +1331,16 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
                 type_filter="JSON Files (*.json)")
         if filepath is None:
             return
-        print("[{}] Loading task from {}.".format(current_datetime(), filepath))
+        printlog("Loading task from {}.".format(filepath))
         scan_task = load_task(filepath, self._mp)
         if hasattr(scan_task, '_lattice'):
             self._mp = scan_task._lattice
-        print("[{}] Loading task is done.".format(current_datetime()))
+        printlog("Loading task is done.")
 
         if scan_task.mode == '2D':
-            print("[{}] Task to load is a 2D task.".format(current_datetime()))
+            printlog("Task to load is a 2D task.")
             self.load_2D_task(filepath)
-            print("[{}] Loaded 2D configurations.".format(current_datetime()))
+            printlog("Loaded 2D configurations.")
         else:
             # initial UI widgets with loaded scan_task
             self.init_ui_with_scan_task(scan_task)
@@ -1347,7 +1348,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def init_ui_with_scan_task(self, scan_task):
         # initial UI widgets with *scan_task*.
         #
-        print("[{}] Starting to restore UI configurations.".format(current_datetime()))
+        printlog("Starting to restore UI configurations.")
 
         # update scan_task obj
         self.scan_task = scan_task
@@ -1392,12 +1393,12 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.enable_arbitary_array_chkbox.setChecked(scan_task.array_mode)
 
         # init data plot
-        print("[{}] Show 2D data visualization on curve widget.".format(current_datetime()))
+        printlog("Show 2D data visualization on curve widget.")
         self._current_arr = scan_task.scan_out_data
         self.init_xydata_cbbs()
 
         #
-        print("[{}] UI restoration is done.".format(current_datetime()))
+        printlog("UI restoration is done.")
 
     def _create_element_btn(self, btn_lbl, sel_key, widgets_dict=None):
         # create push button from selected element.
@@ -1410,7 +1411,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         elem_btn.clicked.connect(
             partial(self.on_show_elem_info, sel_key, widgets_dict))
         elem_btn.setCursor(Qt.PointingHandCursor)
-        print("[{}] - Created element button with the label of '{}'.".format(current_datetime(), btn_lbl))
+        printlog("- Created element button with the label of '{}'.".format(btn_lbl))
         return elem_btn
 
     def _place_element_btn(self, elem_btn, mode, target=None):
@@ -1430,8 +1431,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             hbox0.update()
         tp = "Element to {}, click to see details.".format(mode)
         elem_btn.setToolTip(tp)
-        print("[{}] - Placed element button with the label of '{}'.".format(
-            current_datetime(), elem_btn.text()))
+        printlog("- Placed element button with the label of '{}'.".format(elem_btn.text()))
 
     def _setup_element_btn_from_scan_task(self, scan_task, mode,
                                           widgets_dict=None, target=None):
@@ -1440,11 +1440,11 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         elem = getattr(scan_task, '{}_element'.format(mode))
         elem_dis = getattr(scan_task, '_{}_element_display'.format(mode))
         elem_lbl = scan_task.print_element(elem)
-        print("[{}] Setting up {} element...".format(current_datetime(), mode.upper()))
-        print("[{}] - {} Field: {}".format(current_datetime(), mode.capitalize(), elem.ename))
-        print("[{}] - Element: {}".format(current_datetime(), elem_dis.ename))
-        print("[{}] - Field Label: {}".format(current_datetime(), elem_lbl))
-        print("[{}] - Field Name: {}".format(current_datetime(), elem.name))
+        printlog("Setting up {} element...".format(mode.upper()))
+        printlog("- {} Field: {}".format(mode.capitalize(), elem.ename))
+        printlog("- Element: {}".format(elem_dis.ename))
+        printlog("- Field Label: {}".format(elem_lbl))
+        printlog("- Field Name: {}".format(elem.name))
         sel_key = ' '.join((elem_dis.ename, elem.name, mode))
         if widgets_dict is None:
             widgets_dict = self.elem_widgets_dict
@@ -1458,7 +1458,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         # flds: element for scan task
         # return: list of fld objs to be added to scan task as extra monis.
         # note: add extra monis does not apply to load_task case.
-        print("[{}] Setting up extra monitors...".format(current_datetime()))
+        printlog("Setting up extra monitors...")
 
         sel_keys = []
         for elem, fld in zip(elems, flds):
@@ -1467,12 +1467,11 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         new_monis = []
         for k, elem, fld in zip(sel_keys, elems, flds):
             if k not in self.elem_widgets_dict:
-                print("[{}] - Add '{}' to element widget dict as key: '{}'.".format(
-                    current_datetime(), elem.name, k))
+                printlog("- Add '{}' to element widget dict as key: '{}'.".format(
+                         elem.name, k))
                 self.elem_widgets_dict[k] = ElementWidget(elem, fields=fld.name)
             if k not in self._extra_monitors:
-                print("[{}] - Add '{}' to extra monitors list.".format(
-                    current_datetime(), k))
+                printlog("- Add '{}' to extra monitors list.".format(k))
                 self._extra_monitors.append(k)
                 new_monis.append(fld)
 
@@ -1524,7 +1523,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
     # test slots
     def test_scan_started(self):
-        print("[{}] Scan is started...".format(current_datetime()))
+        printlog("Scan is started.")
         return
         print(self.scan_task)
         print("-" * 20)
@@ -1543,7 +1542,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         print("\n")
 
     def test_scan_finished(self):
-        print("[{}] Scan is done...".format(current_datetime()))
+        printlog("Scan is done.")
         return
         print(self.scan_task)
         print("-" * 20)
