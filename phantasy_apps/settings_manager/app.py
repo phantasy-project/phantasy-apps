@@ -95,7 +95,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(int, int, int)
     def on_settings_sts(self, i, j, k):
-        print(i,j,k)
         for s, v in zip(('elem', 'sppv', 'rdpv'), (i, j, k)):
             o = getattr(self, 'total_{}_number_lbl'.format(s))
             o.setText(str(v))

@@ -86,13 +86,14 @@ class SettingsModel(QStandardItemModel):
             item_ename = QStandardItem(elem.name)
 
             # debug
-            printlog('{0:03d}:{1} [{2}]'.format(elem_cnt, elem.name, fname))
+            # printlog('{0:03d}:{1} [{2}]'.format(elem_cnt, elem.name, fname))
             #
 
             fld = elem.get_field(fname)
             item_ename.fobj = fld
             if fld is None:
-                printlog("{} [{}] is invalid.".format(elem.name, fname))
+                # debug
+                # printlog("{} [{}] is invalid.".format(elem.name, fname))
                 continue
 
             # PVs, setpoint and readback
@@ -218,13 +219,16 @@ class _SortProxyModel(QSortFilterProxyModel):
         return r
 
 
-def convert_settings(settings_read, mp):
+def convert_settings(settings_read, lat):
     """Convert settings to flat.
-    TODO: pre-create name:object mapping, to replace get_elements()
     """
     flat_settings = []
+    nm = {o.name: o for o in lat}
     for ename, econf in settings_read.items():
-        elem = mp.get_elements(name=ename)[0]
+        elem = nm.get(ename, None)
+        if elem is None:
+            print("{} not found.".format(ename))
+            continue
         for fname, fval0 in econf.items():
             confline = (elem, fname, fval0)
             flat_settings.append(confline)
