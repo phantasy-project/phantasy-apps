@@ -224,10 +224,11 @@ def convert_settings(settings_read, lat):
     """
     flat_settings = []
     nm = {o.name: o for o in lat}
+    latname = lat.name
     for ename, econf in settings_read.items():
         elem = nm.get(ename, None)
         if elem is None:
-            print("{} not found.".format(ename))
+            print("{} is not in lattice {} but defined in the settings.".format(ename, latname))
             continue
         for fname, fval0 in econf.items():
             confline = (elem, fname, fval0)
