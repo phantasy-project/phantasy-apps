@@ -70,6 +70,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # show element settings
         flat_settings, settings = pack_lattice_settings(o.work_lattice_conf)
         self.settingsLoaded.emit(flat_settings, settings)
+        print("Lattice is changed ...")
 
     def update_lattice_info_lbls(self, mach, segm):
         for w in (self.lv_lbl, self.lv_mach_lbl, self.lv_segm_lbl,
@@ -88,6 +89,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def __on_show_settings(self):
         # visualize settings
+        self.reset_pvs()
         model = SettingsModel(self.treeView, self.__flat_settings)
         model.settings_sts.connect(self.on_settings_sts)
         model.set_model()
@@ -178,10 +180,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         if self._lattice_load_window is None:
             self._lattice_load_window = LatticeWidget()
+            self._lattice_load_window.latticeChanged.connect(
+                    self.on_lattice_changed)
+            self._lattice_load_window.latticeChanged.connect(self._lattice_load_window.close)
         self._lattice_load_window.show()
-        self._lattice_load_window.latticeChanged.connect(
-                self.on_lattice_changed)
-        self._lattice_load_window.latticeChanged.connect(self._lattice_load_window.close)
 
     @pyqtSlot()
     def on_show_latinfo(self):
@@ -208,3 +210,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_click_view(self, idx):
         printlog("Clicked: ({}, {}), item is expanded? ({})".format(
             idx.row(), idx.column(), self.treeView.isExpanded(idx)))
+
+    def reset_pvs(self):
+        print("-" * 30)
+        print("Reset {} PVs".format(len(self._pvs)))
+        for pv in self._pvs:
+            pv.auto_monitor = False
+            pv.clear_callbacks()
