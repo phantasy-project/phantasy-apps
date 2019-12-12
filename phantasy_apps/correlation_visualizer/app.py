@@ -963,8 +963,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         """
         if self.lattice_load_window is None:
             self.lattice_load_window = LatticeWidget()
+            self.lattice_load_window.latticeChanged.connect(self.update_mp)
         self.lattice_load_window.show()
-        self.lattice_load_window.latticeChanged.connect(self.update_mp)
 
     @pyqtSlot(QVariant)
     def update_mp(self, o):

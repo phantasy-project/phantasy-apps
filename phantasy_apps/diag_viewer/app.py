@@ -263,8 +263,8 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         """
         if self._lattice_load_window is None:
             self._lattice_load_window = LatticeWidget()
+            self._lattice_load_window.latticeChanged.connect(self.update_lattice)
         self._lattice_load_window.show()
-        self._lattice_load_window.latticeChanged.connect(self.update_lattice)
         # reset element selection widgets
         self._elem_sel_widget = None
 
