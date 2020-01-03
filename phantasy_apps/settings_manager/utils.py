@@ -78,9 +78,9 @@ class SettingsModel(QStandardItemModel):
                 idx = self.index(idx_c.row(), idx_c.column(), idx_p)
                 self.data_changed.emit((idx_c, val, Qt.DisplayRole))
 
-        elem_cnt = 1
-        sppv_cnt = 1
-        rdpv_cnt = 1
+        sppv_cnt = 0
+        rdpv_cnt = 0
+        elem_list = []
 
         for elem, fname, fval0 in self._settings:
             item_ename = QStandardItem(elem.name)
@@ -134,9 +134,10 @@ class SettingsModel(QStandardItemModel):
                     row.append(item)
             [i.setEditable(False) for i in row]
             self.appendRow(row)
-            elem_cnt += 1
+            if elem.name not in elem_list:
+                elem_list.append(elem.name)
 
-        self.settings_sts.emit(elem_cnt, sppv_cnt, rdpv_cnt)
+        self.settings_sts.emit(len(elem_list), sppv_cnt, rdpv_cnt)
 
     def set_model(self):
         # set data
@@ -215,8 +216,13 @@ class _SortProxyModel(QSortFilterProxyModel):
                     left_data = r_left.group(1)
                     right_data = r_right.group(1)
             r = left_data < right_data
-
         return r
+
+    def filterAcceptsRow(self, src_row, src_parent):
+        src_model = self.sourceModel()
+        src_index = src_model.index(src_row, 0)
+        var = src_index.data(Qt.DisplayRole)
+        return re.match(self.filterRegExp().pattern(), var) is not None
 
 
 def convert_settings(settings_read, lat):
