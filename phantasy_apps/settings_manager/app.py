@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from fnmatch import translate
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import pyqtSignal
@@ -95,6 +96,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         model.set_model()
         self._pvs = model._pvs
 
+        #
+        self.namefilter_lineEdit.textChanged.emit(self.namefilter_lineEdit.text())
+
     @pyqtSlot(int, int, int)
     def on_settings_sts(self, i, j, k):
         for s, v in zip(('elem', 'sppv', 'rdpv'), (i, j, k)):
@@ -155,10 +159,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     QMessageBox.Ok)
 
     def closeEvent(self, e):
-        BaseAppForm.closeEvent(self, e)
-        for pv in self._pvs:
-            pv.auto_monitor = False
-            pv.clear_callbacks()
+        r = BaseAppForm.closeEvent(self, e)
+        if r:
+            for pv in self._pvs:
+                pv.auto_monitor = False
+                pv.clear_callbacks()
 
     @pyqtSlot(bool)
     def on_toggle_phyfields(self, f):
@@ -206,7 +211,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         lw.setEnabled(False)
         self._lv.show()
 
-
     def on_click_view(self, idx):
         printlog("Clicked: ({}, {}), item is expanded? ({})".format(
             idx.row(), idx.column(), self.treeView.isExpanded(idx)))
@@ -217,3 +221,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for pv in self._pvs:
             pv.auto_monitor = False
             pv.clear_callbacks()
+
+    @pyqtSlot('QString')
+    def on_namefilter_changed(self, s):
+        print("triggered")
+        if s == '':
+            s = '*'
+        m = self.treeView.model()
+        m.setFilterRegExp(translate(s))
+        self.total_show_number_lbl.setText(str(m.rowCount()))
