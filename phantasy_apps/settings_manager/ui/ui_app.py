@@ -85,7 +85,6 @@ class Ui_MainWindow(object):
         self.total_elem_number_lbl.setStyleSheet("QLabel {\n"
                                                  "    color: #28A745;\n"
                                                  "}")
-        self.total_elem_number_lbl.setText("")
         self.total_elem_number_lbl.setObjectName("total_elem_number_lbl")
         self.horizontalLayout.addWidget(self.total_elem_number_lbl)
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
@@ -95,7 +94,6 @@ class Ui_MainWindow(object):
         self.total_sppv_number_lbl.setStyleSheet("QLabel {\n"
                                                  "    color: #28A745;\n"
                                                  "}")
-        self.total_sppv_number_lbl.setText("")
         self.total_sppv_number_lbl.setObjectName("total_sppv_number_lbl")
         self.horizontalLayout.addWidget(self.total_sppv_number_lbl)
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
@@ -105,13 +103,29 @@ class Ui_MainWindow(object):
         self.total_rdpv_number_lbl.setStyleSheet("QLabel {\n"
                                                  "    color: #28A745;\n"
                                                  "}")
-        self.total_rdpv_number_lbl.setText("")
         self.total_rdpv_number_lbl.setObjectName("total_rdpv_number_lbl")
         self.horizontalLayout.addWidget(self.total_rdpv_number_lbl)
         spacerItem = QtWidgets.QSpacerItem(40, 20,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
+        self.label_5 = QtWidgets.QLabel(self.centralwidget)
+        self.label_5.setObjectName("label_5")
+        self.horizontalLayout.addWidget(self.label_5)
+        self.namefilter_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
+        self.namefilter_lineEdit.setText("")
+        self.namefilter_lineEdit.setObjectName("namefilter_lineEdit")
+        self.horizontalLayout.addWidget(self.namefilter_lineEdit)
+        self.total_show_number_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.total_show_number_lbl.setStyleSheet("QLabel {\n"
+                                                 "    color: #28A745;\n"
+                                                 "    font-weight: bold;\n"
+                                                 "}")
+        self.total_show_number_lbl.setObjectName("total_show_number_lbl")
+        self.horizontalLayout.addWidget(self.total_show_number_lbl)
+        self.label_4 = QtWidgets.QLabel(self.centralwidget)
+        self.label_4.setObjectName("label_4")
+        self.horizontalLayout.addWidget(self.label_4)
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -209,6 +223,8 @@ class Ui_MainWindow(object):
             MainWindow.on_toggle_engfields)
         self.actionLoad_Lattice.triggered.connect(MainWindow.on_load_lattice)
         self.treeView.clicked['QModelIndex'].connect(MainWindow.on_click_view)
+        self.namefilter_lineEdit.textChanged['QString'].connect(
+            MainWindow.on_namefilter_changed)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -224,8 +240,24 @@ class Ui_MainWindow(object):
         self.lv_segm_lbl.setToolTip(_translate("MainWindow", "Segment name."))
         self.lv_segm_lbl.setText(_translate("MainWindow", "segment"))
         self.label.setText(_translate("MainWindow", "Total Elements"))
+        self.total_elem_number_lbl.setText(_translate("MainWindow", "0"))
         self.label_2.setText(_translate("MainWindow", "Setpoint PVs"))
+        self.total_sppv_number_lbl.setText(_translate("MainWindow", "0"))
         self.label_3.setText(_translate("MainWindow", "Readback PVs"))
+        self.total_rdpv_number_lbl.setText(_translate("MainWindow", "0"))
+        self.label_5.setText(_translate("MainWindow", "Search"))
+        self.namefilter_lineEdit.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body>Input Unix style search pattern, e.g.:<br/>\n"
+                "*: match all names;<br/>\n"
+                "*LEBT*: match names with string \'LEBT\';<br/>\n"
+                "? is to match one char or digit.<br/>\n"
+                "</body></html>"))
+        self.total_show_number_lbl.setToolTip(
+            _translate("MainWindow", "Total filtered items."))
+        self.total_show_number_lbl.setText(_translate("MainWindow", "0"))
+        self.label_4.setText(_translate("MainWindow", "items"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
