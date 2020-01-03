@@ -274,6 +274,7 @@ class Ui_MainWindow(object):
         self.action_Save.setIconText(_translate("MainWindow", "Save Settings"))
         self.action_Save.setToolTip(
             _translate("MainWindow", "Save settings into a file."))
+        self.action_Save.setShortcut(_translate("MainWindow", "Ctrl+S"))
         self.actionLoad_From_Snapshot.setText(
             _translate("MainWindow", "Load From Snapshot"))
         self.actionLoad_From_Snapshot.setIconText(
@@ -281,23 +282,31 @@ class Ui_MainWindow(object):
         self.actionLoad_From_Snapshot.setToolTip(
             _translate("MainWindow",
                        "Load settings from a snapshot (.snp) file."))
+        self.actionLoad_From_Snapshot.setShortcut(
+            _translate("MainWindow", "Ctrl+L"))
         self.actionPhysics_Fields.setText(_translate("MainWindow", "Physics"))
         self.actionPhysics_Fields.setIconText(
             _translate("MainWindow", "Physics Fields"))
         self.actionPhysics_Fields.setToolTip(
             _translate("MainWindow", "Show physics fields."))
+        self.actionPhysics_Fields.setShortcut(
+            _translate("MainWindow", "Ctrl+Shift+P"))
         self.actionEngineering_Fields.setText(
             _translate("MainWindow", "Engineering"))
         self.actionEngineering_Fields.setIconText(
             _translate("MainWindow", "Engineering Fields"))
         self.actionEngineering_Fields.setToolTip(
             _translate("MainWindow", "Show engineering fields."))
+        self.actionEngineering_Fields.setShortcut(
+            _translate("MainWindow", "Ctrl+Shift+E"))
         self.actionLoad_Lattice.setText(
             _translate("MainWindow", "Load Lattice"))
         self.actionLoad_Lattice.setIconText(
             _translate("MainWindow", "Load Lattice"))
         self.actionLoad_Lattice.setToolTip(
             _translate("MainWindow", "Load Lattice."))
+        self.actionLoad_Lattice.setShortcut(
+            _translate("MainWindow", "Ctrl+Shift+L"))
 
 
 from . import resources_rc
