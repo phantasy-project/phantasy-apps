@@ -105,7 +105,7 @@ class Ui_MainWindow(object):
                                                  "}")
         self.total_rdpv_number_lbl.setObjectName("total_rdpv_number_lbl")
         self.horizontalLayout.addWidget(self.total_rdpv_number_lbl)
-        spacerItem = QtWidgets.QSpacerItem(40, 20,
+        spacerItem = QtWidgets.QSpacerItem(140, 20,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
@@ -113,14 +113,31 @@ class Ui_MainWindow(object):
         self.label_5.setObjectName("label_5")
         self.horizontalLayout.addWidget(self.label_5)
         self.namefilter_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(8)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.namefilter_lineEdit.sizePolicy().hasHeightForWidth())
+        self.namefilter_lineEdit.setSizePolicy(sizePolicy)
         self.namefilter_lineEdit.setText("")
         self.namefilter_lineEdit.setObjectName("namefilter_lineEdit")
         self.horizontalLayout.addWidget(self.namefilter_lineEdit)
         self.total_show_number_lbl = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.total_show_number_lbl.sizePolicy().hasHeightForWidth())
+        self.total_show_number_lbl.setSizePolicy(sizePolicy)
         self.total_show_number_lbl.setStyleSheet("QLabel {\n"
                                                  "    color: #28A745;\n"
                                                  "    font-weight: bold;\n"
                                                  "}")
+        self.total_show_number_lbl.setAlignment(QtCore.Qt.AlignRight
+                                                | QtCore.Qt.AlignTrailing
+                                                | QtCore.Qt.AlignVCenter)
         self.total_show_number_lbl.setObjectName("total_show_number_lbl")
         self.horizontalLayout.addWidget(self.total_show_number_lbl)
         self.label_4 = QtWidgets.QLabel(self.centralwidget)
@@ -249,11 +266,8 @@ class Ui_MainWindow(object):
         self.namefilter_lineEdit.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body>Input Unix style search pattern, e.g.:<br/>\n"
-                "*: match all names;<br/>\n"
-                "*LEBT*: match names with string \'LEBT\';<br/>\n"
-                "? is to match one char or digit.<br/>\n"
-                "</body></html>"))
+                "<html><head/><body><p>Input Unix style search pattern by \'key = pattern\', valid key: \'device\', \'field\', \'type\', if not defined, \'device\' is used.</p><p>1. *: match all device names, which is equivalent of device=*;</p><p>2. *LEBT*: match device name which has string \'LEBT\';</p><p>3. type=\'CAV\': match all devices of type \'CAV\';</p><p>4. ? is to match one char or digit, pure \'\' is to interpret as *.<br/></p></body></html>"
+            ))
         self.total_show_number_lbl.setToolTip(
             _translate("MainWindow", "Total filtered items."))
         self.total_show_number_lbl.setText(_translate("MainWindow", "0"))
