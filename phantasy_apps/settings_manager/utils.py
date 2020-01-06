@@ -94,14 +94,9 @@ class SettingsModel(QStandardItemModel):
         rdpv_cnt = 0
         elem_list = []
 
-        for elem, fname, fval0 in self._settings:
+        for elem, fname, fld, fval0 in self._settings:
             item_ename = QStandardItem(elem.name)
 
-            # debug
-            # printlog('{0:03d}:{1} [{2}]'.format(elem_cnt, elem.name, fname))
-            #
-
-            fld = elem.get_field(fname)
             item_ename.fobj = fld
             if fld is None:
                 # debug
@@ -235,15 +230,20 @@ class _SortProxyModel(QSortFilterProxyModel):
         return r
 
     def filterAcceptsRow(self, src_row, src_parent):
+        if src_parent.isValid():
+            return True
+
         src_model = self.sourceModel()
         idx = self.filter_col_index[src_model.get_filter_key()]
         src_index = src_model.index(src_row, idx)
         var = src_index.data(Qt.DisplayRole)
+
         return re.match(self.filterRegExp().pattern(), var) is not None
 
 
 def convert_settings(settings_read, lat):
-    """Convert settings to flat.
+    """Convert settings to flat, each tuple is composed of (CaElement,
+    field name, CaField, field value)
     """
     flat_settings = []
     nm = {o.name: o for o in lat}
@@ -254,7 +254,7 @@ def convert_settings(settings_read, lat):
             print("{} is not in lattice {} but defined in the settings.".format(ename, latname))
             continue
         for fname, fval0 in econf.items():
-            confline = (elem, fname, fval0)
+            confline = (elem, fname, elem.get_field(fname), fval0)
             flat_settings.append(confline)
     return flat_settings
 
