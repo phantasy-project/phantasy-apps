@@ -73,10 +73,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.settingsLoaded.emit(flat_settings, settings)
         print("Lattice is changed ...")
 
-    def update_lattice_info_lbls(self, mach, segm):
+    def _enable_widgets(self, enabled):
         for w in (self.lv_lbl, self.lv_mach_lbl, self.lv_segm_lbl,
                   self.lv_view_btn):
-            w.setVisible(True)
+            w.setEnabled(enabled)
+
+    def update_lattice_info_lbls(self, mach, segm):
+        self._enable_widgets(True)
         self.lv_mach_lbl.setText(mach)
         self.lv_segm_lbl.setText(segm)
 
@@ -117,9 +120,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.on_lattice_changed(self._mp)
 
         # lattice viewer
-        for w in (self.lv_lbl, self.lv_mach_lbl, self.lv_segm_lbl,
-                  self.lv_view_btn):
-            w.setVisible(False)
+        self._enable_widgets(False)
         self._lv = None
         self.lv_view_btn.clicked.connect(self.on_show_latinfo)
 
