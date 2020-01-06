@@ -97,11 +97,12 @@ class SettingsModel(QStandardItemModel):
         for elem, fname, fld, fval0 in self._settings:
             item_ename = QStandardItem(elem.name)
 
-            item_ename.fobj = fld
             if fld is None:
                 # debug
                 # printlog("{} [{}] is invalid.".format(elem.name, fname))
                 continue
+            item_ename.fobj = fld
+            item_ename.ftype = fld.ftype
 
             # PVs, setpoint and readback
             for sp_obj, rd_obj in zip(fld.setpoint_pv, fld.readback_pv):
@@ -209,6 +210,7 @@ class _SortProxyModel(QSortFilterProxyModel):
             'device': model.i_name,
             'field': model.i_field,
             'type': model.i_type}
+        self.filter_ftypes = ['ENG', 'PHY']
 
     def lessThan(self, left, right):
         left_data = left.data(Qt.DisplayRole)
@@ -234,11 +236,14 @@ class _SortProxyModel(QSortFilterProxyModel):
             return True
 
         src_model = self.sourceModel()
-        idx = self.filter_col_index[src_model.get_filter_key()]
+        filter_key = src_model.get_filter_key()
+        ftype = src_model.item(src_row, 0).ftype
+
+        idx = self.filter_col_index[filter_key]
         src_index = src_model.index(src_row, idx)
         var = src_index.data(Qt.DisplayRole)
-
-        return re.match(self.filterRegExp().pattern(), var) is not None
+        return ftype in self.filter_ftypes and \
+                re.match(self.filterRegExp().pattern(), var) is not None
 
 
 def convert_settings(settings_read, lat):

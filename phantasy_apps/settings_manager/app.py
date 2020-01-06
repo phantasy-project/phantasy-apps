@@ -91,7 +91,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def __on_show_settings(self):
         # visualize settings
         self.reset_pvs()
-        model = SettingsModel(self.treeView, self.__flat_settings)
+        model = SettingsModel(self._tv, self.__flat_settings)
         model.settings_sts.connect(self.on_settings_sts)
         model.set_model()
         self._pvs = model._pvs
@@ -106,12 +106,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             o.setText(str(v))
 
     def __post_init_ui(self):
+        self._tv = self.treeView
         self._load_from_dlg = None
         self._lattice_load_window = None
         self._mp = None
         self.__settings = None
         self.__flat_settings = None
         self._pvs = []
+        self._eng_phy_toggle = {'ENG': True, 'PHY': True}
         self.on_lattice_changed(self._mp)
 
         # lattice viewer
@@ -167,17 +169,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(bool)
     def on_toggle_phyfields(self, f):
-        if f:
-            print("Show PHY fields...")
-        else:
-            print("Hide PHY fields...")
+        self._eng_phy_toggle['PHY'] = f
+        self.toggle_ftype()
 
     @pyqtSlot(bool)
     def on_toggle_engfields(self, f):
-        if f:
-            print("Show ENG fields...")
-        else:
-            print("Hide ENG fields...")
+        self._eng_phy_toggle['ENG'] = f
+        self.toggle_ftype()
+
+    def toggle_ftype(self):
+        m = self._tv.model()
+        m.filter_ftypes = [k for k, v in self._eng_phy_toggle.items() if v is True]
+        self.namefilter_lineEdit.textChanged.emit(self.namefilter_lineEdit.text())
 
     @pyqtSlot()
     def on_load_lattice(self):
@@ -213,7 +216,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def on_click_view(self, idx):
         printlog("Clicked: ({}, {}), item is expanded? ({})".format(
-            idx.row(), idx.column(), self.treeView.isExpanded(idx)))
+            idx.row(), idx.column(), self._tv.isExpanded(idx)))
 
     def reset_pvs(self):
         print("-" * 30)
@@ -232,7 +235,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             v = s
         if v == '':
             v = '*'
-        m = self.treeView.model()
+        m = self._tv.model()
         m.sourceModel().set_filter_key(k)
         m.setFilterRegExp(translate(v))
         self.total_show_number_lbl.setText(str(m.rowCount()))
