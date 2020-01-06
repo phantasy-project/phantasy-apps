@@ -755,9 +755,11 @@ class Ui_MainWindow(object):
         self.menu_Help.setObjectName("menu_Help")
         self.menuTools = QtWidgets.QMenu(self.menubar)
         self.menuTools.setObjectName("menuTools")
-        self.menu_Scan = QtWidgets.QMenu(self.menubar)
-        self.menu_Scan.setObjectName("menu_Scan")
         MainWindow.setMenuBar(self.menubar)
+        self.toolBar = QtWidgets.QToolBar(MainWindow)
+        self.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.toolBar.setObjectName("toolBar")
+        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.actionE_xit = QtWidgets.QAction(MainWindow)
         icon18 = QtGui.QIcon()
         icon18.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
@@ -794,17 +796,29 @@ class Ui_MainWindow(object):
         self.actionMPS_guardian.setCheckable(True)
         self.actionMPS_guardian.setObjectName("actionMPS_guardian")
         self.actionSave_Task = QtWidgets.QAction(MainWindow)
+        icon23 = QtGui.QIcon()
+        icon23.addPixmap(QtGui.QPixmap(":/icons/save2.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionSave_Task.setIcon(icon23)
         self.actionSave_Task.setObjectName("actionSave_Task")
         self.actionSave = QtWidgets.QAction(MainWindow)
         self.actionSave.setIcon(icon12)
         self.actionSave.setObjectName("actionSave")
         self.actionLoad_Task = QtWidgets.QAction(MainWindow)
+        icon24 = QtGui.QIcon()
+        icon24.addPixmap(QtGui.QPixmap(":/icons/folder-open.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionLoad_Task.setIcon(icon24)
         self.actionLoad_Task.setObjectName("actionLoad_Task")
         self.actionVirtual_diag = QtWidgets.QAction(MainWindow)
         self.actionVirtual_diag.setCheckable(True)
         self.actionVirtual_diag.setObjectName("actionVirtual_diag")
         self.actionEnable_2D_Scan = QtWidgets.QAction(MainWindow)
         self.actionEnable_2D_Scan.setCheckable(False)
+        icon25 = QtGui.QIcon()
+        icon25.addPixmap(QtGui.QPixmap(":/icons/3d.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
+        self.actionEnable_2D_Scan.setIcon(icon25)
         self.actionEnable_2D_Scan.setObjectName("actionEnable_2D_Scan")
         self.actionDevice_Processor = QtWidgets.QAction(MainWindow)
         self.actionDevice_Processor.setObjectName("actionDevice_Processor")
@@ -816,17 +830,16 @@ class Ui_MainWindow(object):
         self.menu_Help.addAction(self.actionAbout)
         self.menu_Help.addAction(self.actionAbout_Qt)
         self.menuTools.addAction(self.actionQuad_Scan)
-        self.menuTools.addAction(self.actionLoad_Lattice)
         self.menuTools.addAction(self.actionMPS_guardian)
         self.menuTools.addAction(self.actionVirtual_diag)
-        self.menuTools.addAction(self.actionEnable_2D_Scan)
         self.menuTools.addAction(self.actionDevice_Processor)
-        self.menu_Scan.addAction(self.actionSave_Task)
-        self.menu_Scan.addAction(self.actionLoad_Task)
         self.menubar.addAction(self.menu_File.menuAction())
-        self.menubar.addAction(self.menu_Scan.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
+        self.toolBar.addAction(self.actionLoad_Lattice)
+        self.toolBar.addAction(self.actionSave_Task)
+        self.toolBar.addAction(self.actionLoad_Task)
+        self.toolBar.addAction(self.actionEnable_2D_Scan)
 
         self.retranslateUi(MainWindow)
         self.actionAbout_Qt.triggered.connect(MainWindow.onAboutQt)
@@ -1019,7 +1032,7 @@ class Ui_MainWindow(object):
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menuTools.setTitle(_translate("MainWindow", "&Tools"))
-        self.menu_Scan.setTitle(_translate("MainWindow", "&Scan"))
+        self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.actionE_xit.setText(_translate("MainWindow", "E&xit"))
         self.actionE_xit.setShortcut(_translate("MainWindow", "Ctrl+W"))
         self.actionContents.setText(_translate("MainWindow", "Contents"))
@@ -1031,6 +1044,8 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Quad Scan Analysis"))
         self.actionLoad_Lattice.setText(
             _translate("MainWindow", "Load Lattice"))
+        self.actionLoad_Lattice.setToolTip(
+            _translate("MainWindow", "Load Lattice."))
         self.actionLoad_Lattice.setShortcut(
             _translate("MainWindow", "Ctrl+Shift+L"))
         self.actionMPS_guardian.setText(
@@ -1043,11 +1058,19 @@ class Ui_MainWindow(object):
         self.actionMPS_guardian.setShortcut(
             _translate("MainWindow", "Ctrl+Shift+M"))
         self.actionSave_Task.setText(_translate("MainWindow", "Save Task"))
+        self.actionSave_Task.setIconText(_translate("MainWindow", "Save Data"))
+        self.actionSave_Task.setToolTip(
+            _translate("MainWindow",
+                       "Save data with scan task configurations."))
         self.actionSave_Task.setShortcut(
             _translate("MainWindow", "Alt+Shift+S"))
         self.actionSave.setText(_translate("MainWindow", "Save"))
         self.actionSave.setShortcut(_translate("MainWindow", "Ctrl+S"))
         self.actionLoad_Task.setText(_translate("MainWindow", "Load Task"))
+        self.actionLoad_Task.setIconText(_translate("MainWindow", "Load Data"))
+        self.actionLoad_Task.setToolTip(
+            _translate("MainWindow",
+                       "Load data with scan task configurations."))
         self.actionLoad_Task.setShortcut(
             _translate("MainWindow", "Alt+Shift+L"))
         self.actionVirtual_diag.setText(
@@ -1056,6 +1079,10 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Ctrl+Shift+V"))
         self.actionEnable_2D_Scan.setText(
             _translate("MainWindow", "Two Dimensional Analysis"))
+        self.actionEnable_2D_Scan.setIconText(
+            _translate("MainWindow", "High Dimensional"))
+        self.actionEnable_2D_Scan.setToolTip(
+            _translate("MainWindow", "Launch 2D scan with 3D visualization."))
         self.actionEnable_2D_Scan.setShortcut(
             _translate("MainWindow", "Ctrl+Shift+H"))
         self.actionDevice_Processor.setText(
