@@ -224,9 +224,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot('QString')
     def on_namefilter_changed(self, s):
-        print("triggered")
-        if s == '':
-            s = '*'
+        k = None
+        kv = s.split('=', 1)
+        if len(kv) == 2:
+            k, v = kv
+        else:
+            v = s
+        if v == '':
+            v = '*'
         m = self.treeView.model()
-        m.setFilterRegExp(translate(s))
+        m.sourceModel().set_filter_key(k)
+        m.setFilterRegExp(translate(v))
         self.total_show_number_lbl.setText(str(m.rowCount()))

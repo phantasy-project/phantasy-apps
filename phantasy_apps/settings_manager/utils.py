@@ -65,6 +65,18 @@ class SettingsModel(QStandardItemModel):
         #
         self.data_changed.connect(self.update_data)
 
+        self._filter_key = 'device'
+
+    def set_filter_key(self, s):
+        """set key for filtering."""
+        if not s:
+            self._filter_key = 'device'
+        else:
+            self._filter_key = s
+
+    def get_filter_key(self):
+        return self._filter_key
+
     def update_data(self, p):
         self._tv.clearSelection()
         self.setData(*p)
@@ -198,6 +210,10 @@ class _SortProxyModel(QSortFilterProxyModel):
     def __init__(self, model):
         super(self.__class__, self).__init__()
         self.setSourceModel(model)
+        self.filter_col_index = {
+            'device': model.i_name,
+            'field': model.i_field,
+            'type': model.i_type}
 
     def lessThan(self, left, right):
         left_data = left.data(Qt.DisplayRole)
@@ -220,7 +236,8 @@ class _SortProxyModel(QSortFilterProxyModel):
 
     def filterAcceptsRow(self, src_row, src_parent):
         src_model = self.sourceModel()
-        src_index = src_model.index(src_row, 0)
+        idx = self.filter_col_index[src_model.get_filter_key()]
+        src_index = src_model.index(src_row, idx)
         var = src_index.data(Qt.DisplayRole)
         return re.match(self.filterRegExp().pattern(), var) is not None
 
