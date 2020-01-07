@@ -158,6 +158,8 @@ def get_app_version(name):
         from phantasy_apps.pm_viewer import __version__ as ver
     elif name == 'Online Model':
         from phantasy_apps.online_model import __version__ as ver
+    elif name == 'Settings Manager':
+        from phantasy_apps.settings_manager import __version__ as ver
     else:
         raise RuntimeError
     return ver
