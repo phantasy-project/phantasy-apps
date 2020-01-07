@@ -233,8 +233,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.ems_detail_btn.clicked.connect(self.on_show_ems)
         self._device_widget = None
 
-        # init model
-        self.ion_charge_lineEdit.textChanged.emit(self.ion_charge_lineEdit.text())
+        # init model, ion info
+        for o in (self.ion_charge_lineEdit, self.ion_mass_lineEdit,
+                  self.ion_name_lineEdit):
+            o.textChanged.emit(o.text())
 
         # default config btn, menu --> history settings
         self._init_revert_config_btn()
@@ -1200,7 +1202,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
               self.ion_mass_lineEdit)
         for v, w in zip((n, q, a), ws):
             w.setText(str(v))
-        self.ion_energy_lineEdit.setText(str(ek))
+        self.ion_energy_lineEdit.setText("{0:.6g}".format(ek))
         try:
             self.on_update_model()
         except:
