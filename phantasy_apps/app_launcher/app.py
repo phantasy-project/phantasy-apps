@@ -23,8 +23,8 @@ from .app_log import LogWidget
 
 
 MSG_TEMPLATE = "<b><span style='text-decoration: underline;'>{msg[0]}:</span></b><p>{msg[1]}</p>"
-#DEFAULT_MSG = '<p align="center"><span style="font-weight:600;">FRIB High-level Physics Controls Applications</span></p><p align="center">Click Button to Launch App</p>'
-DEFAULT_MSG = 'FRIB High-level Physics Controls Applications'
+DEFAULT_MSG = '<p align="center">FRIB High-level Physics Controls Applications<br/><small align="center"><span style="font-weight:normal;color:gray;">Double-clicking to Launch App</span></small></p>'
+#DEFAULT_MSG = 'FRIB High-level Physics Controls Applications'
 
 
 class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
@@ -56,7 +56,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         self.app_about_info = """
             <html>
             <h4>About Launcher App</h4>
-            <p>This app features the access portal for available
+            <p>This app features the access portal of the available
             physics apps for FRIB, current version is {}.
             </p>
             <p>Copyright (C) 2019 Facility for Rare Isotope Beams and other contributors.</p>
