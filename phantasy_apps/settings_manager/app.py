@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import json
+from collections import OrderedDict
 from fnmatch import translate
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
 from phantasy_ui import BaseAppForm
+from phantasy_ui import get_save_filename
+from phantasy_ui import get_open_filename
 from phantasy_ui.widgets import LatticeWidget
 from phantasy_apps.utils import printlog
+from phantasy import Settings
 
 from .app_loadfrom import LoadSettingsDialog
 from .ui.ui_app import Ui_MainWindow
@@ -131,6 +136,40 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Save settings to file.
         """
         print("Save settings to file")
+        filename, ext = get_save_filename(self,
+                caption="Save Settings to a File",
+                type_filter="JSON Files (*.json);;HDF5 Files (*.h5)")
+        if filename is None:
+            return
+        ext = ext.upper()
+        if ext == 'JSON':
+            self._save_settings_as_json(filename)
+        elif ext == 'H5':
+            self._save_settings_as_h5(filename)
+
+    def _save_settings_as_json(self, filename):
+        m = self._tv.model()
+
+        data = OrderedDict()
+        for ir in range(m.rowCount()):
+            ename = m.data(m.index(ir, 0))
+            fname = m.data(m.index(ir, 1))
+            fsetp = float(m.data(m.index(ir, 4)))
+            if ename not in data:
+                data.update({ename: {fname: fsetp}})
+            else:
+                data[ename].update({fname: fsetp})
+
+        with open(filename, 'w') as f:
+            json.dump(data, f, indent=2)
+
+        QMessageBox.information(
+                self, "", "Save data to {}".format(filename))
+
+        printlog("Saved settings to {}.".format(filename))
+
+    def _save_settings_as_h5(self, filename):
+        pass
 
     @pyqtSlot()
     def on_load_from_snp(self):
@@ -240,3 +279,39 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.sourceModel().set_filter_key(k)
         m.setFilterRegExp(translate(v))
         self.total_show_number_lbl.setText(str(m.rowCount()))
+
+    @pyqtSlot()
+    def on_load(self):
+        """Load settings from file."""
+        filepath, ext = get_open_filename(self,
+                caption="Load Settings from a File",
+                type_filter="JSON Files (*.json);;HDF5 Files (*.h5)")
+        if filepath is None:
+            return
+        printlog("Loading settings from {}.".format(filepath))
+        scan_task = self.load_settings(filepath)
+
+    def load_settings(self, filepath):
+        lat = self._mp.work_lattice_conf
+        s = make_settings(filepath, lat)
+        lat.settings = s
+        flat_settings, settings = pack_lattice_settings(lat)
+        self.settingsLoaded.emit(flat_settings, settings)
+        self.__settings = s
+
+
+def make_settings(filepath, lat):
+    """Make settings, if both ENG and PHY exist, only keep PHY."""
+    s = Settings(filepath)
+    nm = {o.name:o for o in lat}
+    s_phy = s.copy()
+    for k, v in s.items():
+        elem = nm[k]
+        phy_fields = elem.get_phy_fields()
+        if phy_fields:
+            s_phy[k] = {}
+            for f in phy_fields:
+                s_phy[k].update({f: v[f]})
+    return s_phy
+
+
