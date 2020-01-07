@@ -175,7 +175,8 @@ class SettingsModel(QStandardItemModel):
                 continue
             rd_pv0 = fld.readback_pv[0]
             sp_pv0 = fld.setpoint_pv[0]
-            fld.set_auto_monitor()
+            fld.set_auto_monitor(True, 'readback')
+            fld.set_auto_monitor(True, 'setpoint')
             for (icol, pv, vtyp) in zip(
                     (self.i_rd, self.i_cset),
                     (rd_pv0, sp_pv0),
