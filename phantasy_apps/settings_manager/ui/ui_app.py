@@ -109,6 +109,11 @@ class Ui_MainWindow(object):
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
+        self.line = QtWidgets.QFrame(self.centralwidget)
+        self.line.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.horizontalLayout.addWidget(self.line)
         self.label_5 = QtWidgets.QLabel(self.centralwidget)
         self.label_5.setObjectName("label_5")
         self.horizontalLayout.addWidget(self.label_5)
@@ -187,7 +192,7 @@ class Ui_MainWindow(object):
         self.action_Save.setObjectName("action_Save")
         self.actionLoad_From_Snapshot = QtWidgets.QAction(MainWindow)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
+        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/folder-open-snp.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionLoad_From_Snapshot.setIcon(icon3)
         self.actionLoad_From_Snapshot.setObjectName("actionLoad_From_Snapshot")
@@ -213,6 +218,12 @@ class Ui_MainWindow(object):
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionLoad_Lattice.setIcon(icon6)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
+        self.actionLoad_Settings = QtWidgets.QAction(MainWindow)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionLoad_Settings.setIcon(icon7)
+        self.actionLoad_Settings.setObjectName("actionLoad_Settings")
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.action_About)
@@ -221,9 +232,11 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_Help.menuAction())
         self.toolBar.addAction(self.actionLoad_Lattice)
         self.toolBar.addAction(self.action_Save)
+        self.toolBar.addAction(self.actionLoad_Settings)
         self.toolBar.addAction(self.actionLoad_From_Snapshot)
         self.toolBar.addAction(self.actionPhysics_Fields)
         self.toolBar.addAction(self.actionEngineering_Fields)
+        self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionE_xit)
 
         self.retranslateUi(MainWindow)
@@ -242,6 +255,7 @@ class Ui_MainWindow(object):
         self.treeView.clicked['QModelIndex'].connect(MainWindow.on_click_view)
         self.namefilter_lineEdit.textChanged['QString'].connect(
             MainWindow.on_namefilter_changed)
+        self.actionLoad_Settings.triggered.connect(MainWindow.on_load)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -321,6 +335,8 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Load Lattice."))
         self.actionLoad_Lattice.setShortcut(
             _translate("MainWindow", "Ctrl+Shift+L"))
+        self.actionLoad_Settings.setText(
+            _translate("MainWindow", "Load Settings"))
 
 
 from . import resources_rc
