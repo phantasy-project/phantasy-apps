@@ -1200,7 +1200,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
               self.ion_mass_lineEdit)
         for v, w in zip((n, q, a), ws):
             w.setText(str(v))
-        self.ion_energy_lineEdit.setText(str(ek))
+        self.ion_energy_lineEdit.setText("{0:.6g}".format(ek))
         try:
             self.on_update_model()
         except:
