@@ -12,7 +12,6 @@ from PyQt5.QtCore import pyqtSignal
 from numpy import ndarray
 
 from phantasy import Configuration
-from phantasy import ensure_put
 from phantasy_apps.wire_scanner.utils import wait as _wait
 from .utils import find_dconf
 
@@ -291,7 +290,7 @@ class Device(QObject):
 
     def turn_on_bias_voltage(self, timeout=10):
         _LOGGER.info("Turn on bias voltage for FC...")
-        ensure_put(self.elem, 'BIAS_VOLT_ON', 1, tol=1.0, timeout=timeout)
+        self.elem.ensure_put('BIAS_VOLT_ON', 1, tol=1.0, timeout=timeout)
         if self.elem.BIAS_VOLT_ON == 1:
             _LOGGER.info("Bias voltage switch is ON.")
             return True
@@ -302,7 +301,7 @@ class Device(QObject):
     def set_bias_voltage(self, timeout=10):
         _LOGGER.info("Set bias voltage for FC...")
         volt = self.bias_volt_threshold
-        ensure_put(self.elem, 'BIAS_VOLT', volt, tol=1.0, timeout=timeout)
+        self.elem.ensure_put('BIAS_VOLT', volt, tol=1.0, timeout=timeout)
         _LOGGER.info("Bias voltage now is {}.".format(self.elem.BIAS_VOLT))
         if self.is_bias_volt_ready('readback'):
             _LOGGER.info("Bias voltage is ready.")
@@ -315,7 +314,7 @@ class Device(QObject):
         """Make device ready for the movement."""
         _LOGGER.info("Enable device...")
         fname = "ENABLE_SCAN{}".format(self._id)
-        r = ensure_put(self.elem, fname, 1, tol=1.0, timeout=timeout)
+        r = self.elem.ensure_put(fname, 1, tol=1.0, timeout=timeout)
         if r == 'PutFinished':
             _LOGGER.info("Device is enabled.")
             return True
