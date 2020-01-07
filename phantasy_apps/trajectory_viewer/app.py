@@ -416,6 +416,7 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         if self._lattice_load_window is None:
             self._lattice_load_window = LatticeWidget()
             self._lattice_load_window.latticeChanged.connect(self.update_lattice)
+            self._lattice_load_window.latticeChanged.connect(self._lattice_load_window.close)
         self._lattice_load_window.show()
         # reset element selection widgets
         self._elem_sel_widgets = {}
