@@ -78,16 +78,14 @@ class SettingsModel(QStandardItemModel):
         return self._filter_key
 
     def update_data(self, p):
-        self._tv.clearSelection()
+        #self._tv.clearSelection()
         self.setData(*p)
 
     def set_data(self):
 
-        def _cb(item_val, item_ename, icol, **kws):
+        def _cb(item_val, **kws):
                 val = FMT.format(kws.get('value'))
-                idx_p = item_ename.index()
                 idx_c = item_val.index()
-                idx = self.index(idx_c.row(), idx_c.column(), idx_p)
                 self.data_changed.emit((idx_c, val, Qt.DisplayRole))
 
         sppv_cnt = 0
@@ -103,6 +101,7 @@ class SettingsModel(QStandardItemModel):
                 continue
             item_ename.fobj = fld
             item_ename.ftype = fld.ftype
+            item_ename.setCheckable(True)
 
             # PVs, setpoint and readback
             for sp_obj, rd_obj in zip(fld.setpoint_pv, fld.readback_pv):
@@ -114,12 +113,12 @@ class SettingsModel(QStandardItemModel):
                 [i.setEditable(False) for i in (it_sp_n, it_sp_v,
                                                 it_rd_n, it_rd_v)]
 
-                item_ename.appendRow((it_sp_n, it_sp_v))
-                item_ename.appendRow((it_rd_n, it_rd_v))
+                item_ename.appendRow((it_sp_n, QStandardItem('-'), QStandardItem('-'), QStandardItem('-'), it_sp_v))
+                item_ename.appendRow((it_rd_n, QStandardItem('-'), QStandardItem('-'), it_rd_v, QStandardItem('-')))
 
                 # cbs
-                sp_obj.add_callback(partial(_cb, it_sp_v, item_ename, 1))
-                rd_obj.add_callback(partial(_cb, it_rd_v, item_ename, 1))
+                sp_obj.add_callback(partial(_cb, it_sp_v))
+                rd_obj.add_callback(partial(_cb, it_rd_v))
                 self._pvs.append(sp_obj)
                 self._pvs.append(rd_obj)
                 sppv_cnt += 1
@@ -229,6 +228,7 @@ class _SortProxyModel(QSortFilterProxyModel):
                 if r_left is not None and r_right is not None:
                     left_data = r_left.group(1)
                     right_data = r_right.group(1)
+
             r = left_data < right_data
         return r
 
@@ -267,6 +267,12 @@ def convert_settings(settings_read, lat):
 
 def pack_lattice_settings(lat, only_physics=False):
     """Pack up element settings of lattice object as a tuple to return.
+
+    Returns
+    -------
+    t : tuple
+        Tuple of (flat_s[list], s[Settings]), element of flat_s:
+        (CaElement, field_name, CaField, field_value)
     """
     settings = lat.get_settings(only_physics=only_physics)
     flat_settings = convert_settings(settings, lat)
