@@ -21,7 +21,8 @@ from .app_pref import PreferencesDialog
 from .ui.ui_app import Ui_MainWindow
 from .utils import SettingsModel
 from .utils import pack_lattice_settings
-from .utils import FlatSettings
+from .data import FlatSettings
+from .data import make_physics_settings
 
 
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
@@ -337,14 +338,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         elif ext == 'H5':
             self._load_settings_from_h5(filepath)
         QMessageBox.information(
-                self, "", "Loaded data to {}".format(filename))
+                self, "", "Loaded data to {}".format(filepath))
         printlog("Loaded settings from {}.".format(filepath))
 
     def _load_settings_from_csv(self, filepath):
         lat = self._mp.work_lattice_conf
-        s = make_settings(filepath, lat)
+        s = make_physics_settings(FlatSettings(filepath), lat)
         lat.settings = s
-        flat_settings, settings = pack_lattice_settings(lat)
+        flat_settings, settings = pack_lattice_settings(lat,
+                data_source=DATA_SRC_MAP[self.field_init_mode],
+                only_physics=False)
         self.settingsLoaded.emit(flat_settings, settings)
         self.__settings = s
 
