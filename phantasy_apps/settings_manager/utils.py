@@ -3,6 +3,7 @@
 
 from collections import OrderedDict
 from functools import partial
+import csv
 import re
 
 from PyQt5.QtCore import Qt
@@ -277,3 +278,38 @@ def pack_lattice_settings(lat, only_physics=False):
     settings = lat.get_settings(only_physics=only_physics)
     flat_settings = convert_settings(settings, lat)
     return flat_settings, settings
+
+
+class FlatSettings(list):
+    """List of device settings, each list element is a tuple of device name,
+    field name, field set value ,field value value and last field set value.
+    """
+    def __init__(self, settings_path=None, **kws):
+        # settings_path is csv file path.
+        super(FlatSettings, self).__init__()
+        self.header = None
+        if isinstance(settings_path, str):
+            delimiter = kws.get('delimiter', ',')
+            skipheader = kws.get('skipheader', True)
+            self.read(settings_path, delimiter, skipheader)
+
+    def read(self, path, delimiter=',', skipheader=True):
+        """Read CSV file with the first line as header.
+        """
+        with open(path, 'r') as f:
+            ss = csv.reader(f, delimiter=delimiter, skipinitialspace=True)
+            if skipheader: self.header = next(ss)
+            for name, field, sp, rd, last_sp in ss:
+                self.append((name, field, float(sp), float(rd), float(last_sp)))
+
+    def write(self, filepath, header=None, delimiter=','):
+        """Write settings into *filepath*.
+        """
+        with open(filepath, 'w') as fp:
+            ss = csv.writer(fp, delimiter=delimiter)
+            if header is not None:
+                ss.writerow(header)
+            elif self.header is not None:
+                ss.writerow(self.header)
+            for name, field, sp, rd, old_sp in self:
+                ss.writerow((name, field, sp, rd, old_sp))
