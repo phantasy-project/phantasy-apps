@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+#debug
+import numpy as np
+import time
+#
+
 from collections import OrderedDict
 from functools import partial
 import re
@@ -48,6 +53,12 @@ class SettingsModel(QStandardItemModel):
     settings_sts = pyqtSignal(int, int, int)
 
     def __init__(self, parent, flat_settings):
+        # debug
+        self.N = 50000
+        self._not_saved = True
+        self.ts_pool = np.zeros(self.N)
+        self.ts_i = 0
+        #
         super(self.__class__, self).__init__(parent)
         self._settings = flat_settings
         self._tv = parent
@@ -80,6 +91,18 @@ class SettingsModel(QStandardItemModel):
     def update_data(self, p):
         #self._tv.clearSelection()
         self.setData(*p)
+        # debug
+        #msg = 'Updated ({}, {}): {}'.format(p[0].row(), p[0].column(), p[1])
+        #printlog(msg)
+
+        if self.ts_i < self.N:
+            self.ts_pool[self.ts_i] = time.time()
+            self.ts_i += 1
+        else:
+            if self._not_saved:
+                printlog("Dump data now.")
+                np.save('/tmp/ts.npy', self.ts_pool)
+                self._not_saved = False
 
     def set_data(self):
 

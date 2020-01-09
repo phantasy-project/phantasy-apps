@@ -113,10 +113,20 @@ class Ui_MainWindow(object):
                                                  "}")
         self.total_rdpv_number_lbl.setObjectName("total_rdpv_number_lbl")
         self.horizontalLayout.addWidget(self.total_rdpv_number_lbl)
-        spacerItem = QtWidgets.QSpacerItem(140, 20,
+        spacerItem = QtWidgets.QSpacerItem(40, 20,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
+        self.label_6 = QtWidgets.QLabel(self.centralwidget)
+        self.label_6.setObjectName("label_6")
+        self.horizontalLayout.addWidget(self.label_6)
+        self.max_update_rate_sbox = QtWidgets.QSpinBox(self.centralwidget)
+        self.max_update_rate_sbox.setPrefix("")
+        self.max_update_rate_sbox.setMinimum(0)
+        self.max_update_rate_sbox.setMaximum(20)
+        self.max_update_rate_sbox.setProperty("value", 1)
+        self.max_update_rate_sbox.setObjectName("max_update_rate_sbox")
+        self.horizontalLayout.addWidget(self.max_update_rate_sbox)
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setFrameShape(QtWidgets.QFrame.VLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -274,6 +284,8 @@ class Ui_MainWindow(object):
         self.actionPreferences.triggered.connect(
             MainWindow.on_launch_preferences)
         self.reload_lattice_btn.clicked.connect(MainWindow.on_reload_lattice)
+        self.max_update_rate_sbox.valueChanged['int'].connect(
+            MainWindow.on_update_max_rate)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -297,6 +309,8 @@ class Ui_MainWindow(object):
         self.total_sppv_number_lbl.setText(_translate("MainWindow", "0"))
         self.label_3.setText(_translate("MainWindow", "Readback PVs"))
         self.total_rdpv_number_lbl.setText(_translate("MainWindow", "0"))
+        self.label_6.setText(_translate("MainWindow", "Max Rate"))
+        self.max_update_rate_sbox.setSuffix(_translate("MainWindow", " Hz"))
         self.label_5.setText(_translate("MainWindow", "Search"))
         self.namefilter_lineEdit.setToolTip(
             _translate(

@@ -381,6 +381,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             printlog("Field init mode is not changed, {}".format(self.field_init_mode))
 
+    @pyqtSlot(int)
+    def on_update_max_rate(self, i):
+        self._max_update_rate = i
+
 
 def make_settings(filepath, lat):
     """Make settings, if both ENG and PHY exist, only keep PHY."""
