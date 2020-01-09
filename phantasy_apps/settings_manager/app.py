@@ -85,6 +85,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                         data_source=DATA_SRC_MAP[self.field_init_mode],
                         only_physics=False)
         self.settingsLoaded.emit(flat_settings, settings)
+        printlog("Lattice is changed")
 
     def _enable_widgets(self, enabled):
         for w in (self.lv_lbl, self.lv_mach_lbl, self.lv_segm_lbl,
@@ -363,6 +364,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         if self._pref_dlg is None:
             self._pref_dlg = PreferencesDialog(self)
+            self._pref_dlg._post_init()
         r = self._pref_dlg.exec_()
         if r == QDialog.Accepted:
             _mode = self.field_init_mode
