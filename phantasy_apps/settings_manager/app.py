@@ -89,13 +89,21 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def _enable_widgets(self, enabled):
         for w in (self.lv_lbl, self.lv_mach_lbl, self.lv_segm_lbl,
-                  self.lv_view_btn):
+                  self.lv_view_btn,
+                  self.reload_lattice_btn):
             w.setEnabled(enabled)
 
     def update_lattice_info_lbls(self, mach, segm):
         self._enable_widgets(True)
         self.lv_mach_lbl.setText(mach)
         self.lv_segm_lbl.setText(segm)
+
+    @pyqtSlot()
+    def on_reload_lattice(self):
+        """Reload lattice.
+        """
+        self.actionLoad_Lattice.triggered.emit()
+        self._lattice_load_window.load_btn.clicked.emit()
 
     @pyqtSlot(QVariant, QVariant)
     def on_settings_loaded(self, flat_settings, settings):
