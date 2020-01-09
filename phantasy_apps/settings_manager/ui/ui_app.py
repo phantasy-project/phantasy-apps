@@ -224,6 +224,12 @@ class Ui_MainWindow(object):
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionLoad_Settings.setIcon(icon7)
         self.actionLoad_Settings.setObjectName("actionLoad_Settings")
+        self.actionPreferences = QtWidgets.QAction(MainWindow)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/sm-icons/preferences.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionPreferences.setIcon(icon8)
+        self.actionPreferences.setObjectName("actionPreferences")
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.action_About)
@@ -237,6 +243,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionPhysics_Fields)
         self.toolBar.addAction(self.actionEngineering_Fields)
         self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionPreferences)
         self.toolBar.addAction(self.actionE_xit)
 
         self.retranslateUi(MainWindow)
@@ -252,10 +259,12 @@ class Ui_MainWindow(object):
         self.actionEngineering_Fields.toggled['bool'].connect(
             MainWindow.on_toggle_engfields)
         self.actionLoad_Lattice.triggered.connect(MainWindow.on_load_lattice)
-        self.treeView.clicked['QModelIndex'].connect(MainWindow.on_click_view)
         self.namefilter_lineEdit.textChanged['QString'].connect(
             MainWindow.on_namefilter_changed)
         self.actionLoad_Settings.triggered.connect(MainWindow.on_load)
+        self.treeView.clicked['QModelIndex'].connect(MainWindow.on_click_view)
+        self.actionPreferences.triggered.connect(
+            MainWindow.on_launch_preferences)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -337,6 +346,7 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Ctrl+Shift+L"))
         self.actionLoad_Settings.setText(
             _translate("MainWindow", "Load Settings"))
+        self.actionPreferences.setText(_translate("MainWindow", "Preferences"))
 
 
 from . import resources_rc
