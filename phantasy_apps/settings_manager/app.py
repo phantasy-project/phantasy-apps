@@ -8,6 +8,7 @@ from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QDialog
 from phantasy_ui import BaseAppForm
 from phantasy_ui import get_save_filename
 from phantasy_ui import get_open_filename
@@ -16,10 +17,14 @@ from phantasy_apps.utils import printlog
 from phantasy import Settings
 
 from .app_loadfrom import LoadSettingsDialog
+from .app_pref import PreferencesDialog
 from .ui.ui_app import Ui_MainWindow
 from .utils import SettingsModel
 from .utils import pack_lattice_settings
 from .utils import FlatSettings
+
+
+DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -75,7 +80,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.update_lattice_info_lbls(o.last_machine_name, o.last_lattice_name)
         # show element settings
-        flat_settings, settings = pack_lattice_settings(o.work_lattice_conf)
+        flat_settings, settings = pack_lattice_settings(o.work_lattice_conf,
+                        data_source=DATA_SRC_MAP[self.field_init_mode],
+                        only_physics=False)
         self.settingsLoaded.emit(flat_settings, settings)
 
     def _enable_widgets(self, enabled):
@@ -105,7 +112,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._pvs = model._pvs
 
         #
-        self.namefilter_lineEdit.textChanged.emit(self.namefilter_lineEdit.text())
+        self.toggle_ftype()
+        #self.namefilter_lineEdit.textChanged.emit(self.namefilter_lineEdit.text())
 
     @pyqtSlot(int, int, int)
     def on_settings_sts(self, i, j, k):
@@ -132,6 +140,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # show lattice settings
         self.settingsLoaded.connect(self.on_settings_loaded)
 
+        # preferences
+        self._pref_dlg = None
+        self.field_init_mode = 'live'
+
+
     def on_save(self):
         """Save settings to file.
         """
@@ -149,7 +162,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._save_settings_as_h5(filename)
 
         QMessageBox.information(
-                self, "", "Save data to {}".format(filename))
+                self, "", "Saved data to {}".format(filename))
         printlog("Saved settings to {}.".format(filename))
 
     def _save_settings_as_json(self, filename):
@@ -235,6 +248,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def toggle_ftype(self):
         m = self._tv.model()
+        if m is None:
+            return
         m.filter_ftypes = [k for k, v in self._eng_phy_toggle.items() if v is True]
         self.namefilter_lineEdit.textChanged.emit(self.namefilter_lineEdit.text())
 
@@ -311,19 +326,47 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Load settings from file."""
         filepath, ext = get_open_filename(self,
                 caption="Load Settings from a File",
-                type_filter="JSON Files (*.json);;HDF5 Files (*.h5)")
+                type_filter="CSV Files (*.csv);;JSON Files (*.json);;HDF5 Files (*.h5)")
         if filepath is None:
             return
-        printlog("Loading settings from {}.".format(filepath))
-        scan_task = self.load_settings(filepath)
+        ext = ext.upper()
+        if ext == 'CSV':
+            self._load_settings_from_csv(filepath)
+        elif ext == 'JSON':
+            self._load_settings_from_json(filepath)
+        elif ext == 'H5':
+            self._load_settings_from_h5(filepath)
+        QMessageBox.information(
+                self, "", "Loaded data to {}".format(filename))
+        printlog("Loaded settings from {}.".format(filepath))
 
-    def load_settings(self, filepath):
+    def _load_settings_from_csv(self, filepath):
         lat = self._mp.work_lattice_conf
         s = make_settings(filepath, lat)
         lat.settings = s
         flat_settings, settings = pack_lattice_settings(lat)
         self.settingsLoaded.emit(flat_settings, settings)
         self.__settings = s
+
+    def _load_settings_from_json(self, filepath):
+        pass
+
+    def _load_settings_from_h5(self, filepath):
+        pass
+
+    @pyqtSlot()
+    def on_launch_preferences(self):
+        """Launch preferences dialog.
+        """
+        if self._pref_dlg is None:
+            self._pref_dlg = PreferencesDialog(self)
+        r = self._pref_dlg.exec_()
+        if r == QDialog.Accepted:
+            _mode = self.field_init_mode
+            self.field_init_mode = self._pref_dlg.mode
+            printlog("Field init mode is changed from {} to {}".format(_mode, self.field_init_mode))
+        else:
+            printlog("Field init mode is not changed, {}".format(self.field_init_mode))
 
 
 def make_settings(filepath, lat):
