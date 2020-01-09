@@ -248,17 +248,16 @@ class _SortProxyModel(QSortFilterProxyModel):
                 re.match(self.filterRegExp().pattern(), var) is not None
 
 
-def convert_settings(settings_read, lat):
+def convert_settings(settings_read, elem_list):
     """Convert settings to flat, each tuple is composed of (CaElement,
     field name, CaField, field value)
     """
     flat_settings = []
-    nm = {o.name: o for o in lat}
-    latname = lat.name
+    nm = {o.name: o for o in elem_list}
     for ename, econf in settings_read.items():
         elem = nm.get(ename, None)
         if elem is None:
-            print("{} is not in lattice {} but defined in the settings.".format(ename, latname))
+            print("{} is not in lattice but defined in the settings.".format(ename))
             continue
         for fname, fval0 in econf.items():
             confline = (elem, fname, elem.get_field(fname), fval0)
@@ -266,8 +265,23 @@ def convert_settings(settings_read, lat):
     return flat_settings
 
 
-def pack_lattice_settings(lat, only_physics=False):
+def pack_lattice_settings(lat, elem_list=None, **kws):
     """Pack up element settings of lattice object as a tuple to return.
+
+    Parameters
+    ----------
+    elem_list : list
+        List of CaElement, if not defined, use the whole lattice.
+
+    Keyword Arguments
+    -----------------
+    data_source : str
+        'model' or 'control', get element settings from MODEL environment if
+        *data_source* is 'model', otherwise get live settings from controls
+        network.
+    only_physics : bool
+        If True, onle get physics settings, other wise, get engineering
+        settings as well.
 
     Returns
     -------
@@ -275,8 +289,9 @@ def pack_lattice_settings(lat, only_physics=False):
         Tuple of (flat_s[list], s[Settings]), element of flat_s:
         (CaElement, field_name, CaField, field_value)
     """
-    settings = lat.get_settings(only_physics=only_physics)
-    flat_settings = convert_settings(settings, lat)
+    elems = lat if elem_list is None else elem_list
+    settings = lat.get_settings_from_element_list(elems, **kws)
+    flat_settings = convert_settings(settings, elems)
     return flat_settings, settings
 
 
