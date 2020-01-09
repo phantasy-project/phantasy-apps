@@ -19,6 +19,7 @@ from .app_loadfrom import LoadSettingsDialog
 from .ui.ui_app import Ui_MainWindow
 from .utils import SettingsModel
 from .utils import pack_lattice_settings
+from .utils import FlatSettings
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -76,7 +77,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # show element settings
         flat_settings, settings = pack_lattice_settings(o.work_lattice_conf)
         self.settingsLoaded.emit(flat_settings, settings)
-        print("Lattice is changed ...")
 
     def _enable_widgets(self, enabled):
         for w in (self.lv_lbl, self.lv_mach_lbl, self.lv_segm_lbl,
@@ -135,38 +135,54 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_save(self):
         """Save settings to file.
         """
-        print("Save settings to file")
         filename, ext = get_save_filename(self,
                 caption="Save Settings to a File",
-                type_filter="JSON Files (*.json);;HDF5 Files (*.h5)")
+                type_filter="CSV Files (*.csv);;JSON Files (*.json);;HDF5 Files (*.h5)")
         if filename is None:
             return
         ext = ext.upper()
+        if ext == 'CSV':
+            self._save_settings_as_csv(filename)
         if ext == 'JSON':
             self._save_settings_as_json(filename)
         elif ext == 'H5':
             self._save_settings_as_h5(filename)
 
+        QMessageBox.information(
+                self, "", "Save data to {}".format(filename))
+        printlog("Saved settings to {}.".format(filename))
+
     def _save_settings_as_json(self, filename):
-        m = self._tv.model()
-
-        data = OrderedDict()
-        for ir in range(m.rowCount()):
-            ename = m.data(m.index(ir, 0))
-            fname = m.data(m.index(ir, 1))
-            fsetp = float(m.data(m.index(ir, 4)))
-            if ename not in data:
-                data.update({ename: {fname: fsetp}})
-            else:
-                data[ename].update({fname: fsetp})
-
+        s = self.get_settings()
         with open(filename, 'w') as f:
             json.dump(data, f, indent=2)
 
-        QMessageBox.information(
-                self, "", "Save data to {}".format(filename))
+    def _save_settings_as_csv(self, filename):
+        s = self.get_settings()
+        header = ('name', 'field', 'setpoint', 'readback', 'last_setpoint')
+        s.write(filename, header=header)
 
-        printlog("Saved settings to {}.".format(filename))
+    def _save_settings_as_h5(self, filename):
+        pass
+
+    def get_settings(self):
+        m = self._tv.model()
+        src_m = m.sourceModel()
+        # sp: last_sp
+        # live_sp: sp about to save
+        # live_rd: rb at live_sp
+        i_name, i_field, i_sp, i_live_rd, i_live_sp = \
+            src_m.i_name, src_m.i_field, src_m.i_val0, src_m.i_rd, src_m.i_cset
+
+        data = FlatSettings()
+        for irow in range(m.rowCount()):
+            ename = m.data(m.index(irow, i_name))
+            fname = m.data(m.index(irow, i_field))
+            f_new_sp = float(m.data(m.index(irow, i_live_sp)))
+            f_old_sp = float(m.data(m.index(irow, i_sp)))
+            f_new_rd = float(m.data(m.index(irow, i_live_rd)))
+            data.append((ename, fname, f_new_sp, f_new_rd, f_old_sp))
+        return data
 
     def _save_settings_as_h5(self, filename):
         pass
@@ -255,6 +271,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lv.show()
 
     def on_click_view(self, idx):
+        r, c = idx.row(), idx.column()
+        m = self._tv.model()
+        src_m = m.sourceModel()
+        src_idx = m.mapToSource(idx)
+        src_r, src_c = src_idx.row(), src_idx.column()
+        printlog("Index of PxyModel ({}, {}), text: {}".format(
+            r, c, str(m.data(idx))))
+        printlog("Index of SrcModel ({}, {}), text: {}".format(
+            src_r, src_c, str(src_m.data(src_idx))))
+
         printlog("Clicked: ({}, {}), item is expanded? ({})".format(
             idx.row(), idx.column(), self._tv.isExpanded(idx)))
 
