@@ -33,6 +33,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # signal: settings loaded, emit flat_settings and settings.
     settingsLoaded = pyqtSignal(QVariant, QVariant)
 
+    # refresh rate
+    rate_changed = pyqtSignal(int)
+
     def __init__(self, version):
         super(SettingsManagerWindow, self).__init__()
 
@@ -150,10 +153,31 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # show lattice settings
         self.settingsLoaded.connect(self.on_settings_loaded)
 
+        # update rate
+        self.rate_changed.connect(self.on_update_rate_changed)
+        self.update_rate_sbox.setValue(-1)
+
         # preferences
         self._pref_dlg = None
         self.field_init_mode = 'live'
 
+    @pyqtSlot(int)
+    def on_update_rate_changed(self, i):
+        # cases:
+        # 1. -1: auto, max rate depends on devices
+        # 2.  0: stop updating
+        # 3.  i: update every 1/i second
+        if i == -1:
+            self.enable_auto_update()
+            tt = "Auto updating rate."
+        elif i == 0:
+            self.pause_update()
+            tt = "Stop updating."
+        else:
+            printlog('updating controled by timer')
+            tt = "Updating at {} Hz.".format(i)
+            #self.updater = 
+        self.update_rate_sbox.setToolTip(tt)
 
     def on_save(self):
         """Save settings to file.
@@ -382,8 +406,19 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             printlog("Field init mode is not changed, {}".format(self.field_init_mode))
 
     @pyqtSlot(int)
-    def on_update_max_rate(self, i):
-        self._max_update_rate = i
+    def on_update_rate(self, i):
+        self._update_rate = i
+        self.rate_changed.emit(i)
+
+    def enable_auto_update(self):
+        # resume updating.
+        for pv in self._pvs:
+            pv.auto_monitor = True
+
+    def pause_update(self):
+        # pause updating.
+        for pv in self._pvs:
+            pv.auto_monitor = False
 
 
 def make_settings(filepath, lat):
