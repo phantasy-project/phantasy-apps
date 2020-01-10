@@ -111,9 +111,9 @@ class SettingsModel(QStandardItemModel):
                 idx_c = item_val.index()
                 self.data_changed.emit((idx_c, val, Qt.DisplayRole))
 
-        sppv_cnt = 0
-        rdpv_cnt = 0
-        elem_list = []
+        sppv_set = set()
+        rdpv_set = set()
+        ename_set = set()
 
         for elem, fname, fld, fval0 in self._settings:
             item_ename = QStandardItem(elem.name)
@@ -142,10 +142,11 @@ class SettingsModel(QStandardItemModel):
                 # cbs
                 sp_obj.add_callback(partial(_cb, it_sp_v))
                 rd_obj.add_callback(partial(_cb, it_rd_v))
-                self._pvs.append(sp_obj)
-                self._pvs.append(rd_obj)
-                sppv_cnt += 1
-                rdpv_cnt += 1
+                for o in (sp_obj, rd_obj,):
+                    if o not in self._pvs:
+                        self._pvs.append(o)
+                sppv_set.add(sp_obj.pvname)
+                rdpv_set.add(rd_obj.pvname)
 
             #
             item_fname = QStandardItem(fname)
@@ -164,10 +165,9 @@ class SettingsModel(QStandardItemModel):
                     row.append(item)
             [i.setEditable(False) for i in row]
             self.appendRow(row)
-            if elem.name not in elem_list:
-                elem_list.append(elem.name)
+            ename_set.add(elem.name)
 
-        self.settings_sts.emit(len(elem_list), sppv_cnt, rdpv_cnt)
+        self.settings_sts.emit(len(ename_set), len(sppv_set), len(rdpv_set))
 
     def set_model(self):
         # set data
@@ -204,8 +204,9 @@ class SettingsModel(QStandardItemModel):
                     (rd_pv0, sp_pv0),
                     ('rd', 'sp')):
                 pv.add_callback(partial(_cb, item0, icol, fld, vtyp))
-            for i in fld.readback_pv + fld.setpoint_pv:
-                self._pvs.append(i)
+            for o in fld.readback_pv + fld.setpoint_pv:
+                if o not in self._pvs:
+                    self._pvs.append(o)
 
     def __post_init_ui(self, tv):
         # set headers

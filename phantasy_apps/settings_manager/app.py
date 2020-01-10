@@ -141,7 +141,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._mp = None
         self.__settings = None
         self.__flat_settings = None
-        self._pvs = []
+        self._pvs = set()
         self._eng_phy_toggle = {'ENG': True, 'PHY': True}
         self.on_lattice_changed(self._mp)
 
