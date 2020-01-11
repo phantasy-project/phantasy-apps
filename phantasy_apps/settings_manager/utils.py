@@ -212,7 +212,7 @@ class SettingsModel(QStandardItemModel):
         for i in self.ids:
             tv.resizeColumnToContents(i)
         tv.setSortingEnabled(True)
-        tv.model().sort(self.i_name)
+        tv.model().sort(self.i_pos)
         tv.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         tv.collapseAll()
 
@@ -225,6 +225,10 @@ class _SortProxyModel(QSortFilterProxyModel):
         self.filter_col_index = {
             'device': model.i_name,
             'field': model.i_field,
+            'pos': model.i_pos,
+            'setpoint': model.i_val0,
+            'live_readback': model.i_rd,
+            'live_setpoint': model.i_cset,
             'type': model.i_type}
         self.filter_ftypes = ['ENG', 'PHY']
 
