@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-#debug
-import numpy as np
-import time
-#
-
 from collections import OrderedDict
 from functools import partial
 import re
@@ -53,17 +48,15 @@ class SettingsModel(QStandardItemModel):
     settings_sts = pyqtSignal(int, int, int)
 
     def __init__(self, parent, flat_settings):
-        # debug
-        self.N = 50000
-        self._not_saved = True
-        self.ts_pool = np.zeros(self.N)
-        self.ts_i = 0
-        #
         super(self.__class__, self).__init__(parent)
         self._settings = flat_settings
         self._tv = parent
-        #
+        # [PV] cb PV pool
         self._pvs = []
+        # [obj(PV/CaField)]: [index[list]]
+        self._m_obj = [] # PV and CaField
+        self._m_idx = [] # list of index(parent), [rd, sp]
+
 
         # header
         self.header = self.h_name, self.h_field, self.h_val0, self.h_rd, self.h_cset, \
@@ -89,20 +82,7 @@ class SettingsModel(QStandardItemModel):
         return self._filter_key
 
     def update_data(self, p):
-        #self._tv.clearSelection()
         self.setData(*p)
-        # debug
-        #msg = 'Updated ({}, {}): {}'.format(p[0].row(), p[0].column(), p[1])
-        #printlog(msg)
-
-        if self.ts_i < self.N:
-            self.ts_pool[self.ts_i] = time.time()
-            self.ts_i += 1
-        else:
-            if self._not_saved:
-                printlog("Dump data now.")
-                np.save('/tmp/ts.npy', self.ts_pool)
-                self._not_saved = False
 
     def set_data(self):
 
@@ -145,6 +125,15 @@ class SettingsModel(QStandardItemModel):
                 for o in (sp_obj, rd_obj,):
                     if o not in self._pvs:
                         self._pvs.append(o)
+
+                for o, item in zip((sp_obj, rd_obj), (it_sp_v, it_rd_v)):
+                    idx = self.indexFromItem(item)
+                    if o not in self._m_obj:
+                        self._m_obj.append(o)
+                        self._m_idx.append([idx])
+                    else:
+                        self._m_idx[self._m_obj.index(o)].append(idx)
+
                 sppv_set.add(sp_obj.pvname)
                 rdpv_set.add(rd_obj.pvname)
 
@@ -207,6 +196,9 @@ class SettingsModel(QStandardItemModel):
             for o in fld.readback_pv + fld.setpoint_pv:
                 if o not in self._pvs:
                     self._pvs.append(o)
+
+            self._m_obj.append(fld)
+            self._m_idx.append([self.index(irow, self.i_rd), self.index(irow, self.i_cset)])
 
     def __post_init_ui(self, tv):
         # set headers
