@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_app.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -120,13 +120,28 @@ class Ui_MainWindow(object):
         self.label_6 = QtWidgets.QLabel(self.centralwidget)
         self.label_6.setObjectName("label_6")
         self.horizontalLayout.addWidget(self.label_6)
-        self.update_rate_sbox = QtWidgets.QSpinBox(self.centralwidget)
-        self.update_rate_sbox.setPrefix("")
-        self.update_rate_sbox.setMinimum(-1)
-        self.update_rate_sbox.setMaximum(5)
-        self.update_rate_sbox.setProperty("value", 1)
-        self.update_rate_sbox.setObjectName("update_rate_sbox")
-        self.horizontalLayout.addWidget(self.update_rate_sbox)
+        self.update_rate_cbb = QtWidgets.QComboBox(self.centralwidget)
+        self.update_rate_cbb.setEnabled(False)
+        self.update_rate_cbb.setObjectName("update_rate_cbb")
+        self.update_rate_cbb.addItem("")
+        self.update_rate_cbb.addItem("")
+        self.update_rate_cbb.addItem("")
+        self.update_rate_cbb.addItem("")
+        self.update_rate_cbb.addItem("")
+        self.update_rate_cbb.addItem("")
+        self.horizontalLayout.addWidget(self.update_rate_cbb)
+        self.update_ctrl_btn = QtWidgets.QToolButton(self.centralwidget)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/start.png"),
+                        QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/stop.png"),
+                        QtGui.QIcon.Active, QtGui.QIcon.On)
+        self.update_ctrl_btn.setIcon(icon2)
+        self.update_ctrl_btn.setCheckable(True)
+        self.update_ctrl_btn.setChecked(False)
+        self.update_ctrl_btn.setAutoRaise(False)
+        self.update_ctrl_btn.setObjectName("update_ctrl_btn")
+        self.horizontalLayout.addWidget(self.update_ctrl_btn)
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setFrameShape(QtWidgets.QFrame.VLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -169,7 +184,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 31))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 26))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -195,58 +210,58 @@ class Ui_MainWindow(object):
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionE_xit = QtWidgets.QAction(MainWindow)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/exit.png"),
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/exit.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionE_xit.setIcon(icon2)
+        self.actionE_xit.setIcon(icon3)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionContents = QtWidgets.QAction(MainWindow)
         self.actionContents.setObjectName("actionContents")
         self.action_Save = QtWidgets.QAction(MainWindow)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/save.png"),
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/save.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.action_Save.setIcon(icon3)
+        self.action_Save.setIcon(icon4)
         self.action_Save.setObjectName("action_Save")
         self.actionLoad_From_Snapshot = QtWidgets.QAction(MainWindow)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/folder-open-snp.png"),
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/folder-open-snp.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_From_Snapshot.setIcon(icon4)
+        self.actionLoad_From_Snapshot.setIcon(icon5)
         self.actionLoad_From_Snapshot.setObjectName("actionLoad_From_Snapshot")
         self.actionPhysics_Fields = QtWidgets.QAction(MainWindow)
         self.actionPhysics_Fields.setCheckable(True)
         self.actionPhysics_Fields.setChecked(True)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/physics.png"),
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/sm-icons/physics.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionPhysics_Fields.setIcon(icon5)
+        self.actionPhysics_Fields.setIcon(icon6)
         self.actionPhysics_Fields.setObjectName("actionPhysics_Fields")
         self.actionEngineering_Fields = QtWidgets.QAction(MainWindow)
         self.actionEngineering_Fields.setCheckable(True)
         self.actionEngineering_Fields.setChecked(True)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/sm-icons/engineering.png"),
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(":/sm-icons/engineering.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionEngineering_Fields.setIcon(icon6)
+        self.actionEngineering_Fields.setIcon(icon7)
         self.actionEngineering_Fields.setObjectName("actionEngineering_Fields")
         self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(":/sm-icons/load_lattice.png"),
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/sm-icons/load_lattice.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Lattice.setIcon(icon7)
+        self.actionLoad_Lattice.setIcon(icon8)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
         self.actionLoad_Settings = QtWidgets.QAction(MainWindow)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Settings.setIcon(icon8)
+        self.actionLoad_Settings.setIcon(icon9)
         self.actionLoad_Settings.setObjectName("actionLoad_Settings")
         self.actionPreferences = QtWidgets.QAction(MainWindow)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(":/sm-icons/preferences.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionPreferences.setIcon(icon9)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap(":/sm-icons/preferences.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionPreferences.setIcon(icon10)
         self.actionPreferences.setObjectName("actionPreferences")
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
@@ -284,8 +299,12 @@ class Ui_MainWindow(object):
         self.actionPreferences.triggered.connect(
             MainWindow.on_launch_preferences)
         self.reload_lattice_btn.clicked.connect(MainWindow.on_reload_lattice)
-        self.update_rate_sbox.valueChanged['int'].connect(
+        self.update_ctrl_btn.toggled['bool'].connect(
+            self.update_rate_cbb.setEnabled)
+        self.update_rate_cbb.currentIndexChanged['int'].connect(
             MainWindow.on_update_rate)
+        self.update_ctrl_btn.toggled['bool'].connect(
+            MainWindow.on_toggle_rate_ctrl_btn)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -309,8 +328,24 @@ class Ui_MainWindow(object):
         self.total_sppv_number_lbl.setText(_translate("MainWindow", "0"))
         self.label_3.setText(_translate("MainWindow", "Readback PVs"))
         self.total_rdpv_number_lbl.setText(_translate("MainWindow", "0"))
+        self.label_6.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Auto : Realtime update</p><p>1-5 : Update every 0.2 to 1 second</p></body></html>"
+            ))
         self.label_6.setText(_translate("MainWindow", "Update Rate"))
-        self.update_rate_sbox.setSuffix(_translate("MainWindow", " Hz"))
+        self.update_rate_cbb.setItemText(0, _translate("MainWindow", "Auto"))
+        self.update_rate_cbb.setItemText(1, _translate("MainWindow", "1 Hz"))
+        self.update_rate_cbb.setItemText(2, _translate("MainWindow", "2 Hz"))
+        self.update_rate_cbb.setItemText(3, _translate("MainWindow", "3 Hz"))
+        self.update_rate_cbb.setItemText(4, _translate("MainWindow", "4 Hz"))
+        self.update_rate_cbb.setItemText(5, _translate("MainWindow", "5 Hz"))
+        self.update_ctrl_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Start/stop updating values.</p></body></html>"
+            ))
+        self.update_ctrl_btn.setText(_translate("MainWindow", "..."))
         self.label_5.setText(_translate("MainWindow", "Search"))
         self.namefilter_lineEdit.setToolTip(
             _translate(
