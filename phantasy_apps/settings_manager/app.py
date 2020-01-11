@@ -249,23 +249,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_apply_settings(self):
-        """Apply (selected) settings to machine.
+        """Apply selected element settings.
         """
-        if self.__settings is None:
-            return
-        try:
-            lat = self._mp.work_lattice_conf
-            lat.settings = self.__settings
-            lat.sync_settings(data_source='model')
-        except:
-            QMessageBox.warning(self, "Apply Settings",
-                    "Failed to apply settings to accelerator.",
-                    QMessageBox.Ok)
-
-        else:
-            QMessageBox.information(self, "Apply Settings",
-                    "Successfully applied settings to accelerator.",
-                    QMessageBox.Ok)
+        m = self._tv.model()
+        settings_selected = m.get_selection()
+        total_selected = len(settings_selected)
+        for i, settings in enumerate(settings_selected, 1):
+            elem, fname, fld, fval0 = settings
+            ename = elem.name
+            fld.value = fval0
+            printlog("[{0:02d}/{1:02d}] Set element {2} [{3}] to {4}.".format(
+                i, total_selected, ename, fname, fval0))
 
     def closeEvent(self, e):
         r = BaseAppForm.closeEvent(self, e)
