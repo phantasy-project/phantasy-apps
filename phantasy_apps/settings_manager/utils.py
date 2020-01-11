@@ -221,6 +221,7 @@ class _SortProxyModel(QSortFilterProxyModel):
 
     def __init__(self, model):
         super(self.__class__, self).__init__()
+        self.m_src = model
         self.setSourceModel(model)
         self.filter_col_index = {
             'device': model.i_name,
@@ -265,6 +266,19 @@ class _SortProxyModel(QSortFilterProxyModel):
         var = src_index.data(Qt.DisplayRole)
         return ftype in self.filter_ftypes and \
                 re.match(self.filterRegExp().pattern(), var) is not None
+
+    def get_selection(self):
+        """Return a list of selected items.
+        """
+        settings_selected = []
+        for i in range(self.rowCount()):
+            idx = self.index(i, self.m_src.i_name)
+            idx_src = self.mapToSource(idx)
+            it_name_src = self.m_src.itemFromIndex(idx_src)
+            if is_item_checked(it_name_src):
+                print(self.data(idx), it_name_src.text(), idx_src.row())
+                settings_selected.append(self.m_src._settings[idx_src.row()])
+        return settings_selected
 
 
 def convert_settings(settings_read, elem_list):
@@ -312,4 +326,8 @@ def pack_lattice_settings(lat, elem_list=None, **kws):
     settings = lat.get_settings_from_element_list(elems, **kws)
     flat_settings = convert_settings(settings, elems)
     return flat_settings, settings
+
+
+def is_item_checked(item):
+    return item.checkState() == Qt.Checked
 
