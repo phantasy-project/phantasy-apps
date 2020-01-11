@@ -4,7 +4,9 @@
 import json
 from collections import OrderedDict
 from fnmatch import translate
+from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QVariant
+from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QMessageBox
@@ -15,12 +17,14 @@ from phantasy_ui import get_open_filename
 from phantasy_ui.widgets import LatticeWidget
 from phantasy_apps.utils import printlog
 from phantasy import Settings
+from phantasy import CaField
 
 from .app_loadfrom import LoadSettingsDialog
 from .app_pref import PreferencesDialog
 from .ui.ui_app import Ui_MainWindow
 from .utils import SettingsModel
 from .utils import pack_lattice_settings
+from .utils import FMT
 from .data import FlatSettings
 from .data import make_physics_settings
 
@@ -123,10 +127,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         model.settings_sts.connect(self.on_settings_sts)
         model.set_model()
         self._pvs = model._pvs
+        self._m_obj = model._m_obj
+        self._m_idx = model._m_idx
 
         #
         self.toggle_ftype()
-        #self.namefilter_lineEdit.textChanged.emit(self.namefilter_lineEdit.text())
+        #
+        self.update_ctrl_btn.toggled.emit(self.update_ctrl_btn.isChecked())
 
     @pyqtSlot(int, int, int)
     def on_settings_sts(self, i, j, k):
@@ -141,7 +148,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._mp = None
         self.__settings = None
         self.__flat_settings = None
-        self._pvs = set()
+        self._pvs = []
         self._eng_phy_toggle = {'ENG': True, 'PHY': True}
         self.on_lattice_changed(self._mp)
 
@@ -154,8 +161,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.settingsLoaded.connect(self.on_settings_loaded)
 
         # update rate
+        self.update_timer = QTimer(self)
+        self.update_timer.timeout.connect(self.on_update_by_time)
         self.rate_changed.connect(self.on_update_rate_changed)
-        self.update_rate_sbox.setValue(-1)
 
         # preferences
         self._pref_dlg = None
@@ -164,20 +172,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(int)
     def on_update_rate_changed(self, i):
         # cases:
-        # 1. -1: auto, max rate depends on devices
-        # 2.  0: stop updating
-        # 3.  i: update every 1/i second
-        if i == -1:
-            self.enable_auto_update()
+        # 1. 0: auto, max rate depends on devices
+        # 2. i > 0: update every 1/i second
+        self.stop_update_timer()
+        if i == 0:
             tt = "Auto updating rate."
-        elif i == 0:
-            self.pause_update()
-            tt = "Stop updating."
         else:
             printlog('updating controled by timer')
             tt = "Updating at {} Hz.".format(i)
-            #self.updater = 
-        self.update_rate_sbox.setToolTip(tt)
+        self.start_update(i)
+        self.update_rate_cbb.setToolTip(tt)
 
     def on_save(self):
         """Save settings to file.
@@ -334,8 +338,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             idx.row(), idx.column(), self._tv.isExpanded(idx)))
 
     def reset_pvs(self):
-        print("-" * 30)
-        print("Reset {} PVs".format(len(self._pvs)))
+        printlog("Reset {} PVs".format(len(self._pvs)))
         for pv in self._pvs:
             pv.auto_monitor = False
             pv.clear_callbacks()
@@ -405,12 +408,30 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             printlog("Field init mode is not changed, {}".format(self.field_init_mode))
 
+    @pyqtSlot()
+    def on_update_by_time(self):
+        """Update values by time.
+        """
+        printlog("Updating...")
+        m = self._tv.model().sourceModel()
+        for i, o in enumerate(self._m_obj):
+            if not isinstance(o, CaField): # PV
+                val = o.get()
+                for idx in self._m_idx[i]:
+#                    print("PV:", (idx.row(), idx.column()), val)
+                    m.data_changed.emit((idx, FMT.format(val), Qt.DisplayRole))
+            else: # CaField
+                rd_val, sp_val = o.value, o.current_setting()
+                for idx, val in zip(self._m_idx[i], (rd_val, sp_val)):
+#                    print("Field:", (idx.row(), idx.column()), val)
+                    m.data_changed.emit((idx, FMT.format(val), Qt.DisplayRole))
+
     @pyqtSlot(int)
     def on_update_rate(self, i):
-        self._update_rate = i
+        # update_rate_cbb index
         self.rate_changed.emit(i)
 
-    def enable_auto_update(self):
+    def auto_update(self):
         # resume updating.
         for pv in self._pvs:
             pv.auto_monitor = True
@@ -419,6 +440,32 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # pause updating.
         for pv in self._pvs:
             pv.auto_monitor = False
+
+    @pyqtSlot(bool)
+    def on_toggle_rate_ctrl_btn(self, f):
+        """Toggle update rate control.
+        """
+        if f:
+            i = self.update_rate_cbb.currentIndex()
+            self.start_update(i)
+        else:
+            self.stop_update()
+
+    def start_update(self, i):
+        if i == 0:
+            # auto update
+            self.auto_update()
+        else:
+            self.pause_update()
+            self.update_timer.start(1000.0 / i)
+
+    def stop_update(self):
+        self.stop_update_timer()
+        self.pause_update()
+
+    def stop_update_timer(self):
+        if self.update_timer.isActive():
+            self.update_timer.stop()
 
 
 def make_settings(filepath, lat):
