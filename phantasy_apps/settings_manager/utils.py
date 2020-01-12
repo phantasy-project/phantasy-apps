@@ -9,6 +9,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QVariant
+from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import QAbstractScrollArea
@@ -46,6 +47,7 @@ class SettingsModel(QStandardItemModel):
 
     data_changed = pyqtSignal(QVariant)
     settings_sts = pyqtSignal(int, int, int)
+    reset_icon = pyqtSignal()
 
     def __init__(self, parent, flat_settings):
         super(self.__class__, self).__init__(parent)
@@ -68,6 +70,7 @@ class SettingsModel(QStandardItemModel):
 
         #
         self.data_changed.connect(self.update_data)
+        self.reset_icon.connect(self.reset_setdone_icons)
 
         self._filter_key = 'device'
 
@@ -216,6 +219,11 @@ class SettingsModel(QStandardItemModel):
         tv.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         tv.collapseAll()
 
+    def reset_setdone_icons(self):
+        # reset set done icons.
+        for i in range(self.rowCount()):
+            self.setData(self.index(i, self.i_name), QIcon(), Qt.DecorationRole)
+
 
 class _SortProxyModel(QSortFilterProxyModel):
 
@@ -268,8 +276,7 @@ class _SortProxyModel(QSortFilterProxyModel):
                 re.match(self.filterRegExp().pattern(), var) is not None
 
     def get_selection(self):
-        """Return a list of selected items.
-        """
+        # Return a list of selected items, [(idx_src, settings)].
         settings_selected = []
         for i in range(self.rowCount()):
             idx = self.index(i, self.m_src.i_name)
@@ -277,7 +284,7 @@ class _SortProxyModel(QSortFilterProxyModel):
             it_name_src = self.m_src.itemFromIndex(idx_src)
             if is_item_checked(it_name_src):
                 print(self.data(idx), it_name_src.text(), idx_src.row())
-                settings_selected.append(self.m_src._settings[idx_src.row()])
+                settings_selected.append((idx_src, self.m_src._settings[idx_src.row()]))
         return settings_selected
 
 
