@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import json
+import time
+from functools import partial
 from collections import OrderedDict
 from fnmatch import translate
 from PyQt5.QtCore import Qt
@@ -9,13 +11,17 @@ from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QDialog
 from phantasy_ui import BaseAppForm
 from phantasy_ui import get_save_filename
 from phantasy_ui import get_open_filename
 from phantasy_ui.widgets import LatticeWidget
+from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from phantasy_apps.utils import printlog
+from phantasy_apps.correlation_visualizer.utils import delayed_exec
 from phantasy import Settings
 from phantasy import CaField
 
@@ -167,7 +173,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # preferences
         self._pref_dlg = None
-        self.field_init_mode = 'live'
+        # see preference dialog class
+        self.field_init_mode = 'model'
+        self.t_wait = 0.05
+
+        # icon
+        self.done_icon = QPixmap(":/sm-icons/done.png")
+        self.fail_icon = QPixmap(":/sm-icons/fail.png")
 
     @pyqtSlot(int)
     def on_update_rate_changed(self, i):
@@ -253,13 +265,39 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         m = self._tv.model()
         settings_selected = m.get_selection()
-        total_selected = len(settings_selected)
-        for i, settings in enumerate(settings_selected, 1):
-            elem, fname, fld, fval0 = settings
-            ename = elem.name
+        self.applyer = DAQT(daq_func=partial(self.apply_single, m.sourceModel()),
+                            daq_seq=settings_selected)
+        self.applyer.daqStarted.connect(self.on_apply_settings_started)
+        self.applyer.progressUpdated.connect(self.on_apply_settings_progress)
+        self.applyer.daqFinished.connect(self.on_apply_settings_finished)
+        self.applyer.start()
+
+    def apply_single(self, model_src, tuple_idx_settings):
+        idx_src, settings = tuple_idx_settings
+        elem, fname, fld, fval0 = settings
+        ename = elem.name
+        try:
             fld.value = fval0
-            printlog("[{0:02d}/{1:02d}] Set element {2} [{3}] to {4}.".format(
-                i, total_selected, ename, fname, fval0))
+        except:
+            px = self.fail_icon
+        else:
+            px = self.done_icon
+            printlog("- Set {} [{}] to {}.".format(ename, fname, fval0))
+            time.sleep(self.t_wait)
+        finally:
+            model_src.setData(idx_src, QIcon(px), Qt.DecorationRole)
+
+    @pyqtSlot(float, 'QString')
+    def on_apply_settings_progress(self, per, str_idx):
+        printlog("Apply settings: {} %".format(per * 100))
+
+    @pyqtSlot()
+    def on_apply_settings_started(self):
+        printlog("Start to apply settings...")
+
+    @pyqtSlot()
+    def on_apply_settings_finished(self):
+        printlog("Finish applying settings...")
 
     def closeEvent(self, e):
         r = BaseAppForm.closeEvent(self, e)
@@ -394,10 +432,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if self._pref_dlg is None:
             self._pref_dlg = PreferencesDialog(self)
             self._pref_dlg._post_init()
+            self.t_wait = self._pref_dlg._apply_wait_sec
         r = self._pref_dlg.exec_()
         if r == QDialog.Accepted:
             _mode = self.field_init_mode
             self.field_init_mode = self._pref_dlg.mode
+            self.t_wait = self._pref_dlg._apply_wait_sec
             printlog("Field init mode is changed from {} to {}".format(_mode, self.field_init_mode))
         else:
             printlog("Field init mode is not changed, {}".format(self.field_init_mode))
@@ -460,6 +500,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def stop_update_timer(self):
         if self.update_timer.isActive():
             self.update_timer.stop()
+
+    @pyqtSlot()
+    def on_reset_set_status(self):
+        self._tv.model().sourceModel().reset_icon.emit()
 
 
 def make_settings(filepath, lat):
