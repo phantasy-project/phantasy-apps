@@ -20,9 +20,20 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         #
         self._post_init()
 
+    @pyqtSlot(float)
+    def on_update_delt(self, x):
+        """Update wait time in second for settings apply.
+        """
+        self._apply_wait_sec = x
+
     def _post_init(self):
-        self.live_rbtn.setChecked(True)
-        self.live_rbtn.toggled.emit(True)
+        self.model_rbtn.setChecked(True)
+        self.live_rbtn.setChecked(False)
+        for o in (self.model_rbtn, self.live_rbtn):
+            o.toggled.emit(o.isChecked())
+
+        self.apply_delt_dsbox.valueChanged.emit(
+                self.apply_delt_dsbox.value())
 
     @pyqtSlot(bool)
     def on_toggle_mode(self, f):
