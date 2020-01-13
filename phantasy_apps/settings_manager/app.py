@@ -172,10 +172,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.rate_changed.connect(self.on_update_rate_changed)
 
         # preferences
-        self._pref_dlg = None
         # see preference dialog class
         self.field_init_mode = 'model'
-        self.t_wait = 0.05
+        self.t_wait = 0.05 # second
+        self.pref_dict = {
+            'field_init_mode': self.field_init_mode,
+            't_wait': self.t_wait,
+        }
 
         # icon
         self.done_icon = QPixmap(":/sm-icons/done.png")
@@ -283,6 +286,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             px = self.done_icon
             printlog("- Set {} [{}] to {}.".format(ename, fname, fval0))
+            print("wait time:", self.t_wait)
             time.sleep(self.t_wait)
         finally:
             model_src.setData(idx_src, QIcon(px), Qt.DecorationRole)
@@ -429,18 +433,22 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_launch_preferences(self):
         """Launch preferences dialog.
         """
-        if self._pref_dlg is None:
-            self._pref_dlg = PreferencesDialog(self)
-            self._pref_dlg._post_init()
-            self.t_wait = self._pref_dlg._apply_wait_sec
-        r = self._pref_dlg.exec_()
+        pref_dlg = PreferencesDialog(self.pref_dict, self)
+        pref_dlg.pref_changed.connect(self.on_update_pref)
+        r = pref_dlg.exec_()
         if r == QDialog.Accepted:
-            _mode = self.field_init_mode
-            self.field_init_mode = self._pref_dlg.mode
-            self.t_wait = self._pref_dlg._apply_wait_sec
-            printlog("Field init mode is changed from {} to {}".format(_mode, self.field_init_mode))
+            self.field_init_mode = self.pref_dict['field_init_mode']
+            printlog("Updated pref --> {}".format(self.pref_dict))
         else:
-            printlog("Field init mode is not changed, {}".format(self.field_init_mode))
+            printlog("Unchanged pref: {}".format(self.pref_dict))
+
+    @pyqtSlot(dict)
+    def on_update_pref(self, d):
+        """Update app preferences.
+        """
+        self.pref_dict.update(d)
+        self.field_init_mode = self.pref_dict['field_init_mode']
+        self.t_wait = self.pref_dict['t_wait']
 
     @pyqtSlot()
     def on_update_by_time(self):
