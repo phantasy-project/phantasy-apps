@@ -9,6 +9,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QVariant
+from PyQt5.QtGui import QBrush
+from PyQt5.QtGui import QColor
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
@@ -32,6 +34,17 @@ COLUMN_NAMES_ATTR = list(COLUMN_SFIELD_MAP.keys())
 SFIELD_NAMES_ATTR = list(COLUMN_SFIELD_MAP.values())
 
 COLUMN_NAMES = COLUMN_NAMES1 + COLUMN_NAMES_ATTR
+
+BG_COLOR_DEFAULT = "#FFFFFF"
+FG_COLOR_DEFAULT = "#000000"
+COLOR_MAP = {
+    # system: (background, foreground)
+    "FE": ('#e0f7fa', "#000000"),
+    "LS1": ("#ffebee", "#000000"),
+    "FS1": ("#e3f2fd", "#000000"),
+    "LS2": ("#e8f5e9", "#000000"),
+    "FS2": ("#fff3e0", "#000000"),
+}
 
 
 class SettingsModel(QStandardItemModel):
@@ -100,6 +113,7 @@ class SettingsModel(QStandardItemModel):
 
         for elem, fname, fld, fval0 in self._settings:
             item_ename = QStandardItem(elem.name)
+            bgcolor, fgcolor = get_color(elem.ename)
 
             if fld is None:
                 # debug
@@ -156,6 +170,11 @@ class SettingsModel(QStandardItemModel):
                     item = QStandardItem(v)
                     row.append(item)
             [i.setEditable(False) for i in row]
+            # color
+            for i in row:
+                i.setData(QBrush(QColor(bgcolor)), Qt.BackgroundRole)
+                i.setData(QBrush(QColor(fgcolor)), Qt.ForegroundRole)
+            #
             self.appendRow(row)
             ename_set.add(elem.name)
 
@@ -354,4 +373,16 @@ def pack_lattice_settings(lat, elem_list=None, **kws):
 
 def is_item_checked(item):
     return item.checkState() == Qt.Checked
+
+
+def get_color(name):
+    """Return background color and foreground color as a tuple
+    based on naming rule.
+    """
+    a, _ = name.split('_', 1)
+    if ':' in a:
+        system = a.split(':')[1]
+    else:
+        system = a
+    return COLOR_MAP.get(system, (BG_COLOR_DEFAULT, FG_COLOR_DEFAULT))
 
