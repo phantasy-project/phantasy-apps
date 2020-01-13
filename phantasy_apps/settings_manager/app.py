@@ -13,6 +13,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QCompleter
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QDialog
 from phantasy_ui import BaseAppForm
@@ -183,6 +184,27 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # icon
         self.done_icon = QPixmap(":/sm-icons/done.png")
         self.fail_icon = QPixmap(":/sm-icons/fail.png")
+
+        # selection
+        self.select_all_btn.clicked.connect(partial(self.on_select, 'all'))
+        self.invert_selection_btn.clicked.connect(partial(self.on_select, 'invert'))
+
+        # filter
+        self.init_filter()
+
+    def init_filter(self):
+        """Initial filter.
+        """
+        o = self.namefilter_lineEdit
+        self._comp = QCompleter([], self)
+        o.setCompleter(self._comp)
+
+    def update_filter_completer(self, s):
+        m = self._comp.model()
+        sl = m.stringList()
+        if s not in sl:
+            sl.append(s)
+        m.setStringList(sl)
 
     @pyqtSlot(int)
     def on_update_rate_changed(self, i):
@@ -379,8 +401,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             pv.auto_monitor = False
             pv.clear_callbacks()
 
-    @pyqtSlot('QString')
-    def on_namefilter_changed(self, s):
+    @pyqtSlot()
+    def on_namefilter_changed(self):
+        s = self.sender().text()
         k = None
         kv = s.split('=', 1)
         if len(kv) == 2:
@@ -393,6 +416,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.sourceModel().set_filter_key(k)
         m.setFilterRegExp(translate(v))
         self.total_show_number_lbl.setText(str(m.rowCount()))
+        self.update_filter_completer(s)
 
     @pyqtSlot()
     def on_load(self):
@@ -512,6 +536,25 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_reset_set_status(self):
         self._tv.model().sourceModel().reset_icon.emit()
+
+    @pyqtSlot(bool)
+    def on_expand_collapse_view(self, expanded):
+        if expanded:
+            self._tv.expandAll()
+            tt = "Click to collapse all."
+        else:
+            self._tv.collapseAll()
+            tt = "Click to expand all."
+        self.sender().setToolTip(tt)
+
+    @pyqtSlot()
+    def on_select(self, mode):
+        if mode == 'all':
+            # select all
+            self._tv.model().select_all()
+        else:
+            # invert selection
+            self._tv.model().invert_selection()
 
 
 def make_settings(filepath, lat):
