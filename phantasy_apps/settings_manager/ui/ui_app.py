@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_app.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.2
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -17,9 +17,6 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName("gridLayout")
-        self.treeView = QtWidgets.QTreeView(self.centralwidget)
-        self.treeView.setObjectName("treeView")
-        self.gridLayout.addWidget(self.treeView, 0, 0, 1, 2)
         self.apply_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -29,7 +26,10 @@ class Ui_MainWindow(object):
             self.apply_btn.sizePolicy().hasHeightForWidth())
         self.apply_btn.setSizePolicy(sizePolicy)
         self.apply_btn.setObjectName("apply_btn")
-        self.gridLayout.addWidget(self.apply_btn, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.apply_btn, 2, 1, 1, 1)
+        self.treeView = QtWidgets.QTreeView(self.centralwidget)
+        self.treeView.setObjectName("treeView")
+        self.gridLayout.addWidget(self.treeView, 1, 0, 1, 2)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSizeConstraint(
             QtWidgets.QLayout.SetDefaultConstraint)
@@ -142,14 +142,57 @@ class Ui_MainWindow(object):
         self.update_ctrl_btn.setAutoRaise(False)
         self.update_ctrl_btn.setObjectName("update_ctrl_btn")
         self.horizontalLayout.addWidget(self.update_ctrl_btn)
+        self.gridLayout.addLayout(self.horizontalLayout, 2, 0, 1, 1)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.expand_all_btn = QtWidgets.QToolButton(self.centralwidget)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/expand.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/collapse.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.On)
+        self.expand_all_btn.setIcon(icon3)
+        self.expand_all_btn.setCheckable(True)
+        self.expand_all_btn.setAutoRaise(True)
+        self.expand_all_btn.setObjectName("expand_all_btn")
+        self.horizontalLayout_2.addWidget(self.expand_all_btn)
+        self.select_all_btn = QtWidgets.QToolButton(self.centralwidget)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/select-all.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.select_all_btn.setIcon(icon4)
+        self.select_all_btn.setAutoRaise(True)
+        self.select_all_btn.setObjectName("select_all_btn")
+        self.horizontalLayout_2.addWidget(self.select_all_btn)
+        self.invert_selection_btn = QtWidgets.QToolButton(self.centralwidget)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/invert-selection.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.invert_selection_btn.setIcon(icon5)
+        self.invert_selection_btn.setAutoRaise(True)
+        self.invert_selection_btn.setObjectName("invert_selection_btn")
+        self.horizontalLayout_2.addWidget(self.invert_selection_btn)
+        self.reset_set_status_btn = QtWidgets.QToolButton(self.centralwidget)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/sm-icons/clear.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.reset_set_status_btn.setIcon(icon6)
+        self.reset_set_status_btn.setAutoRaise(True)
+        self.reset_set_status_btn.setObjectName("reset_set_status_btn")
+        self.horizontalLayout_2.addWidget(self.reset_set_status_btn)
+        spacerItem1 = QtWidgets.QSpacerItem(900, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem1)
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setFrameShape(QtWidgets.QFrame.VLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
-        self.horizontalLayout.addWidget(self.line)
+        self.horizontalLayout_2.addWidget(self.line)
         self.label_5 = QtWidgets.QLabel(self.centralwidget)
         self.label_5.setObjectName("label_5")
-        self.horizontalLayout.addWidget(self.label_5)
+        self.horizontalLayout_2.addWidget(self.label_5)
         self.namefilter_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -160,7 +203,7 @@ class Ui_MainWindow(object):
         self.namefilter_lineEdit.setSizePolicy(sizePolicy)
         self.namefilter_lineEdit.setText("")
         self.namefilter_lineEdit.setObjectName("namefilter_lineEdit")
-        self.horizontalLayout.addWidget(self.namefilter_lineEdit)
+        self.horizontalLayout_2.addWidget(self.namefilter_lineEdit)
         self.total_show_number_lbl = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -177,14 +220,14 @@ class Ui_MainWindow(object):
                                                 | QtCore.Qt.AlignTrailing
                                                 | QtCore.Qt.AlignVCenter)
         self.total_show_number_lbl.setObjectName("total_show_number_lbl")
-        self.horizontalLayout.addWidget(self.total_show_number_lbl)
+        self.horizontalLayout_2.addWidget(self.total_show_number_lbl)
         self.label_4 = QtWidgets.QLabel(self.centralwidget)
         self.label_4.setObjectName("label_4")
-        self.horizontalLayout.addWidget(self.label_4)
-        self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
+        self.horizontalLayout_2.addWidget(self.label_4)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 0, 0, 1, 2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 31))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -210,58 +253,58 @@ class Ui_MainWindow(object):
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionE_xit = QtWidgets.QAction(MainWindow)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/exit.png"),
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(":/sm-icons/exit.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionE_xit.setIcon(icon3)
+        self.actionE_xit.setIcon(icon7)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionContents = QtWidgets.QAction(MainWindow)
         self.actionContents.setObjectName("actionContents")
         self.action_Save = QtWidgets.QAction(MainWindow)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/save.png"),
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/sm-icons/save.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.action_Save.setIcon(icon4)
+        self.action_Save.setIcon(icon8)
         self.action_Save.setObjectName("action_Save")
         self.actionLoad_From_Snapshot = QtWidgets.QAction(MainWindow)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/folder-open-snp.png"),
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/sm-icons/folder-open-snp.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_From_Snapshot.setIcon(icon5)
+        self.actionLoad_From_Snapshot.setIcon(icon9)
         self.actionLoad_From_Snapshot.setObjectName("actionLoad_From_Snapshot")
         self.actionPhysics_Fields = QtWidgets.QAction(MainWindow)
         self.actionPhysics_Fields.setCheckable(True)
         self.actionPhysics_Fields.setChecked(True)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/sm-icons/physics.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionPhysics_Fields.setIcon(icon6)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap(":/sm-icons/physics.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionPhysics_Fields.setIcon(icon10)
         self.actionPhysics_Fields.setObjectName("actionPhysics_Fields")
         self.actionEngineering_Fields = QtWidgets.QAction(MainWindow)
         self.actionEngineering_Fields.setCheckable(True)
         self.actionEngineering_Fields.setChecked(True)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(":/sm-icons/engineering.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionEngineering_Fields.setIcon(icon7)
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap(":/sm-icons/engineering.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionEngineering_Fields.setIcon(icon11)
         self.actionEngineering_Fields.setObjectName("actionEngineering_Fields")
         self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(":/sm-icons/load_lattice.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Lattice.setIcon(icon8)
+        icon12 = QtGui.QIcon()
+        icon12.addPixmap(QtGui.QPixmap(":/sm-icons/load_lattice.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionLoad_Lattice.setIcon(icon12)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
         self.actionLoad_Settings = QtWidgets.QAction(MainWindow)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Settings.setIcon(icon9)
+        icon13 = QtGui.QIcon()
+        icon13.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionLoad_Settings.setIcon(icon13)
         self.actionLoad_Settings.setObjectName("actionLoad_Settings")
         self.actionPreferences = QtWidgets.QAction(MainWindow)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap(":/sm-icons/preferences.png"),
+        icon14 = QtGui.QIcon()
+        icon14.addPixmap(QtGui.QPixmap(":/sm-icons/preferences.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionPreferences.setIcon(icon10)
+        self.actionPreferences.setIcon(icon14)
         self.actionPreferences.setObjectName("actionPreferences")
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
@@ -292,7 +335,7 @@ class Ui_MainWindow(object):
         self.actionEngineering_Fields.toggled['bool'].connect(
             MainWindow.on_toggle_engfields)
         self.actionLoad_Lattice.triggered.connect(MainWindow.on_load_lattice)
-        self.namefilter_lineEdit.textChanged['QString'].connect(
+        self.namefilter_lineEdit.editingFinished.connect(
             MainWindow.on_namefilter_changed)
         self.actionLoad_Settings.triggered.connect(MainWindow.on_load)
         self.treeView.clicked['QModelIndex'].connect(MainWindow.on_click_view)
@@ -305,6 +348,10 @@ class Ui_MainWindow(object):
             MainWindow.on_update_rate)
         self.update_ctrl_btn.toggled['bool'].connect(
             MainWindow.on_toggle_rate_ctrl_btn)
+        self.reset_set_status_btn.clicked.connect(
+            MainWindow.on_reset_set_status)
+        self.expand_all_btn.toggled['bool'].connect(
+            MainWindow.on_expand_collapse_view)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -346,11 +393,24 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Start/stop updating values.</p></body></html>"
             ))
         self.update_ctrl_btn.setText(_translate("MainWindow", "..."))
+        self.expand_all_btn.setToolTip(
+            _translate("MainWindow", "Click to expand all."))
+        self.expand_all_btn.setText(_translate("MainWindow", "Expand"))
+        self.select_all_btn.setToolTip(_translate("MainWindow", "Select all."))
+        self.select_all_btn.setText(_translate("MainWindow", "Select All"))
+        self.invert_selection_btn.setToolTip(
+            _translate("MainWindow", "Invert current selections."))
+        self.invert_selection_btn.setText(
+            _translate("MainWindow", "Invert Selection"))
+        self.reset_set_status_btn.setToolTip(
+            _translate("MainWindow", "Clear status."))
+        self.reset_set_status_btn.setText(
+            _translate("MainWindow", "Clear Status"))
         self.label_5.setText(_translate("MainWindow", "Search"))
         self.namefilter_lineEdit.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Input Unix style search pattern by \'key = pattern\', valid key: \'device\', \'field\', \'type\', if not defined, \'device\' is used.</p><p>1. *: match all device names, which is equivalent of device=*;</p><p>2. *LEBT*: match device name which has string \'LEBT\';</p><p>3. type=\'CAV\': match all devices of type \'CAV\';</p><p>4. ? is to match one char or digit, pure \'\' is to interpret as *.<br/></p></body></html>"
+                "<html><head/><body><p>Input Unix style search pattern by \'key = pattern\', valid keys: \'device\', \'field\', \'setpoint\', \'live_readback\', \'live_setpoint\', \'pos\', \'type\', if not defined, \'device\' is used, press Enter to activate the filter.</p><p>1. *: match all device names, which is equivalent of device=*;</p><p>2. *LEBT*: match device name which has string \'LEBT\';</p><p>3. type=\'CAV\': match all devices of type \'CAV\';</p><p>4. ? is to match one char or digit, pure \'\' is to interpret as *.<br/></p></body></html>"
             ))
         self.total_show_number_lbl.setToolTip(
             _translate("MainWindow", "Total filtered items."))
