@@ -287,6 +287,23 @@ class _SortProxyModel(QSortFilterProxyModel):
                 settings_selected.append((idx_src, self.m_src._settings[idx_src.row()]))
         return settings_selected
 
+    def select_all(self):
+        for i in range(self.rowCount()):
+            idx = self.index(i, self.m_src.i_name)
+            idx_src = self.mapToSource(idx)
+            it_name_src = self.m_src.itemFromIndex(idx_src)
+            it_name_src.setCheckState(Qt.Checked)
+
+    def invert_selection(self):
+        for i in range(self.rowCount()):
+            idx = self.index(i, self.m_src.i_name)
+            idx_src = self.mapToSource(idx)
+            it_name_src = self.m_src.itemFromIndex(idx_src)
+            if not is_item_checked(it_name_src):
+                it_name_src.setCheckState(Qt.Checked)
+            else:
+                it_name_src.setCheckState(Qt.Unchecked)
+
 
 def convert_settings(settings_read, elem_list):
     """Convert settings to flat, each tuple is composed of (CaElement,
