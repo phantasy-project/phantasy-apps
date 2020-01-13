@@ -347,7 +347,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if m is None:
             return
         m.filter_ftypes = [k for k, v in self._eng_phy_toggle.items() if v is True]
-        self.namefilter_lineEdit.textChanged.emit(self.namefilter_lineEdit.text())
+        self.namefilter_lineEdit.editingFinished.emit()
 
     @pyqtSlot()
     def on_load_lattice(self):
