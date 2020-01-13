@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_preferences.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.2
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -62,22 +62,20 @@ class Ui_Dialog(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_12.addItem(spacerItem1)
-        self.pushButton = QtWidgets.QPushButton(self.groupBox)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout_12.addWidget(self.pushButton)
-        self.pushButton_2 = QtWidgets.QPushButton(self.groupBox)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.horizontalLayout_12.addWidget(self.pushButton_2)
+        self.cancel_btn = QtWidgets.QPushButton(self.groupBox)
+        self.cancel_btn.setObjectName("cancel_btn")
+        self.horizontalLayout_12.addWidget(self.cancel_btn)
+        self.ok_btn = QtWidgets.QPushButton(self.groupBox)
+        self.ok_btn.setObjectName("ok_btn")
+        self.horizontalLayout_12.addWidget(self.ok_btn)
         self.gridLayout.addLayout(self.horizontalLayout_12, 3, 0, 1, 2)
         self.gridLayout_9.addWidget(self.groupBox, 0, 0, 1, 1)
 
         self.retranslateUi(Dialog)
-        self.pushButton_2.clicked.connect(Dialog.accept)
-        self.pushButton.clicked.connect(Dialog.reject)
-        self.model_rbtn.toggled['bool'].connect(Dialog.on_toggle_mode)
+        self.ok_btn.clicked.connect(Dialog.on_click_ok)
+        self.cancel_btn.clicked.connect(Dialog.reject)
         self.live_rbtn.toggled['bool'].connect(Dialog.on_toggle_mode)
-        self.apply_delt_dsbox.valueChanged['double'].connect(
-            Dialog.on_update_delt)
+        self.model_rbtn.toggled['bool'].connect(Dialog.on_toggle_mode)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -91,8 +89,8 @@ class Ui_Dialog(object):
         self.label.setText(
             _translate("Dialog", "Time Interval Between Batch Settings Apply"))
         self.apply_delt_dsbox.setSuffix(_translate("Dialog", " second"))
-        self.pushButton.setText(_translate("Dialog", "Cancel"))
-        self.pushButton_2.setText(_translate("Dialog", "OK"))
+        self.cancel_btn.setText(_translate("Dialog", "Cancel"))
+        self.ok_btn.setText(_translate("Dialog", "OK"))
 
 
 from . import resources_rc
