@@ -36,14 +36,13 @@ SFIELD_NAMES_ATTR = list(COLUMN_SFIELD_MAP.values())
 COLUMN_NAMES = COLUMN_NAMES1 + COLUMN_NAMES_ATTR
 
 BG_COLOR_DEFAULT = "#FFFFFF"
-FG_COLOR_DEFAULT = "#000000"
 COLOR_MAP = {
-    # system: (background, foreground)
-    "FE": ('#e0f7fa', "#000000"),
-    "LS1": ("#ffebee", "#000000"),
-    "FS1": ("#e3f2fd", "#000000"),
-    "LS2": ("#e8f5e9", "#000000"),
-    "FS2": ("#fff3e0", "#000000"),
+    # system: background
+    "FE": "#e0f7fa",
+    "LS1": "#ffebee",
+    "FS1": "#e3f2fd",
+    "LS2": "#e8f5e9",
+    "FS2": "#fff3e0",
 }
 
 
@@ -113,7 +112,7 @@ class SettingsModel(QStandardItemModel):
 
         for elem, fname, fld, fval0 in self._settings:
             item_ename = QStandardItem(elem.name)
-            bgcolor, fgcolor = get_color(elem.ename)
+            bgcolor = get_color(elem.ename)
 
             if fld is None:
                 # debug
@@ -169,11 +168,11 @@ class SettingsModel(QStandardItemModel):
                         v = '{0:.4f}'.format(v)
                     item = QStandardItem(v)
                     row.append(item)
-            [i.setEditable(False) for i in row]
-            # color
+
+            # color, readonly
             for i in row:
+                i.setEditable(False)
                 i.setData(QBrush(QColor(bgcolor)), Qt.BackgroundRole)
-                i.setData(QBrush(QColor(fgcolor)), Qt.ForegroundRole)
             #
             self.appendRow(row)
             ename_set.add(elem.name)
@@ -376,13 +375,12 @@ def is_item_checked(item):
 
 
 def get_color(name):
-    """Return background color and foreground color as a tuple
-    based on naming rule.
+    """Return background color based on naming rule.
     """
     a, _ = name.split('_', 1)
     if ':' in a:
         system = a.split(':')[1]
     else:
         system = a
-    return COLOR_MAP.get(system, (BG_COLOR_DEFAULT, FG_COLOR_DEFAULT))
+    return COLOR_MAP.get(system, BG_COLOR_DEFAULT)
 
