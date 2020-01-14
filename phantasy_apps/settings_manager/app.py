@@ -286,34 +286,41 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_apply_settings(self):
         """Apply selected element settings.
         """
+        self.idx_px_list = []  # list to apply icon [(idx_src, px)]
         m = self._tv.model()
         settings_selected = m.get_selection()
-        self.applyer = DAQT(daq_func=partial(self.apply_single, m.sourceModel()),
+        self.applyer = DAQT(daq_func=self.apply_single,
                             daq_seq=settings_selected)
         self.applyer.daqStarted.connect(self.on_apply_settings_started)
-        self.applyer.progressUpdated.connect(self.on_apply_settings_progress)
+        self.applyer.progressUpdated.connect(
+                partial(self.on_apply_settings_progress,
+                        self.idx_px_list, m.sourceModel()))
         self.applyer.daqFinished.connect(self.on_apply_settings_finished)
         self.applyer.start()
 
-    def apply_single(self, model_src, tuple_idx_settings):
+    def apply_single(self, tuple_idx_settings):
         idx_src, settings = tuple_idx_settings
         elem, fname, fld, fval0 = settings
         ename = elem.name
         try:
+            t0 = time.time()
             fld.value = fval0
         except:
             px = self.fail_icon
         else:
             px = self.done_icon
             printlog("- Set {} [{}] to {}.".format(ename, fname, fval0))
-            print("wait time:", self.t_wait)
-            time.sleep(self.t_wait)
-        finally:
-            model_src.setData(idx_src, QIcon(px), Qt.DecorationRole)
+            dt = self.t_wait - (time.time() - t0)
+            if dt > 0:
+                time.sleep(dt)
+                printlog("Wait time: {} sec.".format(dt))
+        self.idx_px_list.append((idx_src, px))
 
     @pyqtSlot(float, 'QString')
-    def on_apply_settings_progress(self, per, str_idx):
-        printlog("Apply settings: {} %".format(per * 100))
+    def on_apply_settings_progress(self, idx_px_list, m, per, str_idx):
+        printlog("Apply settings: {0:.1f} %".format(per * 100))
+        idx_src, px = idx_px_list[-1]
+        m.setData(idx_src, QIcon(px), Qt.DecorationRole)
 
     @pyqtSlot()
     def on_apply_settings_started(self):
