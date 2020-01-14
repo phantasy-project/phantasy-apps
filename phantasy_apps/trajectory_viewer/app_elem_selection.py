@@ -44,7 +44,7 @@ class ElementSelectionWidget(QWidget, Ui_Form):
         all_dtypes = mp.get_all_types()
         dtypes = kws.get('dtypes', None)
         if dtypes is None:
-            self.__dtypes = set(all_types)
+            self.__dtypes = set(all_dtypes)
         else:
             self.__dtypes = set(i for i in dtypes if i in all_dtypes)
 
@@ -111,9 +111,12 @@ class ElementSelectionWidget(QWidget, Ui_Form):
 
 if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
+    from phantasy import MachinePortal
+
+    mp = MachinePortal("FRIB_VA", "LS1FS1")
 
     app = QApplication([])
-    w = ElementSelectionWidget()
+    w = ElementSelectionWidget(None, mp)
     w.show()
 
     app.exec_()
