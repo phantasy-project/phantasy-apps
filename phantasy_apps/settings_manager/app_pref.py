@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from .ui.ui_preferences import Ui_Dialog
-
-from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
+
+from .ui.ui_preferences import Ui_Dialog
 
 
 class PreferencesDialog(QDialog, Ui_Dialog):
-
     pref_changed = pyqtSignal(dict)
 
     def __init__(self, pref_dict, parent=None):
@@ -27,8 +26,8 @@ class PreferencesDialog(QDialog, Ui_Dialog):
     def _post_init(self):
         # field init mode
         mode = self.pref_dict['field_init_mode']
-        self.model_rbtn.setChecked(mode=='model')
-        self.live_rbtn.setChecked(mode=='live')
+        self.model_rbtn.setChecked(mode == 'model')
+        self.live_rbtn.setChecked(mode == 'live')
         for o in (self.model_rbtn, self.live_rbtn):
             o.toggled.emit(o.isChecked())
 
@@ -49,5 +48,4 @@ class PreferencesDialog(QDialog, Ui_Dialog):
 
     def get_config(self):
         return {'field_init_mode': self.mode,
-                't_wait': self.apply_delt_dsbox.value(),}
-
+                't_wait': self.apply_delt_dsbox.value(), }

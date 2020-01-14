@@ -3,44 +3,41 @@
 
 import json
 import time
-from functools import partial
-from collections import OrderedDict
 from fnmatch import translate
-from PyQt5.QtCore import Qt
+from functools import partial
+
 from PyQt5.QtCore import QVariant
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QCompleter
-from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QDialog
-from phantasy_ui import BaseAppForm
-from phantasy_ui import get_save_filename
-from phantasy_ui import get_open_filename
-from phantasy_ui.widgets import LatticeWidget
-from phantasy_ui.widgets import DataAcquisitionThread as DAQT
-from phantasy_ui.widgets import printlog
-from phantasy_apps.correlation_visualizer.utils import delayed_exec
-from phantasy import Settings
+from PyQt5.QtWidgets import QMessageBox
 from phantasy import CaField
+from phantasy import Settings
+from phantasy_ui import BaseAppForm
+from phantasy_ui import get_open_filename
+from phantasy_ui import get_save_filename
+from phantasy_ui.widgets import DataAcquisitionThread as DAQT
+from phantasy_ui.widgets import LatticeWidget
+from phantasy_ui.widgets import printlog
 
 from .app_loadfrom import LoadSettingsDialog
 from .app_pref import PreferencesDialog
-from .ui.ui_app import Ui_MainWindow
-from .utils import SettingsModel
-from .utils import pack_lattice_settings
-from .utils import FMT
 from .data import FlatSettings
 from .data import make_physics_settings
-
+from .ui.ui_app import Ui_MainWindow
+from .utils import FMT
+from .utils import SettingsModel
+from .utils import pack_lattice_settings
 
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
 IDX_RATE_MAP = {1: 0.1, 2: 0.2, 3: 0.5, 4: 1, 5: 2, 6: 5}
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
-
     # signal: settings loaded, emit flat_settings and settings.
     settingsLoaded = pyqtSignal(QVariant, QVariant)
 
@@ -96,8 +93,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.update_lattice_info_lbls(o.last_machine_name, o.last_lattice_name)
         # show element settings
         flat_settings, settings = pack_lattice_settings(o.work_lattice_conf,
-                        data_source=DATA_SRC_MAP[self.field_init_mode],
-                        only_physics=False)
+                                                        data_source=DATA_SRC_MAP[self.field_init_mode],
+                                                        only_physics=False)
         self.settingsLoaded.emit(flat_settings, settings)
         printlog("Lattice is changed")
 
@@ -170,12 +167,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # update rate
         self.rate_changed.connect(self.on_update_rate_changed)
         self.update_rate_cbb.currentIndexChanged.emit(
-                self.update_rate_cbb.currentIndex())
+            self.update_rate_cbb.currentIndex())
 
         # preferences
         # see preference dialog class
         self.field_init_mode = 'model'
-        self.t_wait = 0.05 # second
+        self.t_wait = 0.05  # second
         self.pref_dict = {
             'field_init_mode': self.field_init_mode,
             't_wait': self.t_wait,
@@ -222,8 +219,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Save settings to file.
         """
         filename, ext = get_save_filename(self,
-                caption="Save Settings to a File",
-                type_filter="CSV Files (*.csv);;JSON Files (*.json);;HDF5 Files (*.h5)")
+                                          caption="Save Settings to a File",
+                                          type_filter="CSV Files (*.csv);;JSON Files (*.json);;HDF5 Files (*.h5)")
         if filename is None:
             return
         ext = ext.upper()
@@ -235,10 +232,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._save_settings_as_h5(filename)
 
         QMessageBox.information(
-                self, "", "Saved data to {}".format(filename))
+            self, "", "Saved data to {}".format(filename))
         printlog("Saved settings to {}.".format(filename))
 
     def _save_settings_as_json(self, filename):
+        # WIP
         s = self.get_settings()
         with open(filename, 'w') as f:
             json.dump(data, f, indent=2)
@@ -293,8 +291,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                             daq_seq=settings_selected)
         self.applyer.daqStarted.connect(self.on_apply_settings_started)
         self.applyer.progressUpdated.connect(
-                partial(self.on_apply_settings_progress,
-                        self.idx_px_list, m.sourceModel()))
+            partial(self.on_apply_settings_progress,
+                    self.idx_px_list, m.sourceModel()))
         self.applyer.daqFinished.connect(self.on_apply_settings_finished)
         self.applyer.start()
 
@@ -361,7 +359,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if self._lattice_load_window is None:
             self._lattice_load_window = LatticeWidget()
             self._lattice_load_window.latticeChanged.connect(
-                    self.on_lattice_changed)
+                self.on_lattice_changed)
             self._lattice_load_window.latticeChanged.connect(self._lattice_load_window.close)
         self._lattice_load_window.show()
 
@@ -427,8 +425,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_load(self):
         """Load settings from file."""
         filepath, ext = get_open_filename(self,
-                caption="Load Settings from a File",
-                type_filter="CSV Files (*.csv);;JSON Files (*.json);;HDF5 Files (*.h5)")
+                                          caption="Load Settings from a File",
+                                          type_filter="CSV Files (*.csv);;JSON Files (*.json);;HDF5 Files (*.h5)")
         if filepath is None:
             return
         ext = ext.upper()
@@ -439,7 +437,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         elif ext == 'H5':
             self._load_settings_from_h5(filepath)
         QMessageBox.information(
-                self, "", "Loaded data to {}".format(filepath))
+            self, "", "Loaded data to {}".format(filepath))
         printlog("Loaded settings from {}.".format(filepath))
 
     def _load_settings_from_csv(self, filepath):
@@ -447,8 +445,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         s = make_physics_settings(FlatSettings(filepath), lat)
         lat.settings = s
         flat_settings, settings = pack_lattice_settings(lat,
-                data_source=DATA_SRC_MAP[self.field_init_mode],
-                only_physics=False)
+                                                        data_source=DATA_SRC_MAP[self.field_init_mode],
+                                                        only_physics=False)
         self.settingsLoaded.emit(flat_settings, settings)
         self.__settings = s
 
@@ -506,11 +504,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.updater = DAQT(daq_func=partial(self.update_value_single, delt),
                             daq_seq=range(1))
         self.updater.resultsReady.connect(
-                partial(self.on_values_ready, m, delt))
+            partial(self.on_values_ready, m))
         self.updater.finished.connect(self.start_thread_update)
         self.updater.start()
 
-    def on_values_ready(self, m, delt, res):
+    def on_values_ready(self, m, res):
         """Results are ready for updating.
         """
         # res --> [res in daq_func] : [(idx, val)... ]
@@ -522,11 +520,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         t0 = time.time()
         res = []
         for o, idx in zip(self._m_obj, self._m_idx):
-            if not isinstance(o, CaField): # PV
+            if not isinstance(o, CaField):  # PV
                 val = o.get()
                 for iidx in idx:
                     res.append((iidx, val))
-            else: # CaField
+            else:  # CaField
                 rd_val, sp_val = o.value, o.current_setting()
                 for iidx, val in zip(idx, (rd_val, sp_val)):
                     res.append((iidx, val))
@@ -594,7 +592,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 def make_settings(filepath, lat):
     """Make settings, if both ENG and PHY exist, only keep PHY."""
     s = Settings(filepath)
-    nm = {o.name:o for o in lat}
+    nm = {o.name: o for o in lat}
     s_phy = s.copy()
     for k, v in s.items():
         elem = nm[k]
@@ -604,5 +602,3 @@ def make_settings(filepath, lat):
             for f in phy_fields:
                 s_phy[k].update({f: v[f]})
     return s_phy
-
-

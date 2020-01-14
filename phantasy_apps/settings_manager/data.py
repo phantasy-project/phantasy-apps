@@ -2,6 +2,7 @@
 
 import csv
 from collections import OrderedDict
+
 from phantasy import Settings
 
 
@@ -22,7 +23,7 @@ def make_physics_settings(flat_settings, lat):
     r : Settings
         Physics settings.
     """
-    s = Settings() # physics settings
+    s = Settings()  # physics settings
     for name, field, sp, rd, last_sp in flat_settings:
         elem = lat[name]
         eng_fields = elem.get_eng_fields()
@@ -49,6 +50,7 @@ class FlatSettings(list):
     """List of device settings, each list element is a tuple of device name,
     field name, field set value ,field value value and last field set value.
     """
+
     def __init__(self, settings_path=None, **kws):
         # settings_path is csv file path.
         super(FlatSettings, self).__init__()
@@ -63,7 +65,8 @@ class FlatSettings(list):
         """
         with open(path, 'r') as f:
             ss = csv.reader(f, delimiter=delimiter, skipinitialspace=True)
-            if skipheader: self.header = next(ss)
+            if skipheader:
+                self.header = next(ss)
             for name, field, sp, rd, last_sp in ss:
                 self.append((name, field, float(sp), float(rd), float(last_sp)))
 

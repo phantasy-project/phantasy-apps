@@ -14,7 +14,6 @@ from .utils import convert_settings
 
 
 class LoadSettingsDialog(QDialog, Ui_Dialog):
-
     # signal: settings loaded, emit flat_settings and settings.
     settingsLoaded = pyqtSignal(QVariant, QVariant)
 
@@ -31,7 +30,7 @@ class LoadSettingsDialog(QDialog, Ui_Dialog):
         """open .snp file.
         """
         filepath, ext = get_open_filename(self,
-                type_filter="SNP Files (*.snp);;CSV Files (*.csv)")
+                                          type_filter="SNP Files (*.snp);;CSV Files (*.csv)")
         if filepath is None:
             return
         self.filepath_lineEdit.setText(filepath)
@@ -43,13 +42,13 @@ class LoadSettingsDialog(QDialog, Ui_Dialog):
         mp = self.parent._mp
         if mp is None:
             QMessageBox.warning(self, "Load Settings",
-                    "Please load lattice first.",
-                    QMessageBox.Ok)
+                                "Please load lattice first.",
+                                QMessageBox.Ok)
         else:
             snpfile = self.filepath_lineEdit.text()
             settings = generate_settings(snpfile=snpfile,
-                    lattice=mp.work_lattice_conf,
-                    only_physics=False)
+                                         lattice=mp.work_lattice_conf,
+                                         only_physics=False)
             flat_settings = convert_settings(settings, mp)
             self.settingsLoaded.emit(flat_settings, settings)
 

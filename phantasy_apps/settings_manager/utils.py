@@ -1,27 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import re
 from collections import OrderedDict
 from functools import partial
-import re
 
-from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QSortFilterProxyModel
-from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QVariant
+from PyQt5.QtCore import Qt
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QBrush
 from PyQt5.QtGui import QColor
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import QAbstractScrollArea
-
-from phantasy_ui.widgets import printlog
-
-try:
-    basestring
-except NameError:
-    basestring = str
 
 FMT = "{0:.6g}"
 
@@ -164,7 +157,7 @@ class SettingsModel(QStandardItemModel):
             for i, f in enumerate(COLUMN_NAMES):
                 if f in COLUMN_NAMES_ATTR:
                     v = getattr(elem, COLUMN_SFIELD_MAP[f])
-                    if not isinstance(v, basestring):
+                    if not isinstance(v, str):
                         v = '{0:.4f}'.format(v)
                     item = QStandardItem(v)
                     row.append(item)
@@ -345,6 +338,8 @@ def pack_lattice_settings(lat, elem_list=None, **kws):
 
     Parameters
     ----------
+    lat :
+        Lattice object.
     elem_list : list
         List of CaElement, if not defined, use the whole lattice.
 
