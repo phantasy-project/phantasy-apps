@@ -8,7 +8,6 @@ from collections import OrderedDict
 from fnmatch import translate
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QVariant
-from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QPixmap
@@ -37,6 +36,7 @@ from .data import make_physics_settings
 
 
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
+IDX_RATE_MAP = {1: 0.1, 2: 0.2, 3: 0.5, 4: 1, 5: 2, 6: 5}
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -168,9 +168,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.settingsLoaded.connect(self.on_settings_loaded)
 
         # update rate
-        self.update_timer = QTimer(self)
-        self.update_timer.timeout.connect(self.on_update_by_time)
         self.rate_changed.connect(self.on_update_rate_changed)
+        self.update_rate_cbb.currentIndexChanged.emit(
+                self.update_rate_cbb.currentIndex())
 
         # preferences
         # see preference dialog class
@@ -208,16 +208,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(int)
     def on_update_rate_changed(self, i):
-        # cases:
-        # 1. 0: auto, max rate depends on devices
-        # 2. i > 0: update every 1/i second
-        self.stop_update_timer()
         if i == 0:
+            self._update_mode = 'auto'
             tt = "Auto updating rate."
         else:
-            printlog('updating controled by timer')
-            tt = "Updating at {} Hz.".format(i)
-        self.start_update(i)
+            self._update_mode = 'thread'
+            rate = IDX_RATE_MAP[i]
+            self._update_delt = 1.0 / rate  # sec
+            tt = "Updating at {0:.1f} Hz.".format(rate)
         self.update_rate_cbb.setToolTip(tt)
 
     def on_save(self):
@@ -474,64 +472,93 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.field_init_mode = self.pref_dict['field_init_mode']
         self.t_wait = self.pref_dict['t_wait']
 
-    @pyqtSlot()
-    def on_update_by_time(self):
-        """Update values by time.
-        """
-        printlog("Updating...")
-        m = self._tv.model().sourceModel()
-        for i, o in enumerate(self._m_obj):
-            if not isinstance(o, CaField): # PV
-                val = o.get()
-                for idx in self._m_idx[i]:
-#                    print("PV:", (idx.row(), idx.column()), val)
-                    m.data_changed.emit((idx, FMT.format(val), Qt.DisplayRole))
-            else: # CaField
-                rd_val, sp_val = o.value, o.current_setting()
-                for idx, val in zip(self._m_idx[i], (rd_val, sp_val)):
-#                    print("Field:", (idx.row(), idx.column()), val)
-                    m.data_changed.emit((idx, FMT.format(val), Qt.DisplayRole))
-
     @pyqtSlot(int)
     def on_update_rate(self, i):
         # update_rate_cbb index
         self.rate_changed.emit(i)
 
-    def auto_update(self):
-        # resume updating.
+    def start_auto_update(self):
+        # updating independently,
+        # _update_mode: 'auto'
         for pv in self._pvs:
             pv.auto_monitor = True
 
-    def pause_update(self):
-        # pause updating.
+    def stop_auto_update(self):
+        # stop auto updating.
         for pv in self._pvs:
             pv.auto_monitor = False
 
+    def start_thread_update(self):
+        # Update values every *delt* second(s),
+        # _update_mode: 'thread'
+        if self._stop_update_thread:
+            return
+
+        delt = self._update_delt
+        m = self._tv.model().sourceModel()
+        self.updater = DAQT(daq_func=partial(self.update_value_single, delt),
+                            daq_seq=range(1))
+        self.updater.resultsReady.connect(
+                partial(self.on_values_ready, m, delt))
+        self.updater.finished.connect(self.start_thread_update)
+        self.updater.start()
+
+    def on_values_ready(self, m, delt, res):
+        """Results are ready for updating.
+        """
+        # res --> [res in daq_func] : [(idx, val)... ]
+        for (idx, val) in res[0]:
+            m.data_changed.emit((idx, FMT.format(val), Qt.DisplayRole))
+
+    def update_value_single(self, delt, iiter):
+        # res: [(idx, val)..., dt1]
+        t0 = time.time()
+        res = []
+        for o, idx in zip(self._m_obj, self._m_idx):
+            if not isinstance(o, CaField): # PV
+                val = o.get()
+                for iidx in idx:
+                    res.append((iidx, val))
+            else: # CaField
+                rd_val, sp_val = o.value, o.current_setting()
+                for iidx, val in zip(idx, (rd_val, sp_val)):
+                    res.append((iidx, val))
+
+        dt = time.time() - t0
+        dt_residual = delt - dt
+        if dt_residual > 0:
+            time.sleep(dt_residual)
+            printlog("Wait {} msec.".format(dt_residual * 1000))
+        else:
+            printlog("Update rate is too high.")
+
+        return res
+
     @pyqtSlot(bool)
-    def on_toggle_rate_ctrl_btn(self, f):
+    def on_toggle_update_btn(self, f):
         """Toggle update rate control.
         """
         if f:
-            i = self.update_rate_cbb.currentIndex()
-            self.start_update(i)
+            self.start_update()
         else:
             self.stop_update()
 
-    def start_update(self, i):
-        if i == 0:
-            # auto update
-            self.auto_update()
+    def start_update(self):
+        if self._update_mode == 'auto':
+            self.start_auto_update()
+            printlog("Start auto updating.")
         else:
-            self.pause_update()
-            self.update_timer.start(1000.0 / i)
+            self._stop_update_thread = False
+            self.start_thread_update()
+            printlog("Start thread updating.")
 
     def stop_update(self):
-        self.stop_update_timer()
-        self.pause_update()
-
-    def stop_update_timer(self):
-        if self.update_timer.isActive():
-            self.update_timer.stop()
+        if self._update_mode == 'thread':
+            self._stop_update_thread = True
+            printlog("Stop thread updating.")
+        else:
+            self.stop_auto_update()
+            printlog("Stop auto updating.")
 
     @pyqtSlot()
     def on_reset_set_status(self):
