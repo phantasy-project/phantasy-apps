@@ -16,7 +16,7 @@ from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import QAbstractScrollArea
 
-from phantasy_apps.utils import printlog
+from phantasy_ui.widgets import printlog
 
 try:
     basestring

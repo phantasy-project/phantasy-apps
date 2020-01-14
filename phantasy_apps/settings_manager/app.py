@@ -20,7 +20,7 @@ from phantasy_ui import get_save_filename
 from phantasy_ui import get_open_filename
 from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
-from phantasy_apps.utils import printlog
+from phantasy_ui.widgets import printlog
 from phantasy_apps.correlation_visualizer.utils import delayed_exec
 from phantasy import Settings
 from phantasy import CaField
