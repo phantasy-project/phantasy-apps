@@ -121,8 +121,9 @@ class Ui_MainWindow(object):
         self.label_6.setObjectName("label_6")
         self.horizontalLayout.addWidget(self.label_6)
         self.update_rate_cbb = QtWidgets.QComboBox(self.centralwidget)
-        self.update_rate_cbb.setEnabled(False)
+        self.update_rate_cbb.setEnabled(True)
         self.update_rate_cbb.setObjectName("update_rate_cbb")
+        self.update_rate_cbb.addItem("")
         self.update_rate_cbb.addItem("")
         self.update_rate_cbb.addItem("")
         self.update_rate_cbb.addItem("")
@@ -227,7 +228,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.horizontalLayout_2, 0, 0, 1, 2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 31))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 26))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -343,11 +344,11 @@ class Ui_MainWindow(object):
             MainWindow.on_launch_preferences)
         self.reload_lattice_btn.clicked.connect(MainWindow.on_reload_lattice)
         self.update_ctrl_btn.toggled['bool'].connect(
-            self.update_rate_cbb.setEnabled)
+            self.update_rate_cbb.setDisabled)
         self.update_rate_cbb.currentIndexChanged['int'].connect(
             MainWindow.on_update_rate)
         self.update_ctrl_btn.toggled['bool'].connect(
-            MainWindow.on_toggle_rate_ctrl_btn)
+            MainWindow.on_toggle_update_btn)
         self.reset_set_status_btn.clicked.connect(
             MainWindow.on_reset_set_status)
         self.expand_all_btn.toggled['bool'].connect(
@@ -382,11 +383,12 @@ class Ui_MainWindow(object):
             ))
         self.label_6.setText(_translate("MainWindow", "Update Rate"))
         self.update_rate_cbb.setItemText(0, _translate("MainWindow", "Auto"))
-        self.update_rate_cbb.setItemText(1, _translate("MainWindow", "1 Hz"))
-        self.update_rate_cbb.setItemText(2, _translate("MainWindow", "2 Hz"))
-        self.update_rate_cbb.setItemText(3, _translate("MainWindow", "3 Hz"))
-        self.update_rate_cbb.setItemText(4, _translate("MainWindow", "4 Hz"))
-        self.update_rate_cbb.setItemText(5, _translate("MainWindow", "5 Hz"))
+        self.update_rate_cbb.setItemText(1, _translate("MainWindow", "0.1 Hz"))
+        self.update_rate_cbb.setItemText(2, _translate("MainWindow", "0.2 Hz"))
+        self.update_rate_cbb.setItemText(3, _translate("MainWindow", "0.5 Hz"))
+        self.update_rate_cbb.setItemText(4, _translate("MainWindow", "1 Hz"))
+        self.update_rate_cbb.setItemText(5, _translate("MainWindow", "2 Hz"))
+        self.update_rate_cbb.setItemText(6, _translate("MainWindow", "5 Hz"))
         self.update_ctrl_btn.setToolTip(
             _translate(
                 "MainWindow",
