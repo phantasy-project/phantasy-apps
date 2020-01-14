@@ -31,7 +31,7 @@ from phantasy_ui.widgets import ElementWidget
 from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
-from phantasy_apps.utils import printlog
+from phantasy_ui.widgets import printlog
 from phantasy_apps.utils import current_datetime
 
 from .app_array_set import ArraySetDialog

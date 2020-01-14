@@ -23,7 +23,7 @@ from PyQt5.QtWidgets import QMessageBox
 
 from phantasy import CaField
 from phantasy import ensure_put
-from phantasy_apps.utils import printlog
+from phantasy_ui.widgets import printlog
 from phantasy_ui import BaseAppForm
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
