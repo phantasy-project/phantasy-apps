@@ -77,6 +77,10 @@ class Ui_Dialog(object):
         self.live_rbtn.toggled['bool'].connect(Dialog.on_toggle_mode)
         self.model_rbtn.toggled['bool'].connect(Dialog.on_toggle_mode)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+        Dialog.setTabOrder(self.ok_btn, self.cancel_btn)
+        Dialog.setTabOrder(self.cancel_btn, self.model_rbtn)
+        Dialog.setTabOrder(self.model_rbtn, self.live_rbtn)
+        Dialog.setTabOrder(self.live_rbtn, self.apply_delt_dsbox)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate

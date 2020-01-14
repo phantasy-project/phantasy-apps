@@ -354,6 +354,18 @@ class Ui_MainWindow(object):
         self.expand_all_btn.toggled['bool'].connect(
             MainWindow.on_expand_collapse_view)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        MainWindow.setTabOrder(self.expand_all_btn, self.select_all_btn)
+        MainWindow.setTabOrder(self.select_all_btn, self.invert_selection_btn)
+        MainWindow.setTabOrder(self.invert_selection_btn,
+                               self.reset_set_status_btn)
+        MainWindow.setTabOrder(self.reset_set_status_btn,
+                               self.namefilter_lineEdit)
+        MainWindow.setTabOrder(self.namefilter_lineEdit, self.treeView)
+        MainWindow.setTabOrder(self.treeView, self.reload_lattice_btn)
+        MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
+        MainWindow.setTabOrder(self.lv_view_btn, self.update_rate_cbb)
+        MainWindow.setTabOrder(self.update_rate_cbb, self.update_ctrl_btn)
+        MainWindow.setTabOrder(self.update_ctrl_btn, self.apply_btn)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
