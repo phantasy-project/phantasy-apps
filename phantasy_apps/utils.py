@@ -100,23 +100,6 @@ def current_datetime(ctime=None, fmt=None):
     return epoch2human(t, fmt=f)
 
 
-def printlog(*msg):
-    """Print message(s) with current timestamp.
-
-    Examples
-    --------
-    >>> printlog('a', 'b', 'c')
-    [2020-01-14T11:22:10.475744] a, b, c
-    >>> printlog(1, 2, 3)
-    [2020-01-14T11:22:57.500679] a, b
-    >>> printlog("This is a log message.")
-    [2020-01-14T11:23:40.389471] This is a log message.
-    """
-    print("[{}] {}".format(
-        current_datetime(),
-        ', '.join((str(i) for i in msg))))
-
-
 if __name__ == '__main__':
     t = 12345
     assert uptime(t) == "03:25:45"
