@@ -14,9 +14,9 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMessageBox
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
+from phantasy_ui.widgets import ElementSelectionWidget
 from phantasy_ui.widgets import LatticeWidget
 
-from phantasy_apps.trajectory_viewer.app_elem_selection import ElementSelectionWidget
 from .app_save import SaveDataDialog
 from .ui.ui_app import Ui_MainWindow
 from .utils import ElementListModelDV as ElementListModel

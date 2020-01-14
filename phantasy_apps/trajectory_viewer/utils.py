@@ -18,6 +18,7 @@ from PyQt5.QtWidgets import QComboBox
 from PyQt5.QtWidgets import QToolButton
 from phantasy import MachinePortal
 from phantasy import epoch2human
+from phantasy_ui.widgets import is_item_checked
 
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 from .ui import details_icon
@@ -39,113 +40,6 @@ COLUMN_SFIELD_MAP_LITE = OrderedDict((
 
 COLUMN_NAMES_LITE = list(COLUMN_SFIELD_MAP_LITE.keys())
 SFIELD_NAMES_LITE = list(COLUMN_SFIELD_MAP_LITE.values())
-
-DTYPE_HINT_MAP = {
-    'BCM': 'Beam Current Monitor',
-    'BEND': 'Magnetic Dipole',
-    'BPM': 'Beam Position Monitor',
-    'CAV': 'RF Cavity',
-    'EBEND': 'Electric Dipole',
-    'EQUAD': 'Electric Quadrupole',
-    'FC': 'Faraday Cup',
-    'HCOR': 'Horizontal Corrector',
-    'HMR': 'Halo Ring Monitor',
-    'IC': 'Ionization Chamber',
-    'ND': 'Neutron Detector',
-    'PM': 'Profile Monitor (Wire Scanner)',
-    'QUAD': 'Magnetic Quadrupole',
-    'SEXT': 'Sextupole',
-    'SOL': 'Solenoid',
-    'VCOR': 'Vertical Corrector',
-}
-
-
-class LatticeDataModel(QStandardItemModel):
-    """Lattice data model fot TV.
-    """
-    # items are selected, list of element names
-    itemsSelected = pyqtSignal(list)
-
-    # n selected items
-    selectedItemsNumberChanged = pyqtSignal(int)
-
-    def __init__(self, parent, mp=None, **kws):
-        super(self.__class__, self).__init__(parent)
-        self._tv = parent
-        self._mp = mp
-
-        self.header = self.h_name, self.h_type, self.h_pos, self.h_len, self.h_index = \
-            COLUMN_NAMES_LITE
-        self.ids = self.i_name, self.i_type, self.i_pos, self.i_len, self.i_index = \
-            range(len(self.header))
-
-        # selected items
-        self._selected_items = []
-
-        # item is changed, selected
-        self.itemChanged.connect(self.on_item_changed)
-
-        # keyword arguments
-        self.kws = kws
-
-    def set_model(self):
-        self.set_data(**self.kws)
-        for i, s in zip(self.ids, self.header):
-            self.setHeaderData(i, Qt.Horizontal, s)
-        self._tv.setModel(self)
-        self.__post_init_ui(self._tv)
-
-    def on_item_changed(self, item):
-        index = item.index()
-        ename = self.item(index.row(), index.column()).text()
-        self._update_selection(ename, item)
-
-    def _update_selection(self, ename, item):
-        # update selected items
-        if is_item_checked(item):
-            self._selected_items.append(ename)
-        else:
-            self._selected_items.remove(ename)
-        self.itemsSelected.emit(self._selected_items)
-        self.selectedItemsNumberChanged.emit(len(self._selected_items))
-        # print(self._selected_items)
-
-    def set_data(self, **kws):
-        dtypes = kws.get('dtypes', None)
-        if dtypes is None:
-            dtypes = self._mp.get_all_types()
-
-        for elem in self._mp.work_lattice_conf:
-
-            if elem.family not in dtypes:
-                # print(elem.name, 'is skipped')
-                continue
-            row = []
-            for i, f in enumerate(SFIELD_NAMES_LITE):
-                v = getattr(elem, f)
-                if i == self.i_index:
-                    v = '{0:04d}'.format(v)
-                if not isinstance(v, basestring):
-                    v = '{0:.4f}'.format(v)
-                item = QStandardItem(v)
-                if i == 0:
-                    item.setCheckable(True)
-                    item.setCheckState(Qt.Checked)
-                    self._update_selection(item.text(), item)
-                item.setEditable(False)
-                row.append(item)
-            self.appendRow(row)
-
-    def __post_init_ui(self, tv):
-        # view properties
-        tv.setStyleSheet("font-family: monospace;")
-        tv.setAlternatingRowColors(True)
-        tv.setSortingEnabled(True)
-        for i in self.ids:
-            tv.resizeColumnToContents(i)
-        self.sort(self.i_index, Qt.AscendingOrder)
-        tv.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        tv.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
 
 class ElementListModel(QStandardItemModel):
@@ -331,10 +225,6 @@ class ElementListModel(QStandardItemModel):
             if is_item_checked(item00):
                 cbb = self._v.indexWidget(self.index(irow, self.i_field))
                 cbb.setCurrentText(s)
-
-
-def is_item_checked(item):
-    return item.checkState() == Qt.Checked
 
 
 def str2list(fname):

@@ -15,6 +15,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import QAbstractScrollArea
+from phantasy_ui.widgets import is_item_checked
 
 FMT = "{0:.6g}"
 
@@ -363,10 +364,6 @@ def pack_lattice_settings(lat, elem_list=None, **kws):
     settings = lat.get_settings_from_element_list(elems, **kws)
     flat_settings = convert_settings(settings, elems)
     return flat_settings, settings
-
-
-def is_item_checked(item):
-    return item.checkState() == Qt.Checked
 
 
 def get_color(name):

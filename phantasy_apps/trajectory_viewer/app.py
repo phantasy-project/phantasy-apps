@@ -14,10 +14,10 @@ from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import QMessageBox
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import LatticeWidget
+from phantasy_ui.widgets import ElementSelectionWidget
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
 from phantasy_apps.utils import apply_mplcurve_settings
-from .app_elem_selection import ElementSelectionWidget
 from .app_help import HelpDialog
 from .ui.ui_app import Ui_MainWindow
 from .utils import ElementListModel
