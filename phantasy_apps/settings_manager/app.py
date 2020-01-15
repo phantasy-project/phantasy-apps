@@ -34,7 +34,7 @@ from .utils import SettingsModel
 from .utils import pack_lattice_settings
 
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
-IDX_RATE_MAP = {1: 0.1, 2: 0.2, 3: 0.5, 4: 1, 5: 2, 6: 5}
+IDX_RATE_MAP = {1: 0.5, 2: 1.0, 3: 2.0}
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):

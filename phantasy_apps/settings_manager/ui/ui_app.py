@@ -127,9 +127,6 @@ class Ui_MainWindow(object):
         self.update_rate_cbb.addItem("")
         self.update_rate_cbb.addItem("")
         self.update_rate_cbb.addItem("")
-        self.update_rate_cbb.addItem("")
-        self.update_rate_cbb.addItem("")
-        self.update_rate_cbb.addItem("")
         self.horizontalLayout.addWidget(self.update_rate_cbb)
         self.update_ctrl_btn = QtWidgets.QToolButton(self.centralwidget)
         icon2 = QtGui.QIcon()
@@ -395,12 +392,9 @@ class Ui_MainWindow(object):
             ))
         self.label_6.setText(_translate("MainWindow", "Update Rate"))
         self.update_rate_cbb.setItemText(0, _translate("MainWindow", "Auto"))
-        self.update_rate_cbb.setItemText(1, _translate("MainWindow", "0.1 Hz"))
-        self.update_rate_cbb.setItemText(2, _translate("MainWindow", "0.2 Hz"))
-        self.update_rate_cbb.setItemText(3, _translate("MainWindow", "0.5 Hz"))
-        self.update_rate_cbb.setItemText(4, _translate("MainWindow", "1 Hz"))
-        self.update_rate_cbb.setItemText(5, _translate("MainWindow", "2 Hz"))
-        self.update_rate_cbb.setItemText(6, _translate("MainWindow", "5 Hz"))
+        self.update_rate_cbb.setItemText(1, _translate("MainWindow", "0.5 Hz"))
+        self.update_rate_cbb.setItemText(2, _translate("MainWindow", "1.0 Hz"))
+        self.update_rate_cbb.setItemText(3, _translate("MainWindow", "2.0 Hz"))
         self.update_ctrl_btn.setToolTip(
             _translate(
                 "MainWindow",
