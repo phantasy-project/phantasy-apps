@@ -16,7 +16,7 @@ from phantasy import PVElement
 from phantasy import PVElementReadonly
 from phantasy.library.physics.devices import process_devices
 
-from phantasy_ui.widgets import printlog
+from phantasy_ui import printlog
 from phantasy_apps.utils import current_datetime
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 from phantasy_ui import random_string

@@ -27,11 +27,11 @@ from PyQt5.QtWidgets import QPushButton
 from phantasy import CaField
 from phantasy_ui import BaseAppForm
 from phantasy_ui import random_string
-from phantasy_ui.widgets import ElementWidget
-from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
-from phantasy_ui.widgets import printlog
+from phantasy_ui import printlog
+from phantasy_ui.widgets import ElementWidget
+from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui.widgets import ElementSelectDialog
 from phantasy_apps.utils import current_datetime
 

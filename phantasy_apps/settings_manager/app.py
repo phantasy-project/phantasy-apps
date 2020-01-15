@@ -20,9 +20,9 @@ from phantasy import Settings
 from phantasy_ui import BaseAppForm
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
+from phantasy_ui import printlog
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from phantasy_ui.widgets import LatticeWidget
-from phantasy_ui.widgets import printlog
 
 from .app_loadfrom import LoadSettingsDialog
 from .app_pref import PreferencesDialog
