@@ -7,6 +7,7 @@ from collections import deque
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
@@ -24,6 +25,27 @@ NMAX = 100
 
 
 class ElementSelectDialog(QDialog, Ui_Dialog):
+    """Select high-level CA field(s) or PV element, once OK button is clicked,
+    the selected item(s) will be emit as signal `selection_changed`, the slot
+    `on_update_elem_tree` should be connected with a signal which emits
+    `MachinePortal` object.
+
+    Signal: `selection_changed`, emits: (elements, elements_display, fields)
+    - elements : deque of CaField/PVElement/PVElementReadonly
+    - elements_display : deque of CaElement/PVElement/PVElementReadonly
+    - fields : deque of field names or None
+
+    Parameters
+    ----------
+    parent : QObject
+        Parent.
+    mode : str
+        Valid options: 'alter', 'monitor', 'extra', 'alter' and 'monitor' is
+        single selection, 'extra' is multi-selection.
+    mp :
+        MachinePortal object.
+    """
+    selection_changed = pyqtSignal(tuple)
 
     def __init__(self, parent=None, mode='alter', mp=None):
         # mode: 'alter' or 'monitor', 'extra'
@@ -36,7 +58,7 @@ class ElementSelectDialog(QDialog, Ui_Dialog):
 
         # UI
         self.setupUi(self)
-        self.setWindowTitle("Select Element")
+        self.setWindowTitle("Select Element and Field")
 
         # mode
         [o.setEnabled(mode == 'alter') for o in
@@ -104,6 +126,8 @@ class ElementSelectDialog(QDialog, Ui_Dialog):
             self.setResult(QDialog.Rejected)
         else:
             self.setResult(QDialog.Accepted)
+            self.selection_changed.emit(
+                    (self.sel_elem, self.sel_elem_display, self.sel_field))
 
     @pyqtSlot()
     def on_click_cancel(self):
