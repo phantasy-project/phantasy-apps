@@ -29,9 +29,9 @@ from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
 from phantasy_ui import random_string
 from phantasy_ui.widgets import ElementWidget
+from phantasy_ui.widgets import ElementSelectDialog
 
 from .app_array_set import ArraySetDialog
-from .app_elem_select import ElementSelectDialog
 from .app_plot3d import Plot3dData
 from .data import ScanDataModel
 from .scan import ScanTask

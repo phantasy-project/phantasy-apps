@@ -32,10 +32,10 @@ from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
 from phantasy_ui.widgets import printlog
+from phantasy_ui.widgets import ElementSelectDialog
 from phantasy_apps.utils import current_datetime
 
 from .app_array_set import ArraySetDialog
-from .app_elem_select import ElementSelectDialog
 from .app_help import HelpDialog
 from .app_monitors_view import MonitorsViewWidget
 from .app_mps_config import MpsConfigWidget
