@@ -335,20 +335,30 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self._indices_for_retake_points = []
         self.on_view_selected_points()
 
+    @pyqtSlot(tuple)
+    def on_selection_changed(self, selections):
+        self._elem_selections = selections
+
     @pyqtSlot()
     def on_select_elem(self, mode='alter'):
         """Select element via PV or high-level element for alter-vars and
         monitor-vars.
         """
-        dlg = self._sel_elem_dialogs.setdefault(mode, ElementSelectDialog(self, mode, mp=self._mp))
-        r = dlg.exec_()
-        self.elementsTreeChanged.connect(dlg.on_update_elem_tree)
+        if mode not in self._sel_elem_dialogs:
+            dlg = ElementSelectDialog(self, mode, mp=self._mp)
+            dlg.selection_changed.connect(self.on_selection_changed)
+            self._sel_elem_dialogs[mode] = dlg
+            self.elementsTreeChanged.connect(dlg.on_update_elem_tree)
+        else:
+            dlg = self._sel_elem_dialogs[mode]
 
+        r = dlg.exec_()
         if r == QDialog.Accepted:
+            sel_elems, sel_elems_display, sel_fields = self._elem_selections
             # update element obj (CaField)
-            sel_elem = dlg.sel_elem[0]  # CaField
-            sel_elem_display = dlg.sel_elem_display[0]  # CaElement
-            fname = dlg.sel_field[0]
+            sel_elem = sel_elems[0]  # CaField
+            sel_elem_display = sel_elems_display[0]  # CaElement
+            fname = sel_fields[0]
             if fname is None:
                 elem_btn_lbl = sel_elem_display.ename
             else:
@@ -387,11 +397,10 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         """Select element as extra monitor(s).
         """
         dlg = ElementSelectDialog(self, 'extra', mp=self._mp)
+        dlg.selection_changed.connect(self.on_selection_changed)
         r = dlg.exec_()
         if r == QDialog.Accepted:
-            sel_elems = dlg.sel_elem
-            sel_elems_display = dlg.sel_elem_display
-
+            sel_elems, sel_elems_display, sel_fields = self._elem_selections
             new_monis = self._setup_extra_monitors(sel_elems_display, sel_elems)
             for moni in new_monis:
                 self.scan_task.add_extra_monitor(moni)
