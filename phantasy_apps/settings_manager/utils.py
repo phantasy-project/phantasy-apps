@@ -318,8 +318,8 @@ class _SortProxyModel(QSortFilterProxyModel):
 
 
 def convert_settings(settings_read, elem_list):
-    """Convert settings to flat, each tuple is composed of (CaElement,
-    field name, CaField, field value)
+    """Convert hierarchical `Settings` to flat list of tuples as the return,
+    each tuple is composed of (CaElement, field name, CaField, field value).
     """
     flat_settings = []
     nm = {o.name: o for o in elem_list}
