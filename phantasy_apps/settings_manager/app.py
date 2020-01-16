@@ -47,6 +47,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # refresh rate
     rate_changed = pyqtSignal(int)
 
+    # lattice is loaded
+    lattice_loaded = pyqtSignal(QVariant)
+
     def __init__(self, version):
         super(SettingsManagerWindow, self).__init__()
 
@@ -103,11 +106,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.settingsLoaded.emit(flat_settings, settings)
         #
         printlog("Lattice is changed")
+        self.lattice_loaded.emit(o)
 
     def show_init_settings_info(self):
         if not self.init_settings:
             QMessageBox.information(self, "Loaded Lattice",
-                    "Lattice is loaded, add device settings from 'Add' tool.",
+                    "Lattice is loaded, add settings from 'Add Devices' tool.",
                     QMessageBox.Ok)
 
     def _enable_widgets(self, enabled):
@@ -160,6 +164,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def __post_init_ui(self):
         self._tv = self.treeView
         self._load_from_dlg = None
+        self._elem_select_dlg = None
         self._lattice_load_window = None
         self._mp = None
         self.__settings = Settings()
@@ -603,14 +608,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_add_devices(self):
         # Add devices, high-level fields or PV elements.
+        t0 = time.time()
 
         def on_device_selected(selections):
             #
             self._elem_selected = selections
 
-        dlg = ElementSelectDialog(self, "multi", mp=self._mp)
-        dlg.selection_changed.connect(on_device_selected)
-        r = dlg.exec_()
+        if self._elem_select_dlg is None:
+            self._elem_select_dlg = ElementSelectDialog(self, "multi", mp=self._mp)
+            self._elem_select_dlg.selection_changed.connect(on_device_selected)
+            self.lattice_loaded.connect(self._elem_select_dlg.on_update_elem_tree)
+        r = self._elem_select_dlg.exec_()
         if r == QDialog.Accepted:
             sel_elems, sel_elems_dis, sel_fields = self._elem_selected
             lat = self._mp.work_lattice_conf
@@ -620,6 +628,5 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     data_source=DATA_SRC_MAP[self.field_init_mode],
                     only_physics=False)
             self.__settings.update(settings)
-            print(self.__settings)
             self.__flat_settings = convert_settings(self.__settings, lat)
             self.settingsLoaded.emit(self.__flat_settings, self.__settings)
