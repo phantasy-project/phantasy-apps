@@ -27,6 +27,7 @@ from phantasy_ui.widgets import LatticeWidget
 
 from .app_loadfrom import LoadSettingsDialog
 from .app_pref import PreferencesDialog
+from .app_pref import DEFAULT_PREF
 from .data import TableSettings
 from .data import make_physics_settings
 from .ui.ui_app import Ui_MainWindow
@@ -94,11 +95,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.update_lattice_info_lbls(o.last_machine_name, o.last_lattice_name)
 
         # show element settings
-        #flat_settings, settings = pack_lattice_settings(o.work_lattice_conf,
-        #                                                data_source=DATA_SRC_MAP[self.field_init_mode],
-        #                                                only_physics=False)
-        #self.settingsLoaded.emit(flat_settings, settings)
+        if self.init_settings:
+            flat_settings, settings = pack_lattice_settings(
+                    o.work_lattice_conf,
+                    data_source=DATA_SRC_MAP[self.field_init_mode],
+                    only_physics=False)
+            self.settingsLoaded.emit(flat_settings, settings)
+        #
         printlog("Lattice is changed")
+
+    def show_init_settings_info(self):
+        if not self.init_settings:
+            QMessageBox.information(self, "Loaded Lattice",
+                    "Lattice is loaded, add device settings from 'Add' tool.",
+                    QMessageBox.Ok)
 
     def _enable_widgets(self, enabled):
         for w in (self.lv_lbl, self.lv_mach_lbl, self.lv_segm_lbl,
@@ -173,12 +183,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # preferences
         # see preference dialog class
-        self.field_init_mode = 'model'
-        self.t_wait = 0.05  # second
-        self.pref_dict = {
-            'field_init_mode': self.field_init_mode,
-            't_wait': self.t_wait,
-        }
+        self.pref_dict = DEFAULT_PREF
+        self.field_init_mode = self.pref_dict['field_init_mode']
+        self.t_wait = self.pref_dict['t_wait']
+        self.init_settings = self.pref_dict['init_settings']
 
         # icon
         self.done_icon = QPixmap(":/sm-icons/done.png")
@@ -234,7 +242,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._save_settings_as_h5(filename)
 
         QMessageBox.information(
-            self, "", "Saved data to {}".format(filename))
+            self, "", "Saved data to {}".format(filename),
+            QMessageBox.Ok)
         printlog("Saved settings to {}.".format(filename))
 
     def _save_settings_as_json(self, filename):
@@ -363,6 +372,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._lattice_load_window.latticeChanged.connect(
                 self.on_lattice_changed)
             self._lattice_load_window.latticeChanged.connect(self._lattice_load_window.close)
+            self._lattice_load_window.latticeChanged.connect(self.show_init_settings_info)
         self._lattice_load_window.show()
 
     @pyqtSlot()
@@ -461,7 +471,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_launch_preferences(self):
         """Launch preferences dialog.
         """
-        pref_dlg = PreferencesDialog(self.pref_dict, self)
+        pref_dlg = PreferencesDialog(self)
         pref_dlg.pref_changed.connect(self.on_update_pref)
         r = pref_dlg.exec_()
         if r == QDialog.Accepted:
@@ -477,6 +487,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.pref_dict.update(d)
         self.field_init_mode = self.pref_dict['field_init_mode']
         self.t_wait = self.pref_dict['t_wait']
+        self.init_settings = self.pref_dict['init_settings']
 
     @pyqtSlot(int)
     def on_update_rate(self, i):
