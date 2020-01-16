@@ -7,14 +7,24 @@ from PyQt5.QtWidgets import QDialog
 
 from .ui.ui_preferences import Ui_Dialog
 
+DEFAULT_FIELD_INIT_MODE = 'model'
+DEFAULT_INIT_SETTINGS = True
+DEFAULT_T_WAIT = 0.05
+
+DEFAULT_PREF = {
+        'field_init_mode': DEFAULT_FIELD_INIT_MODE,
+        'init_settings': DEFAULT_INIT_SETTINGS,
+        't_wait': DEFAULT_T_WAIT,
+}
+
 
 class PreferencesDialog(QDialog, Ui_Dialog):
     pref_changed = pyqtSignal(dict)
 
-    def __init__(self, pref_dict, parent=None):
+    def __init__(self, parent=None):
         super(self.__class__, self).__init__()
         self.parent = parent
-        self.pref_dict = pref_dict
+        self.pref_dict = DEFAULT_PREF
 
         # UI
         self.setupUi(self)
@@ -35,6 +45,10 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         t_wait = self.pref_dict['t_wait']
         self.apply_delt_dsbox.setValue(t_wait)
 
+        # init_settings bool
+        init_settings = self.pref_dict['init_settings']
+        self.init_settings_chkbox.setChecked(init_settings)
+
     @pyqtSlot(bool)
     def on_toggle_mode(self, f):
         if f:
@@ -48,4 +62,12 @@ class PreferencesDialog(QDialog, Ui_Dialog):
 
     def get_config(self):
         return {'field_init_mode': self.mode,
-                't_wait': self.apply_delt_dsbox.value(), }
+                't_wait': self.apply_delt_dsbox.value(),
+                'init_settings': self.init_settings, }
+
+    @pyqtSlot(bool)
+    def on_init_settings(self, f):
+        """If toggled, initialize settings view with the whole loaded
+        lattice, otherwise the user should add elements into view.
+        """
+        self.init_settings = f
