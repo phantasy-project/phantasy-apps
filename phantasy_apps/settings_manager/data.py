@@ -6,15 +6,15 @@ from collections import OrderedDict
 from phantasy import Settings
 
 
-def make_physics_settings(flat_settings, lat):
-    """Generate Settings of *lat* from FlatSettings instance defined by
-    *flat_settings*. For lattice settings, all settings are physics field
+def make_physics_settings(csv_settings, lat):
+    """Generate Settings of *lat* from `TableSettings` instance defined by
+    *csv_settings*. For lattice settings, all settings are physics field
     settings.
 
     Parameters
     ----------
-    flat_settings :
-        FlatSettings instance from CSV settings file.
+    csv_settings : TableSettings
+        TableSettings instance from CSV settings file.
     lat : Lattice
         High-level lattice object.
 
@@ -24,7 +24,7 @@ def make_physics_settings(flat_settings, lat):
         Physics settings.
     """
     s = Settings()  # physics settings
-    for name, field, sp, rd, last_sp in flat_settings:
+    for name, field, sp, rd, last_sp in csv_settings:
         elem = lat[name]
         eng_fields = elem.get_eng_fields()
         phy_fields = elem.get_phy_fields()
@@ -46,14 +46,20 @@ def make_physics_settings(flat_settings, lat):
     return s
 
 
-class FlatSettings(list):
-    """List of device settings, each list element is a tuple of device name,
-    field name, field set value ,field value value and last field set value.
+class TableSettings(list):
+    """List of device settings (read from CSV file from Settings Manager),
+    each list element is a tuple of device name (ename), field name (fname),
+    field set value (sp), field value (rd) and last field set value (last sp).
+
+    Parameters
+    ----------
+    settings_path : str
+        CSV settings data filepath.
     """
 
     def __init__(self, settings_path=None, **kws):
         # settings_path is csv file path.
-        super(FlatSettings, self).__init__()
+        super(TableSettings, self).__init__()
         self.header = None
         if isinstance(settings_path, str):
             delimiter = kws.get('delimiter', ',')

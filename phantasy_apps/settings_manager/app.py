@@ -22,11 +22,12 @@ from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
 from phantasy_ui import printlog
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
+from phantasy_ui.widgets import ElementSelectDialog
 from phantasy_ui.widgets import LatticeWidget
 
 from .app_loadfrom import LoadSettingsDialog
 from .app_pref import PreferencesDialog
-from .data import FlatSettings
+from .data import TableSettings
 from .data import make_physics_settings
 from .ui.ui_app import Ui_MainWindow
 from .utils import FMT
@@ -258,7 +259,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         i_name, i_field, i_sp, i_live_rd, i_live_sp = \
             src_m.i_name, src_m.i_field, src_m.i_val0, src_m.i_rd, src_m.i_cset
 
-        data = FlatSettings()
+        data = TableSettings()
         for irow in range(m.rowCount()):
             ename = m.data(m.index(irow, i_name))
             fname = m.data(m.index(irow, i_field))
@@ -442,7 +443,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def _load_settings_from_csv(self, filepath):
         lat = self._mp.work_lattice_conf
-        s = make_physics_settings(FlatSettings(filepath), lat)
+        s = make_physics_settings(TableSettings(filepath), lat)
         lat.settings = s
         flat_settings, settings = pack_lattice_settings(lat,
                                                         data_source=DATA_SRC_MAP[self.field_init_mode],
@@ -589,16 +590,3 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._tv.model().invert_selection()
 
 
-def make_settings(filepath, lat):
-    """Make settings, if both ENG and PHY exist, only keep PHY."""
-    s = Settings(filepath)
-    nm = {o.name: o for o in lat}
-    s_phy = s.copy()
-    for k, v in s.items():
-        elem = nm[k]
-        phy_fields = elem.get_phy_fields()
-        if phy_fields:
-            s_phy[k] = {}
-            for f in phy_fields:
-                s_phy[k].update({f: v[f]})
-    return s_phy
