@@ -33,6 +33,7 @@ from .ui.ui_app import Ui_MainWindow
 from .utils import FMT
 from .utils import SettingsModel
 from .utils import pack_lattice_settings
+from .utils import convert_settings
 
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
 IDX_RATE_MAP = {1: 0.5, 2: 1.0, 3: 2.0}
@@ -83,20 +84,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         2. Update lattice info labels
         3. Show the current element settings
         """
+        if o is None:
+            return
         self._mp = o
         #
         snpload_status = True if self._mp is not None else False
         self.actionLoad_From_Snapshot.setEnabled(snpload_status)
         #
-        if o is None:
-            return
-        #
         self.update_lattice_info_lbls(o.last_machine_name, o.last_lattice_name)
+
         # show element settings
-        flat_settings, settings = pack_lattice_settings(o.work_lattice_conf,
-                                                        data_source=DATA_SRC_MAP[self.field_init_mode],
-                                                        only_physics=False)
-        self.settingsLoaded.emit(flat_settings, settings)
+        #flat_settings, settings = pack_lattice_settings(o.work_lattice_conf,
+        #                                                data_source=DATA_SRC_MAP[self.field_init_mode],
+        #                                                only_physics=False)
+        #self.settingsLoaded.emit(flat_settings, settings)
         printlog("Lattice is changed")
 
     def _enable_widgets(self, enabled):
@@ -151,7 +152,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._load_from_dlg = None
         self._lattice_load_window = None
         self._mp = None
-        self.__settings = None
+        self.__settings = Settings()
         self.__flat_settings = None
         self._pvs = []
         self._eng_phy_toggle = {'ENG': True, 'PHY': False}
@@ -444,12 +445,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def _load_settings_from_csv(self, filepath):
         lat = self._mp.work_lattice_conf
         s = make_physics_settings(TableSettings(filepath), lat)
-        lat.settings = s
+        lat.settings.update(s)
         flat_settings, settings = pack_lattice_settings(lat,
                                                         data_source=DATA_SRC_MAP[self.field_init_mode],
                                                         only_physics=False)
         self.settingsLoaded.emit(flat_settings, settings)
-        self.__settings = s
 
     def _load_settings_from_json(self, filepath):
         pass
@@ -589,4 +589,26 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             # invert selection
             self._tv.model().invert_selection()
 
+    @pyqtSlot()
+    def on_add_devices(self):
+        # Add devices, high-level fields or PV elements.
 
+        def on_device_selected(selections):
+            #
+            self._elem_selected = selections
+
+        dlg = ElementSelectDialog(self, "multi", mp=self._mp)
+        dlg.selection_changed.connect(on_device_selected)
+        r = dlg.exec_()
+        if r == QDialog.Accepted:
+            sel_elems, sel_elems_dis, sel_fields = self._elem_selected
+            lat = self._mp.work_lattice_conf
+            elems = sel_elems_dis
+            _, settings = pack_lattice_settings(
+                    lat, elems,
+                    data_source=DATA_SRC_MAP[self.field_init_mode],
+                    only_physics=False)
+            self.__settings.update(settings)
+            print(self.__settings)
+            self.__flat_settings = convert_settings(self.__settings, lat)
+            self.settingsLoaded.emit(self.__flat_settings, self.__settings)
