@@ -610,7 +610,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_purge_settings(self):
         """Clear all the items from view.
         """
-        self.settingsLoaded.emit([], {})
+        self._tv.model().sourceModel().delete_selected_items.emit()
+        self.namefilter_lineEdit.editingFinished.emit()
 
     def on_device_selected(self, selections):
         # Selected elements/fields
