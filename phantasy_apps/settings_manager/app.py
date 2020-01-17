@@ -607,8 +607,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._tv.model().invert_selection()
 
     @pyqtSlot()
-    def on_purge_settings(self):
-        """Clear all the items from view.
+    def on_remove_selected_settings(self):
+        """Remove selected (checked) settings items from view.
         """
         self._tv.model().sourceModel().delete_selected_items.emit()
         self.namefilter_lineEdit.editingFinished.emit()
@@ -647,7 +647,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     if elem not in self._elem_list:
                         self._elem_list.append(elem)
             else:
-                # after Settings.update, pv_mode_toggled signal?
+                # WIP: this part should be refactored
                 from .utils import build_element
                 settings = Settings()
                 sel_elems, _, _ = self._elem_selected
