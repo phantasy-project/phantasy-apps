@@ -616,7 +616,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # Selected elements/fields
         self._elem_selected = selections
         #debug
-        print(selections)
+        #print(selections)
 
     @pyqtSlot(bool)
     def on_pv_mode_toggled(self, is_checked):
@@ -648,17 +648,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             else:
                 # after Settings.update, pv_mode_toggled signal?
                 from .utils import build_element
-                sel_elem, _, _ = self._elem_selected
-                pv_elem = sel_elem[0]
+                settings = Settings()
+                sel_elems, _, _ = self._elem_selected
+                pv_elem = sel_elems[0]
+
                 ename = pv_elem.ename
                 fname = pv_elem.fname
-                elem = build_element(pv_elem.setpoint[0],
-                                     pv_elem.readback[0],
-                                     ename=ename,
-                                     fname=fname)
-                settings = Settings()
+                elem = build_element(pv_elem.setpoint[0], pv_elem.readback[0],
+                                     ename=ename, fname=fname)
                 settings.update([(ename, {fname: getattr(elem, fname),
-                                          fname+'phy': getattr(elem, fname)})])
+                                  fname + '_phy': getattr(elem, fname)})])
                 self.__settings.update(settings)
                 if elem not in self._elem_list:
                     self._elem_list.append(elem)
