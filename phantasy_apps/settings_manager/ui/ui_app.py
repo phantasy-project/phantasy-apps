@@ -179,6 +179,14 @@ class Ui_MainWindow(object):
         self.reset_set_status_btn.setAutoRaise(True)
         self.reset_set_status_btn.setObjectName("reset_set_status_btn")
         self.horizontalLayout_2.addWidget(self.reset_set_status_btn)
+        self.delete_btn = QtWidgets.QToolButton(self.centralwidget)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(":/sm-icons/delete.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.delete_btn.setIcon(icon7)
+        self.delete_btn.setAutoRaise(True)
+        self.delete_btn.setObjectName("delete_btn")
+        self.horizontalLayout_2.addWidget(self.delete_btn)
         spacerItem1 = QtWidgets.QSpacerItem(900, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
@@ -233,6 +241,9 @@ class Ui_MainWindow(object):
         self.menu_Help.setObjectName("menu_Help")
         MainWindow.setMenuBar(self.menubar)
         self.toolBar = QtWidgets.QToolBar(MainWindow)
+        self.toolBar.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+        self.toolBar.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.toolBar.setAutoFillBackground(False)
         self.toolBar.setStyleSheet("QToolBar {\n"
                                    "    padding: 4px;\n"
                                    "    spacing: 4px;\n"
@@ -242,7 +253,6 @@ class Ui_MainWindow(object):
                                    "    image: url(handle.png);\n"
                                    "}QToolb")
         self.toolBar.setOrientation(QtCore.Qt.Horizontal)
-        self.toolBar.setIconSize(QtCore.QSize(36, 36))
         self.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
@@ -251,59 +261,65 @@ class Ui_MainWindow(object):
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionE_xit = QtWidgets.QAction(MainWindow)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(":/sm-icons/exit.png"),
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/sm-icons/exit.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionE_xit.setIcon(icon7)
+        self.actionE_xit.setIcon(icon8)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionContents = QtWidgets.QAction(MainWindow)
         self.actionContents.setObjectName("actionContents")
         self.action_Save = QtWidgets.QAction(MainWindow)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(":/sm-icons/save.png"),
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/sm-icons/save.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.action_Save.setIcon(icon8)
+        self.action_Save.setIcon(icon9)
         self.action_Save.setObjectName("action_Save")
         self.actionLoad_From_Snapshot = QtWidgets.QAction(MainWindow)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(":/sm-icons/folder-open-snp.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_From_Snapshot.setIcon(icon9)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap(":/sm-icons/folder-open-snp.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionLoad_From_Snapshot.setIcon(icon10)
         self.actionLoad_From_Snapshot.setObjectName("actionLoad_From_Snapshot")
         self.actionPhysics_Fields = QtWidgets.QAction(MainWindow)
         self.actionPhysics_Fields.setCheckable(True)
         self.actionPhysics_Fields.setChecked(False)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap(":/sm-icons/physics.png"),
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap(":/sm-icons/physics.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionPhysics_Fields.setIcon(icon10)
+        self.actionPhysics_Fields.setIcon(icon11)
         self.actionPhysics_Fields.setObjectName("actionPhysics_Fields")
         self.actionEngineering_Fields = QtWidgets.QAction(MainWindow)
         self.actionEngineering_Fields.setCheckable(True)
         self.actionEngineering_Fields.setChecked(True)
-        icon11 = QtGui.QIcon()
-        icon11.addPixmap(QtGui.QPixmap(":/sm-icons/engineering.png"),
+        icon12 = QtGui.QIcon()
+        icon12.addPixmap(QtGui.QPixmap(":/sm-icons/engineering.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionEngineering_Fields.setIcon(icon11)
+        self.actionEngineering_Fields.setIcon(icon12)
         self.actionEngineering_Fields.setObjectName("actionEngineering_Fields")
         self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
-        icon12 = QtGui.QIcon()
-        icon12.addPixmap(QtGui.QPixmap(":/sm-icons/load_lattice.png"),
+        icon13 = QtGui.QIcon()
+        icon13.addPixmap(QtGui.QPixmap(":/sm-icons/load_lattice.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Lattice.setIcon(icon12)
+        self.actionLoad_Lattice.setIcon(icon13)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
         self.actionLoad_Settings = QtWidgets.QAction(MainWindow)
-        icon13 = QtGui.QIcon()
-        icon13.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
+        icon14 = QtGui.QIcon()
+        icon14.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Settings.setIcon(icon13)
+        self.actionLoad_Settings.setIcon(icon14)
         self.actionLoad_Settings.setObjectName("actionLoad_Settings")
         self.actionPreferences = QtWidgets.QAction(MainWindow)
-        icon14 = QtGui.QIcon()
-        icon14.addPixmap(QtGui.QPixmap(":/sm-icons/preferences.png"),
+        icon15 = QtGui.QIcon()
+        icon15.addPixmap(QtGui.QPixmap(":/sm-icons/preferences.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionPreferences.setIcon(icon14)
+        self.actionPreferences.setIcon(icon15)
         self.actionPreferences.setObjectName("actionPreferences")
+        self.actionAdd_Devices = QtWidgets.QAction(MainWindow)
+        icon16 = QtGui.QIcon()
+        icon16.addPixmap(QtGui.QPixmap(":/sm-icons/add.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionAdd_Devices.setIcon(icon16)
+        self.actionAdd_Devices.setObjectName("actionAdd_Devices")
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.action_About)
@@ -311,6 +327,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_File.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
         self.toolBar.addAction(self.actionLoad_Lattice)
+        self.toolBar.addAction(self.actionAdd_Devices)
         self.toolBar.addAction(self.action_Save)
         self.toolBar.addAction(self.actionLoad_Settings)
         self.toolBar.addAction(self.actionLoad_From_Snapshot)
@@ -350,6 +367,8 @@ class Ui_MainWindow(object):
             MainWindow.on_reset_set_status)
         self.expand_all_btn.toggled['bool'].connect(
             MainWindow.on_expand_collapse_view)
+        self.actionAdd_Devices.triggered.connect(MainWindow.on_add_devices)
+        self.delete_btn.clicked.connect(MainWindow.on_remove_selected_settings)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.expand_all_btn, self.select_all_btn)
         MainWindow.setTabOrder(self.select_all_btn, self.invert_selection_btn)
@@ -414,6 +433,9 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Clear status."))
         self.reset_set_status_btn.setText(
             _translate("MainWindow", "Clear Status"))
+        self.delete_btn.setToolTip(
+            _translate("MainWindow", "Delete selected items."))
+        self.delete_btn.setText(_translate("MainWindow", "..."))
         self.label_5.setText(_translate("MainWindow", "Search"))
         self.namefilter_lineEdit.setToolTip(
             _translate(
@@ -476,6 +498,11 @@ class Ui_MainWindow(object):
         self.actionLoad_Settings.setText(
             _translate("MainWindow", "Load Settings"))
         self.actionPreferences.setText(_translate("MainWindow", "Preferences"))
+        self.actionPreferences.setToolTip(
+            _translate("MainWindow", "Preferences."))
+        self.actionAdd_Devices.setText(_translate("MainWindow", "Add Devices"))
+        self.actionAdd_Devices.setToolTip(
+            _translate("MainWindow", "Add Devices."))
 
 
 from . import resources_rc
