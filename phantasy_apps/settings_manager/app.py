@@ -169,6 +169,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._mp = None
         self.__settings = Settings()
         self.__flat_settings = None
+        self._elem_list = []  #  selected element list
         self._pvs = []
         self._eng_phy_toggle = {'ENG': True, 'PHY': False}
         self.on_lattice_changed(self._mp)
@@ -606,27 +607,62 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._tv.model().invert_selection()
 
     @pyqtSlot()
+    def on_purge_settings(self):
+        """Clear all the items from view.
+        """
+        self.settingsLoaded.emit([], {})
+
+    def on_device_selected(self, selections):
+        # Selected elements/fields
+        self._elem_selected = selections
+        #debug
+        print(selections)
+
+    @pyqtSlot(bool)
+    def on_pv_mode_toggled(self, is_checked):
+        # pv mode: True, element mode: False
+        self._pv_mode = is_checked
+
+    @pyqtSlot()
     def on_add_devices(self):
         # Add devices, high-level fields or PV elements.
-        t0 = time.time()
-
-        def on_device_selected(selections):
-            #
-            self._elem_selected = selections
-
         if self._elem_select_dlg is None:
             self._elem_select_dlg = ElementSelectDialog(self, "multi", mp=self._mp)
-            self._elem_select_dlg.selection_changed.connect(on_device_selected)
+            self._elem_select_dlg.selection_changed.connect(self.on_device_selected)
+            self._elem_select_dlg.pv_mode_toggled.connect(self.on_pv_mode_toggled)
             self.lattice_loaded.connect(self._elem_select_dlg.on_update_elem_tree)
         r = self._elem_select_dlg.exec_()
         if r == QDialog.Accepted:
-            sel_elems, sel_elems_dis, sel_fields = self._elem_selected
-            lat = self._mp.work_lattice_conf
-            elems = sel_elems_dis
-            _, settings = pack_lattice_settings(
-                    lat, elems,
-                    data_source=DATA_SRC_MAP[self.field_init_mode],
-                    only_physics=False)
-            self.__settings.update(settings)
-            self.__flat_settings = convert_settings(self.__settings, lat)
+            if not self._pv_mode:
+                sel_elems, sel_elems_dis, sel_fields = self._elem_selected
+                lat = self._mp.work_lattice_conf
+                elems = sel_elems_dis
+                _, settings = pack_lattice_settings(
+                        lat, elems,
+                        data_source=DATA_SRC_MAP[self.field_init_mode],
+                        only_physics=False)
+                self.__settings.update(settings)
+                for elem in lat:
+                    if elem not in self._elem_list:
+                        self._elem_list.append(elem)
+            else:
+                # after Settings.update, pv_mode_toggled signal?
+                from .utils import build_element
+                sel_elem, _, _ = self._elem_selected
+                pv_elem = sel_elem[0]
+                ename = pv_elem.ename
+                fname = pv_elem.fname
+                elem = build_element(pv_elem.setpoint[0],
+                                     pv_elem.readback[0],
+                                     ename=ename,
+                                     fname=fname)
+                settings = Settings()
+                settings.update([(ename, {fname: getattr(elem, fname),
+                                          fname+'phy': getattr(elem, fname)})])
+                self.__settings.update(settings)
+                if elem not in self._elem_list:
+                    self._elem_list.append(elem)
+
+            #
+            self.__flat_settings = convert_settings(self.__settings, self._elem_list)
             self.settingsLoaded.emit(self.__flat_settings, self.__settings)
