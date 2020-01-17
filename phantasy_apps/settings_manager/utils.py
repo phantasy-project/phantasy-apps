@@ -9,6 +9,7 @@ from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QBrush
 from PyQt5.QtGui import QColor
 from PyQt5.QtGui import QIcon
@@ -16,6 +17,9 @@ from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import QAbstractScrollArea
 from phantasy_ui.widgets import is_item_checked
+
+from phantasy import CaElement
+from phantasy import PVElement
 
 FMT = "{0:.6g}"
 
@@ -46,14 +50,15 @@ class SettingsModel(QStandardItemModel):
     Parameters
     ----------
     flat_settings : list
-        List of setting with the format of ``(elem, fname, fval0)``,
-        ``elem`` is CaElement object, ``fname`` is field name, ``fval0`` is
-        saved field value of setpoint.
+        List of setting with the format of ``(elem, fname, field, fval0)``,
+        ``elem`` is CaElement object, ``fname`` is field name, ``field`` is
+        CaField object, ``fval0`` is saved field value of setpoint.
     """
 
     data_changed = pyqtSignal(QVariant)
     settings_sts = pyqtSignal(int, int, int)
     reset_icon = pyqtSignal()
+    delete_selected_items = pyqtSignal()
 
     def __init__(self, parent, flat_settings):
         super(self.__class__, self).__init__(parent)
@@ -77,6 +82,7 @@ class SettingsModel(QStandardItemModel):
         #
         self.data_changed.connect(self.update_data)
         self.reset_icon.connect(self.reset_setdone_icons)
+        self.delete_selected_items.connect(self.on_delete_selected_items)
 
         self._filter_key = 'device'
 
@@ -231,10 +237,28 @@ class SettingsModel(QStandardItemModel):
         tv.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         tv.collapseAll()
 
+    @pyqtSlot()
     def reset_setdone_icons(self):
         # reset set done icons.
         for i in range(self.rowCount()):
             self.setData(self.index(i, self.i_name), QIcon(), Qt.DecorationRole)
+
+    @pyqtSlot()
+    def on_delete_selected_items(self):
+        # delete selected items ?
+        checked_items = []
+        for i in range(self.rowCount()):
+            idx = self.index(i, self.i_name)
+            it_name = self.itemFromIndex(idx)
+            if is_item_checked(it_name):
+                checked_items.append(it_name)
+
+        for item in checked_items:
+            idx = self.indexFromItem(item)
+            irow = idx.row()
+            name = item.text()
+            self.removeRow(irow)
+            #print("Delete {} at {}".format(name, irow))
 
 
 class _SortProxyModel(QSortFilterProxyModel):
@@ -376,3 +400,37 @@ def get_color(name):
         system = a
     return COLOR_MAP.get(system, BG_COLOR_DEFAULT)
 
+
+def build_element(sp_pv, rd_pv, ename=None, fname=None):
+    """Build high-level element from setpoint and readback PV names.
+
+    Parameters
+    ----------
+    sp_pv : str
+        Setpoint PV name.
+    rd_pv : str
+        Readback PV name.
+    ename : str
+        Element name.
+    fname : str
+        Field name.
+
+    Returns
+    -------
+    elem : CaElement
+        CaElement object.
+    """
+    pv_elem = PVElement(sp_pv, rd_pv)
+    if ename is None:
+        ename = pv_elem.ename
+    if fname is None:
+        fname = pv_elem.fname
+    elem = CaElement(name=ename)
+    pv_props = {'field_eng': fname, 'field_phy': '{}_phy'.format(fname),
+            'handle': 'readback', 'pv_policy': 'DEFAULT', 'index': '-1',
+            'length': '0.0', 'sb': -1, 'family': 'PV'}
+    pv_tags = []
+    for pv, handle in zip((sp_pv, rd_pv), ('setpoint', 'readback')):
+        pv_props['handle'] = handle
+        elem.process_pv(pv, pv_props, pv_tags)
+    return elem
