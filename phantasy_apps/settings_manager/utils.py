@@ -43,6 +43,9 @@ SFIELD_NAMES_ATTR = list(COLUMN_SFIELD_MAP.values())
 
 COLUMN_NAMES = COLUMN_NAMES1 + COLUMN_NAMES_ATTR + COLUMN_NAMES2
 
+VALID_FILTER_KEYS = ('device', 'field', 'pos', 'type',
+                     'x0', 'x1', 'x2', 'dx01', 'dx02', 'dx12')
+
 BG_COLOR_DEFAULT = "#FFFFFF"
 COLOR_MAP = {
     # system: background
@@ -94,13 +97,11 @@ class SettingsModel(QStandardItemModel):
         self.reset_icon.connect(self.reset_setdone_icons)
         self.delete_selected_items.connect(self.on_delete_selected_items)
 
-        self.dataChanged.connect(self.on_data_changed)
-
         self._filter_key = 'device'
 
     def set_filter_key(self, s):
         """set key for filtering."""
-        if not s:
+        if s not in VALID_FILTER_KEYS:
             self._filter_key = 'device'
         else:
             self._filter_key = s
@@ -128,10 +129,6 @@ class SettingsModel(QStandardItemModel):
             for i, v in zip((self.i_val0_rd, self.i_val0_cset, self.i_rd_cset),
                             (dx01, dx02, dx12)):
                 self.setData(self.index(row, i), v, Qt.DisplayRole)
-
-
-    def on_data_changed(self, idx1, idx2,):
-        print(idx1.row(), idx1.column(), idx2.row(), idx2.column())
 
     def set_data(self):
 
@@ -359,7 +356,7 @@ class _SortProxyModel(QSortFilterProxyModel):
         src_index = src_model.index(src_row, idx)
         var = src_index.data(Qt.DisplayRole)
         return ftype in self.filter_ftypes and \
-                re.match(self.filterRegExp().pattern(), var) is not None
+                re.match(self.filterRegExp().pattern(), str(var)) is not None
 
     def get_selection(self):
         # Return a list of selected items, [(idx_src, settings)].

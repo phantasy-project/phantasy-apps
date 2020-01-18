@@ -218,7 +218,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def init_filter(self):
         """Initial filter.
         """
-        o = self.namefilter_lineEdit
+        o = self.filter_lineEdit
         o.setToolTip(FILTER_TT)
         self._comp = QCompleter([], self)
         o.setCompleter(self._comp)
@@ -378,7 +378,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if m is None:
             return
         m.filter_ftypes = [k for k, v in self._eng_phy_toggle.items() if v is True]
-        self.namefilter_lineEdit.editingFinished.emit()
+        self.filter_lineEdit.editingFinished.emit()
 
     @pyqtSlot()
     def on_load_lattice(self):
@@ -434,7 +434,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             pv.clear_callbacks()
 
     @pyqtSlot()
-    def on_namefilter_changed(self):
+    def on_filter_changed(self):
+        m = self._tv.model()
+        if m is None:
+            return
         s = self.sender().text()
         k = None
         kv = s.split('=', 1)
@@ -444,7 +447,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             v = s
         if v == '':
             v = '*'
-        m = self._tv.model()
         m.sourceModel().set_filter_key(k)
         m.setFilterRegExp(translate(v))
         self.total_show_number_lbl.setText(str(m.rowCount()))
@@ -622,7 +624,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Remove selected (checked) settings items from view.
         """
         self._tv.model().sourceModel().delete_selected_items.emit()
-        self.namefilter_lineEdit.editingFinished.emit()
+        self.filter_lineEdit.editingFinished.emit()
 
     def on_device_selected(self, selections):
         # Selected elements/fields
