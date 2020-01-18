@@ -23,7 +23,17 @@ from phantasy import PVElement
 
 FMT = "{0:.6g}"
 
-COLUMN_NAMES1 = ['Device', 'Field', 'Setpoint', 'Live Readback', 'Live Setpoint']
+X0 = 'x\N{SUBSCRIPT ZERO}'
+X1 = 'x\N{SUBSCRIPT ONE}'
+X2 = 'x\N{SUBSCRIPT TWO}'
+DELTA = '\N{GREEK CAPITAL LETTER DELTA}'
+
+COLUMN_NAMES1 = ['Device', 'Field', 'Setpoint({})'.format(X0),
+                 'Live Readback({})'.format(X1),
+                 'Live Setpoint({})'.format(X2)]
+COLUMN_NAMES2 = ['{D}({x0}-{x1})'.format(D=DELTA, x0=X0, x1=X1),
+                 '{D}({x0}-{x2})'.format(D=DELTA, x0=X0, x2=X2),
+                 '{D}({x1}-{x2})'.format(D=DELTA, x1=X1, x2=X2)]
 COLUMN_SFIELD_MAP = OrderedDict((
     ('Type', 'family'),
     ('Pos [m]', 'sb'),
@@ -31,7 +41,7 @@ COLUMN_SFIELD_MAP = OrderedDict((
 COLUMN_NAMES_ATTR = list(COLUMN_SFIELD_MAP.keys())
 SFIELD_NAMES_ATTR = list(COLUMN_SFIELD_MAP.values())
 
-COLUMN_NAMES = COLUMN_NAMES1 + COLUMN_NAMES_ATTR
+COLUMN_NAMES = COLUMN_NAMES1 + COLUMN_NAMES_ATTR + COLUMN_NAMES2
 
 BG_COLOR_DEFAULT = "#FFFFFF"
 COLOR_MAP = {
@@ -73,16 +83,18 @@ class SettingsModel(QStandardItemModel):
 
         # header
         self.header = self.h_name, self.h_field, self.h_val0, self.h_rd, self.h_cset, \
-                      self.h_type, self.h_pos \
+                      self.h_type, self.h_pos, self.h_val0_rd, self.h_val0_cset, self.h_rd_cset \
             = COLUMN_NAMES
         self.ids = self.i_name, self.i_field, self.i_val0, self.i_rd, self.i_cset, \
-                   self.i_type, self.i_pos \
+                   self.i_type, self.i_pos, self.i_val0_rd, self.i_val0_cset, self.i_rd_cset \
             = range(len(self.header))
 
         #
         self.data_changed.connect(self.update_data)
         self.reset_icon.connect(self.reset_setdone_icons)
         self.delete_selected_items.connect(self.on_delete_selected_items)
+
+        self.dataChanged.connect(self.on_data_changed)
 
         self._filter_key = 'device'
 
@@ -98,6 +110,28 @@ class SettingsModel(QStandardItemModel):
 
     def update_data(self, p):
         self.setData(*p)
+        self.update_deltas(p)
+
+    def update_deltas(self, p):
+        # update discrepancies.
+        idx, _, _ = p
+        if idx.parent().isValid():
+            pass
+        else:
+            row = idx.row()
+            x0 = float(self.data(self.index(row, self.i_val0)))
+            x1 = float(self.data(self.index(row, self.i_rd)))
+            x2 = float(self.data(self.index(row, self.i_cset)))
+            dx01 = x0 - x1
+            dx02 = x0 - x2
+            dx12 = x1 - x2
+            for i, v in zip((self.i_val0_rd, self.i_val0_cset, self.i_rd_cset),
+                            (dx01, dx02, dx12)):
+                self.setData(self.index(row, i), v, Qt.DisplayRole)
+
+
+    def on_data_changed(self, idx1, idx2,):
+        print(idx1.row(), idx1.column(), idx2.row(), idx2.column())
 
     def set_data(self):
 
@@ -168,6 +202,13 @@ class SettingsModel(QStandardItemModel):
                         v = '{0:.4f}'.format(v)
                     item = QStandardItem(v)
                     row.append(item)
+            # delta(x0-x1)
+            v_d01 = float(item_val0.text()) - float(item_rd.text())
+            v_d02 = float(item_val0.text()) - float(item_cset.text())
+            v_d12 = float(item_rd.text()) - float(item_cset.text())
+            for v in (v_d01, v_d02, v_d12):
+                item = QStandardItem(FMT.format(v))
+                row.append(item)
 
             # color, readonly
             for i in row:
@@ -219,7 +260,12 @@ class SettingsModel(QStandardItemModel):
                     self._pvs.append(o)
 
             self._m_obj.append(fld)
-            self._m_idx.append([self.index(irow, self.i_rd), self.index(irow, self.i_cset)])
+            self._m_idx.append(
+                [self.index(irow, self.i_rd),
+                 self.index(irow, self.i_cset),])
+                 # self.index(irow, self.i_val0_rd),    # x0-x1
+                 # self.index(irow, self.i_val0_cset),  # x0-x2
+                 # self.index(irow, self.i_rd_cset)])   # x1-x2
 
     def __post_init_ui(self, tv):
         # set headers
