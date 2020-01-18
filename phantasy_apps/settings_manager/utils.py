@@ -106,7 +106,7 @@ class SettingsModel(QStandardItemModel):
             self._filter_key = s
 
     def get_filter_key(self):
-        return self._filter_key
+        return self._filter_key.lower()
 
     def update_data(self, p):
         self.setData(*p)
@@ -317,10 +317,14 @@ class _SortProxyModel(QSortFilterProxyModel):
             'device': model.i_name,
             'field': model.i_field,
             'pos': model.i_pos,
-            'setpoint': model.i_val0,
-            'live_readback': model.i_rd,
-            'live_setpoint': model.i_cset,
-            'type': model.i_type}
+            'type': model.i_type,
+            'x0': model.i_val0,
+            'x1': model.i_rd,
+            'x2': model.i_cset,
+            'dx01': model.i_val0_rd,
+            'dx02': model.i_val0_cset,
+            'dx12': model.i_rd_cset,
+        }
         self.filter_ftypes = ['ENG', 'PHY']
 
     def lessThan(self, left, right):
