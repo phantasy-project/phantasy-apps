@@ -3,13 +3,14 @@
 
 import json
 import time
-from fnmatch import translate
 from functools import partial
 
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import QRegularExpression
+from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QCompleter
@@ -448,7 +449,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if v == '':
             v = '*'
         m.sourceModel().set_filter_key(k)
-        m.setFilterRegExp(translate(v))
+
+        # Qt >= 5.12
+        # re_str = QRegularExpression.wildcardToRegularExpression(v)
+        # m.setFilterRegularExpression(re_str)
+
+        m.setFilterRegExp(QRegExp(v, Qt.CaseSensitive,
+                                  QRegExp.WildcardUnix))
+
         self.total_show_number_lbl.setText(str(m.rowCount()))
         self.update_filter_completer(s)
 

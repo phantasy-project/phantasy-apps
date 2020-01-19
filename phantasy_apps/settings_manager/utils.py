@@ -8,6 +8,7 @@ from functools import partial
 from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QRegularExpression
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QBrush
@@ -16,6 +17,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import QAbstractScrollArea
+from PyQt5.QtWidgets import QHeaderView
 from phantasy_ui.widgets import is_item_checked
 
 from phantasy import CaElement
@@ -220,7 +222,7 @@ class SettingsModel(QStandardItemModel):
     def set_model(self):
         # set data
         self.set_data()
-        # set model, set field column
+        # set model
         proxy_model = _SortProxyModel(self)
         self._tv.setModel(proxy_model)
         #
@@ -271,10 +273,9 @@ class SettingsModel(QStandardItemModel):
 
         # view properties
         tv.setStyleSheet("font-family: monospace;")
-        tv.setAlternatingRowColors(True)
         tv.expandAll()
         for i in self.ids:
-            tv.resizeColumnToContents(i)
+            tv.header().setSectionResizeMode(i, QHeaderView.ResizeToContents)
         tv.setSortingEnabled(True)
         tv.model().sort(self.i_pos)
         tv.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
@@ -355,8 +356,15 @@ class _SortProxyModel(QSortFilterProxyModel):
         idx = self.filter_col_index[filter_key]
         src_index = src_model.index(src_row, idx)
         var = src_index.data(Qt.DisplayRole)
-        return ftype in self.filter_ftypes and \
-                re.match(self.filterRegExp().pattern(), str(var)) is not None
+        if not isinstance(var, str):
+            var = FMT.format(var)
+        # Qt >= 5.12
+        # regex = self.filterRegularExpression()
+        # return ftype in self.filter_ftypes and regex.match(var).hasMatch()
+
+        # wildcardunix
+        regex = self.filterRegExp()
+        return ftype in self.filter_ftypes and regex.exactMatch(var)
 
     def get_selection(self):
         # Return a list of selected items, [(idx_src, settings)].
