@@ -40,16 +40,20 @@ from .utils import convert_settings
 
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
 IDX_RATE_MAP = {1: 0.5, 2: 1.0, 3: 2.0}
-FILTER_TT = """Input filter string with the format of 'keyword=pattern', valid keywords as the headers show, pattern applies Unix wildcard rules.
+FILTER_TT = """\
+Input filter string with the format of 'keyword=pattern', valid keywords as
+the headers show, pattern applies Unix wildcard rules.
 Keyword is case insensitive, if keyword is not defined, 'device' is used.
-For 'setpoint', the keyword 'x0' could be used, the same rule applies to 'x1', 'x2', 'dx01', 'dx02', 'dx03',
-where 'dxij' is 'xi - xj' as show in the headers.
+For 'setpoint', the keyword 'x0' is used, the same rule applies to 'x1', 'x2',
+'dx01', 'dx02', 'dx03', where 'dxij' is 'xi - xj' as show in the headers.
 
 Press Enter to activate the filter, here is some examples:
 1. *: match all device names, which is equivalent of device=*;
 2. *LEBT*: match device name which has string 'LEBT';
 3. type='CAV': match all devices of type 'CAV';
-4. ? is to match one char or digit, pure '' is to interpret as *."""
+4. dx12=0.00*: match the diff between readback and setpoint of 0.00xx..;
+5. ? is to match one char or digit, pure '' is to interpret as *.\
+"""
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
