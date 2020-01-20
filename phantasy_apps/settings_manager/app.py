@@ -208,6 +208,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # icon
         self.done_icon = QPixmap(":/sm-icons/done.png")
         self.fail_icon = QPixmap(":/sm-icons/fail.png")
+        self._warning_px = QPixmap(":/sm-icons/warning.png")
 
         # selection
         self.select_all_btn.clicked.connect(partial(self.on_select, 'all'))
@@ -540,7 +541,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         delt = self._update_delt
         m = self._tv.model().sourceModel()
-        self.updater = DAQT(daq_func=partial(self.update_value_single, delt),
+        self.updater = DAQT(daq_func=partial(self.update_value_single, m, delt),
                             daq_seq=range(1))
         self.updater.resultsReady.connect(
             partial(self.on_values_ready, m))
@@ -550,23 +551,42 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_values_ready(self, m, res):
         """Results are ready for updating.
         """
-        # res --> [res in daq_func] : [(idx, val)... ]
-        for (idx, val) in res[0]:
-            m.data_changed.emit((idx, FMT.format(val), Qt.DisplayRole))
+        # res --> [res in daq_func] : [(idx, val, role)... ]
+        for (idx, val, role) in res[0]:
+            m.data_changed.emit((idx, val, role))
 
-    def update_value_single(self, delt, iiter):
-        # res: [(idx, val)..., dt1]
+    def update_value_single(self, m, delt, iiter):
+        # res: [(idx, val, role)..., ]
         t0 = time.time()
         res = []
         for o, idx in zip(self._m_obj, self._m_idx):
             if not isinstance(o, CaField):  # PV
                 val = o.get()
                 for iidx in idx:
-                    res.append((iidx, val))
+                    res.append((iidx, FMT.format(val), Qt.DisplayRole))
             else:  # CaField
+                irow = idx[0].row()
                 rd_val, sp_val = o.value, o.current_setting()
-                for iidx, val in zip(idx, (rd_val, sp_val)):
-                    res.append((iidx, val))
+                x0_idx = m.index(irow, m.i_val0)
+                x1_idx = m.index(irow, m.i_rd)
+                x2_idx = m.index(irow, m.i_cset)
+                tol_idx = m.index(irow, m.i_tol)
+                dx01_idx = m.index(irow, m.i_val0_rd)
+                dx02_idx = m.index(irow, m.i_val0_cset)
+                dx12_idx = m.index(irow, m.i_rd_cset)
+                x0 = float(m.data(x0_idx))
+                x1 = float(m.data(x1_idx))
+                x2 = float(m.data(x2_idx))
+                dx01 = x0 - x1
+                dx02 = x0 - x2
+                dx12 = x1 - x2
+                idx_tuple = (idx[0], idx[1], dx01_idx, dx02_idx, dx12_idx)
+                v_tuple = (rd_val, sp_val, dx01, dx02, dx12)
+                for iidx, val in zip(idx_tuple, v_tuple):
+                    res.append((iidx, FMT.format(val), Qt.DisplayRole))
+                tol = float(m.data(tol_idx))
+                if abs(dx12) > tol:
+                    res.append((dx12_idx, QIcon(self._warning_px), Qt.DecorationRole))
 
         dt = time.time() - t0
         dt_residual = delt - dt
