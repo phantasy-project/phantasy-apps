@@ -39,7 +39,7 @@ from .utils import pack_lattice_settings
 from .utils import convert_settings
 
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
-IDX_RATE_MAP = {1: 0.5, 2: 1.0, 3: 2.0}
+IDX_RATE_MAP = {1: 0.1, 2: 0.2, 3: 0.5, 4: 1.0, 5: 2.0}
 FILTER_TT = """\
 Input filter string with the format of 'keyword=pattern', valid keywords as
 the headers show, pattern applies Unix wildcard rules.
@@ -544,6 +544,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def start_thread_update(self):
         # Update values every *delt* second(s),
         # _update_mode: 'thread'
+
         if self._stop_update_thread:
             return
 
@@ -562,6 +563,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # res --> [res in daq_func] : [(idx, val, role)... ]
         for (idx, val, role) in res[0]:
             m.data_changed.emit((idx, val, role))
+        self._update_cnt += 1
 
     def update_value_single(self, m, delt, iiter):
         # res: [(idx, val, role)..., ]
@@ -601,7 +603,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         dt = time.time() - t0
         dt_residual = delt - dt
-        if dt_residual > 0:
+        if dt_residual > 0 and self._update_cnt != 0:
             time.sleep(dt_residual)
             printlog("Wait {} msec.".format(dt_residual * 1000))
         else:
@@ -624,6 +626,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             printlog("Start auto updating.")
         else:
             self._stop_update_thread = False
+            self._update_cnt = 0
             self.start_thread_update()
             printlog("Start thread updating.")
 
