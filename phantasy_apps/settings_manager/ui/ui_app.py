@@ -199,17 +199,17 @@ class Ui_MainWindow(object):
         self.label_5 = QtWidgets.QLabel(self.centralwidget)
         self.label_5.setObjectName("label_5")
         self.horizontalLayout_2.addWidget(self.label_5)
-        self.namefilter_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
+        self.filter_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(8)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.namefilter_lineEdit.sizePolicy().hasHeightForWidth())
-        self.namefilter_lineEdit.setSizePolicy(sizePolicy)
-        self.namefilter_lineEdit.setText("")
-        self.namefilter_lineEdit.setObjectName("namefilter_lineEdit")
-        self.horizontalLayout_2.addWidget(self.namefilter_lineEdit)
+            self.filter_lineEdit.sizePolicy().hasHeightForWidth())
+        self.filter_lineEdit.setSizePolicy(sizePolicy)
+        self.filter_lineEdit.setText("")
+        self.filter_lineEdit.setObjectName("filter_lineEdit")
+        self.horizontalLayout_2.addWidget(self.filter_lineEdit)
         self.total_show_number_lbl = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -350,8 +350,8 @@ class Ui_MainWindow(object):
         self.actionEngineering_Fields.toggled['bool'].connect(
             MainWindow.on_toggle_engfields)
         self.actionLoad_Lattice.triggered.connect(MainWindow.on_load_lattice)
-        self.namefilter_lineEdit.editingFinished.connect(
-            MainWindow.on_namefilter_changed)
+        self.filter_lineEdit.editingFinished.connect(
+            MainWindow.on_filter_changed)
         self.actionLoad_Settings.triggered.connect(MainWindow.on_load)
         self.treeView.clicked['QModelIndex'].connect(MainWindow.on_click_view)
         self.actionPreferences.triggered.connect(
@@ -374,9 +374,8 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.select_all_btn, self.invert_selection_btn)
         MainWindow.setTabOrder(self.invert_selection_btn,
                                self.reset_set_status_btn)
-        MainWindow.setTabOrder(self.reset_set_status_btn,
-                               self.namefilter_lineEdit)
-        MainWindow.setTabOrder(self.namefilter_lineEdit, self.treeView)
+        MainWindow.setTabOrder(self.reset_set_status_btn, self.filter_lineEdit)
+        MainWindow.setTabOrder(self.filter_lineEdit, self.treeView)
         MainWindow.setTabOrder(self.treeView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
         MainWindow.setTabOrder(self.lv_view_btn, self.update_rate_cbb)
@@ -437,7 +436,7 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Delete selected items."))
         self.delete_btn.setText(_translate("MainWindow", "..."))
         self.label_5.setText(_translate("MainWindow", "Search"))
-        self.namefilter_lineEdit.setToolTip(
+        self.filter_lineEdit.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Input Unix style search pattern by \'key = pattern\', valid keys: \'device\', \'field\', \'setpoint\', \'live_readback\', \'live_setpoint\', \'pos\', \'type\', if not defined, \'device\' is used, press Enter to activate the filter.</p><p>1. *: match all device names, which is equivalent of device=*;</p><p>2. *LEBT*: match device name which has string \'LEBT\';</p><p>3. type=\'CAV\': match all devices of type \'CAV\';</p><p>4. ? is to match one char or digit, pure \'\' is to interpret as *.<br/></p></body></html>"
