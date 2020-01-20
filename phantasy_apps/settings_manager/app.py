@@ -210,6 +210,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.done_icon = QPixmap(":/sm-icons/done.png")
         self.fail_icon = QPixmap(":/sm-icons/fail.png")
         self._warning_px = QPixmap(":/sm-icons/warning.png")
+        self._ok_px = QPixmap(":/sm-icons/ok.png")
 
         # selection
         self.select_all_btn.clicked.connect(partial(self.on_select, 'all'))
@@ -589,7 +590,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     res.append((iidx, FMT.format(val), Qt.DisplayRole))
                 tol = float(m.data(tol_idx))
                 if abs(dx12) > tol:
-                    res.append((dx12_idx, QIcon(self._warning_px), Qt.DecorationRole))
+                    diff_status_px = self._warning_px
+                else:
+                    diff_status_px = self._ok_px
+                res.append((dx12_idx, QIcon(diff_status_px), Qt.DecorationRole))
 
         dt = time.time() - t0
         dt_residual = delt - dt
