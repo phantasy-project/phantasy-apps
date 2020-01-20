@@ -721,3 +721,25 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             #
             self.__flat_settings = convert_settings(self.__settings, self._elem_list)
             self.settingsLoaded.emit(self.__flat_settings, self.__settings)
+
+    @pyqtSlot()
+    def on_single_update(self):
+        """Update values, indicators for one time."""
+        self._update_cnt = 0
+        m = self._tv.model().sourceModel()
+        self.one_updater = DAQT(daq_func=partial(self.update_value_single, m, 0),
+                                daq_seq=range(1))
+        self.one_updater.daqStarted.connect(partial(
+            self.set_widgets_status_for_updating, 'START'))
+        self.one_updater.resultsReady.connect(
+            partial(self.on_values_ready, m))
+        self.one_updater.finished.connect(partial(
+            self.set_widgets_status_for_updating, 'STOP'))
+        self.one_updater.start()
+
+    def set_widgets_status_for_updating(self, status):
+        """Set widgets status for updating.
+        """
+        w1 = (self.update_ctrl_btn, self.update_rate_cbb, self.apply_btn,
+              self.single_update_btn,)
+        [i.setDisabled(status == 'START') for i in w1]
