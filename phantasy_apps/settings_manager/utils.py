@@ -35,7 +35,8 @@ COLUMN_NAMES1 = ['Device', 'Field', 'Setpoint({})'.format(X0),
                  'Live Setpoint({})'.format(X2)]
 COLUMN_NAMES2 = ['{D}({x0}-{x1})'.format(D=DELTA, x0=X0, x1=X1),
                  '{D}({x0}-{x2})'.format(D=DELTA, x0=X0, x2=X2),
-                 '{D}({x1}-{x2})'.format(D=DELTA, x1=X1, x2=X2)]
+                 '{D}({x1}-{x2})'.format(D=DELTA, x1=X1, x2=X2),
+                 'Tolerance']
 COLUMN_SFIELD_MAP = OrderedDict((
     ('Type', 'family'),
     ('Pos [m]', 'sb'),
@@ -88,10 +89,12 @@ class SettingsModel(QStandardItemModel):
 
         # header
         self.header = self.h_name, self.h_field, self.h_val0, self.h_rd, self.h_cset, \
-                      self.h_type, self.h_pos, self.h_val0_rd, self.h_val0_cset, self.h_rd_cset \
+                      self.h_type, self.h_pos, self.h_val0_rd, self.h_val0_cset, self.h_rd_cset, \
+                      self.h_tol \
             = COLUMN_NAMES
         self.ids = self.i_name, self.i_field, self.i_val0, self.i_rd, self.i_cset, \
-                   self.i_type, self.i_pos, self.i_val0_rd, self.i_val0_cset, self.i_rd_cset \
+                   self.i_type, self.i_pos, self.i_val0_rd, self.i_val0_cset, self.i_rd_cset, \
+                   self.i_tol \
             = range(len(self.header))
 
         #
@@ -201,7 +204,7 @@ class SettingsModel(QStandardItemModel):
                         v = '{0:.4f}'.format(v)
                     item = QStandardItem(v)
                     row.append(item)
-            # delta(x0-x1)
+            # dx01,02,12
             v_d01 = float(item_val0.text()) - float(item_rd.text())
             v_d02 = float(item_val0.text()) - float(item_cset.text())
             v_d12 = float(item_rd.text()) - float(item_cset.text())
@@ -213,7 +216,13 @@ class SettingsModel(QStandardItemModel):
             for i in row:
                 i.setEditable(False)
                 i.setData(QBrush(QColor(bgcolor)), Qt.BackgroundRole)
-            #
+
+            # tolerance for dx12
+            tol = fld.tolerance
+            item_tol = QStandardItem(FMT.format(tol))
+            item_tol.setData(QBrush(QColor(bgcolor)), Qt.BackgroundRole)
+            row.append(item_tol)
+
             self.appendRow(row)
             ename_set.add(elem.name)
 
