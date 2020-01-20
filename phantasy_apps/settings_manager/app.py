@@ -39,7 +39,7 @@ from .utils import pack_lattice_settings
 from .utils import convert_settings
 
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
-IDX_RATE_MAP = {1: 0.1, 2: 0.2, 3: 0.5, 4: 1.0, 5: 2.0}
+IDX_RATE_MAP = {0: 0.1, 1: 0.2, 2: 0.5, 3: 1.0, 4: 2.0}
 FILTER_TT = """\
 Input filter string with the format of 'keyword=pattern', valid keywords as
 the headers show, pattern applies Unix wildcard rules.
@@ -223,6 +223,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # filter
         self.init_filter()
 
+        # stop auto update when lattice is changed
+        self.lattice_loaded.connect(self.stop_auto_update)
+
     def init_filter(self):
         """Initial filter.
         """
@@ -240,7 +243,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(int)
     def on_update_rate_changed(self, i):
-        if i == 0:
+        if i == 5: # add 'auto' back to cbb index 5
             self._update_mode = 'auto'
             tt = "Auto updating rate."
         else:
