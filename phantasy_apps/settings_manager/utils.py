@@ -47,7 +47,8 @@ SFIELD_NAMES_ATTR = list(COLUMN_SFIELD_MAP.values())
 COLUMN_NAMES = COLUMN_NAMES1 + COLUMN_NAMES_ATTR + COLUMN_NAMES2
 
 VALID_FILTER_KEYS = ('device', 'field', 'pos', 'type',
-                     'x0', 'x1', 'x2', 'dx01', 'dx02', 'dx12')
+                     'x0', 'x1', 'x2', 'dx01', 'dx02', 'dx12',
+                     'tolerance', 'writable')
 
 BG_COLOR_DEFAULT = "#FFFFFF"
 BG_COLOR_MAP = {
@@ -329,6 +330,8 @@ class _SortProxyModel(QSortFilterProxyModel):
             'dx01': model.i_val0_rd,
             'dx02': model.i_val0_cset,
             'dx12': model.i_rd_cset,
+            'tolerance': model.i_tol,
+            'writable': model.i_writable,
         }
         self.filter_ftypes = ['ENG', 'PHY']
 
@@ -365,6 +368,7 @@ class _SortProxyModel(QSortFilterProxyModel):
         var = src_index.data(Qt.DisplayRole)
         if not isinstance(var, str):
             var = FMT.format(var)
+
         # Qt >= 5.12
         # regex = self.filterRegularExpression()
         # return ftype in self.filter_ftypes and regex.match(var).hasMatch()
