@@ -593,10 +593,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 dx01 = x0 - x1
                 dx02 = x0 - x2
                 dx12 = x1 - x2
+                wa_idx = m.index(irow, m.i_writable)
+                wa = o.write_access
                 idx_tuple = (idx[0], idx[1], dx01_idx, dx02_idx, dx12_idx)
                 v_tuple = (rd_val, sp_val, dx01, dx02, dx12)
                 for iidx, val in zip(idx_tuple, v_tuple):
                     res.append((iidx, FMT.format(val), Qt.DisplayRole))
+                res.append((wa_idx, str(wa), Qt.DisplayRole))
                 tol = float(m.data(tol_idx))
                 if abs(dx12) > tol:
                     diff_status_px = self._warning_px
