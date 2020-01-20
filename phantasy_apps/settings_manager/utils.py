@@ -116,24 +116,6 @@ class SettingsModel(QStandardItemModel):
 
     def update_data(self, p):
         self.setData(*p)
-        self.update_deltas(p)
-
-    def update_deltas(self, p):
-        # update discrepancies.
-        idx, _, _ = p
-        if idx.parent().isValid():
-            pass
-        else:
-            row = idx.row()
-            x0 = float(self.data(self.index(row, self.i_val0)))
-            x1 = float(self.data(self.index(row, self.i_rd)))
-            x2 = float(self.data(self.index(row, self.i_cset)))
-            dx01 = x0 - x1
-            dx02 = x0 - x2
-            dx12 = x1 - x2
-            for i, v in zip((self.i_val0_rd, self.i_val0_cset, self.i_rd_cset),
-                            (dx01, dx02, dx12)):
-                self.setData(self.index(row, i), v, Qt.DisplayRole)
 
     def set_data(self):
 
@@ -284,7 +266,7 @@ class SettingsModel(QStandardItemModel):
         tv.setStyleSheet("font-family: monospace;")
         tv.expandAll()
         for i in self.ids:
-            tv.header().setSectionResizeMode(i, QHeaderView.ResizeToContents)
+            tv.resizeColumnToContents(i)
         tv.setSortingEnabled(True)
         tv.model().sort(self.i_pos)
         tv.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
@@ -372,8 +354,12 @@ class _SortProxyModel(QSortFilterProxyModel):
         # return ftype in self.filter_ftypes and regex.match(var).hasMatch()
 
         # wildcardunix
-        regex = self.filterRegExp()
-        return ftype in self.filter_ftypes and regex.exactMatch(var)
+        #regex = self.filterRegExp()
+        #return ftype in self.filter_ftypes and regex.exactMatch(var)
+
+        #
+        return ftype in self.filter_ftypes and \
+                re.match(self.filterRegExp().pattern(), var) is not None
 
     def get_selection(self):
         # Return a list of selected items, [(idx_src, settings)].

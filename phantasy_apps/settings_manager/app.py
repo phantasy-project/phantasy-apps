@@ -3,6 +3,7 @@
 
 import json
 import time
+from fnmatch import translate
 from functools import partial
 
 from PyQt5.QtCore import QVariant
@@ -455,8 +456,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # re_str = QRegularExpression.wildcardToRegularExpression(v)
         # m.setFilterRegularExpression(re_str)
 
-        m.setFilterRegExp(QRegExp(v, Qt.CaseSensitive,
-                                  QRegExp.WildcardUnix))
+        #m.setFilterRegExp(QRegExp(v, Qt.CaseSensitive,
+        #                          QRegExp.WildcardUnix))
+
+        m.setFilterRegExp(translate(v))
 
         self.total_show_number_lbl.setText(str(m.rowCount()))
         self.update_filter_completer(s)
