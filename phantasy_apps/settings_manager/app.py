@@ -311,11 +311,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         settings_selected = m.get_selection()
         self.applyer = DAQT(daq_func=self.apply_single,
                             daq_seq=settings_selected)
-        self.applyer.daqStarted.connect(self.on_apply_settings_started)
+        self.applyer.daqStarted.connect(partial(
+            self.set_widgets_status_for_applying, 'START'))
         self.applyer.progressUpdated.connect(
             partial(self.on_apply_settings_progress,
                     self.idx_px_list, m.sourceModel()))
-        self.applyer.daqFinished.connect(self.on_apply_settings_finished)
+        self.applyer.daqFinished.connect(partial(
+            self.set_widgets_status_for_applying, 'STOP'))
         self.applyer.start()
 
     def apply_single(self, tuple_idx_settings):
@@ -341,14 +343,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         printlog("Apply settings: {0:.1f} %".format(per * 100))
         idx_src, px = idx_px_list[-1]
         m.setData(idx_src, QIcon(px), Qt.DecorationRole)
-
-    @pyqtSlot()
-    def on_apply_settings_started(self):
-        printlog("Start to apply settings...")
-
-    @pyqtSlot()
-    def on_apply_settings_finished(self):
-        printlog("Finish applying settings...")
 
     def closeEvent(self, e):
         r = BaseAppForm.closeEvent(self, e)
@@ -731,4 +725,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         w1 = (self.update_ctrl_btn, self.update_rate_cbb, self.apply_btn,
               self.single_update_btn,)
+        [i.setDisabled(status == 'START') for i in w1]
+
+    def set_widgets_status_for_applying(self, status):
+        """Set widgets status for applying.
+        """
+        w1 = (self.apply_btn, )
         [i.setDisabled(status == 'START') for i in w1]
