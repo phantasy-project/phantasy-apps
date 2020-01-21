@@ -19,11 +19,6 @@ class Ui_Dialog(object):
         self.groupBox.setObjectName("groupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.groupBox)
         self.gridLayout.setObjectName("gridLayout")
-        self.label_72 = QtWidgets.QLabel(self.groupBox)
-        self.label_72.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft
-                                   | QtCore.Qt.AlignVCenter)
-        self.label_72.setObjectName("label_72")
-        self.gridLayout.addWidget(self.label_72, 1, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.model_rbtn = QtWidgets.QRadioButton(self.groupBox)
@@ -39,6 +34,11 @@ class Ui_Dialog(object):
         self.field_init_mode.addButton(self.live_rbtn)
         self.horizontalLayout.addWidget(self.live_rbtn)
         self.gridLayout.addLayout(self.horizontalLayout, 1, 1, 1, 1)
+        self.label_72 = QtWidgets.QLabel(self.groupBox)
+        self.label_72.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft
+                                   | QtCore.Qt.AlignVCenter)
+        self.label_72.setObjectName("label_72")
+        self.gridLayout.addWidget(self.label_72, 1, 0, 1, 1)
         self.label = QtWidgets.QLabel(self.groupBox)
         self.label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft
                                 | QtCore.Qt.AlignVCenter)
@@ -47,7 +47,7 @@ class Ui_Dialog(object):
         spacerItem = QtWidgets.QSpacerItem(20, 40,
                                            QtWidgets.QSizePolicy.Minimum,
                                            QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 3, 0, 1, 1)
+        self.gridLayout.addItem(spacerItem, 4, 0, 1, 1)
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
         spacerItem1 = QtWidgets.QSpacerItem(40, 20,
@@ -60,7 +60,7 @@ class Ui_Dialog(object):
         self.ok_btn = QtWidgets.QPushButton(self.groupBox)
         self.ok_btn.setObjectName("ok_btn")
         self.horizontalLayout_12.addWidget(self.ok_btn)
-        self.gridLayout.addLayout(self.horizontalLayout_12, 4, 0, 1, 2)
+        self.gridLayout.addLayout(self.horizontalLayout_12, 5, 0, 1, 2)
         self.apply_delt_dsbox = QtWidgets.QDoubleSpinBox(self.groupBox)
         self.apply_delt_dsbox.setDecimals(3)
         self.apply_delt_dsbox.setMaximum(5.0)
@@ -71,6 +71,14 @@ class Ui_Dialog(object):
         self.init_settings_chkbox = QtWidgets.QCheckBox(self.groupBox)
         self.init_settings_chkbox.setObjectName("init_settings_chkbox")
         self.gridLayout.addWidget(self.init_settings_chkbox, 0, 0, 1, 2)
+        self.label_2 = QtWidgets.QLabel(self.groupBox)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout.addWidget(self.label_2, 3, 0, 1, 1)
+        self.tol_dsbox = QtWidgets.QDoubleSpinBox(self.groupBox)
+        self.tol_dsbox.setSingleStep(0.1)
+        self.tol_dsbox.setProperty("value", 0.1)
+        self.tol_dsbox.setObjectName("tol_dsbox")
+        self.gridLayout.addWidget(self.tol_dsbox, 3, 1, 1, 1)
         self.gridLayout_9.addWidget(self.groupBox, 0, 0, 1, 1)
 
         self.retranslateUi(Dialog)
@@ -90,8 +98,6 @@ class Ui_Dialog(object):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.groupBox.setTitle(_translate("Dialog", "Preferences"))
-        self.label_72.setText(
-            _translate("Dialog", "Initial current field set value mode"))
         self.model_rbtn.setToolTip(
             _translate(
                 "Dialog",
@@ -104,6 +110,8 @@ class Ui_Dialog(object):
                 "<html><head/><body><p>Initialize field set value by pulling the live device settings from controls network.</p></body></html>"
             ))
         self.live_rbtn.setText(_translate("Dialog", "Live"))
+        self.label_72.setText(
+            _translate("Dialog", "Initial current field set value mode"))
         self.label.setText(
             _translate("Dialog", "Settling time between batch settings apply"))
         self.cancel_btn.setText(_translate("Dialog", "Cancel"))
@@ -118,6 +126,8 @@ class Ui_Dialog(object):
             _translate(
                 "Dialog",
                 "Initialize device settings with the whole loaded lattice"))
+        self.label_2.setText(
+            _translate("Dialog", "Absolute Discrepancy Tolerance"))
 
 
 from . import resources_rc
