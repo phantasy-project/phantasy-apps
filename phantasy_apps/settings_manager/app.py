@@ -37,6 +37,8 @@ from .utils import FMT
 from .utils import SettingsModel
 from .utils import pack_lattice_settings
 from .utils import convert_settings
+from .data import get_csv_settings
+from .data import CSV_HEADER
 
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
 IDX_RATE_MAP = {0: 0.1, 1: 0.2, 2: 0.5, 3: 1.0, 4: 2.0}
@@ -281,31 +283,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             json.dump(data, f, indent=2)
 
     def _save_settings_as_csv(self, filename):
-        s = self.get_settings()
-        header = ('name', 'field', 'setpoint', 'readback', 'last_setpoint')
-        s.write(filename, header=header)
+        s = get_csv_settings(self._tv.model())
+        s.write(filename, header=CSV_HEADER)
 
     def _save_settings_as_h5(self, filename):
         pass
-
-    def get_settings(self):
-        m = self._tv.model()
-        src_m = m.sourceModel()
-        # sp: last_sp
-        # live_sp: sp about to save
-        # live_rd: rb at live_sp
-        i_name, i_field, i_sp, i_live_rd, i_live_sp = \
-            src_m.i_name, src_m.i_field, src_m.i_val0, src_m.i_rd, src_m.i_cset
-
-        data = TableSettings()
-        for irow in range(m.rowCount()):
-            ename = m.data(m.index(irow, i_name))
-            fname = m.data(m.index(irow, i_field))
-            f_new_sp = float(m.data(m.index(irow, i_live_sp)))
-            f_old_sp = float(m.data(m.index(irow, i_sp)))
-            f_new_rd = float(m.data(m.index(irow, i_live_rd)))
-            data.append((ename, fname, f_new_sp, f_new_rd, f_old_sp))
-        return data
 
     def _save_settings_as_h5(self, filename):
         pass
