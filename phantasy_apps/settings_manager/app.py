@@ -12,6 +12,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QRegularExpression
 from PyQt5.QtCore import QRegExp
+from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QCompleter
@@ -106,6 +107,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # post init ui
         self.__post_init_ui()
+
+        self.adjustSize()
 
     @pyqtSlot(QVariant)
     def on_lattice_changed(self, o):
@@ -792,6 +795,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         w1 = (self.apply_btn, )
         [i.setDisabled(status == 'START') for i in w1]
+
+    def sizeHint(self):
+        return QSize(1800, 1200)
 
 
 def make_tolerance_dict_from_table_settings(table_settings):
