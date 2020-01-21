@@ -163,8 +163,16 @@ class SettingsModel(QStandardItemModel):
                 [i.setEditable(False) for i in (it_sp_n, it_sp_v,
                                                 it_rd_n, it_rd_v)]
 
-                item_ename.appendRow((it_sp_n, QStandardItem('-'), QStandardItem('-'), QStandardItem('-'), it_sp_v))
-                item_ename.appendRow((it_rd_n, QStandardItem('-'), QStandardItem('-'), it_rd_v, QStandardItem('-')))
+                item_ename.appendRow(
+                    (it_sp_n, QStandardItem('-'), QStandardItem('-'),
+                     QStandardItem('-'), QStandardItem('-'),
+                     QStandardItem('-'), it_sp_v)
+                )
+                item_ename.appendRow(
+                    (it_rd_n, QStandardItem('-'), QStandardItem('-'),
+                     QStandardItem('-'), QStandardItem('-'),
+                     it_rd_v, QStandardItem('-'))
+                )
 
                 # cbs
                 sp_obj.add_callback(partial(_cb, it_sp_v))
