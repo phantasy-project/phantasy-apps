@@ -10,11 +10,13 @@ from .ui.ui_preferences import Ui_Dialog
 DEFAULT_FIELD_INIT_MODE = 'model'
 DEFAULT_INIT_SETTINGS = True
 DEFAULT_T_WAIT = 0.05
+DEFAULT_TOLERANCE = 0.10
 
 DEFAULT_PREF = {
         'field_init_mode': DEFAULT_FIELD_INIT_MODE,
         'init_settings': DEFAULT_INIT_SETTINGS,
         't_wait': DEFAULT_T_WAIT,
+        'tolerance': DEFAULT_TOLERANCE,
 }
 
 
@@ -49,6 +51,10 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         init_settings = self.pref_dict['init_settings']
         self.init_settings_chkbox.setChecked(init_settings)
 
+        # tolerance
+        tol = self.pref_dict['tolerance']
+        self.tol_dsbox.setValue(tol)
+
     @pyqtSlot(bool)
     def on_toggle_mode(self, f):
         if f:
@@ -63,7 +69,8 @@ class PreferencesDialog(QDialog, Ui_Dialog):
     def get_config(self):
         return {'field_init_mode': self.mode,
                 't_wait': self.apply_delt_dsbox.value(),
-                'init_settings': self.init_settings, }
+                'init_settings': self.init_settings,
+                'tolerance': self.tol_dsbox.value(),}
 
     @pyqtSlot(bool)
     def on_init_settings(self, f):
