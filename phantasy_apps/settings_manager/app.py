@@ -69,7 +69,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     lattice_loaded = pyqtSignal(QVariant)
 
     # discrenpancy tolerance
-    tolerance_changed = pyqtSignal([float], [list])
+    # float: tolerance value
+    # dict: {ename: {fname: tolerance value}}
+    tolerance_changed = pyqtSignal([float], [dict])
 
     #
     is_settings_loaded_from_file = pyqtSignal(bool)
@@ -185,7 +187,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(bool)
     def on_is_settings_loaded_from_file(self, f):
         if f:
-            self.tolerance_changed[list].emit(self._tolerance_list)
+            self.tolerance_changed[dict].emit(self._tolerance_dict)
             self.is_loaded_from_file = False
 
     @pyqtSlot(int, int, int)
@@ -230,7 +232,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.init_settings = self.pref_dict['init_settings']
         self.tolerance = self.pref_dict['tolerance']
         self.tolerance_changed[float].connect(self.on_tolerance_float_changed)
-        self.tolerance_changed[list].connect(self.on_tolerance_list_changed)
+        self.tolerance_changed[dict].connect(self.on_tolerance_dict_changed)
 
         # icon
         self.done_icon = QPixmap(":/sm-icons/done.png")
@@ -259,16 +261,25 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             src_m.setData(src_m.index(i, src_m.i_tol), FMT.format(tol),
                           Qt.DisplayRole)
 
-    @pyqtSlot(list)
-    def on_tolerance_list_changed(self, tol_list):
-        # set tolerance with a list of values.
+    @pyqtSlot(dict)
+    def on_tolerance_dict_changed(self, tol_dict):
+        # set tolerance with a dict of values.
         m = self._tv.model()
         if m is None:
             return
         src_m = m.sourceModel()
-        for tol, i in zip(tol_list, range(src_m.rowCount())):
-            src_m.setData(src_m.index(i, src_m.i_tol), FMT.format(tol),
-                          Qt.DisplayRole)
+        for i in range(src_m.rowCount()):
+            ename = src_m.data(src_m.index(i, src_m.i_name))
+            fname = src_m.data(src_m.index(i, src_m.i_field))
+            if ename not in self._tolerance_dict:
+                continue
+            elif fname not in self._tolerance_dict[ename]:
+                continue
+            else:
+                tol = self._tolerance_dict[ename][fname]
+                src_m.setData(
+                    src_m.index(i, src_m.i_tol), FMT.format(tol),
+                    Qt.DisplayRole)
 
     def init_filter(self):
         """Initial filter.
@@ -518,7 +529,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                                         data_source=DATA_SRC_MAP[self.field_init_mode],
                                                         only_physics=False)
         self.is_loaded_from_file = True
-        self._tolerance_list = [i[7] for i in table_settings]
+        self._tolerance_dict = make_tolerance_dict_from_table_settings(table_settings)
         self.settingsLoaded.emit(flat_settings, settings)
 
     def _load_settings_from_json(self, filepath):
@@ -548,7 +559,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.t_wait = self.pref_dict['t_wait']
         self.init_settings = self.pref_dict['init_settings']
         tol = self.pref_dict['tolerance']
-        self.tolerance_changed.emit(tol)
+        self.tolerance_changed[float].emit(tol)
         self.tolerance = tol
 
     @pyqtSlot(int)
@@ -781,3 +792,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         w1 = (self.apply_btn, )
         [i.setDisabled(status == 'START') for i in w1]
+
+
+def make_tolerance_dict_from_table_settings(table_settings):
+    """Create tolerance dict from TableSettings.
+    """
+    r = {}
+    for i in table_settings:
+        ename, fname, tol = i[0], i[1], i[7]
+        if ename in r:
+            r[ename].update({fname: tol})
+        else:
+            r[ename] = {fname: tol}
+    return r
