@@ -615,6 +615,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def stop_update(self):
         if self._update_mode == 'thread':
+            # chances auto update be set after loading settings from file,
+            # so stop it.
+            self.stop_auto_update()
             self._stop_update_thread = True
             printlog("Stop thread updating.")
         else:
