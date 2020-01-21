@@ -13,9 +13,9 @@ CSV_HEADER = (
 
 
 def make_physics_settings(csv_settings, lat):
-    """Generate Settings of *lat* from `TableSettings` instance defined by
-    *csv_settings*. For lattice settings, all settings are physics field
-    settings.
+    """Generate Settings (lattice settings) of *lat* from `TableSettings`
+    instance defined by *csv_settings*.
+    For lattice settings, all settings are physics field settings.
 
     Parameters
     ----------
@@ -30,7 +30,7 @@ def make_physics_settings(csv_settings, lat):
         Physics settings.
     """
     s = Settings()  # physics settings
-    for name, field, sp, rd, last_sp in csv_settings:
+    for name, field, _, _, sp, rd, last_sp, _, _ in csv_settings:
         elem = lat[name]
         eng_fields = elem.get_eng_fields()
         phy_fields = elem.get_phy_fields()
