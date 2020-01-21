@@ -68,6 +68,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # lattice is loaded
     lattice_loaded = pyqtSignal(QVariant)
 
+    # discrenpancy tolerance
+    tolerance_changed = pyqtSignal([float], [list])
+
+    #
+    is_settings_loaded_from_file = pyqtSignal(bool)
+
     def __init__(self, version):
         super(SettingsManagerWindow, self).__init__()
 
@@ -173,6 +179,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.update_ctrl_btn.toggled.emit(self.update_ctrl_btn.isChecked())
         self.single_update_btn.clicked.emit()
+        #
+        self.is_settings_loaded_from_file.emit(self.is_loaded_from_file)
+
+    @pyqtSlot(bool)
+    def on_is_settings_loaded_from_file(self, f):
+        if f:
+            self.tolerance_changed[list].emit(self._tolerance_list)
+            self.is_loaded_from_file = False
 
     @pyqtSlot(int, int, int)
     def on_settings_sts(self, i, j, k):
@@ -192,6 +206,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._pvs = []
         self._eng_phy_toggle = {'ENG': True, 'PHY': False}
         self.on_lattice_changed(self._mp)
+        self.is_loaded_from_file = False  # is settings from file?
 
         # lattice viewer
         self._enable_widgets(False)
@@ -200,6 +215,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # show lattice settings
         self.settingsLoaded.connect(self.on_settings_loaded)
+        self.is_settings_loaded_from_file.connect(self.on_is_settings_loaded_from_file)
 
         # update rate
         self.rate_changed.connect(self.on_update_rate_changed)
@@ -212,6 +228,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.field_init_mode = self.pref_dict['field_init_mode']
         self.t_wait = self.pref_dict['t_wait']
         self.init_settings = self.pref_dict['init_settings']
+        self.tolerance = self.pref_dict['tolerance']
+        self.tolerance_changed[float].connect(self.on_tolerance_float_changed)
+        self.tolerance_changed[list].connect(self.on_tolerance_list_changed)
 
         # icon
         self.done_icon = QPixmap(":/sm-icons/done.png")
@@ -228,6 +247,28 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # stop auto update when lattice is changed
         self.lattice_loaded.connect(self.stop_auto_update)
+
+    @pyqtSlot(float)
+    def on_tolerance_float_changed(self, tol):
+        # set tolerance with the same value.
+        m = self._tv.model()
+        if m is None:
+            return
+        src_m = m.sourceModel()
+        for i in range(src_m.rowCount()):
+            src_m.setData(src_m.index(i, src_m.i_tol), FMT.format(tol),
+                          Qt.DisplayRole)
+
+    @pyqtSlot(list)
+    def on_tolerance_list_changed(self, tol_list):
+        # set tolerance with a list of values.
+        m = self._tv.model()
+        if m is None:
+            return
+        src_m = m.sourceModel()
+        for tol, i in zip(tol_list, range(src_m.rowCount())):
+            src_m.setData(src_m.index(i, src_m.i_tol), FMT.format(tol),
+                          Qt.DisplayRole)
 
     def init_filter(self):
         """Initial filter.
@@ -470,11 +511,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def _load_settings_from_csv(self, filepath):
         lat = self._mp.work_lattice_conf
-        s = make_physics_settings(TableSettings(filepath), lat)
+        table_settings = TableSettings(filepath)
+        s = make_physics_settings(table_settings, lat)
         lat.settings.update(s)
         flat_settings, settings = pack_lattice_settings(lat,
                                                         data_source=DATA_SRC_MAP[self.field_init_mode],
                                                         only_physics=False)
+        self.is_loaded_from_file = True
+        self._tolerance_list = [i[7] for i in table_settings]
         self.settingsLoaded.emit(flat_settings, settings)
 
     def _load_settings_from_json(self, filepath):
@@ -491,7 +535,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         pref_dlg.pref_changed.connect(self.on_update_pref)
         r = pref_dlg.exec_()
         if r == QDialog.Accepted:
-            self.field_init_mode = self.pref_dict['field_init_mode']
             printlog("Updated pref --> {}".format(self.pref_dict))
         else:
             printlog("Unchanged pref: {}".format(self.pref_dict))
@@ -504,6 +547,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.field_init_mode = self.pref_dict['field_init_mode']
         self.t_wait = self.pref_dict['t_wait']
         self.init_settings = self.pref_dict['init_settings']
+        tol = self.pref_dict['tolerance']
+        self.tolerance_changed.emit(tol)
+        self.tolerance = tol
 
     @pyqtSlot(int)
     def on_update_rate(self, i):
