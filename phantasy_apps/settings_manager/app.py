@@ -172,6 +172,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.toggle_ftype()
         #
         self.update_ctrl_btn.toggled.emit(self.update_ctrl_btn.isChecked())
+        self.single_update_btn.clicked.emit()
 
     @pyqtSlot(int, int, int)
     def on_settings_sts(self, i, j, k):
