@@ -30,13 +30,17 @@ X1 = 'x\N{SUBSCRIPT ONE}'
 X2 = 'x\N{SUBSCRIPT TWO}'
 DELTA = '\N{GREEK CAPITAL LETTER DELTA}'
 
-COLUMN_NAMES1 = ['Device', 'Field', 'Setpoint({})'.format(X0),
-                 'Live Readback({})'.format(X1),
-                 'Live Setpoint({})'.format(X2)]
-COLUMN_NAMES2 = ['{D}({x0}-{x1})'.format(D=DELTA, x0=X0, x1=X1),
-                 '{D}({x0}-{x2})'.format(D=DELTA, x0=X0, x2=X2),
-                 '{D}({x1}-{x2})'.format(D=DELTA, x1=X1, x2=X2),
-                 'Tolerance', 'Writable']
+COLUMN_NAMES1 = ['Device', 'Field']
+
+COLUMN_NAMES2 = [
+    'Setpoint({})'.format(X0),
+    'Live Readback({})'.format(X1),
+    'Live Setpoint({})'.format(X2),
+    '{D}({x0}-{x1})'.format(D=DELTA, x0=X0, x1=X1),
+    '{D}({x0}-{x2})'.format(D=DELTA, x0=X0, x2=X2),
+    '{D}({x1}-{x2})'.format(D=DELTA, x1=X1, x2=X2),
+    'Tolerance', 'Writable'
+]
 COLUMN_SFIELD_MAP = OrderedDict((
     ('Type', 'family'),
     ('Pos [m]', 'sb'),
@@ -95,12 +99,14 @@ class SettingsModel(QStandardItemModel):
 
 
         # header
-        self.header = self.h_name, self.h_field, self.h_val0, self.h_rd, self.h_cset, \
-                      self.h_type, self.h_pos, self.h_val0_rd, self.h_val0_cset, self.h_rd_cset, \
+        self.header = self.h_name, self.h_field, self.h_type, self.h_pos, \
+                      self.h_val0, self.h_rd, self.h_cset, \
+                      self.h_val0_rd, self.h_val0_cset, self.h_rd_cset, \
                       self.h_tol, self.h_writable \
             = COLUMN_NAMES
-        self.ids = self.i_name, self.i_field, self.i_val0, self.i_rd, self.i_cset, \
-                   self.i_type, self.i_pos, self.i_val0_rd, self.i_val0_cset, self.i_rd_cset, \
+        self.ids = self.i_name, self.i_field, self.i_type, self.i_pos, \
+                   self.i_val0, self.i_rd, self.i_cset, \
+                   self.i_val0_rd, self.i_val0_cset, self.i_rd_cset, \
                    self.i_tol, self.i_writable \
             = range(len(self.header))
 
@@ -185,7 +191,7 @@ class SettingsModel(QStandardItemModel):
             item_rd = QStandardItem(FMT.format(fld.value))
             item_cset = QStandardItem(FMT.format(elem.current_setting(fname)))
 
-            row = [item_ename, item_fname, item_val0, item_rd, item_cset, ]
+            row = [item_ename, item_fname]
             for i, f in enumerate(COLUMN_NAMES):
                 if f in COLUMN_NAMES_ATTR:
                     v = getattr(elem, COLUMN_SFIELD_MAP[f])
@@ -193,6 +199,8 @@ class SettingsModel(QStandardItemModel):
                         v = '{0:.4f}'.format(v)
                     item = QStandardItem(v)
                     row.append(item)
+            #
+            row.extend([item_val0, item_rd, item_cset])
             # dx01,02,12
             v_d01 = float(item_val0.text()) - float(item_rd.text())
             v_d02 = float(item_val0.text()) - float(item_cset.text())
