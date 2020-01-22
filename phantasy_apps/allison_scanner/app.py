@@ -176,12 +176,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         ve = self.voltage_lineEdit
         ve.setValidator(QDoubleValidator())
         ve.textChanged.connect(self.on_v2d)
-        self.ion_name_lineEdit.textChanged.connect(
-                self.ion_name_display_lbl.setText)
-        self.ion_charge_lineEdit.textChanged.connect(
-                self.ion_charge_display_lbl.setText)
-        self.ion_mass_lineEdit.textChanged.connect(
-                self.ion_mass_display_lbl.setText)
 
         # data
         self._data = None
