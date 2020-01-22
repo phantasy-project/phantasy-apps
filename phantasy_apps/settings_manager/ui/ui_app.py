@@ -17,26 +17,6 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName("gridLayout")
-        self.apply_btn = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.apply_btn.sizePolicy().hasHeightForWidth())
-        self.apply_btn.setSizePolicy(sizePolicy)
-        self.apply_btn.setObjectName("apply_btn")
-        self.gridLayout.addWidget(self.apply_btn, 5, 1, 1, 1)
-        self.treeView = QtWidgets.QTreeView(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(
-            self.treeView.sizePolicy().hasHeightForWidth())
-        self.treeView.setSizePolicy(sizePolicy)
-        self.treeView.setObjectName("treeView")
-        self.gridLayout.addWidget(self.treeView, 3, 0, 1, 2)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSizeConstraint(
             QtWidgets.QLayout.SetDefaultConstraint)
@@ -155,7 +135,27 @@ class Ui_MainWindow(object):
         self.single_update_btn.setIcon(icon3)
         self.single_update_btn.setObjectName("single_update_btn")
         self.horizontalLayout.addWidget(self.single_update_btn)
-        self.gridLayout.addLayout(self.horizontalLayout, 5, 0, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout, 4, 0, 1, 1)
+        self.treeView = QtWidgets.QTreeView(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(
+            self.treeView.sizePolicy().hasHeightForWidth())
+        self.treeView.setSizePolicy(sizePolicy)
+        self.treeView.setObjectName("treeView")
+        self.gridLayout.addWidget(self.treeView, 2, 0, 1, 2)
+        self.apply_btn = QtWidgets.QPushButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.apply_btn.sizePolicy().hasHeightForWidth())
+        self.apply_btn.setSizePolicy(sizePolicy)
+        self.apply_btn.setObjectName("apply_btn")
+        self.gridLayout.addWidget(self.apply_btn, 4, 1, 1, 1)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -245,18 +245,7 @@ class Ui_MainWindow(object):
         self.label_4 = QtWidgets.QLabel(self.centralwidget)
         self.label_4.setObjectName("label_4")
         self.horizontalLayout_2.addWidget(self.label_4)
-        self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 2)
-        self.beamSpeciesDisplayWidget = BeamSpeciesDisplayWidget(
-            self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.beamSpeciesDisplayWidget.sizePolicy().hasHeightForWidth())
-        self.beamSpeciesDisplayWidget.setSizePolicy(sizePolicy)
-        self.beamSpeciesDisplayWidget.setObjectName("beamSpeciesDisplayWidget")
-        self.gridLayout.addWidget(self.beamSpeciesDisplayWidget, 0, 0, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 0, 0, 1, 2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 31))
@@ -279,6 +268,7 @@ class Ui_MainWindow(object):
                                    "    image: url(handle.png);\n"
                                    "}QToolb")
         self.toolBar.setOrientation(QtCore.Qt.Horizontal)
+        self.toolBar.setIconSize(QtCore.QSize(36, 36))
         self.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
@@ -348,7 +338,6 @@ class Ui_MainWindow(object):
         self.actionAdd_Devices.setIcon(icon17)
         self.actionAdd_Devices.setObjectName("actionAdd_Devices")
         self.menu_File.addAction(self.actionLoad_From_Snapshot)
-        self.menu_File.addAction(self.actionE_xit)
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.action_About)
@@ -363,6 +352,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionEngineering_Fields)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionPreferences)
+        self.toolBar.addAction(self.actionE_xit)
 
         self.retranslateUi(MainWindow)
         self.actionAbout_Qt.triggered.connect(MainWindow.onAboutQt)
@@ -415,7 +405,6 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.apply_btn.setText(_translate("MainWindow", "Apply"))
         self.reload_lattice_btn.setToolTip(
             _translate("MainWindow", "Reload Lattice."))
         self.reload_lattice_btn.setText(_translate("MainWindow", "..."))
@@ -450,6 +439,7 @@ class Ui_MainWindow(object):
         self.single_update_btn.setToolTip(
             _translate("MainWindow", "Update for one time."))
         self.single_update_btn.setText(_translate("MainWindow", "..."))
+        self.apply_btn.setText(_translate("MainWindow", "Apply"))
         self.expand_all_btn.setToolTip(
             _translate("MainWindow", "Click to expand all."))
         self.expand_all_btn.setText(_translate("MainWindow", "Expand"))
@@ -476,15 +466,6 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Total filtered items."))
         self.total_show_number_lbl.setText(_translate("MainWindow", "0"))
         self.label_4.setText(_translate("MainWindow", "items"))
-        self.beamSpeciesDisplayWidget.setProperty(
-            "atomicNumberPV", _translate("MainWindow", "FE_ISRC1:BEAM:Z_BOOK"))
-        self.beamSpeciesDisplayWidget.setProperty(
-            "massNumberPV", _translate("MainWindow", "FE_ISRC1:BEAM:A_BOOK"))
-        self.beamSpeciesDisplayWidget.setProperty(
-            "chargeNumberPV", _translate("MainWindow", "FE_ISRC1:BEAM:Q_BOOK"))
-        self.beamSpeciesDisplayWidget.setProperty(
-            "elementNamePV", _translate("MainWindow",
-                                        "FE_ISRC1:BEAM:ELMT_BOOK"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
@@ -544,7 +525,6 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Add Devices."))
 
 
-from phantasy_ui.widgets.beam_species_displayWidget import BeamSpeciesDisplayWidget
 from . import resources_rc
 
 if __name__ == "__main__":

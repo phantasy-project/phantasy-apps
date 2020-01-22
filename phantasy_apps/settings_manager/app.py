@@ -18,6 +18,8 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QCompleter
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QSizePolicy
 from phantasy import CaField
 from phantasy import Settings
 from phantasy_ui import BaseAppForm
@@ -27,6 +29,7 @@ from phantasy_ui import printlog
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from phantasy_ui.widgets import ElementSelectDialog
 from phantasy_ui.widgets import LatticeWidget
+from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 
 from .app_loadfrom import LoadSettingsDialog
 from .app_pref import PreferencesDialog
@@ -200,6 +203,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             o.setText(str(v))
 
     def __post_init_ui(self):
+        # add beamSpeciesDisplayWidget
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.toolBar.addWidget(spacer)
+        self.beam_display_widget = BeamSpeciesDisplayWidget()
+        self.toolBar.addWidget(self.beam_display_widget)
+        #
+
         self._tv = self.treeView
         self._load_from_dlg = None
         self._elem_select_dlg = None
