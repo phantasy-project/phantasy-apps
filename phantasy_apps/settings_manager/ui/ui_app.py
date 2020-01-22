@@ -267,9 +267,12 @@ class Ui_MainWindow(object):
                                    "QToolBar::handle {\n"
                                    "    image: url(handle.png);\n"
                                    "}QToolb")
+        self.toolBar.setAllowedAreas(QtCore.Qt.BottomToolBarArea
+                                     | QtCore.Qt.TopToolBarArea)
         self.toolBar.setOrientation(QtCore.Qt.Horizontal)
         self.toolBar.setIconSize(QtCore.QSize(36, 36))
         self.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.toolBar.setFloatable(False)
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         MainWindow.insertToolBarBreak(self.toolBar)
