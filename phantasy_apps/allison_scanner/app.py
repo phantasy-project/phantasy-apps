@@ -1219,7 +1219,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             n = self.ion_name_lineEdit.text()
             q = self.ion_charge_lineEdit.text()
             a = self.ion_mass_lineEdit.text()
-            ek = self.ion_energy_lineEdit.text()
+            ek = float(self.ion_energy_lineEdit.text())
             # n, q, a, kv = 'Ar', 9, 40, 53.333
         return (n, q, a, ek)
 
