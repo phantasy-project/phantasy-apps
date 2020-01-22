@@ -1072,14 +1072,22 @@ class Ui_MainWindow(object):
         self.page_beam_params = QtWidgets.QWidget()
         self.page_beam_params.setGeometry(QtCore.QRect(0, 0, 494, 565))
         self.page_beam_params.setObjectName("page_beam_params")
-        self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.page_beam_params)
-        self.verticalLayout_6.setContentsMargins(4, 4, 4, 4)
-        self.verticalLayout_6.setSpacing(8)
-        self.verticalLayout_6.setObjectName("verticalLayout_6")
-        self.gridLayout_6 = QtWidgets.QGridLayout()
-        self.gridLayout_6.setObjectName("gridLayout_6")
+        self.gridLayout_5 = QtWidgets.QGridLayout(self.page_beam_params)
+        self.gridLayout_5.setObjectName("gridLayout_5")
+        self.beamSpeciesDisplayWidget = BeamSpeciesDisplayWidget(
+            self.page_beam_params)
+        self.beamSpeciesDisplayWidget.setObjectName("beamSpeciesDisplayWidget")
+        self.gridLayout_5.addWidget(self.beamSpeciesDisplayWidget, 0, 0, 2, 1)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 65,
+                                            QtWidgets.QSizePolicy.Minimum,
+                                            QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_5.addItem(spacerItem1, 0, 1, 1, 1)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem2)
         self.auto_fill_beam_params_btn = QtWidgets.QPushButton(
             self.page_beam_params)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -1092,91 +1100,7 @@ class Ui_MainWindow(object):
         self.auto_fill_beam_params_btn.setObjectName(
             "auto_fill_beam_params_btn")
         self.horizontalLayout_2.addWidget(self.auto_fill_beam_params_btn)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
-                                            QtWidgets.QSizePolicy.Expanding,
-                                            QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem1)
-        self.gridLayout_6.addLayout(self.horizontalLayout_2, 3, 0, 1, 1)
-        self.ion_name_display_lbl = QtWidgets.QLabel(self.page_beam_params)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.ion_name_display_lbl.sizePolicy().hasHeightForWidth())
-        self.ion_name_display_lbl.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Cantarell")
-        font.setPointSize(30)
-        font.setBold(False)
-        font.setWeight(50)
-        self.ion_name_display_lbl.setFont(font)
-        self.ion_name_display_lbl.setAlignment(QtCore.Qt.AlignCenter)
-        self.ion_name_display_lbl.setObjectName("ion_name_display_lbl")
-        self.gridLayout_6.addWidget(self.ion_name_display_lbl, 1, 3, 3, 1)
-        spacerItem2 = QtWidgets.QSpacerItem(388, 20,
-                                            QtWidgets.QSizePolicy.Expanding,
-                                            QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_6.addItem(spacerItem2, 1, 0, 1, 1)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 40,
-                                            QtWidgets.QSizePolicy.Minimum,
-                                            QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_6.addItem(spacerItem3, 3, 4, 1, 1)
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setContentsMargins(0, -1, -1, -1)
-        self.horizontalLayout_3.setSpacing(1)
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.ion_charge_display_lbl = QtWidgets.QLabel(self.page_beam_params)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(
-            self.ion_charge_display_lbl.sizePolicy().hasHeightForWidth())
-        self.ion_charge_display_lbl.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Cantarell")
-        font.setPointSize(14)
-        self.ion_charge_display_lbl.setFont(font)
-        self.ion_charge_display_lbl.setObjectName("ion_charge_display_lbl")
-        self.horizontalLayout_3.addWidget(self.ion_charge_display_lbl)
-        self.label_50 = QtWidgets.QLabel(self.page_beam_params)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(
-            self.label_50.sizePolicy().hasHeightForWidth())
-        self.label_50.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Cantarell")
-        font.setPointSize(14)
-        self.label_50.setFont(font)
-        self.label_50.setObjectName("label_50")
-        self.horizontalLayout_3.addWidget(self.label_50)
-        self.gridLayout_6.addLayout(self.horizontalLayout_3, 1, 4, 1, 1)
-        spacerItem4 = QtWidgets.QSpacerItem(20, 40,
-                                            QtWidgets.QSizePolicy.Minimum,
-                                            QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_6.addItem(spacerItem4, 3, 2, 1, 1)
-        self.ion_mass_display_lbl = QtWidgets.QLabel(self.page_beam_params)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.ion_mass_display_lbl.sizePolicy().hasHeightForWidth())
-        self.ion_mass_display_lbl.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Cantarell")
-        font.setPointSize(14)
-        self.ion_mass_display_lbl.setFont(font)
-        self.ion_mass_display_lbl.setAlignment(QtCore.Qt.AlignRight
-                                               | QtCore.Qt.AlignTrailing
-                                               | QtCore.Qt.AlignVCenter)
-        self.ion_mass_display_lbl.setObjectName("ion_mass_display_lbl")
-        self.gridLayout_6.addWidget(self.ion_mass_display_lbl, 1, 2, 1, 1)
-        self.verticalLayout_6.addLayout(self.gridLayout_6)
+        self.gridLayout_5.addLayout(self.horizontalLayout_2, 1, 1, 1, 1)
         self.gridLayout_8 = QtWidgets.QGridLayout()
         self.gridLayout_8.setObjectName("gridLayout_8")
         self.label_33 = QtWidgets.QLabel(self.page_beam_params)
@@ -1327,11 +1251,11 @@ class Ui_MainWindow(object):
         self.ion_name_lineEdit.setReadOnly(True)
         self.ion_name_lineEdit.setObjectName("ion_name_lineEdit")
         self.gridLayout_8.addWidget(self.ion_name_lineEdit, 1, 4, 1, 1)
-        self.verticalLayout_6.addLayout(self.gridLayout_8)
-        spacerItem5 = QtWidgets.QSpacerItem(20, 500,
+        self.gridLayout_5.addLayout(self.gridLayout_8, 2, 0, 1, 2)
+        spacerItem3 = QtWidgets.QSpacerItem(20, 500,
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout_6.addItem(spacerItem5)
+        self.gridLayout_5.addItem(spacerItem3, 3, 0, 1, 2)
         self.data_analysis_tbox.addItem(self.page_beam_params, "")
         self.page_bkgd_noise = QtWidgets.QWidget()
         self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 494, 565))
@@ -1676,10 +1600,10 @@ class Ui_MainWindow(object):
         self.update_results_btn = QtWidgets.QToolButton(self.twiss_gbox)
         self.update_results_btn.setObjectName("update_results_btn")
         self.horizontalLayout_11.addWidget(self.update_results_btn)
-        spacerItem6 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_11.addItem(spacerItem6)
+        self.horizontalLayout_11.addItem(spacerItem4)
         self.show_results_btn = QtWidgets.QToolButton(self.twiss_gbox)
         self.show_results_btn.setObjectName("show_results_btn")
         self.horizontalLayout_11.addWidget(self.show_results_btn)
@@ -1818,6 +1742,8 @@ class Ui_MainWindow(object):
         self.default_config_btn.clicked.connect(
             MainWindow.on_load_default_config)
         self.toolButton.clicked.connect(MainWindow.on_add_current_config)
+        self.beamSpeciesDisplayWidget.display_changed.connect(
+            self.auto_fill_beam_params_btn.click)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.ems_names_cbb, self.ems_detail_btn)
         MainWindow.setTabOrder(self.ems_detail_btn, self.ems_orientation_cbb)
@@ -1841,8 +1767,6 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.volt_step_dsbox,
                                self.volt_settling_time_dsbox)
         MainWindow.setTabOrder(self.volt_settling_time_dsbox,
-                               self.auto_fill_beam_params_btn)
-        MainWindow.setTabOrder(self.auto_fill_beam_params_btn,
                                self.ion_name_lineEdit)
         MainWindow.setTabOrder(self.ion_name_lineEdit,
                                self.ion_charge_lineEdit)
@@ -2025,14 +1949,6 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Fetch live beam species infomation."))
         self.auto_fill_beam_params_btn.setText(
             _translate("MainWindow", "Auto Fill"))
-        self.ion_name_display_lbl.setText(_translate("MainWindow", "Ar"))
-        self.ion_charge_display_lbl.setText(_translate("MainWindow", "9"))
-        self.label_50.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p><span style=\" vertical-align:super;\">+</span></p></body></html>"
-            ))
-        self.ion_mass_display_lbl.setText(_translate("MainWindow", "40"))
         self.label_33.setText(
             _translate("MainWindow",
                        "<html><head/><body><p>Ion Mass</p></body></html>"))
@@ -2156,6 +2072,7 @@ class Ui_MainWindow(object):
 
 from mpl4qt.widgets.mplbasewidget import MatplotlibBaseWidget
 from mpl4qt.widgets.mplimagewidget import MatplotlibImageWidget
+from phantasy_ui.widgets.beam_species_displayWidget import BeamSpeciesDisplayWidget
 from . import resources_rc
 
 if __name__ == "__main__":
