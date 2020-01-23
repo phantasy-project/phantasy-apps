@@ -70,6 +70,9 @@ FG_COLOR_MAP = {
     False: "#6C757D",
 }
 
+# {ename: CaElement}
+NAME_ELEMENT_DICT = dict()
+
 
 class SettingsModel(QStandardItemModel):
     """Settings model from Settings instance.
@@ -432,9 +435,11 @@ def convert_settings(settings_read, elem_list):
     each tuple is composed of (CaElement, field name, CaField, field value).
     """
     flat_settings = []
-    nm = {o.name: o for o in elem_list}
+    for o in elem_list:
+        if o.name not in NAME_ELEMENT_DICT:
+            NAME_ELEMENT_DICT[o.name] = o
     for ename, econf in settings_read.items():
-        elem = nm.get(ename, None)
+        elem = NAME_ELEMENT_DICT.get(ename, None)
         if elem is None:
             print("{} is not in lattice but defined in the settings.".format(ename))
             continue
