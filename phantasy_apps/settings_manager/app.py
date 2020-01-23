@@ -80,7 +80,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     #
     is_settings_loaded_from_file = pyqtSignal(bool)
 
-    def __init__(self, version):
+    def __init__(self, version, config_dir):
         super(SettingsManagerWindow, self).__init__()
 
         # app version
@@ -103,6 +103,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             <p>Copyright (C) 2019 Facility for Rare Isotope Beams and other contributors.</p>
             </html>
         """.format(self._version)
+
+        self._confdir = config_dir
 
         # UI
         self.setupUi(self)
