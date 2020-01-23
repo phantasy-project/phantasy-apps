@@ -521,11 +521,30 @@ def build_element(sp_pv, rd_pv, ename=None, fname=None):
     if fname is None:
         fname = pv_elem.fname
     elem = CaElement(name=ename)
-    pv_props = {'field_eng': fname, 'field_phy': '{}_phy'.format(fname),
-            'handle': 'readback', 'pv_policy': 'DEFAULT', 'index': '-1',
-            'length': '0.0', 'sb': -1, 'family': 'PV'}
+    pv_props = {
+        'field_eng': fname,
+        'field_phy': '{}_PHY'.format(fname),
+        'handle': 'readback',
+        'pv_policy': 'DEFAULT',
+        'index': '-1',
+        'length': '0.0',
+        'sb': -1,
+        'family': 'PV'}
     pv_tags = []
     for pv, handle in zip((sp_pv, rd_pv), ('setpoint', 'readback')):
         pv_props['handle'] = handle
         elem.process_pv(pv, pv_props, pv_tags)
     return elem
+
+
+def get_names(pvname):
+    """Return element name and field name from pv name, based on the following
+    naming convention: SYSTEM_SUBSYS:DEVICE_D####:FIELD_HANDLE
+    """
+    r = re.match(r'(.*):(.*)_.*', pvname)
+    try:
+        ename = r.group(1)
+        fname = r.group(2)
+    except AttributeError:
+        ename = fname = pvname
+    return ename, fname

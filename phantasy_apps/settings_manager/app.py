@@ -761,16 +761,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             else:
                 # WIP: this part should be refactored
                 from .utils import build_element
+                from .utils import get_names
+
                 settings = Settings()
                 sel_elems, _, _ = self._elem_selected
                 pv_elem = sel_elems[0]
 
-                ename = pv_elem.ename
-                fname = pv_elem.fname
+                ename, fname = get_names(pv_elem.setpoint[0])
                 elem = build_element(pv_elem.setpoint[0], pv_elem.readback[0],
                                      ename=ename, fname=fname)
-                settings.update([(ename, {fname: getattr(elem, fname),
-                                  fname + '_phy': getattr(elem, fname)})])
+                v_sp = elem.current_setting(fname)
+                settings.update([(ename, {fname: v_sp,
+                                  fname + '_phy': v_sp})])
                 self.__settings.update(settings)
                 if elem not in self._elem_list:
                     self._elem_list.append(elem)
