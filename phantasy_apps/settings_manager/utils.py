@@ -22,6 +22,7 @@ from phantasy_ui.widgets import is_item_checked
 
 from phantasy import CaElement
 from phantasy import PVElement
+from phantasy import get_settings_from_element_list
 
 FMT = "{0:.6g}"
 
@@ -69,9 +70,6 @@ FG_COLOR_MAP = {
     True: "#343A40",
     False: "#6C757D",
 }
-
-# {ename: CaElement}
-NAME_ELEMENT_DICT = dict()
 
 
 class SettingsModel(QStandardItemModel):
@@ -430,34 +428,44 @@ class _SortProxyModel(QSortFilterProxyModel):
                 it_name_src.setCheckState(Qt.Unchecked)
 
 
-def convert_settings(settings_read, elem_list):
+def convert_settings(settings_read, lat):
     """Convert hierarchical `Settings` to flat list of tuples as the return,
     each tuple is composed of (CaElement, field name, CaField, field value).
+
+    Parameters
+    ----------
+    settings_read : Settings
+        Key-value pairs of element settings, value is key-value pairs of field
+        and value.
+    lat : Lattice
+        High-level lattice object.
+
+    Returns
+    -------
+    r : list
+        List of tuple of settings.
     """
     flat_settings = []
-    for o in elem_list:
-        if o.name not in NAME_ELEMENT_DICT:
-            NAME_ELEMENT_DICT[o.name] = o
     for ename, econf in settings_read.items():
-        elem = NAME_ELEMENT_DICT.get(ename, None)
-        if elem is None:
-            print("{} is not in lattice but defined in the settings.".format(ename))
-            continue
+        elem = lat[ename]
+        #if elem is None:
+        #    print("{} is not in lattice but defined in the settings.".format(ename))
+        #    continue
         for fname, fval0 in econf.items():
             confline = (elem, fname, elem.get_field(fname), fval0)
             flat_settings.append(confline)
     return flat_settings
 
 
-def pack_lattice_settings(lat, elem_list=None, **kws):
-    """Pack up element settings of lattice object as a tuple to return.
+def pack_settings(elem_list, lat, **kws):
+    """Pack up element settings of as a tuple to return.
 
     Parameters
     ----------
-    lat :
-        Lattice object.
     elem_list : list
-        List of CaElement, if not defined, use the whole lattice.
+        List of CaElement.
+    lat : Lattice
+        High-level lattice object.
 
     Keyword Arguments
     -----------------
@@ -465,6 +473,9 @@ def pack_lattice_settings(lat, elem_list=None, **kws):
         'model' or 'control', get element settings from MODEL environment if
         *data_source* is 'model', otherwise get live settings from controls
         network.
+    settings : Settings
+        Predefined physics Settings from '.json' file which should includes
+        all the elements in *elem_list*.
     only_physics : bool
         If True, onle get physics settings, other wise, get engineering
         settings as well.
@@ -475,9 +486,8 @@ def pack_lattice_settings(lat, elem_list=None, **kws):
         Tuple of (flat_s[list], s[Settings]), element of flat_s:
         (CaElement, field_name, CaField, field_value)
     """
-    elems = lat if elem_list is None else elem_list
-    settings = lat.get_settings_from_element_list(elems, **kws)
-    flat_settings = convert_settings(settings, elems)
+    settings = get_settings_from_element_list(elem_list, **kws)
+    flat_settings = convert_settings(settings, lat)
     return flat_settings, settings
 
 
@@ -495,56 +505,3 @@ def get_bg_color(name):
 def get_fg_color(writable):
     return FG_COLOR_MAP.get(writable)
 
-
-def build_element(sp_pv, rd_pv, ename=None, fname=None):
-    """Build high-level element from setpoint and readback PV names.
-
-    Parameters
-    ----------
-    sp_pv : str
-        Setpoint PV name.
-    rd_pv : str
-        Readback PV name.
-    ename : str
-        Element name.
-    fname : str
-        Field name.
-
-    Returns
-    -------
-    elem : CaElement
-        CaElement object.
-    """
-    pv_elem = PVElement(sp_pv, rd_pv)
-    if ename is None:
-        ename = pv_elem.ename
-    if fname is None:
-        fname = pv_elem.fname
-    elem = CaElement(name=ename)
-    pv_props = {
-        'field_eng': fname,
-        'field_phy': '{}_PHY'.format(fname),
-        'handle': 'readback',
-        'pv_policy': 'DEFAULT',
-        'index': '-1',
-        'length': '0.0',
-        'sb': -1,
-        'family': 'PV'}
-    pv_tags = []
-    for pv, handle in zip((sp_pv, rd_pv), ('setpoint', 'readback')):
-        pv_props['handle'] = handle
-        elem.process_pv(pv, pv_props, pv_tags)
-    return elem
-
-
-def get_names(pvname):
-    """Return element name and field name from pv name, based on the following
-    naming convention: SYSTEM_SUBSYS:DEVICE_D####:FIELD_HANDLE
-    """
-    r = re.match(r'(.*):(.*)_.*', pvname)
-    try:
-        ename = r.group(1)
-        fname = r.group(2)
-    except AttributeError:
-        ename = fname = pvname
-    return ename, fname

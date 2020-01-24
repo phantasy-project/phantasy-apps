@@ -22,6 +22,7 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QSizePolicy
 from phantasy import CaField
 from phantasy import Settings
+from phantasy import build_element
 from phantasy_ui import BaseAppForm
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
@@ -39,8 +40,7 @@ from .data import make_physics_settings
 from .ui.ui_app import Ui_MainWindow
 from .utils import FMT
 from .utils import SettingsModel
-from .utils import pack_lattice_settings
-from .utils import convert_settings
+from .utils import pack_settings
 from .data import get_csv_settings
 from .data import CSV_HEADER
 
@@ -62,6 +62,8 @@ Press Enter to activate the filter, here is some examples:
 """
 
 
+
+
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # signal: settings loaded, emit flat_settings and settings.
     settingsLoaded = pyqtSignal(QVariant, QVariant)
@@ -79,6 +81,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     #
     is_settings_loaded_from_file = pyqtSignal(bool)
+
+    # the list of element list is changed --> update settings model
+    element_list_changed = pyqtSignal()
+
 
     def __init__(self, version, config_dir):
         super(SettingsManagerWindow, self).__init__()
@@ -117,30 +123,33 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(QVariant)
     def on_lattice_changed(self, o):
-        """Lattice is loaded.
-        1. Update status of snp load tool
-        2. Update lattice info labels
-        3. Show the current element settings
-        """
+        # Lattice is loaded.
+        # Update status of snp load tool
+        # Update lattice info labels
+        # Reset lattice
+        #   Show the current element settings
+        #
         if o is None:
             return
+        if is_same_lattice(o, self._mp):
+            return
+        # update lattice with the new one
         self._mp = o
-        #
-        snpload_status = True if self._mp is not None else False
-        self.actionLoad_From_Snapshot.setEnabled(snpload_status)
-        #
-        self.update_lattice_info_lbls(o.last_machine_name, o.last_lattice_name)
+        # reset self._lat
+        self._lat = o.work_lattice_conf
+        self.lattice_loaded.emit(o)
 
         # show element settings
-        if self.init_settings:
-            flat_settings, settings = pack_lattice_settings(
-                    o.work_lattice_conf,
-                    data_source=DATA_SRC_MAP[self.field_init_mode],
-                    only_physics=False)
-            self.settingsLoaded.emit(flat_settings, settings)
-        #
-        printlog("Lattice is changed")
-        self.lattice_loaded.emit(o)
+        if self.init_settings:  # in Preferences
+            # if init settings, show settings to the view.
+            self._elem_list = self._lat[:]
+            self.element_list_changed.emit()
+        else:
+            # WIP
+            # otherwise, user needs to 'Add Devices' to the view.
+            # self._lat.reset_settings()
+            # self._lat._elements = []
+            pass
 
     def show_init_settings_info(self):
         if not self.init_settings:
@@ -217,10 +226,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._load_from_dlg = None
         self._elem_select_dlg = None
         self._lattice_load_window = None
+
         self._mp = None
+        self._lat = None
+        self._elem_list = []  # element list for SettingsModel
+
         self.__settings = Settings()
         self.__flat_settings = None
-        self._elem_list = []  #  selected element list
+
         self._pvs = []
         self._eng_phy_toggle = {'ENG': True, 'PHY': False}
         self.on_lattice_changed(self._mp)
@@ -265,6 +278,28 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # stop auto update when lattice is changed
         self.lattice_loaded.connect(self.stop_auto_update)
+        # widget status regarding lattice changed.
+        self.lattice_loaded.connect(self.on_update_widgets_status)
+        #
+        self.element_list_changed.connect(self.on_elemlist_changed)
+
+    @pyqtSlot(QVariant)
+    def on_update_widgets_status(self, o):
+        # WIP: control widget status after lattice is loaded.
+        self.actionLoad_From_Snapshot.setEnabled(True)
+        self.update_lattice_info_lbls(o.last_machine_name, o.last_lattice_name)
+
+    @pyqtSlot()
+    def on_elemlist_changed(self):
+        # element list changed
+        # update flat_settings and settings
+        # update settings view
+        flat_settings, settings = pack_settings(
+                self._elem_list, self._lat,
+                settings=self._lat.settings,
+                data_source=DATA_SRC_MAP[self.field_init_mode],
+                only_physics=False)
+        self.settingsLoaded.emit(flat_settings, settings)
 
     @pyqtSlot(float)
     def on_tolerance_float_changed(self, tol):
@@ -541,9 +576,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         table_settings = TableSettings(filepath)
         s = make_physics_settings(table_settings, lat)
         lat.settings.update(s)
-        flat_settings, settings = pack_lattice_settings(lat,
-                                                        data_source=DATA_SRC_MAP[self.field_init_mode],
-                                                        only_physics=False)
+        flat_settings, settings = pack_settings(lat,
+                                                data_source=DATA_SRC_MAP[self.field_init_mode],
+                                                only_physics=False)
         self.is_loaded_from_file = True
         self._tolerance_dict = make_tolerance_dict_from_table_settings(table_settings)
         self.settingsLoaded.emit(flat_settings, settings)
@@ -746,42 +781,33 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._elem_select_dlg.selection_changed.connect(self.on_device_selected)
             self._elem_select_dlg.pv_mode_toggled.connect(self.on_pv_mode_toggled)
             self.lattice_loaded.connect(self._elem_select_dlg.on_update_elem_tree)
+
         r = self._elem_select_dlg.exec_()
         if r == QDialog.Accepted:
             if not self._pv_mode:
                 sel_elems, sel_elems_dis, sel_fields = self._elem_selected
-                lat = self._mp.work_lattice_conf
-                elems = sel_elems_dis
-                _, settings = pack_lattice_settings(
-                        lat, elems,
-                        data_source=DATA_SRC_MAP[self.field_init_mode],
-                        only_physics=False)
-                self.__settings.update(settings)
-                for elem in lat:
-                    if elem not in self._elem_list:
-                        self._elem_list.append(elem)
+                is_added_list = []
+                for i in sel_elems_dis:
+                    self._lat.append(i)
+                    is_added_list.append(self.add_element(i))
+                is_added = True in is_added_list
             else:
-                # WIP: this part should be refactored
-                from .utils import build_element
-                from .utils import get_names
-
-                settings = Settings()
                 sel_elems, _, _ = self._elem_selected
                 pv_elem = sel_elems[0]
+                elem = build_element(pv_elem.setpoint[0], pv_elem.readback[0])
+                self._lat.append(elem)
+                is_added = self.add_element(elem)
+            if is_added:
+                self.element_list_changed.emit()
 
-                ename, fname = get_names(pv_elem.setpoint[0])
-                elem = build_element(pv_elem.setpoint[0], pv_elem.readback[0],
-                                     ename=ename, fname=fname)
-                v_sp = elem.current_setting(fname)
-                settings.update([(ename, {fname: v_sp,
-                                  fname + '_phy': v_sp})])
-                self.__settings.update(settings)
-                if elem not in self._elem_list:
-                    self._elem_list.append(elem)
-
-            #
-            self.__flat_settings = convert_settings(self.__settings, self._elem_list)
-            self.settingsLoaded.emit(self.__flat_settings, self.__settings)
+    def add_element(self, elem):
+        """Add *elem* to element list if not added.
+        """
+        if elem not in self._elem_list:
+            self._elem_list.append(elem)
+            return True
+        else:
+            return False
 
     @pyqtSlot()
     def on_single_update(self):
@@ -813,6 +839,22 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def sizeHint(self):
         return QSize(1800, 1200)
+
+    # test
+    def on_click_test_btn(self):
+        pass
+        printlog(len(self._lat), self._lat)
+        printlog(len(self._lat.settings), self._lat.settings)
+
+
+def is_same_lattice(new_mp, current_mp):
+    """Test if the current loaded lattice of new_mp and current_mp is the same.
+    """
+    # new_mp is not None
+    if current_mp is None:
+        return False
+    return (new_mp.last_machine_name == current_mp.last_machine_name) and \
+            (new_mp.last_lattice_name == current_mp.last_lattice_name)
 
 
 def make_tolerance_dict_from_table_settings(table_settings):
