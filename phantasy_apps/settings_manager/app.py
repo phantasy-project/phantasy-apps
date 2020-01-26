@@ -62,8 +62,6 @@ Press Enter to activate the filter, here is some examples:
 """
 
 
-
-
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # signal: settings loaded, emit flat_settings and settings.
     settingsLoaded = pyqtSignal(QVariant, QVariant)
@@ -188,10 +186,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.reset_pvs()
         model = SettingsModel(self._tv, self.__flat_settings)
         model.settings_sts.connect(self.on_settings_sts)
+        model.item_deletion_updated[list].connect(self.on_delete_items)
         model.set_model()
         self._pvs = model._pvs
         self._m_obj = model._m_obj
-        self._m_idx = model._m_idx
+        self._m_it = model._m_it
 
         #
         self.toggle_ftype()
@@ -657,13 +656,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # res: [(idx, val, role)..., ]
         t0 = time.time()
         res = []
-        for o, idx in zip(self._m_obj, self._m_idx):
+        print(len(self._m_obj), len(self._m_it))
+        for o, it in zip(self._m_obj, self._m_it):
             if not isinstance(o, CaField):  # PV
                 val = o.get()
-                for iidx in idx:
-                    res.append((iidx, FMT.format(val), Qt.DisplayRole))
+                for iit in it:
+                    idx = m.indexFromItem(iit)
+                    res.append((idx, FMT.format(val), Qt.DisplayRole))
             else:  # CaField
-                irow = idx[0].row()
+                idx0 = m.indexFromItem(it[0])
+                idx1 = m.indexFromItem(it[1])
+                irow = idx0.row()
                 rd_val, sp_val = o.value, o.current_setting()
                 x0_idx = m.index(irow, m.i_val0)
                 x1_idx = m.index(irow, m.i_rd)
@@ -680,7 +683,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 dx12 = x1 - x2
                 wa_idx = m.index(irow, m.i_writable)
                 wa = o.write_access
-                idx_tuple = (idx[0], idx[1], dx01_idx, dx02_idx, dx12_idx)
+                idx_tuple = (idx0, idx1, dx01_idx, dx02_idx, dx12_idx)
                 v_tuple = (rd_val, sp_val, dx01, dx02, dx12)
                 for iidx, val in zip(idx_tuple, v_tuple):
                     res.append((iidx, FMT.format(val), Qt.DisplayRole))
@@ -839,6 +842,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def sizeHint(self):
         return QSize(1800, 1200)
+
+    @pyqtSlot(list)
+    def on_delete_items(self, fobj_list):
+        """Delete the element(s) from element list by given field object list.
+        """
+        for fobj in fobj_list:
+            elem = self._lat[fobj.ename]
+            # !! note: delete both ENG/PHY fields.
+            if elem in self._elem_list:
+                self._elem_list.remove(elem)
 
     # test
     def on_click_test_btn(self):
