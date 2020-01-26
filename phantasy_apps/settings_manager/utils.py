@@ -22,6 +22,7 @@ from phantasy_ui.widgets import is_item_checked
 
 from phantasy import CaElement
 from phantasy import PVElement
+from phantasy import CaField
 from phantasy import get_settings_from_element_list
 
 FMT = "{0:.6g}"
@@ -83,10 +84,21 @@ class SettingsModel(QStandardItemModel):
         CaField object, ``fval0`` is saved field value of setpoint.
     """
 
+    # data changed, e.g. field/PV value is updated
     data_changed = pyqtSignal(QVariant)
+
+    # statistics for loaded items, PVs
     settings_sts = pyqtSignal(int, int, int)
+
+    # reset item0 icon if applied
     reset_icon = pyqtSignal()
+
+    # delete checked items
     delete_selected_items = pyqtSignal()
+
+    # delete checked items from original element list,
+    # signal list of CaField objects.
+    item_deletion_updated = pyqtSignal(list)
 
     def __init__(self, parent, flat_settings):
         super(self.__class__, self).__init__(parent)
@@ -96,8 +108,7 @@ class SettingsModel(QStandardItemModel):
         self._pvs = []
         # [obj(PV/CaField)]: [index[list]]
         self._m_obj = [] # PV and CaField
-        self._m_idx = [] # list of index(parent), [rd, sp]
-
+        self._m_it = [] # list of items, [rd, sp]
 
         # header
         self.header = self.h_name, self.h_field, self.h_type, self.h_pos, \
@@ -186,9 +197,9 @@ class SettingsModel(QStandardItemModel):
                     idx = self.indexFromItem(item)
                     if o not in self._m_obj:
                         self._m_obj.append(o)
-                        self._m_idx.append([idx])
+                        self._m_it.append([item]) # put item instead of idx
                     else:
-                        self._m_idx[self._m_obj.index(o)].append(idx)
+                        self._m_it[self._m_obj.index(o)].append(item)
 
                 sppv_set.add(sp_obj.pvname)
                 rdpv_set.add(rd_obj.pvname)
@@ -284,12 +295,9 @@ class SettingsModel(QStandardItemModel):
                     self._pvs.append(o)
 
             self._m_obj.append(fld)
-            self._m_idx.append(
-                [self.index(irow, self.i_rd),
-                 self.index(irow, self.i_cset),])
-                 # self.index(irow, self.i_val0_rd),    # x0-x1
-                 # self.index(irow, self.i_val0_cset),  # x0-x2
-                 # self.index(irow, self.i_rd_cset)])   # x1-x2
+            self._m_it.append(
+                [self.item(irow, self.i_rd),
+                 self.item(irow, self.i_cset),])
 
     def __post_init_ui(self, tv):
         # set headers
@@ -322,12 +330,29 @@ class SettingsModel(QStandardItemModel):
             if is_item_checked(it_name):
                 checked_items.append(it_name)
 
+        fobj_list = []
         for item in checked_items:
             idx = self.indexFromItem(item)
             irow = idx.row()
-            name = item.text()
+            ename = item.text()
+            fobj = item.fobj
+            
+            # delete items from self._m_it and self._m_obj
+            ind = self._m_obj.index(fobj)
+            self._m_it.pop(ind)
+            self._m_obj.pop(ind)
+            for pv in fobj.setpoint_pv + fobj.readback_pv:
+                i = self._m_obj.index(pv)
+                self._m_it.pop(i)
+                self._m_obj.pop(i)
+            #
+            fobj_list.append(fobj)
+            # delete
             self.removeRow(irow)
-            #print("Delete {} at {}".format(name, irow))
+
+        # field object list that to be deleted
+        self.item_deletion_updated.emit(fobj_list)
+
 
 
 class _SortProxyModel(QSortFilterProxyModel):
