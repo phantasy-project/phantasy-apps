@@ -15,6 +15,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QRegularExpression
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QCompleter
@@ -126,6 +127,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # tolerance settings
         ts_confpath = os.path.join(confdir, 'tolerance.json')
         self._tolerance_settings = ToleranceSettings(ts_confpath)
+
+        #
+        self.config_timer = QTimer(self)
+        self.config_timer.timeout.connect(self.on_update_dump_config)
+        self.config_timer.start(10000)
 
     @pyqtSlot(QVariant)
     def on_lattice_changed(self, o):
@@ -455,7 +461,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.setData(idx_src, QIcon(px), Qt.DecorationRole)
 
     def closeEvent(self, e):
-        self.snapshot_tolerance_settings()
+        self.on_update_dump_config()
         r = BaseAppForm.closeEvent(self, e)
         if r:
             for pv in self._pvs:
@@ -469,15 +475,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if m is None:
             return
         src_m = m.sourceModel()
+        is_changed = False
         for i in range(src_m.rowCount()):
             ename = src_m.data(src_m.index(i, src_m.i_name))
             fname = src_m.data(src_m.index(i, src_m.i_field))
             v_tol = float(src_m.data(src_m.index(i, src_m.i_tol)))
             if ename not in self._tolerance_settings:
                 self._tolerance_settings[ename] = OrderedDict([(fname, v_tol)])
+                is_changed = True
             else:
+                if fname not in self._tolerance_settings[ename]:
+                    is_changed = True
+                elif self._tolerance_settings[ename][fname] != v_tol:
+                    is_changed = True
                 self._tolerance_settings[ename].update([(fname, v_tol)])
-        self._tolerance_settings.write(self._tolerance_settings.settings_path)
+        if is_changed:
+            self._tolerance_settings.write(self._tolerance_settings.settings_path)
+            printlog("Update tolerance settings snapshot.")
 
     @pyqtSlot(bool)
     def on_toggle_phyfields(self, f):
@@ -874,6 +888,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             if elem in self._elem_list:
                 self._elem_list.remove(elem)
         self.element_list_changed.emit()
+
+    @pyqtSlot()
+    def on_update_dump_config(self):
+        """Update and dump configurations.
+        """
+        printlog("Update and dump configurations...")
+        self.snapshot_tolerance_settings()
 
     # test
     def on_click_test_btn(self):
