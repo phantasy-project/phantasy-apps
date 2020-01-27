@@ -141,3 +141,16 @@ class ToleranceSettings(Settings):
             settingsPath = None
         super(self.__class__, self).__init__(settingsPath)
         self.settings_path = settings_path
+
+
+class ElementPVConfig(Settings):
+    """PV configurations for element from setpoint/readback PVs.
+    e.g. {ename: {setpoint: sppv, readback: rdpv}}
+    """
+    def __init__(self, settings_path=None):
+        if settings_path is not None and os.path.isfile(settings_path):
+            settingsPath = settings_path
+        else:
+            settingsPath = None
+        super(self.__class__, self).__init__(settingsPath)
+        self.settings_path = settings_path
