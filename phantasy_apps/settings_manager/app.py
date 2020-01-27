@@ -145,7 +145,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.config_timer = QTimer(self)
         self.config_timer.timeout.connect(self.on_update_dump_config)
-        self.config_timer.start(10000)
 
     @pyqtSlot(QVariant)
     def on_element_from_pv_added(self, elem):
@@ -299,6 +298,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.t_wait = self.pref_dict['t_wait']
         self.init_settings = self.pref_dict['init_settings']
         self.tolerance = self.pref_dict['tolerance']
+        self.dt_confsync = self.pref_dict['dt_confsync']
+
         self.tolerance_changed[float].connect(self.on_tolerance_float_changed)
         self.tolerance_changed[ToleranceSettings].connect(self.on_tolerance_dict_changed)
         self.model_settings_changed.connect(self.on_model_settings_changed)
@@ -323,6 +324,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.lattice_loaded.connect(self.on_update_widgets_status)
         #
         self.element_list_changed.connect(self.on_elemlist_changed)
+
+        # start config sync timer
+        self.config_timer.start(self.dt_confsync * 1000)
 
     @pyqtSlot(QVariant)
     def on_update_widgets_status(self, o):
@@ -686,6 +690,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         tol = self.pref_dict['tolerance']
         self.tolerance_changed[float].emit(tol)
         self.tolerance = tol
+        dt_confsync = self.pref_dict['dt_confsync']
+        if dt_confsync != self.dt_confsync:
+            self.config_timer.stop()
+            self.dt_confsync = dt_confsync
+            self.config_timer.start(self.dt_confsync * 1000)
 
     @pyqtSlot(int)
     def on_update_rate(self, i):

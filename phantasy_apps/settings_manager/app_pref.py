@@ -11,12 +11,14 @@ DEFAULT_FIELD_INIT_MODE = 'model'
 DEFAULT_INIT_SETTINGS = True
 DEFAULT_T_WAIT = 0.05
 DEFAULT_TOLERANCE = 0.10
+DEFAULT_CONFIG_SYNC_TIME_INTERVAL = 10  # second
 
 DEFAULT_PREF = {
         'field_init_mode': DEFAULT_FIELD_INIT_MODE,
         'init_settings': DEFAULT_INIT_SETTINGS,
         't_wait': DEFAULT_T_WAIT,
         'tolerance': DEFAULT_TOLERANCE,
+        'dt_confsync': DEFAULT_CONFIG_SYNC_TIME_INTERVAL,
 }
 
 
@@ -55,6 +57,10 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         tol = self.pref_dict['tolerance']
         self.tol_dsbox.setValue(tol)
 
+        # confsync dt
+        dt_confsync = self.pref_dict['dt_confsync']
+        self.dt_confsync_dsbox.setValue(dt_confsync)
+
     @pyqtSlot(bool)
     def on_toggle_mode(self, f):
         if f:
@@ -70,7 +76,9 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         return {'field_init_mode': self.mode,
                 't_wait': self.apply_delt_dsbox.value(),
                 'init_settings': self.init_settings,
-                'tolerance': self.tol_dsbox.value(),}
+                'tolerance': self.tol_dsbox.value(),
+                'dt_confsync': self.dt_confsync_dsbox.value(),
+        }
 
     @pyqtSlot(bool)
     def on_init_settings(self, f):
