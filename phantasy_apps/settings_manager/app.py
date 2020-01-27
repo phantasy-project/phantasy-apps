@@ -16,6 +16,7 @@ from PyQt5.QtCore import QRegularExpression
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QTimer
+from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QCompleter
@@ -291,6 +292,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.update_rate_cbb.currentIndexChanged.emit(
             self.update_rate_cbb.currentIndex())
 
+        # scaling factor lineEdit
+        self.scaling_factor_lineEdit.setValidator(QDoubleValidator(0.0, 10, 6))
+
         # preferences
         # see preference dialog class
         self.pref_dict = DEFAULT_PREF
@@ -465,10 +469,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_apply_settings(self):
         """Apply selected element settings.
         """
+        # scaling factor
+        scaling_factor = float(self.scaling_factor_lineEdit.text())
+        #
         self.idx_px_list = []  # list to apply icon [(idx_src, px)]
         m = self._tv.model()
         settings_selected = m.get_selection()
-        self.applyer = DAQT(daq_func=self.apply_single,
+        self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor),
                             daq_seq=settings_selected)
         self.applyer.daqStarted.connect(partial(
             self.set_widgets_status_for_applying, 'START'))
@@ -479,13 +486,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.set_widgets_status_for_applying, 'STOP'))
         self.applyer.start()
 
-    def apply_single(self, tuple_idx_settings):
+    def apply_single(self, sf, tuple_idx_settings):
         idx_src, settings = tuple_idx_settings
         elem, fname, fld, fval0 = settings
         ename = elem.name
         try:
             t0 = time.time()
-            fld.value = fval0
+            fld.value = fval0 * sf
         except:
             px = self.fail_icon
         else:
