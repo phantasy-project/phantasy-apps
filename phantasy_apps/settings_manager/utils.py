@@ -194,6 +194,7 @@ class SettingsModel(QStandardItemModel):
                         self._pvs.append(o)
 
                 for o, item in zip((sp_obj, rd_obj), (it_sp_v, it_rd_v)):
+                    # PHY and ENG fields share the same sp/rd pvs.
                     idx = self.indexFromItem(item)
                     if o not in self._m_obj:
                         self._m_obj.append(o)
@@ -336,12 +337,16 @@ class SettingsModel(QStandardItemModel):
             irow = idx.row()
             ename = item.text()
             fobj = item.fobj
-            
+
+            print("{} [{}] is to be deleted.".format(fobj.ename, fobj.name))
             # delete items from self._m_it and self._m_obj
             ind = self._m_obj.index(fobj)
             self._m_it.pop(ind)
             self._m_obj.pop(ind)
             for pv in fobj.setpoint_pv + fobj.readback_pv:
+                # ENH and PHY fields share the same sp/rd/ pvs.
+                if pv not in self._m_obj:
+                    continue
                 i = self._m_obj.index(pv)
                 self._m_it.pop(i)
                 self._m_obj.pop(i)
