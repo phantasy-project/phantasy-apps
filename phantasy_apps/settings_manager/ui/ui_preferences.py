@@ -47,7 +47,7 @@ class Ui_Dialog(object):
         spacerItem = QtWidgets.QSpacerItem(20, 40,
                                            QtWidgets.QSizePolicy.Minimum,
                                            QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 4, 0, 1, 1)
+        self.gridLayout.addItem(spacerItem, 5, 0, 1, 1)
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
         spacerItem1 = QtWidgets.QSpacerItem(40, 20,
@@ -60,7 +60,7 @@ class Ui_Dialog(object):
         self.ok_btn = QtWidgets.QPushButton(self.groupBox)
         self.ok_btn.setObjectName("ok_btn")
         self.horizontalLayout_12.addWidget(self.ok_btn)
-        self.gridLayout.addLayout(self.horizontalLayout_12, 5, 0, 1, 2)
+        self.gridLayout.addLayout(self.horizontalLayout_12, 6, 0, 1, 2)
         self.apply_delt_dsbox = QtWidgets.QDoubleSpinBox(self.groupBox)
         self.apply_delt_dsbox.setDecimals(3)
         self.apply_delt_dsbox.setMaximum(5.0)
@@ -79,6 +79,17 @@ class Ui_Dialog(object):
         self.tol_dsbox.setProperty("value", 0.1)
         self.tol_dsbox.setObjectName("tol_dsbox")
         self.gridLayout.addWidget(self.tol_dsbox, 3, 1, 1, 1)
+        self.label_3 = QtWidgets.QLabel(self.groupBox)
+        self.label_3.setObjectName("label_3")
+        self.gridLayout.addWidget(self.label_3, 4, 0, 1, 1)
+        self.dt_confsync_dsbox = QtWidgets.QDoubleSpinBox(self.groupBox)
+        self.dt_confsync_dsbox.setDecimals(1)
+        self.dt_confsync_dsbox.setMinimum(1.0)
+        self.dt_confsync_dsbox.setMaximum(600.0)
+        self.dt_confsync_dsbox.setSingleStep(10.0)
+        self.dt_confsync_dsbox.setProperty("value", 10.0)
+        self.dt_confsync_dsbox.setObjectName("dt_confsync_dsbox")
+        self.gridLayout.addWidget(self.dt_confsync_dsbox, 4, 1, 1, 1)
         self.gridLayout_9.addWidget(self.groupBox, 0, 0, 1, 1)
 
         self.retranslateUi(Dialog)
@@ -128,6 +139,10 @@ class Ui_Dialog(object):
                 "Initialize device settings with the whole loaded lattice"))
         self.label_2.setText(
             _translate("Dialog", "Absolute Discrepancy Tolerance"))
+        self.label_3.setText(
+            _translate("Dialog",
+                       "Time period for configuration data synchronization "))
+        self.dt_confsync_dsbox.setSuffix(_translate("Dialog", " second"))
 
 
 from . import resources_rc

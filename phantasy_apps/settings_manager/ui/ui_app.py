@@ -136,26 +136,6 @@ class Ui_MainWindow(object):
         self.single_update_btn.setObjectName("single_update_btn")
         self.horizontalLayout.addWidget(self.single_update_btn)
         self.gridLayout.addLayout(self.horizontalLayout, 4, 0, 1, 1)
-        self.treeView = QtWidgets.QTreeView(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(
-            self.treeView.sizePolicy().hasHeightForWidth())
-        self.treeView.setSizePolicy(sizePolicy)
-        self.treeView.setObjectName("treeView")
-        self.gridLayout.addWidget(self.treeView, 2, 0, 1, 2)
-        self.apply_btn = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.apply_btn.sizePolicy().hasHeightForWidth())
-        self.apply_btn.setSizePolicy(sizePolicy)
-        self.apply_btn.setObjectName("apply_btn")
-        self.gridLayout.addWidget(self.apply_btn, 4, 1, 1, 1)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -246,6 +226,26 @@ class Ui_MainWindow(object):
         self.label_4.setObjectName("label_4")
         self.horizontalLayout_2.addWidget(self.label_4)
         self.gridLayout.addLayout(self.horizontalLayout_2, 0, 0, 1, 2)
+        self.treeView = QtWidgets.QTreeView(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(
+            self.treeView.sizePolicy().hasHeightForWidth())
+        self.treeView.setSizePolicy(sizePolicy)
+        self.treeView.setObjectName("treeView")
+        self.gridLayout.addWidget(self.treeView, 2, 0, 1, 2)
+        self.apply_btn = QtWidgets.QPushButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.apply_btn.sizePolicy().hasHeightForWidth())
+        self.apply_btn.setSizePolicy(sizePolicy)
+        self.apply_btn.setObjectName("apply_btn")
+        self.gridLayout.addWidget(self.apply_btn, 4, 1, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 31))
@@ -275,7 +275,6 @@ class Ui_MainWindow(object):
         self.toolBar.setFloatable(False)
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
-        MainWindow.insertToolBarBreak(self.toolBar)
         self.action_About = QtWidgets.QAction(MainWindow)
         self.action_About.setObjectName("action_About")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
@@ -442,7 +441,6 @@ class Ui_MainWindow(object):
         self.single_update_btn.setToolTip(
             _translate("MainWindow", "Update for one time."))
         self.single_update_btn.setText(_translate("MainWindow", "..."))
-        self.apply_btn.setText(_translate("MainWindow", "Apply"))
         self.expand_all_btn.setToolTip(
             _translate("MainWindow", "Click to expand all."))
         self.expand_all_btn.setText(_translate("MainWindow", "Expand"))
@@ -469,6 +467,7 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Total filtered items."))
         self.total_show_number_lbl.setText(_translate("MainWindow", "0"))
         self.label_4.setText(_translate("MainWindow", "items"))
+        self.apply_btn.setText(_translate("MainWindow", "Apply"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
