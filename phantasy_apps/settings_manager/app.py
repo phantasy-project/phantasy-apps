@@ -84,6 +84,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # the list of element list is changed --> update settings model
     element_list_changed = pyqtSignal()
 
+    # model settings is changed --> update settings snapshot
+    model_settings_changed = pyqtSignal(Settings)
 
     def __init__(self, version, config_dir):
         super(SettingsManagerWindow, self).__init__()
@@ -124,9 +126,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.adjustSize()
 
     def init_config(self, confdir):
-        # tolerance settings
+        # tolerance settings (ts)
         ts_confpath = os.path.join(confdir, 'tolerance.json')
         self._tolerance_settings = ToleranceSettings(ts_confpath)
+
+        # predefined model settings (ms)
+        self.ms_confpath = os.path.join(confdir, 'settings.json')
+        self._model_settings = Settings(self.ms_confpath)
 
         #
         self.config_timer = QTimer(self)
@@ -265,6 +271,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.tolerance = self.pref_dict['tolerance']
         self.tolerance_changed[float].connect(self.on_tolerance_float_changed)
         self.tolerance_changed[ToleranceSettings].connect(self.on_tolerance_dict_changed)
+        self.model_settings_changed.connect(self.on_model_settings_changed)
 
         # icon
         self.done_icon = QPixmap(":/sm-icons/done.png")
@@ -304,6 +311,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 only_physics=False)
         self.settingsLoaded.emit(flat_settings, settings)
         self.tolerance_changed[ToleranceSettings].emit(self._tolerance_settings)
+        self.model_settings_changed.emit(settings)
 
     @pyqtSlot(float)
     def on_tolerance_float_changed(self, tol):
@@ -895,6 +903,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         printlog("Update and dump configurations...")
         self.snapshot_tolerance_settings()
+
+    @pyqtSlot(Settings)
+    def on_model_settings_changed(self, settings):
+        """Update and dump model settings.
+        """
+        if settings != self._model_settings:
+            self._model_settings.update(settings)
+            self._model_settings.write(self.ms_confpath)
+            printlog("Update model settings snapshot.")
 
     # test
     def on_click_test_btn(self):
