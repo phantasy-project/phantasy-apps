@@ -656,7 +656,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # res: [(idx, val, role)..., ]
         t0 = time.time()
         res = []
-        print(len(self._m_obj), len(self._m_it))
         for o, it in zip(self._m_obj, self._m_it):
             if not isinstance(o, CaField):  # PV
                 val = o.get()
@@ -789,6 +788,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if r == QDialog.Accepted:
             if not self._pv_mode:
                 sel_elems, sel_elems_dis, sel_fields = self._elem_selected
+
                 is_added_list = []
                 for i in sel_elems_dis:
                     self._lat.append(i)
@@ -849,9 +849,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         for fobj in fobj_list:
             elem = self._lat[fobj.ename]
-            # !! note: delete both ENG/PHY fields.
+            # !! note: delete both ENG/PHY fields even if any one of ENG/PHY is deleted.
             if elem in self._elem_list:
                 self._elem_list.remove(elem)
+        self.element_list_changed.emit()
 
     # test
     def on_click_test_btn(self):
