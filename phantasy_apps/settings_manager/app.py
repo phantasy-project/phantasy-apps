@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import json
+import os
 import time
 from fnmatch import translate
 from functools import partial
+from collections import OrderedDict
 
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import Qt
@@ -36,6 +38,7 @@ from .app_loadfrom import LoadSettingsDialog
 from .app_pref import PreferencesDialog
 from .app_pref import DEFAULT_PREF
 from .data import TableSettings
+from .data import ToleranceSettings
 from .data import make_physics_settings
 from .ui.ui_app import Ui_MainWindow
 from .utils import FMT
@@ -74,11 +77,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     # discrenpancy tolerance
     # float: tolerance value
-    # dict: {ename: {fname: tolerance value}}
-    tolerance_changed = pyqtSignal([float], [dict])
-
-    #
-    is_settings_loaded_from_file = pyqtSignal(bool)
+    # ToleranceSettings: {ename: {fname: tolerance value}}
+    tolerance_changed = pyqtSignal([float], [ToleranceSettings])
 
     # the list of element list is changed --> update settings model
     element_list_changed = pyqtSignal()
@@ -114,10 +114,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.setupUi(self)
         self.postInitUi()
 
+        # config
+        self.init_config(self._confdir)
+
         # post init ui
         self.__post_init_ui()
 
         self.adjustSize()
+
+    def init_config(self, confdir):
+        # tolerance settings
+        ts_confpath = os.path.join(confdir, 'tolerance.json')
+        self._tolerance_settings = ToleranceSettings(ts_confpath)
 
     @pyqtSlot(QVariant)
     def on_lattice_changed(self, o):
@@ -197,14 +205,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.update_ctrl_btn.toggled.emit(self.update_ctrl_btn.isChecked())
         self.single_update_btn.clicked.emit()
-        #
-        self.is_settings_loaded_from_file.emit(self.is_loaded_from_file)
-
-    @pyqtSlot(bool)
-    def on_is_settings_loaded_from_file(self, f):
-        if f:
-            self.tolerance_changed[dict].emit(self._tolerance_dict)
-            self.is_loaded_from_file = False
 
     @pyqtSlot(int, int, int)
     def on_settings_sts(self, i, j, k):
@@ -236,7 +236,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._pvs = []
         self._eng_phy_toggle = {'ENG': True, 'PHY': False}
         self.on_lattice_changed(self._mp)
-        self.is_loaded_from_file = False  # is settings from file?
 
         # lattice viewer
         self._enable_widgets(False)
@@ -245,7 +244,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # show lattice settings
         self.settingsLoaded.connect(self.on_settings_loaded)
-        self.is_settings_loaded_from_file.connect(self.on_is_settings_loaded_from_file)
 
         # update rate
         self.rate_changed.connect(self.on_update_rate_changed)
@@ -260,7 +258,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.init_settings = self.pref_dict['init_settings']
         self.tolerance = self.pref_dict['tolerance']
         self.tolerance_changed[float].connect(self.on_tolerance_float_changed)
-        self.tolerance_changed[dict].connect(self.on_tolerance_dict_changed)
+        self.tolerance_changed[ToleranceSettings].connect(self.on_tolerance_dict_changed)
 
         # icon
         self.done_icon = QPixmap(":/sm-icons/done.png")
@@ -299,10 +297,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 data_source=DATA_SRC_MAP[self.field_init_mode],
                 only_physics=False)
         self.settingsLoaded.emit(flat_settings, settings)
+        self.tolerance_changed[ToleranceSettings].emit(self._tolerance_settings)
 
     @pyqtSlot(float)
     def on_tolerance_float_changed(self, tol):
         # set tolerance with the same value.
+        # update _tolerance_settings
         m = self._tv.model()
         if m is None:
             return
@@ -310,10 +310,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for i in range(src_m.rowCount()):
             src_m.setData(src_m.index(i, src_m.i_tol), FMT.format(tol),
                           Qt.DisplayRole)
+            # update tolerance settings
+            ename = src_m.data(src_m.index(i, src_m.i_name))
+            fname = src_m.data(src_m.index(i, src_m.i_field))
+            if ename not in self._tolerance_settings:
+                self._tolerance_settings[ename] = OrderedDict([(fname, tol)])
+            else:
+                self._tolerance_settings[ename].update([(fname, tol)])
+        self._tolerance_settings.write(self._tolerance_settings.settings_path)
 
-    @pyqtSlot(dict)
-    def on_tolerance_dict_changed(self, tol_dict):
-        # set tolerance with a dict of values.
+    @pyqtSlot(ToleranceSettings)
+    def on_tolerance_dict_changed(self, tol_settings):
+        # set tolerance with a tolerance settings
         m = self._tv.model()
         if m is None:
             return
@@ -321,12 +329,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for i in range(src_m.rowCount()):
             ename = src_m.data(src_m.index(i, src_m.i_name))
             fname = src_m.data(src_m.index(i, src_m.i_field))
-            if ename not in self._tolerance_dict:
+            if ename not in self._tolerance_settings:
                 continue
-            elif fname not in self._tolerance_dict[ename]:
+            elif fname not in self._tolerance_settings[ename]:
                 continue
             else:
-                tol = self._tolerance_dict[ename][fname]
+                tol = self._tolerance_settings[ename][fname]
                 src_m.setData(
                     src_m.index(i, src_m.i_tol), FMT.format(tol),
                     Qt.DisplayRole)
@@ -571,16 +579,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         printlog("Loaded settings from {}.".format(filepath))
 
     def _load_settings_from_csv(self, filepath):
-        lat = self._mp.work_lattice_conf
+        lat = self._lat
         table_settings = TableSettings(filepath)
         s = make_physics_settings(table_settings, lat)
         lat.settings.update(s)
-        flat_settings, settings = pack_settings(lat,
-                                                data_source=DATA_SRC_MAP[self.field_init_mode],
-                                                only_physics=False)
-        self.is_loaded_from_file = True
-        self._tolerance_dict = make_tolerance_dict_from_table_settings(table_settings)
-        self.settingsLoaded.emit(flat_settings, settings)
+        self.element_list_changed.emit()
 
     def _load_settings_from_json(self, filepath):
         pass
