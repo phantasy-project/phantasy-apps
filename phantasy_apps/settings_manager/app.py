@@ -40,6 +40,7 @@ from .app_pref import PreferencesDialog
 from .app_pref import DEFAULT_PREF
 from .data import TableSettings
 from .data import ToleranceSettings
+from .data import ElementPVConfig
 from .data import make_physics_settings
 from .ui.ui_app import Ui_MainWindow
 from .utils import FMT
@@ -86,6 +87,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     # model settings is changed --> update settings snapshot
     model_settings_changed = pyqtSignal(Settings)
+
+    # element from PVs
+    element_from_pv_added = pyqtSignal(QVariant)
 
     def __init__(self, version, config_dir):
         super(SettingsManagerWindow, self).__init__()
@@ -134,10 +138,36 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.ms_confpath = os.path.join(confdir, 'settings.json')
         self._model_settings = Settings(self.ms_confpath)
 
+        # elements from PVs
+        self.elem_confpath = os.path.join(confdir, 'elements.json')
+        self._elem_pvconf = ElementPVConfig(self.elem_confpath)
+
         #
         self.config_timer = QTimer(self)
         self.config_timer.timeout.connect(self.on_update_dump_config)
         self.config_timer.start(10000)
+
+    @pyqtSlot(QVariant)
+    def on_element_from_pv_added(self, elem):
+        """CaElement from PVs is added, update elem_pvconf.
+        """
+        ename = elem.name
+        if ename not in self._elem_pvconf:
+            eng_field = elem.get_eng_fields()[0]
+            phy_field = elem.get_phy_fields()[0]
+            sp_pv = elem.pv(handle='setpoint', field=eng_field)[0]
+            rd_pv = elem.pv(handle='readback', field=eng_field)[0]
+            self._elem_pvconf[ename] = {
+                'setpoint': sp_pv,
+                'readback': rd_pv,
+                'index': -1,
+                'length': 0.0,
+                'sb': -1,
+                'family': 'PV',
+                'field': eng_field,
+                'field_phy': phy_field
+            }
+            self._elem_pvconf.write(self.elem_confpath)
 
     @pyqtSlot(QVariant)
     def on_lattice_changed(self, o):
@@ -272,6 +302,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.tolerance_changed[float].connect(self.on_tolerance_float_changed)
         self.tolerance_changed[ToleranceSettings].connect(self.on_tolerance_dict_changed)
         self.model_settings_changed.connect(self.on_model_settings_changed)
+        self.element_from_pv_added.connect(self.on_element_from_pv_added)
 
         # icon
         self.done_icon = QPixmap(":/sm-icons/done.png")
@@ -619,10 +650,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         printlog("Loaded settings from {}.".format(filepath))
 
     def _load_settings_from_csv(self, filepath):
-        lat = self._lat
+        lat = self.build_lattice()
         table_settings = TableSettings(filepath)
         s = make_physics_settings(table_settings, lat)
         lat.settings.update(s)
+        self._elem_list = [lat[ename] for ename in s]
         self.element_list_changed.emit()
 
     def _load_settings_from_json(self, filepath):
@@ -844,7 +876,38 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self._lat.append(elem)
                 is_added = self.add_element(elem)
             if is_added:
+                self.element_from_pv_added.emit(elem)
                 self.element_list_changed.emit()
+
+    def build_lattice(self):
+        """Build lattice based on machine/lattice name, and add elements from
+        PV configs from elem_pvconf, the model settings of the new elements
+        are pulled from model_settings if available.
+
+        Returns
+        -------
+        r : Lattice
+            Updated high-level lattice object.
+        """
+        # load mp
+        # add elements rom elem_pvconf
+        lat = self._lat
+        ms = self._model_settings
+        for ename, conf in self._elem_pvconf.items():
+            field_eng = conf['field']
+            field_phy = conf['field_phy']
+            sp_pv = conf['setpoint']
+            rd_pv = conf['readback']
+            index = conf['index']
+            length = conf['length']
+            sb = conf['sb']
+            elem = build_element(sp_pv, rd_pv, ename=ename, fname=field_eng,
+                                 field_phy=field_phy, index=index,
+                                 length=length, sb=sb)
+            lat.append(elem)
+            if ename in ms:
+                lat.settings[ename] = ms[ename]
+        return lat
 
     def add_element(self, elem):
         """Add *elem* to element list if not added.
