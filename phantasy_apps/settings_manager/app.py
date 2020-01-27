@@ -455,11 +455,29 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.setData(idx_src, QIcon(px), Qt.DecorationRole)
 
     def closeEvent(self, e):
+        self.snapshot_tolerance_settings()
         r = BaseAppForm.closeEvent(self, e)
         if r:
             for pv in self._pvs:
                 pv.auto_monitor = False
                 pv.clear_callbacks()
+
+    def snapshot_tolerance_settings(self):
+        """Iterate all the tolerance settings, update and save.
+        """
+        m = self._tv.model()
+        if m is None:
+            return
+        src_m = m.sourceModel()
+        for i in range(src_m.rowCount()):
+            ename = src_m.data(src_m.index(i, src_m.i_name))
+            fname = src_m.data(src_m.index(i, src_m.i_field))
+            v_tol = float(src_m.data(src_m.index(i, src_m.i_tol)))
+            if ename not in self._tolerance_settings:
+                self._tolerance_settings[ename] = OrderedDict([(fname, v_tol)])
+            else:
+                self._tolerance_settings[ename].update([(fname, v_tol)])
+        self._tolerance_settings.write(self._tolerance_settings.settings_path)
 
     @pyqtSlot(bool)
     def on_toggle_phyfields(self, f):
