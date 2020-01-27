@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import csv
+import os
 from collections import OrderedDict
 
 from phantasy import Settings
@@ -22,7 +23,7 @@ def make_physics_settings(csv_settings, lat):
     csv_settings : TableSettings
         TableSettings instance from CSV settings file.
     lat : Lattice
-        High-level lattice object.
+        High-level lattice object, or a list of CaElement(s).
 
     Returns
     -------
@@ -127,3 +128,16 @@ def get_csv_settings(proxy_model):
                      f_new_sp, f_new_rd, f_old_sp,
                      f_tol, f_writable))
     return data
+
+
+class ToleranceSettings(Settings):
+    """Settings for tolerance, keep tolerance element, field-wise
+    e.g. {ename: {fname1: tol1, fname2: tol2}}
+    """
+    def __init__(self, settings_path=None):
+        if os.path.isfile(settings_path):
+            settingsPath = settings_path
+        else:
+            settingsPath = None
+        super(self.__class__, self).__init__(settingsPath)
+        self.settings_path = settings_path
