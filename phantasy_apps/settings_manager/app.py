@@ -985,12 +985,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._model_settings.write(self.ms_confpath)
             printlog("Update model settings snapshot.")
 
-    # test
-    def on_click_test_btn(self):
-        pass
-        printlog(len(self._lat), self._lat)
-        printlog(len(self._lat.settings), self._lat.settings)
-
 
 def is_same_lattice(new_mp, current_mp):
     """Test if the current loaded lattice of new_mp and current_mp is the same.
