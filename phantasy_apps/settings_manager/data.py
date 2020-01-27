@@ -135,7 +135,7 @@ class ToleranceSettings(Settings):
     e.g. {ename: {fname1: tol1, fname2: tol2}}
     """
     def __init__(self, settings_path=None):
-        if os.path.isfile(settings_path):
+        if settings_path is not None and os.path.isfile(settings_path):
             settingsPath = settings_path
         else:
             settingsPath = None
