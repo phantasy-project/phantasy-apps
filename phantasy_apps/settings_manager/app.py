@@ -494,14 +494,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         idx_src, settings = tuple_idx_settings
         elem, fname, fld, fval0 = settings
         ename = elem.name
+        fval_to_set = fval0 * sf
         try:
             t0 = time.time()
-            fld.value = fval0 * sf
+            fval_current_settings = fld.current_setting()
+            fld.value = fval_to_set
         except:
             px = self.fail_icon
         else:
             px = self.done_icon
-            printlog("- Set {} [{}] to {}.".format(ename, fname, fval0))
+            printlog("- Set {} [{}] from {} to {} ({}).".format(
+                ename, fname, fval_current_settings, fval_to_set, fval0))
             dt = self.t_wait - (time.time() - t0)
             if dt > 0:
                 time.sleep(dt)
