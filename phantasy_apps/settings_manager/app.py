@@ -348,16 +348,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._tv.setContextMenuPolicy(Qt.CustomContextMenu)
         self._tv.customContextMenuRequested.connect(self.on_custom_context_menu)
 
+    @pyqtSlot()
+    def on_copy_text(self, m, idx):
+        text = m.data(idx)
+        cb = QGuiApplication.clipboard()
+        cb.setText(text)
+        printlog('copied text: {}'.format(text))
+        msg = '<html><head/><body><p><span style="color:#007BFF;">Copied text: </span><span style="color:#DC3545;">{}</span></p></body></html>'.format(text)
+        self.statusInfoChanged.emit(msg)
+        self._reset_status_info()
+
     @pyqtSlot(QPoint)
     def on_custom_context_menu(self, pos):
-        def on_copy_text():
-            text = m.data(idx)
-            cb = QGuiApplication.clipboard()
-            cb.setText(text)
-            printlog('copied {}'.format(text))
-            self.statusInfoChanged.emit("Copied text '{}'.".format(text))
-            self._reset_status_info()
-
         m = self._tv.model()
         if m is None:
             return
@@ -369,7 +371,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.setStyleSheet('QMenu {margin: 2px;}')
 
         copy_action = QAction(self._copy_icon, "Copy", menu)
-        copy_action.triggered.connect(on_copy_text)
+        copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
 
         menu.addAction(copy_action)
 
@@ -638,6 +640,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         lw.load_btn.clicked.emit()
         lw.setEnabled(False)
         self._lv.show()
+
+    def on_pressed_view(self, idx):
+        m = self._tv.model()
+        if m is None:
+            return
+        if QGuiApplication.mouseButtons() == Qt.MiddleButton:
+            self.on_copy_text(m, idx)
 
     def on_click_view(self, idx):
         r, c = idx.row(), idx.column()
