@@ -8,6 +8,7 @@ from collections import OrderedDict
 from fnmatch import translate
 from functools import partial
 
+from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import QVariant
@@ -17,9 +18,12 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtWidgets import QCompleter
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMenu
+from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QWidget
 from phantasy import CaField
@@ -314,10 +318,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.ndigit_changed.connect(self.on_ndigit_changed)
 
         # icon
-        self.done_icon = QPixmap(":/sm-icons/done.png")
-        self.fail_icon = QPixmap(":/sm-icons/fail.png")
+        self.done_px = QPixmap(":/sm-icons/done.png")
+        self.fail_px = QPixmap(":/sm-icons/fail.png")
         self._warning_px = QPixmap(":/sm-icons/warning.png")
         self._ok_px = QPixmap(":/sm-icons/ok.png")
+        self._copy_icon = QIcon(QPixmap(":/sm-icons/copy.png"))
 
         # selection
         self.select_all_btn.clicked.connect(partial(self.on_select, 'all'))
@@ -335,6 +340,40 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # start config sync timer
         self.config_timer.start(self.dt_confsync * 1000)
+
+        # context menu
+        self.set_context_menu()
+
+    def set_context_menu(self):
+        self._tv.setContextMenuPolicy(Qt.CustomContextMenu)
+        self._tv.customContextMenuRequested.connect(self.on_custom_context_menu)
+
+    @pyqtSlot(QPoint)
+    def on_custom_context_menu(self, pos):
+        def on_copy_text():
+            text = m.data(idx)
+            cb = QGuiApplication.clipboard()
+            cb.setText(text)
+            printlog('copied {}'.format(text))
+            self.statusInfoChanged.emit("Copied text '{}'.".format(text))
+            self._reset_status_info()
+
+        m = self._tv.model()
+        if m is None:
+            return
+        src_m = m.sourceModel()
+        idx = self._tv.indexAt(pos)
+        src_idx = m.mapToSource(idx)
+
+        menu = QMenu(self)
+        menu.setStyleSheet('QMenu {margin: 2px;}')
+
+        copy_action = QAction(self._copy_icon, "Copy", menu)
+        copy_action.triggered.connect(on_copy_text)
+
+        menu.addAction(copy_action)
+
+        menu.exec_(self._tv.viewport().mapToGlobal(pos))
 
     @pyqtSlot(QVariant)
     def on_update_widgets_status(self, o):
@@ -500,9 +539,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             fval_current_settings = fld.current_setting()
             fld.value = fval_to_set
         except:
-            px = self.fail_icon
+            px = self.fail_px
         else:
-            px = self.done_icon
+            px = self.done_px
             printlog("- Set {} [{}] from {} to {} ({}).".format(
                 ename, fname, fval_current_settings, fval_to_set, fval0))
             dt = self.t_wait - (time.time() - t0)
