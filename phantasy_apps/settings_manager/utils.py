@@ -94,8 +94,16 @@ class SettingsModel(QStandardItemModel):
     # signal list of CaField objects.
     item_deletion_updated = pyqtSignal(list)
 
-    def __init__(self, parent, flat_settings):
+    def __init__(self, parent, flat_settings, **kws):
+        # kw: ndigit
         super(self.__class__, self).__init__(parent)
+        self._ndigit = kws.get('ndigit', None)
+
+        if self._ndigit is None:
+            self.fmt = FMT
+        else:
+            self.fmt = '{{0:.{0}f}}'.format(self._ndigit)
+
         self._settings = flat_settings
         self._tv = parent
         # [PV] cb PV pool
@@ -139,7 +147,7 @@ class SettingsModel(QStandardItemModel):
     def set_data(self):
 
         def _cb(item_val, **kws):
-            val = FMT.format(kws.get('value'))
+            val = self.fmt.format(kws.get('value'))
             idx_c = item_val.index()
             self.data_changed.emit((idx_c, val, Qt.DisplayRole))
 
@@ -162,9 +170,9 @@ class SettingsModel(QStandardItemModel):
             # PVs, setpoint and readback
             for sp_obj, rd_obj in zip(fld.setpoint_pv, fld.readback_pv):
                 it_sp_n = QStandardItem(sp_obj.pvname)
-                it_sp_v = QStandardItem(FMT.format(sp_obj.value))
+                it_sp_v = QStandardItem(self.fmt.format(sp_obj.value))
                 it_rd_n = QStandardItem(rd_obj.pvname)
-                it_rd_v = QStandardItem(FMT.format(rd_obj.value))
+                it_rd_v = QStandardItem(self.fmt.format(rd_obj.value))
 
                 [i.setEditable(False) for i in (it_sp_n, it_sp_v,
                                                 it_rd_n, it_rd_v)]
@@ -201,10 +209,10 @@ class SettingsModel(QStandardItemModel):
 
             #
             item_fname = QStandardItem(fname)
-            item_val0 = QStandardItem(FMT.format(fval0))
+            item_val0 = QStandardItem(self.fmt.format(fval0))
 
-            item_rd = QStandardItem(FMT.format(fld.value))
-            item_cset = QStandardItem(FMT.format(elem.current_setting(fname)))
+            item_rd = QStandardItem(self.fmt.format(fld.value))
+            item_cset = QStandardItem(self.fmt.format(elem.current_setting(fname)))
 
             row = [item_ename, item_fname]
             for i, f in enumerate(COLUMN_NAMES):
@@ -221,7 +229,7 @@ class SettingsModel(QStandardItemModel):
             v_d02 = float(item_val0.text()) - float(item_cset.text())
             v_d12 = float(item_rd.text()) - float(item_cset.text())
             for v in (v_d01, v_d02, v_d12):
-                item = QStandardItem(FMT.format(v))
+                item = QStandardItem(self.fmt.format(v))
                 row.append(item)
 
             # editable
@@ -230,7 +238,7 @@ class SettingsModel(QStandardItemModel):
 
             # tolerance for dx12
             tol = fld.tolerance
-            item_tol = QStandardItem(FMT.format(tol))
+            item_tol = QStandardItem(self.fmt.format(tol))
             row.append(item_tol)
 
             # writable
@@ -269,7 +277,7 @@ class SettingsModel(QStandardItemModel):
             idx = item_name.index()
             self.data_changed.emit(
                 (self.index(idx.row(), icol),
-                 FMT.format(val), Qt.DisplayRole))
+                 self.fmt.format(val), Qt.DisplayRole))
 
         for irow in range(self.rowCount()):
             item0 = self.item(irow, self.i_name)
@@ -407,7 +415,7 @@ class _SortProxyModel(QSortFilterProxyModel):
         src_index = src_model.index(src_row, idx)
         var = src_index.data(Qt.DisplayRole)
         if not isinstance(var, str):
-            var = FMT.format(var)
+            var = self.fmt.format(var)
 
         # Qt >= 5.12
         # regex = self.filterRegularExpression()

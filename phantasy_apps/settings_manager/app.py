@@ -90,6 +90,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # element from PVs
     element_from_pv_added = pyqtSignal(QVariant)
 
+    # ndigit
+    ndigit_changed = pyqtSignal(int)
+
     def __init__(self, version, config_dir):
         super(SettingsManagerWindow, self).__init__()
 
@@ -232,7 +235,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def __on_show_settings(self):
         # visualize settings
         self.reset_pvs()
-        model = SettingsModel(self._tv, self.__flat_settings)
+        model = SettingsModel(self._tv, self.__flat_settings, ndigit=self.ndigit)
         model.settings_sts.connect(self.on_settings_sts)
         model.item_deletion_updated[list].connect(self.on_delete_items)
         model.set_model()
@@ -301,11 +304,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.init_settings = self.pref_dict['init_settings']
         self.tolerance = self.pref_dict['tolerance']
         self.dt_confsync = self.pref_dict['dt_confsync']
+        self.ndigit = self.pref_dict['ndigit']
+        self.fmt = '{{0:.{0}f}}'.format(self.ndigit)
 
         self.tolerance_changed[float].connect(self.on_tolerance_float_changed)
         self.tolerance_changed[ToleranceSettings].connect(self.on_tolerance_dict_changed)
         self.model_settings_changed.connect(self.on_model_settings_changed)
         self.element_from_pv_added.connect(self.on_element_from_pv_added)
+        self.ndigit_changed.connect(self.on_ndigit_changed)
 
         # icon
         self.done_icon = QPixmap(":/sm-icons/done.png")
@@ -359,7 +365,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         src_m = m.sourceModel()
         for i in range(src_m.rowCount()):
-            src_m.setData(src_m.index(i, src_m.i_tol), FMT.format(tol),
+            src_m.setData(src_m.index(i, src_m.i_tol), self.fmt.format(tol),
                           Qt.DisplayRole)
             # update tolerance settings
             ename = src_m.data(src_m.index(i, src_m.i_name))
@@ -387,7 +393,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             else:
                 tol = tol_settings[ename][fname]
                 src_m.setData(
-                    src_m.index(i, src_m.i_tol), FMT.format(tol),
+                    src_m.index(i, src_m.i_tol), self.fmt.format(tol),
                     Qt.DisplayRole)
 
     def init_filter(self):
@@ -700,6 +706,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.config_timer.stop()
             self.dt_confsync = dt_confsync
             self.config_timer.start(self.dt_confsync * 1000)
+        ndigit = self.pref_dict['ndigit']
+        if ndigit != self.ndigit:
+            self.ndigit_changed.emit(ndigit)
+
+    @pyqtSlot(int)
+    def on_ndigit_changed(self, n):
+        self.ndigit = n
+        self.fmt = '{{0:.{0}f}}'.format(n)
+        self.element_list_changed.emit()
 
     @pyqtSlot(int)
     def on_update_rate(self, i):
@@ -750,7 +765,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 val = o.get()
                 for iit in it:
                     idx = m.indexFromItem(iit)
-                    res.append((idx, FMT.format(val), Qt.DisplayRole))
+                    res.append((idx, self.fmt.format(val), Qt.DisplayRole))
             else:  # CaField
                 idx0 = m.indexFromItem(it[0])
                 idx1 = m.indexFromItem(it[1])
@@ -774,7 +789,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 idx_tuple = (idx0, idx1, dx01_idx, dx02_idx, dx12_idx)
                 v_tuple = (rd_val, sp_val, dx01, dx02, dx12)
                 for iidx, val in zip(idx_tuple, v_tuple):
-                    res.append((iidx, FMT.format(val), Qt.DisplayRole))
+                    res.append((iidx, self.fmt.format(val), Qt.DisplayRole))
                 res.append((wa_idx, str(wa), Qt.DisplayRole))
                 tol = float(m.data(tol_idx))
                 if abs(dx12) > tol:
