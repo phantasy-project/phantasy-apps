@@ -703,8 +703,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.init_settings = self.pref_dict['init_settings']
         tol = self.pref_dict['tolerance']
         if self.tolerance != tol:
-            self.tolerance_changed[float].emit(tol)
-            self.tolerance = tol
+            r = QMessageBox.question(self, "Change Tolerance",
+                    "Are you sure to change all the discrepancy tolerance to {0:.2f}?".format(tol),
+                    QMessageBox.Yes | QMessageBox.No)
+            if r == QMessageBox.Yes:
+                self.tolerance_changed[float].emit(tol)
+                self.tolerance = tol
         dt_confsync = self.pref_dict['dt_confsync']
         if dt_confsync != self.dt_confsync:
             self.config_timer.stop()
