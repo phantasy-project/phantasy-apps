@@ -997,7 +997,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_update_dump_config(self):
         """Update and dump configurations.
         """
-        printlog("Update and dump configurations...")
+        # printlog("Update and dump configurations...")
         self.snapshot_tolerance_settings()
 
     @pyqtSlot(Settings)
