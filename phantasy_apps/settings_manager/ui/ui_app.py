@@ -404,6 +404,8 @@ class Ui_MainWindow(object):
         self.update_ctrl_btn.toggled['bool'].connect(
             self.single_update_btn.setDisabled)
         self.single_update_btn.clicked.connect(MainWindow.on_single_update)
+        self.treeView.pressed['QModelIndex'].connect(
+            MainWindow.on_pressed_view)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.expand_all_btn, self.select_all_btn)
         MainWindow.setTabOrder(self.select_all_btn, self.invert_selection_btn)
