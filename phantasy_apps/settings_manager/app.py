@@ -4,26 +4,24 @@
 import json
 import os
 import time
+from collections import OrderedDict
 from fnmatch import translate
 from functools import partial
-from collections import OrderedDict
 
+from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import QRegularExpression
-from PyQt5.QtCore import QRegExp
-from PyQt5.QtCore import QSize
-from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QCompleter
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtWidgets import QWidget
 from phantasy import CaField
 from phantasy import Settings
 from phantasy import build_element
@@ -31,24 +29,24 @@ from phantasy_ui import BaseAppForm
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
 from phantasy_ui import printlog
+from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from phantasy_ui.widgets import ElementSelectDialog
 from phantasy_ui.widgets import LatticeWidget
-from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 
 from .app_loadfrom import LoadSettingsDialog
-from .app_pref import PreferencesDialog
 from .app_pref import DEFAULT_PREF
+from .app_pref import PreferencesDialog
+from .data import CSV_HEADER
+from .data import ElementPVConfig
 from .data import TableSettings
 from .data import ToleranceSettings
-from .data import ElementPVConfig
+from .data import get_csv_settings
 from .data import make_physics_settings
 from .ui.ui_app import Ui_MainWindow
 from .utils import FMT
 from .utils import SettingsModel
 from .utils import pack_settings
-from .data import get_csv_settings
-from .data import CSV_HEADER
 
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
 IDX_RATE_MAP = {0: 0.1, 1: 0.2, 2: 0.5, 3: 1.0, 4: 2.0}
@@ -202,8 +200,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def show_init_settings_info(self):
         if not self.init_settings:
             QMessageBox.information(self, "Loaded Lattice",
-                    "Lattice is loaded, add settings from 'Add Devices' tool.",
-                    QMessageBox.Ok)
+                                    "Lattice is loaded, add settings from 'Add Devices' tool.",
+                                    QMessageBox.Ok)
 
     def _enable_widgets(self, enabled):
         for w in (self.lv_lbl, self.lv_mach_lbl, self.lv_segm_lbl,
@@ -344,10 +342,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # update flat_settings and settings
         # update settings view
         flat_settings, settings = pack_settings(
-                self._elem_list, self._lat,
-                settings=self._lat.settings,
-                data_source=DATA_SRC_MAP[self.field_init_mode],
-                only_physics=False)
+            self._elem_list, self._lat,
+            settings=self._lat.settings,
+            data_source=DATA_SRC_MAP[self.field_init_mode],
+            only_physics=False)
         self.settingsLoaded.emit(flat_settings, settings)
         self.tolerance_changed[ToleranceSettings].emit(self._tolerance_settings)
         self.model_settings_changed.emit(settings)
@@ -382,12 +380,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for i in range(src_m.rowCount()):
             ename = src_m.data(src_m.index(i, src_m.i_name))
             fname = src_m.data(src_m.index(i, src_m.i_field))
-            if ename not in self._tolerance_settings:
+            if ename not in tol_settings:
                 continue
-            elif fname not in self._tolerance_settings[ename]:
+            elif fname not in tol_settings[ename]:
                 continue
             else:
-                tol = self._tolerance_settings[ename][fname]
+                tol = tol_settings[ename][fname]
                 src_m.setData(
                     src_m.index(i, src_m.i_tol), FMT.format(tol),
                     Qt.DisplayRole)
@@ -409,7 +407,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(int)
     def on_update_rate_changed(self, i):
-        if i == 5: # add 'auto' back to cbb index 5
+        if i == 5:  # add 'auto' back to cbb index 5
             self._update_mode = 'auto'
             tt = "Auto updating rate."
         else:
@@ -633,7 +631,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # re_str = QRegularExpression.wildcardToRegularExpression(v)
         # m.setFilterRegularExpression(re_str)
 
-        #m.setFilterRegExp(QRegExp(v, Qt.CaseSensitive,
+        # m.setFilterRegExp(QRegExp(v, Qt.CaseSensitive,
         #                          QRegExp.WildcardUnix))
 
         m.setFilterRegExp(translate(v))
@@ -858,8 +856,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_device_selected(self, selections):
         # Selected elements/fields
         self._elem_selected = selections
-        #debug
-        #print(selections)
+        # debug
+        # print(selections)
 
     @pyqtSlot(bool)
     def on_pv_mode_toggled(self, is_checked):
@@ -959,7 +957,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def set_widgets_status_for_applying(self, status):
         """Set widgets status for applying.
         """
-        w1 = (self.apply_btn, )
+        w1 = (self.apply_btn,)
         [i.setDisabled(status == 'START') for i in w1]
 
     def sizeHint(self):
@@ -1000,7 +998,7 @@ def is_same_lattice(new_mp, current_mp):
     if current_mp is None:
         return False
     return (new_mp.last_machine_name == current_mp.last_machine_name) and \
-            (new_mp.last_lattice_name == current_mp.last_lattice_name)
+           (new_mp.last_lattice_name == current_mp.last_lattice_name)
 
 
 def make_tolerance_dict_from_table_settings(table_settings):

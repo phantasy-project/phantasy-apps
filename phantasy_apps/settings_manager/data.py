@@ -109,7 +109,7 @@ def get_csv_settings(proxy_model):
     m = proxy_model
     src_m = proxy_model.sourceModel()
     i_name, i_field, i_type, i_pos, i_new_sp, i_new_rd, i_old_sp, \
-            i_tol, i_writable = \
+    i_tol, i_writable = \
         src_m.i_name, src_m.i_field, src_m.i_type, src_m.i_pos, \
         src_m.i_cset, src_m.i_rd, src_m.i_val0, src_m.i_tol, src_m.i_writable
 
@@ -134,6 +134,7 @@ class ToleranceSettings(Settings):
     """Settings for tolerance, keep tolerance element, field-wise
     e.g. {ename: {fname1: tol1, fname2: tol2}}
     """
+
     def __init__(self, settings_path=None):
         if settings_path is not None and os.path.isfile(settings_path):
             settingsPath = settings_path
@@ -147,6 +148,7 @@ class ElementPVConfig(Settings):
     """PV configurations for element from setpoint/readback PVs.
     e.g. {ename: {setpoint: sppv, readback: rdpv}}
     """
+
     def __init__(self, settings_path=None):
         if settings_path is not None and os.path.isfile(settings_path):
             settingsPath = settings_path

@@ -8,7 +8,6 @@ from functools import partial
 from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QRegularExpression
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QBrush
@@ -17,13 +16,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import QAbstractScrollArea
-from PyQt5.QtWidgets import QHeaderView
-from phantasy_ui.widgets import is_item_checked
-
-from phantasy import CaElement
-from phantasy import PVElement
-from phantasy import CaField
 from phantasy import get_settings_from_element_list
+from phantasy_ui.widgets import is_item_checked
 
 FMT = "{0:.6g}"
 
@@ -107,8 +101,8 @@ class SettingsModel(QStandardItemModel):
         # [PV] cb PV pool
         self._pvs = []
         # [obj(PV/CaField)]: [index[list]]
-        self._m_obj = [] # PV and CaField
-        self._m_it = [] # list of items, [rd, sp]
+        self._m_obj = []  # PV and CaField
+        self._m_it = []  # list of items, [rd, sp]
 
         # header
         self.header = self.h_name, self.h_field, self.h_type, self.h_pos, \
@@ -145,9 +139,9 @@ class SettingsModel(QStandardItemModel):
     def set_data(self):
 
         def _cb(item_val, **kws):
-                val = FMT.format(kws.get('value'))
-                idx_c = item_val.index()
-                self.data_changed.emit((idx_c, val, Qt.DisplayRole))
+            val = FMT.format(kws.get('value'))
+            idx_c = item_val.index()
+            self.data_changed.emit((idx_c, val, Qt.DisplayRole))
 
         sppv_set = set()
         rdpv_set = set()
@@ -198,7 +192,7 @@ class SettingsModel(QStandardItemModel):
                     idx = self.indexFromItem(item)
                     if o not in self._m_obj:
                         self._m_obj.append(o)
-                        self._m_it.append([item]) # put item instead of idx
+                        self._m_it.append([item])  # put item instead of idx
                     else:
                         self._m_it[self._m_obj.index(o)].append(item)
 
@@ -274,8 +268,8 @@ class SettingsModel(QStandardItemModel):
                 val = fld.current_setting()
             idx = item_name.index()
             self.data_changed.emit(
-                    (self.index(idx.row(), icol),
-                    FMT.format(val), Qt.DisplayRole))
+                (self.index(idx.row(), icol),
+                 FMT.format(val), Qt.DisplayRole))
 
         for irow in range(self.rowCount()):
             item0 = self.item(irow, self.i_name)
@@ -298,7 +292,7 @@ class SettingsModel(QStandardItemModel):
             self._m_obj.append(fld)
             self._m_it.append(
                 [self.item(irow, self.i_rd),
-                 self.item(irow, self.i_cset),])
+                 self.item(irow, self.i_cset), ])
 
     def __post_init_ui(self, tv):
         # set headers
@@ -357,7 +351,6 @@ class SettingsModel(QStandardItemModel):
 
         # field object list that to be deleted
         self.item_deletion_updated.emit(fobj_list)
-
 
 
 class _SortProxyModel(QSortFilterProxyModel):
@@ -421,12 +414,12 @@ class _SortProxyModel(QSortFilterProxyModel):
         # return ftype in self.filter_ftypes and regex.match(var).hasMatch()
 
         # wildcardunix
-        #regex = self.filterRegExp()
-        #return ftype in self.filter_ftypes and regex.exactMatch(var)
+        # regex = self.filterRegExp()
+        # return ftype in self.filter_ftypes and regex.exactMatch(var)
 
         #
         return ftype in self.filter_ftypes and \
-                re.match(self.filterRegExp().pattern(), var) is not None
+               re.match(self.filterRegExp().pattern(), var) is not None
 
     def get_selection(self):
         # Return a list of selected items, [(idx_src, settings)].
@@ -478,7 +471,7 @@ def convert_settings(settings_read, lat):
     flat_settings = []
     for ename, econf in settings_read.items():
         elem = lat[ename]
-        #if elem is None:
+        # if elem is None:
         #    print("{} is not in lattice but defined in the settings.".format(ename))
         #    continue
         for fname, fval0 in econf.items():
@@ -534,4 +527,3 @@ def get_bg_color(name):
 
 def get_fg_color(writable):
     return FG_COLOR_MAP.get(writable)
-
