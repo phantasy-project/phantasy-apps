@@ -19,6 +19,9 @@ class Ui_Dialog(object):
         self.groupBox.setObjectName("groupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.groupBox)
         self.gridLayout.setObjectName("gridLayout")
+        self.label_2 = QtWidgets.QLabel(self.groupBox)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout.addWidget(self.label_2, 3, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.model_rbtn = QtWidgets.QRadioButton(self.groupBox)
@@ -47,7 +50,7 @@ class Ui_Dialog(object):
         spacerItem = QtWidgets.QSpacerItem(20, 40,
                                            QtWidgets.QSizePolicy.Minimum,
                                            QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 5, 0, 1, 1)
+        self.gridLayout.addItem(spacerItem, 6, 0, 1, 1)
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
         spacerItem1 = QtWidgets.QSpacerItem(40, 20,
@@ -60,7 +63,7 @@ class Ui_Dialog(object):
         self.ok_btn = QtWidgets.QPushButton(self.groupBox)
         self.ok_btn.setObjectName("ok_btn")
         self.horizontalLayout_12.addWidget(self.ok_btn)
-        self.gridLayout.addLayout(self.horizontalLayout_12, 6, 0, 1, 2)
+        self.gridLayout.addLayout(self.horizontalLayout_12, 7, 0, 1, 2)
         self.apply_delt_dsbox = QtWidgets.QDoubleSpinBox(self.groupBox)
         self.apply_delt_dsbox.setDecimals(3)
         self.apply_delt_dsbox.setMaximum(5.0)
@@ -68,12 +71,6 @@ class Ui_Dialog(object):
         self.apply_delt_dsbox.setProperty("value", 0.05)
         self.apply_delt_dsbox.setObjectName("apply_delt_dsbox")
         self.gridLayout.addWidget(self.apply_delt_dsbox, 2, 1, 1, 1)
-        self.init_settings_chkbox = QtWidgets.QCheckBox(self.groupBox)
-        self.init_settings_chkbox.setObjectName("init_settings_chkbox")
-        self.gridLayout.addWidget(self.init_settings_chkbox, 0, 0, 1, 2)
-        self.label_2 = QtWidgets.QLabel(self.groupBox)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout.addWidget(self.label_2, 3, 0, 1, 1)
         self.tol_dsbox = QtWidgets.QDoubleSpinBox(self.groupBox)
         self.tol_dsbox.setSingleStep(0.1)
         self.tol_dsbox.setProperty("value", 0.1)
@@ -90,6 +87,17 @@ class Ui_Dialog(object):
         self.dt_confsync_dsbox.setProperty("value", 10.0)
         self.dt_confsync_dsbox.setObjectName("dt_confsync_dsbox")
         self.gridLayout.addWidget(self.dt_confsync_dsbox, 4, 1, 1, 1)
+        self.init_settings_chkbox = QtWidgets.QCheckBox(self.groupBox)
+        self.init_settings_chkbox.setObjectName("init_settings_chkbox")
+        self.gridLayout.addWidget(self.init_settings_chkbox, 0, 0, 1, 2)
+        self.label_4 = QtWidgets.QLabel(self.groupBox)
+        self.label_4.setObjectName("label_4")
+        self.gridLayout.addWidget(self.label_4, 5, 0, 1, 1)
+        self.ndigit_sbox = QtWidgets.QSpinBox(self.groupBox)
+        self.ndigit_sbox.setMaximum(20)
+        self.ndigit_sbox.setProperty("value", 3)
+        self.ndigit_sbox.setObjectName("ndigit_sbox")
+        self.gridLayout.addWidget(self.ndigit_sbox, 5, 1, 1, 1)
         self.gridLayout_9.addWidget(self.groupBox, 0, 0, 1, 1)
 
         self.retranslateUi(Dialog)
@@ -109,6 +117,8 @@ class Ui_Dialog(object):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.groupBox.setTitle(_translate("Dialog", "Preferences"))
+        self.label_2.setText(
+            _translate("Dialog", "Absolute Discrepancy Tolerance"))
         self.model_rbtn.setToolTip(
             _translate(
                 "Dialog",
@@ -128,6 +138,10 @@ class Ui_Dialog(object):
         self.cancel_btn.setText(_translate("Dialog", "Cancel"))
         self.ok_btn.setText(_translate("Dialog", "OK"))
         self.apply_delt_dsbox.setSuffix(_translate("Dialog", " second"))
+        self.label_3.setText(
+            _translate("Dialog",
+                       "Time period for configuration data synchronization "))
+        self.dt_confsync_dsbox.setSuffix(_translate("Dialog", " second"))
         self.init_settings_chkbox.setToolTip(
             _translate(
                 "Dialog",
@@ -137,12 +151,7 @@ class Ui_Dialog(object):
             _translate(
                 "Dialog",
                 "Initialize device settings with the whole loaded lattice"))
-        self.label_2.setText(
-            _translate("Dialog", "Absolute Discrepancy Tolerance"))
-        self.label_3.setText(
-            _translate("Dialog",
-                       "Time period for configuration data synchronization "))
-        self.dt_confsync_dsbox.setSuffix(_translate("Dialog", " second"))
+        self.label_4.setText(_translate("Dialog", "Float number precision"))
 
 
 from . import resources_rc
