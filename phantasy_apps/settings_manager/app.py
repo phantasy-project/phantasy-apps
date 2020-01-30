@@ -37,6 +37,7 @@ from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from phantasy_ui.widgets import ElementSelectDialog
 from phantasy_ui.widgets import LatticeWidget
+from phantasy_ui.widgets import ProbeWidget
 
 from .app_loadfrom import LoadSettingsDialog
 from .app_pref import DEFAULT_PREF
@@ -323,6 +324,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._warning_px = QPixmap(":/sm-icons/warning.png")
         self._ok_px = QPixmap(":/sm-icons/ok.png")
         self._copy_icon = QIcon(QPixmap(":/sm-icons/copy.png"))
+        self._probe_icon = QIcon(QPixmap(":/sm-icons/probe.png"))
 
         # selection
         self.select_all_btn.clicked.connect(partial(self.on_select, 'all'))
@@ -360,21 +362,42 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(QPoint)
     def on_custom_context_menu(self, pos):
+        def on_probe_element(elem, fname):
+            w = ProbeWidget(element=elem, field_name=fname)
+            [o.setEnabled(False) for o in (w.locate_btn, w.lattice_load_btn)]
+            w.show()
+
         m = self._tv.model()
         if m is None:
             return
         src_m = m.sourceModel()
         idx = self._tv.indexAt(pos)
         src_idx = m.mapToSource(idx)
+        item = src_m.itemFromIndex(src_idx)
+        text = item.text()
 
+        #
         menu = QMenu(self)
         menu.setStyleSheet('QMenu {margin: 2px;}')
 
-        copy_action = QAction(self._copy_icon, "Copy", menu)
+        #
+        copy_action = QAction(self._copy_icon,
+                              "Copy '{}'".format(text), menu)
         copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
-
         menu.addAction(copy_action)
 
+        #
+        if hasattr(item, 'fobj'):
+            ename = text
+            elem = self._lat[ename]
+            fld = item.fobj
+            probe_action = QAction(self._probe_icon,
+                                   "Probe '{}'".format(ename), menu)
+            probe_action.triggered.connect(
+                    partial(on_probe_element, elem, fld.name))
+            menu.addAction(probe_action)
+
+        #
         menu.exec_(self._tv.viewport().mapToGlobal(pos))
 
     @pyqtSlot(QVariant)
