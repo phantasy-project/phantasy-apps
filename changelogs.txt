@@ -1,3 +1,36 @@
+Version 2.4.0
+-------------
+2020-01-30
+
+- Allison Scanner App
+  - Alway show initial motor position before moving
+  - Show colorbar of the main imageWidget by default
+  - Replace ion species display with the new created widget
+  - Other fixes
+
+- App Launcher
+  - Adjust the window size
+  - Update app title
+
+- Correlation Visualizer
+  - Apply ensure put policy to device setting action
+  - Move some menu actions into toolbar
+  - Implement arbitrary 3D data plot from 2D scan mode data
+  - Other fixes
+
+- ORM
+  - Fix settings view auto monitor issue.
+
+- [New] Settings Manager
+  - Implement present device settings as a tree
+  - Implement comprehensive sort/filter function
+  - Implement non-blocking data updating and setting applying function
+  - Implement comprehensive configuration system
+  - Implement data saving and loading function
+
+- Trajectory Viewer
+  - Fix minor bugs
+
 Version 2.3.4
 -------------
 2019-11-13
