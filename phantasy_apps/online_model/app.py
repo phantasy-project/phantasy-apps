@@ -19,13 +19,13 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QMessageBox
 
 from phantasy_ui import BaseAppForm
+from phantasy_ui import delayed_exec
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
 from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui.widgets import ElementSelectionWidget
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 
-from phantasy_apps.correlation_visualizer.utils import delayed_exec
 from phantasy_apps.utils import apply_mplcurve_settings
 from phantasy_apps.trajectory_viewer.utils import ElementListModel
 

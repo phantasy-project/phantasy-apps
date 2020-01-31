@@ -25,6 +25,7 @@ from phantasy import CaField
 from phantasy import ensure_put
 from phantasy_ui import printlog
 from phantasy_ui import BaseAppForm
+from phantasy_ui import delayed_exec
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
 from phantasy_ui import random_string
@@ -38,7 +39,6 @@ from .scan import ScanTask
 from .scan import load_task
 from .ui.ui_2dscan import Ui_MainWindow
 from .utils import COLOR_DANGER, COLOR_INFO
-from .utils import delayed_exec
 
 
 class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):

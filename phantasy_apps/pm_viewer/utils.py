@@ -18,7 +18,7 @@ from PyQt5.QtGui import QStandardItem
 from phantasy import epoch2human
 from phantasy import Configuration
 from phantasy import MachinePortal
-from phantasy_apps.correlation_visualizer.utils import delayed_exec
+from phantasy_ui import delayed_exec
 from phantasy_apps.wire_scanner.device import Device
 from phantasy_apps.utils import find_dconf
 

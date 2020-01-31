@@ -15,16 +15,6 @@ COLOR_WARNING = QColor('#FFC107')
 COLOR_PRIMARY = QColor('#007BFF')
 
 
-def delayed_exec(f, delay, *args, **kws):
-    """Execute *f* after *delay* msecm `*args` and `**kws` is for *f*.
-    """
-
-    def func():
-        return f(*args, **kws)
-
-    QTimer.singleShot(delay, func)
-
-
 def milli_sleep(qApp, msec):
     t0 = time.time()
     while (time.time() - t0) * 1000 < msec:

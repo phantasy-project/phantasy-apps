@@ -6,7 +6,7 @@ from scipy.interpolate import griddata
 import numpy.ma as ma
 
 from phantasy_ui import BaseAppForm
-from phantasy_apps.correlation_visualizer.utils import delayed_exec
+from phantasy_ui import delayed_exec
 
 from .ui.ui_plot3d import Ui_MainWindow
 

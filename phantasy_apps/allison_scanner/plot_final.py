@@ -3,7 +3,7 @@
 
 
 from phantasy_ui import BaseAppForm
-from phantasy_apps.correlation_visualizer.utils import delayed_exec
+from phantasy_ui import delayed_exec
 
 from .ui.ui_plot_results import Ui_MainWindow
 

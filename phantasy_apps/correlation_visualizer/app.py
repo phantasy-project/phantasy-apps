@@ -27,6 +27,7 @@ from PyQt5.QtWidgets import QPushButton
 from phantasy import CaField
 from phantasy_ui import BaseAppForm
 from phantasy_ui import random_string
+from phantasy_ui import delayed_exec
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
 from phantasy_ui import printlog
@@ -48,7 +49,6 @@ from .scan import ScanWorker
 from .scan import load_task
 from .ui.ui_app import Ui_MainWindow
 from .utils import COLOR_DANGER, COLOR_INFO, COLOR_WARNING, COLOR_PRIMARY
-from .utils import delayed_exec
 
 BOTTOM_TBTN_ICON_SIZE = 32
 SMALL_TBTN_ICON_SIZE = 20
