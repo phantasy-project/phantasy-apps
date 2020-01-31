@@ -345,6 +345,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # context menu
         self.set_context_menu()
+        self._probe_widgets_dict = {}
 
     def set_context_menu(self):
         self._tv.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -360,13 +361,19 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.statusInfoChanged.emit(msg)
         self._reset_status_info()
 
+    @pyqtSlot()
+    def on_probe_element(self, elem, fname):
+        ename = elem.name
+        if ename not in self._probe_widgets_dict:
+            w = ProbeWidget(element=elem)
+            [o.setEnabled(False) for o in (w.locate_btn, w.lattice_load_btn)]
+            self._probe_widgets_dict[ename] = w
+        w = self._probe_widgets_dict[ename]
+        w.show()
+        w.fields_cbb.setCurrentText(fname)
+
     @pyqtSlot(QPoint)
     def on_custom_context_menu(self, pos):
-        def on_probe_element(elem, fname):
-            w = ProbeWidget(element=elem, field_name=fname)
-            [o.setEnabled(False) for o in (w.locate_btn, w.lattice_load_btn)]
-            w.show()
-
         m = self._tv.model()
         if m is None:
             return
@@ -394,7 +401,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             probe_action = QAction(self._probe_icon,
                                    "Probe '{}'".format(ename), menu)
             probe_action.triggered.connect(
-                    partial(on_probe_element, elem, fld.name))
+                    partial(self.on_probe_element, elem, fld.name))
             menu.addAction(probe_action)
 
         #
