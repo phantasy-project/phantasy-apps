@@ -382,6 +382,8 @@ class _SortProxyModel(QSortFilterProxyModel):
             'writable': model.i_writable,
         }
         self.filter_ftypes = ['ENG', 'PHY']
+        # if True, filter checked items, otherwise show all items.
+        self.filter_checked_enabled = False
 
     def lessThan(self, left, right):
         left_data = left.data(Qt.DisplayRole)
@@ -409,11 +411,17 @@ class _SortProxyModel(QSortFilterProxyModel):
 
         src_model = self.sourceModel()
         filter_key = src_model.get_filter_key()
-        ftype = src_model.item(src_row, 0).ftype
+        ftype = src_model.item(src_row, src_model.i_name).ftype
+        if self.filter_checked_enabled:
+            item_checked = is_item_checked(
+                    src_model.item(src_row, src_model.i_name))
+        else:
+            item_checked = True
 
         idx = self.filter_col_index[filter_key]
         src_index = src_model.index(src_row, idx)
         var = src_index.data(Qt.DisplayRole)
+
         if not isinstance(var, str):
             var = self.fmt.format(var)
 
@@ -426,7 +434,7 @@ class _SortProxyModel(QSortFilterProxyModel):
         # return ftype in self.filter_ftypes and regex.exactMatch(var)
 
         #
-        return ftype in self.filter_ftypes and \
+        return ftype in self.filter_ftypes and item_checked and \
                re.match(self.filterRegExp().pattern(), var) is not None
 
     def get_selection(self):
