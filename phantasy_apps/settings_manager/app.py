@@ -990,8 +990,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 elem = build_element(pv_elem.setpoint[0], pv_elem.readback[0])
                 self._lat.append(elem)
                 is_added = self.add_element(elem)
+                if is_added:
+                    self.element_from_pv_added.emit(elem)
             if is_added:
-                self.element_from_pv_added.emit(elem)
                 self.element_list_changed.emit()
 
     def build_lattice(self):
@@ -1093,7 +1094,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
 
 def is_same_lattice(new_mp, current_mp):
-    """Test if the current loaded lattice of new_mp and current_mp is the same.
+    """Test if the current loaded machine/segment of new_mp is the same as
+    the one of current_mp.
     """
     # new_mp is not None
     if current_mp is None:
