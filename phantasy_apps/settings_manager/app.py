@@ -1098,6 +1098,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._model_settings.write(self.ms_confpath)
             printlog("Update model settings snapshot.")
 
+    @pyqtSlot(bool)
+    def on_toggle_all_selected(self, selected):
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_checked_enabled = selected
+        self.filter_lineEdit.editingFinished.emit()
+
 
 def make_tolerance_dict_from_table_settings(table_settings):
     """Create tolerance dict from TableSettings.
