@@ -185,12 +185,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         if o is None:
             return
-        if is_same_lattice(o, self._mp):
+
+        if (o.last_machine_name == self._last_machine_name) and \
+                (o.last_lattice_name == self._last_lattice_name):
             return
         # update lattice with the new one
         self._mp = o
+        self._last_machine_name = self._mp.last_machine_name
+        self._last_lattice_name = self._mp.last_lattice_name
         # reset self._lat
-        self._lat = o.work_lattice_conf
+        self._lat = o.combined_lattice()
         self.lattice_loaded.emit(o)
 
         # show element settings
@@ -275,6 +279,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lattice_load_window = None
 
         self._mp = None
+        self._last_machine_name = None
+        self._last_lattice_name = None
         self._lat = None
         self._elem_list = []  # element list for SettingsModel
 
@@ -1091,17 +1097,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._model_settings.update(settings)
             self._model_settings.write(self.ms_confpath)
             printlog("Update model settings snapshot.")
-
-
-def is_same_lattice(new_mp, current_mp):
-    """Test if the current loaded machine/segment of new_mp is the same as
-    the one of current_mp.
-    """
-    # new_mp is not None
-    if current_mp is None:
-        return False
-    return (new_mp.last_machine_name == current_mp.last_machine_name) and \
-           (new_mp.last_lattice_name == current_mp.last_lattice_name)
 
 
 def make_tolerance_dict_from_table_settings(table_settings):
