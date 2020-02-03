@@ -259,6 +259,18 @@ class Ui_MainWindow(object):
         self.scaling_factor_lineEdit.setObjectName("scaling_factor_lineEdit")
         self.horizontalLayout.addWidget(self.scaling_factor_lineEdit)
         self.gridLayout.addLayout(self.horizontalLayout, 4, 0, 1, 2)
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_5.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
+        self.pushButton = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton.setCheckable(True)
+        self.pushButton.setObjectName("pushButton")
+        self.horizontalLayout_5.addWidget(self.pushButton)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_5.addItem(spacerItem2)
+        self.gridLayout.addLayout(self.horizontalLayout_5, 1, 0, 1, 2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 31))
@@ -406,6 +418,8 @@ class Ui_MainWindow(object):
         self.single_update_btn.clicked.connect(MainWindow.on_single_update)
         self.treeView.pressed['QModelIndex'].connect(
             MainWindow.on_pressed_view)
+        self.pushButton.toggled['bool'].connect(
+            MainWindow.on_toggle_all_selected)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.expand_all_btn, self.select_all_btn)
         MainWindow.setTabOrder(self.select_all_btn, self.invert_selection_btn)
@@ -483,6 +497,9 @@ class Ui_MainWindow(object):
         self.single_update_btn.setText(_translate("MainWindow", "..."))
         self.apply_btn.setText(_translate("MainWindow", "Apply"))
         self.scaling_factor_lineEdit.setText(_translate("MainWindow", "1.0"))
+        self.pushButton.setToolTip(
+            _translate("MainWindow", "Show all selected items."))
+        self.pushButton.setText(_translate("MainWindow", "All Selected"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
