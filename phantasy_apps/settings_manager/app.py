@@ -68,7 +68,11 @@ Press Enter to activate the filter, here is some examples:
 2. *LEBT*: match device name which has string 'LEBT';
 3. type='CAV': match all devices of type 'CAV';
 4. dx12=0.00*: match the diff between readback and setpoint of 0.00xx..;
-5. ? is to match one char or digit, pure '' is to interpret as *.\
+5. ? is to match one char or digit, pure '' is to interpret as *.
+
+For the number columns, value range or single value filter is supported, e.g.
+1. pos=(1,) matches all the position value equal or greater than 1.0;
+2. x1=(-1, 2) matches current readback value is in [-1, 2] range.\
 """
 
 
