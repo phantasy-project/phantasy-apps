@@ -709,11 +709,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m = self._tv.model()
         if m is None:
             return
-        s = self.sender().text()
+        s = self.sender().text().strip()
         k = None
         kv = s.split('=', 1)
         if len(kv) == 2:
-            k, v = kv
+            k, v = kv[0].strip(), kv[1].strip()
         else:
             v = s
         if v == '':
