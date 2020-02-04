@@ -52,6 +52,7 @@ from .ui.ui_app import Ui_MainWindow
 from .utils import FMT
 from .utils import SettingsModel
 from .utils import pack_settings
+from .utils import VALID_FILTER_KEYS_NUM
 
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
 IDX_RATE_MAP = {0: 0.1, 1: 0.2, 2: 0.5, 3: 1.0, 4: 2.0}
@@ -727,7 +728,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # m.setFilterRegExp(QRegExp(v, Qt.CaseSensitive,
         #                          QRegExp.WildcardUnix))
 
-        m.setFilterRegExp(translate(v))
+        if k in VALID_FILTER_KEYS_NUM:
+            m.setFilterRegExp(v)
+        else:
+            m.setFilterRegExp(translate(v))
 
         self.total_show_number_lbl.setText(str(m.rowCount()))
         self.update_filter_completer(s)
