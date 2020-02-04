@@ -172,10 +172,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._elem_pvconf[ename] = {
                 'setpoint': sp_pv,
                 'readback': rd_pv,
-                'index': -1,
-                'length': 0.0,
-                'sb': -1,
-                'family': 'PV',
+                'index': elem.index,
+                'length': elem.length,
+                'sb': elem.sb,
+                'family': elem.family,
                 'field': eng_field,
                 'field_phy': phy_field
             }
