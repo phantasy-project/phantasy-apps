@@ -3,7 +3,9 @@
 
 import re
 from collections import OrderedDict
+from fnmatch import translate
 from functools import partial
+from numpy.testing import assert_almost_equal
 
 from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtCore import QVariant
@@ -46,9 +48,10 @@ SFIELD_NAMES_ATTR = list(COLUMN_SFIELD_MAP.values())
 
 COLUMN_NAMES = COLUMN_NAMES1 + COLUMN_NAMES_ATTR + COLUMN_NAMES2
 
-VALID_FILTER_KEYS = ('device', 'field', 'pos', 'type',
-                     'x0', 'x1', 'x2', 'dx01', 'dx02', 'dx12',
-                     'tolerance', 'writable')
+VALID_FILTER_KEYS_NUM = ['x0', 'x1', 'x2', 'dx01', 'dx02', 'dx12',
+                         'pos', 'tolerance']
+VALID_FILTER_KEYS = ['device', 'field', 'type',
+                     'writable'] + VALID_FILTER_KEYS_NUM
 
 BG_COLOR_DEFAULT = "#FFFFFF"
 BG_COLOR_MAP = {
@@ -411,7 +414,9 @@ class _SortProxyModel(QSortFilterProxyModel):
 
         src_model = self.sourceModel()
         filter_key = src_model.get_filter_key()
+        # ENG/PHY
         ftype = src_model.item(src_row, src_model.i_name).ftype
+        # checked items
         if self.filter_checked_enabled:
             item_checked = is_item_checked(
                     src_model.item(src_row, src_model.i_name))
@@ -425,17 +430,47 @@ class _SortProxyModel(QSortFilterProxyModel):
         if not isinstance(var, str):
             var = self.fmt.format(var)
 
-        # Qt >= 5.12
-        # regex = self.filterRegularExpression()
-        # return ftype in self.filter_ftypes and regex.match(var).hasMatch()
+        # number keys
+        if filter_key in VALID_FILTER_KEYS_NUM:
+            var = float(var)
+            filter_str = self.filterRegExp().pattern()
+            try:
+                t = eval(filter_str)
+                # (x1, x2) or [x1, x2], or (x1, x2, x3) (only use x1, x2)
+                if isinstance(t, (tuple, list)):
+                    if len(t) > 1:
+                        x1, x2 = t[0], t[1]
+                        return ftype in self.filter_ftypes and \
+                                item_checked and \
+                                (var >= x1 and var <= x2)
+                    elif len(t) == 1:
+                        # (x1,) or [x1,]
+                        return ftype in self.filter_ftypes and \
+                                item_checked and \
+                                var >= t[0]
+                    else:
+                        raise SyntaxError
+                elif isinstance(t, (float, int)):
+                        return ftype in self.filter_ftypes and \
+                                item_checked and \
+                                is_equal(var, t, 3)
+                else:
+                    raise SyntaxError
+            except SyntaxError:
+                return ftype in self.filter_ftypes and item_checked and \
+                    re.match(translate(filter_str), str(var)) is not None
+        else:
+            # Qt >= 5.12
+            # regex = self.filterRegularExpression()
+            # return ftype in self.filter_ftypes and regex.match(var).hasMatch()
 
-        # wildcardunix
-        # regex = self.filterRegExp()
-        # return ftype in self.filter_ftypes and regex.exactMatch(var)
+            # wildcardunix
+            # regex = self.filterRegExp()
+            # return ftype in self.filter_ftypes and regex.exactMatch(var)
 
-        #
-        return ftype in self.filter_ftypes and item_checked and \
-               re.match(self.filterRegExp().pattern(), var) is not None
+            #
+            return ftype in self.filter_ftypes and item_checked and \
+                   re.match(self.filterRegExp().pattern(), var) is not None
 
     def get_selection(self):
         # Return a list of selected items, [(idx_src, settings)].
@@ -543,3 +578,13 @@ def get_bg_color(name):
 
 def get_fg_color(writable):
     return FG_COLOR_MAP.get(writable)
+
+
+def is_equal(a, b, decimal=6):
+    """Test if a and b is almost equal.
+    """
+    try:
+        assert_almost_equal(a, b, decimal=decimal)
+        return True
+    except AssertionError:
+        return False
