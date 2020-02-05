@@ -688,7 +688,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if m is None:
             return
         if QGuiApplication.mouseButtons() == Qt.MiddleButton:
-            self.on_copy_text(m, idx)
+            cb = QGuiApplication.clipboard()
+            if cb.supportsSelection():
+                text = m.data(idx)
+                cb.setText(text, cb.Selection)
+                msg = '<html><head/><body><p><span style=" color:#007bff;">Selected text: </span><span style=" color:#dc3545;">{}</span><span style=" color:#007bff;">, paste with middle button.</span></p></body></html>'.format(text)
+                self.statusInfoChanged.emit(msg)
+                self._reset_status_info()
 
     def on_click_view(self, idx):
         r, c = idx.row(), idx.column()
