@@ -2,11 +2,24 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import QModelIndex
+from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QVariant
+from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
+
+from PyQt5.QtGui import QGuiApplication
+from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QPixmap
+
+from PyQt5.QtWidgets import QMenu
+from PyQt5.QtWidgets import QAction
+
+from functools import partial
+
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import LatticeDataModelFull
+from phantasy_ui.widgets import ProbeWidget
 
 from .ui.ui_app import Ui_MainWindow
 
@@ -49,15 +62,88 @@ class LatticeViewerWindow(BaseAppForm, Ui_MainWindow):
     def post_init_ui(self):
         #
         self.__mp = None
-        # events
-        self.treeView.doubleClicked.connect(self.on_dbclicked_view)
-        self.elementSelected.connect(self.probeWidget.on_select_element)
+        # context menu
+        self._copy_icon = QIcon(QPixmap(":/lv-icons/copy.png"))
+        self._probe_icon = QIcon(QPixmap(":/lv-icons/probe.png"))
+        self.set_context_menu()
+        self._probe_widgets_dict = {}
+
+    def set_context_menu(self):
+        self.treeView.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.treeView.customContextMenuRequested.connect(self.on_custom_context_menu)
+
+    @pyqtSlot(QPoint)
+    def on_custom_context_menu(self, pos):
+        m = self.treeView.model()
+        if m is None:
+            return
+        idx = self.treeView.indexAt(pos)
+        item = m.itemFromIndex(idx)
+        text = item.text()
+
+        #
+        menu = QMenu(self)
+        menu.setStyleSheet('QMenu {margin: 2px;}')
+
+        #
+        copy_action = QAction(self._copy_icon,
+                              "Copy '{}'".format(text), menu)
+        copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
+        menu.addAction(copy_action)
+
+        #
+        if hasattr(item, 'fobj'):
+            ename = text
+            elem = self.__lat[ename]
+            fld = item.fobj
+            probe_action = QAction(self._probe_icon,
+                                   "Probe '{}'".format(ename), menu)
+            probe_action.triggered.connect(
+                    partial(self.on_probe_element, elem, fld.name))
+            menu.addAction(probe_action)
+
+        #
+        menu.exec_(self.treeView.viewport().mapToGlobal(pos))
+
+    @pyqtSlot()
+    def on_copy_text(self, m, idx):
+        text = m.data(idx)
+        cb = QGuiApplication.clipboard()
+        cb.setText(text)
+        msg = '<html><head/><body><p><span style="color:#007BFF;">Copied text: </span><span style="color:#DC3545;">{}</span></p></body></html>'.format(text)
+        self.statusInfoChanged.emit(msg)
+        self._reset_status_info()
+
+    @pyqtSlot()
+    def on_probe_element(self, elem, fname):
+        ename = elem.name
+        if ename not in self._probe_widgets_dict:
+            w = ProbeWidget(element=elem)
+            [o.setEnabled(False) for o in (w.locate_btn, w.lattice_load_btn)]
+            self._probe_widgets_dict[ename] = w
+        w = self._probe_widgets_dict[ename]
+        w.show()
+        w.fields_cbb.setCurrentText(fname)
+
+    def on_pressed_view(self, idx):
+        m = self.treeView.model()
+        if m is None:
+            return
+        if QGuiApplication.mouseButtons() == Qt.MiddleButton:
+            cb = QGuiApplication.clipboard()
+            if cb.supportsSelection():
+                text = m.data(idx)
+                cb.setText(text, cb.Selection)
+                msg = '<html><head/><body><p><span style=" color:#007bff;">Selected text: </span><span style=" color:#dc3545;">{}</span><span style=" color:#007bff;">, paste with middle button.</span></p></body></html>'.format(text)
+                self.statusInfoChanged.emit(msg)
+                self._reset_status_info()
 
     @pyqtSlot(QVariant)
     def onLatticeChanged(self, o):
         """loaded lattice changed.
         """
         self.__mp = o
+        self.__lat = o.combined_lattice()
         model = LatticeDataModelFull(self.treeView, o)
         model.set_model()
         # update meta info
