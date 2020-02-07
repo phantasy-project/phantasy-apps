@@ -12,7 +12,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1920, 1440)
+        MainWindow.resize(1774, 1206)
+        MainWindow.setMinimumSize(QtCore.QSize(0, 0))
         MainWindow.setStyleSheet("QLineEdit {\n"
                                  "    border: 0.5px solid gray;\n"
                                  "    padding: 1 5px;\n"
@@ -21,51 +22,35 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.verticalLayout_2.setContentsMargins(8, 12, 8, 8)
+        self.verticalLayout_2.setSpacing(6)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.v_splitter = QtWidgets.QSplitter(self.centralwidget)
-        self.v_splitter.setOrientation(QtCore.Qt.Vertical)
-        self.v_splitter.setObjectName("v_splitter")
-        self.h_splitter = QtWidgets.QSplitter(self.v_splitter)
-        self.h_splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.h_splitter.setObjectName("h_splitter")
-        self.latticeWidget = LatticeWidget(self.h_splitter)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.latticeWidget.sizePolicy().hasHeightForWidth())
-        self.latticeWidget.setSizePolicy(sizePolicy)
-        self.latticeWidget.setObjectName("latticeWidget")
-        self.probeWidget = ProbeWidget(self.h_splitter)
-        self.probeWidget.setObjectName("probeWidget")
-        self.lattice_view = QtWidgets.QWidget(self.v_splitter)
+        self.verticalLayout = QtWidgets.QVBoxLayout()
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.splitter = QtWidgets.QSplitter(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
+                                           QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(1)
         sizePolicy.setHeightForWidth(
-            self.lattice_view.sizePolicy().hasHeightForWidth())
-        self.lattice_view.setSizePolicy(sizePolicy)
-        self.lattice_view.setObjectName("lattice_view")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.lattice_view)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.splitter = QtWidgets.QSplitter(self.lattice_view)
+            self.splitter.sizePolicy().hasHeightForWidth())
+        self.splitter.setSizePolicy(sizePolicy)
         self.splitter.setOrientation(QtCore.Qt.Vertical)
         self.splitter.setObjectName("splitter")
         self.lattice_list_gb = QtWidgets.QGroupBox(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.lattice_list_gb.sizePolicy().hasHeightForWidth())
         self.lattice_list_gb.setSizePolicy(sizePolicy)
-        self.lattice_list_gb.setMinimumSize(QtCore.QSize(0, 700))
+        self.lattice_list_gb.setMinimumSize(QtCore.QSize(0, 0))
         self.lattice_list_gb.setObjectName("lattice_list_gb")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.lattice_list_gb)
-        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.gridLayout = QtWidgets.QGridLayout(self.lattice_list_gb)
+        self.gridLayout.setContentsMargins(6, 6, 6, 6)
+        self.gridLayout.setSpacing(4)
+        self.gridLayout.setObjectName("gridLayout")
         self.treeView = QtWidgets.QTreeView(self.lattice_list_gb)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Expanding)
@@ -74,8 +59,9 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.treeView.sizePolicy().hasHeightForWidth())
         self.treeView.setSizePolicy(sizePolicy)
+        self.treeView.setMinimumSize(QtCore.QSize(0, 700))
         self.treeView.setObjectName("treeView")
-        self.gridLayout_2.addWidget(self.treeView, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.treeView, 0, 0, 1, 1)
         self.layout_view_gb = QtWidgets.QGroupBox(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -85,9 +71,10 @@ class Ui_MainWindow(object):
             self.layout_view_gb.sizePolicy().hasHeightForWidth())
         self.layout_view_gb.setSizePolicy(sizePolicy)
         self.layout_view_gb.setObjectName("layout_view_gb")
-        self.gridLayout = QtWidgets.QGridLayout(self.layout_view_gb)
-        self.gridLayout.setContentsMargins(2, 6, 2, 6)
-        self.gridLayout.setObjectName("gridLayout")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.layout_view_gb)
+        self.gridLayout_2.setContentsMargins(6, 6, 6, 6)
+        self.gridLayout_2.setSpacing(4)
+        self.gridLayout_2.setObjectName("gridLayout_2")
         self.layout_plot = MatplotlibBaseWidget(self.layout_view_gb)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -98,12 +85,14 @@ class Ui_MainWindow(object):
         self.layout_plot.setSizePolicy(sizePolicy)
         self.layout_plot.setProperty("figureTightLayout", True)
         self.layout_plot.setObjectName("layout_plot")
-        self.gridLayout.addWidget(self.layout_plot, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.layout_plot, 0, 0, 1, 1)
         self.verticalLayout.addWidget(self.splitter)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.label_2 = QtWidgets.QLabel(self.lattice_view)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+        self.gridLayout_3 = QtWidgets.QGridLayout()
+        self.gridLayout_3.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_3.setSpacing(6)
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -111,8 +100,8 @@ class Ui_MainWindow(object):
             self.label_2.sizePolicy().hasHeightForWidth())
         self.label_2.setSizePolicy(sizePolicy)
         self.label_2.setObjectName("label_2")
-        self.horizontalLayout_2.addWidget(self.label_2)
-        self.elem_num_lineEdit = QtWidgets.QLineEdit(self.lattice_view)
+        self.gridLayout_3.addWidget(self.label_2, 0, 0, 1, 1)
+        self.elem_num_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -122,32 +111,29 @@ class Ui_MainWindow(object):
         self.elem_num_lineEdit.setSizePolicy(sizePolicy)
         self.elem_num_lineEdit.setReadOnly(True)
         self.elem_num_lineEdit.setObjectName("elem_num_lineEdit")
-        self.horizontalLayout_2.addWidget(self.elem_num_lineEdit)
-        self.label_3 = QtWidgets.QLabel(self.lattice_view)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Preferred)
+        self.gridLayout_3.addWidget(self.elem_num_lineEdit, 0, 1, 1, 1)
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.label_3.sizePolicy().hasHeightForWidth())
         self.label_3.setSizePolicy(sizePolicy)
         self.label_3.setObjectName("label_3")
-        self.horizontalLayout_2.addWidget(self.label_3)
-        self.elem_types_lineEdit = QtWidgets.QLineEdit(self.lattice_view)
+        self.gridLayout_3.addWidget(self.label_3, 0, 2, 1, 1)
+        self.elem_types_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.elem_types_lineEdit.sizePolicy().hasHeightForWidth())
         self.elem_types_lineEdit.setSizePolicy(sizePolicy)
         self.elem_types_lineEdit.setObjectName("elem_types_lineEdit")
-        self.horizontalLayout_2.addWidget(self.elem_types_lineEdit)
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.label = QtWidgets.QLabel(self.lattice_view)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+        self.gridLayout_3.addWidget(self.elem_types_lineEdit, 0, 3, 1, 1)
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -155,29 +141,31 @@ class Ui_MainWindow(object):
             self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy)
         self.label.setObjectName("label")
-        self.horizontalLayout.addWidget(self.label)
-        self.elem_sts_lineEdit = QtWidgets.QLineEdit(self.lattice_view)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(1)
+        self.gridLayout_3.addWidget(self.label, 1, 0, 1, 1)
+        self.elem_sts_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.elem_sts_lineEdit.sizePolicy().hasHeightForWidth())
         self.elem_sts_lineEdit.setSizePolicy(sizePolicy)
         self.elem_sts_lineEdit.setReadOnly(True)
         self.elem_sts_lineEdit.setObjectName("elem_sts_lineEdit")
-        self.horizontalLayout.addWidget(self.elem_sts_lineEdit)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        self.verticalLayout_2.addWidget(self.v_splitter)
+        self.gridLayout_3.addWidget(self.elem_sts_lineEdit, 1, 1, 1, 3)
+        self.verticalLayout.addLayout(self.gridLayout_3)
+        self.verticalLayout_2.addLayout(self.verticalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 32))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1774, 31))
         self.menubar.setObjectName("menubar")
-        self.menu_File = QtWidgets.QMenu(self.menubar)
-        self.menu_File.setObjectName("menu_File")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
         MainWindow.setMenuBar(self.menubar)
+        self.toolBar = QtWidgets.QToolBar(MainWindow)
+        self.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.toolBar.setObjectName("toolBar")
+        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.actionAbout = QtWidgets.QAction(MainWindow)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
@@ -202,20 +190,27 @@ class Ui_MainWindow(object):
                         QtGui.QIcon.Off)
         self.actionContents.setIcon(icon3)
         self.actionContents.setObjectName("actionContents")
-        self.menu_File.addAction(self.actionE_xit)
+        self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/lv-icons/load_lattice.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionLoad_Lattice.setIcon(icon4)
+        self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.actionAbout)
         self.menu_Help.addAction(self.actionAbout_Qt)
-        self.menubar.addAction(self.menu_File.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
+        self.toolBar.addAction(self.actionLoad_Lattice)
+        self.toolBar.addAction(self.actionE_xit)
 
         self.retranslateUi(MainWindow)
         self.actionAbout.triggered.connect(MainWindow.onAbout)
         self.actionAbout_Qt.triggered.connect(MainWindow.onAboutQt)
         self.actionE_xit.triggered.connect(MainWindow.close)
-        self.latticeWidget.latticeChanged['QVariant'].connect(
-            MainWindow.onLatticeChanged)
+        self.treeView.pressed['QModelIndex'].connect(
+            MainWindow.on_pressed_view)
+        self.actionLoad_Lattice.triggered.connect(MainWindow.on_load_lattice)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -226,20 +221,26 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Total Elements"))
         self.label_3.setText(_translate("MainWindow", "Device Types"))
         self.label.setText(_translate("MainWindow", "By Device Type"))
-        self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
+        self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
         self.actionAbout.setShortcut(_translate("MainWindow", "Ctrl+A"))
         self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
         self.actionE_xit.setText(_translate("MainWindow", "E&xit"))
+        self.actionE_xit.setToolTip(
+            _translate("MainWindow", "Exit application."))
         self.actionE_xit.setShortcut(_translate("MainWindow", "Ctrl+W"))
         self.actionContents.setText(_translate("MainWindow", "Contents"))
         self.actionContents.setShortcut(_translate("MainWindow", "F1"))
+        self.actionLoad_Lattice.setText(
+            _translate("MainWindow", "Load Lattice"))
+        self.actionLoad_Lattice.setToolTip(
+            _translate("MainWindow", "Load lattice."))
+        self.actionLoad_Lattice.setShortcut(
+            _translate("MainWindow", "Ctrl+Shift+L"))
 
 
 from mpl4qt.widgets.mplbasewidget import MatplotlibBaseWidget
-from phantasy_ui.widgets.latticewidget import LatticeWidget
-from phantasy_ui.widgets.probewidget import ProbeWidget
 from . import resources_rc
 
 if __name__ == "__main__":
