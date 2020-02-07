@@ -19,15 +19,13 @@ from functools import partial
 
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import LatticeDataModelFull
+from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui.widgets import ProbeWidget
 
 from .ui.ui_app import Ui_MainWindow
 
 
 class LatticeViewerWindow(BaseAppForm, Ui_MainWindow):
-
-    # selected element by double clicking
-    elementSelected = pyqtSignal(QVariant)
 
     def __init__(self, version):
         super(LatticeViewerWindow, self).__init__()
@@ -62,6 +60,7 @@ class LatticeViewerWindow(BaseAppForm, Ui_MainWindow):
     def post_init_ui(self):
         #
         self.__mp = None
+        self._lattice_load_window = None
         # context menu
         self._copy_icon = QIcon(QPixmap(":/lv-icons/copy.png"))
         self._probe_icon = QIcon(QPixmap(":/lv-icons/probe.png"))
@@ -138,8 +137,19 @@ class LatticeViewerWindow(BaseAppForm, Ui_MainWindow):
                 self.statusInfoChanged.emit(msg)
                 self._reset_status_info()
 
+    @pyqtSlot()
+    def on_load_lattice(self):
+        """Load lattice.
+        """
+        if self._lattice_load_window is None:
+            self._lattice_load_window = LatticeWidget()
+            self._lattice_load_window.latticeChanged.connect(
+                self.on_lattice_changed)
+            self._lattice_load_window.latticeChanged.connect(self._lattice_load_window.close)
+        self._lattice_load_window.show()
+
     @pyqtSlot(QVariant)
-    def onLatticeChanged(self, o):
+    def on_lattice_changed(self, o):
         """loaded lattice changed.
         """
         self.__mp = o
@@ -169,22 +179,6 @@ class LatticeViewerWindow(BaseAppForm, Ui_MainWindow):
         self.elem_num_lineEdit.setText('{0:d}'.format(n_elem))
         self.elem_sts_lineEdit.setText(sts_info)
         self.elem_types_lineEdit.setText(';'.join(dtypes))
-
-    @pyqtSlot(QModelIndex)
-    def on_dbclicked_view(self, index):
-        """On double clicking.
-        """
-        row, col = index.row(), index.column()
-        model = self.treeView.model()
-        # selected item
-        #item = model.item(row, col)
-        ename = model.item(row, 0).text()
-        elem = self.__mp.get_elements(name=ename)[0]
-        self.elementSelected.emit(elem)
-
-    def closeEvent(self, e):
-        self.probeWidget.reset_cbs()
-        BaseAppForm.closeEvent(self, e)
 
 
 if __name__ == '__main__':
