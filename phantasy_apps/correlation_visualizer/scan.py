@@ -65,8 +65,11 @@ class ScanTask(object):
         # shot/iter
         self._shotnum = 5
 
-        # wait in sec
+        # timeout in sec
         self._wait_sec = 1.0
+
+        # extra wait in sec
+        self._extra_wait_sec = 0.0
 
         # daq rate
         self._daq_rate = 1.0
@@ -209,13 +212,23 @@ class ScanTask(object):
 
     @property
     def t_wait(self):
-        """float: Additional wait time in second after each set point.
+        """float: Maximum wait time in second for each ensure set.
         """
         return self._wait_sec
 
     @t_wait.setter
     def t_wait(self, s):
         self._wait_sec = s
+
+    @property
+    def t_wait_extra(self):
+        """float: Additional wait time in second after each ensure set point.
+        """
+        return self._extra_wait_sec
+
+    @t_wait_extra.setter
+    def t_wait_extra(self, s):
+        self._extra_wait_sec = s
 
     @property
     def daq_rate(self):
@@ -289,7 +302,8 @@ class ScanTask(object):
         if self.mode == "1D":
             return "Scan Task: {name}\n" \
                    "Task Mode: 1D\n" \
-                   "Wait Sec: {twait}\n" \
+                   "Timeout [s]: {twait}\n" \
+                   "Extra wait time [s]: {extra_twait}\n" \
                    "Shot Num: {nshot}\n" \
                    "DAQ Rate: {rate}\n" \
                    "Array mode: {array_mode}\n" \
@@ -304,6 +318,7 @@ class ScanTask(object):
                 name=self.name,
                 niter=self.alter_number,
                 twait=self.t_wait,
+                extra_twait=self.t_wait_extra,
                 nshot=self.shotnum,
                 rate=self.daq_rate,
                 sstart=self.alter_start,
@@ -321,7 +336,8 @@ class ScanTask(object):
                 nested_task_name = nested_task.name
             return "Scan Task: {name}\n" \
                    "Task Mode: 2D\n" \
-                   "Wait Sec: {twait}\n" \
+                   "Timeout [s]: {twait}\n" \
+                   "Extra wait time [s]: {extra_twait}\n" \
                    "Array mode: {array_mode}\n" \
                    "Alter array: {array}\n" \
                    "Alter Number: {niter}\n" \
@@ -333,6 +349,7 @@ class ScanTask(object):
                 name=self.name,
                 niter=self.alter_number,
                 twait=self.t_wait,
+                extra_twait=self.t_wait_extra,
                 sstart=self.alter_start,
                 sstop=self.alter_stop,
                 array_mode=self.array_mode,
@@ -397,6 +414,7 @@ class ScanTask(object):
             task_dict['daq_rate'] = self.daq_rate
         task_dict['scan_range'] = self.get_alter_array().tolist()
         task_dict['t_wait'] = self.t_wait
+        task_dict['t_wait_extra'] = self.t_wait_extra
         task_dict['tolerance'] = self.tolerance
         data_sheet.update({'task': task_dict})
 
@@ -475,6 +493,7 @@ def load_task(filepath, o):
     scan_task = ScanTask(name, mode=mode)
     scan_task.alter_number = task['task']['n_iteration']
     scan_task.t_wait = task['task']['t_wait']
+    scan_task.t_wait_extra = task['task'].get('t_wait_extra', 0.0)
     scan_task.tolerance = task['task'].get('tolerance', 0.10)
     if mode == "1D":
         scan_task.shotnum = task['task']['n_shot']
@@ -565,6 +584,7 @@ class ScanWorker(QObject):
         out_data = self.task.scan_out_data
         tmp_data = self.task.scan_out_data_per_iter
         wait_sec = self.task.t_wait
+        extra_wait_sec = self.task.t_wait_extra
         tol = self.task.tolerance
         daq_rate = self.task.daq_rate
         daq_delt = 1.0 / daq_rate
@@ -598,6 +618,10 @@ class ScanWorker(QObject):
             # set alter element, apply ensure put
             ensure_put(alter_elem, goal=x, tol=tol, timeout=wait_sec)
             printlog("{} RD: {} SP: {}".format(alter_elem.ename, alter_elem.value, x))
+
+            # extra wait
+            time.sleep(extra_wait_sec)
+            printlog("Additionally, waited for {} seconds.".format(extra_wait_sec))
 
             # DAQ
             for i in range(nshot):

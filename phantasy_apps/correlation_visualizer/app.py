@@ -138,6 +138,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.niter_spinBox.valueChanged.connect(self.on_update_niter)
         self.nshot_spinBox.valueChanged.connect(self.on_update_nshot)
         self.waitsec_dSpinBox.valueChanged.connect(self.on_update_waitsec)
+        self.t_wait_extra_dSpinBox.valueChanged.connect(self.on_update_extra_wait)
         self.scanrate_dSpinBox.valueChanged.connect(self.on_update_daqrate)
         self.tol_dSpinBox.valueChanged.connect(self.on_update_tol)
         # output scan data
@@ -865,7 +866,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def set_scan_ctrl_status(self, mode='start'):
         ctrls = (self.niter_spinBox, self.nshot_spinBox,
                  self.waitsec_dSpinBox, self.scanrate_dSpinBox,
-                 self.tol_dSpinBox)
+                 self.tol_dSpinBox, self.t_wait_extra_dSpinBox)
         if mode=='start':
             # disable ctrls
             [o.setEnabled(False) for o in ctrls]
@@ -913,8 +914,13 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(float)
     def on_update_waitsec(self, x):
-        # time wait after every scan data setup, in sec
+        # max wait time in second (timeout) for each alter element ensure set.
         self.scan_task.t_wait = x
+
+    @pyqtSlot(float)
+    def on_update_extra_wait(self, x):
+        # extra wait time in second after each alter element ensure set up.
+        self.scan_task.t_wait_extra = x
 
     @pyqtSlot(int)
     def on_update_nshot(self, i):
@@ -1391,8 +1397,10 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.niter_spinBox.setValue(scan_task.alter_number)
         # nshot
         self.nshot_spinBox.setValue(scan_task.shotnum)
-        # t_wait
+        # t_wait (timeout)
         self.waitsec_dSpinBox.setValue(scan_task.t_wait)
+        # t_wait_extra
+        self.t_wait_extra_dSpinBox.setValue(scan_task.t_wait_extra)
         # daq_rate
         self.scanrate_dSpinBox.setValue(scan_task.daq_rate)
         # tolerance
