@@ -615,11 +615,11 @@ class Ui_MainWindow(object):
         self.niter_spinBox.setToolTip(
             _translate("MainWindow", "Total number of points to scan."))
         self.label_3.setText(_translate("MainWindow",
-                                        "Max Wait Time [second]"))
+                                        "Alter Timeout [second]"))
         self.waitsec_dSpinBox.setToolTip(
             _translate(
                 "MainWindow",
-                "Maximum wait time in second after setting alter element."))
+                "Maximum wait time in second for setting the alter element."))
         self.label_18.setText(
             _translate(
                 "MainWindow",
