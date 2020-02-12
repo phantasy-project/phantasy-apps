@@ -22,6 +22,16 @@ from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 from phantasy_ui import random_string
 
 
+def default_alter_action(goal, alter_elem, tolerance, timeout, extra_wait):
+    # set alter element, apply ensure put
+    ensure_put(alter_elem, goal=goal, tol=tolerance, timeout=timeout)
+    printlog("{} RD: {} SP: {}".format(alter_elem.ename, alter_elem.value, goal))
+
+    # extra wait
+    time.sleep(extra_wait)
+    printlog("Additionally, waited for {} seconds.".format(extra_wait))
+
+
 class ScanTask(object):
     """Class to abstract scan routine.
     """
@@ -73,6 +83,9 @@ class ScanTask(object):
 
         # daq rate
         self._daq_rate = 1.0
+
+        # alter action
+        self.alter_action = None
 
         # initialize out data
         self.init_out_data()
@@ -165,6 +178,16 @@ class ScanTask(object):
         """Return all extra monitor elements.
         """
         return self._extra_monitor_elem
+
+    @property
+    def alter_action(self):
+        """Function for setting alter element with the new value.
+        """
+        return self._alter_action
+
+    @alter_action.setter
+    def alter_action(self, fn=None):
+        self._alter_action = default_alter_action if fn is None else fn
 
     @property
     def alter_start(self):
@@ -588,6 +611,7 @@ class ScanWorker(QObject):
         tol = self.task.tolerance
         daq_rate = self.task.daq_rate
         daq_delt = 1.0 / daq_rate
+        alter_action = self.task.alter_action
 
         index_array = range(self.starting_index, alter_array.size)
 
@@ -615,13 +639,8 @@ class ScanWorker(QObject):
                 self.scanPausedAtIndex.emit(idx)
                 break
 
-            # set alter element, apply ensure put
-            ensure_put(alter_elem, goal=x, tol=tol, timeout=wait_sec)
-            printlog("{} RD: {} SP: {}".format(alter_elem.ename, alter_elem.value, x))
-
-            # extra wait
-            time.sleep(extra_wait_sec)
-            printlog("Additionally, waited for {} seconds.".format(extra_wait_sec))
+            alter_action(x, alter_elem=alter_elem, tolerance=tol,
+                         timeout=wait_sec, extra_wait=extra_wait_sec)
 
             # DAQ
             for i in range(nshot):
