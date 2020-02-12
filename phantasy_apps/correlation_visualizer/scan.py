@@ -22,8 +22,14 @@ from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 from phantasy_ui import random_string
 
 
-def default_alter_action(goal, alter_elem, tolerance, timeout, extra_wait):
+def default_alter_action(goal, **kws):
     # set alter element, apply ensure put
+    alter_elem = kws.get('alter_elem', None)
+    tolerance = kws.get('tolerance', 0.01)
+    timeout = kws.get('timeout', 0.01)
+    extra_wait = kws.get('extra_wait', 0.0)
+    if alter_elem is None:
+        return
     ensure_put(alter_elem, goal=goal, tol=tolerance, timeout=timeout)
     printlog("{} RD: {} SP: {}".format(alter_elem.ename, alter_elem.value, goal))
 
