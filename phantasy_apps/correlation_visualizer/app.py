@@ -42,6 +42,7 @@ from .app_monitors_view import MonitorsViewWidget
 from .app_mps_config import MpsConfigWidget
 from .app_points_view import PointsViewWidget
 from .app_save import SaveDataDialog
+from .app_udef_action import UserDefinedActionDialog
 from .app_2d import TwoParamsScanWindow
 from .data import ScanDataModel
 from .scan import ScanTask
@@ -255,6 +256,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         # self.actionMPS_guardian.setChecked(True)
         #
         self.pauseScan[bool].connect(self.on_pause_scan)
+
+        # set alter action as default
+        self.regular_alter_action_rbtn.setChecked(True)
 
     @pyqtSlot(bool)
     def on_pause_scan(self, f):
@@ -660,6 +664,15 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
         # virtual diag?
         self.actionVirtual_diag.setChecked(True)
+
+        # alter action, regular/advanced
+        self._adv_alter_action_dlg = None
+        self.regular_alter_action_rbtn.toggled.connect(
+                partial(self.on_toggle_alter_action_rbtn, 'regular'))
+        self.advanced_alter_action_rbtn.toggled.connect(
+                partial(self.on_toggle_alter_action_rbtn, 'advanced'))
+        self.advanced_alter_action_btn.clicked.connect(
+                self.on_click_adv_alter_action_btn)
 
     def is_virtual_mode(self):
         # if enabled, treat devices virtually, e.g. VA.
@@ -1208,7 +1221,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             "Scan task is done, reset alter element...")
         self.scanlogUpdated.emit(
             "Setting alter element to {0:.3f}...".format(x0))
-        self.scan_task.alter_element.value = x0
+        # self.scan_task.alter_element.value = x0
+        self.scan_task.alter_action(x0, alter_elem=self.scan_task.alter_element)
         self.scanlogUpdated.emit(
             "Alter element reaches {0:.3f}".format(x0))
         # in case it is 'resume' while scan is done
@@ -1539,6 +1553,32 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         lw.load_btn.clicked.emit()
         lw.setEnabled(False)
         self._lv.show()
+
+    @pyqtSlot(bool)
+    def on_toggle_alter_action_rbtn(self, mode):
+        """Toggle alter action mode, 'regular' or 'advanced'.
+        """
+        if mode == 'regular':
+            # reset alter action with the default one.
+            self.scan_task.alter_action = None
+        else:  # mode is advanced
+            self.advanced_alter_action_btn.clicked.emit()
+
+    @pyqtSlot(QVariant)
+    def on_update_alter_action(self, fn):
+        """Update the function for setting alter element.
+        """
+        self.scan_task.alter_action = fn
+
+    @pyqtSlot()
+    def on_click_adv_alter_action_btn(self):
+        """User-defined alter action.
+        """
+        if self._adv_alter_action_dlg is None:
+            self._adv_alter_action_dlg = UserDefinedActionDialog(self)
+            self._adv_alter_action_dlg.alter_action_changed.connect(
+                    self.on_update_alter_action)
+        self._adv_alter_action_dlg.exec_()
 
     # test slots
     def test_scan_started(self):
