@@ -14,6 +14,8 @@ class Ui_Dialog(object):
         Dialog.setObjectName("Dialog")
         Dialog.resize(887, 600)
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
+        self.gridLayout.setContentsMargins(6, 12, 6, 6)
+        self.gridLayout.setSpacing(6)
         self.gridLayout.setObjectName("gridLayout")
         self.label = QtWidgets.QLabel(Dialog)
         self.label.setObjectName("label")
@@ -27,28 +29,38 @@ class Ui_Dialog(object):
             self.browse_btn.sizePolicy().hasHeightForWidth())
         self.browse_btn.setSizePolicy(sizePolicy)
         self.browse_btn.setObjectName("browse_btn")
-        self.gridLayout.addWidget(self.browse_btn, 0, 2, 1, 1)
+        self.gridLayout.addWidget(self.browse_btn, 0, 4, 1, 1)
+        self.cancel_btn = QtWidgets.QPushButton(Dialog)
+        self.cancel_btn.setObjectName("cancel_btn")
+        self.gridLayout.addWidget(self.cancel_btn, 2, 4, 1, 1)
         self.plainTextEdit = QtWidgets.QPlainTextEdit(Dialog)
         self.plainTextEdit.setStyleSheet("QPlainTextEdit {\n"
                                          "    font-family: monospace;\n"
                                          "}")
+        self.plainTextEdit.setPlainText("")
+        self.plainTextEdit.setPlaceholderText("")
         self.plainTextEdit.setObjectName("plainTextEdit")
-        self.gridLayout.addWidget(self.plainTextEdit, 1, 0, 1, 3)
+        self.gridLayout.addWidget(self.plainTextEdit, 1, 0, 1, 5)
+        self.save_btn = QtWidgets.QPushButton(Dialog)
+        self.save_btn.setObjectName("save_btn")
+        self.gridLayout.addWidget(self.save_btn, 0, 2, 1, 1)
+        self.saveas_btn = QtWidgets.QPushButton(Dialog)
+        self.saveas_btn.setObjectName("saveas_btn")
+        self.gridLayout.addWidget(self.saveas_btn, 0, 3, 1, 1)
+        self.ok_btn = QtWidgets.QPushButton(Dialog)
+        self.ok_btn.setObjectName("ok_btn")
+        self.gridLayout.addWidget(self.ok_btn, 2, 3, 1, 1)
         spacerItem = QtWidgets.QSpacerItem(40, 20,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem, 2, 0, 1, 1)
-        self.ok_btn = QtWidgets.QPushButton(Dialog)
-        self.ok_btn.setObjectName("ok_btn")
-        self.gridLayout.addWidget(self.ok_btn, 2, 1, 1, 1)
-        self.cancel_btn = QtWidgets.QPushButton(Dialog)
-        self.cancel_btn.setObjectName("cancel_btn")
-        self.gridLayout.addWidget(self.cancel_btn, 2, 2, 1, 1)
+        self.gridLayout.addItem(spacerItem, 2, 0, 1, 3)
 
         self.retranslateUi(Dialog)
         self.browse_btn.clicked.connect(Dialog.on_open_file)
         self.ok_btn.clicked.connect(Dialog.on_click_ok)
         self.cancel_btn.clicked.connect(Dialog.on_click_cancel)
+        self.save_btn.clicked.connect(Dialog.on_save)
+        self.saveas_btn.clicked.connect(Dialog.on_save_as)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -60,17 +72,10 @@ class Ui_Dialog(object):
                 "Input Python code in the below area or load from a file to define the alter element action"
             ))
         self.browse_btn.setText(_translate("Dialog", "Browse"))
-        self.plainTextEdit.setPlainText(
-            _translate(
-                "Dialog", "import time\n"
-                "def f(x, **kws):\n"
-                "    t = kws.get(\'t\', 1.0)\n"
-                "    alter_elem = kws.get(\'alter_elem\', None) # field to change with x\n"
-                "    if alter_elem is not None:\n"
-                "        alter_elem.value = x\n"
-                "    time.sleep(t)"))
-        self.ok_btn.setText(_translate("Dialog", "OK"))
         self.cancel_btn.setText(_translate("Dialog", "Cancel"))
+        self.save_btn.setText(_translate("Dialog", "Save"))
+        self.saveas_btn.setText(_translate("Dialog", "Save As"))
+        self.ok_btn.setText(_translate("Dialog", "OK"))
 
 
 if __name__ == "__main__":
