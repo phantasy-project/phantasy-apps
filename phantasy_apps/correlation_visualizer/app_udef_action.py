@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import re
+
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QVariant
@@ -20,6 +22,9 @@ class UserDefinedActionDialog(QDialog, Ui_Dialog):
     # function changed
     alter_action_changed = pyqtSignal(QVariant)
 
+    # function name changed
+    func_name_changed = pyqtSignal('QString')
+
     def __init__(self, parent=None):
         super(UserDefinedActionDialog, self).__init__()
         self.parent = parent
@@ -30,6 +35,19 @@ class UserDefinedActionDialog(QDialog, Ui_Dialog):
         self.setWindowTitle(self._title)
 
         self.hl = PythonHighlighter(self.plainTextEdit.document())
+        self.func_name_changed.connect(self.func_name_lineEdit.setText)
+
+    @pyqtSlot()
+    def on_text_changed(self):
+        # try to extra function name
+        s = self.plainTextEdit.toPlainText()
+        r = re.search(r'def\s+(.*)\(.*', s, re.MULTILINE)
+        try:
+            func_name = r.group(1)
+        except AttributeError:
+            pass
+        else:
+            self.func_name_changed.emit(func_name)
 
     @pyqtSlot()
     def on_open_file(self):
@@ -54,7 +72,7 @@ class UserDefinedActionDialog(QDialog, Ui_Dialog):
     @pyqtSlot()
     def on_click_ok(self):
         text = self.plainTextEdit.toPlainText()
-        func = str2func(text)
+        func = str2func(text, func_name=self.func_name_lineEdit.text())
         if func is not None:
             self.close()
             self.setResult(QDialog.Accepted)
@@ -69,3 +87,15 @@ class UserDefinedActionDialog(QDialog, Ui_Dialog):
     def on_click_cancel(self):
         self.close()
         self.setResult(QDialog.Rejected)
+
+    @pyqtSlot()
+    def on_save(self):
+        """Save current text to a file if loaded from a file.
+        """
+        pass
+
+    @pyqtSlot()
+    def on_save_as(self):
+        """Save current text to a file.
+        """
+        pass
