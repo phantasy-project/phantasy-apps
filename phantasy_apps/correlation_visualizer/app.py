@@ -1555,13 +1555,14 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self._lv.show()
 
     @pyqtSlot(bool)
-    def on_toggle_alter_action_rbtn(self, mode):
+    def on_toggle_alter_action_rbtn(self, mode, f):
         """Toggle alter action mode, 'regular' or 'advanced'.
         """
-        if mode == 'regular':
+        if f and mode == 'regular':
             # reset alter action with the default one.
             self.scan_task.alter_action = None
-        else:  # mode is advanced
+
+        if f and mode == 'advanced':  # mode is advanced
             self.advanced_alter_action_btn.clicked.emit()
 
     @pyqtSlot(QVariant)
