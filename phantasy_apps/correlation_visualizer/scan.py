@@ -19,23 +19,8 @@ from phantasy.library.physics.devices import process_devices
 from phantasy_ui import printlog
 from phantasy_apps.utils import current_datetime
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet
+from phantasy_apps.correlation_visualizer.alter_actions import DEFAULT_ALTER_ACTION
 from phantasy_ui import random_string
-
-
-def default_alter_action(goal, **kws):
-    # set alter element, apply ensure put
-    alter_elem = kws.get('alter_elem', None)
-    tolerance = kws.get('tolerance', 0.01)
-    timeout = kws.get('timeout', 0.01)
-    extra_wait = kws.get('extra_wait', 0.0)
-    if alter_elem is None:
-        return
-    ensure_put(alter_elem, goal=goal, tol=tolerance, timeout=timeout)
-    printlog("{} RD: {} SP: {}".format(alter_elem.ename, alter_elem.value, goal))
-
-    # extra wait
-    time.sleep(extra_wait)
-    printlog("Additionally, waited for {} seconds.".format(extra_wait))
 
 
 class ScanTask(object):
@@ -193,7 +178,7 @@ class ScanTask(object):
 
     @alter_action.setter
     def alter_action(self, fn=None):
-        self._alter_action = default_alter_action if fn is None else fn
+        self._alter_action = DEFAULT_ALTER_ACTION if fn is None else fn
 
     @property
     def alter_start(self):
