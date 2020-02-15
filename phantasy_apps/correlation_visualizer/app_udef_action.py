@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
 
 from phantasy_ui import get_open_filename
+from phantasy_ui import get_save_filename
 from phantasy_ui.widgets import PythonHighlighter
 from phantasy_ui.widgets import format_code
 from phantasy_ui.widgets import str2func
@@ -25,6 +26,9 @@ class UserDefinedActionDialog(QDialog, Ui_Dialog):
     # function name changed
     func_name_changed = pyqtSignal('QString')
 
+    # file loaded
+    file_loaded = pyqtSignal('QString')
+
     def __init__(self, parent=None):
         super(UserDefinedActionDialog, self).__init__()
         self.parent = parent
@@ -36,6 +40,13 @@ class UserDefinedActionDialog(QDialog, Ui_Dialog):
 
         self.hl = PythonHighlighter(self.plainTextEdit.document())
         self.func_name_changed.connect(self.func_name_lineEdit.setText)
+        self.file_loaded.connect(self.on_file_loaded)
+
+    @pyqtSlot('QString')
+    def on_file_loaded(self, filepath):
+        self.filepath_lineEdit.setText(filepath)
+        self.save_btn.setEnabled(True)
+        self.saveas_btn.setEnabled(True)
 
     @pyqtSlot()
     def on_text_changed(self):
@@ -68,6 +79,7 @@ class UserDefinedActionDialog(QDialog, Ui_Dialog):
                 return
             else:
                 self.plainTextEdit.setPlainText(code_formatted)
+                self.file_loaded.emit(filepath)
 
     @pyqtSlot()
     def on_click_ok(self):
@@ -88,14 +100,47 @@ class UserDefinedActionDialog(QDialog, Ui_Dialog):
         self.close()
         self.setResult(QDialog.Rejected)
 
+    def _save_data(self, filepath=None):
+        try:
+            code_formatted = format_code(self.plainTextEdit.toPlainText())
+        except RuntimeError:
+            QMessageBox.critical(self, "Checking User-defined Function",
+                    "The code is not right formatted.",
+                    QMessageBox.Ok)
+            return
+        else:
+            self.plainTextEdit.setPlainText(code_formatted)
+
+        if filepath is None:
+            filepath = self.filepath_lineEdit.text()
+
+        try:
+            with open(filepath, 'w') as fp:
+                fp.write(self.plainTextEdit.toPlainText())
+        except:
+            QMessageBox.warning(self, "Save Data to a File",
+                    "Failed to save data to {}.".format(filepath),
+                    QMessageBox.Ok)
+        else:
+            QMessageBox.information(self, "Save Data to a File",
+                    "Saved data to {}.".format(filepath),
+                    QMessageBox.Ok)
+
     @pyqtSlot()
     def on_save(self):
         """Save current text to a file if loaded from a file.
         """
-        pass
+        self._save_data()
 
     @pyqtSlot()
     def on_save_as(self):
         """Save current text to a file.
         """
-        pass
+        filename, ext = get_save_filename(self,
+                caption="Save Data to a file",
+                type_filter="Python Files (*.py)")
+
+        if filename is None:
+            return
+        self._save_data(filename)
+        self.file_loaded.emit(filename)
