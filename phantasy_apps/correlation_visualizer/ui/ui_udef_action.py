@@ -13,19 +13,24 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(1060, 800)
-        self.gridLayout = QtWidgets.QGridLayout(Dialog)
-        self.gridLayout.setContentsMargins(6, 12, 6, 6)
-        self.gridLayout.setSpacing(6)
-        self.gridLayout.setObjectName("gridLayout")
+        self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
+        self.verticalLayout.setContentsMargins(6, 12, 6, 6)
+        self.verticalLayout.setSpacing(6)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setSpacing(6)
+        self.horizontalLayout.setObjectName("horizontalLayout")
         self.label = QtWidgets.QLabel(Dialog)
         self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 0, 0, 1, 3)
+        self.horizontalLayout.addWidget(self.label)
         self.save_btn = QtWidgets.QPushButton(Dialog)
+        self.save_btn.setEnabled(False)
         self.save_btn.setObjectName("save_btn")
-        self.gridLayout.addWidget(self.save_btn, 0, 3, 1, 1)
+        self.horizontalLayout.addWidget(self.save_btn)
         self.saveas_btn = QtWidgets.QPushButton(Dialog)
+        self.saveas_btn.setEnabled(False)
         self.saveas_btn.setObjectName("saveas_btn")
-        self.gridLayout.addWidget(self.saveas_btn, 0, 4, 1, 1)
+        self.horizontalLayout.addWidget(self.saveas_btn)
         self.browse_btn = QtWidgets.QPushButton(Dialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -35,14 +40,29 @@ class Ui_Dialog(object):
             self.browse_btn.sizePolicy().hasHeightForWidth())
         self.browse_btn.setSizePolicy(sizePolicy)
         self.browse_btn.setObjectName("browse_btn")
-        self.gridLayout.addWidget(self.browse_btn, 0, 5, 1, 1)
+        self.horizontalLayout.addWidget(self.browse_btn)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setSpacing(6)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label_3 = QtWidgets.QLabel(Dialog)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_2.addWidget(self.label_3)
+        self.filepath_lineEdit = QtWidgets.QLineEdit(Dialog)
+        self.filepath_lineEdit.setReadOnly(True)
+        self.filepath_lineEdit.setObjectName("filepath_lineEdit")
+        self.horizontalLayout_2.addWidget(self.filepath_lineEdit)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.plainTextEdit = QtWidgets.QPlainTextEdit(Dialog)
         self.plainTextEdit.setStyleSheet("QPlainTextEdit {\n"
                                          "    font-family: monospace;\n"
                                          "}")
         self.plainTextEdit.setPlaceholderText("")
         self.plainTextEdit.setObjectName("plainTextEdit")
-        self.gridLayout.addWidget(self.plainTextEdit, 1, 0, 1, 6)
+        self.verticalLayout.addWidget(self.plainTextEdit)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setSpacing(6)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.label_2 = QtWidgets.QLabel(Dialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -52,7 +72,7 @@ class Ui_Dialog(object):
             self.label_2.sizePolicy().hasHeightForWidth())
         self.label_2.setSizePolicy(sizePolicy)
         self.label_2.setObjectName("label_2")
-        self.gridLayout.addWidget(self.label_2, 2, 0, 1, 1)
+        self.horizontalLayout_3.addWidget(self.label_2)
         self.func_name_lineEdit = QtWidgets.QLineEdit(Dialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -62,17 +82,18 @@ class Ui_Dialog(object):
             self.func_name_lineEdit.sizePolicy().hasHeightForWidth())
         self.func_name_lineEdit.setSizePolicy(sizePolicy)
         self.func_name_lineEdit.setObjectName("func_name_lineEdit")
-        self.gridLayout.addWidget(self.func_name_lineEdit, 2, 1, 1, 1)
+        self.horizontalLayout_3.addWidget(self.func_name_lineEdit)
         spacerItem = QtWidgets.QSpacerItem(40, 20,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem, 2, 2, 1, 2)
+        self.horizontalLayout_3.addItem(spacerItem)
         self.ok_btn = QtWidgets.QPushButton(Dialog)
         self.ok_btn.setObjectName("ok_btn")
-        self.gridLayout.addWidget(self.ok_btn, 2, 4, 1, 1)
+        self.horizontalLayout_3.addWidget(self.ok_btn)
         self.cancel_btn = QtWidgets.QPushButton(Dialog)
         self.cancel_btn.setObjectName("cancel_btn")
-        self.gridLayout.addWidget(self.cancel_btn, 2, 5, 1, 1)
+        self.horizontalLayout_3.addWidget(self.cancel_btn)
+        self.verticalLayout.addLayout(self.horizontalLayout_3)
 
         self.retranslateUi(Dialog)
         self.browse_btn.clicked.connect(Dialog.on_open_file)
@@ -92,8 +113,11 @@ class Ui_Dialog(object):
                 "Input Python code in the below area or load from a file to define the alter element action"
             ))
         self.save_btn.setText(_translate("Dialog", "Save"))
+        self.save_btn.setShortcut(_translate("Dialog", "Ctrl+S"))
         self.saveas_btn.setText(_translate("Dialog", "Save As"))
+        self.saveas_btn.setShortcut(_translate("Dialog", "Ctrl+Shift+S"))
         self.browse_btn.setText(_translate("Dialog", "Browse"))
+        self.label_3.setText(_translate("Dialog", "Loaded from the file"))
         self.plainTextEdit.setPlainText(
             _translate(
                 "Dialog",
@@ -109,7 +133,7 @@ class Ui_Dialog(object):
                 "   - \'extra_wait\': additional wait time in second after \'ensure put\'; \n"
                 "\"\"\"\n"
                 "from phantasy import ensure_put\n"
-                "# from phantasy_ui import printlog\n"
+                "from phantasy_ui import printlog\n"
                 "                                                                               \n"
                 "def f(goal, **kws):                                                                                                                                                                                           \n"
                 "    # set alter element, apply ensure put                                         \n"
@@ -120,11 +144,11 @@ class Ui_Dialog(object):
                 "    if alter_elem is None:                                                        \n"
                 "        return                                                                    \n"
                 "    ensure_put(alter_elem, goal=goal, tol=tolerance, timeout=timeout)          \n"
-                "    # printlog(\"{} RD: {} SP: {}\".format(alter_elem.ename, alter_elem.value, goal))\n"
+                "    printlog(\"{} RD: {} SP: {}\".format(alter_elem.ename, alter_elem.value, goal))\n"
                 "                                                                               \n"
                 "    # extra wait                                                               \n"
                 "    time.sleep(extra_wait)                                                     \n"
-                "    # printlog(\"Additionally, waited for {} seconds.\".format(extra_wait)) "
+                "    printlog(\"Additionally, waited for {} seconds.\".format(extra_wait)) "
             ))
         self.label_2.setText(_translate("Dialog", "Function Name"))
         self.func_name_lineEdit.setToolTip(
