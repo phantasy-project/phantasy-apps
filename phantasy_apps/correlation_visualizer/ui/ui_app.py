@@ -855,7 +855,6 @@ class Ui_MainWindow(object):
         self.actionDevice_Processor.setObjectName("actionDevice_Processor")
         self.menu_File.addAction(self.actionSave)
         self.menu_File.addSeparator()
-        self.menu_File.addAction(self.actionE_xit)
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.actionAbout)
@@ -871,6 +870,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionSave_Task)
         self.toolBar.addAction(self.actionLoad_Task)
         self.toolBar.addAction(self.actionEnable_2D_Scan)
+        self.toolBar.addAction(self.actionE_xit)
 
         self.retranslateUi(MainWindow)
         self.actionAbout_Qt.triggered.connect(MainWindow.onAboutQt)
@@ -895,10 +895,6 @@ class Ui_MainWindow(object):
         self.actionEnable_2D_Scan.triggered.connect(MainWindow.on2DScanAction)
         self.actionDevice_Processor.triggered.connect(
             MainWindow.onConfigDeviceProcessor)
-        self.advanced_alter_action_rbtn.toggled['bool'].connect(
-            self.advanced_alter_action_btn.setEnabled)
-        self.regular_alter_action_rbtn.toggled['bool'].connect(
-            self.advanced_alter_action_btn.setDisabled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.alter_elem_lineEdit,
                                self.select_alter_elem_btn)
@@ -992,10 +988,19 @@ class Ui_MainWindow(object):
         self.select_more_monitor_elems_btn.setText(
             _translate("MainWindow", "More"))
         self.label_18.setText(_translate("MainWindow", "Alter Action"))
+        self.regular_alter_action_rbtn.setToolTip(
+            _translate("MainWindow", "Default alter policy: ensure_put."))
         self.regular_alter_action_rbtn.setText(
             _translate("MainWindow", "Regular"))
+        self.advanced_alter_action_rbtn.setToolTip(
+            _translate("MainWindow", "User-defined alter policy."))
         self.advanced_alter_action_rbtn.setText(
             _translate("MainWindow", "Advanced"))
+        self.advanced_alter_action_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "Input user-defined function for setting the alter element(s)."
+            ))
         self.advanced_alter_action_btn.setText(
             _translate("MainWindow", "Action"))
         self.label_12.setText(_translate("MainWindow", "Event Log"))
