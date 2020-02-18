@@ -20,7 +20,9 @@ from phantasy_ui import printlog
 from phantasy_apps.utils import current_datetime
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 from phantasy_apps.correlation_visualizer.alter_actions import DEFAULT_ALTER_ACTION
+from phantasy_apps.correlation_visualizer.alter_actions import DEFAULT_ALTER_ACTION_CODE
 from phantasy_ui import random_string
+from phantasy_ui.widgets import str2func
 
 
 class ScanTask(object):
@@ -75,8 +77,9 @@ class ScanTask(object):
         # daq rate
         self._daq_rate = 1.0
 
-        # alter action
+        # alter action, mode: 'regular'
         self.alter_action = None
+        self.alter_action_code = None
 
         # initialize out data
         self.init_out_data()
@@ -171,6 +174,19 @@ class ScanTask(object):
         return self._extra_monitor_elem
 
     @property
+    def alter_action_code(self):
+        """str: Definition of alter action.
+        """
+        return self._alter_action_code
+
+    @alter_action_code.setter
+    def alter_action_code(self, s=None):
+        if s is None:
+            self._alter_action_code = DEFAULT_ALTER_ACTION_CODE
+        else:
+            self._alter_action_code = s
+
+    @property
     def alter_action(self):
         """Function for setting alter element with the new value.
         """
@@ -178,7 +194,12 @@ class ScanTask(object):
 
     @alter_action.setter
     def alter_action(self, fn=None):
-        self._alter_action = DEFAULT_ALTER_ACTION if fn is None else fn
+        if fn is None:
+            self._alter_action = DEFAULT_ALTER_ACTION
+            self._alter_action_mode = 'regular'
+        else:
+            self._alter_action = fn
+            self._alter_action_mode = 'advanced'
 
     @property
     def alter_start(self):
@@ -432,6 +453,14 @@ class ScanTask(object):
         task_dict['tolerance'] = self.tolerance
         data_sheet.update({'task': task_dict})
 
+        # alter action
+        action_dict = OrderedDict()
+        action_dict['mode'] = self._alter_action_mode
+        action_dict['function'] = {
+                'name': self._alter_action.__name__,
+                'code': self._alter_action_code}
+        data_sheet.update({'alter_action': action_dict})
+
         # devices
         dev_dict = OrderedDict()
         dev_dict['alter_element'] = {
@@ -516,6 +545,17 @@ def load_task(filepath, o):
     array = task['task']['scan_range']
     scan_task.set_alter_array(array)
     scan_task.array_mode = array_mode
+
+    # alter action
+    default_action_dict = {'mode': 'regular', 'function': None}
+    alter_action_dict = task.get('alter_action', default_action_dict)
+    if alter_action_dict['mode'] == 'regular':
+        scan_task.alter_action = None
+    else:
+        f_name = alter_action_dict['function']['name']
+        f_code = alter_action_dict['function']['code']
+        scan_task.alter_action_code = f_code
+        scan_task.alter_action = str2func(f_code, func_name=f_name)
 
     # acquired data
     scan_task.scan_out_data = np.asarray(task['data']['array'])
