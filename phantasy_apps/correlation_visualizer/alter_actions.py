@@ -11,6 +11,7 @@ Here are some rules:
    - 'timeout': timeout in second for 'ensure put';
    - 'extra_wait': additional wait time in second after 'ensure put';
 """
+import inspect
 import time
 from phantasy import ensure_put
 from phantasy_ui import printlog
@@ -33,3 +34,4 @@ def default_alter_action(goal, **kws):
 
 
 DEFAULT_ALTER_ACTION = default_alter_action
+DEFAULT_ALTER_ACTION_CODE = inspect.getsource(DEFAULT_ALTER_ACTION)
