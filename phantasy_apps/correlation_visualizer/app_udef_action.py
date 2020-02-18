@@ -20,8 +20,8 @@ from phantasy_apps.correlation_visualizer.ui.ui_udef_action import Ui_Dialog
 
 class UserDefinedActionDialog(QDialog, Ui_Dialog):
 
-    # function changed
-    alter_action_changed = pyqtSignal(QVariant)
+    # function changed, obj, str
+    alter_action_changed = pyqtSignal(QVariant, 'QString')
 
     # function name changed
     func_name_changed = pyqtSignal('QString')
@@ -83,12 +83,13 @@ class UserDefinedActionDialog(QDialog, Ui_Dialog):
 
     @pyqtSlot()
     def on_click_ok(self):
-        text = self.plainTextEdit.toPlainText()
-        func = str2func(text, func_name=self.func_name_lineEdit.text())
-        if func is not None:
+        func_str = self.plainTextEdit.toPlainText()
+        func_obj = str2func(func_str,
+                            func_name=self.func_name_lineEdit.text())
+        if func_obj is not None:
             self.close()
             self.setResult(QDialog.Accepted)
-            self.alter_action_changed.emit(func)
+            self.alter_action_changed.emit(func_obj, func_str)
         else:
             QMessageBox.warning(self, self._title,
                     "The code is not right formatted.",
