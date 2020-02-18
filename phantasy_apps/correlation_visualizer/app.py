@@ -1392,6 +1392,26 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self._setup_element_btn_from_scan_task(scan_task, 'alter')
         self._setup_element_btn_from_scan_task(scan_task, 'monitor')
 
+        # alter action
+        alter_mode = self.scan_task._alter_action_mode
+        for o in (self.regular_alter_action_rbtn,
+                  self.advanced_alter_action_rbtn):
+            o.toggled.disconnect()
+        self.advanced_alter_action_btn.setDisabled(alter_mode == 'regular')
+        if alter_mode == 'regular':
+            self.regular_alter_action_rbtn.setChecked(True)
+        else:
+            self.advanced_alter_action_rbtn.setChecked(True)
+            self._adv_alter_action_dlg = UserDefinedActionDialog(self)
+            self._adv_alter_action_dlg.alter_action_changed.connect(
+                    self.on_update_alter_action)
+            self._adv_alter_action_dlg.plainTextEdit.setPlainText(
+                    self.scan_task.alter_action_code)
+        self.regular_alter_action_rbtn.toggled.connect(
+                partial(self.on_toggle_alter_action_rbtn, 'regular'))
+        self.advanced_alter_action_rbtn.toggled.connect(
+                partial(self.on_toggle_alter_action_rbtn, 'advanced'))
+
         # extra monitors
         extra_monis = scan_task.get_extra_monitors()
         extra_monis_dis = scan_task._extra_moni_display
@@ -1561,15 +1581,18 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         if f and mode == 'regular':
             # reset alter action with the default one.
             self.scan_task.alter_action = None
+            self.advanced_alter_action_btn.setEnabled(False)
 
         if f and mode == 'advanced':  # mode is advanced
+            self.advanced_alter_action_btn.setEnabled(True)
             self.advanced_alter_action_btn.clicked.emit()
 
-    @pyqtSlot(QVariant)
-    def on_update_alter_action(self, fn):
+    @pyqtSlot(QVariant, 'QString')
+    def on_update_alter_action(self, func_obj, func_str):
         """Update the function for setting alter element.
         """
-        self.scan_task.alter_action = fn
+        self.scan_task.alter_action = func_obj
+        self.scan_task.alter_action_code = func_str
 
     @pyqtSlot()
     def on_click_adv_alter_action_btn(self):
