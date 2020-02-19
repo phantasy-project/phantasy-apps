@@ -1,8 +1,7 @@
 var Ui = {
 
     findDevices: function () {
-        var descs =  Array.prototype.slice.call(document.querySelectorAll("desc"));
-        console.log(descs);
+        var descs = Array.prototype.slice.call(document.querySelectorAll("desc"));
         descs.forEach(function (desc) {
             var result = /device=(.*)/.exec(desc.textContent);
             if (result) {
@@ -15,9 +14,14 @@ var Ui = {
                 if (!parent.onclick)
                     parent.onclick = function (evt) {
                         CTRL.select(devname);
-                    };
+                };
+                if (!parent.ondblclick)
+                    parent.ondblclick = function (evt) {
+                        CTRL.dblSelect(devname);
+                };
             }
         });
+        CTRL.loadDeviceDone();
     },
 
     getElementsByDeviceName: function (devname) {
@@ -31,7 +35,6 @@ var Ui = {
         });
         return els;
     },
-
 
     findParentDevice: function (el) {
         while (el) {
@@ -70,12 +73,12 @@ var Ui = {
         var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         console.log("bbrect " + bb.width + ", " + bb.height);
         var padding = 0.2 * Math.min(bb.width, bb.height);
-        rect.setAttribute("width", bb.width + 2*padding);
-        rect.setAttribute("height", bb.height + 2*padding);
+        rect.setAttribute("width", bb.width + 1.0 * padding);
+        rect.setAttribute("height", bb.height + 1.0 * padding);
         rect.setAttribute("x", bb.x - padding);
         rect.setAttribute("y", bb.y - padding);
-        rect.setAttribute("rx", 2*padding);
-        rect.setAttribute("ry", 2*padding);
+        rect.setAttribute("rx", 1.0 * padding);
+        rect.setAttribute("ry", 1.0 * padding);
         rect.setAttribute("class", "select");
         return rect;
     },
@@ -89,7 +92,7 @@ var Ui = {
     },
 
     select: function (devname) {
-        console.log("select", devname);
+        console.log("Select", devname);
         var elements = Ui.getElementsByDeviceName(devname);
         Ui.removeElementsOfClass("select");
 

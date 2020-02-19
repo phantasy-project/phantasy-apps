@@ -48,7 +48,15 @@ class Controller(QObject):
     @pyqtSlot('QString')
     def registerDevice(self, devname):
         self._devices[devname] = False
-        printlog("Registered device %s" % devname)
+        msg = "Registered device %s" % devname
+        printlog(msg)
+
+    @pyqtSlot()
+    def loadDeviceDone(self):
+        n = len([k for k, v in self._devices.items() if not v])
+        msg = "Loaded {} devices.".format(n)
+        self.status_info_changed.emit(msg)
+        delayed_exec(lambda:self.status_info_changed.emit(''), 5000)
 
     def set_status(self, devname, status):
         if status != self._devices[devname]:
