@@ -10,7 +10,7 @@ var Ui = {
                 console.log("Found device: " + devname +
                             " (" + parent.getAttribute("id") + ")");
                 CTRL.registerDevice(devname);
-                //parent.classList.add(devname);
+                //parent.classList.add('tooltip');
                 if (!parent.onclick)
                     parent.onclick = function (evt) {
                         CTRL.select(devname);
@@ -18,6 +18,10 @@ var Ui = {
                 if (!parent.ondblclick)
                     parent.ondblclick = function (evt) {
                         CTRL.dblSelect(devname);
+                };
+                if (!parent.onmouseover)
+                    parent.onmouseover = function (evt) {
+                        CTRL.mouseOver(devname);
                 };
             }
         });
@@ -90,6 +94,15 @@ var Ui = {
             el.parentNode.removeChild(el);
         });
     },
+
+//    hover: function (devname) {
+//        console.log("Hover", devname);
+//        var elements = Ui.getElementsByDeviceName(devname);
+//        
+//        elements.forEach(function (el) {
+//            el.parentNode.setAttribute('title', devname);
+//        });
+//    },
 
     select: function (devname) {
         console.log("Select", devname);

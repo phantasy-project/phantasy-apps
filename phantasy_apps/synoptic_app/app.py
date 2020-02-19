@@ -50,7 +50,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         #
         mp = MachinePortal("FRIB_VA", 'LS1FS1')
         self.lattice = mp.work_lattice_conf
-        
+
         #
         self.post_init()
         #
@@ -68,6 +68,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.frame = self.view.page().mainFrame()
         self.controller = Controller(self.frame, self.lattice)
         self.controller.status_info_changed.connect(self.statusInfoChanged)
+        self.controller.pointed_device_changed.connect(self.on_pointed_device_changed)
         self.frame.addToJavaScriptWindowObject('CTRL', self.controller)
         self.view.show()
         self.frame.javaScriptWindowObjectCleared.connect(self.on_javaScriptWindowObjectCleared)
@@ -76,6 +77,10 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         #self.frame = self.view.page().mainFrame()
         #self.controller = Controller(self.frame, self.lattice)
         self.frame.addToJavaScriptWindowObject('CTRL', self.controller)
+
+    @pyqtSlot('QString')
+    def on_pointed_device_changed(self, devname):
+        self.current_pointed_device_lineEdit.setText(devname)
 
     @pyqtSlot()
     def on_open_file(self):

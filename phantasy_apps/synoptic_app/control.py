@@ -15,6 +15,9 @@ class Controller(QObject):
     # info to publish on status bar
     status_info_changed = pyqtSignal('QString')
 
+    # pointed device
+    pointed_device_changed = pyqtSignal('QString')
+
     def __init__(self, frame, lattice, parent=None):
         super(self.__class__, self).__init__(parent)
         self.lattice = lattice
@@ -48,8 +51,14 @@ class Controller(QObject):
     @pyqtSlot('QString')
     def registerDevice(self, devname):
         self._devices[devname] = False
-        msg = "Registered device %s" % devname
+        msg = "Registered device {}".format(devname)
         printlog(msg)
+
+    @pyqtSlot('QString')
+    def mouseOver(self, devname):
+        msg = "Hover device {}".format(devname)
+        printlog(msg)
+        self.pointed_device_changed.emit(devname)
 
     @pyqtSlot()
     def loadDeviceDone(self):
