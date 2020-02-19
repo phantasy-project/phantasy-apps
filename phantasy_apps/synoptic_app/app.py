@@ -20,7 +20,9 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QUrl
 
 from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtWidgets import QVBoxLayout
+
+from phantasy import MachinePortal
+
 from phantasy_ui import BaseAppForm
 from phantasy_ui import get_open_filename
 
@@ -46,15 +48,17 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.postInitUi()
 
         #
+        mp = MachinePortal("FRIB_VA", 'LS1FS1')
+        self.lattice = mp.work_lattice_conf
+        
+        #
         self.post_init()
         #
         self.set_view(filepath)
 
     def post_init(self):
         self.view = MyWebView()
-        layout = QVBoxLayout(self)
-        layout.addWidget(self.view)
-        self.centralwidget.setLayout(layout)
+        self.vbox.addWidget(self.view)
 
     def set_view(self, filepath):
         print("Set view with {}".format(filepath))
@@ -62,14 +66,14 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.view.load(QUrl.fromLocalFile(os.path.abspath(filepath)))
         #
         self.frame = self.view.page().mainFrame()
-        self.controller = Controller(self.frame)
+        self.controller = Controller(self.frame, self.lattice)
         self.frame.addToJavaScriptWindowObject('CTRL', self.controller)
         self.view.show()
         self.frame.javaScriptWindowObjectCleared.connect(self.on_javaScriptWindowObjectCleared)
 
     def on_javaScriptWindowObjectCleared(self):
-        self.frame = self.view.page().mainFrame()
-        self.controller = Controller(self.frame)
+        #self.frame = self.view.page().mainFrame()
+        #self.controller = Controller(self.frame, self.lattice)
         self.frame.addToJavaScriptWindowObject('CTRL', self.controller)
 
     @pyqtSlot()
