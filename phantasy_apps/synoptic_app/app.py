@@ -67,6 +67,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         #
         self.frame = self.view.page().mainFrame()
         self.controller = Controller(self.frame, self.lattice)
+        self.controller.status_info_changed.connect(self.statusInfoChanged)
         self.frame.addToJavaScriptWindowObject('CTRL', self.controller)
         self.view.show()
         self.frame.javaScriptWindowObjectCleared.connect(self.on_javaScriptWindowObjectCleared)
