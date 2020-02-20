@@ -106,6 +106,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(float, float)
     def on_svg_basesize_changed(self, w, h):
         printlog("Get SVG basesize", w, h)
+        self.svg_basesize = (w, h)
         viewSize = self.view.frameSize()
         zf_w = viewSize.width() / w * 100
         zf_h = viewSize.height() / h * 100
@@ -133,6 +134,16 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
     def on_zoom_set_view(self, zf=100.0):
         self.view.zoom_factor = zf
         self.view.zooming_view.emit()
+
+    def resizeEvent(self, evt):
+        # do not trigger very often!
+        w, h = self.svg_basesize
+        viewSize = self.view.frameSize()
+        zf_w = viewSize.width() / w * 100
+        zf_h = viewSize.height() / h * 100
+        self.on_zoom_set_view(min(zf_w, zf_h))
+        QMainWindow.resizeEvent(self, evt)
+
 
 if __name__ == "__main__":
     from PyQt5.QtWidgets import QApplication
