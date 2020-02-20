@@ -84,6 +84,12 @@ class Ui_MainWindow(object):
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.action_zoom_reset.setIcon(icon2)
         self.action_zoom_reset.setObjectName("action_zoom_reset")
+        self.action_zoom_page_fit = QtWidgets.QAction(MainWindow)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_page-fit.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.action_zoom_page_fit.setIcon(icon3)
+        self.action_zoom_page_fit.setObjectName("action_zoom_page_fit")
         self.menu_File.addAction(self.action_Open)
         self.menu_File.addSeparator()
         self.menu_File.addAction(self.actionE_xit)
@@ -96,6 +102,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.action_zoom_in)
         self.toolBar.addAction(self.action_zoom_out)
         self.toolBar.addAction(self.action_zoom_reset)
+        self.toolBar.addAction(self.action_zoom_page_fit)
 
         self.retranslateUi(MainWindow)
         self.actionAbout_Qt.triggered.connect(MainWindow.onAboutQt)
@@ -104,7 +111,9 @@ class Ui_MainWindow(object):
         self.action_Open.triggered.connect(MainWindow.on_open_file)
         self.action_zoom_in.triggered.connect(MainWindow.on_zoom_in_view)
         self.action_zoom_out.triggered.connect(MainWindow.on_zoom_out_view)
-        self.action_zoom_reset.triggered.connect(MainWindow.on_zoom_reset_view)
+        self.action_zoom_reset.triggered.connect(MainWindow.on_zoom_set_view)
+        self.action_zoom_page_fit.triggered.connect(
+            MainWindow.on_zoom_fit_page_view)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -123,8 +132,18 @@ class Ui_MainWindow(object):
         self.actionContents.setShortcut(_translate("MainWindow", "F1"))
         self.action_Open.setText(_translate("MainWindow", "&Open"))
         self.action_zoom_in.setText(_translate("MainWindow", "zoom_in"))
+        self.action_zoom_in.setToolTip(
+            _translate("MainWindow", "Enlarge the view."))
         self.action_zoom_out.setText(_translate("MainWindow", "zoom_out"))
+        self.action_zoom_out.setToolTip(
+            _translate("MainWindow", "Shrink the view."))
         self.action_zoom_reset.setText(_translate("MainWindow", "zoom_reset"))
+        self.action_zoom_reset.setToolTip(
+            _translate("MainWindow", "Reset the view."))
+        self.action_zoom_page_fit.setText(
+            _translate("MainWindow", "zoom_page_fit"))
+        self.action_zoom_page_fit.setToolTip(
+            _translate("MainWindow", "Page fit the view."))
 
 
 from . import resources_rc
