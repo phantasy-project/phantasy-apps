@@ -3,6 +3,8 @@
 import logging
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWebKitWidgets import QWebView
 from PyQt5.QtWebKitWidgets import QWebPage
 
@@ -26,6 +28,9 @@ class LoggingWebPage(QWebPage):
 
 class MyWebView(QWebView):
 
+    # zoom
+    zooming_view = pyqtSignal()
+
     def __init__(self, *args, **kwargs):
         super(self.__class__, self).__init__(*args, **kwargs)
         # Prevent the reload menu from opening. It will be useless anyway.
@@ -34,13 +39,22 @@ class MyWebView(QWebView):
         #
         self.setPage(LoggingWebPage())
 
+        #
+        self.zoom_factor = self.zoomFactor() * 100
+        self.zooming_view.connect(self.on_zooming_view)
+
     def wheelEvent(self, event):
-        frame = self.page().mainFrame()
         delta = event.angleDelta().y()
-        scale = 1 + 0.1 * delta / 240
-        frame.setZoomFactor(frame.zoomFactor() * scale)
+        self.zoom_factor = self.zoom_factor * (1 + 0.05 * delta / 120)
+        self.zooming_view.emit()
+
+    @pyqtSlot()
+    def on_zooming_view(self):
+        self.setZoomFactor(self.zoom_factor / 100.0)
+
+    def change_zoom_factor(self, x):
+        self.zoom_factor += x
+        self.zooming_view.emit()
 
     def contentsSizeChanged(self, event):
         printlog(event)
-
-

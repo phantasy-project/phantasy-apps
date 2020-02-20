@@ -19,12 +19,16 @@ import os
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QUrl
 
+from PyQt5.QtGui import QKeySequence
+
 from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QShortcut
 
 from phantasy import MachinePortal
 
 from phantasy_ui import BaseAppForm
 from phantasy_ui import get_open_filename
+from phantasy_ui import printlog
 
 from phantasy_apps.synoptic_app.control import Controller
 from phantasy_apps.synoptic_app.webview import MyWebView
@@ -60,8 +64,17 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.view = MyWebView()
         self.vbox.addWidget(self.view)
 
+        frame = self.view.page().mainFrame()
+        frame.loadFinished.connect(self.on_frame_loaded)
+
+        # keyshorts
+        self.action_zoom_in.setShortcut(QKeySequence.ZoomIn)
+        self.action_zoom_out.setShortcut(QKeySequence.ZoomOut)
+        zoom0 = QShortcut(QKeySequence("Ctrl+0"), self)
+        zoom0.activated.connect(self.on_zoom_reset_view)
+
     def set_view(self, filepath):
-        print("Set view with {}".format(filepath))
+        printlog("Set view with {}".format(filepath))
         #
         self.view.load(QUrl.fromLocalFile(os.path.abspath(filepath)))
         #
@@ -78,6 +91,13 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         #self.controller = Controller(self.frame, self.lattice)
         self.frame.addToJavaScriptWindowObject('CTRL', self.controller)
 
+    @pyqtSlot(bool)
+    def on_frame_loaded(self, f):
+        printlog("Page is loaded")
+        contentsSize = self.frame.contentsSize()
+        viewSize = self.view.frameSize()
+        print(contentsSize, viewSize)
+
     @pyqtSlot('QString')
     def on_pointed_device_changed(self, devname):
         self.current_pointed_device_lineEdit.setText(devname)
@@ -92,6 +112,18 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
             return
         self.set_view(filepath)
 
+    @pyqtSlot()
+    def on_zoom_in_view(self):
+        self.view.change_zoom_factor(10)
+
+    @pyqtSlot()
+    def on_zoom_out_view(self):
+        self.view.change_zoom_factor(-10)
+
+    @pyqtSlot()
+    def on_zoom_reset_view(self):
+        self.view.zoom_factor = 100
+        self.view.zooming_view.emit()
 
 if __name__ == "__main__":
     from PyQt5.QtWidgets import QApplication
