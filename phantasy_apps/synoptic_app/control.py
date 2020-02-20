@@ -18,6 +18,9 @@ class Controller(QObject):
     # pointed device
     pointed_device_changed = pyqtSignal('QString')
 
+    # svg basesize, width, height
+    svg_basesize_changed = pyqtSignal(float, float)
+
     def __init__(self, frame, lattice, parent=None):
         super(self.__class__, self).__init__(parent)
         self.lattice = lattice
@@ -74,3 +77,8 @@ class Controller(QObject):
                                           devname, status))
             self._devices[devname] = status
 
+    @pyqtSlot(float, float)
+    def get_content_size(self, w, h):
+        """Get SVG base size of width x height in px.
+        """
+        self.svg_basesize_changed.emit(w, h)

@@ -15,6 +15,7 @@ Show the available templates:
 >>> makeBasePyQtApp -l
 """
 import os
+from functools import partial
 
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QUrl
@@ -64,31 +65,31 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.view = MyWebView()
         self.vbox.addWidget(self.view)
 
-        frame = self.view.page().mainFrame()
-        frame.loadFinished.connect(self.on_frame_loaded)
+        self.frame = self.view.page().mainFrame()
+        self.frame.loadFinished.connect(self.on_frame_loaded)
+
+        self.controller = Controller(self.frame, self.lattice)
+        self.controller.status_info_changed.connect(self.statusInfoChanged)
+        self.controller.pointed_device_changed.connect(self.on_pointed_device_changed)
+        self.controller.svg_basesize_changed.connect(self.on_svg_basesize_changed)
+
+        self.frame.addToJavaScriptWindowObject('CTRL', self.controller)
+        self.frame.javaScriptWindowObjectCleared.connect(
+                self.on_javaScriptWindowObjectCleared)
 
         # keyshorts
         self.action_zoom_in.setShortcut(QKeySequence.ZoomIn)
         self.action_zoom_out.setShortcut(QKeySequence.ZoomOut)
         zoom0 = QShortcut(QKeySequence("Ctrl+0"), self)
-        zoom0.activated.connect(self.on_zoom_reset_view)
+        zoom0.activated.connect(partial(self.on_zoom_set_view, 100))
 
     def set_view(self, filepath):
         printlog("Set view with {}".format(filepath))
         #
         self.view.load(QUrl.fromLocalFile(os.path.abspath(filepath)))
-        #
-        self.frame = self.view.page().mainFrame()
-        self.controller = Controller(self.frame, self.lattice)
-        self.controller.status_info_changed.connect(self.statusInfoChanged)
-        self.controller.pointed_device_changed.connect(self.on_pointed_device_changed)
-        self.frame.addToJavaScriptWindowObject('CTRL', self.controller)
         self.view.show()
-        self.frame.javaScriptWindowObjectCleared.connect(self.on_javaScriptWindowObjectCleared)
 
     def on_javaScriptWindowObjectCleared(self):
-        #self.frame = self.view.page().mainFrame()
-        #self.controller = Controller(self.frame, self.lattice)
         self.frame.addToJavaScriptWindowObject('CTRL', self.controller)
 
     @pyqtSlot(bool)
@@ -101,6 +102,14 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot('QString')
     def on_pointed_device_changed(self, devname):
         self.current_pointed_device_lineEdit.setText(devname)
+
+    @pyqtSlot(float, float)
+    def on_svg_basesize_changed(self, w, h):
+        printlog("Get SVG basesize", w, h)
+        viewSize = self.view.frameSize()
+        zf_w = viewSize.width() / w * 100
+        zf_h = viewSize.height() / h * 100
+        self.on_zoom_set_view(min(zf_w, zf_h))
 
     @pyqtSlot()
     def on_open_file(self):
@@ -121,8 +130,8 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.view.change_zoom_factor(-10)
 
     @pyqtSlot()
-    def on_zoom_reset_view(self):
-        self.view.zoom_factor = 100
+    def on_zoom_set_view(self, zf=100.0):
+        self.view.zoom_factor = zf
         self.view.zooming_view.emit()
 
 if __name__ == "__main__":
