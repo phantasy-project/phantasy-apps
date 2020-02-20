@@ -62,6 +62,9 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.set_view(filepath)
 
     def post_init(self):
+        #
+        self.svg_basesize = None
+        #
         self.view = MyWebView()
         self.vbox.addWidget(self.view)
 
@@ -105,12 +108,8 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(float, float)
     def on_svg_basesize_changed(self, w, h):
-        printlog("Get SVG basesize", w, h)
         self.svg_basesize = (w, h)
-        viewSize = self.view.frameSize()
-        zf_w = viewSize.width() / w * 100
-        zf_h = viewSize.height() / h * 100
-        self.on_zoom_set_view(min(zf_w, zf_h))
+        self.on_zoom_fit_page_view()
 
     @pyqtSlot()
     def on_open_file(self):
@@ -135,13 +134,19 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.view.zoom_factor = zf
         self.view.zooming_view.emit()
 
-    def resizeEvent(self, evt):
-        # do not trigger very often!
+    @pyqtSlot()
+    def on_zoom_fit_page_view(self):
+        if self.svg_basesize is None:
+            return
         w, h = self.svg_basesize
         viewSize = self.view.frameSize()
         zf_w = viewSize.width() / w * 100
         zf_h = viewSize.height() / h * 100
         self.on_zoom_set_view(min(zf_w, zf_h))
+
+    def resizeEvent(self, evt):
+        # do not trigger very often!
+        self.on_zoom_fit_page_view()
         QMainWindow.resizeEvent(self, evt)
 
 
