@@ -1,5 +1,12 @@
 var Ui = {
 
+    initializeView: function () {
+        var svg = document.querySelector('svg');
+        var w = svg.width.baseVal.value;
+        var h = svg.height.baseVal.value;
+        CTRL.get_content_size(w, h);
+    },
+
     findDevices: function () {
         var descs = Array.prototype.slice.call(document.querySelectorAll("desc"));
         descs.forEach(function (desc) {
