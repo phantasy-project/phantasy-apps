@@ -159,6 +159,7 @@ def load_orm_sheet(filepath):
     bpm_field = orm_conf_sheet.get('monitor_field', 'X&Y')
 
     mp = MachinePortal(machine, segment)
+    time.sleep(0.1)
     name_elem_map = {i.name: i for i in mp.work_lattice_conf}
     #
     # print("Loading {} of {}".format(segment, machine))
