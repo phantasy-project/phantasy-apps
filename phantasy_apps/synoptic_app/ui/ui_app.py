@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_app.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.13.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -19,10 +19,20 @@ class Ui_MainWindow(object):
         self.gridLayout.setContentsMargins(6, 12, 6, 6)
         self.gridLayout.setSpacing(6)
         self.gridLayout.setObjectName("gridLayout")
-        self.vbox = QtWidgets.QVBoxLayout()
-        self.vbox.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
-        self.vbox.setObjectName("vbox")
-        self.gridLayout.addLayout(self.vbox, 1, 0, 1, 1)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        spacerItem = QtWidgets.QSpacerItem(40, 20,
+                                           QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
+        self.start_data_agent_btn = QtWidgets.QPushButton(self.centralwidget)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/sn-app/icons/start.png"),
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.start_data_agent_btn.setIcon(icon)
+        self.start_data_agent_btn.setObjectName("start_data_agent_btn")
+        self.horizontalLayout_2.addWidget(self.start_data_agent_btn)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 2, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -44,9 +54,13 @@ class Ui_MainWindow(object):
             "current_pointed_device_lineEdit")
         self.horizontalLayout.addWidget(self.current_pointed_device_lineEdit)
         self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 1)
+        self.vbox = QtWidgets.QVBoxLayout()
+        self.vbox.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
+        self.vbox.setObjectName("vbox")
+        self.gridLayout.addLayout(self.vbox, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 31))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 26))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -67,32 +81,31 @@ class Ui_MainWindow(object):
         self.action_Open = QtWidgets.QAction(MainWindow)
         self.action_Open.setObjectName("action_Open")
         self.action_zoom_in = QtWidgets.QAction(MainWindow)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_in.png"),
-                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.action_zoom_in.setIcon(icon)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_in.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.action_zoom_in.setIcon(icon1)
         self.action_zoom_in.setObjectName("action_zoom_in")
         self.action_zoom_out = QtWidgets.QAction(MainWindow)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_out.png"),
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_out.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.action_zoom_out.setIcon(icon1)
+        self.action_zoom_out.setIcon(icon2)
         self.action_zoom_out.setObjectName("action_zoom_out")
         self.action_zoom_reset = QtWidgets.QAction(MainWindow)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_reset.png"),
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_reset.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.action_zoom_reset.setIcon(icon2)
+        self.action_zoom_reset.setIcon(icon3)
         self.action_zoom_reset.setObjectName("action_zoom_reset")
         self.action_zoom_page_fit = QtWidgets.QAction(MainWindow)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_page-fit.png"),
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_page-fit.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.action_zoom_page_fit.setIcon(icon3)
+        self.action_zoom_page_fit.setIcon(icon4)
         self.action_zoom_page_fit.setObjectName("action_zoom_page_fit")
         self.menu_File.addAction(self.action_Open)
         self.menu_File.addSeparator()
-        self.menu_File.addAction(self.actionE_xit)
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.action_About)
@@ -103,6 +116,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.action_zoom_out)
         self.toolBar.addAction(self.action_zoom_reset)
         self.toolBar.addAction(self.action_zoom_page_fit)
+        self.toolBar.addAction(self.actionE_xit)
 
         self.retranslateUi(MainWindow)
         self.actionAbout_Qt.triggered.connect(MainWindow.onAboutQt)
@@ -114,11 +128,14 @@ class Ui_MainWindow(object):
         self.action_zoom_reset.triggered.connect(MainWindow.on_zoom_set_view)
         self.action_zoom_page_fit.triggered.connect(
             MainWindow.on_zoom_fit_page_view)
+        self.start_data_agent_btn.clicked.connect(
+            MainWindow.on_click_start_btn)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.start_data_agent_btn.setText(_translate("MainWindow", "START"))
         self.label.setText(_translate("MainWindow", "Current Pointing Device"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
