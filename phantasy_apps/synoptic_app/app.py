@@ -21,6 +21,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QUrl
 
 from PyQt5.QtGui import QKeySequence
+from PyQt5.QtGui import QIcon, QPixmap
 
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QShortcut
@@ -33,6 +34,7 @@ from phantasy_ui import printlog
 
 from phantasy_apps.synoptic_app.control import Controller
 from phantasy_apps.synoptic_app.webview import MyWebView
+from phantasy_apps.synoptic_app.data import DataAgent
 from phantasy_apps.synoptic_app.ui.ui_app import Ui_MainWindow
 
 
@@ -64,6 +66,8 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
     def post_init(self):
         #
         self.svg_basesize = None
+        self._start_icon = QIcon(QPixmap(":/sn-app/icons/start.png"))
+        self._stop_icon = QIcon(QPixmap(":/sn-app/icons/stop.png"))
         #
         self.view = MyWebView()
         self.vbox.addWidget(self.view)
@@ -80,11 +84,41 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.frame.javaScriptWindowObjectCleared.connect(
                 self.on_javaScriptWindowObjectCleared)
 
+        # data
+        self.data_agent = DataAgent(self.controller)
+        self.data_agent.value_changed.connect(self.controller.on_update_value)
+        self.data_agent.started.connect(self.on_data_agent_started)
+        self.data_agent.finished.connect(self.on_data_agent_finished)
+        #self.data_agent.finished.connect(self.data_agent.deleteLater)
+
         # keyshorts
         self.action_zoom_in.setShortcut(QKeySequence.ZoomIn)
         self.action_zoom_out.setShortcut(QKeySequence.ZoomOut)
         zoom0 = QShortcut(QKeySequence("Ctrl+0"), self)
         zoom0.activated.connect(partial(self.on_zoom_set_view, 100))
+
+    @pyqtSlot()
+    def on_data_agent_started(self):
+        o = self.start_data_agent_btn
+        o.setText("STOP")
+        o.setIcon(self._stop_icon)
+
+    @pyqtSlot()
+    def on_data_agent_finished(self):
+        o = self.start_data_agent_btn
+        o.setText("START")
+        o.setIcon(self._start_icon)
+
+    @pyqtSlot()
+    def on_click_start_btn(self):
+        # start data agent.
+        text = self.sender().text()
+        if text == 'START':
+            if not self.data_agent.isRunning():
+                self.data_agent.start()
+        else:
+            if self.data_agent.isRunning():
+                self.data_agent.stop()
 
     def set_view(self, filepath):
         printlog("Set view with {}".format(filepath))
@@ -97,10 +131,10 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(bool)
     def on_frame_loaded(self, f):
+        # for testing only.
         printlog("Page is loaded")
         contentsSize = self.frame.contentsSize()
         viewSize = self.view.frameSize()
-        print(contentsSize, viewSize)
 
     @pyqtSlot('QString')
     def on_pointed_device_changed(self, devname):
