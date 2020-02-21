@@ -58,14 +58,13 @@ class Controller(QObject):
         msg = "Registered device {}".format(devname)
         printlog(msg)
 
-    @pyqtSlot('QString', 'QString', float, float, float, float)
-    def registerAnnoteAnchor(self, devname, fname, w, h, x, y):
+    @pyqtSlot('QString', 'QString')
+    def registerAnnoteAnchor(self, devname, fname):
         if devname not in self.annote_anchors:
-            self.annote_anchors[devname] = [(fname, (w, h, x, y))]
+            self.annote_anchors[devname] = [fname]
         else:
-            self.annote_anchors[devname].append((fname, (w, h, x, y)))
-        printlog("Registed anchor ({}, {}, {}, {}) for {}[{}]".format(
-            w, h, x, y, devname, fname))
+            self.annote_anchors[devname].append(fname)
+        printlog("Registed anchor for {} [{}]".format(devname, fname))
 
     @pyqtSlot('QString')
     def mouseOver(self, devname):
@@ -93,10 +92,10 @@ class Controller(QObject):
         """
         self.svg_basesize_changed.emit(w, h)
 
-    @pyqtSlot(float, float, float, float, float)
-    def on_update_value(self, val, w, h, x, y):
+    @pyqtSlot(float, 'QString', 'QString')
+    def on_update_value(self, val, devname, fname):
         # update value
         printlog("Update value: {}".format(val))
         self.frame.evaluateJavaScript(
-            "Ui.updateData({}, {}, {}, {}, {})".format(val, w, h, x, y))
-
+            "Ui.updateData({}, '{}', '{}')".format(
+                val, devname, fname))

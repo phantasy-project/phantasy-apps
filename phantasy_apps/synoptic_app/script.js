@@ -51,12 +51,22 @@ var Ui = {
             if (result) {
                 var devname = result[1];
                 var fname = result[2];
-                var bb = annote.parentNode.getBBox();
-                console.log("Found annote anchor: " + devname + " " + fname)
-                CTRL.registerAnnoteAnchor(devname, fname,
-                                          bb.width, bb.height, bb.x, bb.y)
+                console.log("Found annote anchor: " + devname + " " + fname);
+                CTRL.registerAnnoteAnchor(devname, fname);
             }
         });
+    },
+
+    getElementsByAnnoteTuple: function (devname, fname) {
+        var els = [];
+        var annotes = Array.prototype.slice.call(document.querySelectorAll("desc"));
+        annotes.forEach(function (annote) {
+            var result = /annote=(.*),(.*)/.exec(annote.textContent);
+            if (result && result[1] == devname && result[2] == fname) {
+                els.push(annote.parentNode);
+            }
+        });
+        return els;
     },
 
     getElementsByDeviceName: function (devname) {
@@ -144,7 +154,7 @@ var Ui = {
 //    hover: function (devname) {
 //        console.log("Hover", devname);
 //        var elements = Ui.getElementsByDeviceName(devname);
-//        
+//
 //        elements.forEach(function (el) {
 //            el.parentNode.setAttribute('title', devname);
 //        });
@@ -189,8 +199,14 @@ var Ui = {
     },
 
     // put value to defined anchor
-    updateData: function (value, w, h, x, y) {
+    updateData: function (value, devname, fname) {
         console.log(
-            "updateData " + value + " To " + w + " " + h + " " + x + " " + y);
+            "updateData " + value + " for " + devname + " [" + fname + "]");
+        var elems = Ui.getElementsByAnnoteTuple(devname, fname);
+        var tspan_list = elems[0].getElementsByTagName('tspan');
+        if (tspan_list.length >= 1) {
+            t = tspan_list[0];
+            t.textContent = value.toFixed(4);
+        }
     }
 };
