@@ -19,7 +19,10 @@ from phantasy.library.physics.devices import process_devices
 from phantasy_ui import printlog
 from phantasy_apps.utils import current_datetime
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet
+from phantasy_apps.correlation_visualizer.alter_actions import DEFAULT_ALTER_ACTION
+from phantasy_apps.correlation_visualizer.alter_actions import DEFAULT_ALTER_ACTION_CODE
 from phantasy_ui import random_string
+from phantasy_ui.widgets import str2func
 
 
 class ScanTask(object):
@@ -65,11 +68,18 @@ class ScanTask(object):
         # shot/iter
         self._shotnum = 5
 
-        # wait in sec
+        # timeout in sec
         self._wait_sec = 1.0
+
+        # extra wait in sec
+        self._extra_wait_sec = 0.0
 
         # daq rate
         self._daq_rate = 1.0
+
+        # alter action, mode: 'regular'
+        self.alter_action = None
+        self.alter_action_code = None
 
         # initialize out data
         self.init_out_data()
@@ -164,6 +174,34 @@ class ScanTask(object):
         return self._extra_monitor_elem
 
     @property
+    def alter_action_code(self):
+        """str: Definition of alter action.
+        """
+        return self._alter_action_code
+
+    @alter_action_code.setter
+    def alter_action_code(self, s=None):
+        if s is None:
+            self._alter_action_code = DEFAULT_ALTER_ACTION_CODE
+        else:
+            self._alter_action_code = s
+
+    @property
+    def alter_action(self):
+        """Function for setting alter element with the new value.
+        """
+        return self._alter_action
+
+    @alter_action.setter
+    def alter_action(self, fn=None):
+        if fn is None:
+            self._alter_action = DEFAULT_ALTER_ACTION
+            self._alter_action_mode = 'regular'
+        else:
+            self._alter_action = fn
+            self._alter_action_mode = 'advanced'
+
+    @property
     def alter_start(self):
         """float: Begining value where scan starts.
         """
@@ -209,13 +247,23 @@ class ScanTask(object):
 
     @property
     def t_wait(self):
-        """float: Additional wait time in second after each set point.
+        """float: Maximum wait time in second for each ensure set.
         """
         return self._wait_sec
 
     @t_wait.setter
     def t_wait(self, s):
         self._wait_sec = s
+
+    @property
+    def t_wait_extra(self):
+        """float: Additional wait time in second after each ensure set point.
+        """
+        return self._extra_wait_sec
+
+    @t_wait_extra.setter
+    def t_wait_extra(self, s):
+        self._extra_wait_sec = s
 
     @property
     def daq_rate(self):
@@ -289,7 +337,8 @@ class ScanTask(object):
         if self.mode == "1D":
             return "Scan Task: {name}\n" \
                    "Task Mode: 1D\n" \
-                   "Wait Sec: {twait}\n" \
+                   "Timeout [s]: {twait}\n" \
+                   "Extra wait time [s]: {extra_twait}\n" \
                    "Shot Num: {nshot}\n" \
                    "DAQ Rate: {rate}\n" \
                    "Array mode: {array_mode}\n" \
@@ -304,6 +353,7 @@ class ScanTask(object):
                 name=self.name,
                 niter=self.alter_number,
                 twait=self.t_wait,
+                extra_twait=self.t_wait_extra,
                 nshot=self.shotnum,
                 rate=self.daq_rate,
                 sstart=self.alter_start,
@@ -321,7 +371,8 @@ class ScanTask(object):
                 nested_task_name = nested_task.name
             return "Scan Task: {name}\n" \
                    "Task Mode: 2D\n" \
-                   "Wait Sec: {twait}\n" \
+                   "Timeout [s]: {twait}\n" \
+                   "Extra wait time [s]: {extra_twait}\n" \
                    "Array mode: {array_mode}\n" \
                    "Alter array: {array}\n" \
                    "Alter Number: {niter}\n" \
@@ -333,6 +384,7 @@ class ScanTask(object):
                 name=self.name,
                 niter=self.alter_number,
                 twait=self.t_wait,
+                extra_twait=self.t_wait_extra,
                 sstart=self.alter_start,
                 sstop=self.alter_stop,
                 array_mode=self.array_mode,
@@ -397,8 +449,17 @@ class ScanTask(object):
             task_dict['daq_rate'] = self.daq_rate
         task_dict['scan_range'] = self.get_alter_array().tolist()
         task_dict['t_wait'] = self.t_wait
+        task_dict['t_wait_extra'] = self.t_wait_extra
         task_dict['tolerance'] = self.tolerance
         data_sheet.update({'task': task_dict})
+
+        # alter action
+        action_dict = OrderedDict()
+        action_dict['mode'] = self._alter_action_mode
+        action_dict['function'] = {
+                'name': self._alter_action.__name__,
+                'code': self._alter_action_code}
+        data_sheet.update({'alter_action': action_dict})
 
         # devices
         dev_dict = OrderedDict()
@@ -475,6 +536,7 @@ def load_task(filepath, o):
     scan_task = ScanTask(name, mode=mode)
     scan_task.alter_number = task['task']['n_iteration']
     scan_task.t_wait = task['task']['t_wait']
+    scan_task.t_wait_extra = task['task'].get('t_wait_extra', 0.0)
     scan_task.tolerance = task['task'].get('tolerance', 0.10)
     if mode == "1D":
         scan_task.shotnum = task['task']['n_shot']
@@ -483,6 +545,17 @@ def load_task(filepath, o):
     array = task['task']['scan_range']
     scan_task.set_alter_array(array)
     scan_task.array_mode = array_mode
+
+    # alter action
+    default_action_dict = {'mode': 'regular', 'function': None}
+    alter_action_dict = task.get('alter_action', default_action_dict)
+    if alter_action_dict['mode'] == 'regular':
+        scan_task.alter_action = None
+    else:
+        f_name = alter_action_dict['function']['name']
+        f_code = alter_action_dict['function']['code']
+        scan_task.alter_action_code = f_code
+        scan_task.alter_action = str2func(f_code, func_name=f_name)
 
     # acquired data
     scan_task.scan_out_data = np.asarray(task['data']['array'])
@@ -565,9 +638,11 @@ class ScanWorker(QObject):
         out_data = self.task.scan_out_data
         tmp_data = self.task.scan_out_data_per_iter
         wait_sec = self.task.t_wait
+        extra_wait_sec = self.task.t_wait_extra
         tol = self.task.tolerance
         daq_rate = self.task.daq_rate
         daq_delt = 1.0 / daq_rate
+        alter_action = self.task.alter_action
 
         index_array = range(self.starting_index, alter_array.size)
 
@@ -595,9 +670,8 @@ class ScanWorker(QObject):
                 self.scanPausedAtIndex.emit(idx)
                 break
 
-            # set alter element, apply ensure put
-            ensure_put(alter_elem, goal=x, tol=tol, timeout=wait_sec)
-            printlog("{} RD: {} SP: {}".format(alter_elem.ename, alter_elem.value, x))
+            alter_action(x, alter_elem=alter_elem, tolerance=tol,
+                         timeout=wait_sec, extra_wait=extra_wait_sec)
 
             # DAQ
             for i in range(nshot):

@@ -8,6 +8,7 @@ Tong Zhang <zhangt@frib.msu.edu>
 """
 import numpy as np
 import pickle
+import time
 from datetime import datetime
 from functools import partial
 from getpass import getuser
@@ -96,6 +97,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
         # outer_element settling time
         self.waitsec_dSpinBox.valueChanged.connect(self.on_update_waitsec)
+        self.t_wait_extra_dSpinBox.valueChanged.connect(self.on_update_extra_wait)
 
         # start scan
         self.start_btn.clicked.connect(self.on_start_scan)
@@ -416,9 +418,14 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(float)
     def on_update_waitsec(self, x):
-        # time wait after every scan data setup, in sec
+        # max wait time in second (timeout) for each alter element ensure set.
         self.scan_task.t_wait = x
         self._dmsec = x * 1000
+
+    @pyqtSlot(float)
+    def on_update_extra_wait(self, x):
+        # extra wait time in second after each alter element ensure set up.
+        self.scan_task.t_wait_extra = x
 
     @pyqtSlot(float)
     def on_update_tol(self, x):
@@ -504,8 +511,14 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         elem = self.scan_task.alter_element
         x = alter_array[self._iiter]
         tol, wait_sec = self.scan_task.tolerance, self.scan_task.t_wait
+        extra_wait_sec = self.scan_task.t_wait_extra
         ensure_put(elem, goal=x, tol=tol, timeout=wait_sec)
         printlog("{} RD: {} SP: {}".format(elem.ename, elem.value, x))
+
+        # extra wait
+        time.sleep(extra_wait_sec)
+        printlog("Additionally, waited for {} seconds.".format(extra_wait_sec))
+
         #
         if not self._run:
             self._run = True
@@ -680,9 +693,10 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         # scan range
         self.lower_limit_lineEdit.setText(str(scan_task.alter_start))
         self.upper_limit_lineEdit.setText(str(scan_task.alter_stop))
-        # nite, t_wait
+        # nite, t_wait (timeout), extra wait
         self.niter_spinBox.setValue(scan_task.alter_number)
         self.waitsec_dSpinBox.setValue(scan_task.t_wait)
+        self.t_wait_extra_dSpinBox.setValue(scan_task.t_wait_extra)
         self.tol_dSpinBox.setValue(scan_task.tolerance)
 
         # array mode

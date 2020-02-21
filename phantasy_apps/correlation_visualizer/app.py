@@ -42,6 +42,7 @@ from .app_monitors_view import MonitorsViewWidget
 from .app_mps_config import MpsConfigWidget
 from .app_points_view import PointsViewWidget
 from .app_save import SaveDataDialog
+from .app_udef_action import UserDefinedActionDialog
 from .app_2d import TwoParamsScanWindow
 from .data import ScanDataModel
 from .scan import ScanTask
@@ -138,6 +139,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.niter_spinBox.valueChanged.connect(self.on_update_niter)
         self.nshot_spinBox.valueChanged.connect(self.on_update_nshot)
         self.waitsec_dSpinBox.valueChanged.connect(self.on_update_waitsec)
+        self.t_wait_extra_dSpinBox.valueChanged.connect(self.on_update_extra_wait)
         self.scanrate_dSpinBox.valueChanged.connect(self.on_update_daqrate)
         self.tol_dSpinBox.valueChanged.connect(self.on_update_tol)
         # output scan data
@@ -254,6 +256,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         # self.actionMPS_guardian.setChecked(True)
         #
         self.pauseScan[bool].connect(self.on_pause_scan)
+
+        # set alter action as default
+        self.regular_alter_action_rbtn.setChecked(True)
 
     @pyqtSlot(bool)
     def on_pause_scan(self, f):
@@ -660,6 +665,15 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         # virtual diag?
         self.actionVirtual_diag.setChecked(True)
 
+        # alter action, regular/advanced
+        self._adv_alter_action_dlg = None
+        self.regular_alter_action_rbtn.toggled.connect(
+                partial(self.on_toggle_alter_action_rbtn, 'regular'))
+        self.advanced_alter_action_rbtn.toggled.connect(
+                partial(self.on_toggle_alter_action_rbtn, 'advanced'))
+        self.advanced_alter_action_btn.clicked.connect(
+                self.on_click_adv_alter_action_btn)
+
     def is_virtual_mode(self):
         # if enabled, treat devices virtually, e.g. VA.
         return self._enable_virtual_diag
@@ -865,7 +879,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def set_scan_ctrl_status(self, mode='start'):
         ctrls = (self.niter_spinBox, self.nshot_spinBox,
                  self.waitsec_dSpinBox, self.scanrate_dSpinBox,
-                 self.tol_dSpinBox)
+                 self.tol_dSpinBox, self.t_wait_extra_dSpinBox)
         if mode=='start':
             # disable ctrls
             [o.setEnabled(False) for o in ctrls]
@@ -913,8 +927,13 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(float)
     def on_update_waitsec(self, x):
-        # time wait after every scan data setup, in sec
+        # max wait time in second (timeout) for each alter element ensure set.
         self.scan_task.t_wait = x
+
+    @pyqtSlot(float)
+    def on_update_extra_wait(self, x):
+        # extra wait time in second after each alter element ensure set up.
+        self.scan_task.t_wait_extra = x
 
     @pyqtSlot(int)
     def on_update_nshot(self, i):
@@ -1202,7 +1221,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             "Scan task is done, reset alter element...")
         self.scanlogUpdated.emit(
             "Setting alter element to {0:.3f}...".format(x0))
-        self.scan_task.alter_element.value = x0
+        # self.scan_task.alter_element.value = x0
+        self.scan_task.alter_action(x0, alter_elem=self.scan_task.alter_element)
         self.scanlogUpdated.emit(
             "Alter element reaches {0:.3f}".format(x0))
         # in case it is 'resume' while scan is done
@@ -1372,6 +1392,26 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self._setup_element_btn_from_scan_task(scan_task, 'alter')
         self._setup_element_btn_from_scan_task(scan_task, 'monitor')
 
+        # alter action
+        alter_mode = self.scan_task._alter_action_mode
+        for o in (self.regular_alter_action_rbtn,
+                  self.advanced_alter_action_rbtn):
+            o.toggled.disconnect()
+        self.advanced_alter_action_btn.setDisabled(alter_mode == 'regular')
+        if alter_mode == 'regular':
+            self.regular_alter_action_rbtn.setChecked(True)
+        else:
+            self.advanced_alter_action_rbtn.setChecked(True)
+            self._adv_alter_action_dlg = UserDefinedActionDialog(self)
+            self._adv_alter_action_dlg.alter_action_changed.connect(
+                    self.on_update_alter_action)
+            self._adv_alter_action_dlg.plainTextEdit.setPlainText(
+                    self.scan_task.alter_action_code)
+        self.regular_alter_action_rbtn.toggled.connect(
+                partial(self.on_toggle_alter_action_rbtn, 'regular'))
+        self.advanced_alter_action_rbtn.toggled.connect(
+                partial(self.on_toggle_alter_action_rbtn, 'advanced'))
+
         # extra monitors
         extra_monis = scan_task.get_extra_monitors()
         extra_monis_dis = scan_task._extra_moni_display
@@ -1391,8 +1431,10 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.niter_spinBox.setValue(scan_task.alter_number)
         # nshot
         self.nshot_spinBox.setValue(scan_task.shotnum)
-        # t_wait
+        # t_wait (timeout)
         self.waitsec_dSpinBox.setValue(scan_task.t_wait)
+        # t_wait_extra
+        self.t_wait_extra_dSpinBox.setValue(scan_task.t_wait_extra)
         # daq_rate
         self.scanrate_dSpinBox.setValue(scan_task.daq_rate)
         # tolerance
@@ -1531,6 +1573,36 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         lw.load_btn.clicked.emit()
         lw.setEnabled(False)
         self._lv.show()
+
+    @pyqtSlot(bool)
+    def on_toggle_alter_action_rbtn(self, mode, f):
+        """Toggle alter action mode, 'regular' or 'advanced'.
+        """
+        if f and mode == 'regular':
+            # reset alter action with the default one.
+            self.scan_task.alter_action = None
+            self.advanced_alter_action_btn.setEnabled(False)
+
+        if f and mode == 'advanced':  # mode is advanced
+            self.advanced_alter_action_btn.setEnabled(True)
+            self.advanced_alter_action_btn.clicked.emit()
+
+    @pyqtSlot(QVariant, 'QString')
+    def on_update_alter_action(self, func_obj, func_str):
+        """Update the function for setting alter element.
+        """
+        self.scan_task.alter_action = func_obj
+        self.scan_task.alter_action_code = func_str
+
+    @pyqtSlot()
+    def on_click_adv_alter_action_btn(self):
+        """User-defined alter action.
+        """
+        if self._adv_alter_action_dlg is None:
+            self._adv_alter_action_dlg = UserDefinedActionDialog(self)
+            self._adv_alter_action_dlg.alter_action_changed.connect(
+                    self.on_update_alter_action)
+        self._adv_alter_action_dlg.exec_()
 
     # test slots
     def test_scan_started(self):
