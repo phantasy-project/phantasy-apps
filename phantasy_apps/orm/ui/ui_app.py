@@ -344,7 +344,7 @@ class Ui_MainWindow(object):
         self.operations_toolBox.setFrameShadow(QtWidgets.QFrame.Plain)
         self.operations_toolBox.setObjectName("operations_toolBox")
         self.orm_measurement = QtWidgets.QWidget()
-        self.orm_measurement.setGeometry(QtCore.QRect(0, 0, 1438, 1048))
+        self.orm_measurement.setGeometry(QtCore.QRect(0, 0, 1438, 970))
         self.orm_measurement.setObjectName("orm_measurement")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.orm_measurement)
         self.gridLayout_4.setObjectName("gridLayout_4")
@@ -686,7 +686,7 @@ class Ui_MainWindow(object):
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.operations_toolBox.addItem(self.orm_measurement, icon10, "")
         self.orm_apply = QtWidgets.QWidget()
-        self.orm_apply.setGeometry(QtCore.QRect(0, 0, 1438, 1048))
+        self.orm_apply.setGeometry(QtCore.QRect(0, 0, 1438, 970))
         self.orm_apply.setObjectName("orm_apply")
         self.gridLayout = QtWidgets.QGridLayout(self.orm_apply)
         self.gridLayout.setObjectName("gridLayout")
@@ -1061,13 +1061,15 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.splitter_2, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 35))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 31))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
-        self.menuFile = QtWidgets.QMenu(self.menubar)
-        self.menuFile.setObjectName("menuFile")
         MainWindow.setMenuBar(self.menubar)
+        self.toolBar = QtWidgets.QToolBar(MainWindow)
+        self.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.toolBar.setObjectName("toolBar")
+        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.load_settings = QtWidgets.QAction(MainWindow)
         icon15 = QtGui.QIcon()
         icon15.addPixmap(QtGui.QPixmap(":/icons/open.png"), QtGui.QIcon.Normal,
@@ -1114,14 +1116,12 @@ class Ui_MainWindow(object):
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.actionAbout)
         self.menu_Help.addAction(self.actionAbout_Qt)
-        self.menuFile.addAction(self.actionOpen)
-        self.menuFile.addAction(self.actionSave)
-        self.menuFile.addAction(self.load_settings)
-        self.menuFile.addAction(self.save_settings)
-        self.menuFile.addSeparator()
-        self.menuFile.addAction(self.actionE_xit)
-        self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
+        self.toolBar.addAction(self.actionOpen)
+        self.toolBar.addAction(self.actionSave)
+        self.toolBar.addAction(self.load_settings)
+        self.toolBar.addAction(self.save_settings)
+        self.toolBar.addAction(self.actionE_xit)
 
         self.retranslateUi(MainWindow)
         self.actionAbout.triggered.connect(MainWindow.onAbout)
@@ -1332,26 +1332,44 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Central Trajectory Correction"))
         self.log_gbox.setTitle(_translate("MainWindow", "Log"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
-        self.menuFile.setTitle(_translate("MainWindow", "&File"))
+        self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.load_settings.setText(
-            _translate("MainWindow", "Load Corrector Settings"))
+            _translate("MainWindow", "Open Corrector Settings"))
+        self.load_settings.setIconText(
+            _translate("MainWindow", "Open Settings"))
+        self.load_settings.setToolTip(
+            _translate("MainWindow", "Open corrector settings from a file."))
         self.load_settings.setShortcut(_translate("MainWindow",
                                                   "Ctrl+Shift+L"))
         self.save_settings.setText(
             _translate("MainWindow", "Save Corrector Settings"))
-        self.save_settings.setIconText(_translate("MainWindow", "Measure ORM"))
+        self.save_settings.setIconText(
+            _translate("MainWindow", "Save Settings"))
+        self.save_settings.setToolTip(
+            _translate("MainWindow", "Save corrector settings to a file."))
         self.save_settings.setShortcut(_translate("MainWindow",
                                                   "Ctrl+Shift+S"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
         self.actionAbout.setShortcut(_translate("MainWindow", "Ctrl+A"))
         self.actionE_xit.setText(_translate("MainWindow", "E&xit"))
+        self.actionE_xit.setIconText(_translate("MainWindow", "Exit"))
+        self.actionE_xit.setToolTip(
+            _translate("MainWindow", " Exit this application."))
         self.actionE_xit.setShortcut(_translate("MainWindow", "Ctrl+W"))
         self.actionContents.setText(_translate("MainWindow", "Contents"))
         self.actionContents.setShortcut(_translate("MainWindow", "F1"))
         self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
-        self.actionSave.setText(_translate("MainWindow", "Save ORM"))
+        self.actionSave.setText(
+            _translate("MainWindow", "Save Response Matrix"))
+        self.actionSave.setIconText(_translate("MainWindow", "Save Matrix"))
+        self.actionSave.setToolTip(
+            _translate("MainWindow", "Save response matrix to a file."))
         self.actionSave.setShortcut(_translate("MainWindow", "Ctrl+S"))
-        self.actionOpen.setText(_translate("MainWindow", "Open ORM"))
+        self.actionOpen.setText(
+            _translate("MainWindow", "Open Response Matrix"))
+        self.actionOpen.setIconText(_translate("MainWindow", "Open Matrix"))
+        self.actionOpen.setToolTip(
+            _translate("MainWindow", "Open response matrix from a file."))
         self.actionOpen.setShortcut(_translate("MainWindow", "Ctrl+O"))
 
 
