@@ -71,6 +71,7 @@ class Controller(QObject):
         msg = "Hover device {}".format(devname)
         printlog(msg)
         self.pointed_device_changed.emit(devname)
+        self.frame.evaluateJavaScript("Ui.hover('{}')".format(devname))
 
     @pyqtSlot()
     def loadDeviceDone(self):

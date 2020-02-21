@@ -30,8 +30,6 @@ var Ui = {
                     parent.onmouseover = function (evt) {
                         CTRL.mouseOver(devname);
                 };
-                // Add sp/rb boxes (testing)
-                // Ui.addTopRect(devname);
 
                 // check
                 var elems = Ui.getElementsByDeviceName(devname);
@@ -143,23 +141,20 @@ var Ui = {
 
     removeElementsOfClass: function (cls) {
         var els = Array.prototype.slice.call(
-            document.getElementsByClassName("select"));
+            document.getElementsByClassName(cls));
         els.forEach(function (el) {
-            console.log("Before remove: "+ el + " " + el.classList);
-            el.classList.remove("select");
-            console.log("After remove: " + el + " " + el.classList);
+            el.classList.remove(cls);
         });
     },
 
-//    hover: function (devname) {
-//        console.log("Hover", devname);
-//        var elements = Ui.getElementsByDeviceName(devname);
-//
-//        elements.forEach(function (el) {
-//            el.parentNode.setAttribute('title', devname);
-//        });
-//    },
-    //
+    hover: function (devname) {
+        console.log("Hover: " + devname);
+        Ui.removeElementsOfClass("hover");
+        var elements = Ui.getElementsByDeviceName(devname);
+        elements.forEach(function (el) {
+            el.parentNode.classList.add('hover');
+        });
+    },
 
     // place top rect
     addTopRect: function (devname) {
@@ -178,10 +173,7 @@ var Ui = {
 
         elements.forEach(function (el) {
             //el.style.filter="url(#outline)";
-            console.log(el);
-            console.log("Before adding class: " + el.classList);
             el.classList.add("select");
-            console.log("After adding class: " + el.classList);
             //var bbrect = Ui.getBBoxAsRectElement(el);
             //el.parentNode.insertBefore(bbrect, el);
         });
