@@ -30,9 +30,33 @@ var Ui = {
                     parent.onmouseover = function (evt) {
                         CTRL.mouseOver(devname);
                 };
+                // Add sp/rb boxes (testing)
+                // Ui.addTopRect(devname);
+
+                // check
+                var elems = Ui.getElementsByDeviceName(devname);
+                if (elems.length > 1) {
+                    console.log(devname + " has more than one elements.");
+                };
             }
         });
         CTRL.loadDeviceDone();
+    },
+
+    // find anchors for annotations
+    findAnnotes: function() {
+        var annotes = Array.prototype.slice.call(document.querySelectorAll("desc"));
+        annotes.forEach(function (annote) {
+            var result = /annote=(.*),(.*)/.exec(annote.textContent);
+            if (result) {
+                var devname = result[1];
+                var fname = result[2];
+                var bb = annote.parentNode.getBBox();
+                console.log("Found annote anchor: " + devname + " " + fname)
+                CTRL.registerAnnoteAnchor(devname, fname,
+                                          bb.width, bb.height, bb.x, bb.y)
+            }
+        });
     },
 
     getElementsByDeviceName: function (devname) {
@@ -79,6 +103,19 @@ var Ui = {
         return false;
     },
 
+    // create a rect for top notation
+    getTopRectFromElement: function (elm) {
+        var bb = elm.getBBox();
+        var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("width", 10);
+        rect.setAttribute("height", 5);
+        rect.setAttribute("x", bb.x + bb.width * 0.5 - 5.0);
+        rect.setAttribute("y", bb.y + 5 + 1);
+        rect.setAttribute("style",
+            "fill:#EEEEEC;stroke:orange;fill-opacity:0.5;stroke-opacity:0.7;stroke-width:0.5;");
+        return rect;
+    },
+
     getBBoxAsRectElement: function (elm){
         var bb = elm.getBBox();
         var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -98,7 +135,9 @@ var Ui = {
         var els = Array.prototype.slice.call(
             document.getElementsByClassName("select"));
         els.forEach(function (el) {
-            el.parentNode.removeChild(el);
+            console.log("Before remove: "+ el + " " + el.classList);
+            el.classList.remove("select");
+            console.log("After remove: " + el + " " + el.classList);
         });
     },
 
@@ -110,6 +149,17 @@ var Ui = {
 //            el.parentNode.setAttribute('title', devname);
 //        });
 //    },
+    //
+
+    // place top rect
+    addTopRect: function (devname) {
+        var elements = Ui.getElementsByDeviceName(devname);
+        elements.forEach(function (el) {
+            console.log("Add top rect for " + devname);
+            var rect = Ui.getTopRectFromElement(el);
+            el.parentNode.insertBefore(rect, el);
+        });
+    },
 
     select: function (devname) {
         console.log("Select", devname);
@@ -118,8 +168,12 @@ var Ui = {
 
         elements.forEach(function (el) {
             //el.style.filter="url(#outline)";
-            var bbrect = Ui.getBBoxAsRectElement(el);
-            el.parentNode.insertBefore(bbrect, el);
+            console.log(el);
+            console.log("Before adding class: " + el.classList);
+            el.classList.add("select");
+            console.log("After adding class: " + el.classList);
+            //var bbrect = Ui.getBBoxAsRectElement(el);
+            //el.parentNode.insertBefore(bbrect, el);
         });
     },
 
@@ -132,6 +186,11 @@ var Ui = {
             console.log(el.getAttribute("class"));
         });
         // set status
-    }
+    },
 
+    // put value to defined anchor
+    updateData: function (value, w, h, x, y) {
+        console.log(
+            "updateData " + value + " To " + w + " " + h + " " + x + " " + y);
+    }
 };
