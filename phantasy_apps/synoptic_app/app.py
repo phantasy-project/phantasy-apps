@@ -112,7 +112,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_click_start_btn(self):
         # start data agent.
-        text = self.sender().text()
+        text = self.start_data_agent_btn.text()
         if text == 'START':
             if not self.data_agent.isRunning():
                 self.data_agent.start()
@@ -131,10 +131,9 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(bool)
     def on_frame_loaded(self, f):
-        # for testing only.
         printlog("Page is loaded")
-        contentsSize = self.frame.contentsSize()
-        viewSize = self.view.frameSize()
+        # start data agent
+        self.on_click_start_btn()
 
     @pyqtSlot('QString')
     def on_pointed_device_changed(self, devname):
