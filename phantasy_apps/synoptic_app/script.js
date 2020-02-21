@@ -199,14 +199,14 @@ var Ui = {
     },
 
     // put value to defined anchor
-    updateData: function (value, devname, fname) {
+    updateData: function (rd, sp, devname, fname) {
         console.log(
-            "updateData " + value + " for " + devname + " [" + fname + "]");
+            "updateData " + rd + " " + sp + " for " + devname + " [" + fname + "]");
         var elems = Ui.getElementsByAnnoteTuple(devname, fname);
         var tspan_list = elems[0].getElementsByTagName('tspan');
         if (tspan_list.length >= 1) {
             t = tspan_list[0];
-            t.textContent = value.toFixed(4);
+            t.textContent = rd.toFixed(4) + " [" + sp.toFixed(4) + "]";
         }
     }
 };

@@ -92,10 +92,10 @@ class Controller(QObject):
         """
         self.svg_basesize_changed.emit(w, h)
 
-    @pyqtSlot(float, 'QString', 'QString')
-    def on_update_value(self, val, devname, fname):
+    @pyqtSlot(float, float, 'QString', 'QString')
+    def on_update_value(self, rd, sp, devname, fname):
         # update value
-        printlog("Update value: {}".format(val))
+        printlog("Update value: RD: {}, SP: {}.".format(rd, sp))
         self.frame.evaluateJavaScript(
-            "Ui.updateData({}, '{}', '{}')".format(
-                val, devname, fname))
+            "Ui.updateData({}, {}, '{}', '{}')".format(
+                rd, sp, devname, fname))
