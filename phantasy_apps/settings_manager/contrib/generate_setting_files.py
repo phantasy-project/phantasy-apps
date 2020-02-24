@@ -3,7 +3,7 @@
 import xlrd
 from phantasy import MachinePortal
 from phantasy import disable_warnings
-from utils import SettingsRow
+from phantasy_apps.settings_manager.contrib import SettingsRow
 
 disable_warnings()
 
