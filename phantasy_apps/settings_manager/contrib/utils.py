@@ -7,6 +7,10 @@ import xlrd
 
 class SettingsRow(object):
 
+    """Extract each row of xlsx (see local file) and parse it to settings,
+    *write* method can export a CSV file for `Settings Manager`.
+    """
+
     def __init__(self, row, index_elem_list, last_settings_row=None):
         # cryo module name
         self.name = self._cell_to_string(row[0])
@@ -41,6 +45,15 @@ class SettingsRow(object):
                     0.1, fld.write_access)
             settings_table.append(settings_row)
         self.settings = settings_table
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        for l, r in zip(self.settings, other.settings):
+            for i, v in enumerate(l[1:], 1):
+                if v != r[i]:
+                    return False
+        return True
 
     @staticmethod
     def _cell_to_cid(cell):

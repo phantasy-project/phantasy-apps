@@ -11,8 +11,8 @@ disable_warnings()
 machine = "FRIB_VA"
 segments = ["MEBT", "LS1FS1"]
 
-xlsx_filepath = "20190212_phase_scan_setting_list_maruta.xlsx"
-sheet_name = "magnets"
+xlsx_filepath = "20200224_phase_scan_setting_list_maruta.xlsx"
+sheet_name = "36Ar10 magnets"
 row_start = 4
 column_start = 4
 settings_rootpath = "extracted_settings"
@@ -46,5 +46,6 @@ last_settings_row = None
 for ridx in range(row_start - 1, magnets_settings.nrows):
     row = magnets_settings.row(ridx)
     current_settings_row = SettingsRow(row, index_elem_list, last_settings_row)
+    if not current_settings_row == last_settings_row:
+        current_settings_row.write(rootpath=settings_rootpath, row_id=ridx + 1)
     last_settings_row = current_settings_row
-    current_settings_row.write(rootpath=settings_rootpath, row_id=ridx + 1)
