@@ -50,8 +50,9 @@ class SettingsRow(object):
         if other is None:
             return False
         for l, r in zip(self.settings, other.settings):
-            for i, v in enumerate(l[1:], 1):
-                if v != r[i]:
+            # only compare ename, fname, family, spos and set value
+            for i in (0, 1, 2, 3, 4):
+                if l[i] != r[i]:
                     return False
         return True
 
