@@ -34,9 +34,9 @@ COLUMN_NAMES2 = [
     'Setpoint({})'.format(X0),
     'Live Readback({})'.format(X1),
     'Live Setpoint({})'.format(X2),
-    '{D}({x0}-{x1})'.format(D=DELTA, x0=X0, x1=X1),
-    '{D}({x0}-{x2})'.format(D=DELTA, x0=X0, x2=X2),
-    '{D}({x1}-{x2})'.format(D=DELTA, x1=X1, x2=X2),
+    '{D}({x0},{x1})'.format(D=DELTA, x0=X0, x1=X1),
+    '{D}({x0},{x2})'.format(D=DELTA, x0=X0, x2=X2),
+    '{D}({x1},{x2})'.format(D=DELTA, x1=X1, x2=X2),
     'Tolerance', 'Writable'
 ]
 COLUMN_SFIELD_MAP = OrderedDict((
