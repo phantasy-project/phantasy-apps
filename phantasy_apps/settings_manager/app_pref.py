@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QDialog
 from .ui.ui_preferences import Ui_Dialog
 
 DEFAULT_FIELD_INIT_MODE = 'model'
-DEFAULT_INIT_SETTINGS = True
+DEFAULT_INIT_SETTINGS = False
 DEFAULT_T_WAIT = 0.05
 DEFAULT_TOLERANCE = 0.10
 DEFAULT_CONFIG_SYNC_TIME_INTERVAL = 10  # second
