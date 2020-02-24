@@ -9,7 +9,7 @@ disable_warnings()
 
 # parameters
 machine = "FRIB_VA"
-segments = ("MEBT", "LS1FS1")
+segments = ["MEBT", "LS1FS1"]
 
 xlsx_filepath = "20190212_phase_scan_setting_list_maruta.xlsx"
 sheet_name = "magnets"
@@ -25,13 +25,13 @@ if sheet_name not in wkbk.sheet_names():
 magnets_settings = wkbk.sheet_by_name(sheet_name)
 head_row = magnets_settings.row(1)
 
-# get a list of column index of element name and element object.
-# [(cell index, CaElement)]
 mp = MachinePortal(machine, segments[0]);
 for segm in segments[1:]:
     mp.load_lattice(segm);
 lat = mp.combined_lattice()
 
+# get a list of column index of element name and element object.
+# [(cell index, CaElement)]
 index_elem_list = []
 col_idx0 = column_start - 1
 for i, cell in enumerate(head_row[col_idx0:], col_idx0):
