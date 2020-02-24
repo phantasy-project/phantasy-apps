@@ -769,9 +769,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._load_settings_from_json(filepath)
         elif ext == 'H5':
             self._load_settings_from_h5(filepath)
+
+        msg = "Loaded data from {}".format(filepath)
+        self.statusInfoChanged.emit(msg)
         QMessageBox.information(
-            self, "", "Loaded data from {}".format(filepath))
-        printlog("Loaded data from {}.".format(filepath))
+            self, "", msg)
+        printlog(msg)
 
     def _load_settings_from_csv(self, filepath):
         lat = self.build_lattice()
