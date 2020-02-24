@@ -359,6 +359,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.set_context_menu()
         self._probe_widgets_dict = {}
 
+        # dnd
+        self.setAcceptDrops(True)
+
     def set_context_menu(self):
         self._tv.setContextMenuPolicy(Qt.CustomContextMenu)
         self._tv.customContextMenuRequested.connect(self.on_custom_context_menu)
@@ -755,6 +758,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                           type_filter="CSV Files (*.csv);;JSON Files (*.json);;HDF5 Files (*.h5)")
         if filepath is None:
             return
+
+        self.load_file(filepath, ext)
+
+    def load_file(self, filepath, ext):
         ext = ext.upper()
         if ext == 'CSV':
             self._load_settings_from_csv(filepath)
@@ -763,8 +770,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         elif ext == 'H5':
             self._load_settings_from_h5(filepath)
         QMessageBox.information(
-            self, "", "Loaded data to {}".format(filepath))
-        printlog("Loaded settings from {}.".format(filepath))
+            self, "", "Loaded data from {}".format(filepath))
+        printlog("Loaded data from {}.".format(filepath))
 
     def _load_settings_from_csv(self, filepath):
         lat = self.build_lattice()
@@ -1120,6 +1127,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         m.filter_checked_enabled = selected
         self.filter_lineEdit.editingFinished.emit()
+
+    def dragEnterEvent(self, e):
+        if e.mimeData().hasUrls():
+            e.accept()
+        else:
+            e.ignore()
+
+    def dropEvent(self, e):
+        path = e.mimeData().urls()[0].toLocalFile()
+        ext = path.rsplit('.', 1)[-1]
+        self.load_file(path, ext)
 
 
 def make_tolerance_dict_from_table_settings(table_settings):
