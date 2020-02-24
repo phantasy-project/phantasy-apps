@@ -553,17 +553,20 @@ class Ui_MainWindow(object):
         self.actionLoad_Lattice.setIconText(
             _translate("MainWindow", "Load Lattice"))
         self.actionLoad_Lattice.setToolTip(
-            _translate("MainWindow", "Load Lattice."))
+            _translate("MainWindow", "Load lattice."))
         self.actionLoad_Lattice.setShortcut(
             _translate("MainWindow", "Ctrl+Shift+L"))
         self.actionLoad_Settings.setText(
             _translate("MainWindow", "Load Settings"))
+        self.actionLoad_Settings.setToolTip(
+            _translate("MainWindow",
+                       "Load settings from a file, or drag and drop in."))
         self.actionPreferences.setText(_translate("MainWindow", "Preferences"))
         self.actionPreferences.setToolTip(
             _translate("MainWindow", "Preferences."))
         self.actionAdd_Devices.setText(_translate("MainWindow", "Add Devices"))
         self.actionAdd_Devices.setToolTip(
-            _translate("MainWindow", "Add Devices."))
+            _translate("MainWindow", "Add more devices."))
 
 
 from . import resources_rc
