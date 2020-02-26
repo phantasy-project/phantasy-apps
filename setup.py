@@ -62,6 +62,7 @@ def set_entry_points():
         'pm_viewer=phantasy_apps.pm_viewer:run',
         'phy_model=phantasy_apps.online_model:run',
         'achromat_tuning=phantasy_apps.achromat_tuning:run',
+        'phy_calc=phantasy_apps.calculator_app:run',
     ]
     return r
 
