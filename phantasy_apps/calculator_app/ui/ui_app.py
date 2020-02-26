@@ -147,7 +147,7 @@ class Ui_MainWindow(object):
         font.setItalic(False)
         font.setWeight(50)
         self.matplotlibcurveWidget.setFigureTitleFont(font)
-        self.matplotlibcurveWidget.setProperty("figureDPI", 120.0)
+        self.matplotlibcurveWidget.setProperty("figureDPI", 100.0)
         self.matplotlibcurveWidget.setFigureMTicksToggle(True)
         self.matplotlibcurveWidget.setFigureGridToggle(True)
         font = QtGui.QFont()
