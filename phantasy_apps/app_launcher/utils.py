@@ -149,7 +149,7 @@ def get_app_version(name):
     elif name == 'Trajectory Correction':
         from phantasy_apps.orm import __version__ as ver
     elif name == 'Unicorn App':
-        from phantasy_apps.unicorn import __version__ as ver
+        from phantasy_apps.unicorn_app import __version__ as ver
     elif name == 'Lattice Viewer':
         from phantasy_apps.lattice_viewer import __version__ as ver
     elif name == 'Device Viewer':
