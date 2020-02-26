@@ -46,7 +46,7 @@ def set_entry_points():
     ]
 
     r['gui_scripts'] = [
-        'unicorn_app=phantasy_apps.unicorn:run',
+        'unicorn_app=phantasy_apps.unicorn_app:run',
         'lattice_viewer=phantasy_apps.lattice_viewer:run',
         'trajectory_viewer=phantasy_apps.trajectory_viewer:run',
         'correlation_visualizer=phantasy_apps.correlation_visualizer:run',
