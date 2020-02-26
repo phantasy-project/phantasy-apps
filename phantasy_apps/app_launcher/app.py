@@ -166,3 +166,6 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         if self._logwidget is None:
             self._logwidget = LogWidget(self._logfile)
         self._logwidget.show()
+
+    def closeEvent(self, e):
+        QMainWindow.closeEvent(self, e)
