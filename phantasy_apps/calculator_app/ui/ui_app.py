@@ -37,12 +37,6 @@ class Ui_MainWindow(object):
         self.label_4 = QtWidgets.QLabel(self.groupBox)
         self.label_4.setObjectName("label_4")
         self.gridLayout_2.addWidget(self.label_4, 3, 0, 1, 1)
-        self.duty_cycle_lineEdit = QtWidgets.QLineEdit(self.groupBox)
-        self.duty_cycle_lineEdit.setObjectName("duty_cycle_lineEdit")
-        self.gridLayout_2.addWidget(self.duty_cycle_lineEdit, 2, 1, 1, 1)
-        self.label_3 = QtWidgets.QLabel(self.groupBox)
-        self.label_3.setObjectName("label_3")
-        self.gridLayout_2.addWidget(self.label_3, 2, 0, 1, 1)
         self.peak_current_lineEdit = QtWidgets.QLineEdit(self.groupBox)
         self.peak_current_lineEdit.setObjectName("peak_current_lineEdit")
         self.gridLayout_2.addWidget(self.peak_current_lineEdit, 3, 1, 1, 1)
@@ -80,6 +74,14 @@ class Ui_MainWindow(object):
                                            QtWidgets.QSizePolicy.Minimum,
                                            QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_2.addItem(spacerItem, 7, 0, 1, 1)
+        self.label_3 = QtWidgets.QLabel(self.groupBox)
+        self.label_3.setObjectName("label_3")
+        self.gridLayout_2.addWidget(self.label_3, 2, 0, 1, 1)
+        self.duty_cycle_lineEdit = QtWidgets.QLineEdit(self.groupBox)
+        self.duty_cycle_lineEdit.setEnabled(False)
+        self.duty_cycle_lineEdit.setReadOnly(True)
+        self.duty_cycle_lineEdit.setObjectName("duty_cycle_lineEdit")
+        self.gridLayout_2.addWidget(self.duty_cycle_lineEdit, 2, 1, 1, 1)
         self.groupBox_2 = QtWidgets.QGroupBox(self.splitter)
         self.groupBox_2.setObjectName("groupBox_2")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.groupBox_2)
@@ -87,14 +89,14 @@ class Ui_MainWindow(object):
         self.beam_power_lineEdit = QtWidgets.QLineEdit(self.groupBox_2)
         self.beam_power_lineEdit.setReadOnly(True)
         self.beam_power_lineEdit.setObjectName("beam_power_lineEdit")
-        self.gridLayout_3.addWidget(self.beam_power_lineEdit, 0, 1, 1, 1)
-        self.label_8 = QtWidgets.QLabel(self.groupBox_2)
-        self.label_8.setObjectName("label_8")
-        self.gridLayout_3.addWidget(self.label_8, 0, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.beam_power_lineEdit, 1, 1, 1, 1)
         spacerItem1 = QtWidgets.QSpacerItem(20, 40,
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_3.addItem(spacerItem1, 1, 0, 1, 1)
+        self.gridLayout_3.addItem(spacerItem1, 4, 0, 1, 1)
+        self.label_8 = QtWidgets.QLabel(self.groupBox_2)
+        self.label_8.setObjectName("label_8")
+        self.gridLayout_3.addWidget(self.label_8, 1, 0, 1, 1)
         self.groupBox_3 = QtWidgets.QGroupBox(self.splitter_2)
         self.groupBox_3.setObjectName("groupBox_3")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.groupBox_3)
@@ -131,7 +133,30 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.matplotlibcurveWidget = MatplotlibCurveWidget(self.groupBox_3)
         self.matplotlibcurveWidget.setProperty("figureTightLayout", False)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        font.setPointSize(16)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(50)
+        self.matplotlibcurveWidget.setFigureXYlabelFont(font)
+        font = QtGui.QFont()
+        font.setFamily("sans-serif")
+        font.setPointSize(20)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(50)
+        self.matplotlibcurveWidget.setFigureTitleFont(font)
+        self.matplotlibcurveWidget.setProperty("figureDPI", 120.0)
+        self.matplotlibcurveWidget.setFigureMTicksToggle(True)
         self.matplotlibcurveWidget.setFigureGridToggle(True)
+        font = QtGui.QFont()
+        font.setFamily("sans-serif")
+        font.setPointSize(14)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(50)
+        self.matplotlibcurveWidget.setFigureXYticksFont(font)
         self.matplotlibcurveWidget.setFigureAutoScale(True)
         self.matplotlibcurveWidget.setObjectName("matplotlibcurveWidget")
         self.verticalLayout.addWidget(self.matplotlibcurveWidget)
@@ -181,11 +206,6 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p>Peak Current (I<span style=\" vertical-align:sub;\">p</span>) [eμA]</p></body></html>"
             ))
-        self.duty_cycle_lineEdit.setText(_translate("MainWindow", "0.013"))
-        self.label_3.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Duty Cycle (D) [%]</p></body></html>"))
         self.peak_current_lineEdit.setText(_translate("MainWindow", "22"))
         self.label_7.setText(
             _translate(
@@ -213,6 +233,12 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p>Pulse Length (&tau;) [μs]</p></body></html>"
             ))
+        self.label_3.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Duty Cycle (&eta;) [%]</p></body></html>"
+            ))
+        self.duty_cycle_lineEdit.setText(_translate("MainWindow", "0.013"))
         self.groupBox_2.setTitle(_translate("MainWindow", "Results"))
         self.beam_power_lineEdit.setText(_translate("MainWindow", "0.209009"))
         self.label_8.setText(_translate("MainWindow", "Beam Power (P) [Watt]"))

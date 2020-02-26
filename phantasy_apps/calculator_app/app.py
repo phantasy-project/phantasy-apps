@@ -28,6 +28,7 @@ from .ui.ui_app import Ui_MainWindow
 
 PER = 0.2
 N = 100
+FMT = "{0:.6g}"
 
 
 class MyAppWindow(BaseAppForm, Ui_MainWindow):
@@ -58,8 +59,9 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
     def _post_init(self):
         #
-        self.params = ('pulse_length', 'rep_rate', 'duty_cycle', 'peak_current',
-                  'ion_mass', 'ion_charge', 'beam_energy')
+        self.params = (
+                'pulse_length', 'rep_rate', 'peak_current',
+                'ion_mass', 'ion_charge', 'beam_energy')
         for p in self.params:
             o = getattr(self, p + '_lineEdit')
             o.setValidator(QDoubleValidator(0, 1e10, 6))
@@ -78,9 +80,9 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         v = getattr(self, "_" + s)
         vmin, vmax = v * (1 - PER), v * (1 + PER)
         vstep = (vmax - vmin) / (N - 1)
-        self.from_lineEdit.setText('{0:.6g}'.format(vmin))
-        self.to_lineEdit.setText('{0:.6g}'.format(vmax))
-        self.step_lineEdit.setText('{0:.6g}'.format(vstep))
+        self.from_lineEdit.setText(FMT.format(vmin))
+        self.to_lineEdit.setText(FMT.format(vmax))
+        self.step_lineEdit.setText("{0:.2g}".format(vstep))
         self.draw_btn.clicked.emit()
 
     @pyqtSlot()
@@ -95,10 +97,12 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
                 for p in self.params
         }
         param_dict[self.current_param] = x
-        w = f_beam_power(**param_dict)
+        eta, w = f_beam_power(**param_dict)
 
         o = self.matplotlibcurveWidget
         o.update_curve(x, w)
+        o.setFigureXlabel(self.current_param)
+        o.setFigureYlabel("Beam Power [W]")
 
     @pyqtSlot('QString')
     def on_update_params(self, param, s):
@@ -113,20 +117,23 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
     def update_results(self):
         try:
-            w = f_beam_power(self._beam_energy, self._peak_current,
+            eta, w = f_beam_power(
+                             self._beam_energy, self._peak_current,
                              self._ion_mass, self._ion_charge,
-                             self._duty_cycle)
+                             self._pulse_length, self._rep_rate)
         except AttributeError:
             pass
         else:
-            self.beam_power_lineEdit.setText("{0:.6g}".format(w))
+            self.beam_power_lineEdit.setText(FMT.format(w))
+            self.duty_cycle_lineEdit.setText(FMT.format(eta))
 
 
 def f_beam_power(beam_energy, peak_current,
-                 ion_mass, ion_charge, duty_cycle, **kws):
-    if not isinstance(beam_energy, np.ndarray):
-        print(beam_energy, peak_current, ion_mass, ion_mass, duty_cycle)
-    return beam_energy * peak_current / ion_charge * ion_mass * duty_cycle * 0.01
+                 ion_mass, ion_charge,
+                 pulse_length, rep_rate, **kws):
+    duty_cycle = rep_rate * pulse_length * 1e-4
+    beam_power = beam_energy * peak_current / ion_charge * ion_mass * duty_cycle * 0.01
+    return duty_cycle, beam_power
 
 
 
