@@ -1147,6 +1147,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_update_visibility(self, idx, f):
         self._tv.setColumnHidden(idx, f)
 
+    @pyqtSlot()
+    def on_take_settings_snapshot(self):
+        """Take current settings, update 'Setpoint(x0)' column.
+        """
+        m = self._tv.model()
+        if m is None:
+            return
+        src_m = m.sourceModel()
+        current_sp_idx = src_m.i_cset
+        stored_sp_idx = src_m.i_val0
+        for i in range(m.rowCount()):
+            sp_val_str = m.data(m.index(i, current_sp_idx))
+            m.setData(m.index(i, stored_sp_idx), sp_val_str)
+
 
 def make_tolerance_dict_from_table_settings(table_settings):
     """Create tolerance dict from TableSettings.
