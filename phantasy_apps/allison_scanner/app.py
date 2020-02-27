@@ -756,10 +756,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._elapsed_timer.stop()
 
     def closeEvent(self, e):
-        r = QMessageBox.information(self, "Close Application",
-                "Have you saved the data?",
+        r = QMessageBox.information(self, "Exit Application",
+                "Do you want to save the data?",
                 QMessageBox.Yes | QMessageBox.No)
-        if r == QMessageBox.No:
+        if r == QMessageBox.Yes:
             self.on_save_data()
         BaseAppForm.closeEvent(self, e)
 
