@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_app.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.2
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -278,7 +278,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addLayout(self.horizontalLayout, 2, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 31))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -369,6 +369,12 @@ class Ui_MainWindow(object):
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionAdd_Devices.setIcon(icon17)
         self.actionAdd_Devices.setObjectName("actionAdd_Devices")
+        self.actionTake_Snapshot = QtWidgets.QAction(MainWindow)
+        icon18 = QtGui.QIcon()
+        icon18.addPixmap(QtGui.QPixmap(":/sm-icons/snapshot.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionTake_Snapshot.setIcon(icon18)
+        self.actionTake_Snapshot.setObjectName("actionTake_Snapshot")
         self.menu_File.addAction(self.actionLoad_From_Snapshot)
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
@@ -380,6 +386,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionAdd_Devices)
         self.toolBar.addAction(self.action_Save)
         self.toolBar.addAction(self.actionLoad_Settings)
+        self.toolBar.addAction(self.actionTake_Snapshot)
         self.toolBar.addAction(self.actionPhysics_Fields)
         self.toolBar.addAction(self.actionEngineering_Fields)
         self.toolBar.addSeparator()
@@ -425,6 +432,8 @@ class Ui_MainWindow(object):
             MainWindow.on_pressed_view)
         self.show_all_selected_btn.toggled['bool'].connect(
             MainWindow.on_toggle_all_selected)
+        self.actionTake_Snapshot.triggered.connect(
+            MainWindow.on_take_settings_snapshot)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.expand_all_btn, self.select_all_btn)
         MainWindow.setTabOrder(self.select_all_btn, self.invert_selection_btn)
@@ -505,7 +514,14 @@ class Ui_MainWindow(object):
         self.single_update_btn.setToolTip(
             _translate("MainWindow", "Update for one time."))
         self.single_update_btn.setText(_translate("MainWindow", "..."))
+        self.apply_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "Apply the checked items\' settings after scaling by the defined scaling factor."
+            ))
         self.apply_btn.setText(_translate("MainWindow", "Apply"))
+        self.scaling_factor_lineEdit.setToolTip(
+            _translate("MainWindow", "Scaling factor."))
         self.scaling_factor_lineEdit.setText(_translate("MainWindow", "1.0"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
@@ -567,6 +583,10 @@ class Ui_MainWindow(object):
         self.actionAdd_Devices.setText(_translate("MainWindow", "Add Devices"))
         self.actionAdd_Devices.setToolTip(
             _translate("MainWindow", "Add more devices."))
+        self.actionTake_Snapshot.setText(
+            _translate("MainWindow", "Take Snapshot"))
+        self.actionTake_Snapshot.setToolTip(
+            _translate("MainWindow", "Record current settings."))
 
 
 from . import resources_rc
