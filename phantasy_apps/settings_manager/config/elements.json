@@ -1,0 +1,252 @@
+{
+  "FE_ISRC1:BEAM:A_BOOK": {
+    "setpoint": "FE_ISRC1:BEAM:A_BOOK",
+    "readback": "FE_ISRC1:BEAM:A_BOOK",
+    "index": -1,
+    "length": 0.0,
+    "sb": -1.0,
+    "family": "ION",
+    "field": "A_BOOK",
+    "field_phy": "A_BOOK_PHY"
+  },
+  "FE_ISRC1:BEAM:Q_BOOK": {
+    "setpoint": "FE_ISRC1:BEAM:Q_BOOK",
+    "readback": "FE_ISRC1:BEAM:Q_BOOK",
+    "index": -1,
+    "length": 0.0,
+    "sb": -1.0,
+    "family": "ION",
+    "field": "Q_BOOK",
+    "field_phy": "Q_BOOK_PHY"
+  },
+  "FE_ISRC1:BEAM:Z_BOOK": {
+    "setpoint": "FE_ISRC1:BEAM:Z_BOOK",
+    "readback": "FE_ISRC1:BEAM:Z_BOOK",
+    "index": -1,
+    "length": 0.0,
+    "sb": -1.0,
+    "family": "ION",
+    "field": "Z_BOOK",
+    "field_phy": "Z_BOOK_PHY"
+  },
+  "FE_ISRC1:PSEL_D0679:V": {
+    "setpoint": "FE_ISRC1:PSEL_D0679:V_CSET",
+    "readback": "FE_ISRC1:PSEL_D0679:V_RD",
+    "index": -1,
+    "length": 0.0,
+    "sb": 67.9,
+    "family": "PV",
+    "field": "V",
+    "field_phy": "V_PHY"
+  },
+  "FE_ISRC1:HVP_D0679:V": {
+    "setpoint": "FE_ISRC1:HVP_D0679:V_CSET",
+    "readback": "FE_ISRC1:HVP_D0679:V_RD",
+    "index": -1,
+    "length": 0.0,
+    "sb": 67.9,
+    "family": "PV",
+    "field": "V",
+    "field_phy": "V_PHY"
+  },
+  "FE_ISRC1:PSB_D0679:V": {
+    "setpoint": "FE_ISRC1:PSB_D0679:V_CSET",
+    "readback": "FE_ISRC1:PSB_D0679:V_RD",
+    "index": -1,
+    "length": 0.0,
+    "sb": 67.9,
+    "family": "PV",
+    "field": "V",
+    "field_phy": "V_PHY"
+  },
+  "FE_ISRC1:PSX_D0679:V": {
+    "setpoint": "FE_ISRC1:PSX_D0679:V_CSET",
+    "readback": "FE_ISRC1:PSX_D0679:V_RD",
+    "index": -1,
+    "length": 0.0,
+    "sb": 67.9,
+    "family": "PV",
+    "field": "V",
+    "field_phy": "V_PHY"
+  },
+  "FE_ISRC1:PSOL_D0682:I": {
+    "setpoint": "FE_ISRC1:PSOL_D0682:I_CSET",
+    "readback": "FE_ISRC1:PSOL_D0682:I_RD",
+    "index": -1,
+    "length": 0.0,
+    "sb": 68.2,
+    "family": "PV",
+    "field": "I",
+    "field_phy": "I_PHY"
+  },
+  "FE_ISRC1:PSOL_D0685:I": {
+    "setpoint": "FE_ISRC1:PSOL_D0685:I_CSET",
+    "readback": "FE_ISRC1:PSOL_D0685:I_RD",
+    "index": -1,
+    "length": 0.0,
+    "sb": 68.5,
+    "family": "PV",
+    "field": "I",
+    "field_phy": "I_PHY"
+  },
+  "FE_ISRC1:PSE_D0686:V": {
+    "setpoint": "FE_ISRC1:PSE_D0686:V_CSET",
+    "readback": "FE_ISRC1:PSE_D0686:V_RD",
+    "index": -1,
+    "length": 0.0,
+    "sb": 68.6,
+    "family": "PV",
+    "field": "V",
+    "field_phy": "V_PHY"
+  },
+  "FE_ISRC1:SOLR_D0690:I": {
+    "setpoint": "FE_ISRC1:SOLR_D0690:I_CSET",
+    "readback": "FE_ISRC1:SOLR_D0690:I_RD",
+    "index": -1,
+    "length": 0.0,
+    "sb": 69.0,
+    "family": "PV",
+    "field": "I",
+    "field_phy": "I_PHY"
+  },
+  "FE_ISRC1:DRV_D0686:POS": {
+    "setpoint": "FE_ISRC1:DRV_D0686:POS_CSET",
+    "readback": "FE_ISRC1:DRV_D0686:POS_RD",
+    "index": -1,
+    "length": 0.0,
+    "sb": 68.6,
+    "family": "PV",
+    "field": "POS",
+    "field_phy": "POS_PHY"
+  },
+  "FE_ISRC1:DCH_D0695:I": {
+    "setpoint": "FE_ISRC1:DCH_D0695:I_CSET",
+    "readback": "FE_ISRC1:DCH_D0695:I_RD",
+    "index": -1,
+    "length": 0.0,
+    "sb": 69.5,
+    "family": "PV",
+    "field": "I",
+    "field_phy": "I_PHY"
+  },
+  "FE_ISRC1:DCV_D0695:I": {
+    "setpoint": "FE_ISRC1:DCV_D0695:I_CSET",
+    "readback": "FE_ISRC1:DCV_D0695:I_RD",
+    "index": -1,
+    "length": 0.0,
+    "sb": 69.5,
+    "family": "PV",
+    "field": "I",
+    "field_phy": "I_PHY"
+  },
+  "FE_ISRC1:HVP_D0698:V": {
+    "setpoint": "FE_ISRC1:HVP_D0698:V_CSET",
+    "readback": "FE_ISRC1:HVP_D0698:V_RD",
+    "index": -1,
+    "length": 0.0,
+    "sb": 69.8,
+    "family": "PV",
+    "field": "V",
+    "field_phy": "V_PHY"
+  },
+  "FE_ISRC1:PSEL_D0698:V": {
+    "setpoint": "FE_ISRC1:PSEL_D0698:V_CSET",
+    "readback": "FE_ISRC1:PSEL_D0698:V_RD",
+    "index": -1,
+    "length": 0.0,
+    "sb": 69.8,
+    "family": "PV",
+    "field": "V",
+    "field_phy": "V_PHY"
+  },
+  "FE_SCS1:STPC01_D0736:SLT.VAL": {
+    "setpoint": "FE_SCS1:STPC01_D0736:SLT.VAL",
+    "readback": "FE_SCS1:STPC01_D0736:SLT.VAL",
+    "index": -1,
+    "length": 0.0,
+    "sb": 73.6,
+    "family": "PV",
+    "field": "SLT.VAL",
+    "field_phy": "SLT.VAL_PHY"
+  },
+  "FE_SCS1:STPC01_D0736:SLB.VAL": {
+    "setpoint": "FE_SCS1:STPC01_D0736:SLB.VAL",
+    "readback": "FE_SCS1:STPC01_D0736:SLB.VAL",
+    "index": -1,
+    "length": 0.0,
+    "sb": 73.6,
+    "family": "PV",
+    "field": "SLB.VAL",
+    "field_phy": "SLB.VAL_PHY"
+  },
+  "FE_SCS1:STPC01_D0736:SLL.VAL": {
+    "setpoint": "FE_SCS1:STPC01_D0736:SLL.VAL",
+    "readback": "FE_SCS1:STPC01_D0736:SLL.VAL",
+    "index": -1,
+    "length": 0.0,
+    "sb": 73.6,
+    "family": "PV",
+    "field": "SLL.VAL",
+    "field_phy": "SLL.VAL_PHY"
+  },
+  "FE_SCS1:STPC01_D0736:SLR.VAL": {
+    "setpoint": "FE_SCS1:STPC01_D0736:SLR.VAL",
+    "readback": "FE_SCS1:STPC01_D0736:SLR.VAL",
+    "index": -1,
+    "length": 0.0,
+    "sb": 73.6,
+    "family": "PV",
+    "field": "SLR.VAL",
+    "field_phy": "SLR.VAL_PHY"
+  },
+  "FE_RFQ:RFC_D1005:E": {
+    "setpoint": "FE_RFQ:RFC_D1005:E_CSET",
+    "readback": "FE_RFQ:RFC_D1005:E_RD_CAVS",
+    "index": -1,
+    "length": 0.0,
+    "sb": 100.5,
+    "family": "PV",
+    "field": "E",
+    "field_phy": "E_PHY"
+  },
+  "FE_RFQ:RFC_D1005:PHA": {
+    "setpoint": "FE_RFQ:RFC_D1005:PHA_CSET",
+    "readback": "FE_RFQ:RFC_D1005:PHA_RD_CAVS",
+    "index": -1,
+    "length": 0.0,
+    "sb": 100.5,
+    "family": "PV",
+    "field": "PHA",
+    "field_phy": "PHA_PHY"
+  },
+  "FS1_STRS:STPC03_D2237:DRV1": {
+    "setpoint": "FS1_STRS:STPC03_D2237:DRV1",
+    "readback": "FS1_STRS:STPC03_D2237:DRV1",
+    "index": -1,
+    "length": 0.0,
+    "sb": 223.7,
+    "family": "PV",
+    "field": "DRV1",
+    "field_phy": "DRV1_PHY"
+  },
+  "FS1_STRS:STPC03_D2237:DRV2": {
+    "setpoint": "FS1_STRS:STPC03_D2237:DRV2",
+    "readback": "FS1_STRS:STPC03_D2237:DRV2",
+    "index": -1,
+    "length": 0.0,
+    "sb": 223.7,
+    "family": "PV",
+    "field": "DRV2",
+    "field_phy": "DRV2_PHY"
+  },
+  "FS1_BMS:STRS_D2237:DRV2:POS": {
+    "setpoint": "FS1_BMS:STRS_D2237:DRV2:POS_CSET.SELN",
+    "readback": "FS1_BMS:STRS_D2237:DRV2:POS_CSET.SELN",
+    "index": -1,
+    "length": 0.0,
+    "sb": 223.7,
+    "family": "PV",
+    "field": "POS",
+    "field_phy": "POS_PHY"
+  }
+}
