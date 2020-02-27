@@ -110,7 +110,7 @@ class PreferencesDialog(QDialog, Ui_Dialog):
     def get_config(self):
         return {'field_init_mode': self.mode,
                 't_wait': self.apply_delt_dsbox.value(),
-                'init_settings': self.init_settings,
+                'init_settings': self.init_settings_chkbox.isChecked(),
                 'tolerance': self.tol_dsbox.value(),
                 'dt_confsync': self.dt_confsync_dsbox.value(),
                 'ndigit': self.ndigit_sbox.value(),
