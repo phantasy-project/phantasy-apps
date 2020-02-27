@@ -29,6 +29,7 @@ from PyQt5.QtWidgets import QWidget
 from phantasy import CaField
 from phantasy import Settings
 from phantasy import build_element
+from phantasy import Lattice
 from phantasy_ui import BaseAppForm
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
@@ -155,6 +156,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.elem_confpath = os.path.join(confdir, 'elements.json')
         self._elem_pvconf = ElementPVConfig(self.elem_confpath)
 
+        # element sequence: initial lattice, maintain internal only
+        self.__init_lat = self.build_lattice()
+
         #
         self.config_timer = QTimer(self)
         self.config_timer.timeout.connect(self.on_update_dump_config)
@@ -203,6 +207,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lat = o.combined_lattice()
         self.lattice_loaded.emit(o)
 
+        self.__init_lat = self.__init_lat + self._lat
         # show element settings
         if self.init_settings:  # in Preferences
             # if init settings, show settings to the view.
@@ -287,7 +292,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._mp = None
         self._last_machine_name = None
         self._last_lattice_name = None
-        self._lat = None
+        self._lat = None # loaded from latticeWidget
         self._elem_list = []  # element list for SettingsModel
 
         self.__settings = Settings()
@@ -411,7 +416,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         if hasattr(item, 'fobj'):
             ename = text
-            elem = self._lat[ename]
+            elem = self.__init_lat[ename]
             fld = item.fobj
             probe_action = QAction(self._probe_icon,
                                    "Probe '{}'".format(ename), menu)
@@ -434,8 +439,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # update flat_settings and settings
         # update settings view
         flat_settings, settings = pack_settings(
-            self._elem_list, self._lat,
-            settings=self._lat.settings,
+            self._elem_list, self.__init_lat,
+            settings=self.__init_lat.settings,
             data_source=DATA_SRC_MAP[self.field_init_mode],
             only_physics=False)
         self.settingsLoaded.emit(flat_settings, settings)
@@ -763,21 +768,29 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def load_file(self, filepath, ext):
         ext = ext.upper()
-        if ext == 'CSV':
-            self._load_settings_from_csv(filepath)
-        elif ext == 'JSON':
-            self._load_settings_from_json(filepath)
-        elif ext == 'H5':
-            self._load_settings_from_h5(filepath)
-
-        msg = "Loaded data from {}".format(filepath)
-        self.statusInfoChanged.emit(msg)
-        QMessageBox.information(
-            self, "", msg)
-        printlog(msg)
+        try:
+            if ext == 'CSV':
+                self._load_settings_from_csv(filepath)
+            elif ext == 'JSON':
+                self._load_settings_from_json(filepath)
+            elif ext == 'H5':
+                self._load_settings_from_h5(filepath)
+        except RuntimeError:
+            pass
+        else:
+            msg = "Loaded data from {}".format(filepath)
+            self.statusInfoChanged.emit(msg)
+            QMessageBox.information(
+                self, "Load Settings File", msg)
+            printlog(msg)
 
     def _load_settings_from_csv(self, filepath):
-        lat = self.build_lattice()
+        if self._lat is None:
+            QMessageBox.warning(self, "Load CSV Settings File",
+                                "Lattice is not loaded.",
+                                QMessageBox.Ok)
+            raise RuntimeError("lattice is required")
+        lat = self.__init_lat
         table_settings = TableSettings(filepath)
         s = make_physics_settings(table_settings, lat)
         lat.settings.update(s)
@@ -1013,14 +1026,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
                 is_added_list = []
                 for i in sel_elems_dis:
-                    self._lat.append(i)
+                    self.__init_lat.append(i)
                     is_added_list.append(self.add_element(i))
                 is_added = True in is_added_list
             else:
                 sel_elems, _, _ = self._elem_selected
                 pv_elem = sel_elems[0]
                 elem = build_element(pv_elem.setpoint[0], pv_elem.readback[0])
-                self._lat.append(elem)
+                self.__init_lat.append(elem)
                 is_added = self.add_element(elem)
                 if is_added:
                     self.element_from_pv_added.emit(elem)
@@ -1028,18 +1041,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self.element_list_changed.emit()
 
     def build_lattice(self):
-        """Build lattice based on machine/lattice name, and add elements from
-        PV configs from elem_pvconf, the model settings of the new elements
-        are pulled from model_settings if available.
+        """Build a sequence of high-level elements from PV configs defined by
+        *elem_pvconf*, the model settings of the new elements are pulled from
+        model_settings if available.
 
         Returns
         -------
         r : Lattice
-            Updated high-level lattice object.
+            Initialized high-level lattice object.
         """
         # load mp
-        # add elements rom elem_pvconf
-        lat = self._lat
+        # add elements from elem_pvconf
+        lat = Lattice(self.__class__)
         ms = self._model_settings
         for ename, conf in self._elem_pvconf.items():
             field_eng = conf['field']
@@ -1048,10 +1061,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             rd_pv = conf['readback']
             index = conf['index']
             length = conf['length']
+            family = conf['family']
             sb = conf['sb']
             elem = build_element(sp_pv, rd_pv, ename=ename, fname=field_eng,
                                  field_phy=field_phy, index=index,
-                                 length=length, sb=sb)
+                                 length=length, sb=sb, family=family)
             lat.append(elem)
             if ename in ms:
                 lat.settings[ename] = ms[ename]
@@ -1102,7 +1116,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Delete the element(s) from element list by given field object list.
         """
         for fobj in fobj_list:
-            elem = self._lat[fobj.ename]
+            elem = self.__init_lat[fobj.ename]
             # !! note: delete both ENG/PHY fields even if any one of ENG/PHY is deleted.
             if elem in self._elem_list:
                 self._elem_list.remove(elem)
