@@ -796,6 +796,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         pref_dlg = PreferencesDialog(self)
         pref_dlg.pref_changed.connect(self.on_update_pref)
+        pref_dlg.visibility_changed.connect(self.on_update_visibility)
         r = pref_dlg.exec_()
         if r == QDialog.Accepted:
             printlog("Updated pref --> {}".format(self.pref_dict))
@@ -1141,6 +1142,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         path = e.mimeData().urls()[0].toLocalFile()
         ext = path.rsplit('.', 1)[-1]
         self.load_file(path, ext)
+
+    @pyqtSlot(int, bool)
+    def on_update_visibility(self, idx, f):
+        self._tv.setColumnHidden(idx, f)
 
 
 def make_tolerance_dict_from_table_settings(table_settings):

@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from functools import partial
+
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtWidgets import QSpacerItem
 
+from .utils import COLUMN_NAMES
 from .ui.ui_preferences import Ui_Dialog
 
 DEFAULT_FIELD_INIT_MODE = 'model'
@@ -25,7 +31,9 @@ DEFAULT_PREF = {
 
 
 class PreferencesDialog(QDialog, Ui_Dialog):
+
     pref_changed = pyqtSignal(dict)
+    visibility_changed = pyqtSignal(int, bool)
 
     def __init__(self, parent=None):
         super(self.__class__, self).__init__()
@@ -66,6 +74,27 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         # ndigits
         ndigit = self.pref_dict['ndigit']
         self.ndigit_sbox.setValue(ndigit)
+
+        # colvis
+        tv = self.parent._tv
+        layout = self.col_visibility_gbox
+        for idx, name in enumerate(COLUMN_NAMES):
+            btn = QPushButton(name, self)
+            btn.setCheckable(True)
+            btn.setChecked(tv.isColumnHidden(idx))
+            btn.toggled.connect(partial(self.on_toggle_visibility, idx))
+            i = idx // 4
+            j = idx - 4 * i
+            layout.addWidget(btn, i, j)
+        layout.addItem(QSpacerItem(20, 20,
+                       QSizePolicy.Preferred, QSizePolicy.Expanding))
+
+    @pyqtSlot(bool)
+    def on_toggle_visibility(self, idx, f):
+        """Toggle the visibility of the *idx*-th column, if *f* is True,
+        hide, otherwise show.
+        """
+        self.visibility_changed.emit(idx, f)
 
     @pyqtSlot(bool)
     def on_toggle_mode(self, f):
