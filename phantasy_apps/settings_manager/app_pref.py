@@ -2,13 +2,18 @@
 # -*- coding: utf-8 -*-
 
 from functools import partial
+import os
 
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import QUrl
+from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QSpacerItem
+
+from phantasy_ui import get_open_directory
 
 from .utils import COLUMN_NAMES
 from .ui.ui_preferences import Ui_Dialog
@@ -19,6 +24,7 @@ DEFAULT_T_WAIT = 0.05
 DEFAULT_TOLERANCE = 0.10
 DEFAULT_CONFIG_SYNC_TIME_INTERVAL = 10  # second
 DEFAULT_N_DIGITS = 3
+DEFAULT_CONFIG_PATH = "~/.phantasy-apps/settings-manager"
 
 DEFAULT_PREF = {
     'field_init_mode': DEFAULT_FIELD_INIT_MODE,
@@ -27,6 +33,7 @@ DEFAULT_PREF = {
     'tolerance': DEFAULT_TOLERANCE,
     'dt_confsync': DEFAULT_CONFIG_SYNC_TIME_INTERVAL,
     'ndigit': DEFAULT_N_DIGITS,
+    'config_path': os.path.abspath(os.path.expanduser(DEFAULT_CONFIG_PATH)),
 }
 
 
@@ -88,6 +95,43 @@ class PreferencesDialog(QDialog, Ui_Dialog):
             layout.addWidget(btn, i, j)
         layout.addItem(QSpacerItem(20, 20,
                        QSizePolicy.Preferred, QSizePolicy.Expanding))
+
+        # config path
+        config_path = self.pref_dict['config_path']
+        self.update_config_paths(config_path)
+        self.change_config_path_btn.clicked.connect(self.on_change_confpath)
+
+    def update_config_paths(self, root_config_path):
+        config_path = root_config_path
+        ts_confpath = os.path.join(config_path, 'tolerance.json')
+        ms_confpath = os.path.join(config_path, 'settings.json')
+        elem_confpath = os.path.join(config_path, 'elements.json')
+        self.config_path_lineEdit.setText(config_path)
+        layout = self.config_btns_hbox
+        for i in reversed(range(layout.count())):
+            w = layout.itemAt(i)
+            try:
+                w.widget().setParent(None)
+            except:
+                layout.removeItem(w)
+        for p in (ts_confpath, ms_confpath, elem_confpath):
+            btn = QPushButton(os.path.basename(p), self)
+            btn.setToolTip(p)
+            btn.clicked.connect(partial(self.on_open_filepath, p))
+            layout.addWidget(btn)
+        layout.addItem(QSpacerItem(20, 20,
+                       QSizePolicy.Expanding, QSizePolicy.Preferred))
+
+    @pyqtSlot()
+    def on_open_filepath(self, path):
+        QDesktopServices.openUrl(QUrl(path))
+
+    @pyqtSlot()
+    def on_change_confpath(self):
+        d = get_open_directory(self)
+        if not os.access(d, os.W_OK):
+            return
+        self.update_config_paths(d)
 
     @pyqtSlot(bool)
     def on_toggle_visibility(self, idx, f):
