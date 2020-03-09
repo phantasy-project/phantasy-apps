@@ -3,17 +3,20 @@
 
 from functools import partial
 import os
+import shutil
 
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QUrl
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QSpacerItem
 
 from phantasy_ui import get_open_directory
+from phantasy_apps.utils import find_dconf
 
 from .utils import COLUMN_NAMES
 from .ui.ui_preferences import Ui_Dialog
@@ -100,6 +103,51 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         config_path = self.pref_dict['config_path']
         self.update_config_paths(config_path)
         self.change_config_path_btn.clicked.connect(self.on_change_confpath)
+
+        # reset config
+        self.reset_config_btn.clicked.connect(self.on_reset_config)
+        # purge config
+        self.purge_config_btn.clicked.connect(self.on_purge_config)
+
+    @pyqtSlot()
+    def on_reset_config(self):
+        """Reset config data with package distributed.
+        """
+        r = QMessageBox.question(self, "Reset Configuration Files",
+                "Are you sure to reset all the configuration files?",
+                QMessageBox.Yes | QMessageBox.No)
+        if r == QMessageBox.No:
+            return
+
+        default_ts_path = find_dconf("settings_manager", "tolerance.json")
+        default_ms_path = find_dconf("settings_manager", "settings.json")
+        default_elem_path = find_dconf("settings_manager", "elements.json")
+        current_config_path = self.config_path_lineEdit.text()
+        ts_path = os.path.join(current_config_path, 'tolerance.json')
+        ms_path = os.path.join(current_config_path, 'settings.json')
+        elem_path = os.path.join(current_config_path, 'elements.json')
+
+        for default_path, path in zip(
+                (default_ts_path, default_ms_path, default_elem_path),
+                (ts_path, ms_path, elem_path)):
+            shutil.copy2(default_path, path)
+
+    @pyqtSlot()
+    def on_purge_config(self):
+        """Purge config data.
+        """
+        r = QMessageBox.question(self, "Purge Configuration Files",
+                "Are you sure to clean up all the configuration files?",
+                QMessageBox.Yes | QMessageBox.No)
+        if r == QMessageBox.No:
+            return
+
+        current_config_path = self.config_path_lineEdit.text()
+        ts_path = os.path.join(current_config_path, 'tolerance.json')
+        ms_path = os.path.join(current_config_path, 'settings.json')
+        elem_path = os.path.join(current_config_path, 'elements.json')
+        for path in (ts_path, ms_path, elem_path):
+            with open(path, 'w'): pass
 
     def update_config_paths(self, root_config_path):
         config_path = root_config_path
