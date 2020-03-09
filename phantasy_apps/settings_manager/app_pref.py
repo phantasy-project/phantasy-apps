@@ -45,6 +45,9 @@ class PreferencesDialog(QDialog, Ui_Dialog):
     pref_changed = pyqtSignal(dict)
     visibility_changed = pyqtSignal(int, bool)
 
+    # config, ts, ms, elem pv
+    config_changed = pyqtSignal()
+
     def __init__(self, parent=None, preference_dict=None):
         super(self.__class__, self).__init__()
         self.parent = parent
@@ -133,6 +136,8 @@ class PreferencesDialog(QDialog, Ui_Dialog):
                 (ts_path, ms_path, elem_path)):
             shutil.copy2(default_path, path)
 
+        self.config_changed.emit()
+
     @pyqtSlot()
     def on_purge_config(self):
         """Purge config data.
@@ -149,6 +154,8 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         elem_path = os.path.join(current_config_path, 'elements.json')
         for path in (ts_path, ms_path, elem_path):
             with open(path, 'w'): pass
+
+        self.config_changed.emit()
 
     def update_config_paths(self, root_config_path):
         config_path = root_config_path

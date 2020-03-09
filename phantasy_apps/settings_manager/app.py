@@ -809,12 +809,32 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         pass
 
     @pyqtSlot()
+    def on_config_updated(self):
+        """config from Preferences is changed, model settings, tolerance
+        settings, element PV config.
+        """
+        confdir = self.pref_dict['config_path']
+        _, ts_confpath, ms_confpath, elem_confpath = init_config_dir(confdir)
+
+        # tolerance settings (ts)
+        self._tolerance_settings = ToleranceSettings(ts_confpath)
+
+        # predefined model settings (ms)
+        self._model_settings = Settings(self.ms_confpath)
+
+        # elements from PVs
+        self._elem_pvconf = ElementPVConfig(self.elem_confpath)
+
+        self.__init_lat = self.build_lattice()
+
+    @pyqtSlot()
     def on_launch_preferences(self):
         """Launch preferences dialog.
         """
         pref_dlg = PreferencesDialog(self, self.pref_dict)
         pref_dlg.pref_changed.connect(self.on_update_pref)
         pref_dlg.visibility_changed.connect(self.on_update_visibility)
+        pref_dlg.config_changed.connect(self.on_config_updated)
         r = pref_dlg.exec_()
         if r == QDialog.Accepted:
             printlog("Updated pref --> {}".format(self.pref_dict))
