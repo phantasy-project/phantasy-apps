@@ -1,0 +1,78 @@
+{
+  "curve": [
+    {
+      "label": "Measurement",
+      "line": {
+        "color": "#28A745",
+        "style": "--",
+        "width": 2.0
+      },
+      "line_id": 0,
+      "marker": {
+        "edgecolor": "#007BFF",
+        "facecolor": "#FFFFFF",
+        "size": 10.0,
+        "style": "s",
+        "width": 2.0
+      }
+    },
+    {
+      "label": "Fitting",
+      "line": {
+        "color": "#DC3545",
+        "style": "-",
+        "width": 2.0
+      },
+      "line_id": 1,
+      "marker": {
+        "edgecolor": "#DC3545",
+        "facecolor": "#DC3545",
+        "size": 5.0,
+        "style": "None",
+        "width": 1.0
+      }
+    }
+  ],
+  "figure": {
+    "labels": {
+      "font": "Cantarell,16,-1,5,50,0,0,0,0,0,Regular",
+      "xlabel": "Dipole Field [I]",
+      "ylabel": "BPM Readings [mm]"
+    },
+    "legend": {
+      "location": 0,
+      "show": true
+    },
+    "title": {
+      "font": "Cantarell,24,-1,5,75,0,0,0,0,0,Bold",
+      "value": "Bend Tuning"
+    },
+    "xy_range": {
+      "auto_scale": true,
+      "xmax": 0.20075,
+      "xmin": 0.17985,
+      "ymax": 0.0579617,
+      "ymin": -0.0504366
+    }
+  },
+  "style": {
+    "background": {
+      "color": "#efebe7"
+    },
+    "figsize": {
+      "dpi": 100.0,
+      "height": 4.8,
+      "width": 6.4
+    },
+    "layout": {
+      "grid_color": "#808080",
+      "grid_on": true,
+      "tight_on": false
+    },
+    "ticks": {
+      "color": "#000000",
+      "font": "sans-serif,12,-1,5,50,0,0,0,0,0",
+      "mticks_on": true
+    }
+  }
+}
