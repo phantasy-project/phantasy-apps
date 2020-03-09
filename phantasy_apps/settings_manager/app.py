@@ -183,7 +183,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # config sync timer
         self.config_timer = QTimer(self)
         self.config_timer.timeout.connect(self.on_update_dump_config)
-        self.config_timer.start(self.dt_confsync * 1000)
+        #
+        # disable this timer 2020-03-09
+        # self.config_timer.start(self.dt_confsync * 1000)
+        #
 
     @pyqtSlot(QVariant)
     def on_element_from_pv_added(self, elem):
@@ -838,7 +841,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if dt_confsync != self.dt_confsync:
             self.config_timer.stop()
             self.dt_confsync = dt_confsync
-            self.config_timer.start(self.dt_confsync * 1000)
+            # self.config_timer.start(self.dt_confsync * 1000)
         ndigit = self.pref_dict['ndigit']
         if ndigit != self.ndigit:
             self.ndigit_changed.emit(ndigit)
