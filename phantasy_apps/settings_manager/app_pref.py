@@ -45,10 +45,11 @@ class PreferencesDialog(QDialog, Ui_Dialog):
     pref_changed = pyqtSignal(dict)
     visibility_changed = pyqtSignal(int, bool)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, preference_dict=None):
         super(self.__class__, self).__init__()
         self.parent = parent
-        self.pref_dict = DEFAULT_PREF
+
+        self.pref_dict = DEFAULT_PREF if preference_dict is None else preference_dict
 
         # UI
         self.setupUi(self)

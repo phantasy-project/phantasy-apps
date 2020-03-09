@@ -1,6 +1,5 @@
 # -*- coding: utf8 -*-
 
-import os
 import sys
 
 from phantasy_ui import QApp as QApplication
@@ -13,19 +12,13 @@ __copyright__ = "(c) 2019, Facility for Rare Isotope beams," \
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
 __version__ = '1.0'
 
-CONFIG_PATH = "~/.phantasy-apps/settings-manager"
-
-
-def init_config_dir():
-    # initialize configuration directory
-    confdir = os.path.expanduser(CONFIG_PATH)
-    if not os.path.exists(confdir):
-        os.makedirs(confdir)
-    return confdir
-
 
 def run(cli=False):
-    confdir = init_config_dir()
+    args = sys.argv
+    if '--config' in args:
+        confdir = args[args.index('--config') + 1]
+    else:
+        confdir = None
 
     app = QApplication(sys.argv)
     w = SettingsManagerWindow(version=__version__, config_dir=confdir)

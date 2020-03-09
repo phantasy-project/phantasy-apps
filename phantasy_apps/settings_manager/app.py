@@ -163,6 +163,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # init dir
         confdir = self.pref_dict['config_path'] if confdir is None else confdir
+        self.pref_dict['config_path'] = os.path.abspath(os.path.expanduser(confdir))
         _, ts_confpath, ms_confpath, elem_confpath = init_config_dir(confdir)
 
         # tolerance settings (ts)
@@ -808,7 +809,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_launch_preferences(self):
         """Launch preferences dialog.
         """
-        pref_dlg = PreferencesDialog(self)
+        pref_dlg = PreferencesDialog(self, self.pref_dict)
         pref_dlg.pref_changed.connect(self.on_update_pref)
         pref_dlg.visibility_changed.connect(self.on_update_visibility)
         r = pref_dlg.exec_()
