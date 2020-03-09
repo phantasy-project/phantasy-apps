@@ -42,6 +42,7 @@ from phantasy_ui.widgets import ProbeWidget
 
 from .app_loadfrom import LoadSettingsDialog
 from .app_pref import DEFAULT_PREF
+from .app_pref import DEFAULT_CONFIG_PATH
 from .app_pref import PreferencesDialog
 from .data import CSV_HEADER
 from .data import ElementPVConfig
@@ -53,6 +54,7 @@ from .ui.ui_app import Ui_MainWindow
 from .utils import FMT
 from .utils import SettingsModel
 from .utils import pack_settings
+from .utils import init_config_dir
 from .utils import VALID_FILTER_KEYS_NUM
 
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
@@ -105,7 +107,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # ndigit
     ndigit_changed = pyqtSignal(int)
 
-    def __init__(self, version, config_dir):
+    def __init__(self, version, config_dir=None):
         super(SettingsManagerWindow, self).__init__()
 
         # app version
@@ -129,14 +131,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             </html>
         """.format(self._version)
 
-        self._confdir = config_dir
-
         # UI
         self.setupUi(self)
         self.postInitUi()
 
         # config
-        self.init_config(self._confdir)
+        self.init_config(config_dir)
 
         # post init ui
         self.__post_init_ui()
@@ -144,24 +144,45 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.adjustSize()
 
     def init_config(self, confdir):
+        # preferences
+        # see preference dialog class
+        self.pref_dict = DEFAULT_PREF
+        self.field_init_mode = self.pref_dict['field_init_mode']
+        self.t_wait = self.pref_dict['t_wait']
+        self.init_settings = self.pref_dict['init_settings']
+        self.tolerance = self.pref_dict['tolerance']
+        self.dt_confsync = self.pref_dict['dt_confsync']
+        self.ndigit = self.pref_dict['ndigit']
+        self.fmt = '{{0:.{0}f}}'.format(self.ndigit)
+
+        self.tolerance_changed[ToleranceSettings].connect(self.on_tolerance_dict_changed)
+        self.tolerance_changed[float].connect(self.on_tolerance_float_changed)
+        self.model_settings_changed.connect(self.on_model_settings_changed)
+        self.element_from_pv_added.connect(self.on_element_from_pv_added)
+        self.ndigit_changed.connect(self.on_ndigit_changed)
+
+        # init dir
+        confdir = self.pref_dict['config_path'] if confdir is None else confdir
+        _, ts_confpath, ms_confpath, elem_confpath = init_config_dir(confdir)
+
         # tolerance settings (ts)
-        ts_confpath = os.path.join(confdir, 'tolerance.json')
         self._tolerance_settings = ToleranceSettings(ts_confpath)
 
         # predefined model settings (ms)
-        self.ms_confpath = os.path.join(confdir, 'settings.json')
+        self.ms_confpath = ms_confpath
         self._model_settings = Settings(self.ms_confpath)
 
         # elements from PVs
-        self.elem_confpath = os.path.join(confdir, 'elements.json')
+        self.elem_confpath = elem_confpath
         self._elem_pvconf = ElementPVConfig(self.elem_confpath)
 
         # element sequence: initial lattice, maintain internal only
         self.__init_lat = self.build_lattice()
 
-        #
+        # config sync timer
         self.config_timer = QTimer(self)
         self.config_timer.timeout.connect(self.on_update_dump_config)
+        self.config_timer.start(self.dt_confsync * 1000)
 
     @pyqtSlot(QVariant)
     def on_element_from_pv_added(self, elem):
@@ -318,23 +339,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # scaling factor lineEdit
         self.scaling_factor_lineEdit.setValidator(QDoubleValidator(0.0, 10, 6))
 
-        # preferences
-        # see preference dialog class
-        self.pref_dict = DEFAULT_PREF
-        self.field_init_mode = self.pref_dict['field_init_mode']
-        self.t_wait = self.pref_dict['t_wait']
-        self.init_settings = self.pref_dict['init_settings']
-        self.tolerance = self.pref_dict['tolerance']
-        self.dt_confsync = self.pref_dict['dt_confsync']
-        self.ndigit = self.pref_dict['ndigit']
-        self.fmt = '{{0:.{0}f}}'.format(self.ndigit)
-
-        self.tolerance_changed[ToleranceSettings].connect(self.on_tolerance_dict_changed)
-        self.tolerance_changed[float].connect(self.on_tolerance_float_changed)
-        self.model_settings_changed.connect(self.on_model_settings_changed)
-        self.element_from_pv_added.connect(self.on_element_from_pv_added)
-        self.ndigit_changed.connect(self.on_ndigit_changed)
-
         # icon
         self.done_px = QPixmap(":/sm-icons/done.png")
         self.fail_px = QPixmap(":/sm-icons/fail.png")
@@ -356,9 +360,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.lattice_loaded.connect(self.on_update_widgets_status)
         #
         self.element_list_changed.connect(self.on_elemlist_changed)
-
-        # start config sync timer
-        self.config_timer.start(self.dt_confsync * 1000)
 
         # context menu
         self.set_context_menu()
