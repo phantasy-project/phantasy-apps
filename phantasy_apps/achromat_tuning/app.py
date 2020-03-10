@@ -80,12 +80,15 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.bpm_goal_lineEdit.textChanged.connect(self.on_eval_bend_goal)
         self.bpm_goal_lineEdit.returnPressed.connect(self.on_eval_bend_goal_pressed)
         self.bend_tune_fn_changed.connect(self.on_bend_tune_fn_changed)
+        self.open_in_cv_btn.clicked.connect(self.on_open_in_cv)
 
         #
         self.bpm_goal_lineEdit.setValidator(QDoubleValidator())
 
         # vars
         self._mp = None
+        self._current_datafile = None
+        self._cv_window = None
         self.task = None
         self.bend_fn = None
         for o in (self.bpm_goal_lineEdit, self.bend_goal_lineEdit,
@@ -113,6 +116,23 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
         apply_mplcurve_settings(o, 'achromat_tuning',
                                 filename='mpl_settings.json')
+
+    @pyqtSlot()
+    def on_open_in_cv(self):
+        """Open data file in Correlation Visualizer.
+        """
+        if self._current_datafile is None:
+            return
+
+        from phantasy_apps.correlation_visualizer import CorrelationVisualizerWindow
+        from phantasy_apps.correlation_visualizer import __version__
+        from phantasy_apps.correlation_visualizer import __title__
+
+        if self._cv_window is None:
+            self._cv_window = CorrelationVisualizerWindow(__version__)
+            self._cv_window.setWindowTitle(__title__)
+        self._cv_window.load_task_from_file(self._current_datafile)
+        self._cv_window.show()
 
     @pyqtSlot(QVariant)
     def on_bend_tune_fn_changed(self, fn):
@@ -158,6 +178,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.load_file(filepath, ext)
 
     def load_file(self, filepath, ext):
+        self._current_datafile = filepath
         self.auto_scale_changed.emit(False)
 
         self.task = load_task(filepath, self._mp)
