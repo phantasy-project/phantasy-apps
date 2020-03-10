@@ -1360,6 +1360,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         # load scan task.
         filepath, ext = get_open_filename(self,
                 type_filter="JSON Files (*.json)")
+        self.load_task_from_file(filepath)
+
+    def load_task_from_file(self, filepath):
         if filepath is None:
             return
         printlog("Loading task from {}.".format(filepath))
