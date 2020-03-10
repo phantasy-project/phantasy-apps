@@ -20,12 +20,13 @@ import numpy as np
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QVariant
+from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import QMainWindow
 from phantasy_ui import BaseAppForm
 from phantasy_ui import get_open_filename
 from phantasy_apps.utils import apply_mplcurve_settings
 from phantasy_apps.correlation_visualizer.data import ScanDataModel
-from phantasy_apps.correlation_visualizer.data import JSONDataSheet
+from phantasy_apps.correlation_visualizer.scan import load_task
 
 from .ui.ui_app import Ui_MainWindow
 
@@ -42,6 +43,9 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
     #
     auto_scale_changed = pyqtSignal(bool)
+
+    #
+    bend_tune_fn_changed = pyqtSignal(QVariant)
 
     def __init__(self, version, **kws):
         super(self.__class__, self).__init__()
@@ -68,9 +72,25 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self._post_init()
 
     def _post_init(self):
+        # events
         self.curve_updated.connect(self.update_curve)
         self.fit_curve_changed.connect(self.update_fitting_curve)
         self.auto_scale_changed.connect(self.bend_tuning_plot.setFigureAutoScale)
+        self.set_bend_goal_btn.clicked.connect(self.on_set_bend_goal)
+        self.bpm_goal_lineEdit.textChanged.connect(self.on_eval_bend_goal)
+        self.bpm_goal_lineEdit.returnPressed.connect(self.on_eval_bend_goal_pressed)
+        self.bend_tune_fn_changed.connect(self.on_bend_tune_fn_changed)
+
+        #
+        self.bpm_goal_lineEdit.setValidator(QDoubleValidator())
+
+        # vars
+        self._mp = None
+        self.task = None
+        self.bend_fn = None
+        for o in (self.bpm_goal_lineEdit, self.bend_goal_lineEdit,
+                  self.set_bend_goal_btn):
+            o.setEnabled(False)
 
         # data viz: bend_tuning_plot
         # add one more curve for fitting
@@ -94,6 +114,37 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         apply_mplcurve_settings(o, 'achromat_tuning',
                                 filename='mpl_settings.json')
 
+    @pyqtSlot(QVariant)
+    def on_bend_tune_fn_changed(self, fn):
+        for o in (self.bpm_goal_lineEdit, self.bend_goal_lineEdit,
+                  self.set_bend_goal_btn):
+            o.setEnabled(True)
+        self.bend_fn = fn
+        self.bpm_goal_lineEdit.textChanged.emit(self.bpm_goal_lineEdit.text())
+
+    @pyqtSlot()
+    def on_eval_bend_goal_pressed(self):
+        self.on_eval_bend_goal(self.sender().text())
+
+    @pyqtSlot('QString')
+    def on_eval_bend_goal(self, s):
+        try:
+            v = float(s)
+        except ValueError:
+            pass
+        else:
+            goal = self.bend_fn(v)
+            self.bend_goal_lineEdit.setText("{0:.4g}".format(goal))
+
+    @pyqtSlot()
+    def on_set_bend_goal(self):
+        v = float(self.bend_goal_lineEdit.text())
+        f = self.task.alter_action
+        if self.task._alter_action_mode == 'regular':
+            f(v, alter_elem=self.task.alter_element)
+        else:
+            f(v)
+
     @pyqtSlot()
     def on_load_data(self):
         """Load data for analysis.
@@ -109,8 +160,10 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
     def load_file(self, filepath, ext):
         self.auto_scale_changed.emit(False)
 
-        ds = JSONDataSheet(filepath)
-        sm = ScanDataModel(np.asarray(ds['data']['array']))
+        self.task = load_task(filepath, self._mp)
+        if hasattr(self.task, '_lattice'):
+            self._mp = self.task._lattice
+        sm = ScanDataModel(self.task.scan_out_data)
 
         data = sm.get_avg()
         bend_settings = data[:, 0]
@@ -120,7 +173,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
         fit_p = np.polyfit(avg_bpm_readings, bend_settings, 2)
         fit_fn = np.poly1d(fit_p)
-        x_opt = fit_fn(0.0)
+        self.bend_tune_fn_changed.emit(fit_fn)
 
         x_fit = np.linspace(avg_bpm_readings.min(), avg_bpm_readings.max(), N_SAMPLE)
         y_fit = fit_fn(x_fit)
