@@ -35,6 +35,7 @@ from phantasy_ui import get_open_filename
 from phantasy_ui import printlog
 from phantasy_ui.widgets import LatticeWidget
 
+from phantasy_apps.utils import find_dconf
 from phantasy_apps.synoptic_app.control import Controller
 from phantasy_apps.synoptic_app.webview import MyWebView
 from phantasy_apps.synoptic_app.data import DataAgent
@@ -45,7 +46,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
     lattice_changed = pyqtSignal(QVariant)
 
-    def __init__(self, version, filepath, **kws):
+    def __init__(self, version, filepath=None, **kws):
         super(self.__class__, self).__init__()
 
         # app version, title
@@ -59,19 +60,22 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.setupUi(self)
         self.postInitUi()
 
-        #
-        #mp = MachinePortal("FRIB_VA", 'LS1FS1')
-        #self.lattice = mp.work_lattice_conf
+        # lattice
+        self._lattice_load_window = None
+        mach = kws.get('machine', 'FRIB')
+        segm = kws.get('segment', 'STRIPPER_FS2A')
+        mp = MachinePortal(mach, segm)
+        self.lattice = mp.work_lattice_conf
 
         #
         self.post_init()
+
         #
+        if filepath is None:
+            filepath = find_dconf("synoptic_app", "fs1-arc.svg")
         self.set_view(filepath)
 
     def post_init(self):
-        # lattice
-        self.lattice = None
-        self._lattice_load_window = None
         #
         self.svg_basesize = None
         self._start_icon = QIcon(QPixmap(":/sn-app/icons/start.png"))
@@ -140,7 +144,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(bool)
     def on_frame_loaded(self, f):
-        printlog("Page is loaded")
+        printlog("Page is loaded, start data agent.")
         # start data agent
         self.on_click_start_btn()
 
@@ -181,6 +185,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         if self.svg_basesize is None:
             return
         w, h = self.svg_basesize
+        printlog("Resize view to ({}, {}).".format(w, h))
         viewSize = self.view.frameSize()
         zf_w = viewSize.width() / w * 100
         zf_h = viewSize.height() / h * 100
@@ -211,14 +216,13 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self._lattice_load_window.show()
 
 
-
 if __name__ == "__main__":
     from PyQt5.QtWidgets import QApplication
     import sys
 
     version = 0.1
     app = QApplication(sys.argv)
-    w = MyAppWindow(version, sys.argv[1])
+    w = MyAppWindow(version, None, machine="FRIB_VA", segment="LS1FS1")
     w.show()
     w.setWindowTitle("This is an app from template")
 
