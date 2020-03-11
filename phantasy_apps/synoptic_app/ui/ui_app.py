@@ -25,6 +25,18 @@ class Ui_MainWindow(object):
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setObjectName("label_2")
+        self.horizontalLayout_2.addWidget(self.label_2)
+        self.settling_time_dsbox = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        self.settling_time_dsbox.setDecimals(1)
+        self.settling_time_dsbox.setMinimum(0.2)
+        self.settling_time_dsbox.setProperty("value", 1.0)
+        self.settling_time_dsbox.setObjectName("settling_time_dsbox")
+        self.horizontalLayout_2.addWidget(self.settling_time_dsbox)
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_2.addWidget(self.label_3)
         self.start_data_agent_btn = QtWidgets.QPushButton(self.centralwidget)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/sn-app/icons/start.png"),
@@ -80,36 +92,40 @@ class Ui_MainWindow(object):
         self.actionContents = QtWidgets.QAction(MainWindow)
         self.actionContents.setObjectName("actionContents")
         self.action_Open = QtWidgets.QAction(MainWindow)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/sn-app/icons/open.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.action_Open.setIcon(icon1)
         self.action_Open.setObjectName("action_Open")
         self.action_zoom_in = QtWidgets.QAction(MainWindow)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_in.png"),
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_in.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.action_zoom_in.setIcon(icon1)
+        self.action_zoom_in.setIcon(icon2)
         self.action_zoom_in.setObjectName("action_zoom_in")
         self.action_zoom_out = QtWidgets.QAction(MainWindow)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_out.png"),
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_out.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.action_zoom_out.setIcon(icon2)
+        self.action_zoom_out.setIcon(icon3)
         self.action_zoom_out.setObjectName("action_zoom_out")
         self.action_zoom_reset = QtWidgets.QAction(MainWindow)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_reset.png"),
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_reset.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.action_zoom_reset.setIcon(icon3)
+        self.action_zoom_reset.setIcon(icon4)
         self.action_zoom_reset.setObjectName("action_zoom_reset")
         self.action_zoom_page_fit = QtWidgets.QAction(MainWindow)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_page-fit.png"),
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/sn-app/icons/zoom_page-fit.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.action_zoom_page_fit.setIcon(icon4)
+        self.action_zoom_page_fit.setIcon(icon5)
         self.action_zoom_page_fit.setObjectName("action_zoom_page_fit")
         self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/sn-app/icons/load_lattice.png"),
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/sn-app/icons/load_lattice.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Lattice.setIcon(icon5)
+        self.actionLoad_Lattice.setIcon(icon6)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
         self.menu_File.addSeparator()
         self.menu_Help.addAction(self.actionContents)
@@ -139,13 +155,17 @@ class Ui_MainWindow(object):
         self.start_data_agent_btn.clicked.connect(
             MainWindow.on_click_start_btn)
         self.actionLoad_Lattice.triggered.connect(MainWindow.on_load_lattice)
+        self.settling_time_dsbox.valueChanged['double'].connect(
+            MainWindow.on_settling_time_changed)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.label_2.setText(_translate("MainWindow", "Update data every"))
+        self.label_3.setText(_translate("MainWindow", "second(s)"))
         self.start_data_agent_btn.setText(_translate("MainWindow", "START"))
-        self.label.setText(_translate("MainWindow", "Current Pointing Device"))
+        self.label.setText(_translate("MainWindow", "Pointed Device"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
