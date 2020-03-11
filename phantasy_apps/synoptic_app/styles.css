@@ -1,0 +1,15 @@
+.status-ON, .status-ON > * {
+    fill: #00FF00 !important;
+}
+
+.status-OFF, .status-OFF > * {
+    fill: #FF0000 !important;
+}
+
+.select {
+    opacity: 0.5;
+}
+
+.hover {
+    cursor: crosshair;
+}
