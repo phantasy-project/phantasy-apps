@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?xml-stylesheet type="text/css" href="styles.css" ?>
-<svg
+<?xml-stylesheet type="text/css" href="styles.css" ?><svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -15,7 +14,7 @@
    version="1.1"
    id="svg1831"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="FS1-arc.svg">
+   sodipodi:docname="fs1-arc.svg">
   <script
      xlink:href="onload.js"
      id="script3082" />
@@ -1879,9 +1878,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.6854074"
-     inkscape:cx="327.18874"
-     inkscape:cy="279.99272"
+     inkscape:zoom="2.6965974"
+     inkscape:cx="484.05189"
+     inkscape:cy="202.20833"
      inkscape:document-units="mm"
      inkscape:current-layer="g2354"
      showgrid="false"
@@ -2144,7 +2143,7 @@
              sodipodi:role="line"
              x="290.28943"
              y="240.99702"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.70182624px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:1.59871745;stroke-linecap:butt;stroke-linejoin:round">QV_D2424</tspan></text>
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.7018261px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:1.59871745;stroke-linecap:butt;stroke-linejoin:round">QV_D2424</tspan></text>
         <text
            xml:space="preserve"
            style="font-style:normal;font-weight:normal;font-size:63.94869614px;line-height:0;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.59871745;stroke-linecap:butt;stroke-linejoin:round"
@@ -2155,7 +2154,7 @@
              sodipodi:role="line"
              x="292.79468"
              y="338.47293"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.70182624px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:1.59871745;stroke-linecap:butt;stroke-linejoin:round">QV_D2463</tspan></text>
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.7018261px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:1.59871745;stroke-linecap:butt;stroke-linejoin:round">QV_D2463</tspan></text>
         <text
            id="text6263"
            y="202.36504"
@@ -4606,6 +4605,46 @@
            width="100%"
            height="100%"
            transform="translate(0,52.610751)" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect1777"
+           id="use1790"
+           transform="translate(240.50632,142.80059)"
+           width="100%"
+           height="100%" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#rect1777"
+           id="use1794"
+           transform="translate(243.01084,265.55906)"
+           width="100%"
+           height="100%" />
+        <text
+           id="text1800"
+           y="225.11446"
+           x="516.60083"
+           style="font-style:normal;font-weight:normal;font-size:55.11602783px;line-height:0;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.37790072"
+           xml:space="preserve"><desc
+             id="desc1796">annote=FS1_BBS:BPM_D2421,X</desc><tspan
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.0232048px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:1.37790072"
+             y="225.11446"
+             x="516.60083"
+             id="tspan1798"
+             sodipodi:role="line">0.00000</tspan></text>
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-weight:normal;font-size:55.11602783px;line-height:0;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.37790072"
+           x="519.10535"
+           y="347.87292"
+           id="text1806"><desc
+             id="desc1802">annote=FS1_BBS:BPM_D2466,X</desc><tspan
+             sodipodi:role="line"
+             id="tspan1804"
+             x="519.10535"
+             y="347.87292"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.0232048px;font-family:monospace;-inkscape-font-specification:monospace;stroke-width:1.37790072">0.00000</tspan></text>
       </g>
     </g>
   </g>
