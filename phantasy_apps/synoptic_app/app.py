@@ -99,7 +99,8 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
         # data
         self.data_agent = DataAgent(self.controller)
-        self.data_agent.value_changed.connect(self.controller.on_update_value)
+        self.data_agent.value_changed[float, float, 'QString', 'QString'].connect(self.controller.on_update_value)
+        self.data_agent.value_changed[float, 'QString', 'QString'].connect(self.controller.on_update_value1)
         self.data_agent.started.connect(self.on_data_agent_started)
         self.data_agent.finished.connect(self.on_data_agent_finished)
         #self.data_agent.finished.connect(self.data_agent.deleteLater)

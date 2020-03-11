@@ -8,8 +8,9 @@ from PyQt5.QtCore import pyqtSignal
 
 class DataAgent(QThread):
 
-    # value changed, rd, sp, ename, fname
-    value_changed = pyqtSignal(float, float, 'QString', 'QString')
+    # value changed, rd, [sp], ename, fname
+    value_changed = pyqtSignal([float, float, 'QString', 'QString'],
+                               [float, 'QString', 'QString'])
 
     def __init__(self, controller, interval=1.0):
         super(self.__class__, self).__init__()
@@ -30,7 +31,11 @@ class DataAgent(QThread):
                     rd = fld.value
                     sp = fld.current_setting()
                     if rd is not None:
-                        self.value_changed.emit(rd, sp, ename, fname)
+                        if sp is not None:
+                            self.value_changed[float, float, 'QString', 'QString'].emit(rd, sp, ename, fname)
+                        else:
+                            self.value_changed[float, 'QString', 'QString'].emit(rd, ename, fname)
+
             time.sleep(self.interval)
 
     def stop(self):

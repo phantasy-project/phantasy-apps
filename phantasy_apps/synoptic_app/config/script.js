@@ -200,5 +200,16 @@ var Ui = {
             t = tspan_list[0];
             t.textContent = rd.toFixed(4) + " [" + sp.toFixed(4) + "]";
         }
+    },
+
+    updateData1: function (rd, devname, fname) {
+        console.log(
+            "updateData " + rd + " for " + devname + " [" + fname + "]");
+        var elems = Ui.getElementsByAnnoteTuple(devname, fname);
+        var tspan_list = elems[0].getElementsByTagName('tspan');
+        if (tspan_list.length >= 1) {
+            t = tspan_list[0];
+            t.textContent = rd.toFixed(4);
+        }
     }
 };

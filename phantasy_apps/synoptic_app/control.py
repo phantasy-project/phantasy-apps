@@ -107,3 +107,11 @@ class Controller(QObject):
         self.frame.evaluateJavaScript(
             "Ui.updateData({}, {}, '{}', '{}')".format(
                 rd, sp, devname, fname))
+
+    @pyqtSlot(float, 'QString', 'QString')
+    def on_update_value1(self, rd, devname, fname):
+        # update value
+        printlog("Update value: RD: {}.".format(rd))
+        self.frame.evaluateJavaScript(
+            "Ui.updateData1({}, '{}', '{}')".format(
+                rd, devname, fname))
