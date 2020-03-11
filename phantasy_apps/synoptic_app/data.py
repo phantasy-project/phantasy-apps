@@ -20,6 +20,9 @@ class DataAgent(QThread):
         self.run_flag = True
         lat = self.controller.lattice
         while self.run_flag:
+            if lat is None:
+                time.sleep(self.interval)
+                continue
             for ename, fname_list in self.controller.annote_anchors.items():
                 elem = lat[ename]
                 for fname in fname_list:

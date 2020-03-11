@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import QObject
+from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 
@@ -31,6 +32,12 @@ class Controller(QObject):
         self.annote_anchors = {}
         #
         self._probe_widgets_dict = {}
+
+    @pyqtSlot(QVariant)
+    def on_lattice_changed(self, lat):
+        """Lattice is changed.
+        """
+        self.lattice = lat
 
     @pyqtSlot('QString')
     def select(self, devname):

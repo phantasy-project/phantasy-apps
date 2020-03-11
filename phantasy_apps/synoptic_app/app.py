@@ -17,7 +17,9 @@ Show the available templates:
 import os
 from functools import partial
 
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import QUrl
 
 from PyQt5.QtGui import QKeySequence
@@ -31,6 +33,7 @@ from phantasy import MachinePortal
 from phantasy_ui import BaseAppForm
 from phantasy_ui import get_open_filename
 from phantasy_ui import printlog
+from phantasy_ui.widgets import LatticeWidget
 
 from phantasy_apps.synoptic_app.control import Controller
 from phantasy_apps.synoptic_app.webview import MyWebView
@@ -39,6 +42,8 @@ from phantasy_apps.synoptic_app.ui.ui_app import Ui_MainWindow
 
 
 class MyAppWindow(BaseAppForm, Ui_MainWindow):
+
+    lattice_changed = pyqtSignal(QVariant)
 
     def __init__(self, version, filepath, **kws):
         super(self.__class__, self).__init__()
@@ -55,8 +60,8 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.postInitUi()
 
         #
-        mp = MachinePortal("FRIB_VA", 'LS1FS1')
-        self.lattice = mp.work_lattice_conf
+        #mp = MachinePortal("FRIB_VA", 'LS1FS1')
+        #self.lattice = mp.work_lattice_conf
 
         #
         self.post_init()
@@ -64,6 +69,9 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.set_view(filepath)
 
     def post_init(self):
+        # lattice
+        self.lattice = None
+        self._lattice_load_window = None
         #
         self.svg_basesize = None
         self._start_icon = QIcon(QPixmap(":/sn-app/icons/start.png"))
@@ -79,6 +87,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.controller.status_info_changed.connect(self.statusInfoChanged)
         self.controller.pointed_device_changed.connect(self.on_pointed_device_changed)
         self.controller.svg_basesize_changed.connect(self.on_svg_basesize_changed)
+        self.lattice_changed.connect(self.controller.on_lattice_changed)
 
         self.frame.addToJavaScriptWindowObject('CTRL', self.controller)
         self.frame.javaScriptWindowObjectCleared.connect(
@@ -181,6 +190,26 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         # do not trigger very often!
         self.on_zoom_fit_page_view()
         QMainWindow.resizeEvent(self, evt)
+
+    @pyqtSlot(QVariant)
+    def on_lattice_changed(self, o):
+        """Lattice is changed.
+        """
+        self.lattice = o.combined_lattice()
+        self.lattice_changed.emit(self.lattice)
+
+    @pyqtSlot()
+    def on_load_lattice(self):
+        """Load lattice.
+        """
+        if self._lattice_load_window is None:
+            self._lattice_load_window = LatticeWidget()
+            self._lattice_load_window.latticeChanged.connect(
+                self.on_lattice_changed)
+            self._lattice_load_window.latticeChanged.connect(self._lattice_load_window.close)
+            #self._lattice_load_window.latticeChanged.connect(self.show_init_settings_info)
+        self._lattice_load_window.show()
+
 
 
 if __name__ == "__main__":
