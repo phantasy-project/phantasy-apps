@@ -41,6 +41,9 @@ from phantasy_apps.synoptic_app.webview import MyWebView
 from phantasy_apps.synoptic_app.data import DataAgent
 from phantasy_apps.synoptic_app.ui.ui_app import Ui_MainWindow
 
+DEFAULT_SVGFILE = find_dconf("synoptic_app", "fs1-arc.svg")
+SVGFILE_DIR = os.path.dirname(DEFAULT_SVGFILE)
+
 
 class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
@@ -76,7 +79,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
         #
         if filepath is None:
-            filepath = find_dconf("synoptic_app", "fs1-arc.svg")
+            filepath = DEFAULT_SVGFILE
         self.set_view(filepath)
 
     def post_init(self):
@@ -169,7 +172,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         """Open SVG file.
         """
         filepath, ext = get_open_filename(self,
-            type_filter="SVG Files (*.svg)")
+            type_filter="SVG Files (*.svg)", cdir=SVGFILE_DIR)
         if filepath is None:
             return
         self.set_view(filepath)
