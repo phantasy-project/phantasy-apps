@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_app.ui'
 #
-# Created by: PyQt5 UI code generator 5.13.2
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -60,7 +60,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.vbox, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 31))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -68,6 +68,7 @@ class Ui_MainWindow(object):
         self.menu_Help.setObjectName("menu_Help")
         MainWindow.setMenuBar(self.menubar)
         self.toolBar = QtWidgets.QToolBar(MainWindow)
+        self.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.action_About = QtWidgets.QAction(MainWindow)
@@ -104,7 +105,12 @@ class Ui_MainWindow(object):
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.action_zoom_page_fit.setIcon(icon4)
         self.action_zoom_page_fit.setObjectName("action_zoom_page_fit")
-        self.menu_File.addAction(self.action_Open)
+        self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/sn-app/icons/load_lattice.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionLoad_Lattice.setIcon(icon5)
+        self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
         self.menu_File.addSeparator()
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
@@ -112,6 +118,8 @@ class Ui_MainWindow(object):
         self.menu_Help.addAction(self.actionAbout_Qt)
         self.menubar.addAction(self.menu_File.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
+        self.toolBar.addAction(self.action_Open)
+        self.toolBar.addAction(self.actionLoad_Lattice)
         self.toolBar.addAction(self.action_zoom_in)
         self.toolBar.addAction(self.action_zoom_out)
         self.toolBar.addAction(self.action_zoom_reset)
@@ -130,6 +138,7 @@ class Ui_MainWindow(object):
             MainWindow.on_zoom_fit_page_view)
         self.start_data_agent_btn.clicked.connect(
             MainWindow.on_click_start_btn)
+        self.actionLoad_Lattice.triggered.connect(MainWindow.on_load_lattice)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -149,18 +158,28 @@ class Ui_MainWindow(object):
         self.actionContents.setShortcut(_translate("MainWindow", "F1"))
         self.action_Open.setText(_translate("MainWindow", "&Open"))
         self.action_zoom_in.setText(_translate("MainWindow", "zoom_in"))
+        self.action_zoom_in.setIconText(_translate("MainWindow", "Zoom In"))
         self.action_zoom_in.setToolTip(
             _translate("MainWindow", "Enlarge the view."))
         self.action_zoom_out.setText(_translate("MainWindow", "zoom_out"))
+        self.action_zoom_out.setIconText(_translate("MainWindow", "Zom Out"))
         self.action_zoom_out.setToolTip(
             _translate("MainWindow", "Shrink the view."))
         self.action_zoom_reset.setText(_translate("MainWindow", "zoom_reset"))
+        self.action_zoom_reset.setIconText(
+            _translate("MainWindow", "Reset View"))
         self.action_zoom_reset.setToolTip(
             _translate("MainWindow", "Reset the view."))
         self.action_zoom_page_fit.setText(
             _translate("MainWindow", "zoom_page_fit"))
+        self.action_zoom_page_fit.setIconText(
+            _translate("MainWindow", "Fit Page"))
         self.action_zoom_page_fit.setToolTip(
             _translate("MainWindow", "Page fit the view."))
+        self.actionLoad_Lattice.setText(
+            _translate("MainWindow", "Load Lattice"))
+        self.actionLoad_Lattice.setToolTip(
+            _translate("MainWindow", "Load lattice."))
 
 
 from . import resources_rc
