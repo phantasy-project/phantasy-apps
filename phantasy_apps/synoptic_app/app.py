@@ -44,7 +44,11 @@ from phantasy_apps.synoptic_app.ui.ui_app import Ui_MainWindow
 
 class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
+    # lattice is changed
     lattice_changed = pyqtSignal(QVariant)
+
+    # settling time is changed
+    settling_time_changed = pyqtSignal(float)
 
     def __init__(self, version, filepath=None, **kws):
         super(self.__class__, self).__init__()
@@ -98,7 +102,9 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
                 self.on_javaScriptWindowObjectCleared)
 
         # data
-        self.data_agent = DataAgent(self.controller)
+        settling_time = self.settling_time_dsbox.value()
+        self.data_agent = DataAgent(self.controller, settling_time)
+        self.settling_time_changed.connect(self.data_agent.on_settling_time_changed)
         self.data_agent.value_changed[float, float, 'QString', 'QString'].connect(self.controller.on_update_value)
         self.data_agent.value_changed[float, 'QString', 'QString'].connect(self.controller.on_update_value1)
         self.data_agent.started.connect(self.on_data_agent_started)
@@ -215,6 +221,12 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
             self._lattice_load_window.latticeChanged.connect(self._lattice_load_window.close)
             #self._lattice_load_window.latticeChanged.connect(self.show_init_settings_info)
         self._lattice_load_window.show()
+
+    @pyqtSlot(float)
+    def on_settling_time_changed(self, x):
+        """Settling time (second) for data updating is changed.
+        """
+        self.settling_time_changed.emit(x)
 
 
 if __name__ == "__main__":
