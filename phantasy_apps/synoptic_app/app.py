@@ -58,10 +58,17 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
         # app version, title
         self.setAppVersion(version)
-        self.setAppTitle("My App")
+        self.setAppTitle("Synoptic View & Control")
 
         # app info in about dialog
-        # self.app_about_info = "About info of My App."
+        self.app_about_info = """
+            <html>
+            <h4>About Synoptic View & Control</h4>
+            <p>This app is created to visualize the accelerator, and control the device as well, current version is {}.
+            </p>
+            <p>Copyright (C) 2020 Facility for Rare Isotope Beams and other contributors.</p>
+            </html>
+        """.format(self._version)
 
         # UI
         self.setupUi(self)
