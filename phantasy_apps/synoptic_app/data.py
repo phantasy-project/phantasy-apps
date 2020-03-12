@@ -9,9 +9,8 @@ from PyQt5.QtCore import pyqtSlot
 
 class DataAgent(QThread):
 
-    # value changed, rd, [sp], ename, fname
-    value_changed = pyqtSignal([float, float, 'QString', 'QString'],
-                               [float, 'QString', 'QString'])
+    # value changed, value, ename, fname, handle, nprec
+    value_changed = pyqtSignal(float, 'QString', 'QString', 'QString', int)
 
     def __init__(self, controller, settling_time):
         super(self.__class__, self).__init__()
@@ -30,17 +29,16 @@ class DataAgent(QThread):
             if lat is None:
                 time.sleep(self.settling_time)
                 continue
-            for ename, fname_list in self.controller.annote_anchors.items():
+            for ename, fconf_list in self.controller.annote_anchors.items():
                 elem = lat[ename]
-                for fname in fname_list:
+                for (fname, handle, nprec) in fconf_list:
                     fld = elem.get_field(fname)
-                    rd = fld.value
-                    sp = fld.current_setting()
-                    if rd is not None:
-                        if sp is not None:
-                            self.value_changed[float, float, 'QString', 'QString'].emit(rd, sp, ename, fname)
-                        else:
-                            self.value_changed[float, 'QString', 'QString'].emit(rd, ename, fname)
+                    if handle == 'setpoint':
+                        value = fld.current_setting()
+                    elif handle == 'readback':
+                        value = fld.value
+                    if value is not None:
+                        self.value_changed.emit(value, ename, fname, handle, nprec)
             dt = self.settling_time - (time.time() - t0)
             if dt > 0:
                 time.sleep(dt)
