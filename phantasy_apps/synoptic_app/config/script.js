@@ -45,23 +45,49 @@ var Ui = {
     findAnnotes: function() {
         var annotes = Array.prototype.slice.call(document.querySelectorAll("desc"));
         annotes.forEach(function (annote) {
-            var result = /annote=(.*),(.*)/.exec(annote.textContent);
+            var result = /annote=(.*)/.exec(annote.textContent);
             if (result) {
-                var devname = result[1];
-                var fname = result[2];
-                console.log("Found annote anchor: " + devname + " " + fname);
-                CTRL.registerAnnoteAnchor(devname, fname);
+                var conf = result[1].split(",");
+                var devname = conf[0];
+                var fname = conf[1];
+                if (conf[2]) {
+                    handle = conf[2];
+                } else {
+                    handle = 'readback';
+                }
+                if (conf[3]) {
+                    nprec = Number(conf[3]);
+                } else {
+                    nprec = 4;
+                }
+                console.log("Found annote anchor: " + devname + " " + fname + " " + handle + " " + nprec);
+                CTRL.registerAnnoteAnchor(devname, fname, handle, nprec);
             }
         });
     },
 
-    getElementsByAnnoteTuple: function (devname, fname) {
+    getElementsByAnnoteTuple: function (devname, fname, handle, nprec) {
         var els = [];
         var annotes = Array.prototype.slice.call(document.querySelectorAll("desc"));
         annotes.forEach(function (annote) {
-            var result = /annote=(.*),(.*)/.exec(annote.textContent);
-            if (result && result[1] == devname && result[2] == fname) {
-                els.push(annote.parentNode);
+            var result = /annote=(.*)/.exec(annote.textContent);
+            if (result) {
+                var conf = result[1].split(",");
+                var devname1 = conf[0];
+                var fname1 = conf[1];
+                if (conf[2]) {
+                    handle1 = conf[2];
+                } else {
+                    handle1 = 'readback';
+                }
+                if (conf[3]) {
+                    nprec1 = Number(conf[3]);
+                } else {
+                    nprec1 = 4;
+                }
+                if (devname1 == devname && fname1 == fname && handle1 == handle && nprec1 == nprec) {
+                    els.push(annote.parentNode);
+                }
             }
         });
         return els;
@@ -191,25 +217,14 @@ var Ui = {
     },
 
     // put value to defined anchor
-    updateData: function (rd, sp, devname, fname) {
+    updateData: function (value, devname, fname, handle, nprec) {
         console.log(
-            "updateData " + rd + " " + sp + " for " + devname + " [" + fname + "]");
-        var elems = Ui.getElementsByAnnoteTuple(devname, fname);
+            "updateData " + value + " for " + devname + " [" + fname + "] " + "of handle: " + handle);
+        var elems = Ui.getElementsByAnnoteTuple(devname, fname, handle, nprec);
         var tspan_list = elems[0].getElementsByTagName('tspan');
         if (tspan_list.length >= 1) {
             t = tspan_list[0];
-            t.textContent = rd.toFixed(4) + " [" + sp.toFixed(4) + "]";
-        }
+            t.textContent = fname + "|" + value.toFixed(nprec);
+        };
     },
-
-    updateData1: function (rd, devname, fname) {
-        console.log(
-            "updateData " + rd + " for " + devname + " [" + fname + "]");
-        var elems = Ui.getElementsByAnnoteTuple(devname, fname);
-        var tspan_list = elems[0].getElementsByTagName('tspan');
-        if (tspan_list.length >= 1) {
-            t = tspan_list[0];
-            t.textContent = rd.toFixed(4);
-        }
-    }
 };
