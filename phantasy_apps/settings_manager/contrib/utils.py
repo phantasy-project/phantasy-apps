@@ -49,6 +49,8 @@ class SettingsRow(object):
     def __eq__(self, other):
         if other is None:
             return False
+        if len(self.settings) != len(other.settings):
+            return False
         for l, r in zip(self.settings, other.settings):
             # only compare ename, fname, family, spos and set value
             for i in (0, 1, 2, 3, 4):
