@@ -160,6 +160,8 @@ def get_app_version(name):
         from phantasy_apps.online_model import __version__ as ver
     elif name == 'Settings Manager':
         from phantasy_apps.settings_manager import __version__ as ver
+    elif name == 'Physics Calculator':
+        from phantasy_apps.calculator_app import __version__ as ver
     else:
         raise RuntimeError
     return ver
