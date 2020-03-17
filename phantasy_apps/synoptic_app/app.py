@@ -76,9 +76,11 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
         # lattice
         self._lattice_load_window = None
-        mach = kws.get('machine', 'FRIB')
-        segm = kws.get('segment', 'STRIPPER_FS2A')
-        mp = MachinePortal(mach, segm)
+        mach = kws.get('machine')
+        segm = kws.get('segment')
+        machine = 'FRIB' if mach is None else mach
+        segment = 'LINAC' if segm is None else segm
+        mp = MachinePortal(machine, segment)
         self.lattice = mp.work_lattice_conf
 
         #
