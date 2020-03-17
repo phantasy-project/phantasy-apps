@@ -57,8 +57,8 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         super(self.__class__, self).__init__()
 
         # app version, title
-        self.setAppVersion(version)
         self.setAppTitle("Synoptic View & Control")
+        self.setAppVersion(version)
 
         # app info in about dialog
         self.app_about_info = """

@@ -10,6 +10,7 @@ __authors__ = "Tong Zhang"
 __copyright__ = "(c) 2020, Facility for Rare Isotope beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
+__title__ = "Synoptic View & Control: Another novel way to visualize and control the facility"
 __version__ = '0.1'
 
 
@@ -35,7 +36,7 @@ def run(cli=False):
     w = MyAppWindow(__version__, svgfile,
                     machine=machine, segment=segment)
     w.show()
-    w.setWindowTitle("Synoptic View & Control: Visualize and Control Accelerator")
+    w.setWindowTitle(__title__)
     if cli:
         app.exec_()
     else:
