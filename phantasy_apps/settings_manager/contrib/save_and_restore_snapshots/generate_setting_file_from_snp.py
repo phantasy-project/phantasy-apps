@@ -8,7 +8,7 @@ Tong Zhang <zhangt@frib.msu.edu>
 from PyQt5.QtWidgets import QApplication
 from phantasy_apps.settings_manager.app import SettingsManagerWindow
 from phantasy_apps.settings_manager import __version__
-from phantasy_apps.settings_manager import init_config_dir
+from phantasy_apps.settings_manager.utils import init_config_dir
 from phantasy_apps.settings_manager.data import TableSettings
 from phantasy_apps.settings_manager.data import make_physics_settings
 import csv
@@ -17,7 +17,8 @@ import re
 
 almost_equal_tolerance = 0.001
 
-type_map = {'PSQ': 'Q', 'PSC2': 'DCH', 'PSC1': 'DCV'}
+type_map = {'PSQ': 'Q', 'PSC2': 'DCH', 'PSC1': 'DCV', 'PSD': 'DH',
+            'PSOL': 'SOLR'}
 
 ### LEBT to MEBT
 machine = "FRIB"
@@ -31,6 +32,13 @@ snpfile = "/user/zhangt/test_phantasy/tests/save_and_restore_snapshots/36Ar10_20
 #csvfile = "/user/zhangt/test_phantasy/tests/sm-data/20200204/LEBT_FS1A.csv"
 #snpfile = "/user/zhangt/test_phantasy/tests/save_and_restore_snapshots/40Ar9_20190926_180238.snp"
 
+### LEBT to FS1A
+machine = "FRIB"
+segments = ["LEBT", "MEBT_FS1A"]
+csvfile = "/user/zhangt/test_phantasy/tests/save_and_restore_snapshots/LEBT_FS1A_template.csv"
+snpfile = "/user/zhangt/test_phantasy/tests/save_and_restore_snapshots/40Ar9_50euA_20190215.snp"
+
+
 new_csvfilename = snpfile.rsplit('.', 1)[0] + '.csv'
 
 ###
@@ -39,13 +47,12 @@ for segm in segments:
     mp.load_lattice(segm)
 lat = mp.combined_lattice()
 
-config_dir = init_config_dir()
+config_dir = "~/.phantasy-apps/settings-manager"
 
 app = QApplication([])
 w = SettingsManagerWindow(__version__, config_dir)
-w._lat = lat
 
-lat1 = w.build_lattice()
+lat1 = w.build_lattice() + lat
 table_settings = TableSettings(csvfile)
 #s = make_physics_settings(table_settings, lat1)
 #lat1.settings.update(s)
@@ -78,7 +85,7 @@ for i, row in enumerate(table_settings):
     elem = lat1[ename]
 
     if elem is None:
-        #print("{} is not found from lattice.".format(ename))
+        print("{} is not found from lattice.".format(ename))
         continue
 
     sp_pv = elem.pv(field=fname, handle='setpoint')[0]
@@ -87,9 +94,14 @@ for i, row in enumerate(table_settings):
         if sp_pv in settings:
             snp_sp = settings[sp_pv]
         else:
-            r = re.match("(.*):(.*)_D(.*)", sp_pv)
-            map_sp_pv = "{}:{}_D{}".format(
-                r.group(1), type_map[r.group(2)], r.group(3))
+            r = re.match("(.*):(.*)_D(.*):(.*)", sp_pv)
+            map_sp_pv = "{}:{}_D{}:{}".format(
+                r.group(1), type_map.get(r.group(2), r.group(2)), r.group(3), r.group(4))
+            if map_sp_pv not in settings:
+                if elem.family in ('QUAD', 'EQUAD'):
+                    map_sp_pv = "{}:QE_D{}:{}".format(r.group(1), r.group(3), r.group(4))
+                elif elem.family in ('EBEND',):
+                    map_sp_pv = "{}:{}".format(elem.name, r.group(4))
             snp_sp = settings[map_sp_pv]
     except:
         print("Cannot find {} [{}] from snp file.".format(ename, fname))
