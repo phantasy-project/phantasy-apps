@@ -14,6 +14,8 @@ class Ui_Dialog(object):
         Dialog.setObjectName("Dialog")
         Dialog.resize(800, 600)
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
+        self.gridLayout.setContentsMargins(6, 12, 6, 6)
+        self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
         self.treeView = QtWidgets.QTreeView(Dialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
