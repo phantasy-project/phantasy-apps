@@ -248,7 +248,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def show_init_settings_info(self):
         if not self.init_settings:
             QMessageBox.information(self, "Loaded Lattice",
-                                    "Lattice is loaded, add settings from 'Add Devices' tool.",
+                                    "Lattice is loaded, add device settings via 'Add Devices' or 'Load Settings' tool.",
                                     QMessageBox.Ok)
 
     def _enable_widgets(self, enabled):
@@ -836,10 +836,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         pref_dlg.visibility_changed.connect(self.on_update_visibility)
         pref_dlg.config_changed.connect(self.on_config_updated)
         r = pref_dlg.exec_()
-        if r == QDialog.Accepted:
-            printlog("Updated pref --> {}".format(self.pref_dict))
-        else:
-            printlog("Unchanged pref: {}".format(self.pref_dict))
+        # if r == QDialog.Accepted:
+        #     printlog("Updated pref --> {}".format(self.pref_dict))
+        # else:
+        #     printlog("Unchanged pref: {}".format(self.pref_dict))
 
     @pyqtSlot(dict)
     def on_update_pref(self, d):
