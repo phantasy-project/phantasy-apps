@@ -123,16 +123,6 @@ class Ui_MainWindow(object):
         self.invert_selection_btn.setObjectName("invert_selection_btn")
         self.gridLayout.addWidget(self.invert_selection_btn, 0, 2, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
-        self.treeView = QtWidgets.QTreeView(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(
-            self.treeView.sizePolicy().hasHeightForWidth())
-        self.treeView.setSizePolicy(sizePolicy)
-        self.treeView.setObjectName("treeView")
-        self.gridLayout_2.addWidget(self.treeView, 1, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSizeConstraint(
             QtWidgets.QLayout.SetDefaultConstraint)
@@ -276,6 +266,16 @@ class Ui_MainWindow(object):
         self.scaling_factor_lineEdit.setObjectName("scaling_factor_lineEdit")
         self.horizontalLayout.addWidget(self.scaling_factor_lineEdit)
         self.gridLayout_2.addLayout(self.horizontalLayout, 2, 0, 1, 1)
+        self.treeView = QtWidgets.QTreeView(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(
+            self.treeView.sizePolicy().hasHeightForWidth())
+        self.treeView.setSizePolicy(sizePolicy)
+        self.treeView.setObjectName("treeView")
+        self.gridLayout_2.addWidget(self.treeView, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 31))
@@ -503,11 +503,11 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Auto : Realtime update</p><p>1-5 : Update every 0.2 to 1 second</p></body></html>"
             ))
         self.label_6.setText(_translate("MainWindow", "Update Rate"))
-        self.update_rate_cbb.setItemText(0, _translate("MainWindow", "0.1 Hz"))
-        self.update_rate_cbb.setItemText(1, _translate("MainWindow", "0.2 Hz"))
-        self.update_rate_cbb.setItemText(2, _translate("MainWindow", "0.5 Hz"))
-        self.update_rate_cbb.setItemText(3, _translate("MainWindow", "1.0 Hz"))
-        self.update_rate_cbb.setItemText(4, _translate("MainWindow", "2.0 Hz"))
+        self.update_rate_cbb.setItemText(0, _translate("MainWindow", "1.0 Hz"))
+        self.update_rate_cbb.setItemText(1, _translate("MainWindow", "0.5 Hz"))
+        self.update_rate_cbb.setItemText(2, _translate("MainWindow", "2.0 Hz"))
+        self.update_rate_cbb.setItemText(3, _translate("MainWindow", "0.2 Hz"))
+        self.update_rate_cbb.setItemText(4, _translate("MainWindow", "0.1 Hz"))
         self.update_ctrl_btn.setToolTip(
             _translate("MainWindow", "Start/stop updating values."))
         self.update_ctrl_btn.setText(_translate("MainWindow", "..."))
