@@ -273,24 +273,25 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_settings_loaded(self, flat_settings, settings):
         """Settings are loaded.
         """
+        printlog("Loading settings...")
         self.__flat_settings = flat_settings
         self.__settings = settings
         self.__on_show_settings()
 
     def __on_show_settings(self):
         # visualize settings
-        self.reset_pvs()
+        printlog("Setting data model...")
         model = SettingsModel(self._tv, self.__flat_settings, ndigit=self.ndigit)
         model.settings_sts.connect(self.on_settings_sts)
         model.item_deletion_updated[list].connect(self.on_delete_items)
         model.set_model()
-        self._pvs = model._pvs
-        self._m_obj = model._m_obj
-        self._m_it = model._m_it
+        self._fld_obj, self._pv_obj = model._fld_obj, model._pv_obj
+        self._fld_it, self._pv_it = model._fld_it, model._pv_it
 
         #
         self.toggle_ftype()
         #
+        printlog("Updating data values...")
         self.update_ctrl_btn.toggled.emit(self.update_ctrl_btn.isChecked())
         self.single_update_btn.clicked.emit()
 
@@ -323,7 +324,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.__settings = Settings()
         self.__flat_settings = None
 
-        self._pvs = []
         self._eng_phy_toggle = {'ENG': True, 'PHY': False}
         self.on_lattice_changed(self._mp)
 
@@ -616,10 +616,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def closeEvent(self, e):
         self.on_update_dump_config()
         r = BaseAppForm.closeEvent(self, e)
-        if r:
-            for pv in self._pvs:
-                pv.auto_monitor = False
-                pv.clear_callbacks()
 
     def snapshot_tolerance_settings(self):
         """Iterate all the tolerance settings, update and save.
@@ -723,11 +719,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         printlog("Clicked: ({}, {}), item is expanded? ({})".format(
             idx.row(), idx.column(), self._tv.isExpanded(idx)))
 
-    def reset_pvs(self):
-        printlog("Reset {} PVs".format(len(self._pvs)))
-        for pv in self._pvs:
-            pv.auto_monitor = False
-            pv.clear_callbacks()
+        if idx.column() == src_m.i_name:
+            ename_item = src_m.itemFromIndex(src_idx)
+            fobj = ename_item.fobj
+            printlog(fobj.get_auto_monitor())
 
     @pyqtSlot()
     def on_filter_changed(self):
@@ -880,13 +875,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def start_auto_update(self):
         # updating independently,
         # _update_mode: 'auto'
-        for pv in self._pvs:
-            pv.auto_monitor = True
+        printlog("Executing start_auto_update()...")
 
     def stop_auto_update(self):
         # stop auto updating.
-        for pv in self._pvs:
-            pv.auto_monitor = False
+        printlog("Executing stop_auto_update()...")
 
     def start_thread_update(self):
         # Update values every *delt* second(s),
@@ -908,6 +901,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Results are ready for updating.
         """
         # res --> [res in daq_func] : [(idx, val, role)... ]
+        printlog("Update data display...")
         for (idx, val, role) in res[0]:
             m.data_changed.emit((idx, val, role))
         self._update_cnt += 1
@@ -916,7 +910,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # res: [(idx, val, role)..., ]
         t0 = time.time()
         res = []
-        for o, it in zip(self._m_obj, self._m_it):
+        for o, it in zip(self._fld_obj + self._pv_obj, self._fld_it + self._pv_it):
             if not isinstance(o, CaField):  # PV
                 val = o.get()
                 for iit in it:
@@ -956,11 +950,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         dt = time.time() - t0
         dt_residual = delt - dt
-        if dt_residual > 0 and self._update_cnt != 0:
-            time.sleep(dt_residual)
-            printlog("Wait {} msec.".format(dt_residual * 1000))
+        if self._update_cnt == 0:
+            printlog("Single update in {0:.1f} msec, no wait.".format(dt * 1000))
         else:
-            printlog("Update rate is too high.")
+            if dt_residual > 0:
+                time.sleep(dt_residual)
+                printlog("Waited {} msec.".format(dt_residual * 1000))
+            else:
+                printlog("Update rate is too high.")
 
         return res
 

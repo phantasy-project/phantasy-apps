@@ -110,11 +110,11 @@ class SettingsModel(QStandardItemModel):
 
         self._settings = flat_settings
         self._tv = parent
-        # [PV] cb PV pool
-        self._pvs = []
-        # [obj(PV/CaField)]: [index[list]]
-        self._m_obj = []  # PV and CaField
-        self._m_it = []  # list of items, [rd, sp]
+        # [obj(PV/CaField)] --> [items]
+        self._fld_obj = []  # CaField
+        self._fld_it = []   # list of items, [rd/sp]
+        self._pv_obj = []   # PV
+        self._pv_it = []    # list of items, [rd/sp]
 
         # header
         self.header = self.h_name, self.h_field, self.h_type, self.h_pos, \
@@ -149,12 +149,6 @@ class SettingsModel(QStandardItemModel):
         self.setData(*p)
 
     def set_data(self):
-
-        def _cb(item_val, **kws):
-            val = self.fmt.format(kws.get('value'))
-            idx_c = item_val.index()
-            self.data_changed.emit((idx_c, val, Qt.DisplayRole))
-
         sppv_set = set()
         rdpv_set = set()
         ename_set = set()
@@ -192,21 +186,13 @@ class SettingsModel(QStandardItemModel):
                      it_rd_v, QStandardItem('-'))
                 )
 
-                # cbs
-                sp_obj.add_callback(partial(_cb, it_sp_v))
-                rd_obj.add_callback(partial(_cb, it_rd_v))
-                for o in (sp_obj, rd_obj,):
-                    if o not in self._pvs:
-                        self._pvs.append(o)
-
                 for o, item in zip((sp_obj, rd_obj), (it_sp_v, it_rd_v)):
                     # PHY and ENG fields share the same sp/rd pvs.
-                    idx = self.indexFromItem(item)
-                    if o not in self._m_obj:
-                        self._m_obj.append(o)
-                        self._m_it.append([item])  # put item instead of idx
+                    if o not in self._pv_obj:
+                        self._pv_obj.append(o)
+                        self._pv_it.append([item])  # put item instead of idx
                     else:
-                        self._m_it[self._m_obj.index(o)].append(item)
+                        self._pv_it[self._pv_obj.index(o)].append(item)
 
                 sppv_set.add(sp_obj.pvname)
                 rdpv_set.add(rd_obj.pvname)
@@ -217,6 +203,9 @@ class SettingsModel(QStandardItemModel):
 
             item_rd = QStandardItem(self.fmt.format(fld.value))
             item_cset = QStandardItem(self.fmt.format(elem.current_setting(fname)))
+
+            self._fld_obj.append(fld)
+            self._fld_it.append([item_rd, item_cset])
 
             row = [item_ename, item_fname]
             for i, f in enumerate(COLUMN_NAMES):
@@ -269,42 +258,7 @@ class SettingsModel(QStandardItemModel):
         proxy_model = _SortProxyModel(self)
         self._tv.setModel(proxy_model)
         #
-        self.set_cbs()
         self.__post_init_ui(self._tv)
-
-    def set_cbs(self):
-        def _cb(item_name, icol, fld, vtyp, **kws):
-            if vtyp == 'rd':
-                val = fld.value
-            else:
-                val = fld.current_setting()
-            idx = item_name.index()
-            self.data_changed.emit(
-                (self.index(idx.row(), icol),
-                 self.fmt.format(val), Qt.DisplayRole))
-
-        for irow in range(self.rowCount()):
-            item0 = self.item(irow, self.i_name)
-            fld = item0.fobj
-            if fld is None:
-                continue
-            rd_pv0 = fld.readback_pv[0]
-            sp_pv0 = fld.setpoint_pv[0]
-            fld.set_auto_monitor(True, 'readback')
-            fld.set_auto_monitor(True, 'setpoint')
-            for (icol, pv, vtyp) in zip(
-                    (self.i_rd, self.i_cset),
-                    (rd_pv0, sp_pv0),
-                    ('rd', 'sp')):
-                pv.add_callback(partial(_cb, item0, icol, fld, vtyp))
-            for o in fld.readback_pv + fld.setpoint_pv:
-                if o not in self._pvs:
-                    self._pvs.append(o)
-
-            self._m_obj.append(fld)
-            self._m_it.append(
-                [self.item(irow, self.i_rd),
-                 self.item(irow, self.i_cset), ])
 
     def __post_init_ui(self, tv):
         # set headers
@@ -345,17 +299,17 @@ class SettingsModel(QStandardItemModel):
             fobj = item.fobj
 
             print("{} [{}] is to be deleted.".format(fobj.ename, fobj.name))
-            # delete items from self._m_it and self._m_obj
-            ind = self._m_obj.index(fobj)
-            self._m_it.pop(ind)
-            self._m_obj.pop(ind)
+            # delete items from self._fld(pv)_it and self._fld(pv)_obj
+            ind = self._fld_obj.index(fobj)
+            self._fld_it.pop(ind)
+            self._fld_obj.pop(ind)
             for pv in fobj.setpoint_pv + fobj.readback_pv:
                 # ENH and PHY fields share the same sp/rd/ pvs.
-                if pv not in self._m_obj:
+                if pv not in self._pv_obj:
                     continue
-                i = self._m_obj.index(pv)
-                self._m_it.pop(i)
-                self._m_obj.pop(i)
+                i = self._pv_obj.index(pv)
+                self._pv_it.pop(i)
+                self._pv_obj.pop(i)
             #
             fobj_list.append(fobj)
             # delete
