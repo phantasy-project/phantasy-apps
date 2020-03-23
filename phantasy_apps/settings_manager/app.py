@@ -58,7 +58,7 @@ from .utils import init_config_dir
 from .utils import VALID_FILTER_KEYS_NUM
 
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
-IDX_RATE_MAP = {0: 0.1, 1: 0.2, 2: 0.5, 3: 1.0, 4: 2.0}
+IDX_RATE_MAP = {0: 1.0, 1: 0.5, 2: 2.0, 3: 0.2, 4: 0.1}
 FILTER_TT = """\
 Input filter string with the format of 'keyword=pattern', valid keywords as
 the headers show, pattern applies Unix wildcard rules.
