@@ -9,6 +9,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QUrl
 from PyQt5.QtGui import QDesktopServices
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QPushButton
@@ -16,6 +17,7 @@ from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QSpacerItem
 
 from phantasy_ui import get_open_directory
+from phantasy_ui import select_font
 from phantasy_apps.utils import find_dconf
 
 from .utils import COLUMN_NAMES
@@ -47,6 +49,9 @@ class PreferencesDialog(QDialog, Ui_Dialog):
 
     # config, ts, ms, elem pv
     config_changed = pyqtSignal()
+
+    # font
+    font_changed = pyqtSignal(QFont)
 
     def __init__(self, parent=None, preference_dict=None):
         super(self.__class__, self).__init__()
@@ -112,6 +117,11 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         self.reset_config_btn.clicked.connect(self.on_reset_config)
         # purge config
         self.purge_config_btn.clicked.connect(self.on_purge_config)
+
+        # font
+        self.font_changed.connect(self.on_font_changed)
+        font = self.pref_dict['font']
+        self.font_changed.emit(font)
 
     @pyqtSlot()
     def on_reset_config(self):
@@ -222,3 +232,19 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         lattice, otherwise the user should add elements into view.
         """
         self.init_settings = f
+
+    @pyqtSlot()
+    def on_select_font(self):
+        """Update font.
+        """
+        font, ok = select_font(self, self.font)
+        if ok:
+            self.font_changed.emit(font)
+
+    @pyqtSlot(QFont)
+    def on_font_changed(self, font):
+        self.font = font
+        self.font_sample_lbl.setText('{},{}pt'.format(font.family(),
+                                                    font.pointSize()))
+        self.font_sample_lbl.setFont(font)
+
