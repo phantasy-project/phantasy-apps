@@ -18,7 +18,7 @@ from PyQt5.QtGui import QColor
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
-from PyQt5.QtWidgets import QAbstractScrollArea
+from PyQt5.QtWidgets import QStyledItemDelegate
 from phantasy import get_settings_from_element_list
 from phantasy_ui.widgets import is_item_checked
 
@@ -69,6 +69,9 @@ FG_COLOR_MAP = {
     True: "#343A40",
     False: "#6C757D",
 }
+
+DEFAULT_FONT_SIZE = 10
+DEFAULT_FONT_FAMILY = "monospace"
 
 
 class SettingsModel(QStandardItemModel):
@@ -262,17 +265,26 @@ class SettingsModel(QStandardItemModel):
 
     def __post_init_ui(self, tv):
         # set headers
+        tv.setSortingEnabled(True)
         for i, s in zip(self.ids, self.header):
             self.setHeaderData(i, Qt.Horizontal, s)
+        tv.model().sort(self.i_pos)
 
-        # view properties
-        tv.setStyleSheet("font-family: monospace;")
+        #
+        self.style_view(tv, font_size=DEFAULT_FONT_SIZE,
+                        font_family=DEFAULT_FONT_FAMILY)
+        self.auto_fit_view(tv)
+
+    def style_view(self, tv, **kws):
+        """
+        font_size, font_family
+        """
+        tv.setItemDelegate(_Delegate(**kws))
+
+    def auto_fit_view(self, tv):
         tv.expandAll()
         for i in self.ids:
             tv.resizeColumnToContents(i)
-        tv.setSortingEnabled(True)
-        tv.model().sort(self.i_pos)
-        tv.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
         tv.collapseAll()
 
     @pyqtSlot()
@@ -455,6 +467,21 @@ class _SortProxyModel(QSortFilterProxyModel):
                 it_name_src.setCheckState(Qt.Checked)
             else:
                 it_name_src.setCheckState(Qt.Unchecked)
+
+
+class _Delegate(QStyledItemDelegate):
+
+    def __init__(self, **kws):
+        super(self.__class__, self).__init__()
+        self.font_size = kws.get('font_size', None)
+        self.font_family = kws.get('font_family', None)
+
+    def initStyleOption(self, option, index):
+        if self.font_size is not None:
+            option.font.setPointSize(self.font_size)
+        if self.font_family is not None:
+            option.font.setFamily(self.font_family)
+        QStyledItemDelegate.initStyleOption(self, option, index)
 
 
 def convert_settings(settings_read, lat):
