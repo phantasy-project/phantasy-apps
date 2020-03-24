@@ -15,6 +15,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QBrush
 from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
@@ -70,9 +71,6 @@ FG_COLOR_MAP = {
     False: "#6C757D",
 }
 
-DEFAULT_FONT_SIZE = 10
-DEFAULT_FONT_FAMILY = "monospace"
-
 
 class SettingsModel(QStandardItemModel):
     """Settings model from Settings instance.
@@ -102,14 +100,18 @@ class SettingsModel(QStandardItemModel):
     item_deletion_updated = pyqtSignal(list)
 
     def __init__(self, parent, flat_settings, **kws):
-        # kw: ndigit
+        # kw: ndigit, font
         super(self.__class__, self).__init__(parent)
         self._ndigit = kws.get('ndigit', None)
+        self._font = kws.get('font', None)
 
         if self._ndigit is None:
             self.fmt = FMT
         else:
             self.fmt = '{{0:.{0}f}}'.format(self._ndigit)
+
+        if self._font is None:
+            self._font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
 
         self._settings = flat_settings
         self._tv = parent
@@ -261,27 +263,28 @@ class SettingsModel(QStandardItemModel):
         proxy_model = _SortProxyModel(self)
         self._tv.setModel(proxy_model)
         #
-        self.__post_init_ui(self._tv)
+        self.__post_init_ui()
 
-    def __post_init_ui(self, tv):
+    def __post_init_ui(self):
         # set headers
+        tv = self._tv
         tv.setSortingEnabled(True)
         for i, s in zip(self.ids, self.header):
             self.setHeaderData(i, Qt.Horizontal, s)
         tv.model().sort(self.i_pos)
 
         #
-        self.style_view(tv, font_size=DEFAULT_FONT_SIZE,
-                        font_family=DEFAULT_FONT_FAMILY)
-        self.auto_fit_view(tv)
+        self.style_view(font=self._font)
+        self.fit_view()
 
-    def style_view(self, tv, **kws):
+    def style_view(self, **kws):
         """
-        font_size, font_family
+        font, font_size, font_family
         """
-        tv.setItemDelegate(_Delegate(**kws))
+        self._tv.setItemDelegate(_Delegate(**kws))
 
-    def auto_fit_view(self, tv):
+    def fit_view(self):
+        tv = self._tv
         tv.expandAll()
         for i in self.ids:
             tv.resizeColumnToContents(i)
@@ -473,14 +476,18 @@ class _Delegate(QStyledItemDelegate):
 
     def __init__(self, **kws):
         super(self.__class__, self).__init__()
+        self.font = kws.get('font', None)
         self.font_size = kws.get('font_size', None)
         self.font_family = kws.get('font_family', None)
 
     def initStyleOption(self, option, index):
-        if self.font_size is not None:
-            option.font.setPointSize(self.font_size)
-        if self.font_family is not None:
-            option.font.setFamily(self.font_family)
+        if self.font is not None:
+            option.font = self.font
+        else:
+            if self.font_size is not None:
+                option.font.setPointSize(self.font_size)
+            if self.font_family is not None:
+                option.font.setFamily(self.font_family)
         QStyledItemDelegate.initStyleOption(self, option, index)
 
 
