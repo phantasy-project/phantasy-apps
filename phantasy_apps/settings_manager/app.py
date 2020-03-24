@@ -19,6 +19,7 @@ from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtGui import QFont
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QKeySequence
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtWidgets import QCompleter
@@ -27,6 +28,7 @@ from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtWidgets import QShortcut
 from PyQt5.QtWidgets import QWidget
 from phantasy import CaField
 from phantasy import Settings
@@ -140,6 +142,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.setupUi(self)
         self.postInitUi()
 
+        self.default_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        self.default_font_size = self.default_font.pointSize()
+
         # config
         self.init_config(config_dir)
 
@@ -214,7 +219,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def get_font_config(self):
         """Initial font config.
         """
-        return QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        return self.default_font
 
     @pyqtSlot(QVariant)
     def on_element_from_pv_added(self, elem):
@@ -400,6 +405,22 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # dnd
         self.setAcceptDrops(True)
+
+        # keyshort
+        zoom0 = QShortcut(QKeySequence("Ctrl+0"), self)
+        zoom_in = QShortcut(QKeySequence.ZoomIn, self)
+        zoom_out = QShortcut(QKeySequence.ZoomOut, self)
+        zoom0.activated.connect(partial(self.on_change_font_size, 0))
+        zoom_in.activated.connect(partial(self.on_change_font_size, 1))
+        zoom_out.activated.connect(partial(self.on_change_font_size, -1))
+
+    def on_change_font_size(self, v):
+        if v == 0:
+            font_size = self.default_font_size
+        else:
+            font_size = self.font.pointSize() + v
+        self.font.setPointSize(font_size)
+        self.font_changed.emit(self.font)
 
     def set_context_menu(self):
         self._tv.setContextMenuPolicy(Qt.CustomContextMenu)
