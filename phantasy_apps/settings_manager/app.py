@@ -406,13 +406,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # dnd
         self.setAcceptDrops(True)
 
-        # keyshort
+        # font size control
         zoom0 = QShortcut(QKeySequence("Ctrl+0"), self)
         zoom_in = QShortcut(QKeySequence.ZoomIn, self)
         zoom_out = QShortcut(QKeySequence.ZoomOut, self)
         zoom0.activated.connect(partial(self.on_change_font_size, 0))
         zoom_in.activated.connect(partial(self.on_change_font_size, 1))
         zoom_out.activated.connect(partial(self.on_change_font_size, -1))
+        self.grow_fontsize_btn.clicked.connect(partial(
+            self.on_change_font_size, 1))
+        self.shrink_fontsize_btn.clicked.connect(partial(
+            self.on_change_font_size, -1))
 
     def on_change_font_size(self, v):
         if v == 0:
