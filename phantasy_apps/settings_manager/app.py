@@ -716,8 +716,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         printlog("Index of SrcModel ({}, {}), text: {}".format(
             src_r, src_c, str(src_m.data(src_idx))))
 
-        printlog("Clicked: ({}, {}), item is expanded? ({})".format(
-            idx.row(), idx.column(), self._tv.isExpanded(idx)))
+        from phantasy_ui.widgets import is_item_checked
+        item = src_m.itemFromIndex(src_idx)
+        printlog("Clicked: ({}, {}), item is expanded? ({}), is checked? ({})".format(
+            idx.row(), idx.column(), self._tv.isExpanded(idx),
+            is_item_checked(item)))
 
         if idx.column() == src_m.i_name:
             ename_item = src_m.itemFromIndex(src_idx)
@@ -892,30 +895,24 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m = self._tv.model().sourceModel()
         self.updater = DAQT(daq_func=partial(self.update_value_single, m, delt),
                             daq_seq=range(1))
-        self.updater.resultsReady.connect(
-            partial(self.on_values_ready, m))
+        self.updater.meta_signal1.connect(partial(
+            self.on_update_display, m))
         self.updater.finished.connect(self.start_thread_update)
         self.updater.start()
 
-    def on_values_ready(self, m, res):
-        """Results are ready for updating.
-        """
-        # res --> [res in daq_func] : [(idx, val, role)... ]
-        printlog("Update data display...")
-        for (idx, val, role) in res[0]:
-            m.data_changed.emit((idx, val, role))
-        self._update_cnt += 1
-
     def update_value_single(self, m, delt, iiter):
-        # res: [(idx, val, role)..., ]
+        # update data tree for one time, iterate all items.
+        if delt == 0:
+            worker = self.one_updater
+        else:
+            worker = self.updater
         t0 = time.time()
-        res = []
         for o, it in zip(self._fld_obj + self._pv_obj, self._fld_it + self._pv_it):
             if not isinstance(o, CaField):  # PV
                 val = o.get()
                 for iit in it:
                     idx = m.indexFromItem(iit)
-                    res.append((idx, self.fmt.format(val), Qt.DisplayRole))
+                    worker.meta_signal1.emit((idx, self.fmt.format(val), Qt.DisplayRole))
             else:  # CaField
                 idx0 = m.indexFromItem(it[0])
                 idx1 = m.indexFromItem(it[1])
@@ -939,27 +936,25 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 idx_tuple = (idx0, idx1, dx01_idx, dx02_idx, dx12_idx)
                 v_tuple = (rd_val, sp_val, dx01, dx02, dx12)
                 for iidx, val in zip(idx_tuple, v_tuple):
-                    res.append((iidx, self.fmt.format(val), Qt.DisplayRole))
-                res.append((wa_idx, str(wa), Qt.DisplayRole))
+                    worker.meta_signal1.emit((iidx, self.fmt.format(val), Qt.DisplayRole))
+                worker.meta_signal1.emit((wa_idx, str(wa), Qt.DisplayRole))
                 tol = float(m.data(tol_idx))
                 if abs(dx12) > tol:
                     diff_status_px = self._warning_px
                 else:
                     diff_status_px = self._ok_px
-                res.append((dx12_idx, QIcon(diff_status_px), Qt.DecorationRole))
+                worker.meta_signal1.emit((dx12_idx, QIcon(diff_status_px), Qt.DecorationRole))
 
         dt = time.time() - t0
         dt_residual = delt - dt
-        if self._update_cnt == 0:
+        if delt == 0:
             printlog("Single update in {0:.1f} msec, no wait.".format(dt * 1000))
         else:
             if dt_residual > 0:
                 time.sleep(dt_residual)
-                printlog("Waited {} msec.".format(dt_residual * 1000))
+                printlog("Waited {0:.0f} msec.".format(dt_residual * 1000))
             else:
-                printlog("Update rate is too high.")
-
-        return res
+                printlog("Rate is {0:.1f} Hz.".format(1.0 / dt))
 
     @pyqtSlot(bool)
     def on_toggle_update_btn(self, f):
@@ -976,7 +971,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             printlog("Start auto updating.")
         else:
             self._stop_update_thread = False
-            self._update_cnt = 0
             self.start_thread_update()
             printlog("Start thread updating.")
 
@@ -1102,17 +1096,22 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             return False
 
+    @pyqtSlot(QVariant)
+    def on_update_display(self, m, res):
+        """Update variable display variables for one row, when data are ready.
+        """
+        m.data_changed.emit(res)
+
     @pyqtSlot()
     def on_single_update(self):
         """Update values, indicators for one time."""
-        self._update_cnt = 0
         m = self._tv.model().sourceModel()
         self.one_updater = DAQT(daq_func=partial(self.update_value_single, m, 0),
                                 daq_seq=range(1))
+        self.one_updater.meta_signal1.connect(partial(
+            self.on_update_display, m))
         self.one_updater.daqStarted.connect(partial(
             self.set_widgets_status_for_updating, 'START'))
-        self.one_updater.resultsReady.connect(
-            partial(self.on_values_ready, m))
         self.one_updater.finished.connect(partial(
             self.set_widgets_status_for_updating, 'STOP'))
         self.one_updater.start()
