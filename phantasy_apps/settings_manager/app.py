@@ -16,6 +16,8 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QGuiApplication
@@ -107,6 +109,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # ndigit
     ndigit_changed = pyqtSignal(int)
 
+    # font
+    font_changed = pyqtSignal(QFont)
+
     def __init__(self, version, config_dir=None):
         super(SettingsManagerWindow, self).__init__()
 
@@ -187,6 +192,29 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # disable this timer 2020-03-09
         # self.config_timer.start(self.dt_confsync * 1000)
         #
+
+        # font
+        self.font = self.get_font_config()
+        self.pref_dict['font'] = self.font
+        self.font_changed.connect(self.on_font_changed)
+
+    @pyqtSlot(QFont)
+    def on_font_changed(self, font):
+        """Update font config.
+        """
+        self.font = font
+        self.pref_dict['font'] = font
+        m = self._tv.model()
+        if m is None:
+            return
+        src_m = m.sourceModel()
+        src_m.style_view(font=font)
+        src_m.fit_view()
+
+    def get_font_config(self):
+        """Initial font config.
+        """
+        return QFontDatabase.systemFont(QFontDatabase.FixedFont)
 
     @pyqtSlot(QVariant)
     def on_element_from_pv_added(self, elem):
@@ -281,7 +309,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def __on_show_settings(self):
         # visualize settings
         printlog("Setting data model...")
-        model = SettingsModel(self._tv, self.__flat_settings, ndigit=self.ndigit)
+        model = SettingsModel(self._tv, self.__flat_settings,
+                              ndigit=self.ndigit, font=self.font)
         model.settings_sts.connect(self.on_settings_sts)
         model.item_deletion_updated[list].connect(self.on_delete_items)
         model.set_model()
@@ -833,6 +862,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         pref_dlg.pref_changed.connect(self.on_update_pref)
         pref_dlg.visibility_changed.connect(self.on_update_visibility)
         pref_dlg.config_changed.connect(self.on_config_updated)
+        pref_dlg.font_changed.connect(self.font_changed)
         r = pref_dlg.exec_()
         # if r == QDialog.Accepted:
         #     printlog("Updated pref --> {}".format(self.pref_dict))
