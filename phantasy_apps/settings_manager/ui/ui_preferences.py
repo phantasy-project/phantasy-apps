@@ -14,6 +14,8 @@ class Ui_Dialog(object):
         Dialog.setObjectName("Dialog")
         Dialog.resize(786, 407)
         self.gridLayout_9 = QtWidgets.QGridLayout(Dialog)
+        self.gridLayout_9.setContentsMargins(6, 12, 6, 6)
+        self.gridLayout_9.setSpacing(6)
         self.gridLayout_9.setObjectName("gridLayout_9")
         self.tabWidget = QtWidgets.QTabWidget(Dialog)
         self.tabWidget.setObjectName("tabWidget")
@@ -63,6 +65,7 @@ class Ui_Dialog(object):
         self.label_3.setObjectName("label_3")
         self.gridLayout.addWidget(self.label_3, 4, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setSpacing(6)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.model_rbtn = QtWidgets.QRadioButton(self.data_tab)
         self.model_rbtn.setChecked(False)
@@ -140,7 +143,7 @@ class Ui_Dialog(object):
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.col_visibility_gbox = QtWidgets.QGridLayout()
         self.col_visibility_gbox.setObjectName("col_visibility_gbox")
-        self.gridLayout_2.addLayout(self.col_visibility_gbox, 1, 0, 1, 2)
+        self.gridLayout_2.addLayout(self.col_visibility_gbox, 2, 0, 1, 2)
         self.label_5 = QtWidgets.QLabel(self.view_tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -150,7 +153,41 @@ class Ui_Dialog(object):
             self.label_5.sizePolicy().hasHeightForWidth())
         self.label_5.setSizePolicy(sizePolicy)
         self.label_5.setObjectName("label_5")
-        self.gridLayout_2.addWidget(self.label_5, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.label_5, 1, 0, 1, 1)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label_6 = QtWidgets.QLabel(self.view_tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_6.sizePolicy().hasHeightForWidth())
+        self.label_6.setSizePolicy(sizePolicy)
+        self.label_6.setObjectName("label_6")
+        self.horizontalLayout_2.addWidget(self.label_6)
+        self.font_sample_lbl = QtWidgets.QLabel(self.view_tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.font_sample_lbl.sizePolicy().hasHeightForWidth())
+        self.font_sample_lbl.setSizePolicy(sizePolicy)
+        self.font_sample_lbl.setAlignment(QtCore.Qt.AlignCenter)
+        self.font_sample_lbl.setObjectName("font_sample_lbl")
+        self.horizontalLayout_2.addWidget(self.font_sample_lbl)
+        self.select_font_btn = QtWidgets.QPushButton(self.view_tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.select_font_btn.sizePolicy().hasHeightForWidth())
+        self.select_font_btn.setSizePolicy(sizePolicy)
+        self.select_font_btn.setObjectName("select_font_btn")
+        self.horizontalLayout_2.addWidget(self.select_font_btn)
+        self.gridLayout_2.addLayout(self.horizontalLayout_2, 0, 0, 1, 2)
         self.tabWidget.addTab(self.view_tab, "")
         self.config_tab = QtWidgets.QWidget()
         self.config_tab.setObjectName("config_tab")
@@ -180,12 +217,13 @@ class Ui_Dialog(object):
         self.purge_config_btn.setObjectName("purge_config_btn")
         self.gridLayout_3.addWidget(self.purge_config_btn, 0, 4, 1, 1)
         self.config_btns_hbox = QtWidgets.QHBoxLayout()
-        self.config_btns_hbox.setContentsMargins(-1, 20, -1, -1)
+        self.config_btns_hbox.setContentsMargins(-1, 0, -1, -1)
         self.config_btns_hbox.setObjectName("config_btns_hbox")
         self.gridLayout_3.addLayout(self.config_btns_hbox, 1, 0, 1, 5)
         self.tabWidget.addTab(self.config_tab, "")
         self.gridLayout_9.addWidget(self.tabWidget, 0, 0, 1, 1)
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_12.setSpacing(6)
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
         spacerItem2 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
@@ -207,6 +245,7 @@ class Ui_Dialog(object):
         self.model_rbtn.toggled['bool'].connect(Dialog.on_toggle_mode)
         self.init_settings_chkbox.toggled['bool'].connect(
             Dialog.on_init_settings)
+        self.select_font_btn.clicked.connect(Dialog.on_select_font)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.ok_btn, self.cancel_btn)
         Dialog.setTabOrder(self.cancel_btn, self.model_rbtn)
@@ -255,6 +294,9 @@ class Ui_Dialog(object):
                 "Dialog",
                 "Check the button to hide the column of the name, uncheck to show."
             ))
+        self.label_6.setText(_translate("Dialog", "Font"))
+        self.font_sample_lbl.setText(_translate("Dialog", "Sample"))
+        self.select_font_btn.setText(_translate("Dialog", "Select"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.view_tab),
                                   _translate("Dialog", "View"))
         self.change_config_path_btn.setText(_translate("Dialog", "Change"))
