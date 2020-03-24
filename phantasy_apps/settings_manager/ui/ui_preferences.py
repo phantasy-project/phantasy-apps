@@ -296,6 +296,8 @@ class Ui_Dialog(object):
             ))
         self.label_6.setText(_translate("Dialog", "Font"))
         self.font_sample_lbl.setText(_translate("Dialog", "Sample"))
+        self.select_font_btn.setToolTip(
+            _translate("Dialog", "Select display font."))
         self.select_font_btn.setText(_translate("Dialog", "Select"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.view_tab),
                                   _translate("Dialog", "View"))
