@@ -66,6 +66,7 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
 
         # UI
         self.setupUi(self)
+        self.postInitUi()
 
         #
         self._post_init()
