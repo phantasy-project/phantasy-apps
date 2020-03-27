@@ -427,26 +427,69 @@ class Ui_MainWindow(object):
         self.choose_elems_btn.setText(_translate("MainWindow", "Choose"))
         self.control_gbox.setTitle(_translate("MainWindow", "Control Panel"))
         self.label_2.setText(_translate("MainWindow", "Frequency"))
+        self.daqfreq_dSpinbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Total number of shot captured in one second.</p></body></html>"
+            ))
         self.daqfreq_dSpinbox.setSuffix(_translate("MainWindow", " Hz"))
         self.label.setText(_translate("MainWindow", "Shot Number"))
+        self.daq_nshot_sbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Total shot number in one DAQ iteration.</p></body></html>"
+            ))
+        self.viz_cnt_lbl.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Completed DAQ iterations.</p></body></html>"
+            ))
         self.viz_cnt_lbl.setText(_translate("MainWindow", "0"))
+        self.capture_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Do single DAQ.</p></body></html>"))
         self.capture_btn.setText(_translate("MainWindow", "Capture"))
+        self.start_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Do DAQ untile Stop button is pushed.</p></body></html>"
+            ))
         self.start_btn.setText(_translate("MainWindow", "Start"))
+        self.stop_btn.setToolTip(
+            _translate("MainWindow",
+                       "<html><head/><body><p>Stop DAQ.</p></body></html>"))
         self.stop_btn.setText(_translate("MainWindow", "Stop"))
         self.label_11.setText(_translate("MainWindow", "X-Axis"))
         self.id_as_x_rbtn.setToolTip(
-            _translate("MainWindow", "Apply device sequece order as x data"))
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Apply device sequece order as x data.</p></body></html>"
+            ))
         self.id_as_x_rbtn.setText(_translate("MainWindow", "ID"))
         self.pos_as_x_rbtn.setToolTip(
-            _translate("MainWindow",
-                       "Apply device longitudinal position as x data"))
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Apply device longitudinal position as x data.</p></body></html>"
+            ))
         self.pos_as_x_rbtn.setText(_translate("MainWindow", "Position"))
         self.show_dnum_rbtn.setToolTip(
-            _translate("MainWindow", "Show device D-numbers as xticks"))
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Show device D-numbers as xticks.</p></body></html>"
+            ))
         self.show_dnum_rbtn.setText(_translate("MainWindow", "D####"))
         self.show_dname_rbtn.setToolTip(
-            _translate("MainWindow", "Show device names as xticks"))
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Show device names as xticks.</p></body></html>"
+            ))
         self.show_dname_rbtn.setText(_translate("MainWindow", "Device Name"))
+        self.annote_height_chkbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Show bar height values as annotations.</p></body></html>"
+            ))
         self.annote_height_chkbox.setText(
             _translate("MainWindow", "Height Annotation"))
         self.label_5.setText(_translate("MainWindow", "DataViz"))
@@ -454,7 +497,7 @@ class Ui_MainWindow(object):
         self.reset_figure_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "Reset figure is always required after changing any configuration, before Capture/Start"
+                "<html><head/><body><p>Reset figure is always required after changing any configuration, before Capture/Start.</p></body></html>"
             ))
         self.reset_figure_btn.setText(_translate("MainWindow", "Reset"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
