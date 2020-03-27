@@ -250,7 +250,7 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self._show_annote = f
         if f:
             # annote height on top/bottom of bar
-            o.annotate_bar()
+            o.on_annote_config_changed()
         else:
             if o._all_annotes is None:
                 return
