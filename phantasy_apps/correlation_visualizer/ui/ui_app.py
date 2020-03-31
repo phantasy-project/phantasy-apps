@@ -853,6 +853,8 @@ class Ui_MainWindow(object):
         self.actionEnable_2D_Scan.setObjectName("actionEnable_2D_Scan")
         self.actionDevice_Processor = QtWidgets.QAction(MainWindow)
         self.actionDevice_Processor.setObjectName("actionDevice_Processor")
+        self.actionAchromat_Analysis = QtWidgets.QAction(MainWindow)
+        self.actionAchromat_Analysis.setObjectName("actionAchromat_Analysis")
         self.menu_File.addAction(self.actionSave)
         self.menu_File.addSeparator()
         self.menu_Help.addAction(self.actionContents)
@@ -860,6 +862,7 @@ class Ui_MainWindow(object):
         self.menu_Help.addAction(self.actionAbout)
         self.menu_Help.addAction(self.actionAbout_Qt)
         self.menuTools.addAction(self.actionQuad_Scan)
+        self.menuTools.addAction(self.actionAchromat_Analysis)
         self.menuTools.addAction(self.actionMPS_guardian)
         self.menuTools.addAction(self.actionVirtual_diag)
         self.menuTools.addAction(self.actionDevice_Processor)
@@ -895,6 +898,8 @@ class Ui_MainWindow(object):
         self.actionEnable_2D_Scan.triggered.connect(MainWindow.on2DScanAction)
         self.actionDevice_Processor.triggered.connect(
             MainWindow.onConfigDeviceProcessor)
+        self.actionAchromat_Analysis.triggered.connect(
+            MainWindow.onAchromatAnalysisAction)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.alter_elem_lineEdit,
                                self.select_alter_elem_btn)
@@ -1141,6 +1146,8 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Ctrl+Shift+H"))
         self.actionDevice_Processor.setText(
             _translate("MainWindow", "Device Processor"))
+        self.actionAchromat_Analysis.setText(
+            _translate("MainWindow", "Achromat Analysis"))
 
 
 from mpl4qt.widgets.mplerrorbarwidget import MatplotlibErrorbarWidget
