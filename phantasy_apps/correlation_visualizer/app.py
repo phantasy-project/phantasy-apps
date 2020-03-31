@@ -226,6 +226,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         # q-scan window
         self.qs_window = None
 
+        # achromat tuning window
+        self.at_window = None
+
         # lattice viewer
         for w in (self.lv_lbl, self.lv_mach, self.lv_segm, self.lv_view):
             w.setVisible(False)
@@ -984,6 +987,21 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
                                     QMessageBox.Ok)
                 return
         self.qs_window.show()
+
+    @pyqtSlot()
+    def onAchromatAnalysisAction(self):
+        """Show achromat data analysis app.
+        """
+        from phantasy_apps.achromat_tuning import MyAppWindow
+        from phantasy_apps.achromat_tuning import __version__
+        from phantasy import create_tempfile
+
+        tmpfile = create_tempfile(prefix="cv4at", suffix=".json")
+        self._save_data_as_json(tmpfile)
+        if self.at_window is None:
+            self.at_window = MyAppWindow(version=__version__)
+        self.at_window.load_file(tmpfile, "json")
+        self.at_window.show()
 
     @pyqtSlot()
     def onLoadLatticeAction(self):
