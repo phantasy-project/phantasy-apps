@@ -22,7 +22,7 @@ from phantasy_ui import BaseAppForm
 from phantasy_apps.trajectory_viewer.utils import ElementListModel
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
-from phantasy_apps.utils import uptime
+from phantasy_ui import uptime
 from .app_settings_view import SettingsView
 from .app_field_setup import FieldSetDialog
 from .app_ormviz import MVizDialog

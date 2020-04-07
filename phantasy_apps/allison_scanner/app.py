@@ -28,7 +28,7 @@ from phantasy_ui.templates import BaseAppForm
 from phantasy_ui.widgets import ElementWidget
 
 from phantasy import Configuration
-from phantasy_apps.utils import uptime
+from phantasy_ui import uptime
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet

@@ -17,8 +17,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMessageBox
 from phantasy_ui import BaseAppForm
+from phantasy_ui import uptime
 
-from phantasy_apps.utils import uptime
 from .app_vainfo import VAProcessInfoWidget
 from .ui.ui_app import Ui_MainWindow
 
