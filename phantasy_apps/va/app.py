@@ -78,6 +78,7 @@ class VALauncherWindow(BaseAppForm, Ui_MainWindow):
 
         # UI
         self.setupUi(self)
+        self.postInitUi()
 
         # initialize va_process
         self.va_process = None
