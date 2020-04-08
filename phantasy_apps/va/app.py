@@ -8,6 +8,7 @@ from PyQt5.QtCore import pyqtSlot
 
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QListWidgetItem
 
 from phantasy_ui import BaseAppForm
 from phantasy_ui.widgets import VirtualAcceleratorWidget
@@ -48,6 +49,9 @@ class VALauncherWindow(BaseAppForm, Ui_MainWindow):
         self._post_init()
 
     def _post_init(self):
+        # list of tuple of va_page and va_list_item
+        self._va_page_item_list = []
+
         # initialize the first tab page
         self.va_tab.currentChanged.emit(self.va_tab.count() - 1)
 
@@ -57,12 +61,16 @@ class VALauncherWindow(BaseAppForm, Ui_MainWindow):
         """
         if index == self.va_tab.count() - 1:
             w = self.create_new_va_page()
-            self.va_tab.insertTab(index, w, "New VA")
+            self.va_tab.insertTab(index, w, "")
             self.va_tab.setCurrentIndex(index)
             va_page = w.findChild(VirtualAcceleratorWidget)
-            va_page.sig_va_name_changed.connect(
-                    partial(self.va_tab.setTabText, index))
+            va_list_item = QListWidgetItem("")
+            va_page.sig_va_name_changed['QString'].connect(va_list_item.setText)
+            va_page.sig_va_name_changed[tuple].connect(
+                    lambda t:self.va_tab.setTabText(index, t[1]))
             va_page.reinit_va_info()
+            self.va_listWidget.addItem(va_list_item)
+            self._va_page_item_list.append((va_page, va_list_item))
 
     def create_new_va_page(self):
         w = QWidget()
