@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(870, 566)
+        MainWindow.resize(777, 508)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/frib_va.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -43,34 +43,22 @@ class Ui_MainWindow(object):
         self.splitter = QtWidgets.QSplitter(self.centralwidget)
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
         self.splitter.setObjectName("splitter")
-        self.listWidget = QtWidgets.QListWidget(self.splitter)
-        self.listWidget.setObjectName("listWidget")
-        self.tabWidget = QtWidgets.QTabWidget(self.splitter)
-        self.tabWidget.setElideMode(QtCore.Qt.ElideNone)
-        self.tabWidget.setDocumentMode(False)
-        self.tabWidget.setTabsClosable(False)
-        self.tabWidget.setMovable(False)
-        self.tabWidget.setTabBarAutoHide(False)
-        self.tabWidget.setObjectName("tabWidget")
-        self.tab = QtWidgets.QWidget()
-        self.tab.setObjectName("tab")
-        self.gridLayout = QtWidgets.QGridLayout(self.tab)
-        self.gridLayout.setObjectName("gridLayout")
-        self.virtualAcceleratorWidget = VirtualAcceleratorWidget(self.tab)
-        self.virtualAcceleratorWidget.setObjectName("virtualAcceleratorWidget")
-        self.gridLayout.addWidget(self.virtualAcceleratorWidget, 0, 0, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(20, 40,
-                                           QtWidgets.QSizePolicy.Minimum,
-                                           QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 1, 0, 1, 1)
-        self.tabWidget.addTab(self.tab, "")
-        self.tab_2 = QtWidgets.QWidget()
-        self.tab_2.setObjectName("tab_2")
-        self.tabWidget.addTab(self.tab_2, "")
+        self.va_list = QtWidgets.QListWidget(self.splitter)
+        self.va_list.setObjectName("va_list")
+        self.va_tab = QtWidgets.QTabWidget(self.splitter)
+        self.va_tab.setElideMode(QtCore.Qt.ElideNone)
+        self.va_tab.setDocumentMode(False)
+        self.va_tab.setTabsClosable(False)
+        self.va_tab.setMovable(False)
+        self.va_tab.setTabBarAutoHide(False)
+        self.va_tab.setObjectName("va_tab")
+        self.last_page = QtWidgets.QWidget()
+        self.last_page.setObjectName("last_page")
+        self.va_tab.addTab(self.last_page, "")
         self.gridLayout_2.addWidget(self.splitter, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 870, 31))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 777, 31))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
@@ -134,19 +122,19 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_Help.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.va_tab.setCurrentIndex(0)
         self.actionAbout.triggered.connect(MainWindow.onAbout)
         self.actionAbout_Qt.triggered.connect(MainWindow.onAboutQt)
         self.actionE_xit.triggered.connect(MainWindow.close)
+        self.va_tab.currentChanged['int'].connect(
+            MainWindow.on_current_tab_changed)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab),
-                                  _translate("MainWindow", "Tab 1"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2),
-                                  _translate("MainWindow", "Tab 2"))
+        self.va_tab.setTabText(self.va_tab.indexOf(self.last_page),
+                               _translate("MainWindow", "+"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
@@ -162,7 +150,6 @@ class Ui_MainWindow(object):
         self.va_stop_tool.setText(_translate("MainWindow", "STOP VA"))
 
 
-from phantasy_ui.widgets.vawidget import VirtualAcceleratorWidget
 from . import resources_rc
 
 if __name__ == "__main__":
