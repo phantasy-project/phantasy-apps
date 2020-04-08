@@ -6,6 +6,9 @@ from functools import partial
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 
+from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QBrush
+
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QListWidgetItem
@@ -65,6 +68,8 @@ class VALauncherWindow(BaseAppForm, Ui_MainWindow):
             self.va_tab.setCurrentIndex(index)
             va_page = w.findChild(VirtualAcceleratorWidget)
             va_list_item = QListWidgetItem("")
+            va_page.sig_va_status_changed['QString', QColor].connect(
+                    lambda s,c:va_list_item.setBackground(QBrush(c)))
             va_page.sig_va_name_changed['QString'].connect(va_list_item.setText)
             va_page.sig_va_name_changed[tuple].connect(
                     lambda t:self.va_tab.setTabText(index, t[1]))
