@@ -1,3 +1,73 @@
+Version 3.0.0
+-------------
+2020-04-16
+
+- [New] Achromat Tuning
+  - The all-in-on solution for bending section tuning
+  - Support to invoke from Correlation Visualizer
+  - Implement the data analysis for dipole tuning
+  - Add support to launch Correlation Visualizer within app
+
+- Allison Scanner
+  - Update the warning message of exiting app
+
+- App Launcher
+  - Fix get version of unicorn app
+  - Get version info of new apps
+
+- Correlation Visualizer
+  - Update UI
+  - Add support to define alter action with customized function
+  - Add extra wait time support after ensure_put action
+  - Add 'Achromat Tuning' app as one of the plugins
+
+- Device Viewer
+  - Update UI
+  - Add support to configure bar chart annotation style
+
+- Lattice Viewer
+  - Redesigned UI
+  - Add support to right clicking context menu
+
+- [New] Physics Calculator
+  - Support the beam power calculation
+  - Support parameter correlation visualization
+
+- Settings Manager
+  - Update UI
+  - Implement the context menu from device item
+    - Probe device
+    - Copy string (work with mouse middle button, copy&paste)
+  - Implement 'Add Devices' feature
+  - Optimize data initialization and updating events
+  - Enhanced filter/search item line edit
+  - Add support to sort for all columns, by string/number
+  - Support drag&drop to load settings file
+  - Add Jupyter notebooks to parse and generate settings for phase scan
+  - Add Jupyter notebooks to parse and convert .snp files
+  - Implement the configuration files management
+  - Implement preference window to control the app styles
+    - Font size, style, etc
+    - Column name hide/show
+    - Data initializatino mode
+    - User configuration files
+  - Implement a new tool to update setpoint column: 'Take Snapshot'
+
+- [New] Synoptic View & Control
+  - Support load and show SVG with meta info anchors
+  - Support data updating
+  - Support zoom in/out, page fit
+  - Serve as general SVG rendering engine to turn static SVG alive
+
+- Virtual Accelerator Launcher
+  - Redesigned UI
+  - Support to launch multiple virtual accelerators
+  - Manage multiple virtual accelertors, delete, add, etc
+  - More controls to VA:
+    - Rep-rate (VA-wise)
+    - Noise (VA-wise)
+    - MPS (global)
+
 Version 2.4.0
 -------------
 2020-01-30
