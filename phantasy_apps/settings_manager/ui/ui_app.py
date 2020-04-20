@@ -12,15 +12,15 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1600, 1200)
+        MainWindow.resize(1300, 975)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout_2.setContentsMargins(6, 6, 6, 6)
-        self.gridLayout_2.setSpacing(6)
+        self.gridLayout_2.setSpacing(4)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.gridLayout = QtWidgets.QGridLayout()
-        self.gridLayout.setSpacing(6)
+        self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
         spacerItem = QtWidgets.QSpacerItem(600, 20,
                                            QtWidgets.QSizePolicy.Expanding,
@@ -142,14 +142,14 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSizeConstraint(
             QtWidgets.QLayout.SetDefaultConstraint)
-        self.horizontalLayout.setSpacing(6)
+        self.horizontalLayout.setSpacing(4)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.reload_lattice_btn = QtWidgets.QToolButton(self.centralwidget)
         icon7 = QtGui.QIcon()
         icon7.addPixmap(QtGui.QPixmap(":/sm-icons/reload.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.reload_lattice_btn.setIcon(icon7)
-        self.reload_lattice_btn.setIconSize(QtCore.QSize(32, 32))
+        self.reload_lattice_btn.setIconSize(QtCore.QSize(24, 24))
         self.reload_lattice_btn.setAutoRaise(True)
         self.reload_lattice_btn.setObjectName("reload_lattice_btn")
         self.horizontalLayout.addWidget(self.reload_lattice_btn)
@@ -247,7 +247,7 @@ class Ui_MainWindow(object):
         icon9.addPixmap(QtGui.QPixmap(":/sm-icons/stop.png"),
                         QtGui.QIcon.Active, QtGui.QIcon.On)
         self.update_ctrl_btn.setIcon(icon9)
-        self.update_ctrl_btn.setIconSize(QtCore.QSize(32, 32))
+        self.update_ctrl_btn.setIconSize(QtCore.QSize(24, 24))
         self.update_ctrl_btn.setCheckable(True)
         self.update_ctrl_btn.setChecked(False)
         self.update_ctrl_btn.setAutoRaise(True)
@@ -258,7 +258,7 @@ class Ui_MainWindow(object):
         icon10.addPixmap(QtGui.QPixmap(":/sm-icons/single.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.single_update_btn.setIcon(icon10)
-        self.single_update_btn.setIconSize(QtCore.QSize(32, 32))
+        self.single_update_btn.setIconSize(QtCore.QSize(24, 24))
         self.single_update_btn.setAutoRaise(True)
         self.single_update_btn.setObjectName("single_update_btn")
         self.horizontalLayout.addWidget(self.single_update_btn)
@@ -294,7 +294,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.treeView, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 31))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 22))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
