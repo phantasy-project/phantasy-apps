@@ -75,7 +75,7 @@ class AppDataModel(QStandardItemModel):
             item_cat.setText('')
             item_cat.setToolTip(tp)
             item_cat.setTextAlignment(Qt.AlignCenter)
-            item_cat.setData(px.scaled(32, 32), Qt.DecorationRole)
+            item_cat.setData(px.scaled(24, 24), Qt.DecorationRole)
 
             item_desc = QStandardItem(app.desc)
             item_ver = QStandardItem(app.ver)

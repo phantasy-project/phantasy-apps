@@ -23,6 +23,7 @@ class LogWidget(QWidget):
         self.textEdit = textEdit
 
         vbox = QVBoxLayout()
+        vbox.setContentsMargins(2, 2, 2, 2)
         vbox.addWidget(textEdit)
         self.setLayout(vbox)
 
@@ -31,7 +32,7 @@ class LogWidget(QWidget):
         fm.fileChanged.connect(self.on_log_updated)
 
     def sizeHint(self):
-        return QSize(1200, 600)
+        return QSize(600, 450)
 
     def on_log_updated(self, p):
         with open(p, 'r') as f:
