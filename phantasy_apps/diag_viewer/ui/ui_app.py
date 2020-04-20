@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1920, 1440)
+        MainWindow.resize(1300, 975)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/dv.png"), QtGui.QIcon.Normal,
                        QtGui.QIcon.Off)
@@ -32,7 +32,7 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setContentsMargins(6, 12, 6, 6)
-        self.verticalLayout.setSpacing(6)
+        self.verticalLayout.setSpacing(4)
         self.verticalLayout.setObjectName("verticalLayout")
         self.splitter = QtWidgets.QSplitter(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
@@ -54,8 +54,8 @@ class Ui_MainWindow(object):
         self.plot_gbox.setSizePolicy(sizePolicy)
         self.plot_gbox.setObjectName("plot_gbox")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.plot_gbox)
-        self.horizontalLayout_3.setContentsMargins(6, 12, 6, 6)
-        self.horizontalLayout_3.setSpacing(6)
+        self.horizontalLayout_3.setContentsMargins(4, 10, 4, 4)
+        self.horizontalLayout_3.setSpacing(4)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.matplotlibbarWidget = MatplotlibBarWidget(self.plot_gbox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
@@ -99,11 +99,11 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.device_gbox.sizePolicy().hasHeightForWidth())
         self.device_gbox.setSizePolicy(sizePolicy)
-        self.device_gbox.setMinimumSize(QtCore.QSize(450, 0))
+        self.device_gbox.setMinimumSize(QtCore.QSize(300, 0))
         self.device_gbox.setObjectName("device_gbox")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.device_gbox)
-        self.verticalLayout_2.setContentsMargins(6, 12, 6, 6)
-        self.verticalLayout_2.setSpacing(6)
+        self.verticalLayout_2.setContentsMargins(4, 10, 4, 4)
+        self.verticalLayout_2.setSpacing(4)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.device_select_hbox = QtWidgets.QHBoxLayout()
         self.device_select_hbox.setSpacing(6)
@@ -150,10 +150,11 @@ class Ui_MainWindow(object):
         self.control_gbox = QtWidgets.QGroupBox(self.centralwidget)
         self.control_gbox.setObjectName("control_gbox")
         self.gridLayout = QtWidgets.QGridLayout(self.control_gbox)
-        self.gridLayout.setContentsMargins(6, 12, 6, 6)
-        self.gridLayout.setSpacing(6)
+        self.gridLayout.setContentsMargins(4, 10, 4, 4)
+        self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
         self.daq_hbox = QtWidgets.QHBoxLayout()
+        self.daq_hbox.setSpacing(4)
         self.daq_hbox.setObjectName("daq_hbox")
         self.label_2 = QtWidgets.QLabel(self.control_gbox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
@@ -218,7 +219,6 @@ class Ui_MainWindow(object):
         icon3.addPixmap(QtGui.QPixmap(":/icons/single.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.capture_btn.setIcon(icon3)
-        self.capture_btn.setIconSize(QtCore.QSize(24, 24))
         self.capture_btn.setObjectName("capture_btn")
         self.daq_hbox.addWidget(self.capture_btn)
         self.start_btn = QtWidgets.QPushButton(self.control_gbox)
@@ -233,7 +233,6 @@ class Ui_MainWindow(object):
         icon4.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
         self.start_btn.setIcon(icon4)
-        self.start_btn.setIconSize(QtCore.QSize(24, 24))
         self.start_btn.setObjectName("start_btn")
         self.daq_hbox.addWidget(self.start_btn)
         self.stop_btn = QtWidgets.QPushButton(self.control_gbox)
@@ -248,11 +247,11 @@ class Ui_MainWindow(object):
         icon5.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
         self.stop_btn.setIcon(icon5)
-        self.stop_btn.setIconSize(QtCore.QSize(24, 24))
         self.stop_btn.setObjectName("stop_btn")
         self.daq_hbox.addWidget(self.stop_btn)
         self.gridLayout.addLayout(self.daq_hbox, 1, 1, 1, 2)
         self.viz_hbox = QtWidgets.QHBoxLayout()
+        self.viz_hbox.setSpacing(4)
         self.viz_hbox.setObjectName("viz_hbox")
         self.label_11 = QtWidgets.QLabel(self.control_gbox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
@@ -343,13 +342,12 @@ class Ui_MainWindow(object):
         icon6.addPixmap(QtGui.QPixmap(":/icons/load.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
         self.reset_figure_btn.setIcon(icon6)
-        self.reset_figure_btn.setIconSize(QtCore.QSize(16, 16))
         self.reset_figure_btn.setObjectName("reset_figure_btn")
         self.gridLayout.addWidget(self.reset_figure_btn, 0, 2, 1, 1)
         self.verticalLayout.addWidget(self.control_gbox)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 31))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 22))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")

@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(811, 433)
+        Dialog.resize(634, 292)
         Dialog.setStyleSheet(
             "QLineEdit {\n"
             "    border: 0.5px solid gray;\n"
@@ -39,6 +39,8 @@ class Ui_Dialog(object):
             "    */\n"
             "}")
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
+        self.gridLayout.setContentsMargins(6, 6, 6, 6)
+        self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
         self.label = QtWidgets.QLabel(Dialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
