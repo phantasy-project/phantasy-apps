@@ -1185,7 +1185,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         [i.setDisabled(status == 'START') for i in w1]
 
     def sizeHint(self):
-        return QSize(1800, 1200)
+        return QSize(1300, 975)
 
     @pyqtSlot(list)
     def on_delete_items(self, fobj_list):
