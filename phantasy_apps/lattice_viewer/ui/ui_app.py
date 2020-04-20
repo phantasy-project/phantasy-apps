@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1774, 1206)
+        MainWindow.resize(1300, 975)
         MainWindow.setMinimumSize(QtCore.QSize(0, 0))
         MainWindow.setStyleSheet("QLineEdit {\n"
                                  "    border: 0.5px solid gray;\n"
@@ -22,10 +22,12 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
-        self.verticalLayout_2.setContentsMargins(8, 12, 8, 8)
-        self.verticalLayout_2.setSpacing(6)
+        self.verticalLayout_2.setContentsMargins(6, 12, 6, 6)
+        self.verticalLayout_2.setSpacing(4)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.verticalLayout = QtWidgets.QVBoxLayout()
+        self.verticalLayout.setContentsMargins(-1, 0, -1, -1)
+        self.verticalLayout.setSpacing(4)
         self.verticalLayout.setObjectName("verticalLayout")
         self.splitter = QtWidgets.QSplitter(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -41,14 +43,14 @@ class Ui_MainWindow(object):
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setVerticalStretch(1)
         sizePolicy.setHeightForWidth(
             self.lattice_list_gb.sizePolicy().hasHeightForWidth())
         self.lattice_list_gb.setSizePolicy(sizePolicy)
         self.lattice_list_gb.setMinimumSize(QtCore.QSize(0, 0))
         self.lattice_list_gb.setObjectName("lattice_list_gb")
         self.gridLayout = QtWidgets.QGridLayout(self.lattice_list_gb)
-        self.gridLayout.setContentsMargins(6, 6, 6, 6)
+        self.gridLayout.setContentsMargins(2, 6, 2, 2)
         self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
         self.treeView = QtWidgets.QTreeView(self.lattice_list_gb)
@@ -59,7 +61,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.treeView.sizePolicy().hasHeightForWidth())
         self.treeView.setSizePolicy(sizePolicy)
-        self.treeView.setMinimumSize(QtCore.QSize(0, 700))
+        self.treeView.setMinimumSize(QtCore.QSize(0, 600))
         self.treeView.setObjectName("treeView")
         self.gridLayout.addWidget(self.treeView, 0, 0, 1, 1)
         self.layout_view_gb = QtWidgets.QGroupBox(self.splitter)
@@ -72,7 +74,7 @@ class Ui_MainWindow(object):
         self.layout_view_gb.setSizePolicy(sizePolicy)
         self.layout_view_gb.setObjectName("layout_view_gb")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.layout_view_gb)
-        self.gridLayout_2.setContentsMargins(6, 6, 6, 6)
+        self.gridLayout_2.setContentsMargins(2, 2, 2, 2)
         self.gridLayout_2.setSpacing(4)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.layout_plot = MatplotlibBaseWidget(self.layout_view_gb)
@@ -88,8 +90,8 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.layout_plot, 0, 0, 1, 1)
         self.verticalLayout.addWidget(self.splitter)
         self.gridLayout_3 = QtWidgets.QGridLayout()
-        self.gridLayout_3.setContentsMargins(4, 4, 4, 4)
-        self.gridLayout_3.setSpacing(6)
+        self.gridLayout_3.setContentsMargins(2, 2, 2, 2)
+        self.gridLayout_3.setSpacing(4)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -157,7 +159,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addLayout(self.verticalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1774, 31))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 22))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
