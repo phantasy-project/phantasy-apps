@@ -12,16 +12,17 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1000, 600)
+        MainWindow.resize(605, 424)
         icon = QtGui.QIcon()
-        icon.addPixmap(
-            QtGui.QPixmap(":/icons/app.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/app.png"), QtGui.QIcon.Normal,
+                       QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
+        self.gridLayout.setContentsMargins(6, 6, 6, 6)
+        self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
         self.tableView = QtWidgets.QTableView(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -40,11 +41,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.about_btn = QtWidgets.QToolButton(self.centralwidget)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(
-            QtGui.QPixmap(":/icons/frib.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(":/icons/frib.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.about_btn.setIcon(icon1)
-        self.about_btn.setIconSize(QtCore.QSize(64, 64))
+        self.about_btn.setIconSize(QtCore.QSize(48, 48))
         self.about_btn.setAutoRaise(True)
         self.about_btn.setObjectName("about_btn")
         self.horizontalLayout.addWidget(self.about_btn)
@@ -81,21 +81,19 @@ class Ui_MainWindow(object):
         self.show_log_btn = QtWidgets.QToolButton(self.centralwidget)
         self.show_log_btn.setEnabled(False)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(
-            QtGui.QPixmap(":/icons/show.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(":/icons/show.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.show_log_btn.setIcon(icon2)
-        self.show_log_btn.setIconSize(QtCore.QSize(24, 24))
+        self.show_log_btn.setIconSize(QtCore.QSize(20, 20))
         self.show_log_btn.setAutoRaise(True)
         self.show_log_btn.setObjectName("show_log_btn")
         self.verticalLayout.addWidget(self.show_log_btn)
         self.enable_debug_btn = QtWidgets.QToolButton(self.centralwidget)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(
-            QtGui.QPixmap(":/icons/log.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(":/icons/log.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.enable_debug_btn.setIcon(icon3)
-        self.enable_debug_btn.setIconSize(QtCore.QSize(24, 24))
+        self.enable_debug_btn.setIconSize(QtCore.QSize(20, 20))
         self.enable_debug_btn.setCheckable(True)
         self.enable_debug_btn.setAutoRaise(True)
         self.enable_debug_btn.setObjectName("enable_debug_btn")
@@ -104,7 +102,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1000, 32))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 605, 22))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
 

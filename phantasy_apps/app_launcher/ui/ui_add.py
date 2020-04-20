@@ -123,9 +123,8 @@ class Ui_Dialog(object):
         self.icon_btn.setBaseSize(QtCore.QSize(64, 64))
         self.icon_btn.setAutoFillBackground(False)
         icon = QtGui.QIcon()
-        icon.addPixmap(
-            QtGui.QPixmap(":/icons/icons/app3.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/icons/app3.png"),
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.icon_btn.setIcon(icon)
         self.icon_btn.setIconSize(QtCore.QSize(64, 64))
         self.icon_btn.setObjectName("icon_btn")
