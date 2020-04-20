@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1920, 1440)
+        MainWindow.resize(1300, 975)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/work.png"), QtGui.QIcon.Normal,
                        QtGui.QIcon.Off)
@@ -82,10 +82,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.elem_models.sizePolicy().hasHeightForWidth())
         self.elem_models.setSizePolicy(sizePolicy)
-        self.elem_models.setMinimumSize(QtCore.QSize(450, 0))
+        self.elem_models.setMinimumSize(QtCore.QSize(350, 0))
         self.elem_models.setObjectName("elem_models")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.elem_models)
-        self.verticalLayout.setContentsMargins(0, 12, 6, 6)
+        self.verticalLayout.setContentsMargins(0, 0, 6, 6)
         self.verticalLayout.setSpacing(4)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout_17 = QtWidgets.QHBoxLayout()
@@ -134,7 +134,6 @@ class Ui_MainWindow(object):
         icon1.addPixmap(QtGui.QPixmap(":/icons/view-details.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.lattice_info_btn.setIcon(icon1)
-        self.lattice_info_btn.setIconSize(QtCore.QSize(24, 24))
         self.lattice_info_btn.setAutoRaise(True)
         self.lattice_info_btn.setObjectName("lattice_info_btn")
         self.horizontalLayout_17.addWidget(self.lattice_info_btn)
@@ -144,7 +143,6 @@ class Ui_MainWindow(object):
         icon2.addPixmap(QtGui.QPixmap(":/icons/refresh.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.refresh_models_btn.setIcon(icon2)
-        self.refresh_models_btn.setIconSize(QtCore.QSize(24, 24))
         self.refresh_models_btn.setAutoRaise(True)
         self.refresh_models_btn.setObjectName("refresh_models_btn")
         self.horizontalLayout_17.addWidget(self.refresh_models_btn)
@@ -163,7 +161,7 @@ class Ui_MainWindow(object):
         self.bpm_vbox.setContentsMargins(0, 0, 0, 0)
         self.bpm_vbox.setObjectName("bpm_vbox")
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_9.setSpacing(6)
+        self.horizontalLayout_9.setSpacing(4)
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.select_all_bpms_btn = QtWidgets.QToolButton(self.layoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
@@ -215,7 +213,6 @@ class Ui_MainWindow(object):
         icon5.addPixmap(QtGui.QPixmap(":/icons/setting.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.config_fields_btn.setIcon(icon5)
-        self.config_fields_btn.setIconSize(QtCore.QSize(20, 20))
         self.config_fields_btn.setAutoRaise(True)
         self.config_fields_btn.setObjectName("config_fields_btn")
         self.horizontalLayout_9.addWidget(self.config_fields_btn)
@@ -237,6 +234,7 @@ class Ui_MainWindow(object):
         self.monitors_gbox.setObjectName("monitors_gbox")
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout(self.monitors_gbox)
         self.horizontalLayout_6.setContentsMargins(4, 8, 4, 4)
+        self.horizontalLayout_6.setSpacing(4)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.bpms_treeView = QtWidgets.QTreeView(self.monitors_gbox)
         self.bpms_treeView.setObjectName("bpms_treeView")
@@ -306,6 +304,7 @@ class Ui_MainWindow(object):
         self.cors_gbox.setObjectName("cors_gbox")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.cors_gbox)
         self.horizontalLayout_4.setContentsMargins(4, 8, 4, 4)
+        self.horizontalLayout_4.setSpacing(4)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.cors_treeView = QtWidgets.QTreeView(self.cors_gbox)
         self.cors_treeView.setObjectName("cors_treeView")
@@ -347,7 +346,7 @@ class Ui_MainWindow(object):
         self.operations_toolBox.setFrameShadow(QtWidgets.QFrame.Plain)
         self.operations_toolBox.setObjectName("operations_toolBox")
         self.orm_measurement = QtWidgets.QWidget()
-        self.orm_measurement.setGeometry(QtCore.QRect(0, 0, 1452, 978))
+        self.orm_measurement.setGeometry(QtCore.QRect(0, 0, 934, 545))
         self.orm_measurement.setObjectName("orm_measurement")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.orm_measurement)
         self.gridLayout_4.setContentsMargins(6, 12, 6, 6)
@@ -364,6 +363,7 @@ class Ui_MainWindow(object):
         self.label_2.setObjectName("label_2")
         self.gridLayout_4.addWidget(self.label_2, 1, 0, 1, 1)
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_7.setSpacing(4)
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.measure_pb = QtWidgets.QProgressBar(self.orm_measurement)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
@@ -405,6 +405,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_7.addWidget(self.run_btn)
         self.gridLayout_4.addLayout(self.horizontalLayout_7, 10, 0, 1, 3)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setSpacing(4)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.label_25 = QtWidgets.QLabel(self.orm_measurement)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
@@ -447,6 +448,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.addWidget(self.daq_nshot_sbox)
         self.gridLayout_4.addLayout(self.horizontalLayout_3, 6, 1, 1, 2)
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_12.setSpacing(4)
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
         self.keep_all_data_chkbox = QtWidgets.QCheckBox(self.orm_measurement)
         self.keep_all_data_chkbox.setObjectName("keep_all_data_chkbox")
@@ -459,6 +461,7 @@ class Ui_MainWindow(object):
         self.label_24.setObjectName("label_24")
         self.gridLayout_4.addWidget(self.label_24, 6, 0, 1, 1)
         self.horizontalLayout_19 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_19.setSpacing(4)
         self.horizontalLayout_19.setObjectName("horizontalLayout_19")
         self.label_30 = QtWidgets.QLabel(self.orm_measurement)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
@@ -560,13 +563,13 @@ class Ui_MainWindow(object):
         self.gridLayout_4.addWidget(self.label, 0, 0, 1, 1)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_2.setSpacing(4)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.update_eta_btn = QtWidgets.QToolButton(self.orm_measurement)
         icon8 = QtGui.QIcon()
         icon8.addPixmap(QtGui.QPixmap(":/icons/update.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.update_eta_btn.setIcon(icon8)
-        self.update_eta_btn.setIconSize(QtCore.QSize(24, 24))
         self.update_eta_btn.setAutoRaise(True)
         self.update_eta_btn.setObjectName("update_eta_btn")
         self.horizontalLayout_2.addWidget(self.update_eta_btn)
@@ -629,6 +632,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.eta_timer_lbl)
         self.gridLayout_4.addLayout(self.horizontalLayout_2, 9, 0, 1, 3)
         self.horizontalLayout_20 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_20.setSpacing(4)
         self.horizontalLayout_20.setObjectName("horizontalLayout_20")
         self.mprec_sbox = QtWidgets.QSpinBox(self.orm_measurement)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -673,6 +677,7 @@ class Ui_MainWindow(object):
         self.cor_srange_tableView.setObjectName("cor_srange_tableView")
         self.gridLayout_4.addWidget(self.cor_srange_tableView, 8, 0, 1, 3)
         self.horizontalLayout_18 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_18.setSpacing(4)
         self.horizontalLayout_18.setObjectName("horizontalLayout_18")
         self.label_33 = QtWidgets.QLabel(self.orm_measurement)
         self.label_33.setObjectName("label_33")
@@ -682,7 +687,6 @@ class Ui_MainWindow(object):
         icon9.addPixmap(QtGui.QPixmap(":/icons/matrix-color.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.mviz_btn.setIcon(icon9)
-        self.mviz_btn.setIconSize(QtCore.QSize(24, 24))
         self.mviz_btn.setAutoRaise(False)
         self.mviz_btn.setObjectName("mviz_btn")
         self.horizontalLayout_18.addWidget(self.mviz_btn)
@@ -692,7 +696,7 @@ class Ui_MainWindow(object):
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.operations_toolBox.addItem(self.orm_measurement, icon10, "")
         self.orm_apply = QtWidgets.QWidget()
-        self.orm_apply.setGeometry(QtCore.QRect(0, 0, 1452, 978))
+        self.orm_apply.setGeometry(QtCore.QRect(0, 0, 934, 545))
         self.orm_apply.setObjectName("orm_apply")
         self.gridLayout = QtWidgets.QGridLayout(self.orm_apply)
         self.gridLayout.setContentsMargins(6, 12, 6, 6)
@@ -706,6 +710,8 @@ class Ui_MainWindow(object):
         self.label_11.setObjectName("label_11")
         self.gridLayout.addWidget(self.label_11, 0, 0, 1, 1)
         self.horizontalLayout_13 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_13.setContentsMargins(-1, -1, -1, 0)
+        self.horizontalLayout_13.setSpacing(4)
         self.horizontalLayout_13.setObjectName("horizontalLayout_13")
         self.label_12 = QtWidgets.QLabel(self.orm_apply)
         self.label_12.setEnabled(False)
@@ -781,6 +787,7 @@ class Ui_MainWindow(object):
         self.label_9.setObjectName("label_9")
         self.gridLayout.addWidget(self.label_9, 5, 0, 1, 1)
         self.horizontalLayout_16 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_16.setSpacing(4)
         self.horizontalLayout_16.setObjectName("horizontalLayout_16")
         self.cor_wait_time_dsbox = QtWidgets.QDoubleSpinBox(self.orm_apply)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -811,6 +818,7 @@ class Ui_MainWindow(object):
         self.label_22.setObjectName("label_22")
         self.gridLayout.addWidget(self.label_22, 6, 0, 1, 1)
         self.horizontalLayout_15 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_15.setSpacing(4)
         self.horizontalLayout_15.setObjectName("horizontalLayout_15")
         self.cor_prec_sbox = QtWidgets.QSpinBox(self.orm_apply)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -842,6 +850,7 @@ class Ui_MainWindow(object):
         self.label_27.setObjectName("label_27")
         self.gridLayout.addWidget(self.label_27, 7, 0, 1, 1)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_5.setSpacing(4)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.label_28 = QtWidgets.QLabel(self.orm_apply)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
@@ -885,6 +894,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.horizontalLayout_5, 7, 1, 1, 1)
         self.cached_settings_hbox = QtWidgets.QHBoxLayout()
         self.cached_settings_hbox.setContentsMargins(-1, 0, -1, -1)
+        self.cached_settings_hbox.setSpacing(4)
         self.cached_settings_hbox.setObjectName("cached_settings_hbox")
         self.label_16 = QtWidgets.QLabel(self.orm_apply)
         self.label_16.setStyleSheet("QLabel {\n" "    color: gray;\n" "}")
@@ -895,7 +905,6 @@ class Ui_MainWindow(object):
         icon11.addPixmap(QtGui.QPixmap(":/icons/del.png"), QtGui.QIcon.Normal,
                          QtGui.QIcon.Off)
         self.del_setting_btn.setIcon(icon11)
-        self.del_setting_btn.setIconSize(QtCore.QSize(24, 24))
         self.del_setting_btn.setAutoRaise(True)
         self.del_setting_btn.setObjectName("del_setting_btn")
         self.cached_settings_hbox.addWidget(self.del_setting_btn)
@@ -904,7 +913,6 @@ class Ui_MainWindow(object):
         icon12.addPixmap(QtGui.QPixmap(":/icons/add.png"), QtGui.QIcon.Normal,
                          QtGui.QIcon.Off)
         self.add_setting_btn.setIcon(icon12)
-        self.add_setting_btn.setIconSize(QtCore.QSize(24, 24))
         self.add_setting_btn.setAutoRaise(True)
         self.add_setting_btn.setObjectName("add_setting_btn")
         self.cached_settings_hbox.addWidget(self.add_setting_btn)
@@ -914,20 +922,19 @@ class Ui_MainWindow(object):
         icon13.addPixmap(QtGui.QPixmap(":/icons/apply.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.apply_selected_settings_btn.setIcon(icon13)
-        self.apply_selected_settings_btn.setIconSize(QtCore.QSize(24, 24))
         self.apply_selected_settings_btn.setAutoRaise(True)
         self.apply_selected_settings_btn.setObjectName(
             "apply_selected_settings_btn")
         self.cached_settings_hbox.addWidget(self.apply_selected_settings_btn)
         self.reset_cached_settings_btn = QtWidgets.QToolButton(self.orm_apply)
         self.reset_cached_settings_btn.setIcon(icon8)
-        self.reset_cached_settings_btn.setIconSize(QtCore.QSize(24, 24))
         self.reset_cached_settings_btn.setAutoRaise(True)
         self.reset_cached_settings_btn.setObjectName(
             "reset_cached_settings_btn")
         self.cached_settings_hbox.addWidget(self.reset_cached_settings_btn)
         self.gridLayout.addLayout(self.cached_settings_hbox, 9, 0, 1, 2)
         self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_8.setSpacing(4)
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
         self.cor_apply_pb = QtWidgets.QProgressBar(self.orm_apply)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
@@ -975,6 +982,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.horizontalLayout_8, 10, 0, 1, 2)
         self.horizontalLayout_14 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_14.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_14.setSpacing(4)
         self.horizontalLayout_14.setObjectName("horizontalLayout_14")
         self.cor_damping_fac_dsbox = QtWidgets.QDoubleSpinBox(self.orm_apply)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -1030,6 +1038,7 @@ class Ui_MainWindow(object):
         self.label_36.setObjectName("label_36")
         self.gridLayout.addWidget(self.label_36, 1, 0, 1, 1)
         self.horizontalLayout_11 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_11.setSpacing(4)
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
         self.scaling_factor_lineEdit = QtWidgets.QLineEdit(self.orm_apply)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
@@ -1055,7 +1064,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.horizontalLayout_11, 1, 1, 1, 1)
         self.operations_toolBox.addItem(self.orm_apply, icon, "")
         self.log_gbox = QtWidgets.QGroupBox(self.splitter_2)
-        self.log_gbox.setMinimumSize(QtCore.QSize(0, 100))
+        self.log_gbox.setMinimumSize(QtCore.QSize(0, 50))
         self.log_gbox.setObjectName("log_gbox")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.log_gbox)
         self.gridLayout_3.setContentsMargins(6, 12, 6, 6)
@@ -1071,7 +1080,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.splitter_2, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 31))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 22))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
