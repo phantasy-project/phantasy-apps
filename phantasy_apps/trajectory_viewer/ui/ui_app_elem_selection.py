@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(800, 600)
+        Form.resize(676, 490)
         Form.setStyleSheet(
             "QGroupBox {\n"
             "    /*background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
@@ -39,6 +39,8 @@ class Ui_Form(object):
             "    border-radius: 3px;\n"
             "}")
         self.gridLayout_3 = QtWidgets.QGridLayout(Form)
+        self.gridLayout_3.setContentsMargins(6, 6, 6, 6)
+        self.gridLayout_3.setSpacing(4)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.treeView = QtWidgets.QTreeView(Form)
         self.treeView.setObjectName("treeView")
