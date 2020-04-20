@@ -12,10 +12,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1687, 1200)
+        MainWindow.resize(1300, 910)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.verticalLayout.setContentsMargins(6, 6, 6, 6)
+        self.verticalLayout.setSpacing(4)
         self.verticalLayout.setObjectName("verticalLayout")
         self.vsplitter = QtWidgets.QSplitter(self.centralwidget)
         self.vsplitter.setOrientation(QtCore.Qt.Vertical)
@@ -30,7 +32,8 @@ class Ui_MainWindow(object):
         self.outer_loop_gbox.setSizePolicy(sizePolicy)
         self.outer_loop_gbox.setObjectName("outer_loop_gbox")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.outer_loop_gbox)
-        self.horizontalLayout_2.setContentsMargins(6, 12, 6, 6)
+        self.horizontalLayout_2.setContentsMargins(4, 10, 4, 4)
+        self.horizontalLayout_2.setSpacing(4)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.hsplitter = QtWidgets.QSplitter(self.outer_loop_gbox)
         self.hsplitter.setOrientation(QtCore.Qt.Horizontal)
@@ -40,6 +43,7 @@ class Ui_MainWindow(object):
         self.layoutWidget.setObjectName("layoutWidget")
         self.gridLayout_conf = QtWidgets.QGridLayout(self.layoutWidget)
         self.gridLayout_conf.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_conf.setSpacing(4)
         self.gridLayout_conf.setObjectName("gridLayout_conf")
         self.label_20 = QtWidgets.QLabel(self.layoutWidget)
         self.label_20.setObjectName("label_20")
@@ -51,6 +55,7 @@ class Ui_MainWindow(object):
         self.label_16.setObjectName("label_16")
         self.gridLayout_conf.addWidget(self.label_16, 1, 0, 1, 1)
         self.horizontalLayout_11 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_11.setSpacing(4)
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
         self.alter_elem_lineEdit = QtWidgets.QLineEdit(self.layoutWidget)
         self.alter_elem_lineEdit.setText("")
@@ -61,6 +66,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_11.addWidget(self.select_alter_elem_btn)
         self.gridLayout_conf.addLayout(self.horizontalLayout_11, 0, 1, 1, 1)
         self.horizontalLayout_10 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_10.setSpacing(4)
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
         self.lower_limit_lineEdit = QtWidgets.QLineEdit(self.layoutWidget)
         self.lower_limit_lineEdit.setObjectName("lower_limit_lineEdit")
@@ -79,7 +85,7 @@ class Ui_MainWindow(object):
         self.upper_limit_lineEdit.setObjectName("upper_limit_lineEdit")
         self.horizontalLayout_10.addWidget(self.upper_limit_lineEdit)
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_7.setSpacing(3)
+        self.horizontalLayout_7.setSpacing(2)
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.enable_arbitary_array_chkbox = QtWidgets.QCheckBox(
             self.layoutWidget)
@@ -96,6 +102,7 @@ class Ui_MainWindow(object):
         self.label_5.setObjectName("label_5")
         self.gridLayout_conf.addWidget(self.label_5, 2, 0, 1, 1)
         self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_8.setSpacing(4)
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
         self.niter_label = QtWidgets.QLabel(self.layoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
@@ -122,6 +129,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8.addWidget(self.niter_spinBox)
         self.gridLayout_conf.addLayout(self.horizontalLayout_8, 2, 1, 1, 1)
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_9.setSpacing(4)
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.label_3 = QtWidgets.QLabel(self.layoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
@@ -167,13 +175,22 @@ class Ui_MainWindow(object):
         self.layoutWidget1.setObjectName("layoutWidget1")
         self.gridLayout_ctrl = QtWidgets.QGridLayout(self.layoutWidget1)
         self.gridLayout_ctrl.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_ctrl.setSpacing(4)
         self.gridLayout_ctrl.setObjectName("gridLayout_ctrl")
-        self.alter_elem_val_lineEdit = QtWidgets.QLineEdit(self.layoutWidget1)
-        self.alter_elem_val_lineEdit.setObjectName("alter_elem_val_lineEdit")
-        self.gridLayout_ctrl.addWidget(self.alter_elem_val_lineEdit, 1, 1, 1,
-                                       1)
         self.formLayout = QtWidgets.QFormLayout()
+        self.formLayout.setSpacing(4)
         self.formLayout.setObjectName("formLayout")
+        self.label_22 = QtWidgets.QLabel(self.layoutWidget1)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_22.sizePolicy().hasHeightForWidth())
+        self.label_22.setSizePolicy(sizePolicy)
+        self.label_22.setObjectName("label_22")
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole,
+                                  self.label_22)
         self.stop_btn = QtWidgets.QPushButton(self.layoutWidget1)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -186,10 +203,13 @@ class Ui_MainWindow(object):
         icon.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
                        QtGui.QIcon.Off)
         self.stop_btn.setIcon(icon)
-        self.stop_btn.setIconSize(QtCore.QSize(32, 32))
         self.stop_btn.setObjectName("stop_btn")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole,
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole,
                                   self.stop_btn)
+        self.label_21 = QtWidgets.QLabel(self.layoutWidget1)
+        self.label_21.setObjectName("label_21")
+        self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole,
+                                  self.label_21)
         self.start_btn = QtWidgets.QPushButton(self.layoutWidget1)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -202,19 +222,17 @@ class Ui_MainWindow(object):
         icon1.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
         self.start_btn.setIcon(icon1)
-        self.start_btn.setIconSize(QtCore.QSize(32, 32))
         self.start_btn.setObjectName("start_btn")
-        self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole,
-                                  self.start_btn)
-        self.label_21 = QtWidgets.QLabel(self.layoutWidget1)
-        self.label_21.setObjectName("label_21")
-        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole,
-                                  self.label_21)
-        self.label_22 = QtWidgets.QLabel(self.layoutWidget1)
-        self.label_22.setObjectName("label_22")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole,
-                                  self.label_22)
+                                  self.start_btn)
         self.gridLayout_ctrl.addLayout(self.formLayout, 2, 0, 1, 2)
+        self.label = QtWidgets.QLabel(self.layoutWidget1)
+        self.label.setObjectName("label")
+        self.gridLayout_ctrl.addWidget(self.label, 1, 0, 1, 1)
+        self.alter_elem_val_lineEdit = QtWidgets.QLineEdit(self.layoutWidget1)
+        self.alter_elem_val_lineEdit.setObjectName("alter_elem_val_lineEdit")
+        self.gridLayout_ctrl.addWidget(self.alter_elem_val_lineEdit, 1, 1, 1,
+                                       1)
         self.moi_cbb = QtWidgets.QComboBox(self.layoutWidget1)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -228,9 +246,6 @@ class Ui_MainWindow(object):
         self.moi_cbb.setFont(font)
         self.moi_cbb.setObjectName("moi_cbb")
         self.gridLayout_ctrl.addWidget(self.moi_cbb, 0, 1, 1, 1)
-        self.label = QtWidgets.QLabel(self.layoutWidget1)
-        self.label.setObjectName("label")
-        self.gridLayout_ctrl.addWidget(self.label, 1, 0, 1, 1)
         self.label_2 = QtWidgets.QLabel(self.layoutWidget1)
         self.label_2.setObjectName("label_2")
         self.gridLayout_ctrl.addWidget(self.label_2, 0, 0, 1, 1)
@@ -245,7 +260,8 @@ class Ui_MainWindow(object):
         self.dataviz_gbox.setSizePolicy(sizePolicy)
         self.dataviz_gbox.setObjectName("dataviz_gbox")
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.dataviz_gbox)
-        self.horizontalLayout_5.setContentsMargins(6, 12, 6, 6)
+        self.horizontalLayout_5.setContentsMargins(4, 10, 4, 4)
+        self.horizontalLayout_5.setSpacing(4)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.splitter = QtWidgets.QSplitter(self.dataviz_gbox)
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
@@ -256,6 +272,7 @@ class Ui_MainWindow(object):
         self.tab1.setObjectName("tab1")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.tab1)
         self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_4.setSpacing(4)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.avg_mplimagewidget = MatplotlibImageWidget(self.tab1)
         font = QtGui.QFont()
@@ -289,6 +306,7 @@ class Ui_MainWindow(object):
         self.tab2.setObjectName("tab2")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.tab2)
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_3.setSpacing(4)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.std_mplimagewidget = MatplotlibImageWidget(self.tab2)
         font = QtGui.QFont()
@@ -323,6 +341,7 @@ class Ui_MainWindow(object):
         self.tab.setObjectName("tab")
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout(self.tab)
         self.horizontalLayout_6.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_6.setSpacing(4)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.curve_mplebwidget = MatplotlibErrorbarWidget(self.tab)
         font = QtGui.QFont()
@@ -364,7 +383,7 @@ class Ui_MainWindow(object):
         self.analysis_gbox.setSizePolicy(sizePolicy)
         self.analysis_gbox.setObjectName("analysis_gbox")
         self.gridLayout = QtWidgets.QGridLayout(self.analysis_gbox)
-        self.gridLayout.setContentsMargins(6, 12, 6, 6)
+        self.gridLayout.setContentsMargins(4, 10, 4, 4)
         self.gridLayout.setHorizontalSpacing(4)
         self.gridLayout.setVerticalSpacing(2)
         self.gridLayout.setObjectName("gridLayout")
@@ -571,7 +590,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.vsplitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1687, 31))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 22))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
@@ -677,21 +696,21 @@ class Ui_MainWindow(object):
             _translate(
                 "MainWindow",
                 "Discrepancy tolerance between set and get of alter element."))
-        self.alter_elem_val_lineEdit.setToolTip(
-            _translate("MainWindow", "Current setting of alter element."))
-        self.stop_btn.setToolTip(_translate("MainWindow", "Stop task."))
-        self.stop_btn.setText(_translate("MainWindow", "Stop"))
-        self.start_btn.setToolTip(_translate("MainWindow", "Start task."))
-        self.start_btn.setText(_translate("MainWindow", "Start"))
-        self.label_21.setText(
-            _translate("MainWindow", "Stop Running 2D Scan Task"))
         self.label_22.setText(
             _translate("MainWindow", "Start Running 2D Scan Task"))
+        self.stop_btn.setToolTip(_translate("MainWindow", "Stop task."))
+        self.stop_btn.setText(_translate("MainWindow", "Stop"))
+        self.label_21.setText(
+            _translate("MainWindow", "Stop Running 2D Scan Task"))
+        self.start_btn.setToolTip(_translate("MainWindow", "Start task."))
+        self.start_btn.setText(_translate("MainWindow", "Start"))
+        self.label.setText(_translate("MainWindow", "Current Settings"))
+        self.alter_elem_val_lineEdit.setToolTip(
+            _translate("MainWindow", "Current setting of alter element."))
         self.moi_cbb.setToolTip(
             _translate(
                 "MainWindow",
                 "Interested monitor to show in the data visualization area."))
-        self.label.setText(_translate("MainWindow", "Current Settings"))
         self.label_2.setText(_translate("MainWindow", "Monitor of Interest"))
         self.dataviz_gbox.setTitle(
             _translate("MainWindow", "Data Visualization"))

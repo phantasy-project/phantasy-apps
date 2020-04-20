@@ -12,10 +12,10 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(1060, 800)
+        Dialog.resize(770, 594)
         self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
-        self.verticalLayout.setContentsMargins(6, 12, 6, 6)
-        self.verticalLayout.setSpacing(6)
+        self.verticalLayout.setContentsMargins(4, 10, 4, 4)
+        self.verticalLayout.setSpacing(4)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSpacing(6)

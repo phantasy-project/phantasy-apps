@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1920, 1440)
+        MainWindow.resize(1300, 975)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/app.png"), QtGui.QIcon.Normal,
                        QtGui.QIcon.Off)
@@ -44,14 +44,14 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.v_splitter.sizePolicy().hasHeightForWidth())
         self.v_splitter.setSizePolicy(sizePolicy)
-        self.v_splitter.setMinimumSize(QtCore.QSize(550, 0))
+        self.v_splitter.setMinimumSize(QtCore.QSize(360, 0))
         self.v_splitter.setOrientation(QtCore.Qt.Vertical)
         self.v_splitter.setObjectName("v_splitter")
         self.scan_groupBox = QtWidgets.QGroupBox(self.v_splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(10)
+        sizePolicy.setVerticalStretch(1)
         sizePolicy.setHeightForWidth(
             self.scan_groupBox.sizePolicy().hasHeightForWidth())
         self.scan_groupBox.setSizePolicy(sizePolicy)
@@ -76,14 +76,15 @@ class Ui_MainWindow(object):
             "}")
         self.scan_groupBox.setObjectName("scan_groupBox")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.scan_groupBox)
-        self.verticalLayout_3.setContentsMargins(6, 12, 6, 6)
-        self.verticalLayout_3.setSpacing(6)
+        self.verticalLayout_3.setContentsMargins(4, 8, 4, 4)
+        self.verticalLayout_3.setSpacing(4)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.widget = QtWidgets.QWidget(self.scan_groupBox)
         self.widget.setObjectName("widget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.widget)
         self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.gridLayout_2.setSpacing(6)
+        self.gridLayout_2.setHorizontalSpacing(4)
+        self.gridLayout_2.setVerticalSpacing(3)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.lv_segm = QtWidgets.QLabel(self.widget)
         self.lv_segm.setStyleSheet("QLabel {\n" "    color: #DC3545;\n" "}")
@@ -102,7 +103,7 @@ class Ui_MainWindow(object):
         self.alter_elem_lineEdit.setObjectName("alter_elem_lineEdit")
         self.gridLayout_2.addWidget(self.alter_elem_lineEdit, 0, 1, 1, 3)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_6.setSpacing(3)
+        self.horizontalLayout_6.setSpacing(2)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.enable_arbitary_array_chkbox = QtWidgets.QCheckBox(self.widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum,
@@ -215,7 +216,7 @@ class Ui_MainWindow(object):
         self.label_9.setObjectName("label_9")
         self.gridLayout_2.addWidget(self.label_9, 2, 0, 1, 1)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_5.setSpacing(9)
+        self.horizontalLayout_5.setSpacing(2)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.auto_show_extra_chkbox = QtWidgets.QCheckBox(self.widget)
         self.auto_show_extra_chkbox.setObjectName("auto_show_extra_chkbox")
@@ -284,8 +285,8 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.line_4.sizePolicy().hasHeightForWidth())
         self.line_4.setSizePolicy(sizePolicy)
+        self.line_4.setFrameShadow(QtWidgets.QFrame.Plain)
         self.line_4.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_4.setObjectName("line_4")
         self.verticalLayout_3.addWidget(self.line_4)
         self.scan_pb = QtWidgets.QProgressBar(self.scan_groupBox)
@@ -293,6 +294,7 @@ class Ui_MainWindow(object):
         self.scan_pb.setObjectName("scan_pb")
         self.verticalLayout_3.addWidget(self.scan_pb)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setSpacing(4)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
@@ -353,7 +355,7 @@ class Ui_MainWindow(object):
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.daq_groupBox.sizePolicy().hasHeightForWidth())
         self.daq_groupBox.setSizePolicy(sizePolicy)
@@ -378,8 +380,9 @@ class Ui_MainWindow(object):
             "}")
         self.daq_groupBox.setObjectName("daq_groupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.daq_groupBox)
-        self.gridLayout.setContentsMargins(6, 12, 6, 6)
-        self.gridLayout.setVerticalSpacing(6)
+        self.gridLayout.setContentsMargins(4, 8, 4, 4)
+        self.gridLayout.setHorizontalSpacing(4)
+        self.gridLayout.setVerticalSpacing(3)
         self.gridLayout.setObjectName("gridLayout")
         self.label_2 = QtWidgets.QLabel(self.daq_groupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
@@ -427,7 +430,7 @@ class Ui_MainWindow(object):
         self.nshot_spinBox.setObjectName("nshot_spinBox")
         self.gridLayout.addWidget(self.nshot_spinBox, 1, 1, 1, 1)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setSpacing(10)
+        self.horizontalLayout_3.setSpacing(4)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.mps_status_btn = QtWidgets.QToolButton(self.daq_groupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
@@ -444,7 +447,6 @@ class Ui_MainWindow(object):
         icon6.addPixmap(QtGui.QPixmap(":/icons/mps_skipped.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.mps_status_btn.setIcon(icon6)
-        self.mps_status_btn.setIconSize(QtCore.QSize(36, 36))
         self.mps_status_btn.setAutoRaise(True)
         self.mps_status_btn.setObjectName("mps_status_btn")
         self.horizontalLayout_3.addWidget(self.mps_status_btn)
@@ -453,8 +455,8 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem1)
         self.line_2 = QtWidgets.QFrame(self.daq_groupBox)
+        self.line_2.setFrameShadow(QtWidgets.QFrame.Plain)
         self.line_2.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_2.setObjectName("line_2")
         self.horizontalLayout_3.addWidget(self.line_2)
         self.start_btn = QtWidgets.QPushButton(self.daq_groupBox)
@@ -469,7 +471,6 @@ class Ui_MainWindow(object):
         icon7.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
         self.start_btn.setIcon(icon7)
-        self.start_btn.setIconSize(QtCore.QSize(32, 32))
         self.start_btn.setAutoDefault(True)
         self.start_btn.setObjectName("start_btn")
         self.horizontalLayout_3.addWidget(self.start_btn)
@@ -485,7 +486,6 @@ class Ui_MainWindow(object):
         icon8.addPixmap(QtGui.QPixmap(":/icons/pause.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
         self.pause_btn.setIcon(icon8)
-        self.pause_btn.setIconSize(QtCore.QSize(32, 32))
         self.pause_btn.setAutoDefault(True)
         self.pause_btn.setObjectName("pause_btn")
         self.horizontalLayout_3.addWidget(self.pause_btn)
@@ -501,7 +501,6 @@ class Ui_MainWindow(object):
         icon9.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
         self.stop_btn.setIcon(icon9)
-        self.stop_btn.setIconSize(QtCore.QSize(32, 32))
         self.stop_btn.setAutoDefault(True)
         self.stop_btn.setObjectName("stop_btn")
         self.horizontalLayout_3.addWidget(self.stop_btn)
@@ -517,7 +516,6 @@ class Ui_MainWindow(object):
         icon10.addPixmap(QtGui.QPixmap(":/icons/retake.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.retake_btn.setIcon(icon10)
-        self.retake_btn.setIconSize(QtCore.QSize(32, 32))
         self.retake_btn.setAutoDefault(True)
         self.retake_btn.setObjectName("retake_btn")
         self.horizontalLayout_3.addWidget(self.retake_btn)
@@ -590,8 +588,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.line.sizePolicy().hasHeightForWidth())
         self.line.setSizePolicy(sizePolicy)
+        self.line.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.line.setLineWidth(1)
+        self.line.setMidLineWidth(0)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
         self.gridLayout.addWidget(self.line, 6, 0, 1, 3)
         self.label_4 = QtWidgets.QLabel(self.daq_groupBox)
@@ -778,7 +778,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.addWidget(self.h_splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 31))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 22))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")

@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(811, 433)
+        Dialog.resize(611, 276)
         Dialog.setStyleSheet(
             "QLineEdit {\n"
             "    border: 0.5px solid gray;\n"
@@ -39,6 +39,8 @@ class Ui_Dialog(object):
             "    */\n"
             "}")
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
+        self.gridLayout.setContentsMargins(6, 6, 6, 6)
+        self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
         self.label = QtWidgets.QLabel(Dialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
@@ -71,12 +73,15 @@ class Ui_Dialog(object):
         self.groupBox.setCheckable(False)
         self.groupBox.setObjectName("groupBox")
         self.formLayout = QtWidgets.QFormLayout(self.groupBox)
+        self.formLayout.setContentsMargins(6, 6, 6, 6)
+        self.formLayout.setSpacing(4)
         self.formLayout.setObjectName("formLayout")
         self.save_figure_chkbox = QtWidgets.QCheckBox(self.groupBox)
         self.save_figure_chkbox.setObjectName("save_figure_chkbox")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole,
                                   self.save_figure_chkbox)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setSpacing(4)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.label_3 = QtWidgets.QLabel(self.groupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -101,6 +106,7 @@ class Ui_Dialog(object):
         self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole,
                                   self.save_settings_chkbox)
         self.segs_hbox = QtWidgets.QHBoxLayout()
+        self.segs_hbox.setSpacing(4)
         self.segs_hbox.setObjectName("segs_hbox")
         self.seg_lbl = QtWidgets.QLabel(self.groupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -115,6 +121,7 @@ class Ui_Dialog(object):
         self.formLayout.setLayout(4, QtWidgets.QFormLayout.LabelRole,
                                   self.segs_hbox)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setSpacing(4)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.label_4 = QtWidgets.QLabel(self.groupBox)
         self.label_4.setObjectName("label_4")
@@ -125,6 +132,7 @@ class Ui_Dialog(object):
         self.formLayout.setLayout(2, QtWidgets.QFormLayout.SpanningRole,
                                   self.horizontalLayout_2)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setSpacing(4)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.label_5 = QtWidgets.QLabel(self.groupBox)
         self.label_5.setObjectName("label_5")
