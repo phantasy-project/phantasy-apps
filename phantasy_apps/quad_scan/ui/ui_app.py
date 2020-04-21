@@ -12,11 +12,10 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1920, 1440)
+        MainWindow.resize(1300, 975)
         icon = QtGui.QIcon()
-        icon.addPixmap(
-            QtGui.QPixmap(":/icons/qs.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/qs.png"), QtGui.QIcon.Normal,
+                       QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setStyleSheet(
             "QGroupBox {\n"
@@ -46,8 +45,11 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout_6 = QtWidgets.QGridLayout(self.centralwidget)
+        self.gridLayout_6.setContentsMargins(6, 6, 6, 6)
+        self.gridLayout_6.setSpacing(4)
         self.gridLayout_6.setObjectName("gridLayout_6")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_4.setSpacing(4)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.data_info_groupBox = QtWidgets.QGroupBox(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -60,6 +62,8 @@ class Ui_MainWindow(object):
         self.data_info_groupBox.setStyleSheet("")
         self.data_info_groupBox.setObjectName("data_info_groupBox")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.data_info_groupBox)
+        self.gridLayout_2.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_2.setSpacing(4)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.data_ts_created_lineEdit = QtWidgets.QLineEdit(
             self.data_info_groupBox)
@@ -153,6 +157,8 @@ class Ui_MainWindow(object):
         self.scan_data_plot_groupBox.setSizePolicy(sizePolicy)
         self.scan_data_plot_groupBox.setObjectName("scan_data_plot_groupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.scan_data_plot_groupBox)
+        self.gridLayout.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
         self.matplotliberrorbarWidget = MatplotlibErrorbarWidget(
             self.scan_data_plot_groupBox)
@@ -171,6 +177,8 @@ class Ui_MainWindow(object):
         self.beam_info_groupBox.setSizePolicy(sizePolicy)
         self.beam_info_groupBox.setObjectName("beam_info_groupBox")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.beam_info_groupBox)
+        self.gridLayout_3.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_3.setSpacing(4)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.label_8 = QtWidgets.QLabel(self.beam_info_groupBox)
         self.label_8.setObjectName("label_8")
@@ -198,6 +206,7 @@ class Ui_MainWindow(object):
         self.distance_lineEdit.setObjectName("distance_lineEdit")
         self.gridLayout_3.addWidget(self.distance_lineEdit, 3, 1, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setSpacing(4)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.autofill_beam_info_pushButton = QtWidgets.QPushButton(
             self.beam_info_groupBox)
@@ -205,9 +214,8 @@ class Ui_MainWindow(object):
                                            QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.autofill_beam_info_pushButton.sizePolicy()
-            .hasHeightForWidth())
+        sizePolicy.setHeightForWidth(self.autofill_beam_info_pushButton.
+                                     sizePolicy().hasHeightForWidth())
         self.autofill_beam_info_pushButton.setSizePolicy(sizePolicy)
         self.autofill_beam_info_pushButton.setObjectName(
             "autofill_beam_info_pushButton")
@@ -231,6 +239,8 @@ class Ui_MainWindow(object):
         self.data_analysis_groupBox.setSizePolicy(sizePolicy)
         self.data_analysis_groupBox.setObjectName("data_analysis_groupBox")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.data_analysis_groupBox)
+        self.gridLayout_4.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_4.setSpacing(4)
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.toolbox = QtWidgets.QToolBox(self.data_analysis_groupBox)
         self.toolbox.setStyleSheet(
@@ -246,18 +256,23 @@ class Ui_MainWindow(object):
             "}")
         self.toolbox.setObjectName("toolbox")
         self.page_params = QtWidgets.QWidget()
-        self.page_params.setGeometry(QtCore.QRect(0, 0, 834, 1052))
+        self.page_params.setGeometry(QtCore.QRect(0, 0, 622, 746))
         self.page_params.setObjectName("page_params")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.page_params)
+        self.verticalLayout_2.setContentsMargins(4, 4, 4, 4)
+        self.verticalLayout_2.setSpacing(4)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.fitting_input_groupBox = QtWidgets.QGroupBox(self.page_params)
         self.fitting_input_groupBox.setObjectName("fitting_input_groupBox")
         self.gridLayout_8 = QtWidgets.QGridLayout(self.fitting_input_groupBox)
+        self.gridLayout_8.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_8.setSpacing(4)
         self.gridLayout_8.setObjectName("gridLayout_8")
         self.label_19 = QtWidgets.QLabel(self.fitting_input_groupBox)
         self.label_19.setObjectName("label_19")
         self.gridLayout_8.addWidget(self.label_19, 0, 0, 1, 1)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setSpacing(4)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.label_20 = QtWidgets.QLabel(self.fitting_input_groupBox)
         self.label_20.setObjectName("label_20")
@@ -285,6 +300,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.addWidget(self.coef_c_init_lineEdit)
         self.gridLayout_8.addLayout(self.horizontalLayout_4, 1, 0, 1, 1)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_5.setSpacing(4)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.label_23 = QtWidgets.QLabel(self.fitting_input_groupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -319,8 +335,11 @@ class Ui_MainWindow(object):
                                                    "}")
         self.fitting_output_groupBox.setObjectName("fitting_output_groupBox")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.fitting_output_groupBox)
+        self.gridLayout_5.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_5.setSpacing(4)
         self.gridLayout_5.setObjectName("gridLayout_5")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setSpacing(4)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.label_24 = QtWidgets.QLabel(self.fitting_output_groupBox)
         self.label_24.setObjectName("label_24")
@@ -380,8 +399,11 @@ class Ui_MainWindow(object):
         self.twiss_output_groupBox.setObjectName("twiss_output_groupBox")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(
             self.twiss_output_groupBox)
+        self.verticalLayout_3.setContentsMargins(4, 4, 4, 4)
+        self.verticalLayout_3.setSpacing(4)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_6.setSpacing(4)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.label_31 = QtWidgets.QLabel(self.twiss_output_groupBox)
         self.label_31.setObjectName("label_31")
@@ -399,6 +421,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.addWidget(self.nemit_lineEdit)
         self.verticalLayout_3.addLayout(self.horizontalLayout_6)
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_7.setSpacing(4)
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.label_28 = QtWidgets.QLabel(self.twiss_output_groupBox)
         self.label_28.setObjectName("label_28")
@@ -434,12 +457,14 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addWidget(self.twiss_output_groupBox)
         self.toolbox.addItem(self.page_params, "")
         self.page_formulae = QtWidgets.QWidget()
-        self.page_formulae.setGeometry(QtCore.QRect(0, 0, 944, 1039))
+        self.page_formulae.setGeometry(QtCore.QRect(0, 0, 622, 746))
         self.page_formulae.setStyleSheet("QLabel {\n"
                                          "    padding: 5px 10px;\n"
                                          "}")
         self.page_formulae.setObjectName("page_formulae")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.page_formulae)
+        self.verticalLayout.setContentsMargins(4, 4, 4, 4)
+        self.verticalLayout.setSpacing(4)
         self.verticalLayout.setObjectName("verticalLayout")
         self.label_33 = QtWidgets.QLabel(self.page_formulae)
         self.label_33.setObjectName("label_33")
@@ -478,7 +503,7 @@ class Ui_MainWindow(object):
         self.gridLayout_6.addLayout(self.verticalLayout_4, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 34))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 22))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -487,30 +512,26 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menubar)
         self.actionOpen = QtWidgets.QAction(MainWindow)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(
-            QtGui.QPixmap(":/icons/open.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(":/icons/open.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.actionOpen.setIcon(icon1)
         self.actionOpen.setObjectName("actionOpen")
         self.actionAbout = QtWidgets.QAction(MainWindow)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(
-            QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.actionAbout.setIcon(icon2)
         self.actionAbout.setObjectName("actionAbout")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(
-            QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.actionAbout_Qt.setIcon(icon3)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionE_xit = QtWidgets.QAction(MainWindow)
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(
-            QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon4.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
         self.actionE_xit.setIcon(icon4)
         self.actionE_xit.setObjectName("actionE_xit")
         self.menu_File.addAction(self.actionOpen)
@@ -623,23 +644,18 @@ class Ui_MainWindow(object):
             ))
         self.coef_c_init_lineEdit.setText(_translate("MainWindow", "0"))
         self.label_23.setText(_translate("MainWindow", "Fitting method"))
-        self.opt_method_comboBox.setItemText(0,
-                                             _translate(
-                                                 "MainWindow", "powell"))
-        self.opt_method_comboBox.setItemText(1,
-                                             _translate(
-                                                 "MainWindow", "leastsq"))
-        self.opt_method_comboBox.setItemText(2,
-                                             _translate(
-                                                 "MainWindow", "nelder"))
-        self.opt_method_comboBox.setItemText(3,
-                                             _translate(
-                                                 "MainWindow", "lbfgsb"))
+        self.opt_method_comboBox.setItemText(
+            0, _translate("MainWindow", "powell"))
+        self.opt_method_comboBox.setItemText(
+            1, _translate("MainWindow", "leastsq"))
+        self.opt_method_comboBox.setItemText(
+            2, _translate("MainWindow", "nelder"))
+        self.opt_method_comboBox.setItemText(
+            3, _translate("MainWindow", "lbfgsb"))
         self.opt_method_comboBox.setItemText(4,
                                              _translate("MainWindow", "ampgo"))
-        self.opt_method_comboBox.setItemText(5,
-                                             _translate(
-                                                 "MainWindow", "basinhopping"))
+        self.opt_method_comboBox.setItemText(
+            5, _translate("MainWindow", "basinhopping"))
         self.opt_method_comboBox.setItemText(6,
                                              _translate("MainWindow", "slsqp"))
         self.fit_pushButton.setText(_translate("MainWindow", "Fit"))
@@ -694,9 +710,8 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p><span style=\" font-weight:600; font-style:italic;\">γ </span>[m<span style=\" vertical-align:super;\">-1</span>]</p></body></html>"
             ))
-        self.toolbox.setItemText(
-            self.toolbox.indexOf(self.page_params),
-            _translate("MainWindow", "Data Analysis"))
+        self.toolbox.setItemText(self.toolbox.indexOf(self.page_params),
+                                 _translate("MainWindow", "Data Analysis"))
         self.label_33.setText(
             _translate(
                 "MainWindow",
@@ -742,9 +757,8 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p><span style=\" font-weight:600; font-style:italic;\">γ = σ</span><span style=\" font-weight:600; font-style:italic; vertical-align:sub;\">22</span><span style=\" font-weight:600; font-style:italic;\"> / ε</span></p></body></html>"
             ))
-        self.toolbox.setItemText(
-            self.toolbox.indexOf(self.page_formulae),
-            _translate("MainWindow", "Signal Quad Note"))
+        self.toolbox.setItemText(self.toolbox.indexOf(self.page_formulae),
+                                 _translate("MainWindow", "Signal Quad Note"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.actionOpen.setText(_translate("MainWindow", "&Open"))
