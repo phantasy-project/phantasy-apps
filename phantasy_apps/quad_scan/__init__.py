@@ -13,7 +13,7 @@ __copyright__ = "(c) 2018-2019, Facility for Rare Isotope beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
 __title__ = "Quad Scan: Post Data Analysis for Emittance Measurement by Q-Scan"
-__version__ = '1.4'
+__version__ = '1.5'
 
 
 def run(cli=False):
