@@ -12,26 +12,19 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1950, 1200)
-        MainWindow.setStyleSheet("QProgressBar {\n"
-                                 "    border: 1px solid gray;\n"
-                                 "    border-radius: 10px;\n"
-                                 "    text-align: center;\n"
-                                 "}\n"
-                                 "\n"
-                                 "QProgressBar::chunk {\n"
-                                 "    background-color: #05B8CC;\n"
-                                 "    width: 20px;\n"
-                                 "    margin: 0.5px;\n"
-                                 "}")
+        MainWindow.resize(1300, 975)
+        MainWindow.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.verticalLayout.setContentsMargins(6, 6, 6, 6)
+        self.verticalLayout.setSpacing(4)
         self.verticalLayout.setObjectName("verticalLayout")
         self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox.setObjectName("groupBox")
         self.gridLayout = QtWidgets.QGridLayout(self.groupBox)
-        self.gridLayout.setContentsMargins(6, 13, 6, 6)
+        self.gridLayout.setContentsMargins(4, 10, 4, 4)
+        self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
         self.treeView = QtWidgets.QTreeView(self.groupBox)
         self.treeView.setObjectName("treeView")
@@ -41,6 +34,7 @@ class Ui_MainWindow(object):
         self.footnote_lbl.setObjectName("footnote_lbl")
         self.verticalLayout.addWidget(self.footnote_lbl)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setSpacing(4)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.pb = QtWidgets.QProgressBar(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -68,7 +62,6 @@ class Ui_MainWindow(object):
         icon.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
                        QtGui.QIcon.Off)
         self.run_btn.setIcon(icon)
-        self.run_btn.setIconSize(QtCore.QSize(32, 32))
         self.run_btn.setObjectName("run_btn")
         self.horizontalLayout.addWidget(self.run_btn)
         self.stop_btn = QtWidgets.QPushButton(self.centralwidget)
@@ -84,13 +77,12 @@ class Ui_MainWindow(object):
         icon1.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
         self.stop_btn.setIcon(icon1)
-        self.stop_btn.setIconSize(QtCore.QSize(32, 32))
         self.stop_btn.setObjectName("stop_btn")
         self.horizontalLayout.addWidget(self.stop_btn)
         self.verticalLayout.addLayout(self.horizontalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1950, 34))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 22))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
