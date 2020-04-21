@@ -12,33 +12,17 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1693, 1601)
+        MainWindow.resize(1299, 1183)
         icon = QtGui.QIcon()
-        icon.addPixmap(
-            QtGui.QPixmap(":/icons/ws.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/icons/ws.png"), QtGui.QIcon.Normal,
+                       QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
-        MainWindow.setStyleSheet("QLineEdit {\n"
-                                 "    border: 0.5px solid gray;\n"
-                                 "    padding: 1 5px;\n"
-                                 "    border-radius: 3px;\n"
-                                 "}\n"
-                                 "\n"
-                                 "QProgressBar {\n"
-                                 "    border: 1px solid gray;\n"
-                                 "    border-radius: 10px;\n"
-                                 "    text-align: center;\n"
-                                 "}\n"
-                                 "\n"
-                                 "QProgressBar::chunk {\n"
-                                 "    background-color: #05B8CC;\n"
-                                 "    width: 20px;\n"
-                                 "    margin: 0.5px;\n"
-                                 "}")
+        MainWindow.setStyleSheet("")
         MainWindow.setIconSize(QtCore.QSize(64, 64))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
+        self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
         self.v_splitter = QtWidgets.QSplitter(self.centralwidget)
         self.v_splitter.setOrientation(QtCore.Qt.Vertical)
@@ -72,65 +56,38 @@ class Ui_MainWindow(object):
             "}")
         self.controls_groupBox.setObjectName("controls_groupBox")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.controls_groupBox)
+        self.gridLayout_3.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_3.setSpacing(4)
         self.gridLayout_3.setObjectName("gridLayout_3")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setSpacing(4)
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.run_btn = QtWidgets.QPushButton(self.controls_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.run_btn.sizePolicy().hasHeightForWidth())
-        self.run_btn.setSizePolicy(sizePolicy)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(
-            QtGui.QPixmap(":/icons/run.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.run_btn.setIcon(icon1)
-        self.run_btn.setIconSize(QtCore.QSize(24, 24))
-        self.run_btn.setObjectName("run_btn")
-        self.horizontalLayout_2.addWidget(self.run_btn)
-        self.advctrl_chkbox = QtWidgets.QCheckBox(self.controls_groupBox)
-        self.advctrl_chkbox.setObjectName("advctrl_chkbox")
-        self.horizontalLayout_2.addWidget(self.advctrl_chkbox)
-        self.run_progressbar = QtWidgets.QProgressBar(self.controls_groupBox)
-        self.run_progressbar.setProperty("value", 24)
-        self.run_progressbar.setObjectName("run_progressbar")
-        self.horizontalLayout_2.addWidget(self.run_progressbar)
-        self.emstop_btn = QtWidgets.QToolButton(self.controls_groupBox)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(
-            QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.emstop_btn.setIcon(icon2)
-        self.emstop_btn.setIconSize(QtCore.QSize(24, 24))
-        self.emstop_btn.setAutoRaise(True)
-        self.emstop_btn.setObjectName("emstop_btn")
-        self.horizontalLayout_2.addWidget(self.emstop_btn)
-        self.gridLayout_3.addLayout(self.horizontalLayout_2, 4, 0, 1, 9)
-        self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_8.setContentsMargins(-1, 0, -1, -1)
-        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
-        self.offset1_lineEdit = QtWidgets.QLineEdit(self.controls_groupBox)
-        self.offset1_lineEdit.setStyleSheet("")
-        self.offset1_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
-        self.offset1_lineEdit.setObjectName("offset1_lineEdit")
-        self.horizontalLayout_8.addWidget(self.offset1_lineEdit)
-        self.offset2_lineEdit = QtWidgets.QLineEdit(self.controls_groupBox)
-        self.offset2_lineEdit.setStyleSheet("")
-        self.offset2_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
-        self.offset2_lineEdit.setObjectName("offset2_lineEdit")
-        self.horizontalLayout_8.addWidget(self.offset2_lineEdit)
-        self.offset3_lineEdit = QtWidgets.QLineEdit(self.controls_groupBox)
-        self.offset3_lineEdit.setStyleSheet("")
-        self.offset3_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
-        self.offset3_lineEdit.setObjectName("offset3_lineEdit")
-        self.horizontalLayout_8.addWidget(self.offset3_lineEdit)
-        self.gridLayout_3.addLayout(self.horizontalLayout_8, 3, 3, 1, 1)
+        self.label_36 = QtWidgets.QLabel(self.controls_groupBox)
+        self.label_36.setText("")
+        self.label_36.setPixmap(QtGui.QPixmap(":/icons/dblrarr.png"))
+        self.label_36.setScaledContents(False)
+        self.label_36.setObjectName("label_36")
+        self.gridLayout_3.addWidget(self.label_36, 0, 1, 1, 1)
+        self.label_37 = QtWidgets.QLabel(self.controls_groupBox)
+        self.label_37.setText("")
+        self.label_37.setPixmap(QtGui.QPixmap(":/icons/dblrarr.png"))
+        self.label_37.setScaledContents(False)
+        self.label_37.setObjectName("label_37")
+        self.gridLayout_3.addWidget(self.label_37, 2, 1, 1, 1)
+        self.label_9 = QtWidgets.QLabel(self.controls_groupBox)
+        self.label_9.setObjectName("label_9")
+        self.gridLayout_3.addWidget(self.label_9, 3, 2, 1, 1)
+        self.label_8 = QtWidgets.QLabel(self.controls_groupBox)
+        self.label_8.setObjectName("label_8")
+        self.gridLayout_3.addWidget(self.label_8, 3, 6, 1, 1)
+        self.label_5 = QtWidgets.QLabel(self.controls_groupBox)
+        self.label_5.setObjectName("label_5")
+        self.gridLayout_3.addWidget(self.label_5, 2, 6, 1, 1)
+        self.line_3 = QtWidgets.QFrame(self.controls_groupBox)
+        self.line_3.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_3.setObjectName("line_3")
+        self.gridLayout_3.addWidget(self.line_3, 2, 7, 1, 1)
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_9.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_9.setSpacing(4)
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.dtype_lineEdit = QtWidgets.QLineEdit(self.controls_groupBox)
         self.dtype_lineEdit.setStyleSheet("")
@@ -155,7 +112,48 @@ class Ui_MainWindow(object):
         self.coord_lineEdit.setObjectName("coord_lineEdit")
         self.horizontalLayout_9.addWidget(self.coord_lineEdit)
         self.gridLayout_3.addLayout(self.horizontalLayout_9, 2, 3, 1, 1)
+        self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_8.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_8.setSpacing(4)
+        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
+        self.offset1_lineEdit = QtWidgets.QLineEdit(self.controls_groupBox)
+        self.offset1_lineEdit.setStyleSheet("")
+        self.offset1_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
+        self.offset1_lineEdit.setObjectName("offset1_lineEdit")
+        self.horizontalLayout_8.addWidget(self.offset1_lineEdit)
+        self.offset2_lineEdit = QtWidgets.QLineEdit(self.controls_groupBox)
+        self.offset2_lineEdit.setStyleSheet("")
+        self.offset2_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
+        self.offset2_lineEdit.setObjectName("offset2_lineEdit")
+        self.horizontalLayout_8.addWidget(self.offset2_lineEdit)
+        self.offset3_lineEdit = QtWidgets.QLineEdit(self.controls_groupBox)
+        self.offset3_lineEdit.setStyleSheet("")
+        self.offset3_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
+        self.offset3_lineEdit.setObjectName("offset3_lineEdit")
+        self.horizontalLayout_8.addWidget(self.offset3_lineEdit)
+        self.gridLayout_3.addLayout(self.horizontalLayout_8, 3, 3, 1, 1)
+        self.pm_names_cbb = QtWidgets.QComboBox(self.controls_groupBox)
+        self.pm_names_cbb.setStyleSheet("QComboBox {\n"
+                                        "    font-family: monospace;\n"
+                                        "}")
+        self.pm_names_cbb.setObjectName("pm_names_cbb")
+        self.gridLayout_3.addWidget(self.pm_names_cbb, 0, 2, 1, 2)
+        self.label = QtWidgets.QLabel(self.controls_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.label.setFont(font)
+        self.label.setObjectName("label")
+        self.gridLayout_3.addWidget(self.label, 0, 0, 1, 1)
         self.horizontalLayout_11 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_11.setSpacing(4)
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
         self.label_41 = QtWidgets.QLabel(self.controls_groupBox)
         self.label_41.setObjectName("label_41")
@@ -174,228 +172,15 @@ class Ui_MainWindow(object):
         self.stop_pos2_lineEdit.setObjectName("stop_pos2_lineEdit")
         self.horizontalLayout_11.addWidget(self.stop_pos2_lineEdit)
         self.gridLayout_3.addLayout(self.horizontalLayout_11, 3, 8, 1, 1)
-        self.label_36 = QtWidgets.QLabel(self.controls_groupBox)
-        self.label_36.setText("")
-        self.label_36.setPixmap(QtGui.QPixmap(":/icons/dblrarr.png"))
-        self.label_36.setScaledContents(False)
-        self.label_36.setObjectName("label_36")
-        self.gridLayout_3.addWidget(self.label_36, 0, 1, 1, 1)
-        self.label_8 = QtWidgets.QLabel(self.controls_groupBox)
-        self.label_8.setObjectName("label_8")
-        self.gridLayout_3.addWidget(self.label_8, 3, 6, 1, 1)
-        self.line_3 = QtWidgets.QFrame(self.controls_groupBox)
-        self.line_3.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_3.setObjectName("line_3")
-        self.gridLayout_3.addWidget(self.line_3, 2, 7, 1, 1)
-        self.pm_names_cbb = QtWidgets.QComboBox(self.controls_groupBox)
-        self.pm_names_cbb.setStyleSheet("QComboBox {\n"
-                                        "    font-family: monospace;\n"
-                                        "}")
-        self.pm_names_cbb.setObjectName("pm_names_cbb")
-        self.gridLayout_3.addWidget(self.pm_names_cbb, 0, 2, 1, 2)
         self.info_lbl = QtWidgets.QLabel(self.controls_groupBox)
         self.info_lbl.setStyleSheet("")
         self.info_lbl.setText("")
         self.info_lbl.setScaledContents(False)
         self.info_lbl.setObjectName("info_lbl")
         self.gridLayout_3.addWidget(self.info_lbl, 0, 4, 1, 1)
-        self.pm_detail_btn = QtWidgets.QToolButton(self.controls_groupBox)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(
-            QtGui.QPixmap(":/icons/view-details.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.pm_detail_btn.setIcon(icon3)
-        self.pm_detail_btn.setIconSize(QtCore.QSize(20, 20))
-        self.pm_detail_btn.setAutoRaise(True)
-        self.pm_detail_btn.setObjectName("pm_detail_btn")
-        self.gridLayout_3.addWidget(self.pm_detail_btn, 0, 5, 1, 1)
-        self.line_4 = QtWidgets.QFrame(self.controls_groupBox)
-        self.line_4.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_4.setObjectName("line_4")
-        self.gridLayout_3.addWidget(self.line_4, 3, 7, 1, 1)
-        self.label_2 = QtWidgets.QLabel(self.controls_groupBox)
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        self.label_2.setFont(font)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout_3.addWidget(self.label_2, 2, 0, 1, 1)
-        self.label = QtWidgets.QLabel(self.controls_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label.sizePolicy().hasHeightForWidth())
-        self.label.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        self.label.setFont(font)
-        self.label.setObjectName("label")
-        self.gridLayout_3.addWidget(self.label, 0, 0, 1, 1)
-        self.advctrl_groupBox = QtWidgets.QGroupBox(self.controls_groupBox)
-        self.advctrl_groupBox.setObjectName("advctrl_groupBox")
-        self.gridLayout_4 = QtWidgets.QGridLayout(self.advctrl_groupBox)
-        self.gridLayout_4.setObjectName("gridLayout_4")
-        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_7.setContentsMargins(-1, 0, -1, -1)
-        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        self.outlimit_lineEdit = QtWidgets.QLineEdit(self.advctrl_groupBox)
-        self.outlimit_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
-        self.outlimit_lineEdit.setObjectName("outlimit_lineEdit")
-        self.horizontalLayout_7.addWidget(self.outlimit_lineEdit)
-        self.toolButton = QtWidgets.QToolButton(self.advctrl_groupBox)
-        self.toolButton.setObjectName("toolButton")
-        self.horizontalLayout_7.addWidget(self.toolButton)
-        self.gridLayout_4.addLayout(self.horizontalLayout_7, 2, 2, 1, 1)
-        self.init_potentiometer_btn = QtWidgets.QPushButton(
-            self.advctrl_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.init_potentiometer_btn.sizePolicy().hasHeightForWidth())
-        self.init_potentiometer_btn.setSizePolicy(sizePolicy)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(
-            QtGui.QPixmap(":/icons/one.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.init_potentiometer_btn.setIcon(icon4)
-        self.init_potentiometer_btn.setIconSize(QtCore.QSize(24, 24))
-        self.init_potentiometer_btn.setObjectName("init_potentiometer_btn")
-        self.gridLayout_4.addWidget(self.init_potentiometer_btn, 0, 0, 1, 1)
-        self.enable_scan_btn = QtWidgets.QPushButton(self.advctrl_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.enable_scan_btn.sizePolicy().hasHeightForWidth())
-        self.enable_scan_btn.setSizePolicy(sizePolicy)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(
-            QtGui.QPixmap(":/icons/two.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.enable_scan_btn.setIcon(icon5)
-        self.enable_scan_btn.setIconSize(QtCore.QSize(24, 24))
-        self.enable_scan_btn.setObjectName("enable_scan_btn")
-        self.gridLayout_4.addWidget(self.enable_scan_btn, 0, 1, 1, 1)
-        self.init_motor_pos_btn = QtWidgets.QPushButton(self.advctrl_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.init_motor_pos_btn.sizePolicy().hasHeightForWidth())
-        self.init_motor_pos_btn.setSizePolicy(sizePolicy)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(
-            QtGui.QPixmap(":/icons/three.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.init_motor_pos_btn.setIcon(icon6)
-        self.init_motor_pos_btn.setIconSize(QtCore.QSize(24, 24))
-        self.init_motor_pos_btn.setObjectName("init_motor_pos_btn")
-        self.gridLayout_4.addWidget(self.init_motor_pos_btn, 0, 2, 1, 1)
-        self.reset_interlock_btn = QtWidgets.QPushButton(self.advctrl_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.reset_interlock_btn.sizePolicy().hasHeightForWidth())
-        self.reset_interlock_btn.setSizePolicy(sizePolicy)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(
-            QtGui.QPixmap(":/icons/four.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.reset_interlock_btn.setIcon(icon7)
-        self.reset_interlock_btn.setIconSize(QtCore.QSize(24, 24))
-        self.reset_interlock_btn.setObjectName("reset_interlock_btn")
-        self.gridLayout_4.addWidget(self.reset_interlock_btn, 0, 3, 1, 1)
-        self.set_scan_range_btn = QtWidgets.QPushButton(self.advctrl_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.set_scan_range_btn.sizePolicy().hasHeightForWidth())
-        self.set_scan_range_btn.setSizePolicy(sizePolicy)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(
-            QtGui.QPixmap(":/icons/five.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.set_scan_range_btn.setIcon(icon8)
-        self.set_scan_range_btn.setIconSize(QtCore.QSize(24, 24))
-        self.set_scan_range_btn.setObjectName("set_scan_range_btn")
-        self.gridLayout_4.addWidget(self.set_scan_range_btn, 0, 4, 1, 1)
-        self.set_bias_volt_btn = QtWidgets.QPushButton(self.advctrl_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.set_bias_volt_btn.sizePolicy().hasHeightForWidth())
-        self.set_bias_volt_btn.setSizePolicy(sizePolicy)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(
-            QtGui.QPixmap(":/icons/six.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.set_bias_volt_btn.setIcon(icon9)
-        self.set_bias_volt_btn.setIconSize(QtCore.QSize(24, 24))
-        self.set_bias_volt_btn.setObjectName("set_bias_volt_btn")
-        self.gridLayout_4.addWidget(self.set_bias_volt_btn, 0, 5, 1, 1)
-        self.mode_btn = QtWidgets.QPushButton(self.advctrl_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.mode_btn.sizePolicy().hasHeightForWidth())
-        self.mode_btn.setSizePolicy(sizePolicy)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(
-            QtGui.QPixmap(":/icons/seven.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
-        self.mode_btn.setIcon(icon10)
-        self.mode_btn.setIconSize(QtCore.QSize(24, 24))
-        self.mode_btn.setObjectName("mode_btn")
-        self.gridLayout_4.addWidget(self.mode_btn, 0, 6, 1, 1)
-        self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_12.setContentsMargins(-1, 0, -1, -1)
-        self.horizontalLayout_12.setObjectName("horizontalLayout_12")
-        self.startpos1_lineEdit = QtWidgets.QLineEdit(self.advctrl_groupBox)
-        self.startpos1_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
-        self.startpos1_lineEdit.setObjectName("startpos1_lineEdit")
-        self.horizontalLayout_12.addWidget(self.startpos1_lineEdit)
-        self.stoppos1_lineEdit = QtWidgets.QLineEdit(self.advctrl_groupBox)
-        self.stoppos1_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
-        self.stoppos1_lineEdit.setObjectName("stoppos1_lineEdit")
-        self.horizontalLayout_12.addWidget(self.stoppos1_lineEdit)
-        self.gridLayout_4.addLayout(self.horizontalLayout_12, 2, 4, 1, 1)
-        self.horizontalLayout_13 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_13.setObjectName("horizontalLayout_13")
-        self.startpos2_lineEdit = QtWidgets.QLineEdit(self.advctrl_groupBox)
-        self.startpos2_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
-        self.startpos2_lineEdit.setObjectName("startpos2_lineEdit")
-        self.horizontalLayout_13.addWidget(self.startpos2_lineEdit)
-        self.stoppos2_lineEdit = QtWidgets.QLineEdit(self.advctrl_groupBox)
-        self.stoppos2_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
-        self.stoppos2_lineEdit.setObjectName("stoppos2_lineEdit")
-        self.horizontalLayout_13.addWidget(self.stoppos2_lineEdit)
-        self.gridLayout_4.addLayout(self.horizontalLayout_13, 5, 4, 1, 1)
-        self.gridLayout_3.addWidget(self.advctrl_groupBox, 5, 0, 1, 9)
-        self.label_37 = QtWidgets.QLabel(self.controls_groupBox)
-        self.label_37.setText("")
-        self.label_37.setPixmap(QtGui.QPixmap(":/icons/dblrarr.png"))
-        self.label_37.setScaledContents(False)
-        self.label_37.setObjectName("label_37")
-        self.gridLayout_3.addWidget(self.label_37, 2, 1, 1, 1)
         self.horizontalLayout_10 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_10.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_10.setSpacing(4)
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
         self.label_10 = QtWidgets.QLabel(self.controls_groupBox)
         self.label_10.setObjectName("label_10")
@@ -414,20 +199,210 @@ class Ui_MainWindow(object):
         self.stop_pos1_lineEdit.setObjectName("stop_pos1_lineEdit")
         self.horizontalLayout_10.addWidget(self.stop_pos1_lineEdit)
         self.gridLayout_3.addLayout(self.horizontalLayout_10, 2, 8, 1, 1)
-        self.label_3 = QtWidgets.QLabel(self.controls_groupBox)
-        self.label_3.setObjectName("label_3")
-        self.gridLayout_3.addWidget(self.label_3, 2, 2, 1, 1)
         self.line = QtWidgets.QFrame(self.controls_groupBox)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
         self.gridLayout_3.addWidget(self.line, 1, 0, 1, 9)
-        self.label_5 = QtWidgets.QLabel(self.controls_groupBox)
-        self.label_5.setObjectName("label_5")
-        self.gridLayout_3.addWidget(self.label_5, 2, 6, 1, 1)
-        self.label_9 = QtWidgets.QLabel(self.controls_groupBox)
-        self.label_9.setObjectName("label_9")
-        self.gridLayout_3.addWidget(self.label_9, 3, 2, 1, 1)
+        self.line_4 = QtWidgets.QFrame(self.controls_groupBox)
+        self.line_4.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_4.setObjectName("line_4")
+        self.gridLayout_3.addWidget(self.line_4, 3, 7, 1, 1)
+        self.label_2 = QtWidgets.QLabel(self.controls_groupBox)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_2.setFont(font)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout_3.addWidget(self.label_2, 2, 0, 1, 1)
+        self.pm_detail_btn = QtWidgets.QToolButton(self.controls_groupBox)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/icons/view-details.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pm_detail_btn.setIcon(icon1)
+        self.pm_detail_btn.setAutoRaise(True)
+        self.pm_detail_btn.setObjectName("pm_detail_btn")
+        self.gridLayout_3.addWidget(self.pm_detail_btn, 0, 5, 1, 1)
+        self.advctrl_groupBox = QtWidgets.QGroupBox(self.controls_groupBox)
+        self.advctrl_groupBox.setObjectName("advctrl_groupBox")
+        self.gridLayout_4 = QtWidgets.QGridLayout(self.advctrl_groupBox)
+        self.gridLayout_4.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_4.setSpacing(4)
+        self.gridLayout_4.setObjectName("gridLayout_4")
+        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_7.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_7.setSpacing(4)
+        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
+        self.outlimit_lineEdit = QtWidgets.QLineEdit(self.advctrl_groupBox)
+        self.outlimit_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
+        self.outlimit_lineEdit.setObjectName("outlimit_lineEdit")
+        self.horizontalLayout_7.addWidget(self.outlimit_lineEdit)
+        self.toolButton = QtWidgets.QToolButton(self.advctrl_groupBox)
+        self.toolButton.setObjectName("toolButton")
+        self.horizontalLayout_7.addWidget(self.toolButton)
+        self.gridLayout_4.addLayout(self.horizontalLayout_7, 2, 2, 1, 1)
+        self.init_potentiometer_btn = QtWidgets.QPushButton(
+            self.advctrl_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.init_potentiometer_btn.sizePolicy().hasHeightForWidth())
+        self.init_potentiometer_btn.setSizePolicy(sizePolicy)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/icons/one.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.init_potentiometer_btn.setIcon(icon2)
+        self.init_potentiometer_btn.setObjectName("init_potentiometer_btn")
+        self.gridLayout_4.addWidget(self.init_potentiometer_btn, 0, 0, 1, 1)
+        self.enable_scan_btn = QtWidgets.QPushButton(self.advctrl_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.enable_scan_btn.sizePolicy().hasHeightForWidth())
+        self.enable_scan_btn.setSizePolicy(sizePolicy)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/icons/two.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.enable_scan_btn.setIcon(icon3)
+        self.enable_scan_btn.setObjectName("enable_scan_btn")
+        self.gridLayout_4.addWidget(self.enable_scan_btn, 0, 1, 1, 1)
+        self.init_motor_pos_btn = QtWidgets.QPushButton(self.advctrl_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.init_motor_pos_btn.sizePolicy().hasHeightForWidth())
+        self.init_motor_pos_btn.setSizePolicy(sizePolicy)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/icons/three.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.init_motor_pos_btn.setIcon(icon4)
+        self.init_motor_pos_btn.setObjectName("init_motor_pos_btn")
+        self.gridLayout_4.addWidget(self.init_motor_pos_btn, 0, 2, 1, 1)
+        self.reset_interlock_btn = QtWidgets.QPushButton(self.advctrl_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.reset_interlock_btn.sizePolicy().hasHeightForWidth())
+        self.reset_interlock_btn.setSizePolicy(sizePolicy)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/icons/four.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.reset_interlock_btn.setIcon(icon5)
+        self.reset_interlock_btn.setObjectName("reset_interlock_btn")
+        self.gridLayout_4.addWidget(self.reset_interlock_btn, 0, 3, 1, 1)
+        self.set_scan_range_btn = QtWidgets.QPushButton(self.advctrl_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.set_scan_range_btn.sizePolicy().hasHeightForWidth())
+        self.set_scan_range_btn.setSizePolicy(sizePolicy)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/icons/five.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.set_scan_range_btn.setIcon(icon6)
+        self.set_scan_range_btn.setObjectName("set_scan_range_btn")
+        self.gridLayout_4.addWidget(self.set_scan_range_btn, 0, 4, 1, 1)
+        self.set_bias_volt_btn = QtWidgets.QPushButton(self.advctrl_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.set_bias_volt_btn.sizePolicy().hasHeightForWidth())
+        self.set_bias_volt_btn.setSizePolicy(sizePolicy)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(":/icons/six.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.set_bias_volt_btn.setIcon(icon7)
+        self.set_bias_volt_btn.setObjectName("set_bias_volt_btn")
+        self.gridLayout_4.addWidget(self.set_bias_volt_btn, 0, 5, 1, 1)
+        self.mode_btn = QtWidgets.QPushButton(self.advctrl_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.mode_btn.sizePolicy().hasHeightForWidth())
+        self.mode_btn.setSizePolicy(sizePolicy)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/icons/seven.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.mode_btn.setIcon(icon8)
+        self.mode_btn.setObjectName("mode_btn")
+        self.gridLayout_4.addWidget(self.mode_btn, 0, 6, 1, 1)
+        self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_12.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_12.setSpacing(4)
+        self.horizontalLayout_12.setObjectName("horizontalLayout_12")
+        self.startpos1_lineEdit = QtWidgets.QLineEdit(self.advctrl_groupBox)
+        self.startpos1_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
+        self.startpos1_lineEdit.setObjectName("startpos1_lineEdit")
+        self.horizontalLayout_12.addWidget(self.startpos1_lineEdit)
+        self.stoppos1_lineEdit = QtWidgets.QLineEdit(self.advctrl_groupBox)
+        self.stoppos1_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
+        self.stoppos1_lineEdit.setObjectName("stoppos1_lineEdit")
+        self.horizontalLayout_12.addWidget(self.stoppos1_lineEdit)
+        self.gridLayout_4.addLayout(self.horizontalLayout_12, 2, 4, 1, 1)
+        self.horizontalLayout_13 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_13.setSpacing(4)
+        self.horizontalLayout_13.setObjectName("horizontalLayout_13")
+        self.startpos2_lineEdit = QtWidgets.QLineEdit(self.advctrl_groupBox)
+        self.startpos2_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
+        self.startpos2_lineEdit.setObjectName("startpos2_lineEdit")
+        self.horizontalLayout_13.addWidget(self.startpos2_lineEdit)
+        self.stoppos2_lineEdit = QtWidgets.QLineEdit(self.advctrl_groupBox)
+        self.stoppos2_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
+        self.stoppos2_lineEdit.setObjectName("stoppos2_lineEdit")
+        self.horizontalLayout_13.addWidget(self.stoppos2_lineEdit)
+        self.gridLayout_4.addLayout(self.horizontalLayout_13, 5, 4, 1, 1)
+        self.gridLayout_3.addWidget(self.advctrl_groupBox, 5, 0, 1, 9)
+        self.label_3 = QtWidgets.QLabel(self.controls_groupBox)
+        self.label_3.setObjectName("label_3")
+        self.gridLayout_3.addWidget(self.label_3, 2, 2, 1, 1)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setSpacing(4)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.run_btn = QtWidgets.QPushButton(self.controls_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.run_btn.sizePolicy().hasHeightForWidth())
+        self.run_btn.setSizePolicy(sizePolicy)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/icons/run.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.run_btn.setIcon(icon9)
+        self.run_btn.setObjectName("run_btn")
+        self.horizontalLayout_2.addWidget(self.run_btn)
+        self.advctrl_chkbox = QtWidgets.QCheckBox(self.controls_groupBox)
+        self.advctrl_chkbox.setObjectName("advctrl_chkbox")
+        self.horizontalLayout_2.addWidget(self.advctrl_chkbox)
+        self.run_progressbar = QtWidgets.QProgressBar(self.controls_groupBox)
+        self.run_progressbar.setProperty("value", 24)
+        self.run_progressbar.setObjectName("run_progressbar")
+        self.horizontalLayout_2.addWidget(self.run_progressbar)
+        self.emstop_btn = QtWidgets.QToolButton(self.controls_groupBox)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
+        self.emstop_btn.setIcon(icon10)
+        self.emstop_btn.setAutoRaise(True)
+        self.emstop_btn.setObjectName("emstop_btn")
+        self.horizontalLayout_2.addWidget(self.emstop_btn)
+        self.gridLayout_3.addLayout(self.horizontalLayout_2, 4, 0, 1, 9)
         spacerItem = QtWidgets.QSpacerItem(20, 40,
                                            QtWidgets.QSizePolicy.Minimum,
                                            QtWidgets.QSizePolicy.Expanding)
@@ -487,9 +462,12 @@ class Ui_MainWindow(object):
             "}")
         self.groupBox.setObjectName("groupBox")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.groupBox)
+        self.gridLayout_2.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_2.setSpacing(4)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout.setSpacing(4)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.plot_data_smoving_btn = QtWidgets.QPushButton(self.groupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
@@ -500,11 +478,9 @@ class Ui_MainWindow(object):
             self.plot_data_smoving_btn.sizePolicy().hasHeightForWidth())
         self.plot_data_smoving_btn.setSizePolicy(sizePolicy)
         icon11 = QtGui.QIcon()
-        icon11.addPixmap(
-            QtGui.QPixmap(":/icons/line-chart.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon11.addPixmap(QtGui.QPixmap(":/icons/line-chart.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.plot_data_smoving_btn.setIcon(icon11)
-        self.plot_data_smoving_btn.setIconSize(QtCore.QSize(24, 24))
         self.plot_data_smoving_btn.setObjectName("plot_data_smoving_btn")
         self.horizontalLayout.addWidget(self.plot_data_smoving_btn)
         self.plot_data_sbeam_btn = QtWidgets.QPushButton(self.groupBox)
@@ -516,7 +492,6 @@ class Ui_MainWindow(object):
             self.plot_data_sbeam_btn.sizePolicy().hasHeightForWidth())
         self.plot_data_sbeam_btn.setSizePolicy(sizePolicy)
         self.plot_data_sbeam_btn.setIcon(icon11)
-        self.plot_data_sbeam_btn.setIconSize(QtCore.QSize(24, 24))
         self.plot_data_sbeam_btn.setObjectName("plot_data_sbeam_btn")
         self.horizontalLayout.addWidget(self.plot_data_sbeam_btn)
         self.plot_data_subnoise_btn = QtWidgets.QPushButton(self.groupBox)
@@ -528,11 +503,9 @@ class Ui_MainWindow(object):
             self.plot_data_subnoise_btn.sizePolicy().hasHeightForWidth())
         self.plot_data_subnoise_btn.setSizePolicy(sizePolicy)
         icon12 = QtGui.QIcon()
-        icon12.addPixmap(
-            QtGui.QPixmap(":/icons/minus.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon12.addPixmap(QtGui.QPixmap(":/icons/minus.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.plot_data_subnoise_btn.setIcon(icon12)
-        self.plot_data_subnoise_btn.setIconSize(QtCore.QSize(24, 24))
         self.plot_data_subnoise_btn.setObjectName("plot_data_subnoise_btn")
         self.horizontalLayout.addWidget(self.plot_data_subnoise_btn)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20,
@@ -554,33 +527,28 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.matplotlibcurveWidget, 2, 0, 1, 1)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_3.setSpacing(4)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.reset_xyscale_btn = QtWidgets.QPushButton(self.groupBox)
         icon13 = QtGui.QIcon()
-        icon13.addPixmap(
-            QtGui.QPixmap(":/icons/reset_scale.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon13.addPixmap(QtGui.QPixmap(":/icons/reset_scale.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.reset_xyscale_btn.setIcon(icon13)
-        self.reset_xyscale_btn.setIconSize(QtCore.QSize(24, 24))
         self.reset_xyscale_btn.setObjectName("reset_xyscale_btn")
         self.horizontalLayout_3.addWidget(self.reset_xyscale_btn)
         self.legend_btn = QtWidgets.QPushButton(self.groupBox)
         icon14 = QtGui.QIcon()
-        icon14.addPixmap(
-            QtGui.QPixmap(":/icons/label.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon14.addPixmap(QtGui.QPixmap(":/icons/label.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.legend_btn.setIcon(icon14)
-        self.legend_btn.setIconSize(QtCore.QSize(24, 24))
         self.legend_btn.setCheckable(True)
         self.legend_btn.setObjectName("legend_btn")
         self.horizontalLayout_3.addWidget(self.legend_btn)
         self.grid_btn = QtWidgets.QPushButton(self.groupBox)
         icon15 = QtGui.QIcon()
-        icon15.addPixmap(
-            QtGui.QPixmap(":/icons/grid.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon15.addPixmap(QtGui.QPixmap(":/icons/grid.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.grid_btn.setIcon(icon15)
-        self.grid_btn.setIconSize(QtCore.QSize(24, 24))
         self.grid_btn.setCheckable(True)
         self.grid_btn.setObjectName("grid_btn")
         self.horizontalLayout_3.addWidget(self.grid_btn)
@@ -591,33 +559,27 @@ class Ui_MainWindow(object):
         self.hide_curve1_btn = QtWidgets.QToolButton(self.groupBox)
         self.hide_curve1_btn.setStyleSheet("")
         icon16 = QtGui.QIcon()
-        icon16.addPixmap(
-            QtGui.QPixmap(":/icons/u.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon16.addPixmap(QtGui.QPixmap(":/icons/u.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.hide_curve1_btn.setIcon(icon16)
-        self.hide_curve1_btn.setIconSize(QtCore.QSize(24, 24))
         self.hide_curve1_btn.setCheckable(True)
         self.hide_curve1_btn.setAutoRaise(True)
         self.hide_curve1_btn.setObjectName("hide_curve1_btn")
         self.horizontalLayout_3.addWidget(self.hide_curve1_btn)
         self.hide_curve2_btn = QtWidgets.QToolButton(self.groupBox)
         icon17 = QtGui.QIcon()
-        icon17.addPixmap(
-            QtGui.QPixmap(":/icons/v.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon17.addPixmap(QtGui.QPixmap(":/icons/v.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.hide_curve2_btn.setIcon(icon17)
-        self.hide_curve2_btn.setIconSize(QtCore.QSize(24, 24))
         self.hide_curve2_btn.setCheckable(True)
         self.hide_curve2_btn.setAutoRaise(True)
         self.hide_curve2_btn.setObjectName("hide_curve2_btn")
         self.horizontalLayout_3.addWidget(self.hide_curve2_btn)
         self.hide_curve3_btn = QtWidgets.QToolButton(self.groupBox)
         icon18 = QtGui.QIcon()
-        icon18.addPixmap(
-            QtGui.QPixmap(":/icons/w.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon18.addPixmap(QtGui.QPixmap(":/icons/w.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.hide_curve3_btn.setIcon(icon18)
-        self.hide_curve3_btn.setIconSize(QtCore.QSize(24, 24))
         self.hide_curve3_btn.setCheckable(True)
         self.hide_curve3_btn.setAutoRaise(True)
         self.hide_curve3_btn.setObjectName("hide_curve3_btn")
@@ -653,10 +615,12 @@ class Ui_MainWindow(object):
             "}")
         self.groupBox_2.setObjectName("groupBox_2")
         self.gridLayout_9 = QtWidgets.QGridLayout(self.groupBox_2)
-        self.gridLayout_9.setContentsMargins(10, 10, 10, 10)
+        self.gridLayout_9.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_9.setSpacing(4)
         self.gridLayout_9.setObjectName("gridLayout_9")
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setContentsMargins(-1, -1, 0, -1)
+        self.horizontalLayout_5.setSpacing(4)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         spacerItem3 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
@@ -675,15 +639,15 @@ class Ui_MainWindow(object):
         self.gridLayout_9.addLayout(self.horizontalLayout_5, 3, 1, 1, 2)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_6.setSpacing(4)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.label_11 = QtWidgets.QLabel(self.groupBox_2)
         self.label_11.setObjectName("label_11")
         self.horizontalLayout_6.addWidget(self.label_11)
         self.fontsize_inc_btn = QtWidgets.QToolButton(self.groupBox_2)
         icon19 = QtGui.QIcon()
-        icon19.addPixmap(
-            QtGui.QPixmap(":/icons/increase-font.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon19.addPixmap(QtGui.QPixmap(":/icons/increase-font.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.fontsize_inc_btn.setIcon(icon19)
         self.fontsize_inc_btn.setIconSize(QtCore.QSize(20, 20))
         self.fontsize_inc_btn.setAutoRaise(True)
@@ -691,9 +655,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.addWidget(self.fontsize_inc_btn)
         self.fontsize_dec_btn = QtWidgets.QToolButton(self.groupBox_2)
         icon20 = QtGui.QIcon()
-        icon20.addPixmap(
-            QtGui.QPixmap(":/icons/decrease-font.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon20.addPixmap(QtGui.QPixmap(":/icons/decrease-font.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.fontsize_dec_btn.setIcon(icon20)
         self.fontsize_dec_btn.setIconSize(QtCore.QSize(20, 20))
         self.fontsize_dec_btn.setAutoRaise(True)
@@ -706,7 +669,8 @@ class Ui_MainWindow(object):
         self.adv_analysis_groupBox = QtWidgets.QGroupBox(self.groupBox_2)
         self.adv_analysis_groupBox.setObjectName("adv_analysis_groupBox")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.adv_analysis_groupBox)
-        self.gridLayout_5.setHorizontalSpacing(9)
+        self.gridLayout_5.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_5.setSpacing(4)
         self.gridLayout_5.setObjectName("gridLayout_5")
         self.lineEdit_3 = QtWidgets.QLineEdit(self.adv_analysis_groupBox)
         self.lineEdit_3.setObjectName("lineEdit_3")
@@ -761,9 +725,8 @@ class Ui_MainWindow(object):
         self.gridLayout_5.addWidget(self.wpos3_right_lineEdit, 3, 4, 1, 1)
         self.plot_wpos1_btn = QtWidgets.QToolButton(self.adv_analysis_groupBox)
         icon21 = QtGui.QIcon()
-        icon21.addPixmap(
-            QtGui.QPixmap(":/icons/show.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon21.addPixmap(QtGui.QPixmap(":/icons/show.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.plot_wpos1_btn.setIcon(icon21)
         self.plot_wpos1_btn.setIconSize(QtCore.QSize(24, 24))
         self.plot_wpos1_btn.setCheckable(True)
@@ -804,7 +767,8 @@ class Ui_MainWindow(object):
         self.results_beam_gb = QtWidgets.QGroupBox(self.groupBox_2)
         self.results_beam_gb.setObjectName("results_beam_gb")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.results_beam_gb)
-        self.gridLayout_7.setContentsMargins(10, 10, 10, 10)
+        self.gridLayout_7.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_7.setSpacing(4)
         self.gridLayout_7.setObjectName("gridLayout_7")
         self.label_30 = QtWidgets.QLabel(self.results_beam_gb)
         self.label_30.setObjectName("label_30")
@@ -1014,7 +978,8 @@ class Ui_MainWindow(object):
         self.results_wires_gb = QtWidgets.QGroupBox(self.groupBox_2)
         self.results_wires_gb.setObjectName("results_wires_gb")
         self.gridLayout_6 = QtWidgets.QGridLayout(self.results_wires_gb)
-        self.gridLayout_6.setContentsMargins(10, 10, 10, 10)
+        self.gridLayout_6.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_6.setSpacing(4)
         self.gridLayout_6.setObjectName("gridLayout_6")
         self.label_17 = QtWidgets.QLabel(self.results_wires_gb)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -1230,6 +1195,7 @@ class Ui_MainWindow(object):
         self.gridLayout_9.addWidget(self.data_filepath_lineEdit, 4, 0, 1, 3)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_4.setSpacing(4)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.analyze_btn = QtWidgets.QPushButton(self.groupBox_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
@@ -1269,18 +1235,16 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.addWidget(self.analyzed_status_lbl)
         self.sync_results_btn = QtWidgets.QToolButton(self.groupBox_2)
         icon22 = QtGui.QIcon()
-        icon22.addPixmap(
-            QtGui.QPixmap(":/icons/sync.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon22.addPixmap(QtGui.QPixmap(":/icons/sync.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.sync_results_btn.setIcon(icon22)
-        self.sync_results_btn.setIconSize(QtCore.QSize(24, 24))
         self.sync_results_btn.setObjectName("sync_results_btn")
         self.horizontalLayout_4.addWidget(self.sync_results_btn)
         self.gridLayout_9.addLayout(self.horizontalLayout_4, 1, 0, 1, 3)
         self.gridLayout.addWidget(self.v_splitter, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1693, 34))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1299, 22))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -1296,30 +1260,26 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menubar)
         self.actionE_xit = QtWidgets.QAction(MainWindow)
         icon23 = QtGui.QIcon()
-        icon23.addPixmap(
-            QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon23.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.actionE_xit.setIcon(icon23)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionContents = QtWidgets.QAction(MainWindow)
         icon24 = QtGui.QIcon()
-        icon24.addPixmap(
-            QtGui.QPixmap(":/icons/help.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon24.addPixmap(QtGui.QPixmap(":/icons/help.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.actionContents.setIcon(icon24)
         self.actionContents.setObjectName("actionContents")
         self.actionAbout = QtWidgets.QAction(MainWindow)
         icon25 = QtGui.QIcon()
-        icon25.addPixmap(
-            QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon25.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.actionAbout.setIcon(icon25)
         self.actionAbout.setObjectName("actionAbout")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         icon26 = QtGui.QIcon()
-        icon26.addPixmap(
-            QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon26.addPixmap(QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.actionAbout_Qt.setIcon(icon26)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionLoad_Configuration = QtWidgets.QAction(MainWindow)
@@ -1340,16 +1300,14 @@ class Ui_MainWindow(object):
         self.actionSync.setObjectName("actionSync")
         self.actionLoad = QtWidgets.QAction(MainWindow)
         icon27 = QtGui.QIcon()
-        icon27.addPixmap(
-            QtGui.QPixmap(":/icons/load.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon27.addPixmap(QtGui.QPixmap(":/icons/load.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.actionLoad.setIcon(icon27)
         self.actionLoad.setObjectName("actionLoad")
         self.actionSave = QtWidgets.QAction(MainWindow)
         icon28 = QtGui.QIcon()
-        icon28.addPixmap(
-            QtGui.QPixmap(":/icons/save.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon28.addPixmap(QtGui.QPixmap(":/icons/save.png"), QtGui.QIcon.Normal,
+                         QtGui.QIcon.Off)
         self.actionSave.setIcon(icon28)
         self.actionSave.setObjectName("actionSave")
         self.actionLocate_Configuration = QtWidgets.QAction(MainWindow)
@@ -1357,9 +1315,8 @@ class Ui_MainWindow(object):
             "actionLocate_Configuration")
         self.actionDAT2JSON = QtWidgets.QAction(MainWindow)
         icon29 = QtGui.QIcon()
-        icon29.addPixmap(
-            QtGui.QPixmap(":/icons/converter.png"), QtGui.QIcon.Normal,
-            QtGui.QIcon.Off)
+        icon29.addPixmap(QtGui.QPixmap(":/icons/converter.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionDAT2JSON.setIcon(icon29)
         self.actionDAT2JSON.setObjectName("actionDAT2JSON")
         self.actionTo_MicroAmp = QtWidgets.QAction(MainWindow)
@@ -1538,24 +1495,21 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.controls_groupBox.setTitle(_translate("MainWindow", "Device"))
-        self.run_btn.setText(_translate("MainWindow", "Run"))
-        self.advctrl_chkbox.setText(_translate("MainWindow", "Advanced"))
-        self.emstop_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Emergency Stop</p></body></html>"))
-        self.emstop_btn.setText(_translate("MainWindow", "..."))
+        self.label_9.setText(_translate("MainWindow", "Wire Offsets"))
+        self.label_8.setText(_translate("MainWindow", "Scan Range (Fork 2)"))
+        self.label_5.setText(_translate("MainWindow", "Scan Range (Fork 1)"))
         self.label_4.setText(_translate("MainWindow", "Coordinate"))
+        self.label.setText(_translate("MainWindow", "Select Device"))
         self.label_41.setText(_translate("MainWindow", "From"))
         self.label_42.setText(_translate("MainWindow", "To"))
-        self.label_8.setText(_translate("MainWindow", "Scan Range (Fork 2)"))
+        self.label_10.setText(_translate("MainWindow", "From"))
+        self.label_12.setText(_translate("MainWindow", "To"))
+        self.label_2.setText(_translate("MainWindow", "Configuration"))
         self.pm_detail_btn.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Show device details</p></body></html>"))
         self.pm_detail_btn.setText(_translate("MainWindow", "..."))
-        self.label_2.setText(_translate("MainWindow", "Configuration"))
-        self.label.setText(_translate("MainWindow", "Select Device"))
         self.advctrl_groupBox.setTitle(
             _translate("MainWindow", "Advanced Controls"))
         self.outlimit_lineEdit.setToolTip(
@@ -1596,19 +1550,22 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p>Stop position of fork2</p></body></html>"
             ))
-        self.label_10.setText(_translate("MainWindow", "From"))
-        self.label_12.setText(_translate("MainWindow", "To"))
         self.label_3.setText(_translate("MainWindow", "Type"))
-        self.label_5.setText(_translate("MainWindow", "Scan Range (Fork 1)"))
-        self.label_9.setText(_translate("MainWindow", "Wire Offsets"))
+        self.run_btn.setText(_translate("MainWindow", "Run"))
+        self.advctrl_chkbox.setText(_translate("MainWindow", "Advanced"))
+        self.emstop_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Emergency Stop</p></body></html>"))
+        self.emstop_btn.setText(_translate("MainWindow", "..."))
         self.groupBox.setTitle(_translate("MainWindow", "Data Visualization"))
         self.plot_data_smoving_btn.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Plot raw data (fork frame)</p></body></html>"
             ))
-        self.plot_data_smoving_btn.setText(
-            _translate("MainWindow", "Original"))
+        self.plot_data_smoving_btn.setText(_translate("MainWindow",
+                                                      "Original"))
         self.plot_data_sbeam_btn.setToolTip(
             _translate(
                 "MainWindow",

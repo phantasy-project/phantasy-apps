@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(650, 370)
+        Dialog.resize(578, 287)
         Dialog.setStyleSheet(
             "QLineEdit {\n"
             "    border: 0.5px solid gray;\n"

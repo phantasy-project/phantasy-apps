@@ -12,14 +12,15 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(679, 269)
+        Dialog.resize(543, 191)
         Dialog.setStyleSheet("QLineEdit {\n"
                              "    border: 0.5px solid gray;\n"
                              "    padding: 1 5px;\n"
                              "    border-radius: 3px;\n"
                              "}")
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
-        self.gridLayout.setContentsMargins(10, 10, 10, 10)
+        self.gridLayout.setContentsMargins(6, 6, 6, 6)
+        self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
         self.open_datfile_btn = QtWidgets.QPushButton(Dialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
