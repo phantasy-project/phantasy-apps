@@ -15,7 +15,7 @@ __copyright__ = "(c) 2019-2020, Facility for Rare Isotope beams," \
 __contact__ = ("Kei Fukushima <fukushim@frib.msu.edu>",
                "Tong Zhang <zhangt@frib.msu.edu>")
 __title__ = "Achromat Tuning for FRIB Folding Segments"
-__version__ = '0.1'
+__version__ = '0.2'
 
 
 def run(cli=False):
