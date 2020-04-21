@@ -166,6 +166,8 @@ def get_app_version(name):
         from phantasy_apps.achromat_tuning import __version__ as ver
     elif name == 'Synoptic View&Control':
         from phantasy_apps.synoptic_app import __version__ as ver
+    elif name == 'Achromat Tuning':
+        from phantasy_apps.achromat_tuning import __version__ as ver
     else:
         raise RuntimeError
     return ver
