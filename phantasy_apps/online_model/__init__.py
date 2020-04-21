@@ -11,7 +11,7 @@ __copyright__ = "(c) 2019, Facility for Rare Isotope beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
 __title__ = "Online Model: Simulate Accelerator Behaviors with Physics Model"
-__version__ = '0.2'
+__version__ = '0.3'
 
 
 def run(cli=False):
