@@ -12,7 +12,7 @@ __copyright__ = "(c) 2018, Facility for Rare Isotope beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
 __title__ = "Trajectory Viewer: Visualize Beam Central Trajectory and Portal for Trajectory Correction"
-__version__ = '3.1'
+__version__ = '3.2'
 
 
 def run(cli=False):
