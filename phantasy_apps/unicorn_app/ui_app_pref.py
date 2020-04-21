@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_app_pref.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,9 +11,10 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(800, 600)
+        Dialog.resize(556, 271)
         self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
-        self.verticalLayout.setContentsMargins(10, 10, 10, 10)
+        self.verticalLayout.setContentsMargins(4, 8, 4, 4)
+        self.verticalLayout.setSpacing(4)
         self.verticalLayout.setObjectName("verticalLayout")
         self.tabWidget = QtWidgets.QTabWidget(Dialog)
         self.tabWidget.setTabPosition(QtWidgets.QTabWidget.North)
@@ -22,11 +23,14 @@ class Ui_Dialog(object):
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.formLayout = QtWidgets.QFormLayout(self.tab)
+        self.formLayout.setContentsMargins(6, 6, 6, 6)
+        self.formLayout.setSpacing(4)
         self.formLayout.setObjectName("formLayout")
         self.label = QtWidgets.QLabel(self.tab)
         self.label.setObjectName("label")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setSpacing(4)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.lineEdit_url = QtWidgets.QLineEdit(self.tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
@@ -52,6 +56,7 @@ class Ui_Dialog(object):
         self.label_4.setObjectName("label_4")
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label_4)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setSpacing(4)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.srv_ctrl_btn = QtWidgets.QPushButton(self.tab)
         self.srv_ctrl_btn.setObjectName("srv_ctrl_btn")
@@ -63,6 +68,7 @@ class Ui_Dialog(object):
         self.label_5.setObjectName("label_5")
         self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.label_5)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setSpacing(4)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.srv_db_reset_btn = QtWidgets.QPushButton(self.tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
@@ -79,6 +85,8 @@ class Ui_Dialog(object):
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.tab_2)
+        self.gridLayout_2.setContentsMargins(6, 6, 6, 6)
+        self.gridLayout_2.setSpacing(4)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.pageZoom_lbl = QtWidgets.QLabel(self.tab_2)
         self.pageZoom_lbl.setAlignment(QtCore.Qt.AlignCenter)
@@ -117,8 +125,11 @@ class Ui_Dialog(object):
         self.tab_3 = QtWidgets.QWidget()
         self.tab_3.setObjectName("tab_3")
         self.gridLayout = QtWidgets.QGridLayout(self.tab_3)
+        self.gridLayout.setContentsMargins(6, 6, 6, 6)
+        self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setSpacing(4)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.label_6 = QtWidgets.QLabel(self.tab_3)
         self.label_6.setObjectName("label_6")

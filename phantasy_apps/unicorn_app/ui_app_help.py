@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_app_help.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -11,8 +11,10 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(957, 681)
+        Dialog.resize(823, 522)
         self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
+        self.verticalLayout.setContentsMargins(6, 6, 6, 6)
+        self.verticalLayout.setSpacing(4)
         self.verticalLayout.setObjectName("verticalLayout")
         self.tabWidget = QtWidgets.QTabWidget(Dialog)
         self.tabWidget.setTabPosition(QtWidgets.QTabWidget.West)
@@ -20,6 +22,8 @@ class Ui_Dialog(object):
         self.tab = QtWidgets.QWidget()
         self.tab.setObjectName("tab")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.tab)
+        self.horizontalLayout.setContentsMargins(4, 4, 4, 4)
+        self.horizontalLayout.setSpacing(4)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.textBrowser_qna = QtWidgets.QTextBrowser(self.tab)
         self.textBrowser_qna.setObjectName("textBrowser_qna")
@@ -28,6 +32,8 @@ class Ui_Dialog(object):
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.tab_2)
+        self.horizontalLayout_2.setContentsMargins(4, 4, 4, 4)
+        self.horizontalLayout_2.setSpacing(4)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.textBrowser_lic = QtWidgets.QTextBrowser(self.tab_2)
         self.textBrowser_lic.setObjectName("textBrowser_lic")
