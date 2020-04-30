@@ -7,6 +7,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWebKitWidgets import QWebView
 from PyQt5.QtWebKitWidgets import QWebPage
+from PyQt5.QtWebKit import QWebSettings
 
 from phantasy_ui import printlog
 
@@ -31,7 +32,7 @@ class MyWebView(QWebView):
     # zoom
     zooming_view = pyqtSignal()
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, debug_mode=False, *args, **kwargs):
         super(self.__class__, self).__init__(*args, **kwargs)
         # Prevent the reload menu from opening. It will be useless anyway.
         self.setContextMenuPolicy(Qt.PreventContextMenu)
@@ -42,6 +43,28 @@ class MyWebView(QWebView):
         #
         self.zoom_factor = self.zoomFactor() * 100
         self.zooming_view.connect(self.on_zooming_view)
+
+        if debug_mode:
+            s = self.settings()
+            s.setAttribute(QWebSettings.DeveloperExtrasEnabled, True)
+            s.setAttribute(QWebSettings.WebGLEnabled, True)
+            s.setAttribute(QWebSettings.Accelerated2dCanvasEnabled, True)
+
+            #
+            from PyQt5.QtWebKitWidgets import QWebInspector
+            from PyQt5.QtWidgets import QDialog, QVBoxLayout
+
+            ins = QWebInspector(self)
+            ins.setPage(self.page())
+            dlg = QDialog()
+            box = QVBoxLayout()
+            box.addWidget(ins)
+            dlg.setLayout(box)
+            dlg.setModal(False)
+            dlg.show()
+            dlg.raise_()
+            dlg.activateWindow()
+            self.dlg = dlg
 
     def wheelEvent(self, event):
         delta = event.angleDelta().y()

@@ -41,7 +41,7 @@ from phantasy_apps.synoptic_app.webview import MyWebView
 from phantasy_apps.synoptic_app.data import DataAgent
 from phantasy_apps.synoptic_app.ui.ui_app import Ui_MainWindow
 
-DEFAULT_SVGFILE = find_dconf("synoptic_app", "fs1-arc.svg")
+DEFAULT_SVGFILE = find_dconf("synoptic_app", "svgfiles/fs1-arc.svg")
 SVGFILE_DIR = os.path.dirname(DEFAULT_SVGFILE)
 
 
@@ -53,7 +53,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
     # settling time is changed
     settling_time_changed = pyqtSignal(float)
 
-    def __init__(self, version, filepath=None, **kws):
+    def __init__(self, version, filepath=None, debug=False, **kws):
         super(self.__class__, self).__init__()
 
         # app version, title
@@ -84,20 +84,20 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.lattice = mp.work_lattice_conf
 
         #
-        self.post_init()
+        self.post_init(debug=debug)
 
         #
         if filepath is None:
             filepath = DEFAULT_SVGFILE
         self.set_view(filepath)
 
-    def post_init(self):
+    def post_init(self, debug):
         #
         self.svg_basesize = None
         self._start_icon = QIcon(QPixmap(":/sn-app/icons/start.png"))
         self._stop_icon = QIcon(QPixmap(":/sn-app/icons/stop.png"))
         #
-        self.view = MyWebView()
+        self.view = MyWebView(debug_mode=debug)
         self.vbox.addWidget(self.view)
 
         self.frame = self.view.page().mainFrame()

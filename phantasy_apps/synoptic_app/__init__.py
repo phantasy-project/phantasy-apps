@@ -15,7 +15,7 @@ __version__ = '0.1'
 
 
 def run(cli=False):
-    # synoptic_app [--svgfile --machine --segment]
+    # synoptic_app [--svgfile --machine --segment --debug]
     args = sys.argv
     if '--machine' in args:
         machine = args[args.index('--machine') + 1]
@@ -32,8 +32,13 @@ def run(cli=False):
     else:
         svgfile = None
 
+    if '--debug' in args:
+        debug = bool(args[args.index('--debug') + 1])
+    else:
+        debug = False
+
     app = QApplication(sys.argv)
-    w = MyAppWindow(__version__, svgfile,
+    w = MyAppWindow(__version__, svgfile, debug,
                     machine=machine, segment=segment)
     w.show()
     w.setWindowTitle(__title__)
