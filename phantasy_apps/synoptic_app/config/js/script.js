@@ -1,33 +1,45 @@
 var Ui = {
-
-    initializeView: function () {
-        var svg = document.querySelector('svg');
-        var w = svg.width.baseVal.value;
-        var h = svg.height.baseVal.value;
-        CTRL.get_content_size(w, h);
+    // initialize page view
+    initializeView: function() {
+        var svg = d3.select('svg');
+        CTRL.get_content_size(svg.attr("width"), svg.attr("height"));
     },
 
-    findDevices: function () {
-        var descs = Array.prototype.slice.call(document.querySelectorAll("desc"));
-        descs.forEach(function (desc) {
+    // initialize tooltips
+    initializeTooltips: function() {
+        d3.select("svg")
+            .append("g")
+                .attr("id", "tooltip-box")
+            .append("rect")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", 20)
+                .attr("height", 10)
+                .attr("fill", "#FF0000AA")
+    },
+
+    // search devices
+    findDevices: function() {
+        // var descs = Array.prototype.slice.call(document.querySelectorAll("desc"));
+        var descs = d3.selectAll("desc").nodes();
+        descs.forEach(function(desc) {
             var result = /device=(.*)/.exec(desc.textContent);
-            if (result) {
-                var devname = result[1],
-                    parent = desc.parentNode;
+            if(result) {
+                var devname = result[1], parent = desc.parentNode;
                 console.log("Found device: " + devname +
                             " (" + parent.getAttribute("id") + ")");
                 CTRL.registerDevice(devname);
                 //parent.classList.add('tooltip');
                 if (!parent.onclick)
-                    parent.onclick = function (evt) {
+                    parent.onclick = function(evt) {
                         CTRL.select(devname);
                 };
                 if (!parent.ondblclick)
-                    parent.ondblclick = function (evt) {
+                    parent.ondblclick = function(evt) {
                         CTRL.dblSelect(devname);
                 };
                 if (!parent.onmouseover)
-                    parent.onmouseover = function (evt) {
+                    parent.onmouseover = function(evt) {
                         CTRL.mouseOver(devname);
                 };
 
@@ -93,10 +105,10 @@ var Ui = {
         return els;
     },
 
-    getElementsByDeviceName: function (devname) {
+    getElementsByDeviceName: function(devname) {
         var els = [];
-        var descs =  Array.prototype.slice.call(document.querySelectorAll("desc"));
-        descs.forEach(function (desc) {
+        var descs = d3.selectAll("desc").nodes()
+        descs.forEach(function(desc) {
             var result = /device=(.*)/.exec(desc.textContent);
             if (result && result[1] == devname) {
                 els.push(desc.parentNode);
@@ -165,20 +177,16 @@ var Ui = {
         return rect;
     },
 
-    removeElementsOfClass: function (cls) {
-        var els = Array.prototype.slice.call(
-            document.getElementsByClassName(cls));
-        els.forEach(function (el) {
-            el.classList.remove(cls);
-        });
+    removeElementsOfClass: function(cls) {
+        d3.selectAll("." + cls).classed(cls, false);
     },
 
-    hover: function (devname) {
+    hover: function(devname) {
         console.log("Hover: " + devname);
         Ui.removeElementsOfClass("hover");
         var elements = Ui.getElementsByDeviceName(devname);
-        elements.forEach(function (el) {
-            el.parentNode.classList.add('hover');
+        elements.forEach(function(el) {
+            d3.select("#" + el.id).classed("hover", true);
         });
     },
 
@@ -192,17 +200,18 @@ var Ui = {
         });
     },
 
-    select: function (devname) {
-        console.log("Select", devname);
-        var elements = Ui.getElementsByDeviceName(devname);
-        Ui.removeElementsOfClass("select");
-
-        elements.forEach(function (el) {
-            //el.style.filter="url(#outline)";
-            el.classList.add("select");
-            //var bbrect = Ui.getBBoxAsRectElement(el);
-            //el.parentNode.insertBefore(bbrect, el);
-        });
+    // select device
+    select: function(devname) {
+        var cls = "select";
+        var element = Ui.getElementsByDeviceName(devname)[0];
+        var o = d3.select("#" + element.id);
+        if (o.classed(cls)) {
+            o.classed(cls, false);
+        } else {
+            Ui.removeElementsOfClass(cls);
+            o.classed(cls, true);
+        }
+        CTRL.updateSelection(devname, o.classed(cls));
     },
 
     setStatus: function (devname, status) {
