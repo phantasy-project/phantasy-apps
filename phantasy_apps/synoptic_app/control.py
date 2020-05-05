@@ -41,13 +41,20 @@ class Controller(QObject):
 
     @pyqtSlot('QString')
     def select(self, devname):
-        printlog("Select: ", devname)
-        if not devname == self.selected_device:
-            self.frame.evaluateJavaScript("Ui.select('{}')".format(devname))
+        printlog("Click on: {}".format(devname))
+        self.frame.evaluateJavaScript("Ui.select('{}')".format(devname))
+
+    @pyqtSlot('QString', 'QString')
+    def updateSelection(self, devname, selected):
+        is_selected = selected == 'true'
+        if is_selected:
             self.selected_device = devname
             msg = '<html><head/><body><p><span style=" color:#007bff;">Selected: </span><span style=" color:#dc3545;">{}</span></p></body></html>'.format(devname)
-            self.status_info_changed.emit(msg)
-            delayed_exec(lambda:self.status_info_changed.emit(''), 2000)
+        else:
+            self.selected_device = None
+            msg = '<html><head/><body><p><span style=" color:#007bff;">Deselected: </span><span style=" color:#dc3545;">{}</span></p></body></html>'.format(devname)
+        self.status_info_changed.emit(msg)
+        delayed_exec(lambda:self.status_info_changed.emit(''), 5000)
 
     @pyqtSlot('QString')
     def dblSelect(self, devname):
