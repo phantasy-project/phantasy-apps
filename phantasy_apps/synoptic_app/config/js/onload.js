@@ -1,4 +1,7 @@
 window.onload = function () {
+    // tooltips
+    Ui.initializeTooltips();
+
     // Initialize the view
     Ui.initializeView();
 
