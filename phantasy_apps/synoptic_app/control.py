@@ -9,6 +9,8 @@ from phantasy_ui import printlog
 from phantasy_ui.widgets import ProbeWidget
 from phantasy_ui import delayed_exec
 
+HANDLE = {'setpoint': 'SP', 'readback': 'RD'}
+
 
 class Controller(QObject):
     """Interface between webview and control system."""
@@ -22,6 +24,9 @@ class Controller(QObject):
     # svg basesize, width, height
     svg_basesize_changed = pyqtSignal(float, float)
 
+    # data changed
+    data_changed = pyqtSignal(dict)
+
     def __init__(self, frame, lattice, parent=None):
         super(self.__class__, self).__init__(parent)
         self.lattice = lattice
@@ -30,6 +35,15 @@ class Controller(QObject):
         self._devices = dict()
         self.selected_device = None
         self.annote_anchors = {}
+
+        # data, {devname: {(fname, handle): (value, nprec)}} 
+        self.data = {}
+        self.data_changed.connect(self.on_data_changed)
+
+        # pointed device
+        self.pointed_device = None
+        self.pointed_device_changed.connect(self.on_pointed_device_changed)
+
         #
         self._probe_widgets_dict = {}
 
@@ -86,6 +100,27 @@ class Controller(QObject):
         printlog(msg)
         self.pointed_device_changed.emit(devname)
         self.frame.evaluateJavaScript("Ui.hover('{}')".format(devname))
+        # value info -->
+        #self.frame.evaluateJavaScript("Ui.updateTooltip('{}')".format(
+        #    devname))
+    
+    def on_data_changed(self, data):
+        # data changed.
+        value_list = []
+        for (fname, handle), (value, nprec) in sorted(data[self.pointed_device].items()):
+            l = "[{0}]({1}): {2}".format(fname, HANDLE[handle], round(value, nprec))
+            value_list.append(l)
+        m = len(value_list) // 2
+        self.frame.evaluateJavaScript("Ui.updateTooltip('{}', '{}', '{}')".format(
+            self.pointed_device, " ".join(value_list[0:m]), " ".join(value_list[m:])))
+
+    @pyqtSlot('QString')
+    def on_pointed_device_changed(self, devname):
+        self.pointed_device = devname
+
+    @pyqtSlot('QString')
+    def mouseLeave(self, devname):
+        self.frame.evaluateJavaScript("Ui.leave('{}')".format(devname))
 
     @pyqtSlot()
     def loadDeviceDone(self):
@@ -113,3 +148,10 @@ class Controller(QObject):
         self.frame.evaluateJavaScript(
             "Ui.updateData({}, '{}', '{}', '{}', {})".format(
                 value, devname, fname, handle, nprec))
+
+        # !keep fresh data!
+        if devname not in self.data:
+            self.data[devname] = {(fname, handle): (float(value), nprec)}
+        else:
+            self.data[devname].update({(fname, handle): (float(value), nprec)})
+        self.data_changed.emit(self.data)
