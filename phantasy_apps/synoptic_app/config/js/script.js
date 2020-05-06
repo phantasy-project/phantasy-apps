@@ -7,15 +7,31 @@ var Ui = {
 
     // initialize tooltips
     initializeTooltips: function() {
-        d3.select("svg")
-            .append("g")
-                .attr("id", "tooltip-box")
-            .append("rect")
-                .attr("x", 0)
-                .attr("y", 0)
-                .attr("width", 20)
-                .attr("height", 10)
-                .attr("fill", "#FF0000AA")
+        Ui.hideTooltip("tp-hidden");
+    },
+
+    hideTooltip: function(cls="tp-hidden-transition", hidden=true) {
+        var ids = ["#tooltip-box", "#tooltip-devname", "#tooltip-phyconf", "#tooltip-engconf"];
+        ids.forEach(function(d) {
+            d3.select(d)
+                .classed(cls, hidden);
+        });
+    },
+
+    // update tooltip
+    updateTooltip: function(devname, val1, val2) {
+        ["tp-hidden", "tp-hidden-transition"].forEach(function(i) {
+            Ui.hideTooltip(i, false);
+        });
+        d3.select("#tooltip-devname")
+            .select("tspan")
+                .text(devname)
+        d3.select("#tooltip-phyconf")
+            .select("tspan")
+                .text(val1)
+        d3.select("#tooltip-engconf")
+            .select("tspan")
+                .text(val2)
     },
 
     // search devices
@@ -41,6 +57,10 @@ var Ui = {
                 if (!parent.onmouseover)
                     parent.onmouseover = function(evt) {
                         CTRL.mouseOver(devname);
+                };
+                if (!parent.onmouseleave)
+                    parent.onmouseleave = function(evt) {
+                        CTRL.mouseLeave(devname);
                 };
 
                 // check
@@ -181,6 +201,13 @@ var Ui = {
         d3.selectAll("." + cls).classed(cls, false);
     },
 
+    // leave device
+    leave: function(devname) {
+        console.log("Leave: " + devname);
+        Ui.hideTooltip();
+    },
+
+    // hover device
     hover: function(devname) {
         console.log("Hover: " + devname);
         Ui.removeElementsOfClass("hover");
