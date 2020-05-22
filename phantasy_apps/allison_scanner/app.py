@@ -1230,6 +1230,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(bool)
     def on_enable_advctrl(self, f):
         self.adv_ctrl_widget.setVisible(f)
+        self.geometry_widget.setVisible(f)
+        self.geometry_hline.setVisible(f)
 
     def _beat_on(self, dt):
         self.status_lbl.setPixmap(self._active_px)
