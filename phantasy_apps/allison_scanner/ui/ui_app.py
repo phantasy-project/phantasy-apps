@@ -1772,8 +1772,6 @@ class Ui_MainWindow(object):
         self.abort_btn.clicked.connect(MainWindow.on_abort)
         self.auto_fill_beam_params_btn.clicked.connect(
             MainWindow.on_auto_fill_beam_params)
-        self.adv_ctrl_chkbox.toggled['bool'].connect(
-            MainWindow.on_enable_advctrl)
         self.actionRunXY.triggered.connect(MainWindow.onRunXnY)
         self.fetch_config_btn.clicked.connect(MainWindow.sync_config)
         self.default_config_btn.clicked.connect(
@@ -1781,6 +1779,8 @@ class Ui_MainWindow(object):
         self.toolButton.clicked.connect(MainWindow.on_add_current_config)
         self.beamSpeciesDisplayWidget.display_changed.connect(
             self.auto_fill_beam_params_btn.click)
+        self.adv_ctrl_chkbox.toggled['bool'].connect(
+            MainWindow.on_enable_advctrl)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.ems_names_cbb, self.ems_detail_btn)
         MainWindow.setTabOrder(self.ems_detail_btn, self.ems_orientation_cbb)
