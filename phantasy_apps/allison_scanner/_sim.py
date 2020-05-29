@@ -12,6 +12,7 @@ class SimDevice(QObject):
     status_out_changed = pyqtSignal(float)
     itlk_changed = pyqtSignal(float)
     status_enable_changed = pyqtSignal(float)
+    ioc_ready_changed = pyqtSignal(int)
     finished = pyqtSignal()
     pb_changed = pyqtSignal(float)
     pe_changed = pyqtSignal(float)
@@ -23,7 +24,8 @@ class SimDevice(QObject):
     def __init__(self, data_pv, status_pv, trigger_pv, pos_pv,
                  pos_begin_pv, pos_end_pv, pos_step_pv,
                  volt_begin_pv, volt_end_pv, volt_step_pv,
-                 in_pv=None, out_pv=None, itlk_pv=None, en_pv=None):
+                 in_pv=None, out_pv=None, itlk_pv=None, en_pv=None,
+                 ready_pv=None):
         super(self.__class__, self).__init__()
 
         # pv names --> PV
@@ -44,6 +46,10 @@ class SimDevice(QObject):
             self._en_pv = epics.PV(en_pv)
             self._encid = self._en_pv.add_callback(self.on_update_en)
         #
+        if ready_pv is not None:
+            # sim only
+            self._ready_pv = epics.PV(ready_pv, auto_monitor=True)
+            self._rcid = self._ready_pv.add_callback(self.on_update_ioc_ready)
 
         self._status_pv = epics.PV(status_pv, auto_monitor=True)
         self._pos_pv = epics.PV(pos_pv)
@@ -76,6 +82,10 @@ class SimDevice(QObject):
         # self._status_pv.remove_callback(self._scid)
         # self._pos_pv.remove_callback(self._pcid)
         self.finished.emit()
+
+    def on_update_ioc_ready(self, value, **kws):
+        # sim only
+        self.ioc_ready_changed.emit(value)
 
     def on_update_p(self, value, **kws):
         self.pos_changed.emit(value)

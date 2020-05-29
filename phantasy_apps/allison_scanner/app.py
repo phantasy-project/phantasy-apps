@@ -120,9 +120,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.title_changed.connect(self.matplotlibimageWidget.setFigureTitle)
 
         self._device_mode = mode.capitalize()
+        self._sim_ioc_conf_inited = False
         self._post_init()
 
     def _post_init(self):
+        if self._device_mode == "Simulation" and not self._sim_ioc_conf_inited:
+            self.on_show_sim_ioc_conf()
         # disable freezed configuration controls
         for w in (self.length_lineEdit, self.length1_lineEdit,
                   self.length2_lineEdit, self.gap_lineEdit,
@@ -141,6 +144,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._not_enable_px = QPixmap(":/icons/off.png")
         self._itlk_px = QPixmap(":/icons/on.png")
         self._not_itlk_px = QPixmap(":/icons/off.png")
+        self._ioc_ready_px = QPixmap(":/icons/on.png")
+        self._ioc_not_ready_px = QPixmap(":/icons/off.png")
         #
         self._fetch_red_px = QPixmap(":/icons/fetch_red.png")
         self._fetch_px = QPixmap(":/icons/fetch.png")
@@ -283,7 +288,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                                      self._pos_step_pv,
                                      self._volt_begin_pv,
                                      self._volt_end_pv,
-                                     self._volt_step_pv)
+                                     self._volt_step_pv,
+                                     ready_pv=self._ready_pv)
+            self._device.ioc_ready_changed.connect(self.on_update_ioc_ready)
+            self.on_update_ioc_ready(caget(self._ready_pv))
         else:
             self._device = SimDevice(self._data_pv, self._status_pv,
                                      self._trigger_pv, self._pos_pv,
@@ -417,6 +425,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._out_pv = elem.pv('STATUS_OUT{}'.format(_id))[0]
             self._itlk_pv = elem.pv('INTERLOCK{}'.format(_id))[0]
             self._en_pv = elem.pv('ENABLE_SCAN{}'.format(_id), handle='readback')[0]
+        if self._device_mode == "Simulation":
+            self._ready_pv = elem.pv("READY")[0]
         self._init_device()
 
         # show current pos value.
@@ -1274,6 +1284,17 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.is_itlk_lbl.setPixmap(px)
         self.is_itlk_lbl.setToolTip(tt)
 
+    def on_update_ioc_ready(self, i):
+        print(">>> SIM IOC ready?: ", i)
+        if i == 1:
+            px = self._ioc_ready_px
+            tt = "Simulation IOC is ready"
+        else:
+            px = self._ioc_not_ready_px
+            tt = "Simulation IOC is not ready"
+        self.sim_mode_widget.ready_lbl.setPixmap(px)
+        self.sim_mode_widget.ready_lbl.setToolTip(tt)
+
     def _update_xylabels(self):
         # update xylabels.
         xlbl = "${}\,\mathrm{{[mm]}}$".format(self._ems_orientation.lower())
@@ -1410,6 +1431,17 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.volt_begin_dsbox.setValue(d['volt_begin'])
         self.volt_end_dsbox.setValue(d['volt_end'])
         self.volt_step_dsbox.setValue(d['volt_step'])
+
+    def on_show_sim_ioc_conf(self):
+        from PyQt5.QtWidgets import QWidget
+        from PyQt5.QtWidgets import QSizePolicy
+        from .sim_mode import SimModeWidget
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.toolBar.addWidget(spacer)
+        self.sim_mode_widget = SimModeWidget(self)
+        self.toolBar.addWidget(self.sim_mode_widget)
+        self._sim_ioc_conf_inited = True
 
 
 def mask_array(a):
