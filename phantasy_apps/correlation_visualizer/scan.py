@@ -423,7 +423,11 @@ class ScanTask(object):
         """Set initial setting for alter element.
         Every time set alter element, set initial setting.
         """
-        x0 = self.alter_element.setpoint_pv[0].get()
+        sppv = self.alter_element.setpoint_pv[0]
+        if sppv.connected:
+            x0 = sppv.get()
+        else:
+            x0 = None
         self._val0 = x0
 
     def get_initial_setting(self):
@@ -571,6 +575,7 @@ def load_task(filepath, o):
 
     # alter device
     alter_objs = read_element(task, 'alter_element', mp)
+
     scan_task.alter_element = alter_objs[0][0]
     scan_task._alter_element_display = alter_objs[1][0]
     if mode == "1D":
@@ -588,6 +593,7 @@ def load_task(filepath, o):
                 locate_nested_datafile(filepath, nested_task_filepath),
                 mp) # 1D and 2D widget only load the same lattice.
         scan_task.set_nested_task(nested_task)
+
 
     return scan_task
 
