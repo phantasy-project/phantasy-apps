@@ -263,6 +263,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         # set alter action as default
         self.regular_alter_action_rbtn.setChecked(True)
 
+        self.setAcceptDrops(True)
+
     @pyqtSlot(bool)
     def on_pause_scan(self, f):
         if f and self.pause_btn.isEnabled():
@@ -1624,6 +1626,16 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             self._adv_alter_action_dlg.alter_action_changed.connect(
                     self.on_update_alter_action)
         self._adv_alter_action_dlg.exec_()
+
+    def dragEnterEvent(self, e):
+        if e.mimeData().hasUrls():
+            e.accept()
+        else:
+            e.ignore()
+
+    def dropEvent(self, e):
+        path = e.mimeData().urls()[0].toLocalFile()
+        self.load_task_from_file(path)
 
     # test slots
     def test_scan_started(self):
