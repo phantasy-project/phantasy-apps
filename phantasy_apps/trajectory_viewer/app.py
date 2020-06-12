@@ -6,6 +6,7 @@ from collections import deque
 from functools import partial
 
 import numpy as np
+from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import pyqtSignal
@@ -30,8 +31,7 @@ BPM_UNIT_FAC = {"mm": 1.0, "m": 1e3}
 class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
     # curves
     lineChanged = pyqtSignal(int)
-    xdataChanged = pyqtSignal(QVariant)
-    ydataChanged = pyqtSignal(QVariant)
+    updateCurve = pyqtSignal(QVariant, QVariant)
 
     # lattice is loaded
     latticeChanged = pyqtSignal(QVariant)
@@ -87,8 +87,7 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
 
         # curve
         self.lineChanged.connect(self.matplotlibcurveWidget.setLineID)
-        self.xdataChanged.connect(self.matplotlibcurveWidget.setXData)
-        self.ydataChanged.connect(self.matplotlibcurveWidget.setYData)
+        self.updateCurve.connect(self.matplotlibcurveWidget.update_curve)
 
         # xy limits
         self.__xylimits_lineEdits = (self.xmin_lineEdit,
@@ -251,6 +250,28 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         self._ref_line_mag = self.bpms_magplot.add_curve(
             label="Reference", ls='--', lw=1,
             color='m', marker='D', mfc='w')
+        #
+        p.selectedPointChanged.connect(self.on_picked_pos_changed)
+        p.zoom_roi_changed.connect(self.on_zoom_roi_changed)
+
+    def on_zoom_roi_changed(self, xlim, ylim):
+        x0, x1 = xlim
+        bpms = self.__mp.get_elements(srange=xlim, type='BPM')
+        bpm0, bpm1 = bpms[0], bpms[-1]
+        cors0 = self.__mp.next_elements(bpm0, type=['HCOR', 'VCOR'], count=-1)
+        cors1 = self.__mp.next_elements(bpm1, type=['HCOR', 'VCOR'], count=-1)
+        cors = self.__mp.get_elements(srange=(cors0[0].sb - 0.001, cors1[0].sb - 0.001), type=['HCOR', 'VCOR'])
+        tv1 = self.bpms_treeView
+        tv2 = self.cors_treeView
+        m1 = self.bpms_treeView.model()
+        m2 = self.cors_treeView.model()
+        bpm_names = [i.name for i in bpms]
+        cor_names = [i.name for i in cors]
+        bpm_its = [m1.item(i, 0) for i in range(m1.rowCount()) if m1.item(i, 0).text() in bpm_names]
+        cor_its = [m2.item(i, 0) for i in range(m2.rowCount()) if m2.item(i, 0).text() in cor_names]
+        [it.setCheckState(Qt.Checked) for it in bpm_its + cor_its]
+        tv1.scrollTo(bpm_its[-1].index())
+        tv2.scrollTo(cor_its[-1].index())
 
     @pyqtSlot(OrderedDict)
     def on_elem_selection_updated(self, mode, d):
@@ -329,6 +350,30 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
     def update_lattice(self, o):
         self.__mp = o
         self.latticeChanged.emit(o)
+
+    @pyqtSlot(float, float)
+    def on_picked_pos_changed(self, x, y):
+        # picked pos changed.
+        self.locate_devices(x)
+
+    def locate_devices(self, pos):
+        # locate the BPM at *pos* and the nearest upstream corrector(hv).
+        # highlight in the device list.
+        self.bpms_treeView.clearSelection()
+        self.cors_treeView.clearSelection()
+        bpm = self.__mp.get_elements(srange=(pos - 0.01, pos + 0.01), type='BPM')[0]
+        cors = self.__mp.next_elements(bpm, type=['HCOR', 'VCOR'], count=-1)
+        m1 = self.bpms_treeView.model()
+        m2 = self.cors_treeView.model()
+        for i in range(m1.rowCount()):
+            it = m1.item(i, 0)
+            if it.text() == bpm.name:
+                m1.select_hl_item(it)
+        cor_names = [i.name for i in cors]
+        for i in range(m2.rowCount()):
+            it = m2.item(i, 0)
+            if it.text() in cor_names:
+                m2.select_hl_item(it)
 
     @pyqtSlot()
     def start_daq(self):
@@ -494,10 +539,9 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         ufac = BPM_UNIT_FAC[self._bpm_unit]
         self.lineChanged.emit(line_id)
         field = getattr(self, '_field{}'.format(line_id + 1))
-        xdata = [elem.sb for elem in self._bpms]
-        ydata = [getattr(elem, field, np.nan) * ufac for elem in self._bpms]
-        self.xdataChanged.emit(xdata)
-        self.ydataChanged.emit(ydata)
+        xdata = np.asarray([elem.sb for elem in self._bpms])
+        ydata = np.asarray([getattr(elem, field, np.nan) * ufac for elem in self._bpms])
+        self.updateCurve.emit(xdata, ydata)
         self.matplotlibcurveWidget.setLineLabel(field)
         if self.update_refline_chkbox.isChecked():
             # add to cache
@@ -525,8 +569,7 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
     def __update_reflines(self, dq):
         x, y = np.asarray(dq).mean(axis=0)
         self.lineChanged.emit(2)
-        self.xdataChanged.emit(x)
-        self.ydataChanged.emit(y)
+        self.updateCurve.emit(x, y)
 
     @pyqtSlot('QString')
     def on_show_refcurve(self, s):
@@ -539,11 +582,9 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
     def __init_data_viz(self):
         # init data viz
         self.lineChanged.emit(0)
-        self.xdataChanged.emit([])
-        self.ydataChanged.emit([])
+        self.updateCurve.emit([], [])
         self.lineChanged.emit(1)
-        self.xdataChanged.emit([])
-        self.ydataChanged.emit([])
+        self.updateCurve.emit([], [])
         #
         p = self.bpms_magplot
         o = self.matplotlibcurveWidget

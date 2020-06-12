@@ -6,6 +6,7 @@ import time
 from collections import OrderedDict
 from functools import partial
 
+from PyQt5.QtCore import QItemSelectionModel
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
@@ -225,6 +226,11 @@ class ElementListModel(QStandardItemModel):
             if is_item_checked(item00):
                 cbb = self._v.indexWidget(self.index(irow, self.i_field))
                 cbb.setCurrentText(s)
+
+    def select_hl_item(self, it):
+        self._v.selectionModel().select(it.index(),
+                QItemSelectionModel.Select | QItemSelectionModel.Rows)
+        self._v.scrollTo(it.index())
 
 
 def str2list(fname):
