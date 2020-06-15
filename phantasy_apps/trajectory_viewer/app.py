@@ -253,6 +253,24 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         #
         p.selectedPointChanged.connect(self.on_picked_pos_changed)
         p.zoom_roi_changed.connect(self.on_zoom_roi_changed)
+        p.shaded_area_updated.connect(self.on_shaded_area_changed)
+        self._shaded_xlim = self._shaded_ylim = None
+
+    @pyqtSlot(tuple, tuple)
+    def on_shaded_area_changed(self, xlim, ylim):
+        self._shaded_xlim = xlim
+        self._shaded_ylim = ylim
+
+    @pyqtSlot()
+    def onShadedAsSelection(self):
+        # Auto-select based on current shaded area
+        if self._shaded_xlim is None or self._shaded_ylim is None:
+            return
+        self.select_all_bpms_btn.clicked.emit()
+        self.inverse_bpm_selection_btn.clicked.emit()
+        self.select_all_cors_btn.clicked.emit()
+        self.inverse_cor_selection_btn.clicked.emit()
+        self.on_zoom_roi_changed(self._shaded_xlim, self._shaded_ylim)
 
     def on_zoom_roi_changed(self, xlim, ylim):
         x0, x1 = xlim
