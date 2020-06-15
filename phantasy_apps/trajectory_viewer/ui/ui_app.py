@@ -517,7 +517,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.addWidget(self.h_splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 27))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
@@ -562,6 +562,13 @@ class Ui_MainWindow(object):
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionLoad_Lattice.setIcon(icon18)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
+        self.actionShaded_As_Selection = QtWidgets.QAction(MainWindow)
+        icon19 = QtGui.QIcon()
+        icon19.addPixmap(QtGui.QPixmap(":/icons/shade_as_selection.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionShaded_As_Selection.setIcon(icon19)
+        self.actionShaded_As_Selection.setObjectName(
+            "actionShaded_As_Selection")
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.actionAbout)
@@ -569,6 +576,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_Help.menuAction())
         self.toolBar.addAction(self.actionLoad_Lattice)
         self.toolBar.addAction(self.actionORM)
+        self.toolBar.addAction(self.actionShaded_As_Selection)
         self.toolBar.addAction(self.actionE_xit)
 
         self.retranslateUi(MainWindow)
@@ -606,6 +614,8 @@ class Ui_MainWindow(object):
             MainWindow.on_show_hide_refline)
         self.show_bpm_mag_btn.toggled['bool'].connect(
             self.bpms_magplot.setVisible)
+        self.actionShaded_As_Selection.triggered.connect(
+            MainWindow.onShadedAsSelection)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -727,6 +737,10 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Load lattice."))
         self.actionLoad_Lattice.setShortcut(
             _translate("MainWindow", "Ctrl+Shift+L"))
+        self.actionShaded_As_Selection.setText(
+            _translate("MainWindow", "Shaded As Selection"))
+        self.actionShaded_As_Selection.setToolTip(
+            _translate("MainWindow", "Auto-Select from shaded area"))
 
 
 from mpl4qt.widgets.mplcurvewidget import MatplotlibCurveWidget
