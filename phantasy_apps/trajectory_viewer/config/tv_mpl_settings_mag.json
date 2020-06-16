@@ -19,7 +19,7 @@
   ],
   "figure": {
     "labels": {
-      "font": "Sans,10,-1,5,50,0,0,0,0,0",
+      "font": "Sans,14,-1,5,50,0,0,0,0,0",
       "xlabel": "",
       "ylabel": "Intensity"
     },
@@ -28,7 +28,7 @@
       "show": false
     },
     "title": {
-      "font": "Sans,10,-1,5,50,0,0,0,0,0",
+      "font": "Sans,18,-1,5,50,0,0,0,0,0",
       "value": ""
     },
     "xy_range": {
@@ -51,12 +51,12 @@
     "layout": {
       "grid_color": "#aaaaaa",
       "grid_on": true,
-      "tight_on": true
+      "tight_on": false
     },
     "ticks": {
       "color": "#000000",
-      "font": "Sans,10,-1,5,50,0,0,0,0,0",
-      "mticks_on": false
+      "font": "Sans,12,-1,5,50,0,0,0,0,0",
+      "mticks_on": true
     }
   }
 }
