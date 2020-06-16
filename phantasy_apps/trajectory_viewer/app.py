@@ -34,7 +34,7 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
     updateCurve = pyqtSignal(QVariant, QVariant)
 
     # lattice is loaded
-    latticeChanged = pyqtSignal(QVariant)
+    latticeChanged = pyqtSignal()
 
     # selected monitors and fields, k: ename, v: list of fields
     monitorsChanged = pyqtSignal(dict)
@@ -172,10 +172,17 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
                                 "Cannot find loaded lattice, try to load first, either by clicking Tools > Load Lattice or Ctrl+Shift+L.",
                                 QMessageBox.Ok)
             return
-        w = self._elem_sel_widgets.setdefault(mode,
-                                              ElementSelectionWidget(self, self.__mp, dtypes=dtype_list))
-        w.elementsSelected.connect(partial(self.on_update_elems, mode))
+        w = self._get_device_selection_widget(mode, dtype_list)
         w.show()
+
+    def _get_device_selection_widget(self, mode, dtype_list):
+        if mode not in self._elem_sel_widgets:
+            w = self._elem_sel_widgets.setdefault(mode,
+                    ElementSelectionWidget(self, self.__mp, dtypes=dtype_list))
+            w.elementsSelected.connect(partial(self.on_update_elems, mode))
+        else:
+            w = self._elem_sel_widgets[mode]
+        return w
 
     @pyqtSlot(float)
     def update_daqfreq(self, f):
@@ -255,6 +262,16 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         p.zoom_roi_changed.connect(self.on_zoom_roi_changed)
         p.shaded_area_updated.connect(self.on_shaded_area_changed)
         self._shaded_xlim = self._shaded_ylim = None
+
+        self.latticeChanged.connect(self.on_lattice_loaded)
+
+    @pyqtSlot()
+    def on_lattice_loaded(self):
+        # lattice is loaded, pre-set devices for selection.
+        for mode, dtype_list in zip(('bpm', 'cor'), (["BPM"], ["HCOR", "VCOR"])):
+            w = self._get_device_selection_widget(mode, dtype_list)
+            w.apply_btn.clicked.emit()
+            w.exit_btn.clicked.emit()
 
     @pyqtSlot(tuple, tuple)
     def on_shaded_area_changed(self, xlim, ylim):
@@ -367,7 +384,7 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(QVariant)
     def update_lattice(self, o):
         self.__mp = o
-        self.latticeChanged.emit(o)
+        self.latticeChanged.emit()
 
     @pyqtSlot(float, float)
     def on_picked_pos_changed(self, x, y):
