@@ -321,9 +321,9 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         self.orm_runner.started.connect(self.start_eta_timer)
         self.orm_runner.resultsReady.connect(
             partial(self.on_results_ready, 'measure'))
+        self.orm_runner.update_progress.connect(self.hl_row)
         self.orm_runner.update_progress.connect(
             partial(self.update_pb, self.measure_pb))
-        self.orm_runner.update_progress.connect(self.hl_row)
         self.orm_runner.finished.connect(self.stop_eta_timer)
         self.orm_runner.finished.connect(
             partial(self.orm_worker_completed, self.measure_pb,
