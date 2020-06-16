@@ -214,8 +214,8 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         self.bpm_unit_millimeter_rbtn.setChecked(True)
         assert self._bpm_unit == "mm"
 
-        # selection of bpms for monitoring
-        self.use_selected_bpms_rbtn.setChecked(True)
+        # selection of bpms for monitoring, default use all
+        self.use_all_bpms_rbtn.setChecked(True)
         assert self._bpms == []
 
         # magplot
@@ -556,7 +556,7 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         """Field-1 is changed, shown as 1st line.
         """
         # update 1st line
-        print("Field-1 now is: ", s)
+        # print("Field-1 now is: ", s)
         self._field1 = s
         self.__update_line(0)
 
@@ -564,7 +564,7 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
     def on_field2_updated(self, s):
         """Field-2 is changed, shown as 2nd line.
         """
-        print("Field-2 now is: ", s)
+        # print("Field-2 now is: ", s)
         self._field2 = s
         self.__update_line(1)
 
