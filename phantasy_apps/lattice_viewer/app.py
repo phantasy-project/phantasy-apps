@@ -142,11 +142,15 @@ class LatticeViewerWindow(BaseAppForm, Ui_MainWindow):
         """Load lattice.
         """
         if self._lattice_load_window is None:
-            self._lattice_load_window = LatticeWidget()
-            self._lattice_load_window.latticeChanged.connect(
-                self.on_lattice_changed)
-            self._lattice_load_window.latticeChanged.connect(self._lattice_load_window.close)
+            self._initialize_lattice_widget()
         self._lattice_load_window.show()
+
+    def _initialize_lattice_widget(self):
+        # initialize lattice load widget.
+        self._lattice_load_window = LatticeWidget()
+        self._lattice_load_window.latticeChanged.connect(
+            self.on_lattice_changed)
+        self._lattice_load_window.latticeChanged.connect(self._lattice_load_window.close)
 
     @pyqtSlot(QVariant)
     def on_lattice_changed(self, o):
