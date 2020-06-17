@@ -739,11 +739,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if self._lv is None:
             self._lv = LatticeViewerWindow(__version__)
             self._lv.setWindowTitle("{} ({})".format(__title__, self.getAppTitle()))
-        lw = self._lv.latticeWidget
+            self._lv._initialize_lattice_widget()
+        lw = self._lv._lattice_load_window
         lw.mach_cbb.setCurrentText(machine)
         lw.seg_cbb.setCurrentText(lattice)
         lw.load_btn.clicked.emit()
-        lw.setEnabled(False)
         self._lv.show()
 
     def on_pressed_view(self, idx):
