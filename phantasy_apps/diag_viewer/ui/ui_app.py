@@ -79,8 +79,8 @@ class Ui_MainWindow(object):
         font.setItalic(False)
         font.setWeight(50)
         self.matplotlibbarWidget.setFigureTitleFont(font)
-        self.matplotlibbarWidget.setFigureMTicksToggle(True)
         self.matplotlibbarWidget.setFigureGridToggle(True)
+        self.matplotlibbarWidget.setFigureMTicksToggle(True)
         font = QtGui.QFont()
         font.setFamily("sans-serif")
         font.setPointSize(14)
@@ -108,19 +108,26 @@ class Ui_MainWindow(object):
         self.device_select_hbox = QtWidgets.QHBoxLayout()
         self.device_select_hbox.setSpacing(6)
         self.device_select_hbox.setObjectName("device_select_hbox")
-        self.select_all_elems_btn = QtWidgets.QToolButton(self.device_gbox)
+        self.refresh_bpm_btn = QtWidgets.QToolButton(self.device_gbox)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/icons/select-all.png"),
+        icon1.addPixmap(QtGui.QPixmap(":/icons/refresh.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.select_all_elems_btn.setIcon(icon1)
+        self.refresh_bpm_btn.setIcon(icon1)
+        self.refresh_bpm_btn.setObjectName("refresh_bpm_btn")
+        self.device_select_hbox.addWidget(self.refresh_bpm_btn)
+        self.select_all_elems_btn = QtWidgets.QToolButton(self.device_gbox)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/icons/select-all.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.select_all_elems_btn.setIcon(icon2)
         self.select_all_elems_btn.setIconSize(QtCore.QSize(20, 20))
         self.select_all_elems_btn.setObjectName("select_all_elems_btn")
         self.device_select_hbox.addWidget(self.select_all_elems_btn)
         self.inverse_selection_btn = QtWidgets.QToolButton(self.device_gbox)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/icons/invert-selection.png"),
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/icons/invert-selection.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.inverse_selection_btn.setIcon(icon2)
+        self.inverse_selection_btn.setIcon(icon3)
         self.inverse_selection_btn.setIconSize(QtCore.QSize(20, 20))
         self.inverse_selection_btn.setObjectName("inverse_selection_btn")
         self.device_select_hbox.addWidget(self.inverse_selection_btn)
@@ -215,10 +222,10 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Minimum)
         self.daq_hbox.addItem(spacerItem1)
         self.capture_btn = QtWidgets.QPushButton(self.control_gbox)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/icons/single.png"),
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/icons/single.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.capture_btn.setIcon(icon3)
+        self.capture_btn.setIcon(icon4)
         self.capture_btn.setObjectName("capture_btn")
         self.daq_hbox.addWidget(self.capture_btn)
         self.start_btn = QtWidgets.QPushButton(self.control_gbox)
@@ -229,10 +236,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.start_btn.sizePolicy().hasHeightForWidth())
         self.start_btn.setSizePolicy(sizePolicy)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.start_btn.setIcon(icon4)
+        self.start_btn.setIcon(icon5)
         self.start_btn.setObjectName("start_btn")
         self.daq_hbox.addWidget(self.start_btn)
         self.stop_btn = QtWidgets.QPushButton(self.control_gbox)
@@ -243,10 +250,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.stop_btn.sizePolicy().hasHeightForWidth())
         self.stop_btn.setSizePolicy(sizePolicy)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.stop_btn.setIcon(icon5)
+        self.stop_btn.setIcon(icon6)
         self.stop_btn.setObjectName("stop_btn")
         self.daq_hbox.addWidget(self.stop_btn)
         self.gridLayout.addLayout(self.daq_hbox, 1, 1, 1, 2)
@@ -338,16 +345,16 @@ class Ui_MainWindow(object):
         self.label_6.setObjectName("label_6")
         self.gridLayout.addWidget(self.label_6, 1, 0, 1, 1)
         self.reset_figure_btn = QtWidgets.QPushButton(self.control_gbox)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/icons/load.png"), QtGui.QIcon.Normal,
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(":/icons/load.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.reset_figure_btn.setIcon(icon6)
+        self.reset_figure_btn.setIcon(icon7)
         self.reset_figure_btn.setObjectName("reset_figure_btn")
         self.gridLayout.addWidget(self.reset_figure_btn, 0, 2, 1, 1)
         self.verticalLayout.addWidget(self.control_gbox)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 27))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -365,16 +372,16 @@ class Ui_MainWindow(object):
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(":/icons/load_lattice.png"),
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/icons/load_lattice.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Lattice.setIcon(icon7)
+        self.actionLoad_Lattice.setIcon(icon8)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
         self.actionSave = QtWidgets.QAction(MainWindow)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(":/icons/save.png"), QtGui.QIcon.Normal,
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/icons/save.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.actionSave.setIcon(icon8)
+        self.actionSave.setIcon(icon9)
         self.actionSave.setObjectName("actionSave")
         self.menu_File.addSeparator()
         self.menu_Help.addAction(self.action_About)
@@ -404,6 +411,7 @@ class Ui_MainWindow(object):
         self.actionSave.triggered.connect(MainWindow.on_save_data)
         self.show_dnum_rbtn.toggled['bool'].connect(MainWindow.on_show_dnum)
         self.show_dname_rbtn.toggled['bool'].connect(MainWindow.on_show_dname)
+        self.refresh_bpm_btn.clicked.connect(MainWindow.on_refresh_model)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -411,6 +419,9 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.plot_gbox.setTitle(_translate("MainWindow", "Data Visualization"))
         self.device_gbox.setTitle(_translate("MainWindow", "Devices"))
+        self.refresh_bpm_btn.setToolTip(
+            _translate("MainWindow", "Refresh BPMs selection."))
+        self.refresh_bpm_btn.setText(_translate("MainWindow", "..."))
         self.select_all_elems_btn.setToolTip(
             _translate("MainWindow",
                        "<html><head/><body><p>Select All</p></body></html>"))
