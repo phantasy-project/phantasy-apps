@@ -10,6 +10,7 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMessageBox
 from phantasy_ui import BaseAppForm
@@ -72,6 +73,11 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self._post_init()
 
     def _post_init(self,):
+        # bpms from TV
+        self._bpms_dict = None
+        self._icon_refresh = QIcon(QPixmap(":/icons/refresh.png"))
+        self._icon_refresh_new = QIcon(QPixmap(":/icons/refresh1.png"))
+        self.refresh_bpm_btn.setVisible(False)
         # lattice load window
         self._lattice_load_window = None
         # elem selection widget
@@ -299,6 +305,21 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         m = tv.model()
         m.elementSelected.connect(self.on_elem_selection_updated)
         model.select_all_items()
+
+    @pyqtSlot()
+    def on_refresh_model(self):
+        # refresh element list, DV from TV.
+        if self._bpms_dict is None:
+            return
+        self.on_update_elems(self._bpms_dict)
+        self.refresh_bpm_btn.setIcon(self._icon_refresh)
+
+
+    @pyqtSlot(dict)
+    def on_update_selected_items(self, elems_dict):
+        # DV launched from TV, when device (BPM) selection is updated.
+        self._bpms_dict = elems_dict
+        self.refresh_bpm_btn.setIcon(self._icon_refresh_new)
 
     @pyqtSlot(OrderedDict)
     def on_elem_selection_updated(self, d):
