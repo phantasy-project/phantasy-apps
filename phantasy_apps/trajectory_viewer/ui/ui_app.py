@@ -149,6 +149,29 @@ class Ui_MainWindow(object):
             self.matplotlibcurveWidget.sizePolicy().hasHeightForWidth())
         self.matplotlibcurveWidget.setSizePolicy(sizePolicy)
         self.matplotlibcurveWidget.setProperty("figureTightLayout", False)
+        self.matplotlibcurveWidget.setFigureXlabel("")
+        self.matplotlibcurveWidget.setFigureTitle("")
+        font = QtGui.QFont()
+        font.setFamily("sans-serif")
+        font.setPointSize(14)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(50)
+        self.matplotlibcurveWidget.setFigureXYlabelFont(font)
+        font = QtGui.QFont()
+        font.setFamily("sans-serif")
+        font.setPointSize(16)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(50)
+        self.matplotlibcurveWidget.setFigureTitleFont(font)
+        font = QtGui.QFont()
+        font.setFamily("sans-serif")
+        font.setPointSize(12)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(50)
+        self.matplotlibcurveWidget.setFigureXYticksFont(font)
         self.matplotlibcurveWidget.setObjectName("matplotlibcurveWidget")
         self.bpms_magplot = MatplotlibCurveWidget(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -159,38 +182,50 @@ class Ui_MainWindow(object):
             self.bpms_magplot.sizePolicy().hasHeightForWidth())
         self.bpms_magplot.setSizePolicy(sizePolicy)
         self.bpms_magplot.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.bpms_magplot.setProperty("figureToolbarToggle", False)
         self.bpms_magplot.setObjectName("bpms_magplot")
         self.verticalLayout.addWidget(self.splitter)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setContentsMargins(-1, 0, -1, -1)
         self.horizontalLayout_3.setSpacing(4)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.toolButton = QtWidgets.QToolButton(self.figctrl_groupBox)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/icons/show.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.toolButton.setIcon(icon4)
-        self.toolButton.setCheckable(True)
-        self.toolButton.setChecked(True)
-        self.toolButton.setAutoRaise(True)
-        self.toolButton.setObjectName("toolButton")
-        self.horizontalLayout_3.addWidget(self.toolButton)
         self.label_14 = QtWidgets.QLabel(self.figctrl_groupBox)
         self.label_14.setObjectName("label_14")
         self.horizontalLayout_3.addWidget(self.label_14)
-        self.refxoy_cbb = QtWidgets.QComboBox(self.figctrl_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.refxoy_cbb.sizePolicy().hasHeightForWidth())
-        self.refxoy_cbb.setSizePolicy(sizePolicy)
-        self.refxoy_cbb.setMinimumSize(QtCore.QSize(90, 0))
-        self.refxoy_cbb.setObjectName("refxoy_cbb")
-        self.refxoy_cbb.addItem("")
-        self.refxoy_cbb.addItem("")
-        self.horizontalLayout_3.addWidget(self.refxoy_cbb)
+        self.line_5 = QtWidgets.QFrame(self.figctrl_groupBox)
+        self.line_5.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_5.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_5.setObjectName("line_5")
+        self.horizontalLayout_3.addWidget(self.line_5)
+        self.label_3 = QtWidgets.QLabel(self.figctrl_groupBox)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_3.addWidget(self.label_3)
+        self.show_ref_x_btn = QtWidgets.QToolButton(self.figctrl_groupBox)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/icons/show.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.show_ref_x_btn.setIcon(icon4)
+        self.show_ref_x_btn.setCheckable(True)
+        self.show_ref_x_btn.setChecked(True)
+        self.show_ref_x_btn.setAutoRaise(True)
+        self.show_ref_x_btn.setObjectName("show_ref_x_btn")
+        self.horizontalLayout_3.addWidget(self.show_ref_x_btn)
+        self.label_15 = QtWidgets.QLabel(self.figctrl_groupBox)
+        self.label_15.setObjectName("label_15")
+        self.horizontalLayout_3.addWidget(self.label_15)
+        self.show_ref_y_btn = QtWidgets.QToolButton(self.figctrl_groupBox)
+        self.show_ref_y_btn.setToolTip("")
+        self.show_ref_y_btn.setIcon(icon4)
+        self.show_ref_y_btn.setCheckable(True)
+        self.show_ref_y_btn.setChecked(True)
+        self.show_ref_y_btn.setAutoRaise(True)
+        self.show_ref_y_btn.setObjectName("show_ref_y_btn")
+        self.horizontalLayout_3.addWidget(self.show_ref_y_btn)
+        self.line_6 = QtWidgets.QFrame(self.figctrl_groupBox)
+        self.line_6.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_6.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_6.setObjectName("line_6")
+        self.horizontalLayout_3.addWidget(self.line_6)
         self.last_one_rbtn = QtWidgets.QRadioButton(self.figctrl_groupBox)
         self.last_one_rbtn.setObjectName("last_one_rbtn")
         self.horizontalLayout_3.addWidget(self.last_one_rbtn)
@@ -240,6 +275,14 @@ class Ui_MainWindow(object):
         self.show_bpm_mag_btn.setAutoRaise(True)
         self.show_bpm_mag_btn.setObjectName("show_bpm_mag_btn")
         self.horizontalLayout_3.addWidget(self.show_bpm_mag_btn)
+        self.toolButton = QtWidgets.QToolButton(self.figctrl_groupBox)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/icons/dv.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.toolButton.setIcon(icon9)
+        self.toolButton.setAutoRaise(True)
+        self.toolButton.setObjectName("toolButton")
+        self.horizontalLayout_3.addWidget(self.toolButton)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.daqctrl_groupBox = QtWidgets.QGroupBox(self.v_splitter_1)
         self.daqctrl_groupBox.setAlignment(QtCore.Qt.AlignLeading
@@ -356,10 +399,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.start_btn.sizePolicy().hasHeightForWidth())
         self.start_btn.setSizePolicy(sizePolicy)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.start_btn.setIcon(icon9)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap(":/icons/start.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.start_btn.setIcon(icon10)
         self.start_btn.setIconSize(QtCore.QSize(20, 20))
         self.start_btn.setObjectName("start_btn")
         self.gridLayout.addWidget(self.start_btn, 1, 1, 1, 1)
@@ -371,10 +414,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.stop_btn.sizePolicy().hasHeightForWidth())
         self.stop_btn.setSizePolicy(sizePolicy)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
                          QtGui.QIcon.Off)
-        self.stop_btn.setIcon(icon10)
+        self.stop_btn.setIcon(icon11)
         self.stop_btn.setIconSize(QtCore.QSize(20, 20))
         self.stop_btn.setObjectName("stop_btn")
         self.gridLayout.addWidget(self.stop_btn, 1, 2, 1, 1)
@@ -424,10 +467,10 @@ class Ui_MainWindow(object):
             self.select_all_bpms_btn.sizePolicy().hasHeightForWidth())
         self.select_all_bpms_btn.setSizePolicy(sizePolicy)
         self.select_all_bpms_btn.setText("")
-        icon11 = QtGui.QIcon()
-        icon11.addPixmap(QtGui.QPixmap(":/icons/select-all.png"),
+        icon12 = QtGui.QIcon()
+        icon12.addPixmap(QtGui.QPixmap(":/icons/select-all.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.select_all_bpms_btn.setIcon(icon11)
+        self.select_all_bpms_btn.setIcon(icon12)
         self.select_all_bpms_btn.setObjectName("select_all_bpms_btn")
         self.horizontalLayout_7.addWidget(self.select_all_bpms_btn)
         self.inverse_bpm_selection_btn = QtWidgets.QToolButton(self.groupBox_3)
@@ -439,10 +482,10 @@ class Ui_MainWindow(object):
             self.inverse_bpm_selection_btn.sizePolicy().hasHeightForWidth())
         self.inverse_bpm_selection_btn.setSizePolicy(sizePolicy)
         self.inverse_bpm_selection_btn.setText("")
-        icon12 = QtGui.QIcon()
-        icon12.addPixmap(QtGui.QPixmap(":/icons/invert-selection.png"),
+        icon13 = QtGui.QIcon()
+        icon13.addPixmap(QtGui.QPixmap(":/icons/invert-selection.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.inverse_bpm_selection_btn.setIcon(icon12)
+        self.inverse_bpm_selection_btn.setIcon(icon13)
         self.inverse_bpm_selection_btn.setObjectName(
             "inverse_bpm_selection_btn")
         self.horizontalLayout_7.addWidget(self.inverse_bpm_selection_btn)
@@ -481,7 +524,7 @@ class Ui_MainWindow(object):
             self.select_all_cors_btn.sizePolicy().hasHeightForWidth())
         self.select_all_cors_btn.setSizePolicy(sizePolicy)
         self.select_all_cors_btn.setText("")
-        self.select_all_cors_btn.setIcon(icon11)
+        self.select_all_cors_btn.setIcon(icon12)
         self.select_all_cors_btn.setObjectName("select_all_cors_btn")
         self.horizontalLayout_8.addWidget(self.select_all_cors_btn)
         self.inverse_cor_selection_btn = QtWidgets.QToolButton(self.groupBox_4)
@@ -493,7 +536,7 @@ class Ui_MainWindow(object):
             self.inverse_cor_selection_btn.sizePolicy().hasHeightForWidth())
         self.inverse_cor_selection_btn.setSizePolicy(sizePolicy)
         self.inverse_cor_selection_btn.setText("")
-        self.inverse_cor_selection_btn.setIcon(icon12)
+        self.inverse_cor_selection_btn.setIcon(icon13)
         self.inverse_cor_selection_btn.setObjectName(
             "inverse_cor_selection_btn")
         self.horizontalLayout_8.addWidget(self.inverse_cor_selection_btn)
@@ -524,46 +567,46 @@ class Ui_MainWindow(object):
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.actionE_xit = QtWidgets.QAction(MainWindow)
-        icon13 = QtGui.QIcon()
-        icon13.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
+        icon14 = QtGui.QIcon()
+        icon14.addPixmap(QtGui.QPixmap(":/icons/exit.png"), QtGui.QIcon.Normal,
                          QtGui.QIcon.Off)
-        self.actionE_xit.setIcon(icon13)
+        self.actionE_xit.setIcon(icon14)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionAbout = QtWidgets.QAction(MainWindow)
-        icon14 = QtGui.QIcon()
-        icon14.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
+        icon15 = QtGui.QIcon()
+        icon15.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
                          QtGui.QIcon.Off)
-        self.actionAbout.setIcon(icon14)
+        self.actionAbout.setIcon(icon15)
         self.actionAbout.setObjectName("actionAbout")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
-        icon15 = QtGui.QIcon()
-        icon15.addPixmap(QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
+        icon16 = QtGui.QIcon()
+        icon16.addPixmap(QtGui.QPixmap(":/icons/qt.png"), QtGui.QIcon.Normal,
                          QtGui.QIcon.Off)
-        self.actionAbout_Qt.setIcon(icon15)
+        self.actionAbout_Qt.setIcon(icon16)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionContents = QtWidgets.QAction(MainWindow)
-        icon16 = QtGui.QIcon()
-        icon16.addPixmap(QtGui.QPixmap(":/icons/help.png"), QtGui.QIcon.Normal,
+        icon17 = QtGui.QIcon()
+        icon17.addPixmap(QtGui.QPixmap(":/icons/help.png"), QtGui.QIcon.Normal,
                          QtGui.QIcon.Off)
-        self.actionContents.setIcon(icon16)
+        self.actionContents.setIcon(icon17)
         self.actionContents.setObjectName("actionContents")
         self.actionORM = QtWidgets.QAction(MainWindow)
-        icon17 = QtGui.QIcon()
-        icon17.addPixmap(QtGui.QPixmap(":/icons/matrix.png"),
+        icon18 = QtGui.QIcon()
+        icon18.addPixmap(QtGui.QPixmap(":/icons/matrix.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionORM.setIcon(icon17)
+        self.actionORM.setIcon(icon18)
         self.actionORM.setObjectName("actionORM")
         self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
-        icon18 = QtGui.QIcon()
-        icon18.addPixmap(QtGui.QPixmap(":/icons/load_lattice.png"),
+        icon19 = QtGui.QIcon()
+        icon19.addPixmap(QtGui.QPixmap(":/icons/load_lattice.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Lattice.setIcon(icon18)
+        self.actionLoad_Lattice.setIcon(icon19)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
         self.actionShaded_As_Selection = QtWidgets.QAction(MainWindow)
-        icon19 = QtGui.QIcon()
-        icon19.addPixmap(QtGui.QPixmap(":/icons/shade_as_selection.png"),
+        icon20 = QtGui.QIcon()
+        icon20.addPixmap(QtGui.QPixmap(":/icons/shade_as_selection.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionShaded_As_Selection.setIcon(icon19)
+        self.actionShaded_As_Selection.setIcon(icon20)
         self.actionShaded_As_Selection.setObjectName(
             "actionShaded_As_Selection")
         self.menu_Help.addAction(self.actionContents)
@@ -601,18 +644,17 @@ class Ui_MainWindow(object):
             self.legend_btn.setChecked)
         self.matplotlibcurveWidget.autoScaleOnUpdated['bool'].connect(
             self.autoscale_btn.setChecked)
-        self.refxoy_cbb.currentTextChanged['QString'].connect(
-            MainWindow.on_show_refcurve)
         self.save_traj_btn.clicked.connect(MainWindow.on_save_trajectory)
         self.load_traj_btn.clicked.connect(MainWindow.on_load_trajectory)
         self.update_refline_chkbox.toggled['bool'].connect(
             self.save_traj_btn.setDisabled)
-        self.toolButton.toggled['bool'].connect(
-            MainWindow.on_show_hide_refline)
+        self.show_ref_x_btn.toggled['bool'].connect(MainWindow.on_show_ref_x)
         self.show_bpm_mag_btn.toggled['bool'].connect(
             self.bpms_magplot.setVisible)
         self.actionShaded_As_Selection.triggered.connect(
             MainWindow.onShadedAsSelection)
+        self.show_ref_y_btn.toggled['bool'].connect(MainWindow.on_show_ref_y)
+        self.toolButton.clicked.connect(MainWindow.on_open_dv)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -637,27 +679,33 @@ class Ui_MainWindow(object):
         self.autoscale_btn.setText(_translate("MainWindow", "Scale"))
         self.label.setText(_translate("MainWindow", "X-Limit"))
         self.label_7.setText(_translate("MainWindow", "Y-Limit"))
-        self.toolButton.setText(_translate("MainWindow", "..."))
         self.label_14.setText(_translate("MainWindow", "Reference Trajectory"))
-        self.refxoy_cbb.setItemText(0, _translate("MainWindow", "X"))
-        self.refxoy_cbb.setItemText(1, _translate("MainWindow", "Y"))
+        self.label_3.setText(_translate("MainWindow", "X"))
+        self.show_ref_x_btn.setText(_translate("MainWindow", "..."))
+        self.label_15.setText(_translate("MainWindow", "Y"))
+        self.show_ref_y_btn.setText(_translate("MainWindow", "..."))
         self.last_one_rbtn.setToolTip(
-            _translate("MainWindow", "Average last one shot"))
+            _translate("MainWindow", "Average last one (1) shot."))
         self.last_one_rbtn.setText(_translate("MainWindow", "1"))
         self.last_five_rbtn.setToolTip(
-            _translate("MainWindow", "Average last five shots"))
+            _translate("MainWindow", "Average last five (5) shots."))
         self.last_five_rbtn.setText(_translate("MainWindow", "5"))
         self.update_refline_chkbox.setToolTip(
-            _translate("MainWindow", "Check to enable curve updating"))
+            _translate("MainWindow",
+                       "Check/uncheck to update/freeze reference X&Y."))
         self.save_traj_btn.setToolTip(
-            _translate("MainWindow", "Save reference trajectory into file"))
+            _translate("MainWindow", "Save reference trajectory into a file."))
         self.save_traj_btn.setText(_translate("MainWindow", "Save"))
         self.load_traj_btn.setToolTip(
-            _translate("MainWindow", "Load reference trajectory from file"))
+            _translate("MainWindow", "Load reference trajectory from a file."))
         self.load_traj_btn.setText(_translate("MainWindow", "Load"))
         self.show_bpm_mag_btn.setToolTip(
             _translate("MainWindow", "Show/hide BPM intensities"))
         self.show_bpm_mag_btn.setText(_translate("MainWindow", "Show MAG"))
+        self.toolButton.setToolTip(
+            _translate("MainWindow",
+                       "View BPM intensity in \'Device Viewer\'."))
+        self.toolButton.setText(_translate("MainWindow", "..."))
         self.daqctrl_groupBox.setTitle(
             _translate("MainWindow", "Controls Panel"))
         self.label_8.setText(_translate("MainWindow", "Monitors"))
@@ -684,8 +732,14 @@ class Ui_MainWindow(object):
         self.label_11.setText(_translate("MainWindow", "DAQ"))
         self.label_2.setText(_translate("MainWindow", "Frequency"))
         self.label_5.setText(_translate("MainWindow", "Action"))
+        self.start_btn.setToolTip(
+            _translate("MainWindow", "Start DAQ (Ctrl+R)."))
         self.start_btn.setText(_translate("MainWindow", "Start"))
+        self.start_btn.setShortcut(_translate("MainWindow", "Ctrl+R"))
+        self.stop_btn.setToolTip(
+            _translate("MainWindow", "Stop DAQ (Ctrl+period)."))
         self.stop_btn.setText(_translate("MainWindow", "Stop"))
+        self.stop_btn.setShortcut(_translate("MainWindow", "Ctrl+."))
         self.freq_dSpinbox.setSuffix(_translate("MainWindow", " Hz"))
         self.groupBox_3.setTitle(_translate("MainWindow", "Monitors"))
         self.label_4.setText(_translate("MainWindow", "Monitors (BPMs)"))
@@ -713,7 +767,7 @@ class Ui_MainWindow(object):
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.actionE_xit.setText(_translate("MainWindow", "E&xit"))
         self.actionE_xit.setToolTip(
-            _translate("MainWindow", "Exit this application."))
+            _translate("MainWindow", "Exit this application (Ctrl+W)."))
         self.actionE_xit.setShortcut(_translate("MainWindow", "Ctrl+W"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
         self.actionAbout.setShortcut(_translate("MainWindow", "Ctrl+A"))
@@ -725,19 +779,23 @@ class Ui_MainWindow(object):
         self.actionORM.setToolTip(
             _translate(
                 "MainWindow",
-                "Launch the app for trajectory response matrix measure and apply."
+                "Launch the app for trajectory response matrix measure and apply (Ctrl+Shift+M)."
             ))
         self.actionORM.setShortcut(_translate("MainWindow", "Ctrl+Shift+M"))
         self.actionLoad_Lattice.setText(
             _translate("MainWindow", "Load Lattice"))
         self.actionLoad_Lattice.setToolTip(
-            _translate("MainWindow", "Load lattice."))
+            _translate("MainWindow", "Load lattice (Ctrl+Shift+L)."))
         self.actionLoad_Lattice.setShortcut(
             _translate("MainWindow", "Ctrl+Shift+L"))
         self.actionShaded_As_Selection.setText(
             _translate("MainWindow", "Shaded As Selection"))
         self.actionShaded_As_Selection.setToolTip(
-            _translate("MainWindow", "Auto-Select from shaded area"))
+            _translate(
+                "MainWindow",
+                "Auto-select devices in the shaded area (Alt+Shift+S)."))
+        self.actionShaded_As_Selection.setShortcut(
+            _translate("MainWindow", "Alt+Shift+S"))
 
 
 from mpl4qt.widgets.mplcurvewidget import MatplotlibCurveWidget
