@@ -11,7 +11,7 @@
       "marker": {
         "edgecolor": "#0000FF",
         "facecolor": "#FFFFFF",
-        "size": 8.0,
+        "size": 6.0,
         "style": "s",
         "width": 1.5
       }
@@ -27,15 +27,47 @@
       "marker": {
         "edgecolor": "#FF0000",
         "facecolor": "#FFFFFF",
-        "size": 8.0,
+        "size": 6.0,
         "style": "o",
         "width": 1.5
+      }
+    },
+    {
+      "label": "$X$-ref",
+      "line": {
+        "color": "#5500FF",
+        "style": "-",
+        "width": 2.0
+      },
+      "line_id": 2,
+      "marker": {
+        "edgecolor": "#00AA00",
+        "facecolor": "#FFFFFF",
+        "size": 6.0,
+        "style": "None",
+        "width": 1.0
+      }
+    },
+    {
+      "label": "$Y$-ref",
+      "line": {
+        "color": "#AA007F",
+        "style": "-",
+        "width": 2.0
+      },
+      "line_id": 3,
+      "marker": {
+        "edgecolor": "#FF00FF",
+        "facecolor": "#FFFFFF",
+        "size": 6.0,
+        "style": "None",
+        "width": 1.0
       }
     }
   ],
   "figure": {
     "labels": {
-      "font": "Sans,14,-1,5,50,0,0,0,0,0",
+      "font": "sans,16,-1,5,50,0,0,0,0,0,Regular",
       "xlabel": "$s$ [m]",
       "ylabel": "Monitors Readings [mm]"
     },
@@ -44,7 +76,7 @@
       "show": true
     },
     "title": {
-      "font": "Sans,18,-1,5,50,0,0,0,0,0",
+      "font": "sans,20,-1,5,50,0,0,0,0,0,Regular",
       "value": ""
     },
     "xy_range": {
