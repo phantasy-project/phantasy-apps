@@ -35,6 +35,7 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
 
     # lattice is loaded
     latticeChanged = pyqtSignal()
+    latticeObjChanged = pyqtSignal(QVariant)
 
     # selected monitors and fields, k: ename, v: list of fields
     monitorsChanged = pyqtSignal(dict)
@@ -190,6 +191,9 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
 
     def post_init(self):
         #
+        self._viz_traj = viz_traj = self.matplotlibcurveWidget
+        self._viz_mag = viz_mag = self.bpms_magplot
+        #
         self.__mp = None
         self._bpm_unit = None
         self._bpms = []  # list of CaElements (e.g. BPM)
@@ -208,7 +212,18 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         self.start_btn.setEnabled(True)
         self.stop_btn.setEnabled(False)
         # add another curve to matplotlibcurveWidget
-        self.matplotlibcurveWidget.add_curve()
+        viz_traj.add_curve()
+        # Add another curve as reference, data could be selected from
+        # cached data
+        self._ref_line_x = viz_traj.add_curve()
+        self._ref_line_y = viz_traj.add_curve()
+        # tuple of array of (s, b) for x and y
+        self.__cached_traj = ()
+
+        # ref_line for intensity
+        self._ref_line_mag = viz_mag.add_curve()
+            #label="Reference", ls='--', lw=1,
+            #color='m', marker='D', mfc='w')
 
         # bpm monitorings unit
         self.bpm_unit_millimeter_rbtn.setChecked(True)
@@ -225,19 +240,17 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         self._daqfreq = 1.0
 
         # load default figure config
-        p = self.matplotlibcurveWidget
-        o = self.bpms_magplot
-        apply_mplcurve_settings(p, 'trajectory_viewer',
+        apply_mplcurve_settings(viz_traj, 'trajectory_viewer',
                                 filename='tv_mpl_settings_traj.json')
-        apply_mplcurve_settings(o, 'trajectory_viewer',
+        apply_mplcurve_settings(viz_mag, 'trajectory_viewer',
                                 filename='tv_mpl_settings_mag.json')
 
         # init data viz
         self.__init_data_viz()
 
         # sync fig controls
-        xmin, xmax = p.get_xlim()
-        ymin, ymax = p.get_ylim()
+        xmin, xmax = viz_traj.get_xlim()
+        ymin, ymax = viz_traj.get_ylim()
         self.xmin_lineEdit.setText("{0:.3g}".format(xmin))
         self.xmax_lineEdit.setText("{0:.3g}".format(xmax))
         self.ymin_lineEdit.setText("{0:.3g}".format(ymin))
@@ -245,22 +258,13 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
 
         # orm window
         self._orm_window = None
-        # Add another curve as reference, data could be selected from
-        # cached data
-        self._ref_line = self.matplotlibcurveWidget.add_curve(
-            label="Reference",
-            color='#005500', marker='v', mfc='w')
-        # tuple of array of (s, b) for x and y
-        self.__cached_traj = ()
+        # dv
+        self._dv_window = None
 
-        # ref_line for intensity
-        self._ref_line_mag = self.bpms_magplot.add_curve(
-            label="Reference", ls='--', lw=1,
-            color='m', marker='D', mfc='w')
         #
-        p.selectedPointChanged.connect(self.on_picked_pos_changed)
-        p.zoom_roi_changed.connect(self.on_zoom_roi_changed)
-        p.shaded_area_updated.connect(self.on_shaded_area_changed)
+        viz_traj.selectedPointChanged.connect(self.on_picked_pos_changed)
+        viz_traj.zoom_roi_changed.connect(self.on_zoom_roi_changed)
+        viz_traj.shaded_area_updated.connect(self.on_shaded_area_changed)
         self._shaded_xlim = self._shaded_ylim = None
 
         self.latticeChanged.connect(self.on_lattice_loaded)
@@ -385,6 +389,7 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
     def update_lattice(self, o):
         self.__mp = o
         self.latticeChanged.emit()
+        self.latticeObjChanged.emit(o)
 
     @pyqtSlot(float, float)
     def on_picked_pos_changed(self, x, y):
@@ -592,27 +597,16 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
 
     def update_reflines(self):
         # update cbb for reflines data
-        xoy = self.refxoy_cbb.currentText()
-        if xoy == 'X':
-            dq = self._x_dq
-        else:
-            dq = self._y_dq
-        self.__update_reflines(dq)
+        if len(self._x_dq) == 0 or len(self._y_dq) == 0:
+            return
+        ref_x = np.asarray(self._x_dq).mean(axis=0)
+        ref_y = np.asarray(self._y_dq).mean(axis=0)
+        self.lineChanged.emit(2)
+        self.updateCurve.emit(*ref_x)
+        self.lineChanged.emit(3)
+        self.updateCurve.emit(*ref_y)
         self.__cached_traj = (np.asarray(self._x_dq),
                               np.asarray(self._y_dq))
-
-    def __update_reflines(self, dq):
-        x, y = np.asarray(dq).mean(axis=0)
-        self.lineChanged.emit(2)
-        self.updateCurve.emit(x, y)
-
-    @pyqtSlot('QString')
-    def on_show_refcurve(self, s):
-        if s == 'X':
-            dq = self._x_dq
-        else:
-            dq = self._y_dq
-        self.__update_reflines(dq)
 
     def __init_data_viz(self):
         # init data viz
@@ -621,10 +615,8 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         self.lineChanged.emit(1)
         self.updateCurve.emit([], [])
         #
-        p = self.bpms_magplot
-        o = self.matplotlibcurveWidget
-        p.setXData([])
-        p.setYData([])
+        self._viz_mag.setXData([])
+        self._viz_mag.setYData([])
 
     def update_xylimit(self, fs, s):
         if 'YLimit' in fs:
@@ -700,26 +692,57 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
             self._y_dq = deque([], n)
 
     @pyqtSlot(bool)
-    def on_show_hide_refline(self, f):
-        # show/hide ref trajectory/intensity
-        self._ref_line.set_visible(f)
-        self._ref_line_mag.set_visible(f)
-        self.matplotlibcurveWidget.update_figure()
+    def on_show_ref_x(self, f):
+        # show/hide ref x trajectory/intensity
+        self._ref_line_x.set_visible(f)
+        self._viz_traj.update_figure()
+        #self._ref_line_x_mag.set_visible(f)
+        #[i.update_figure() for i in (self._p, self._o)]
+
+    @pyqtSlot(bool)
+    def on_show_ref_y(self, f):
+        # show/hide ref y trajectory/intensity
+        self._ref_line_y.set_visible(f)
+        self._viz_traj.update_figure()
+        #self._ref_line_y_mag.set_visible(f)
+        #[i.update_figure() for i in (self._p, self._o)]
 
     def __update_intensity(self):
         # update BPM intensities.
-        o = self.bpms_magplot
         x = [elem.sb for elem in self._bpms]
         y = [getattr(elem, self.__mag_field) for elem in self._bpms]
-        o.setLineID(0)
-        o.setXData(x)
-        o.setYData(y)
+        self._viz_mag.setLineID(0)
+        self._viz_mag.update_curve(x, y)
 
     def __plot_loaded_intensity(self, s, mag):
         # show loaded intensity as reference.
         self._ref_line_mag.set_xdata(s)
         self._ref_line_mag.set_ydata(mag)
-        self.bpms_magplot.update_figure()
+        self._viz_mag.update_figure()
+
+    @pyqtSlot()
+    def on_open_dv(self):
+        if self.__mp is None or self.bpms_treeView.model() is None:
+            return
+        bpms_dict = self.bpms_treeView.model()._selected_elements
+        if not bpms_dict:
+            return
+
+        if self._dv_window is None:
+            from phantasy_apps.diag_viewer import DeviceViewerWindow
+            from phantasy_apps.diag_viewer import __version__
+            from phantasy_apps.diag_viewer import __title__
+            self._dv_window = DeviceViewerWindow(version=__version__)
+            self._dv_window.refresh_bpm_btn.setVisible(True)
+            self._dv_window.setWindowTitle(__title__ + ' (Trajectory Viewer)')
+            self._dv_window.update_lattice(self.__mp)
+            self._dv_window.on_update_elems(bpms_dict.keys())
+            self.monitorsChanged.connect(self._dv_window.on_update_selected_items)
+            self.latticeObjChanged.connect(self._dv_window.update_lattice)
+            o = self._dv_window.matplotlibbarWidget
+        #
+        self._dv_window.show()
+        self._dv_window.reset_figure_btn.clicked.emit()
 
 
 if __name__ == '__main__':
