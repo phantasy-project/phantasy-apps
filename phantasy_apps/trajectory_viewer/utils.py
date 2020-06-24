@@ -242,6 +242,24 @@ def str2list(fname):
     return [fname]
 
 
+class TVDataSheet(JSONDataSheet):
+    def __init__(self, path=None):
+        super(self.__class__, self).__init__(path)
+
+        if path is None:
+            d = OrderedDict()
+            d['info'] = {
+                'user': getpass.getuser(),
+                'created': epoch2human(time.time(), fmt=TS_FMT)
+            }
+            d['monitors'] = {}
+            d['correctors'] = {}
+            d['machine'] = ''
+            d['segment'] = ''
+            d['config'] = OrderedDict()
+            self.update(d)
+
+
 class MonitorReadingsDataSheet(JSONDataSheet):
     def __init__(self, path=None):
         super(self.__class__, self).__init__(path)
