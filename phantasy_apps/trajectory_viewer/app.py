@@ -25,6 +25,7 @@ from .utils import ElementListModel
 from .utils import MonitorReadingsDataSheet
 from .utils import TVDataSheet
 from .utils import load_readings_sheet
+from .utils import load_lattice
 
 BPM_UNIT_FAC = {"mm": 1.0, "m": 1e3}
 
@@ -754,11 +755,15 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
             return
 
         machine, segment = self.__mp.last_machine_name, self.__mp.last_lattice_name
-        bpms_list = sort_dict(self.bpms_treeView.model()._selected_elements)
-        cors_list = sort_dict(self.cors_treeView.model()._selected_elements)
+        m_bpm = self.bpms_treeView.model()
+        all_bpms_list = sort_dict(m_bpm._enames)
+        sel_bpms_list = sort_dict(m_bpm._selected_elements)
+        m_cor = self.cors_treeView.model()
+        all_cors_list = sort_dict(m_cor._enames)
+        sel_cors_list = sort_dict(m_cor._selected_elements)
         data_sheet = TVDataSheet()
-        data_sheet['monitors'] = bpms_list
-        data_sheet['correctors'] = cors_list
+        data_sheet['monitors'] = {'all': all_bpms_list, 'selected': sel_bpms_list}
+        data_sheet['correctors'] = {'all': all_cors_list, 'selected': sel_cors_list}
         data_sheet['machine'] = machine
         data_sheet['segment'] = segment
         #
@@ -780,6 +785,53 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
                 'mag': self._viz_mag.get_mpl_settings()
         }
         data_sheet.write(filepath)
+
+    @pyqtSlot()
+    def on_open(self):
+        # open data.
+        filepath, ext = get_open_filename(self,
+                                          type_filter="JSON Files (*.json)")
+        if filepath is None:
+            return
+
+        ds = TVDataSheet(filepath)
+        try:
+            assert ds['info']['app'] == self.getAppTitle()
+        except AssertionError:
+            QMessageBox.warning(self, "Open Data",
+                                "The file to open is not for this app.",
+                                QMessageBox.Ok)
+            return
+        try:
+            machine, segment = ds['machine'], ds['segment']
+            mp = load_lattice(machine, segment, self.__mp)
+            assert mp.last_load_success is True
+        except AssertionError:
+            QMessageBox.warning(self, "Load Lattice",
+                                "Cannot load lattice: {}/{}.".format(machine, segment),
+                                QMessageBox.Ok)
+        else:
+            self.__mp = mp
+        #
+        bpms_list = ds['monitors']['all']
+        cors_list = ds['correctors']['all']
+        self.on_update_elems('bpm', bpms_list)
+        self.on_update_elems('cor', cors_list)
+        for m, k in zip((self.bpms_treeView.model(), self.cors_treeView.model()),
+                        ('monitors', 'correctors')):
+            for ename in ds[k]['selected']:
+                m.select_item(ename)
+        #
+        self.use_all_bpms_rbtn.setChecked(ds['config']['use_all'])
+        self.use_selected_bpms_rbtn.setChecked(ds['config']['use_selected'])
+        self.field1_cbb.setCurrentText(ds['config']['field1'])
+        self.field2_cbb.setCurrentText(ds['config']['field2'])
+        self.bpm_unit_meter_rbtn.setChecked(ds['config']['unit_meter'])
+        self.bpm_unit_millimeter_rbtn.setChecked(ds['config']['unit_millimeter'])
+        self.freq_dSpinbox.setValue(ds['config']['daq_freq'])
+        #
+        for w, k in zip((self._viz_traj, self._viz_mag), ('traj', 'mag')):
+            w.apply_mpl_settings(ds['mpl_config'][k])
 
 
 def sort_dict(d):
