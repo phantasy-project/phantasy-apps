@@ -22,6 +22,7 @@ from phantasy import epoch2human
 from phantasy_ui.widgets import is_item_checked
 
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet
+from phantasy_apps.correlation_visualizer.scan import load_lattice
 from .ui import details_icon
 
 TS_FMT = "%Y-%m-%d %H:%M:%S"
@@ -200,6 +201,10 @@ class ElementListModel(QStandardItemModel):
         # tv.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         # tv.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
+    def select_item(self, ename):
+        i = self._enames.index(ename)
+        self.item(i, 0).setCheckState(Qt.Checked)
+
     def select_all_items(self):
         """Mark all items as checked.
         """
@@ -257,6 +262,7 @@ class TVDataSheet(JSONDataSheet):
             d['machine'] = ''
             d['segment'] = ''
             d['config'] = OrderedDict()
+            d['mpl_config'] = {}
             self.update(d)
 
 
