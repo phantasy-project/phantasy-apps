@@ -23,6 +23,7 @@ from .app_help import HelpDialog
 from .ui.ui_app import Ui_MainWindow
 from .utils import ElementListModel
 from .utils import MonitorReadingsDataSheet
+from .utils import TVDataSheet
 from .utils import load_readings_sheet
 
 BPM_UNIT_FAC = {"mm": 1.0, "m": 1e3}
@@ -639,8 +640,6 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
             return
 
         machine, segment = self.__mp.last_machine_name, self.__mp.last_lattice_name
-        print("machine:", machine)
-        print("segment:", segment)
         ds = MonitorReadingsDataSheet()
         ds['machine'] = machine
         ds['segment'] = segment
@@ -743,6 +742,48 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         #
         self._dv_window.show()
         self._dv_window.reset_figure_btn.clicked.emit()
+
+    @pyqtSlot()
+    def on_save(self):
+        # save data to a file.
+        if self.__mp is None:
+            return
+        filepath, ext = get_save_filename(self, cdir='.',
+                type_filter="JSON Files (*.json)")
+        if filepath is None:
+            return
+
+        machine, segment = self.__mp.last_machine_name, self.__mp.last_lattice_name
+        bpms_list = sort_dict(self.bpms_treeView.model()._selected_elements)
+        cors_list = sort_dict(self.cors_treeView.model()._selected_elements)
+        data_sheet = TVDataSheet()
+        data_sheet['monitors'] = bpms_list
+        data_sheet['correctors'] = cors_list
+        data_sheet['machine'] = machine
+        data_sheet['segment'] = segment
+        #
+        info_conf = data_sheet['info']
+        info_conf['app'] = self.getAppTitle()
+        info_conf['version'] = self.getAppVersion()
+        #
+        app_conf = data_sheet['config']
+        app_conf['use_all'] = self.use_all_bpms_rbtn.isChecked()
+        app_conf['use_selected'] = self.use_selected_bpms_rbtn.isChecked()
+        app_conf['field1'] = self.field1_cbb.currentText()
+        app_conf['field2'] = self.field2_cbb.currentText()
+        app_conf['unit_meter'] = self.bpm_unit_meter_rbtn.isChecked()
+        app_conf['unit_millimeter'] = self.bpm_unit_millimeter_rbtn.isChecked()
+        app_conf['daq_freq'] = self.freq_dSpinbox.value()
+        #
+        data_sheet['mpl_config'] = {
+                'traj': self._viz_traj.get_mpl_settings(),
+                'mag': self._viz_mag.get_mpl_settings()
+        }
+        data_sheet.write(filepath)
+
+
+def sort_dict(d):
+    return [k for k in sorted(d, key=lambda i: (i[-4:], i))]
 
 
 if __name__ == '__main__':
