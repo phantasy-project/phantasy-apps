@@ -105,6 +105,7 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self._viz_inactive_px = QPixmap(":/icons/inactive.png")
         self.daq_pb.setVisible(False)
 
+        self.reset_figure_btn.clicked.disconnect(self.on_init_dataviz)
         # xdata opt
         self.id_as_x_rbtn.setChecked(False)
         self.pos_as_x_rbtn.setChecked(True)
@@ -114,12 +115,20 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self._xtklbls_dnum = []   # init by reset
         self._xtklbls_dname = []  # init by reset
         self._xtks = []
+        self._auto_rotate_deg_dname = 40
+        self._auto_rotate_deg_dnum = 30
+        self._auto_rotate_xtks = self.auto_rotate_chkbox.isChecked()
+        self.auto_rotate_chkbox.toggled.connect(self.on_auto_rotate_xtks)
 
         self.xtks_changed.connect(self.matplotlibbarWidget.set_xticks)
         self.xtklbls_changed.connect(self.matplotlibbarWidget.set_xticklabels)
 
+        # xylabels
+        self._auto_lbls = self.auto_lbls_chkbox.isChecked()
+        self.auto_lbls_chkbox.toggled.connect(self.on_auto_lbls)
+
         # annote
-        self._show_annote = False
+        self._show_annote = self.annote_height_chkbox.isChecked()
 
         # device selection
         self.choose_elems_btn.clicked.connect(self.on_list_devices)
@@ -132,6 +141,7 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         # reset figure
         # does not work with matlotlib 2.0.0
         # self.on_init_dataviz()
+        self.reset_figure_btn.clicked.connect(self.on_init_dataviz)
 
     @pyqtSlot()
     def on_select_all_elems(self):
@@ -224,19 +234,21 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         # tmp solution
         from mpl4qt.widgets.mplconfig import MatplotlibConfigBarPanel
         MatplotlibConfigBarPanel(self.matplotlibbarWidget)
+        self.annote_height_chkbox.toggled.emit(self.annote_height_chkbox.isChecked())
+        self.on_auto_lbls(self._auto_lbls)
         #
 
     @pyqtSlot(bool)
     def on_apply_id_as_xdata(self, f):
         if f:
-            print("Apply ID as xdata")
             self._xdata_gauge = 'id'
+            self.reset_figure_btn.clicked.emit()
 
     @pyqtSlot(bool)
     def on_apply_pos_as_xdata(self, f):
         if f:
-            print("Apply Pos as xdata")
             self._xdata_gauge = 'pos'
+            self.reset_figure_btn.clicked.emit()
 
     def set_widgets_status(self, status):
         olist1 = (self.reset_figure_btn, self.start_btn,
@@ -271,6 +283,7 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         if self._lattice_load_window is None:
             self._lattice_load_window = LatticeWidget()
             self._lattice_load_window.latticeChanged.connect(self.update_lattice)
+            self._lattice_load_window.latticeChanged.connect(self._lattice_load_window.close)
         self._lattice_load_window.show()
         # reset element selection widgets
         self._elem_sel_widget = None
@@ -424,6 +437,8 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self.xtklbls_changed.emit(self._xtklbls_dnum)
         if self._xtks != []:
             self.xtks_changed.emit(self._xtks)
+        self.on_auto_rotate_xtks(self._auto_rotate_xtks)
+        self.on_auto_lbls(self._auto_lbls)
 
     @pyqtSlot(bool)
     def on_show_dname(self, f):
@@ -432,7 +447,47 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self.xtklbls_changed.emit(self._xtklbls_dname)
         if self._xtks != []:
             self.xtks_changed.emit(self._xtks)
+        self.on_auto_rotate_xtks(self._auto_rotate_xtks)
+        self.on_auto_lbls(self._auto_lbls)
 
     def reset_xtklbls(self):
         [o.toggled.emit(o.isChecked()) for o in
                 (self.show_dnum_rbtn, self.show_dname_rbtn)]
+
+    @pyqtSlot(bool)
+    def on_auto_rotate_xtks(self, f):
+        self._auto_rotate_xtks = f
+        if f:
+            if self.show_dnum_rbtn.isChecked():
+                self.on_rotate_xtks(self._auto_rotate_deg_dnum)
+            elif self.show_dname_rbtn.isChecked():
+                self.on_rotate_xtks(self._auto_rotate_deg_dname)
+            self.auto_rotate_dsbox.setValue(self.matplotlibbarWidget.getFigureXTicksAngle())
+
+    @pyqtSlot(bool)
+    def on_auto_lbls(self, f):
+        self._auto_lbls = f
+        if f:
+            self._auto_xlbl()
+            self._auto_ylbl()
+
+    def _auto_xlbl(self):
+        if self.show_dnum_rbtn.isChecked() or self.show_dname_rbtn.isChecked():
+            xlbl = ''
+        else:
+            xlbl = 's [m]'
+        self.matplotlibbarWidget.setFigureXlabel(xlbl)
+
+    def _auto_ylbl(self):
+        fld = self._field_list[0]
+        ename = self._elems_list[0]
+        ylbl = "Device readings for '{}' ({})".format(ename.family, fld)
+        self.matplotlibbarWidget.setFigureYlabel(ylbl)
+
+    @pyqtSlot(float)
+    def on_rotate_xtks(self, deg):
+        self.matplotlibbarWidget.setFigureXTicksAngle(deg)
+        if self.show_dnum_rbtn.isChecked():
+            self._auto_rotate_deg_dnum = deg
+        elif self.show_dname_rbtn.isChecked():
+            self._auto_rotate_deg_dname = deg
