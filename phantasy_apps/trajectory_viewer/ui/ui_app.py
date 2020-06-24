@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_app.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.14.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -557,7 +557,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.addWidget(self.h_splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 27))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 23))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
@@ -609,12 +609,20 @@ class Ui_MainWindow(object):
         self.actionShaded_As_Selection.setIcon(icon20)
         self.actionShaded_As_Selection.setObjectName(
             "actionShaded_As_Selection")
+        self.actionSave = QtWidgets.QAction(MainWindow)
+        self.actionSave.setIcon(icon6)
+        self.actionSave.setObjectName("actionSave")
+        self.actionOpen = QtWidgets.QAction(MainWindow)
+        self.actionOpen.setIcon(icon7)
+        self.actionOpen.setObjectName("actionOpen")
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.actionAbout)
         self.menu_Help.addAction(self.actionAbout_Qt)
         self.menubar.addAction(self.menu_Help.menuAction())
         self.toolBar.addAction(self.actionLoad_Lattice)
+        self.toolBar.addAction(self.actionOpen)
+        self.toolBar.addAction(self.actionSave)
         self.toolBar.addAction(self.actionORM)
         self.toolBar.addAction(self.actionShaded_As_Selection)
         self.toolBar.addAction(self.actionE_xit)
@@ -655,6 +663,8 @@ class Ui_MainWindow(object):
             MainWindow.onShadedAsSelection)
         self.show_ref_y_btn.toggled['bool'].connect(MainWindow.on_show_ref_y)
         self.toolButton.clicked.connect(MainWindow.on_open_dv)
+        self.actionSave.triggered.connect(MainWindow.on_save)
+        self.actionOpen.triggered.connect(MainWindow.on_open)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -796,6 +806,10 @@ class Ui_MainWindow(object):
                 "Auto-select devices in the shaded area (Alt+Shift+S)."))
         self.actionShaded_As_Selection.setShortcut(
             _translate("MainWindow", "Alt+Shift+S"))
+        self.actionSave.setText(_translate("MainWindow", "Save"))
+        self.actionSave.setShortcut(_translate("MainWindow", "Ctrl+S"))
+        self.actionOpen.setText(_translate("MainWindow", "Open"))
+        self.actionOpen.setShortcut(_translate("MainWindow", "Ctrl+O"))
 
 
 from mpl4qt.widgets.mplcurvewidget import MatplotlibCurveWidget
