@@ -767,6 +767,8 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         data_sheet['machine'] = machine
         data_sheet['segment'] = segment
         #
+        data_sheet['data'] = {i: [o.tolist() for o in l.get_data()] for i, l in enumerate(self._viz_traj._lines)}
+        #
         info_conf = data_sheet['info']
         info_conf['app'] = self.getAppTitle()
         info_conf['version'] = self.getAppVersion()
@@ -832,6 +834,10 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         #
         for w, k in zip((self._viz_traj, self._viz_mag), ('traj', 'mag')):
             w.apply_mpl_settings(ds['mpl_config'][k])
+        #
+        for i, (x, y) in ds['data'].items():
+            self.lineChanged.emit(int(i))
+            self.updateCurve.emit(x, y)
 
 
 def sort_dict(d):
