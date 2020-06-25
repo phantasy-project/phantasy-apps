@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_app.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.14.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -17,43 +17,38 @@ class Ui_MainWindow(object):
         icon.addPixmap(QtGui.QPixmap(":/icons/work.png"), QtGui.QIcon.Normal,
                        QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
-        MainWindow.setStyleSheet(
-            "QGroupBox {\n"
-            "    /*background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-            "                                      stop: 0 #E0E0E0, stop: 1 #E0E0E0);\n"
-            "   */\n"
-            "    border: 2px solid gray;\n"
-            "    border-radius: 5px;\n"
-            "    margin-top: 1.5ex; /* leave space at the top for the title */\n"
-            "    margin-bottom: 0.5ex;\n"
-            "}\n"
-            "\n"
-            "QGroupBox::title {\n"
-            "    subcontrol-origin: margin;\n"
-            "    subcontrol-position: top center; /* position at the top center */\n"
-            "    padding: 0 3px;\n"
-            "    /*background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-            "                                      stop: 0 #EDECEB, stop: 1 #FFFFFF);\n"
-            "    */\n"
-            "}\n"
-            "\n"
-            "QLineEdit {\n"
-            "    border: 0.5px solid gray;\n"
-            "    padding: 1 5px;\n"
-            "    border-radius: 3px;\n"
-            "}\n"
-            "\n"
-            "QProgressBar {\n"
-            "    border: 1px solid gray;\n"
-            "    border-radius: 10px;\n"
-            "    text-align: center;\n"
-            "}\n"
-            "\n"
-            "QProgressBar::chunk {\n"
-            "    background-color: #05B8CC;\n"
-            "    width: 20px;\n"
-            "    margin: 0.5px;\n"
-            "}")
+        MainWindow.setStyleSheet("QProgressBar {\n"
+                                 "    border: 1px solid gray;\n"
+                                 "    border-radius: 1px;\n"
+                                 "    text-align: center;\n"
+                                 "}\n"
+                                 "\n"
+                                 "QProgressBar::chunk {\n"
+                                 "    background-color: #05B8CC;\n"
+                                 "    width: 20px;\n"
+                                 "    margin: 0.5px;\n"
+                                 "}\n"
+                                 "\n"
+                                 "QToolBox{\n"
+                                 "     icon-size: 30px;\n"
+                                 "}\n"
+                                 "\n"
+                                 "QToolBox QScrollArea > QWidget > QWidget\n"
+                                 "{\n"
+                                 "    border: 2px solid gray;\n"
+                                 "    border-radius: 2px;\n"
+                                 "}\n"
+                                 "\n"
+                                 "QToolBox::tab {\n"
+                                 "    background-color: #BABDB6;\n"
+                                 "    /*border: 2px solid gray;*/\n"
+                                 "    border-radius: 2px;\n"
+                                 "    color: black;\n"
+                                 "}\n"
+                                 "\n"
+                                 "QToolBox::tab:selected { \n"
+                                 "    color: blue;\n"
+                                 "}")
         MainWindow.setIconSize(QtCore.QSize(36, 36))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -319,34 +314,12 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.operations_toolBox.sizePolicy().hasHeightForWidth())
         self.operations_toolBox.setSizePolicy(sizePolicy)
-        self.operations_toolBox.setStyleSheet(
-            "QToolBox{\n"
-            "     icon-size: 30px;\n"
-            "}\n"
-            "\n"
-            "QToolBox QScrollArea > QWidget > QWidget\n"
-            "{\n"
-            "    border: 2px solid gray;\n"
-            "    border-radius: 5px;\n"
-            "}\n"
-            "\n"
-            "QToolBox::tab {\n"
-            "\n"
-            "    background-color: #BABDB6;\n"
-            "    /*border: 2px solid gray;*/\n"
-            "    border-radius: 5px;\n"
-            "    color: black;\n"
-            "}\n"
-            "\n"
-            "QToolBox::tab:selected { \n"
-            "    font: italic;\n"
-            "    color: blue;\n"
-            "}")
+        self.operations_toolBox.setStyleSheet("")
         self.operations_toolBox.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.operations_toolBox.setFrameShadow(QtWidgets.QFrame.Plain)
         self.operations_toolBox.setObjectName("operations_toolBox")
         self.orm_measurement = QtWidgets.QWidget()
-        self.orm_measurement.setGeometry(QtCore.QRect(0, 0, 934, 545))
+        self.orm_measurement.setGeometry(QtCore.QRect(0, 0, 933, 529))
         self.orm_measurement.setObjectName("orm_measurement")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.orm_measurement)
         self.gridLayout_4.setContentsMargins(6, 12, 6, 6)
@@ -451,6 +424,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_12.setSpacing(4)
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
         self.keep_all_data_chkbox = QtWidgets.QCheckBox(self.orm_measurement)
+        self.keep_all_data_chkbox.setChecked(True)
         self.keep_all_data_chkbox.setObjectName("keep_all_data_chkbox")
         self.horizontalLayout_12.addWidget(self.keep_all_data_chkbox)
         self.gridLayout_4.addLayout(self.horizontalLayout_12, 7, 1, 1, 2)
@@ -553,10 +527,10 @@ class Ui_MainWindow(object):
         self.rel_range_lineEdit.setSizePolicy(sizePolicy)
         self.rel_range_lineEdit.setObjectName("rel_range_lineEdit")
         self.horizontalLayout.addWidget(self.rel_range_lineEdit)
-        self.label_4 = QtWidgets.QLabel(self.orm_measurement)
-        self.label_4.setStyleSheet("QLabel {\n" "    color: gray;\n" "}")
-        self.label_4.setObjectName("label_4")
-        self.horizontalLayout.addWidget(self.label_4)
+        self.keep_polarity_chkbox = QtWidgets.QCheckBox(self.orm_measurement)
+        self.keep_polarity_chkbox.setChecked(True)
+        self.keep_polarity_chkbox.setObjectName("keep_polarity_chkbox")
+        self.horizontalLayout.addWidget(self.keep_polarity_chkbox)
         self.gridLayout_4.addLayout(self.horizontalLayout, 2, 1, 1, 2)
         self.label = QtWidgets.QLabel(self.orm_measurement)
         self.label.setObjectName("label")
@@ -696,7 +670,7 @@ class Ui_MainWindow(object):
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.operations_toolBox.addItem(self.orm_measurement, icon10, "")
         self.orm_apply = QtWidgets.QWidget()
-        self.orm_apply.setGeometry(QtCore.QRect(0, 0, 934, 545))
+        self.orm_apply.setGeometry(QtCore.QRect(0, 0, 933, 529))
         self.orm_apply.setObjectName("orm_apply")
         self.gridLayout = QtWidgets.QGridLayout(self.orm_apply)
         self.gridLayout.setContentsMargins(6, 12, 6, 6)
@@ -1080,7 +1054,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.splitter_2, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 23))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
@@ -1250,11 +1224,8 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Relative (<span style=\" font-style:italic;\">Δx</span>) w.r.t current setting (<span style=\" font-style:italic;\">x</span><span style=\" vertical-align:sub;\">0</span>)</p></body></html>"
             ))
         self.rel_range_lineEdit.setText(_translate("MainWindow", "0.1"))
-        self.label_4.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>The alter range is [<span style=\" font-style:italic;\">x</span><span style=\" vertical-align:sub;\">0 </span>- <span style=\" font-style:italic;\">Δ</span>x, <span style=\" font-style:italic;\">x</span><span style=\" vertical-align:sub;\">0 </span>+ <span style=\" font-style:italic;\">Δ</span>x].</p></body></html>"
-            ))
+        self.keep_polarity_chkbox.setText(
+            _translate("MainWindow", "Keep Polarity"))
         self.label.setText(_translate("MainWindow", "Operation Mode"))
         self.update_eta_btn.setText(_translate("MainWindow", "Update"))
         self.label_18.setText(_translate("MainWindow", "Estimated Time"))
@@ -1357,7 +1328,8 @@ class Ui_MainWindow(object):
         self.load_settings.setIconText(
             _translate("MainWindow", "Open Settings"))
         self.load_settings.setToolTip(
-            _translate("MainWindow", "Open corrector settings from a file."))
+            _translate("MainWindow",
+                       "Open corrector settings from a file (Ctrl+Shift+L)."))
         self.load_settings.setShortcut(_translate("MainWindow",
                                                   "Ctrl+Shift+L"))
         self.save_settings.setText(
@@ -1365,7 +1337,8 @@ class Ui_MainWindow(object):
         self.save_settings.setIconText(
             _translate("MainWindow", "Save Settings"))
         self.save_settings.setToolTip(
-            _translate("MainWindow", "Save corrector settings to a file."))
+            _translate("MainWindow",
+                       "Save corrector settings to a file (Ctrl+Shift+S)."))
         self.save_settings.setShortcut(_translate("MainWindow",
                                                   "Ctrl+Shift+S"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
@@ -1373,7 +1346,7 @@ class Ui_MainWindow(object):
         self.actionE_xit.setText(_translate("MainWindow", "E&xit"))
         self.actionE_xit.setIconText(_translate("MainWindow", "Exit"))
         self.actionE_xit.setToolTip(
-            _translate("MainWindow", " Exit this application."))
+            _translate("MainWindow", " Exit this application (Ctrl+W)."))
         self.actionE_xit.setShortcut(_translate("MainWindow", "Ctrl+W"))
         self.actionContents.setText(_translate("MainWindow", "Contents"))
         self.actionContents.setShortcut(_translate("MainWindow", "F1"))
@@ -1382,13 +1355,15 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Save Response Matrix"))
         self.actionSave.setIconText(_translate("MainWindow", "Save Matrix"))
         self.actionSave.setToolTip(
-            _translate("MainWindow", "Save response matrix to a file."))
+            _translate("MainWindow",
+                       "Save response matrix to a file (Ctrl+S)."))
         self.actionSave.setShortcut(_translate("MainWindow", "Ctrl+S"))
         self.actionOpen.setText(
             _translate("MainWindow", "Open Response Matrix"))
         self.actionOpen.setIconText(_translate("MainWindow", "Open Matrix"))
         self.actionOpen.setToolTip(
-            _translate("MainWindow", "Open response matrix from a file."))
+            _translate("MainWindow",
+                       "Open response matrix from a file (Ctrl+O)."))
         self.actionOpen.setShortcut(_translate("MainWindow", "Ctrl+O"))
 
 
