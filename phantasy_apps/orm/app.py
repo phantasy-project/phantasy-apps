@@ -502,7 +502,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
             mp, name_map, bpms_dict, cors_dict, \
                 (orm, cor_field, bpm_field, t_wait, reset_wait, mprec, srange, daq_nshot, daq_rate), \
                 (cor_llmt, cor_ulmt, cor_dfac, cor_niter, cor_wait, cor_prec, cor_daq_rate, cor_daq_nshot), \
-                ftype = load_orm_sheet(filepath)
+                ftype, keep_polarity = load_orm_sheet(filepath)
         except:
             QMessageBox.warning(self, "Loading Response Matrix",
                                 "Cannot load selected file!", QMessageBox.Ok)
@@ -528,6 +528,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         self.rel_range_lineEdit.setText(str(rel_range))
         self.corrector_fields_cbb.currentTextChanged.emit(cor_field)
         self.monitor_fields_cbb.currentTextChanged.emit(bpm_field)
+        self.keep_polarity_chkbox.setChecked(keep_polarity)
         #
         self.lower_limit_lineEdit.setText(str(cor_llmt))
         self.upper_limit_lineEdit.setText(str(cor_ulmt))
@@ -588,6 +589,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         orm_conf['wait_seconds'] = self._wait_sec
         orm_conf['reset_wait_seconds'] = self._reset_wait_sec
         orm_conf['set_precision'] = self._mprec
+        orm_conf['keep_polarity'] = self.keep_polarity_chkbox.isChecked()
         orm_conf['alter_range'] = {
             'relative_range': self._rel_range,
             'total_steps': self._ssteps
@@ -859,9 +861,9 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         data = [(self._name_map[ename], fname[0])
                 for ename, fname in self._cors_dict.items()]
 
-
         model = ScanRangeModel(self.cor_srange_tableView, data,
                                self._rel_range,
+                               keep_polarity=self.keep_polarity_chkbox.isChecked(),
                                fmt=self.get_fmt(mode="measure"))
         model.set_model()
 
@@ -1029,11 +1031,11 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         self.set_orm()
 
     @pyqtSlot()
-    def on_update_srange(self, ):
+    def on_update_srange(self):
         # update scan range list model with updated rel_range.
-        print(self._rel_range)
+        # print(self._rel_range)
         m = self.cor_srange_tableView.model()
-        m.update_scan_range(self._rel_range)
+        m.update_scan_range(self._rel_range, self.keep_polarity_chkbox.isChecked())
 
     def on_update_selection(self, mode, d):
         # update the devices after selection changed

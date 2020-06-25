@@ -152,6 +152,7 @@ def load_orm_sheet(filepath):
     reset_wait = orm_conf_sheet.get('reset_wait_seconds', 1.0)
     ndigits = orm_conf_sheet.get('set_precision', 2)
     srange = orm_conf_sheet.get('alter_range', {'relative_range': 0.1, 'total_steps': 3})
+    keep_polarity = orm_conf_sheet.get('keep_polarity', True)
     daq_nshot = orm_conf_sheet.get('daq_nshot', 1)
     daq_rate = orm_conf_sheet.get('daq_rate', 1)
     orm = np.asarray(orm_conf_sheet['orm'], dtype=np.float)
@@ -183,7 +184,7 @@ def load_orm_sheet(filepath):
 
     file_type = data_sheet['info'].get('file_type', None)
 
-    return mp, name_elem_map, bpms_dict, cors_dict, orm_conf, cor_conf, file_type
+    return mp, name_elem_map, bpms_dict, cors_dict, orm_conf, cor_conf, file_type, keep_polarity
 
 
 class ORMDataSheet(JSONDataSheet):
@@ -358,6 +359,7 @@ class ScanRangeModel(QStandardItemModel):
         self._data = data  # list of (element, field)
         self._rel_range = rel_range
         self.fmt = kws.get('fmt', '{0:>.8g}')
+        self.keep_polarity = kws.get('keep_polarity', True)
 
         #
         self._pvs = []
@@ -395,8 +397,8 @@ class ScanRangeModel(QStandardItemModel):
         for i, (c, f) in enumerate(self._data):
             row = []
             cset = c.current_setting(f)
-            x1 = cset - self._rel_range
-            x2 = cset + self._rel_range
+            x1, x2 = get_rel_range(cset, self._rel_range,
+                                   self.keep_polarity)
             item_idx = QStandardItem('{0:03d}'.format(i + 1))
             item_ename = QStandardItem(c.name)
             item_fname = QStandardItem(f)
@@ -448,10 +450,10 @@ class ScanRangeModel(QStandardItemModel):
         # tv.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         # self.view_size.emit(w, h)
 
-    def update_scan_range(self, rel):
+    def update_scan_range(self, rel, keep_polarity=False):
         for i in range(self.rowCount()):
             x0 = float(self.item(i, self.i_cset).text())
-            x1, x2 = x0 - rel, x0 + rel
+            x1, x2 = get_rel_range(x0, rel, keep_polarity)
             self.item(i, self.i_sstart).setText(self.fmt.format(x1))
             self.item(i, self.i_sstop).setText(self.fmt.format(x2))
 
@@ -575,3 +577,17 @@ def get_orm_with_residuals(filepath):
         mat_w_residual[i] = [np.polyfit(scan_arr, mat_data[i][:, k], 1) for k in range(m)]
 
     return np.asarray(mat_w_residual)
+
+
+def get_rel_range(x0, rel, keep_polarity):
+    x1, x2 = np.asarray((x0 - rel, x0 + rel))
+    if keep_polarity:
+        drel = rel / 10.0
+        while x1 * x2 <=0:
+            if x0 >=0:
+                x1 += drel
+                x2 += drel
+            else:
+                x1 -= drel
+                x2 -= drel
+    return x1, x2
