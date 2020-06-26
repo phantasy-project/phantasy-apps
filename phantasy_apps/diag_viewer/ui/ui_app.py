@@ -309,9 +309,30 @@ class Ui_MainWindow(object):
         self.show_dname_rbtn.setObjectName("show_dname_rbtn")
         self.xticklbls_group.addButton(self.show_dname_rbtn)
         self.viz_hbox.addWidget(self.show_dname_rbtn)
+        self.auto_rotate_chkbox = QtWidgets.QCheckBox(self.control_gbox)
+        self.auto_rotate_chkbox.setChecked(True)
+        self.auto_rotate_chkbox.setObjectName("auto_rotate_chkbox")
+        self.viz_hbox.addWidget(self.auto_rotate_chkbox)
+        self.auto_rotate_dsbox = QtWidgets.QDoubleSpinBox(self.control_gbox)
+        self.auto_rotate_dsbox.setObjectName("auto_rotate_dsbox")
+        self.viz_hbox.addWidget(self.auto_rotate_dsbox)
+        self.line = QtWidgets.QFrame(self.control_gbox)
+        self.line.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.viz_hbox.addWidget(self.line)
         self.annote_height_chkbox = QtWidgets.QCheckBox(self.control_gbox)
         self.annote_height_chkbox.setObjectName("annote_height_chkbox")
         self.viz_hbox.addWidget(self.annote_height_chkbox)
+        self.line_2 = QtWidgets.QFrame(self.control_gbox)
+        self.line_2.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_2.setObjectName("line_2")
+        self.viz_hbox.addWidget(self.line_2)
+        self.auto_lbls_chkbox = QtWidgets.QCheckBox(self.control_gbox)
+        self.auto_lbls_chkbox.setChecked(True)
+        self.auto_lbls_chkbox.setObjectName("auto_lbls_chkbox")
+        self.viz_hbox.addWidget(self.auto_lbls_chkbox)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
@@ -412,6 +433,8 @@ class Ui_MainWindow(object):
         self.show_dnum_rbtn.toggled['bool'].connect(MainWindow.on_show_dnum)
         self.show_dname_rbtn.toggled['bool'].connect(MainWindow.on_show_dname)
         self.refresh_bpm_btn.clicked.connect(MainWindow.on_refresh_model)
+        self.auto_rotate_dsbox.valueChanged['double'].connect(
+            MainWindow.on_rotate_xtks)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -495,6 +518,9 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Show device names as xticks.</p></body></html>"
             ))
         self.show_dname_rbtn.setText(_translate("MainWindow", "Device Name"))
+        self.auto_rotate_chkbox.setText(_translate("MainWindow",
+                                                   "Auto Rotate"))
+        self.auto_rotate_dsbox.setSuffix(_translate("MainWindow", " deg"))
         self.annote_height_chkbox.setToolTip(
             _translate(
                 "MainWindow",
@@ -502,6 +528,7 @@ class Ui_MainWindow(object):
             ))
         self.annote_height_chkbox.setText(
             _translate("MainWindow", "Height Annotation"))
+        self.auto_lbls_chkbox.setText(_translate("MainWindow", "Auto Labels"))
         self.label_5.setText(_translate("MainWindow", "DataViz"))
         self.label_6.setText(_translate("MainWindow", "DAQ"))
         self.reset_figure_btn.setToolTip(
