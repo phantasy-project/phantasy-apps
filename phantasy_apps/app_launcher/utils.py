@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import importlib
 import os
 
 from PyQt5.QtCore import Qt
@@ -15,6 +16,25 @@ try:
     from configparser import ConfigParser
 except ImportError:
     from ConfigParser import SafeConfigParser as ConfigParser
+
+APP_NAMES_MAP = {
+    'Correlation Visualizer': 'correlation_visualizer',
+    'Quad Scan App': 'quad_scan',
+    'Allison Scanner App': 'allison_scanner',
+    'Wire Scanner App': 'wire_scanner',
+    'Virtual Accelerator Launcher': 'va',
+    'Trajectory Viewer': 'trajectory_viewer',
+    'Trajectory Correction': 'orm',
+    'Unicorn App': 'unicorn_app',
+    'Lattice Viewer': 'lattice_viewer',
+    'Device Viewer': 'diag_viewer',
+    'PM Viewer': 'pm_viewer',
+    'Online Model': 'online_model',
+    'Settings Manager': 'settings_manager',
+    'Physics Calculator': 'calculator_app',
+    'Achromat Tuning': 'achromat_tuning',
+    'Synoptic View&Control': 'synoptic_app',
+}
 
 DEFAULT_ICON_PATH = "/usr/share/phantasy/assets/icons/default.png"
 
@@ -124,53 +144,21 @@ class AppItem(object):
         self.cmd = cmd
         self.icon_path = icon_path
         self.category = "Limited" if category is None else category
-        if version is None:
-            try:
-                self.ver = get_app_version(name)
-            except RuntimeError:
-                self.ver = "0"
-        else:
-            self.ver = version
+        self.ver = get_app_version(name) if version is None else version
 
 
-def get_app_version(name):
-    if name == 'Correlation Visualizer':
-        from phantasy_apps.correlation_visualizer import __version__ as ver
-    elif name == 'Quad Scan App':
-        from phantasy_apps.quad_scan import __version__ as ver
-    elif name == 'Wire Scanner App':
-        from phantasy_apps.wire_scanner import __version__ as ver
-    elif name == 'Allison Scanner App':
-        from phantasy_apps.allison_scanner import __version__ as ver
-    elif name == 'Virtual Accelerator Launcher':
-        from phantasy_apps.va import __version__ as ver
-    elif name == 'Trajectory Viewer':
-        from phantasy_apps.trajectory_viewer import __version__ as ver
-    elif name == 'Trajectory Correction':
-        from phantasy_apps.orm import __version__ as ver
-    elif name == 'Unicorn App':
-        from phantasy_apps.unicorn_app import __version__ as ver
-    elif name == 'Lattice Viewer':
-        from phantasy_apps.lattice_viewer import __version__ as ver
-    elif name == 'Device Viewer':
-        from phantasy_apps.diag_viewer import __version__ as ver
-    elif name == 'PM Viewer':
-        from phantasy_apps.pm_viewer import __version__ as ver
-    elif name == 'Online Model':
-        from phantasy_apps.online_model import __version__ as ver
-    elif name == 'Settings Manager':
-        from phantasy_apps.settings_manager import __version__ as ver
-    elif name == 'Physics Calculator':
-        from phantasy_apps.calculator_app import __version__ as ver
-    elif name == 'Achromat Tuning':
-        from phantasy_apps.achromat_tuning import __version__ as ver
-    elif name == 'Synoptic View&Control':
-        from phantasy_apps.synoptic_app import __version__ as ver
-    elif name == 'Achromat Tuning':
-        from phantasy_apps.achromat_tuning import __version__ as ver
+def get_app_version(name, parent='phantasy_apps'):
+    try:
+        module = importlib.import_module('{parent}.{pkg}'.format(
+                    parent=parent, pkg=APP_NAMES_MAP.get(name,'Undefined')))
+    except ImportError:
+        ver = "Unknown"
+        print(name, ver)
     else:
-        raise RuntimeError
-    return ver
+        ver = module.__version__
+        print(name, ver)
+    finally:
+        return ver
 
 
 def get_app_data(path=None):
