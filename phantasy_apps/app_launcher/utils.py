@@ -2,8 +2,10 @@
 
 import importlib
 import os
+import toml
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QFile
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
@@ -12,34 +14,8 @@ from PyQt5.QtGui import QStandardItemModel
 
 from phantasy_apps.utils import find_dconf as _find_dconf
 
-try:
-    from configparser import ConfigParser
-except ImportError:
-    from ConfigParser import SafeConfigParser as ConfigParser
 
-APP_NAMES_MAP = {
-    'Correlation Visualizer': 'correlation_visualizer',
-    'Quad Scan App': 'quad_scan',
-    'Allison Scanner App': 'allison_scanner',
-    'Wire Scanner App': 'wire_scanner',
-    'Virtual Accelerator Launcher': 'va',
-    'Trajectory Viewer': 'trajectory_viewer',
-    'Trajectory Correction': 'orm',
-    'Unicorn App': 'unicorn_app',
-    'Lattice Viewer': 'lattice_viewer',
-    'Device Viewer': 'diag_viewer',
-    'PM Viewer': 'pm_viewer',
-    'Online Model': 'online_model',
-    'Settings Manager': 'settings_manager',
-    'Physics Calculator': 'calculator_app',
-    'Achromat Tuning': 'achromat_tuning',
-    'Synoptic View&Control': 'synoptic_app',
-}
-
-DEFAULT_ICON_PATH = "/usr/share/phantasy/assets/icons/default.png"
-
-
-def find_dconf(path=None):
+def find_dconf(path=None, filename='app_launcher.ini'):
     """Find parameter configuration for `app_launcher` if `path` is None.
     searching the following locations:
     * ~/.phantasy/app_launcher.ini
@@ -48,7 +24,7 @@ def find_dconf(path=None):
     """
     if path is not None:
         return os.path.abspath(path)
-    return _find_dconf('app_launcher', 'app_launcher.ini')
+    return _find_dconf('app_launcher', filename)
 
 
 class AppDataModel(QStandardItemModel):
@@ -84,12 +60,12 @@ class AppDataModel(QStandardItemModel):
             item_name.icon_console = QIcon(self.px_console)
             item_name.setIcon(icon)
 
-            item_cat = QStandardItem(app.category)
+            item_cat = QStandardItem(app.groups[0])
             text = item_cat.text()
-            if text == 'Public':
+            if text == 'stable':
                 px = self.px_catpub
                 tp = "App access is public"
-            elif text == 'Limited':
+            elif text == 'devel':
                 px = self.px_catlim
                 tp = "App access is limited"
             item_cat.setText('')
@@ -132,55 +108,60 @@ class AppDataModel(QStandardItemModel):
 
 
 class AppItem(object):
-    def __init__(self, name, desc, cmd, icon_path, category=None, version=None):
+    def __init__(self, name, desc, cmd, icon_path, groups, version):
         # name : app name
         # desc : app descriptiono
-        # cmd : command to start up app
-        # icon_path : icon path for app icon
-        # category : category of app, default is 'Limited'
+        # cmd : command to start up app (exec)
+        # icon_path : icon path for app icon (icon)
+        # groups : a list of affiliated groups
         super(self.__class__, self).__init__()
         self.name = name
         self.desc = desc
         self.cmd = cmd
         self.icon_path = icon_path
-        self.category = "Limited" if category is None else category
-        self.ver = get_app_version(name) if version is None else version
+        self.groups = groups
+        self.ver = version
+
+    def __repr__(self):
+        return f"AppItem({self.name}, {self.desc[:10]}..., {self.cmd[:10]}..., {self.icon_path[:10]}..., {self.groups}, {self.ver})"
 
 
-def get_app_version(name, parent='phantasy_apps'):
+def get_app_version(pkg_path):
+    if isinstance(pkg_path, list):
+        pkg_path = '.'.join(pkg_path)
     try:
-        module = importlib.import_module('{parent}.{pkg}'.format(
-                    parent=parent, pkg=APP_NAMES_MAP.get(name,'Undefined')))
+        module = importlib.import_module(pkg_path)
     except ImportError:
         ver = "Unknown"
-        print(name, ver)
     else:
         ver = module.__version__
-        print(name, ver)
     finally:
         return ver
 
 
-def get_app_data(path=None):
+def get_app_data(path=None, filename='app_launcher.ini'):
     """Return a list of app data.
     """
 
     # app conf
-    path_conf = find_dconf(path)
-    conf = ConfigParser()
-    conf.read(path_conf)
+    path_conf = find_dconf(path, filename)
+    conf = toml.load(path_conf)
+
+    title = conf.pop('title')
+    imp_path_conf = conf.pop('CONFIG_PATH')
+    app_default_conf = conf.pop('APP-DEFAULT')
+    default_icon_path = app_default_conf['icon']
+    default_groups = app_default_conf['groups']
 
     data = []
-    for k,v in conf.items():
-        if k == 'DEFAULT':
-            continue
-        icon_path = v.get('icon', DEFAULT_ICON_PATH)
-        if not os.path.isfile(icon_path):
-            icon_path = DEFAULT_ICON_PATH
-        category = v.get('category', None)
-        version = v.get('version', None)
-        app_item = AppItem(k, v.get('desc'), v.get('exec'), icon_path,
-                           category, version)
+    for k, v in conf.items():
+        icon_path = v.get('icon', default_icon_path)
+        if not QFile(icon_path).exists():
+            icon_path = default_icon_path
+        groups = v.get('groups', default_groups)
+        version = v.get('version', get_app_version(imp_path_conf.get(k, 'undefined')))
+        app_item = AppItem(v.get('name'), v.get('desc'), v.get('exec'), icon_path,
+                           groups, version)
         data.append(app_item)
 
     return data
@@ -193,7 +174,7 @@ if __name__ == '__main__':
     import sys
     from subprocess import Popen
 
-    data = get_app_data()
+    data = get_app_data(filename='app_launcher.ini')
 
     class MyApp(QWidget):
         def __init__(self):
