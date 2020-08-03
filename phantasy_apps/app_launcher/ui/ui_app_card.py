@@ -23,6 +23,9 @@ class Ui_AppForm(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
+        self.app_ver_lbl = QtWidgets.QLabel(AppForm)
+        self.app_ver_lbl.setObjectName("app_ver_lbl")
+        self.horizontalLayout.addWidget(self.app_ver_lbl)
         spacerItem = QtWidgets.QSpacerItem(40, 20,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
@@ -67,18 +70,13 @@ class Ui_AppForm(object):
         self.app_btn.setMinimumSize(QtCore.QSize(128, 128))
         self.app_btn.setMaximumSize(QtCore.QSize(128, 128))
         self.app_btn.setBaseSize(QtCore.QSize(128, 128))
-        self.app_btn.setStyleSheet("QToolButton {\n"
-                                   "    border: 0px;\n"
-                                   "}\n"
-                                   "QToolButton:hover:!pressed\n"
-                                   "{\n"
-                                   "  border: 1px solid rgb(223, 223, 223);\n"
-                                   "}")
+        self.app_btn.setStyleSheet("")
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/tux.png"), QtGui.QIcon.Normal,
                        QtGui.QIcon.Off)
         self.app_btn.setIcon(icon)
         self.app_btn.setIconSize(QtCore.QSize(64, 64))
+        self.app_btn.setAutoRaise(True)
         self.app_btn.setObjectName("app_btn")
         self.horizontalLayout_2.addWidget(self.app_btn)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
@@ -158,6 +156,7 @@ class Ui_AppForm(object):
     def retranslateUi(self, AppForm):
         _translate = QtCore.QCoreApplication.translate
         AppForm.setWindowTitle(_translate("AppForm", "Form"))
+        self.app_ver_lbl.setText(_translate("AppForm", "v1.0"))
         self.app_btn.setText(_translate("AppForm", "APP ICON"))
         self.app_name_lbl.setText(_translate("AppForm", "APP NAME"))
         self.app_group_lbl.setText(_translate("AppForm",
