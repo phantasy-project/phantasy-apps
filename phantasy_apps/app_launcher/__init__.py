@@ -3,14 +3,14 @@
 import sys
 from phantasy_ui import QApp as QApplication
 
-from .app import AppLauncherWindow
+from .app_new import AppLauncherWindow
 
 __authors__ = "Tong Zhang"
 __copyright__ = "(c) 2019, Facility for Rare Isotope beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
 __title__ = "Global Launcher for FRIB Physics Apps"
-__version__ = '3.3'
+__version__ = '4.0'
 
 
 def run(cli=False):
