@@ -18,6 +18,7 @@ from .ui.ui_app_info import Ui_InfoForm
 class AppCard(QWidget, Ui_AppForm):
 
     favChanged = pyqtSignal(bool)
+    infoFormChanged = pyqtSignal(dict, bool)
 
     def __init__(self, name, groups, cmd=None, fav_on=False, desc=None,
                  version=None, parent=None, **kws):
@@ -41,9 +42,27 @@ class AppCard(QWidget, Ui_AppForm):
         for o in (self.fav_btn, self.app_btn, self.info_btn):
             o.setMouseTracking(True)
 
-        self.info_form = AppCardInfoForm(name, groups[0], fav_on, desc)
-        self.info_form.favChanged.connect(self.on_fav_changed)
-        self.favChanged.connect(self.info_form.on_fav_changed)
+#        self.info_form = AppCardInfoForm(name, groups[0], fav_on, desc)
+#        self.info_form.favChanged.connect(self.on_fav_changed)
+#        self.info_form.sig_close.connect(self.on_close_info)
+#        self.favChanged.connect(self.info_form.on_fav_changed)
+
+    def get_meta_info(self):
+        return {'name': self.name(), 'groups': self.groups(),
+                'fav': self.favorite(), 'desc': self.description()}
+
+    @pyqtSlot()
+    def on_close_info(self):
+        self.info_btn.toggled.disconnect()
+        self.info_btn.setChecked(False)
+        self.setStyleSheet("""
+        QWidget#AppForm {
+            border: 2px solid rgb(200, 200, 200);
+        }
+        QWidget#AppForm:hover:!pressed {
+            border: 2px solid rgb(138, 138, 138);
+        }""")
+        self.info_btn.toggled.connect(self.on_toggle_info)
 
     @pyqtSlot(bool)
     def on_fav_changed(self, on):
@@ -124,7 +143,7 @@ class AppCard(QWidget, Ui_AppForm):
             QWidget#AppForm:hover:!pressed {
                 border: 2px solid #04B13B;
             }""")
-            self.info_on()
+            self.infoFormChanged.emit(self.get_meta_info(), True)
         else:
             self.setStyleSheet("""
             QWidget#AppForm {
@@ -133,7 +152,7 @@ class AppCard(QWidget, Ui_AppForm):
             QWidget#AppForm:hover:!pressed {
                 border: 2px solid rgb(138, 138, 138);
             }""")
-            self.info_off()
+            self.infoFormChanged.emit(self.get_meta_info(), False)
 
     def mouseMoveEvent(self, evt):
         change_cursor = False
@@ -157,22 +176,16 @@ class AppCard(QWidget, Ui_AppForm):
     def on_launch_app(self):
         Popen(self._cmd, shell=True)
 
-    def info_on(self):
-        self.info_form.show()
-
-    def info_off(self):
-        self.info_form.close()
-
 
 class AppCardInfoForm(QWidget, Ui_InfoForm):
 
     favChanged = pyqtSignal(bool)
     runAppInTerminal = pyqtSignal(bool)
+    sig_close = pyqtSignal()
 
     def __init__(self, name, group, fav_on=False, desc=None,
                  parent=None, **kws):
         super(AppCardInfoForm, self).__init__(parent)
-        print(desc)
 
         self.setupUi(self)
         self.app_name.setText(name)
@@ -195,3 +208,12 @@ class AppCardInfoForm(QWidget, Ui_InfoForm):
     @pyqtSlot(bool)
     def on_toggle_fav(self, on):
         self.favChanged.emit(on)
+
+    @pyqtSlot()
+    def on_close(self):
+        self.sig_close.emit()
+        self.close()
+
+    def closeEvent(self, evt):
+        self.sig_close.emit()
+        QWidget.closeEvent(self, evt)
