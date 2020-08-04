@@ -7,8 +7,12 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QPainter
 from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QStyleOption
+from PyQt5.QtWidgets import QStyle
 from PyQt5.QtWidgets import QWidget
+
 from subprocess import Popen
 
 from .ui.ui_app_card import Ui_AppForm
@@ -41,11 +45,6 @@ class AppCard(QWidget, Ui_AppForm):
         self.setMouseTracking(True)
         for o in (self.fav_btn, self.app_btn, self.info_btn):
             o.setMouseTracking(True)
-
-#        self.info_form = AppCardInfoForm(name, groups[0], fav_on, desc)
-#        self.info_form.favChanged.connect(self.on_fav_changed)
-#        self.info_form.sig_close.connect(self.on_close_info)
-#        self.favChanged.connect(self.info_form.on_fav_changed)
 
     def get_meta_info(self):
         return {'name': self.name(), 'groups': self.groups(),
@@ -96,7 +95,7 @@ class AppCard(QWidget, Ui_AppForm):
 
     def setCommand(self, cmd):
         self._cmd = cmd
-        self.app_btn.clicked.connect(self.on_launch_app)
+        self.app_btn.clicked.connect(lambda:self.on_launch_app(False))
 
     def name(self):
         """str : App name.
@@ -165,16 +164,18 @@ class AppCard(QWidget, Ui_AppForm):
             self.unsetCursor()
 
     def paintEvent(self, evt):
-        from PyQt5.QtGui import QPainter
-        from PyQt5.QtWidgets import QStyleOption, QStyle
         opt = QStyleOption()
         opt.initFrom(self)
         p = QPainter(self)
         self.style().drawPrimitive(QStyle.PE_Widget, opt, p, self)
 
-    @pyqtSlot()
-    def on_launch_app(self):
-        Popen(self._cmd, shell=True)
+    @pyqtSlot(bool)
+    def on_launch_app(self, console):
+        if not console:
+            cmdline = self._cmd
+        else:
+            cmdline = "x-terminal-emulator -e " + self._cmd
+        Popen(cmdline, shell=True)
 
 
 class AppCardInfoForm(QWidget, Ui_InfoForm):
@@ -208,6 +209,10 @@ class AppCardInfoForm(QWidget, Ui_InfoForm):
     @pyqtSlot(bool)
     def on_toggle_fav(self, on):
         self.favChanged.emit(on)
+        if on:
+            self.fav_on_lbl.setText("Remove from Favorites")
+        else:
+            self.fav_on_lbl.setText("Add to Favorites")
 
     @pyqtSlot()
     def on_close(self):
@@ -217,3 +222,9 @@ class AppCardInfoForm(QWidget, Ui_InfoForm):
     def closeEvent(self, evt):
         self.sig_close.emit()
         QWidget.closeEvent(self, evt)
+
+    def paintEvent(self, evt):
+        opt = QStyleOption()
+        opt.initFrom(self)
+        p = QPainter(self)
+        self.style().drawPrimitive(QStyle.PE_Widget, opt, p, self)
