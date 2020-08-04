@@ -140,6 +140,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             app_card = self._app_card_dict[name]
             info_form.favChanged.connect(app_card.on_fav_changed)
             info_form.sig_close.connect(app_card.on_close_info)
+            info_form.runAppInTerminal.connect(app_card.on_launch_app)
             app_card.favChanged.connect(info_form.on_fav_changed)
             self._info_form_dict[name] = [info_form, True, self.sender(), None]
 
