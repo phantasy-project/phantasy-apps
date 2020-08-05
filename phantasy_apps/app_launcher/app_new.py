@@ -13,6 +13,8 @@ from PyQt5.QtWidgets import QWidget
 
 from subprocess import Popen
 from functools import partial
+import os
+import pwd
 
 from phantasy_ui import BaseAppForm
 
@@ -76,11 +78,6 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         #
         self.adjustSize()
 
-        #
-        #self.v.setContextMenuPolicy(Qt.CustomContextMenu)
-        #self.v.customContextMenuRequested.connect(
-        #        self.on_custom_menu_request)
-
     def on_launch_app(self, index, **kws):
         # slot
         item = self.v.model().item(index.row(), 0)
@@ -108,6 +105,9 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         return QSize(1600, 1200)
 
     def post_init_ui(self):
+        # uid
+        self.set_greetings()
+
         self._app_card_dict = {} # name: AppCard
         self._info_form_dict = {} # name: (info_form, on/off)
 
@@ -181,17 +181,6 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         QMainWindow.resizeEvent(self, evt)
         self.place_info_form()
 
-
-    def eventFilter(self, src, e):
-        if e.type() == QEvent.HoverEnter:
-            t = src.text()
-            self.textEdit.setHtml(MSG_TEMPLATE.format(msg=MSG[t]))
-            return True
-        if e.type() == QEvent.HoverLeave:
-            self.textEdit.setHtml(DEFAULT_MSG)
-            return True
-        return QMainWindow.eventFilter(self, src, e)
-
     @pyqtSlot()
     def on_add_launcher(self):
         """[VOID] Add new button as app launcher.
@@ -239,5 +228,16 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         else:
             n = int(xn)
         return n
+
+    def set_greetings(self):
+        s = pwd.getpwuid(os.getuid())
+        try:
+            u = s[4].strip(',')
+            assert u != ''
+        except AssertionError:
+            u = s[0]
+        finally:
+            self.greetings_lbl.setText("Welcome {}!".format(u.title()))
+
 
 

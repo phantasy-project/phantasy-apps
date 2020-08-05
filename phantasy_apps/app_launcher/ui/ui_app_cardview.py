@@ -80,14 +80,6 @@ class Ui_MainWindow(object):
         self.home_page.setObjectName("home_page")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.home_page)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.label_2 = QtWidgets.QLabel(self.home_page)
-        self.label_2.setStyleSheet("QLabel {\n"
-                                   "    padding: 10px 10px 10px 0px;\n"
-                                   "    border-bottom: 1px solid gray;\n"
-                                   "    border-radius: 2px;\n"
-                                   "}")
-        self.label_2.setObjectName("label_2")
-        self.gridLayout_2.addWidget(self.label_2, 0, 0, 1, 1)
         self.label_3 = QtWidgets.QLabel(self.home_page)
         self.label_3.setStyleSheet("QLabel {\n"
                                    "    padding: 10px 10px 10px 0px;\n"
@@ -95,6 +87,16 @@ class Ui_MainWindow(object):
                                    "}")
         self.label_3.setObjectName("label_3")
         self.gridLayout_2.addWidget(self.label_3, 1, 0, 1, 1)
+        self.greetings_lbl = QtWidgets.QLabel(self.home_page)
+        self.greetings_lbl.setStyleSheet("QLabel {\n"
+                                         "    padding: 10px 10px 10px 0px;\n"
+                                         "    border-bottom: 1px solid gray;\n"
+                                         "    border-radius: 2px;\n"
+                                         "    font-size: 22pt;\n"
+                                         "    font-weight: bold;\n"
+                                         "}")
+        self.greetings_lbl.setObjectName("greetings_lbl")
+        self.gridLayout_2.addWidget(self.greetings_lbl, 0, 0, 1, 1)
         self.fav_scrollArea = QtWidgets.QScrollArea(self.home_page)
         self.fav_scrollArea.setWidgetResizable(True)
         self.fav_scrollArea.setObjectName("fav_scrollArea")
@@ -167,32 +169,32 @@ class Ui_MainWindow(object):
         self.gridLayout_5 = QtWidgets.QGridLayout(self.fav_apps_page)
         self.gridLayout_5.setContentsMargins(0, 10, 0, 0)
         self.gridLayout_5.setObjectName("gridLayout_5")
-        self.scrollArea_2 = QtWidgets.QScrollArea(self.fav_apps_page)
-        self.scrollArea_2.setWidgetResizable(True)
-        self.scrollArea_2.setObjectName("scrollArea_2")
+        self.fav_scrollArea_alias = QtWidgets.QScrollArea(self.fav_apps_page)
+        self.fav_scrollArea_alias.setWidgetResizable(True)
+        self.fav_scrollArea_alias.setObjectName("fav_scrollArea_alias")
         self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_3.setGeometry(
             QtCore.QRect(0, 0, 1406, 713))
         self.scrollAreaWidgetContents_3.setObjectName(
             "scrollAreaWidgetContents_3")
-        self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_3)
-        self.gridLayout_5.addWidget(self.scrollArea_2, 0, 0, 1, 1)
+        self.fav_scrollArea_alias.setWidget(self.scrollAreaWidgetContents_3)
+        self.gridLayout_5.addWidget(self.fav_scrollArea_alias, 0, 0, 1, 1)
         self.tabWidget_2.addTab(self.fav_apps_page, "")
         self.groups_apps_page = QtWidgets.QWidget()
         self.groups_apps_page.setObjectName("groups_apps_page")
         self.gridLayout_6 = QtWidgets.QGridLayout(self.groups_apps_page)
         self.gridLayout_6.setContentsMargins(0, 10, 0, 0)
         self.gridLayout_6.setObjectName("gridLayout_6")
-        self.scrollArea_3 = QtWidgets.QScrollArea(self.groups_apps_page)
-        self.scrollArea_3.setWidgetResizable(True)
-        self.scrollArea_3.setObjectName("scrollArea_3")
+        self.grps_scrollArea = QtWidgets.QScrollArea(self.groups_apps_page)
+        self.grps_scrollArea.setWidgetResizable(True)
+        self.grps_scrollArea.setObjectName("grps_scrollArea")
         self.scrollAreaWidgetContents_4 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_4.setGeometry(
-            QtCore.QRect(0, 0, 1406, 714))
+            QtCore.QRect(0, 0, 1406, 713))
         self.scrollAreaWidgetContents_4.setObjectName(
             "scrollAreaWidgetContents_4")
-        self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_4)
-        self.gridLayout_6.addWidget(self.scrollArea_3, 0, 0, 1, 1)
+        self.grps_scrollArea.setWidget(self.scrollAreaWidgetContents_4)
+        self.gridLayout_6.addWidget(self.grps_scrollArea, 0, 0, 1, 1)
         self.tabWidget_2.addTab(self.groups_apps_page, "")
         self.gridLayout_3.addWidget(self.tabWidget_2, 1, 0, 1, 1)
         icon2 = QtGui.QIcon()
@@ -200,11 +202,17 @@ class Ui_MainWindow(object):
                         QtGui.QIcon.Off)
         self.tabWidget.addTab(self.apps_page, icon2, "")
         self.gridLayout.addWidget(self.tabWidget, 1, 0, 1, 1)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setContentsMargins(-1, 0, -1, -1)
+        self.bottombar = QtWidgets.QWidget(self.centralwidget)
+        self.bottombar.setStyleSheet("QWidget#bottombar {\n"
+                                     "    border-top: 1px solid gray;\n"
+                                     "    border-radius: 2px;\n"
+                                     "}")
+        self.bottombar.setObjectName("bottombar")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.bottombar)
+        self.horizontalLayout.setContentsMargins(-1, 1, -1, -1)
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.about_btn = QtWidgets.QToolButton(self.centralwidget)
+        self.about_btn = QtWidgets.QToolButton(self.bottombar)
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap(":/icons/frib.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
@@ -213,10 +221,10 @@ class Ui_MainWindow(object):
         self.about_btn.setAutoRaise(True)
         self.about_btn.setObjectName("about_btn")
         self.horizontalLayout.addWidget(self.about_btn)
-        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label = QtWidgets.QLabel(self.bottombar)
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
-        self.title_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.title_lbl = QtWidgets.QLabel(self.bottombar)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(1)
@@ -242,7 +250,7 @@ class Ui_MainWindow(object):
         self.title_lbl.setAlignment(QtCore.Qt.AlignCenter)
         self.title_lbl.setObjectName("title_lbl")
         self.horizontalLayout.addWidget(self.title_lbl)
-        self.toolButton = QtWidgets.QToolButton(self.centralwidget)
+        self.toolButton = QtWidgets.QToolButton(self.bottombar)
         icon4 = QtGui.QIcon()
         icon4.addPixmap(QtGui.QPixmap(":/icons/search.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -254,7 +262,7 @@ class Ui_MainWindow(object):
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.show_log_btn = QtWidgets.QToolButton(self.centralwidget)
+        self.show_log_btn = QtWidgets.QToolButton(self.bottombar)
         self.show_log_btn.setEnabled(False)
         icon5 = QtGui.QIcon()
         icon5.addPixmap(QtGui.QPixmap(":/icons/show.png"), QtGui.QIcon.Normal,
@@ -264,7 +272,7 @@ class Ui_MainWindow(object):
         self.show_log_btn.setAutoRaise(True)
         self.show_log_btn.setObjectName("show_log_btn")
         self.verticalLayout.addWidget(self.show_log_btn)
-        self.enable_debug_btn = QtWidgets.QToolButton(self.centralwidget)
+        self.enable_debug_btn = QtWidgets.QToolButton(self.bottombar)
         icon6 = QtGui.QIcon()
         icon6.addPixmap(QtGui.QPixmap(":/icons/log.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
@@ -275,7 +283,7 @@ class Ui_MainWindow(object):
         self.enable_debug_btn.setObjectName("enable_debug_btn")
         self.verticalLayout.addWidget(self.enable_debug_btn)
         self.horizontalLayout.addLayout(self.verticalLayout)
-        self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.bottombar, 2, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1440, 26))
@@ -283,28 +291,26 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menubar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         self.tabWidget_2.setCurrentIndex(0)
+        self.about_btn.clicked.connect(MainWindow.onAbout)
         self.enable_debug_btn.toggled['bool'].connect(
             MainWindow.on_enable_debug)
         self.show_log_btn.clicked.connect(MainWindow.on_show_log)
-        self.enable_debug_btn.toggled['bool'].connect(
-            self.show_log_btn.setEnabled)
-        self.about_btn.clicked.connect(MainWindow.onAbout)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label_2.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p><span style=\" font-size:22pt; font-weight:600;\">Welcome!</span></p></body></html>"
-            ))
         self.label_3.setText(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p><span style=\" font-size:20pt;\">Favorites</span></p></body></html>"
+            ))
+        self.greetings_lbl.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p><span style=\" font-size:22pt; font-weight:600;\">Welcome!</span></p></body></html>"
             ))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.home_page),
                                   _translate("MainWindow", "Home"))
@@ -328,12 +334,12 @@ class Ui_MainWindow(object):
         self.label.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p><span style=\" font-size:11pt;\">Facility for Rare Isotope Beams</span></p><p><span style=\" font-size:9pt;\">Michigan State University</span></p></body></html>"
+                "<html><head/><body><p><span style=\" font-size:10pt;\">Facility for Rare Isotope Beams</span></p><p><span style=\" font-size:8pt;\">Michigan State University</span></p></body></html>"
             ))
         self.title_lbl.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>High-level Physics Controls Applications</p></body></html>"
+                "<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">High-level Physics Applications</span></p></body></html>"
             ))
         self.toolButton.setText(_translate("MainWindow", "Search"))
         self.show_log_btn.setToolTip(
