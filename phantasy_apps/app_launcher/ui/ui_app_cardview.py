@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1440, 1080)
+        MainWindow.resize(1200, 900)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/app.png"), QtGui.QIcon.Normal,
                        QtGui.QIcon.Off)
@@ -21,15 +21,15 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
-        self.gridLayout.setContentsMargins(6, 6, 6, 6)
+        self.gridLayout.setContentsMargins(6, 6, 6, 0)
         self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
-        self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
+        self.main_tab = QtWidgets.QTabWidget(self.centralwidget)
         font = QtGui.QFont()
         font.setPointSize(16)
-        self.tabWidget.setFont(font)
-        self.tabWidget.setAutoFillBackground(False)
-        self.tabWidget.setStyleSheet(
+        self.main_tab.setFont(font)
+        self.main_tab.setAutoFillBackground(False)
+        self.main_tab.setStyleSheet(
             "QTabWidget::pane { \n"
             "    border-top: 1px solid #C2C7CB;\n"
             "}\n"
@@ -48,8 +48,8 @@ class Ui_MainWindow(object):
             "    border-bottom-color: #C2C7CB; /* same as the pane color */\n"
             "    border-top-left-radius: 2px;\n"
             "    border-top-right-radius: 2px;\n"
-            "    min-width: 8ex;\n"
-            "    padding: 4px;\n"
+            "    min-width: 16ex;\n"
+            "    padding: 10px;\n"
             "}\n"
             "\n"
             "QTabBar::tab:selected, QTabBar::tab:hover {\n"
@@ -70,12 +70,12 @@ class Ui_MainWindow(object):
             "QScrollArea {\n"
             "    border: none;\n"
             "}")
-        self.tabWidget.setTabPosition(QtWidgets.QTabWidget.North)
-        self.tabWidget.setTabShape(QtWidgets.QTabWidget.Rounded)
-        self.tabWidget.setIconSize(QtCore.QSize(64, 64))
-        self.tabWidget.setElideMode(QtCore.Qt.ElideNone)
-        self.tabWidget.setDocumentMode(False)
-        self.tabWidget.setObjectName("tabWidget")
+        self.main_tab.setTabPosition(QtWidgets.QTabWidget.North)
+        self.main_tab.setTabShape(QtWidgets.QTabWidget.Rounded)
+        self.main_tab.setIconSize(QtCore.QSize(64, 64))
+        self.main_tab.setElideMode(QtCore.Qt.ElideNone)
+        self.main_tab.setDocumentMode(False)
+        self.main_tab.setObjectName("main_tab")
         self.home_page = QtWidgets.QWidget()
         self.home_page.setObjectName("home_page")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.home_page)
@@ -102,14 +102,14 @@ class Ui_MainWindow(object):
         self.fav_scrollArea.setObjectName("fav_scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(
-            0, 0, 1406, 722))
+            0, 0, 1170, 561))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.fav_scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_2.addWidget(self.fav_scrollArea, 2, 0, 1, 1)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(":/icons/home.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.tabWidget.addTab(self.home_page, icon1, "")
+        self.main_tab.addTab(self.home_page, icon1, "")
         self.apps_page = QtWidgets.QWidget()
         self.apps_page.setObjectName("apps_page")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.apps_page)
@@ -122,11 +122,11 @@ class Ui_MainWindow(object):
                                    "}")
         self.label_4.setObjectName("label_4")
         self.gridLayout_3.addWidget(self.label_4, 0, 0, 1, 1)
-        self.tabWidget_2 = QtWidgets.QTabWidget(self.apps_page)
+        self.apps_tab = QtWidgets.QTabWidget(self.apps_page)
         font = QtGui.QFont()
         font.setPointSize(14)
-        self.tabWidget_2.setFont(font)
-        self.tabWidget_2.setStyleSheet(
+        self.apps_tab.setFont(font)
+        self.apps_tab.setStyleSheet(
             "QTabWidget::tab-bar {\n"
             "   border: 1px solid gray;\n"
             "}\n"
@@ -147,7 +147,7 @@ class Ui_MainWindow(object):
             "QTabWidget::pane { \n"
             "    border-top: 1px solid #C2C7CB;\n"
             "}")
-        self.tabWidget_2.setObjectName("tabWidget_2")
+        self.apps_tab.setObjectName("apps_tab")
         self.all_apps_page = QtWidgets.QWidget()
         self.all_apps_page.setObjectName("all_apps_page")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.all_apps_page)
@@ -157,29 +157,29 @@ class Ui_MainWindow(object):
         self.all_apps_scrollArea.setWidgetResizable(True)
         self.all_apps_scrollArea.setObjectName("all_apps_scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(
-            QtCore.QRect(0, 0, 1406, 713))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(
+            0, 0, 100, 20))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.all_apps_scrollArea.setWidget(self.scrollAreaWidgetContents_2)
         self.gridLayout_4.addWidget(self.all_apps_scrollArea, 0, 0, 1, 1)
-        self.tabWidget_2.addTab(self.all_apps_page, "")
+        self.apps_tab.addTab(self.all_apps_page, "")
         self.fav_apps_page = QtWidgets.QWidget()
         self.fav_apps_page.setObjectName("fav_apps_page")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.fav_apps_page)
         self.gridLayout_5.setContentsMargins(0, 10, 0, 0)
         self.gridLayout_5.setObjectName("gridLayout_5")
-        self.fav_scrollArea_alias = QtWidgets.QScrollArea(self.fav_apps_page)
-        self.fav_scrollArea_alias.setWidgetResizable(True)
-        self.fav_scrollArea_alias.setObjectName("fav_scrollArea_alias")
+        self.fav1_scrollArea = QtWidgets.QScrollArea(self.fav_apps_page)
+        self.fav1_scrollArea.setWidgetResizable(True)
+        self.fav1_scrollArea.setObjectName("fav1_scrollArea")
         self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(
-            QtCore.QRect(0, 0, 1406, 713))
+        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(
+            0, 0, 100, 20))
         self.scrollAreaWidgetContents_3.setObjectName(
             "scrollAreaWidgetContents_3")
-        self.fav_scrollArea_alias.setWidget(self.scrollAreaWidgetContents_3)
-        self.gridLayout_5.addWidget(self.fav_scrollArea_alias, 0, 0, 1, 1)
-        self.tabWidget_2.addTab(self.fav_apps_page, "")
+        self.fav1_scrollArea.setWidget(self.scrollAreaWidgetContents_3)
+        self.gridLayout_5.addWidget(self.fav1_scrollArea, 0, 0, 1, 1)
+        self.apps_tab.addTab(self.fav_apps_page, "")
         self.groups_apps_page = QtWidgets.QWidget()
         self.groups_apps_page.setObjectName("groups_apps_page")
         self.gridLayout_6 = QtWidgets.QGridLayout(self.groups_apps_page)
@@ -189,19 +189,19 @@ class Ui_MainWindow(object):
         self.grps_scrollArea.setWidgetResizable(True)
         self.grps_scrollArea.setObjectName("grps_scrollArea")
         self.scrollAreaWidgetContents_4 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_4.setGeometry(
-            QtCore.QRect(0, 0, 1406, 713))
+        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(
+            0, 0, 100, 20))
         self.scrollAreaWidgetContents_4.setObjectName(
             "scrollAreaWidgetContents_4")
         self.grps_scrollArea.setWidget(self.scrollAreaWidgetContents_4)
         self.gridLayout_6.addWidget(self.grps_scrollArea, 0, 0, 1, 1)
-        self.tabWidget_2.addTab(self.groups_apps_page, "")
-        self.gridLayout_3.addWidget(self.tabWidget_2, 1, 0, 1, 1)
+        self.apps_tab.addTab(self.groups_apps_page, "")
+        self.gridLayout_3.addWidget(self.apps_tab, 1, 0, 1, 1)
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap(":/icons/apps.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.tabWidget.addTab(self.apps_page, icon2, "")
-        self.gridLayout.addWidget(self.tabWidget, 1, 0, 1, 1)
+        self.main_tab.addTab(self.apps_page, icon2, "")
+        self.gridLayout.addWidget(self.main_tab, 1, 0, 1, 1)
         self.bottombar = QtWidgets.QWidget(self.centralwidget)
         self.bottombar.setStyleSheet("QWidget#bottombar {\n"
                                      "    border-top: 1px solid gray;\n"
@@ -209,7 +209,7 @@ class Ui_MainWindow(object):
                                      "}")
         self.bottombar.setObjectName("bottombar")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.bottombar)
-        self.horizontalLayout.setContentsMargins(-1, 1, -1, -1)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.about_btn = QtWidgets.QToolButton(self.bottombar)
@@ -233,19 +233,15 @@ class Ui_MainWindow(object):
             self.title_lbl.sizePolicy().hasHeightForWidth())
         self.title_lbl.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
-        font.setPointSize(20)
+        font.setPointSize(22)
         font.setBold(True)
         font.setWeight(75)
         self.title_lbl.setFont(font)
         self.title_lbl.setStyleSheet("QLabel {\n"
                                      "    font-weight: bold;\n"
-                                     "    font-size: 20pt;\n"
-                                     "    /*border: 0.5px solid gray;\n"
-                                     "    border-radius: 3px;\n"
+                                     "    font-size: 22pt;\n"
                                      "    padding: 5px 10px 5px 10px;\n"
-                                     "    background-color: white;\n"
                                      "    color: blue;\n"
-                                     "    */\n"
                                      "}")
         self.title_lbl.setAlignment(QtCore.Qt.AlignCenter)
         self.title_lbl.setObjectName("title_lbl")
@@ -286,13 +282,13 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.bottombar, 2, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1440, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1200, 24))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
-        self.tabWidget_2.setCurrentIndex(0)
+        self.main_tab.setCurrentIndex(0)
+        self.apps_tab.setCurrentIndex(0)
         self.about_btn.clicked.connect(MainWindow.onAbout)
         self.enable_debug_btn.toggled['bool'].connect(
             MainWindow.on_enable_debug)
@@ -312,24 +308,21 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p><span style=\" font-size:22pt; font-weight:600;\">Welcome!</span></p></body></html>"
             ))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.home_page),
-                                  _translate("MainWindow", "Home"))
+        self.main_tab.setTabText(self.main_tab.indexOf(self.home_page),
+                                 _translate("MainWindow", "Home"))
         self.label_4.setText(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p><span style=\" font-size:22pt; font-weight:600;\">Apps</span></p></body></html>"
             ))
-        self.tabWidget_2.setTabText(
-            self.tabWidget_2.indexOf(self.all_apps_page),
-            _translate("MainWindow", "All"))
-        self.tabWidget_2.setTabText(
-            self.tabWidget_2.indexOf(self.fav_apps_page),
-            _translate("MainWindow", "Favorites"))
-        self.tabWidget_2.setTabText(
-            self.tabWidget_2.indexOf(self.groups_apps_page),
-            _translate("MainWindow", "Groups"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.apps_page),
-                                  _translate("MainWindow", "Apps"))
+        self.apps_tab.setTabText(self.apps_tab.indexOf(self.all_apps_page),
+                                 _translate("MainWindow", "All"))
+        self.apps_tab.setTabText(self.apps_tab.indexOf(self.fav_apps_page),
+                                 _translate("MainWindow", "Favorites"))
+        self.apps_tab.setTabText(self.apps_tab.indexOf(self.groups_apps_page),
+                                 _translate("MainWindow", "Groups"))
+        self.main_tab.setTabText(self.main_tab.indexOf(self.apps_page),
+                                 _translate("MainWindow", "Apps"))
         self.about_btn.setText(_translate("MainWindow", "..."))
         self.label.setText(
             _translate(
@@ -337,10 +330,8 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p><span style=\" font-size:10pt;\">Facility for Rare Isotope Beams</span></p><p><span style=\" font-size:8pt;\">Michigan State University</span></p></body></html>"
             ))
         self.title_lbl.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p align=\"center\"><span style=\" font-size:22pt;\">High-level Physics Applications</span></p></body></html>"
-            ))
+            _translate("MainWindow",
+                       "<html><head/><body><p><br/></p></body></html>"))
         self.toolButton.setText(_translate("MainWindow", "Search"))
         self.show_log_btn.setToolTip(
             _translate("MainWindow", "Show log messages"))
