@@ -3,6 +3,7 @@
 import importlib
 import os
 import toml
+from collections import OrderedDict
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QFile
@@ -53,7 +54,7 @@ class AppDataModel(QStandardItemModel):
             self.setHeaderData(i, Qt.Horizontal, s)
 
     def set_data(self):
-        for app in self._app_items:
+        for app in self._app_items.values():
             item_name = QStandardItem(app.name)
             item_name.cmd = app.cmd
             item_name.icon = icon = QIcon(QPixmap(app.icon_path))
@@ -140,7 +141,7 @@ def get_app_version(pkg_path):
 
 
 def get_app_data(path=None, filename='app_launcher.ini'):
-    """Return a list of app data.
+    """Return a dict of app data, key: name.
     """
 
     # app conf
@@ -153,7 +154,7 @@ def get_app_data(path=None, filename='app_launcher.ini'):
     default_icon_path = app_default_conf['icon']
     default_groups = app_default_conf['groups']
 
-    data = []
+    data = OrderedDict()
     for k, v in conf.items():
         icon_path = v.get('icon', default_icon_path)
         if not QFile(icon_path).exists():
@@ -162,7 +163,7 @@ def get_app_data(path=None, filename='app_launcher.ini'):
         version = v.get('version', get_app_version(imp_path_conf.get(k, 'undefined')))
         app_item = AppItem(v.get('name'), v.get('desc'), v.get('exec'), icon_path,
                            groups, version)
-        data.append(app_item)
+        data.update([(app_item.name, app_item)])
 
     return data
 
