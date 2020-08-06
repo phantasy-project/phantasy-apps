@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import QEvent
 from PyQt5.QtCore import QSize
-from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMenu
@@ -68,9 +66,20 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         # debug
         self._debug = False
 
+        #
         self._margin = 20
         self._spacing = 40
         self._width = 300
+        #
+        # value: {name: AppCard}
+        self._app_card_dict = { 'fav': {}, 'fav1': {}, 'all': {} }
+        # value: {name: (info_form, on/off, sender, iidx)}
+        self._info_form_dict = {'fav': {}, 'fav1': {}, 'all': {} }
+        self._layout_dict = {'fav': None, 'fav1': None, 'all': None}
+        self._area_dict = {'fav': self.fav_scrollArea,
+                           'fav1': self.fav1_scrollArea,
+                           'all': self.all_apps_scrollArea}
+        self._apps_tab_page = {0: 'all', 1: 'fav1', 2: 'grps'}
 
         # post init ui
         self.post_init_ui()
@@ -101,6 +110,61 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         act1.triggered.connect(partial(self.on_launch_app, index))
         act2.triggered.connect(partial(self.on_launch_app, index, detached=True))
 
+    @pyqtSlot(int)
+    def on_current_changed(self, nested, i):
+        self.clear_info_form(self._current_page)
+        if not nested:
+            if i == 0:
+                page = 'fav'
+            else:
+                page = self._apps_tab_page[self.apps_tab.currentIndex()]
+        else:
+            page = self._apps_tab_page[i]
+        self._current_page = page
+        self.set_page(page)
+
+    def clear_info_form(self, page):
+        if page == -1:
+            return
+        # clear info forms.
+        del_names = []
+        for k, v in self._info_form_dict[page].items():
+            info_form, show, _, iidx = v
+            if show:
+                layout = self._layout_dict[page]
+                w = layout.itemAt(iidx).widget()
+                layout.removeWidget(w)
+                w.sig_close.emit()
+                w.setParent(None)
+                del_names.append(k)
+        for i in del_names:
+            self._info_form_dict[page].pop(i)
+
+    def set_page(self, page):
+        area = self._area_dict[page]
+        w = area.takeWidget()
+        w.setParent(None)
+        w = QWidget(self)
+        w.setContentsMargins(0, self._margin, 0, self._margin)
+        layout = FlowLayout(spacing=self._spacing)
+        self._layout_dict[page] = layout
+        for name, app_item in self._app_data.items():
+            groups = app_item.groups
+            cmd = app_item.cmd
+            desc = app_item.desc
+            ver = app_item.ver
+            fav_on = 'favorite' in groups
+            if page in ['fav', 'fav1'] and not fav_on:
+                continue
+            card = AppCard(name, groups, cmd, fav_on, desc, ver, self, width=self._width)
+            card.setIcon(app_item.icon_path)
+            card.infoFormChanged.connect(partial(self.on_info_form_changed, page))
+            card.favChanged.connect(self.on_fav_changed)
+            self._app_card_dict[page][name] = card
+            layout.addWidget(card)
+        w.setLayout(layout)
+        area.setWidget(w)
+
     def sizeHint(self):
         return QSize(1600, 1200)
 
@@ -108,78 +172,66 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         # uid
         self.set_greetings()
 
-        self._app_card_dict = {} # name: AppCard
-        self._info_form_dict = {} # name: (info_form, on/off)
-
-        w = QWidget(self)
-        w.setContentsMargins(0, self._margin, 0, self._margin)
-        layout = self.layout = FlowLayout(spacing=self._spacing)
-        for app_item in self._app_data:
-            name = app_item.name
-            groups = app_item.groups
-            cmd = app_item.cmd
-            desc = app_item.desc
-            ver = app_item.ver
-            fav_on = 'favorite' in groups
-            card = AppCard(name, groups, cmd, fav_on, desc, ver, self, width=self._width)
-            card.setIcon(app_item.icon_path)
-            card.infoFormChanged.connect(self.on_info_form_changed)
-            self._app_card_dict[name] = card
-            layout.addWidget(card)
-        w.setLayout(layout)
-        self.all_apps_scrollArea.setWidget(w)
+        self._current_page = -1
+        self.apps_tab.currentChanged.connect(partial(self.on_current_changed, True))
+        self.main_tab.currentChanged.connect(partial(self.on_current_changed, False))
+        self.main_tab.currentChanged.emit(self.main_tab.currentIndex())
 
     @pyqtSlot(dict, bool)
-    def on_info_form_changed(self, meta_info, show):
+    def on_info_form_changed(self, page, meta_info, show):
         name = meta_info['name']
-        if name not in self._info_form_dict:
+        if name not in self._info_form_dict[page]:
             group = meta_info['groups'][0]
             fav_on = meta_info['fav']
             desc = meta_info['desc']
             info_form = AppCardInfoForm(name, group, fav_on, desc)
-            app_card = self._app_card_dict[name]
-            info_form.favChanged.connect(app_card.on_fav_changed)
-            info_form.sig_close.connect(app_card.on_close_info)
-            info_form.runAppInTerminal.connect(app_card.on_launch_app)
-            app_card.favChanged.connect(info_form.on_fav_changed)
-            self._info_form_dict[name] = [info_form, True, self.sender(), None]
+            card = self._app_card_dict[page][name]
+            info_form.favChanged.connect(card.on_fav_changed)
+            info_form.sig_close.connect(card.on_close_info)
+            info_form.runAppInTerminal.connect(card.on_launch_app)
+            card.favChanged.connect(info_form.on_fav_changed)
+            self._info_form_dict[page][name] = [info_form, True, self.sender(), None]
 
         if show:
-            for k, v in self._info_form_dict.items():
+            for k, v in self._info_form_dict[page].items():
                 if k == name: continue
                 v[1] = False
         else:
-            self._info_form_dict[name][1] = False
+            self._info_form_dict[page][name][1] = False
 
-        self.place_info_form()
+        self.place_info_form(page)
 
-    def place_info_form(self):
+    def place_info_form(self, page):
+        #
+        area = self._area_dict[page]
+        layout = self._layout_dict[page]
+        #
         del_names = []
-        for k, v in self._info_form_dict.items():
+        for k, v in self._info_form_dict[page].items():
             info_form, show, sender, iidx = v
-            n = self._get_row_item_count(self.all_apps_scrollArea, self._spacing, self._width)
+            n = self._get_row_item_count(area, self._spacing, self._width)
 
             if show:
-                idx = self.layout.indexOf(sender)
+                idx = layout.indexOf(sender)
                 iidx = (1 + idx // n) * n
-                iidx = min(iidx, self.layout.count())
+                iidx = min(iidx, layout.count())
                 info_form.setFixedWidth(
                     n * (self._spacing + self._width) - self._spacing)
-                self.layout.insertWidget(iidx, info_form)
+                layout.insertWidget(iidx, info_form)
                 v[3] = iidx
             else:
-                w = self.layout.itemAt(iidx).widget()
-                self.layout.removeWidget(w)
+                w = layout.itemAt(iidx).widget()
+                layout.removeWidget(w)
                 w.sig_close.emit()
                 w.setParent(None)
                 del_names.append(k)
 
         for i in del_names:
-            self._info_form_dict.pop(i)
+            self._info_form_dict[page].pop(i)
 
     def resizeEvent(self, evt):
         QMainWindow.resizeEvent(self, evt)
-        self.place_info_form()
+        self.place_info_form(self._current_page)
 
     @pyqtSlot()
     def on_add_launcher(self):
@@ -239,5 +291,10 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         finally:
             self.greetings_lbl.setText("Welcome {}!".format(u.title()))
 
-
-
+    @pyqtSlot(bool)
+    def on_fav_changed(self, on):
+        name = self.sender().name()
+        if on:
+            self._app_data[name].groups.append('favorite')
+        else:
+            self._app_data[name].groups.remove('favorite')
