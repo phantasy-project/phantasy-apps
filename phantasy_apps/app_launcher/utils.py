@@ -159,7 +159,7 @@ def get_app_data(path=None, filename='app_launcher.ini'):
         icon_path = v.get('icon', default_icon_path)
         if not QFile(icon_path).exists():
             icon_path = default_icon_path
-        groups = v.get('groups', default_groups)
+        groups = v.get('groups', default_groups[:])
         version = v.get('version', get_app_version(imp_path_conf.get(k, 'undefined')))
         app_item = AppItem(v.get('name'), v.get('desc'), v.get('exec'), icon_path,
                            groups, version)
