@@ -78,7 +78,8 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         self._layout_dict = {'fav': None, 'fav1': None, 'all': None}
         self._area_dict = {'fav': self.fav_scrollArea,
                            'fav1': self.fav1_scrollArea,
-                           'all': self.all_apps_scrollArea}
+                           'all': self.all_apps_scrollArea,
+                           'grps': self.grps_scrollArea,}
         self._apps_tab_page = {0: 'all', 1: 'fav1', 2: 'grps'}
 
         # post init ui
@@ -124,6 +125,10 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         self.set_page(page)
 
     def clear_info_form(self, page):
+        # TODO
+        if page == 'grps':
+            return
+        #
         if page == -1:
             return
         # clear info forms.
@@ -141,6 +146,13 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             self._info_form_dict[page].pop(i)
 
     def set_page(self, page):
+        # TODO
+        if page == 'grps':
+            from PyQt5.QtWidgets import QMessageBox
+            QMessageBox.warning(self, "Group Page", "To be implemeneted",
+                    QMessageBox.Ok)
+            return
+        #
         area = self._area_dict[page]
         w = area.takeWidget()
         w.setParent(None)
