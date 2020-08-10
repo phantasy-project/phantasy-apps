@@ -123,6 +123,15 @@ class AppItem(object):
         self.groups = groups
         self.ver = version
 
+    def __contains__(self, item):
+        item = item.lower()
+        if item in self.name.lower() or item.lower() in self.desc.lower() \
+           or item in self.cmd.lower() or item in self.ver.lower() \
+           or item in ' '.join(self.groups).lower():
+               return True
+        else:
+            return False
+
     def __repr__(self):
         return f"AppItem({self.name}, {self.desc[:10]}..., {self.cmd[:10]}..., {self.icon_path[:10]}..., {self.groups}, {self.ver})"
 
