@@ -72,10 +72,12 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         self._width = 300
         #
         # value: {name: AppCard}
-        self._app_card_dict = { 'fav': {}, 'fav1': {}, 'all': {} }
+        self._app_card_dict = { 'fav': {}, 'fav1': {}, 'all': {},
+                                'search_apps': {}, 'search_fav': {}}
         # value: {name: (info_form, on/off, sender, iidx)}
         self._info_form_dict = {'fav': {}, 'fav1': {}, 'all': {} }
-        self._layout_dict = {'fav': None, 'fav1': None, 'all': None}
+        self._layout_dict = {'fav': None, 'fav1': None, 'all': None,
+                             'search_fav': None, 'search_apps': None}
         self._area_dict = {'fav': self.fav_scrollArea,
                            'fav1': self.fav1_scrollArea,
                            'all': self.all_apps_scrollArea,
@@ -113,11 +115,16 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(int)
     def on_current_changed(self, nested, i):
+        self._nested = nested
+        self._current_index = i
         self.clear_info_form(self._current_page)
         if not nested:
             if i == 0:
                 page = 'fav'
             else:
+                # quick fix for nest bit and page index
+                self._nested = True
+                self._current_index = self.apps_tab.currentIndex()
                 page = self._apps_tab_page[self.apps_tab.currentIndex()]
         else:
             page = self._apps_tab_page[i]
@@ -327,4 +334,149 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot('QString')
     def on_search_updated(self, s):
-        print("searching: ", s)
+        matched_fav_items = []
+        matched_other_items = []
+        for name, item in self._app_data.items():
+            if s in item:
+                if 'favorite' in item.groups:
+                    matched_fav_items.append(item)
+                else:
+                    matched_other_items.append(item)
+        self.show_search_results(s, matched_fav_items, matched_other_items)
+
+    def show_search_results(self, s, fav_items, other_items):
+        if s == '':
+            self.search_btn.setChecked(False)
+            return
+
+        from PyQt5.QtWidgets import QLabel, QVBoxLayout, QSpacerItem, QSizePolicy
+        from PyQt5.QtWidgets import QScrollArea
+
+        total_items = len(fav_items) + len(other_items)
+        if self.main_tab.widget(2) is None:
+            w = QWidget()
+            self.main_tab.addTab(w, 'Search')
+
+            headtext_lbl = QLabel(w)
+            headtext_lbl.setObjectName('headtext_lbl')
+            headtext_lbl.setStyleSheet(
+                    "QLabel {\n"
+                    "    padding: 10px 10px 10px 0px;\n"
+                    "    border-bottom: 1px solid gray;\n"
+                    "    border-radius: 2px;\n"
+                    "    font-size: 22pt;\n"
+                    "    font-weight: bold;\n"
+                    "}")
+            headtext_lbl.setText("Search Results: '{}' ({})".format(s, total_items))
+            layout = QVBoxLayout()
+            layout.addWidget(headtext_lbl)
+
+            # fav group
+            fav_lbl = QLabel(w)
+            fav_lbl.setText("Favorites")
+            fav_lbl.setObjectName('fav_group_lbl')
+            fav_lbl.setStyleSheet(
+                    "QLabel {\n"
+                    "    padding: 10px 10px 10px 0px;\n"
+                    "    color: darkgreen;\n"
+                    "    font-size: 20pt;\n"
+                    "}")
+            layout.addWidget(fav_lbl)
+            fav_area = QScrollArea(w)
+            fav_area.setObjectName('fav_area')
+            fav_area.setWidgetResizable(True)
+            layout.addWidget(fav_area)
+
+            # apps group
+            apps_lbl = QLabel(w)
+            apps_lbl.setText("Apps")
+            apps_lbl.setObjectName('apps_group_lbl')
+            apps_lbl.setStyleSheet(
+                    "QLabel {\n"
+                    "    padding: 10px 10px 10px 0px;\n"
+                    "    color: darkgreen;\n"
+                    "    font-size: 20pt;\n"
+                    "}")
+            layout.addWidget(apps_lbl)
+            apps_area = QScrollArea(w)
+            apps_area.setObjectName('apps_area')
+            apps_area.setWidgetResizable(True)
+            layout.addWidget(apps_area)
+
+            #
+            spacer = QSpacerItem(100, 20, QSizePolicy.Minimum, QSizePolicy.Expanding)
+            layout.addItem(spacer)
+            w.setLayout(layout)
+        else:
+            w = self.main_tab.widget(2)
+            w.findChild(QLabel, 'headtext_lbl').setText("Search Results: '{}' ({})".format(s, total_items))
+
+        self.main_tab.currentChanged.disconnect()
+        self.main_tab.setCurrentIndex(2)
+        self.main_tab.currentChanged.connect(partial(self.on_current_changed, False))
+
+        # show filtered items, group by Favorites and Apps
+        fav_area = w.findChild(QScrollArea, 'fav_area')
+        w1 = fav_area.takeWidget()
+        if w1 is not None:
+            w1.setParent(None)
+        w1 = QWidget(w)
+        w1.setContentsMargins(0, self._margin, 0, self._margin)
+        layout = FlowLayout(spacing=self._spacing)
+        self._layout_dict['search_fav'] = layout
+        for app_item in fav_items:
+            groups = app_item.groups
+            cmd = app_item.cmd
+            desc = app_item.desc
+            ver = app_item.ver
+            name = app_item.name
+            card = AppCard(name, groups, cmd, True, desc, ver, self, width=self._width)
+            card.setIcon(app_item.icon_path)
+            card.infoFormChanged.connect(partial(self.on_info_form_changed, 'search_fav'))
+            card.favChanged.connect(self.on_fav_changed)
+            self._app_card_dict['search_fav'][name] = card
+            layout.addWidget(card)
+        w1.setLayout(layout)
+        fav_area.setWidget(w1)
+
+        apps_area = w.findChild(QScrollArea, 'apps_area')
+        w2 = apps_area.takeWidget()
+        if w2 is not None:
+            w2.setParent(None)
+        w2 = QWidget(w)
+        w2.setContentsMargins(0, self._margin, 0, self._margin)
+        layout = FlowLayout(spacing=self._spacing)
+        self._layout_dict['search_apps'] = layout
+        for app_item in other_items:
+            groups = app_item.groups
+            cmd = app_item.cmd
+            desc = app_item.desc
+            ver = app_item.ver
+            name = app_item.name
+            card = AppCard(name, groups, cmd, False, desc, ver, self, width=self._width)
+            card.setIcon(app_item.icon_path)
+            card.infoFormChanged.connect(partial(self.on_info_form_changed, 'search_apps'))
+            card.favChanged.connect(self.on_fav_changed)
+            self._app_card_dict['search_apps'][name] = card
+            layout.addWidget(card)
+        w2.setLayout(layout)
+        apps_area.setWidget(w2)
+
+        #
+        w.findChild(QLabel, 'fav_group_lbl').setVisible(not fav_items==[])
+        w.findChild(QLabel, 'apps_group_lbl').setVisible(not other_items==[])
+        apps_area.setVisible(not other_items==[])
+        fav_area.setVisible(not fav_items==[])
+
+    @pyqtSlot(bool)
+    def on_enable_search(self, enabled):
+        if not enabled and self.main_tab.currentIndex() == 2:
+            # switch back to last page
+            if self._nested:
+                self.main_tab.setCurrentIndex(1)
+                self.apps_tab.setCurrentIndex(self._current_index)
+            else:
+                self.main_tab.setCurrentIndex(self._current_index)
+            # clean search page
+            self.main_tab.removeTab(2)
+
