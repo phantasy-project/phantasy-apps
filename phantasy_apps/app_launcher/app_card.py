@@ -65,7 +65,6 @@ class AppCard(QWidget, Ui_AppForm):
 
     @pyqtSlot(bool)
     def on_fav_changed(self, on):
-        print("Change fav to: ", on)
         self.fav_btn.setChecked(on)
 
     def setIcon(self, icon_path):

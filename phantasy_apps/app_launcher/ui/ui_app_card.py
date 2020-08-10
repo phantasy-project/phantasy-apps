@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_AppForm(object):
     def setupUi(self, AppForm):
         AppForm.setObjectName("AppForm")
-        AppForm.resize(196, 337)
+        AppForm.resize(196, 333)
         AppForm.setStyleSheet("QWidget#AppForm {\n"
                               "    border: 2px solid rgb(200,200,200);\n"
                               "}\n"
@@ -33,21 +33,21 @@ class Ui_AppForm(object):
         self.fav_btn = QtWidgets.QToolButton(AppForm)
         self.fav_btn.setStyleSheet(
             "QToolButton {\n"
-            "    border-image: url(\":/icons/fav-off.png\");\n"
+            "    border-image: url(\":/icons/fav-off.svg\");\n"
             "    width: 32px;\n"
             "    height: 32px;\n"
             "    background-repeat: no-repeat;\n"
             "}\n"
             "QToolButton::hover {\n"
-            "    border-image: url(:/icons/fav-off-hover.png);\n"
+            "    border-image: url(:/icons/fav-off-hover.svg);\n"
             "    background-repeat: no-repeat;\n"
             "}\n"
             "QToolButton::checked {\n"
-            "    border-image: url(:/icons/fav-on.png);\n"
+            "    border-image: url(:/icons/fav-on.svg);\n"
             "    background-repeat: no-repeat;\n"
             "}\n"
             "QToolButton::unchecked {\n"
-            "    border-image: url(:/icons/fav-off.png);\n"
+            "    border-image: url(:/icons/fav-off.svg);\n"
             "    background-repeat: no-repeat;\n"
             "}")
         self.fav_btn.setText("")

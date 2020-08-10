@@ -63,12 +63,10 @@ class Ui_InfoForm(object):
         self.fav_btn = QtWidgets.QToolButton(InfoForm)
         self.fav_btn.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/icons/fav-off-action.png"),
+        icon.addPixmap(QtGui.QPixmap(":/icons/fav-off-action.svg"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon.addPixmap(QtGui.QPixmap(":/icons/fav-on-action.png"),
+        icon.addPixmap(QtGui.QPixmap(":/icons/fav-on-action.svg"),
                        QtGui.QIcon.Active, QtGui.QIcon.On)
-        icon.addPixmap(QtGui.QPixmap(":/icons/fav-on-action.png"),
-                       QtGui.QIcon.Selected, QtGui.QIcon.On)
         self.fav_btn.setIcon(icon)
         self.fav_btn.setIconSize(QtCore.QSize(32, 32))
         self.fav_btn.setCheckable(True)
