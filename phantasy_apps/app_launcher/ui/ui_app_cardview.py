@@ -24,6 +24,111 @@ class Ui_MainWindow(object):
         self.gridLayout.setContentsMargins(6, 6, 6, 0)
         self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
+        self.bottombar = QtWidgets.QWidget(self.centralwidget)
+        self.bottombar.setStyleSheet("QWidget#bottombar {\n"
+                                     "    border-top: 1px solid gray;\n"
+                                     "    border-radius: 2px;\n"
+                                     "}")
+        self.bottombar.setObjectName("bottombar")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.bottombar)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout.setSpacing(0)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.about_btn = QtWidgets.QToolButton(self.bottombar)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/icons/frib.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.about_btn.setIcon(icon1)
+        self.about_btn.setIconSize(QtCore.QSize(64, 64))
+        self.about_btn.setAutoRaise(True)
+        self.about_btn.setObjectName("about_btn")
+        self.horizontalLayout.addWidget(self.about_btn)
+        self.label = QtWidgets.QLabel(self.bottombar)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label.sizePolicy().hasHeightForWidth())
+        self.label.setSizePolicy(sizePolicy)
+        self.label.setObjectName("label")
+        self.horizontalLayout.addWidget(self.label)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setContentsMargins(-1, -1, 0, -1)
+        self.horizontalLayout_2.setSpacing(4)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        spacerItem = QtWidgets.QSpacerItem(100, 20,
+                                           QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
+        self.search_btn = QtWidgets.QToolButton(self.bottombar)
+        self.search_btn.setStyleSheet(
+            "QToolButton {\n"
+            "    border-image: url(\":/icons/search.svg\");\n"
+            "    width: 32px;\n"
+            "    height: 32px;\n"
+            "    background-repeat: no-repeat;\n"
+            "}\n"
+            "QToolButton::hover {\n"
+            "    border-image: url(:/icons/search-on.svg);\n"
+            "    background-repeat: no-repeat;\n"
+            "}\n"
+            "QToolButton::checked {\n"
+            "    border-image: url(:/icons/search-on.svg);\n"
+            "    background-repeat: no-repeat;\n"
+            "}\n"
+            "QToolButton::unchecked {\n"
+            "    border-image: url(:/icons/search.svg);\n"
+            "    background-repeat: no-repeat;\n"
+            "}")
+        self.search_btn.setText("")
+        self.search_btn.setIconSize(QtCore.QSize(32, 32))
+        self.search_btn.setCheckable(True)
+        self.search_btn.setAutoRaise(True)
+        self.search_btn.setObjectName("search_btn")
+        self.horizontalLayout_2.addWidget(self.search_btn)
+        self.search_lineEdit = QtWidgets.QLineEdit(self.bottombar)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.search_lineEdit.sizePolicy().hasHeightForWidth())
+        self.search_lineEdit.setSizePolicy(sizePolicy)
+        self.search_lineEdit.setStyleSheet("QLineEdit {\n"
+                                           "    height: 32px;\n"
+                                           "    padding: 2px;\n"
+                                           "    border: 1px solid gray;\n"
+                                           "    border-radius: 2px;\n"
+                                           "}")
+        self.search_lineEdit.setObjectName("search_lineEdit")
+        self.horizontalLayout_2.addWidget(self.search_lineEdit)
+        self.horizontalLayout.addLayout(self.horizontalLayout_2)
+        self.verticalLayout = QtWidgets.QVBoxLayout()
+        self.verticalLayout.setSpacing(0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.show_log_btn = QtWidgets.QToolButton(self.bottombar)
+        self.show_log_btn.setEnabled(False)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/icons/show.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.show_log_btn.setIcon(icon2)
+        self.show_log_btn.setIconSize(QtCore.QSize(20, 20))
+        self.show_log_btn.setAutoRaise(True)
+        self.show_log_btn.setObjectName("show_log_btn")
+        self.verticalLayout.addWidget(self.show_log_btn)
+        self.enable_debug_btn = QtWidgets.QToolButton(self.bottombar)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/icons/log.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.enable_debug_btn.setIcon(icon3)
+        self.enable_debug_btn.setIconSize(QtCore.QSize(20, 20))
+        self.enable_debug_btn.setCheckable(True)
+        self.enable_debug_btn.setAutoRaise(True)
+        self.enable_debug_btn.setObjectName("enable_debug_btn")
+        self.verticalLayout.addWidget(self.enable_debug_btn)
+        self.horizontalLayout.addLayout(self.verticalLayout)
+        self.gridLayout.addWidget(self.bottombar, 4, 0, 1, 1)
         self.main_tab = QtWidgets.QTabWidget(self.centralwidget)
         font = QtGui.QFont()
         font.setPointSize(16)
@@ -106,10 +211,10 @@ class Ui_MainWindow(object):
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.fav_scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_2.addWidget(self.fav_scrollArea, 2, 0, 1, 1)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/icons/home.png"), QtGui.QIcon.Normal,
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/icons/home.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.main_tab.addTab(self.home_page, icon1, "")
+        self.main_tab.addTab(self.home_page, icon4, "")
         self.apps_page = QtWidgets.QWidget()
         self.apps_page.setObjectName("apps_page")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.apps_page)
@@ -198,116 +303,11 @@ class Ui_MainWindow(object):
         self.gridLayout_6.addWidget(self.grps_scrollArea, 0, 0, 1, 1)
         self.apps_tab.addTab(self.groups_apps_page, "")
         self.gridLayout_3.addWidget(self.apps_tab, 1, 0, 1, 1)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/icons/apps.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.main_tab.addTab(self.apps_page, icon2, "")
-        self.gridLayout.addWidget(self.main_tab, 1, 0, 1, 1)
-        self.bottombar = QtWidgets.QWidget(self.centralwidget)
-        self.bottombar.setStyleSheet("QWidget#bottombar {\n"
-                                     "    border-top: 1px solid gray;\n"
-                                     "    border-radius: 2px;\n"
-                                     "}")
-        self.bottombar.setObjectName("bottombar")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.bottombar)
-        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout.setSpacing(0)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.about_btn = QtWidgets.QToolButton(self.bottombar)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/icons/frib.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.about_btn.setIcon(icon3)
-        self.about_btn.setIconSize(QtCore.QSize(64, 64))
-        self.about_btn.setAutoRaise(True)
-        self.about_btn.setObjectName("about_btn")
-        self.horizontalLayout.addWidget(self.about_btn)
-        self.label = QtWidgets.QLabel(self.bottombar)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label.sizePolicy().hasHeightForWidth())
-        self.label.setSizePolicy(sizePolicy)
-        self.label.setObjectName("label")
-        self.horizontalLayout.addWidget(self.label)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setContentsMargins(-1, -1, 0, -1)
-        self.horizontalLayout_2.setSpacing(4)
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem = QtWidgets.QSpacerItem(100, 20,
-                                           QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem)
-        self.search_btn = QtWidgets.QToolButton(self.bottombar)
-        self.search_btn.setStyleSheet(
-            "QToolButton {\n"
-            "    border-image: url(\":/icons/search.svg\");\n"
-            "    width: 32px;\n"
-            "    height: 32px;\n"
-            "    background-repeat: no-repeat;\n"
-            "}\n"
-            "QToolButton::hover {\n"
-            "    border-image: url(:/icons/search-on.svg);\n"
-            "    background-repeat: no-repeat;\n"
-            "}\n"
-            "QToolButton::checked {\n"
-            "    border-image: url(:/icons/search-on.svg);\n"
-            "    background-repeat: no-repeat;\n"
-            "}\n"
-            "QToolButton::unchecked {\n"
-            "    border-image: url(:/icons/search.svg);\n"
-            "    background-repeat: no-repeat;\n"
-            "}")
-        self.search_btn.setText("")
-        self.search_btn.setIconSize(QtCore.QSize(32, 32))
-        self.search_btn.setCheckable(True)
-        self.search_btn.setAutoRaise(True)
-        self.search_btn.setObjectName("search_btn")
-        self.horizontalLayout_2.addWidget(self.search_btn)
-        self.search_lineEdit = QtWidgets.QLineEdit(self.bottombar)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.search_lineEdit.sizePolicy().hasHeightForWidth())
-        self.search_lineEdit.setSizePolicy(sizePolicy)
-        self.search_lineEdit.setStyleSheet("QLineEdit {\n"
-                                           "    height: 32px;\n"
-                                           "    padding: 2px;\n"
-                                           "    border: 1px solid gray;\n"
-                                           "    border-radius: 2px;\n"
-                                           "}")
-        self.search_lineEdit.setObjectName("search_lineEdit")
-        self.horizontalLayout_2.addWidget(self.search_lineEdit)
-        self.horizontalLayout.addLayout(self.horizontalLayout_2)
-        self.verticalLayout = QtWidgets.QVBoxLayout()
-        self.verticalLayout.setSpacing(0)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.show_log_btn = QtWidgets.QToolButton(self.bottombar)
-        self.show_log_btn.setEnabled(False)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/icons/show.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.show_log_btn.setIcon(icon4)
-        self.show_log_btn.setIconSize(QtCore.QSize(20, 20))
-        self.show_log_btn.setAutoRaise(True)
-        self.show_log_btn.setObjectName("show_log_btn")
-        self.verticalLayout.addWidget(self.show_log_btn)
-        self.enable_debug_btn = QtWidgets.QToolButton(self.bottombar)
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/icons/log.png"), QtGui.QIcon.Normal,
+        icon5.addPixmap(QtGui.QPixmap(":/icons/apps.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.enable_debug_btn.setIcon(icon5)
-        self.enable_debug_btn.setIconSize(QtCore.QSize(20, 20))
-        self.enable_debug_btn.setCheckable(True)
-        self.enable_debug_btn.setAutoRaise(True)
-        self.enable_debug_btn.setObjectName("enable_debug_btn")
-        self.verticalLayout.addWidget(self.enable_debug_btn)
-        self.horizontalLayout.addLayout(self.verticalLayout)
-        self.gridLayout.addWidget(self.bottombar, 2, 0, 1, 1)
+        self.main_tab.addTab(self.apps_page, icon5, "")
+        self.gridLayout.addWidget(self.main_tab, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1200, 26))
@@ -315,20 +315,35 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menubar)
 
         self.retranslateUi(MainWindow)
-        self.main_tab.setCurrentIndex(1)
+        self.main_tab.setCurrentIndex(0)
         self.apps_tab.setCurrentIndex(0)
         self.about_btn.clicked.connect(MainWindow.onAbout)
         self.enable_debug_btn.toggled['bool'].connect(
             MainWindow.on_enable_debug)
         self.show_log_btn.clicked.connect(MainWindow.on_show_log)
         self.search_btn.toggled['bool'].connect(self.search_lineEdit.setFocus)
-        self.search_btn.toggled['bool'].connect(
-            self.search_lineEdit.setVisible)
+        self.search_lineEdit.textChanged['QString'].connect(
+            MainWindow.on_search_updated)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.about_btn.setText(_translate("MainWindow", "..."))
+        self.label.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p><span style=\" font-size:10pt;\">Facility for Rare Isotope Beams</span></p><p><span style=\" font-size:8pt;\">Michigan State University</span></p></body></html>"
+            ))
+        self.search_btn.setToolTip(
+            _translate("MainWindow", "Search (Ctrl + F)."))
+        self.search_btn.setShortcut(_translate("MainWindow", "Ctrl+F"))
+        self.show_log_btn.setToolTip(
+            _translate("MainWindow", "Show log messages"))
+        self.show_log_btn.setText(_translate("MainWindow", "Show Log"))
+        self.enable_debug_btn.setToolTip(
+            _translate("MainWindow", "Enable log messages capture"))
+        self.enable_debug_btn.setText(_translate("MainWindow", "Debug"))
         self.label_3.setText(
             _translate(
                 "MainWindow",
@@ -354,21 +369,6 @@ class Ui_MainWindow(object):
                                  _translate("MainWindow", "Groups"))
         self.main_tab.setTabText(self.main_tab.indexOf(self.apps_page),
                                  _translate("MainWindow", "Apps"))
-        self.about_btn.setText(_translate("MainWindow", "..."))
-        self.label.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p><span style=\" font-size:10pt;\">Facility for Rare Isotope Beams</span></p><p><span style=\" font-size:8pt;\">Michigan State University</span></p></body></html>"
-            ))
-        self.search_btn.setToolTip(
-            _translate("MainWindow", "Search (Ctrl + F)."))
-        self.search_btn.setShortcut(_translate("MainWindow", "Ctrl+F"))
-        self.show_log_btn.setToolTip(
-            _translate("MainWindow", "Show log messages"))
-        self.show_log_btn.setText(_translate("MainWindow", "Show Log"))
-        self.enable_debug_btn.setToolTip(
-            _translate("MainWindow", "Enable log messages capture"))
-        self.enable_debug_btn.setText(_translate("MainWindow", "Debug"))
 
 
 from . import resources_rc
