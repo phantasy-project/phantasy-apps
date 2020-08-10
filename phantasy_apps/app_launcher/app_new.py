@@ -3,10 +3,18 @@
 
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QSize
-from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtWidgets import QDialog
-from PyQt5.QtWidgets import QMenu
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMenu
+from PyQt5.QtWidgets import QScrollArea
+from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtWidgets import QSpacerItem
+from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
 
 from subprocess import Popen
@@ -349,13 +357,11 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             self.search_btn.setChecked(False)
             return
 
-        from PyQt5.QtWidgets import QLabel, QVBoxLayout, QSpacerItem, QSizePolicy
-        from PyQt5.QtWidgets import QScrollArea
 
         total_items = len(fav_items) + len(other_items)
         if self.main_tab.widget(2) is None:
             w = QWidget()
-            self.main_tab.addTab(w, 'Search')
+            self.main_tab.addTab(w, QIcon(QPixmap(":/icons/view_list.png")), 'Search')
 
             headtext_lbl = QLabel(w)
             headtext_lbl.setObjectName('headtext_lbl')
@@ -371,6 +377,19 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             layout = QVBoxLayout()
             layout.addWidget(headtext_lbl)
 
+            # 404
+            notfound_lbl = QLabel(w)
+            notfound_lbl.setObjectName('notfound_lbl')
+            notfound_lbl.setStyleSheet(
+                    "QLabel {\n"
+                    "    padding: 10px 10px 10px 0px;\n"
+                    "    font-size: 22pt;\n"
+                    "    color: gray;\n"
+                    "}")
+            notfound_lbl.setText("No items match your search.")
+            layout.addWidget(notfound_lbl, stretch=1, alignment=Qt.AlignCenter)
+            notfound_lbl.setVisible(False)
+
             # fav group
             fav_lbl = QLabel(w)
             fav_lbl.setText("Favorites")
@@ -385,7 +404,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             fav_area = QScrollArea(w)
             fav_area.setObjectName('fav_area')
             fav_area.setWidgetResizable(True)
-            layout.addWidget(fav_area)
+            layout.addWidget(fav_area, stretch=1)
 
             # apps group
             apps_lbl = QLabel(w)
@@ -401,11 +420,10 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             apps_area = QScrollArea(w)
             apps_area.setObjectName('apps_area')
             apps_area.setWidgetResizable(True)
-            layout.addWidget(apps_area)
+            layout.addWidget(apps_area, stretch=1)
 
             #
-            spacer = QSpacerItem(100, 20, QSizePolicy.Minimum, QSizePolicy.Expanding)
-            layout.addItem(spacer)
+            layout.addStretch(0)
             w.setLayout(layout)
         else:
             w = self.main_tab.widget(2)
@@ -465,6 +483,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         #
         w.findChild(QLabel, 'fav_group_lbl').setVisible(not fav_items==[])
         w.findChild(QLabel, 'apps_group_lbl').setVisible(not other_items==[])
+        w.findChild(QLabel, 'notfound_lbl').setVisible(other_items==[] and fav_items==[])
         apps_area.setVisible(not other_items==[])
         fav_area.setVisible(not fav_items==[])
 
