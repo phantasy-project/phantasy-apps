@@ -177,6 +177,15 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         w.setLayout(layout)
         area.setWidget(w)
 
+        # update cnt
+        for i in range(self.apps_tab.count()):
+            area = self._area_dict[self._apps_tab_page[i]]
+            layout = area.findChildren(FlowLayout)
+            if layout == []:
+                continue
+            self.apps_tab.setTabText(i, '{} ({})'.format(
+                self.apps_tab.tabText(i).split(' ')[0], layout[0].count()))
+
     def sizeHint(self):
         return QSize(1600, 1200)
 
@@ -315,3 +324,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             self._app_data[name].groups.append('favorite')
         else:
             self._app_data[name].groups.remove('favorite')
+
+    @pyqtSlot('QString')
+    def on_search_updated(self, s):
+        print("searching: ", s)
