@@ -213,6 +213,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         self.main_tab.currentChanged.connect(partial(self.on_current_changed, False))
         self.main_tab.currentChanged.emit(self.main_tab.currentIndex())
 
+        self.search_btn.toggled.connect(partial(self.on_enable_search, True))
         # log/debug
         for o in (self.show_log_btn, self.enable_debug_btn,):
             o.setVisible(False)
@@ -354,7 +355,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
 
     def show_search_results(self, s, fav_items, other_items):
         if s == '':
-            self.search_btn.setChecked(False)
+            self.on_enable_search(False, False)
             return
 
 
@@ -488,7 +489,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         fav_area.setVisible(not fav_items==[])
 
     @pyqtSlot(bool)
-    def on_enable_search(self, enabled):
+    def on_enable_search(self, auto_collapse, enabled):
         if not enabled and self.main_tab.currentIndex() == 2:
             # switch back to last page
             if self._nested:
@@ -498,4 +499,8 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
                 self.main_tab.setCurrentIndex(self._current_index)
             # clean search page
             self.main_tab.removeTab(2)
+
+        if auto_collapse:
+            # collapse input box
+            self.search_lineEdit.setVisible(enabled)
 
