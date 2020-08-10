@@ -189,6 +189,11 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         self.main_tab.currentChanged.connect(partial(self.on_current_changed, False))
         self.main_tab.currentChanged.emit(self.main_tab.currentIndex())
 
+        # log/debug
+        for o in (self.show_log_btn, self.enable_debug_btn,):
+            o.setVisible(False)
+        self.search_btn.toggled.emit(self.search_btn.isChecked())
+
     @pyqtSlot(dict, bool)
     def on_info_form_changed(self, page, meta_info, show):
         name = meta_info['name']
