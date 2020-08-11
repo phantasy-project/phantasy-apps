@@ -28,7 +28,7 @@ class AppCard(QWidget, Ui_AppForm):
     infoFormChanged = pyqtSignal(dict, bool)
 
     def __init__(self, name, groups, cmd=None, fav_on=False, desc=None,
-                 version=None, helpdoc=None, parent=None, **kws):
+                 version=None, helpdoc=None, contact=None, parent=None, **kws):
         super(AppCard, self).__init__(parent)
 
         #
@@ -45,6 +45,7 @@ class AppCard(QWidget, Ui_AppForm):
         self.setDescription(desc)
         self.setVersion(version)
         self.setHelpdoc(helpdoc)
+        self.setContact(contact)
 
         self.setMouseTracking(True)
         for o in (self.fav_btn, self.app_btn, self.info_btn):
@@ -53,7 +54,8 @@ class AppCard(QWidget, Ui_AppForm):
     def get_meta_info(self):
         return {'name': self.name(), 'groups': self.groups(),
                 'fav': self.favorite(), 'desc': self.description(),
-                'helpdoc': self.helpdoc(), }
+                'helpdoc': self.helpdoc(), 'contact': self.contact(),
+                'ver': self.version(),}
 
     @pyqtSlot()
     def on_close_info(self):
@@ -99,6 +101,14 @@ class AppCard(QWidget, Ui_AppForm):
 
     def setHelpdoc(self, s):
         self._helpdoc = s
+
+    def contact(self):
+        """People : People to contact.
+        """
+        return self._contact
+
+    def setContact(self, o):
+        self._contact = o
 
     def command(self):
         """str : Callback command.
@@ -196,16 +206,18 @@ class AppCardInfoForm(QWidget, Ui_InfoForm):
     runAppInTerminal = pyqtSignal(bool)
     sig_close = pyqtSignal()
 
-    def __init__(self, name, group, fav_on=False, desc=None, helpdoc=None,
+    def __init__(self, name, group, fav_on=False, desc=None, ver=None, helpdoc=None, contact=None,
                  parent=None, **kws):
         super(AppCardInfoForm, self).__init__(parent)
 
         self.setupUi(self)
         self.app_name.setText(name)
         self.app_main_group.setText(group)
+        self.app_version = ver
         self.desc_plainTextEdit.setPlainText(desc)
         self.on_fav_changed(fav_on)
         self.config_helpdoc(helpdoc)
+        self.config_contact(contact)
 
     @pyqtSlot(bool)
     def on_fav_changed(self, on):
@@ -252,3 +264,14 @@ class AppCardInfoForm(QWidget, Ui_InfoForm):
                 self.helpdoc_btn.setVisible(False)
         else: # url?
             self.helpdoc_btn.setVisible(False)
+
+    def config_contact(self, contact):
+        if contact.name == '':
+            [o.setVisible(False) for o in (self.contact_lbl, self.contact_name_lbl,
+                                           self.contact_phone_lbl, self.contact_email_lbl)]
+        else:
+            self.contact_name_lbl.setText(contact.name)
+            self.contact_phone_lbl.setText(contact.phone)
+            s = f'<a href="mailto:{contact.email}?subject=Questions about {self.app_name.text()} v{self.app_version}">{contact.email}</a>'
+            self.contact_email_lbl.setOpenExternalLinks(True)
+            self.contact_email_lbl.setText(s)

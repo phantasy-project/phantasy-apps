@@ -109,13 +109,14 @@ class AppDataModel(QStandardItemModel):
 
 
 class AppItem(object):
-    def __init__(self, name, desc, cmd, icon_path, groups, version, helpdoc):
+    def __init__(self, name, desc, cmd, icon_path, groups, version, helpdoc, contact):
         # name : app name
         # desc : app descriptiono
         # cmd : command to start up app (exec)
         # icon_path : icon path for app icon (icon)
         # groups : a list of affiliated groups
         # helpdoc : path for help doc
+        # contact : People to contact
         super(self.__class__, self).__init__()
         self.name = name
         self.desc = desc
@@ -124,18 +125,32 @@ class AppItem(object):
         self.groups = groups
         self.ver = version
         self.helpdoc = helpdoc
+        self.contact = contact
 
     def __contains__(self, item):
         item = item.lower()
         if item in self.name.lower() or item.lower() in self.desc.lower() \
            or item in self.cmd.lower() or item in self.ver.lower() \
-           or item in ' '.join(self.groups).lower():
+           or item in ' '.join(self.groups).lower() or item in str(self.contact):
                return True
         else:
             return False
 
     def __repr__(self):
         return f"AppItem({self.name}, {self.desc[:10]}..., {self.cmd[:10]}..., {self.icon_path[:10]}..., {self.groups}, {self.ver})"
+
+
+class People(object):
+    def __init__(self, name, phone, email, **kws):
+        self.name = name
+        self.phone = phone
+        self.email = email
+
+    def __repr__(self):
+        return f"People('{self.name}', '{self.phone}', '{self.email}')"
+
+    def __str__(self):
+        return ' '.join([self.name, self.phone, self.email])
 
 
 def get_app_version(pkg_path):
@@ -163,6 +178,7 @@ def get_app_data(path=None, filename='app_launcher.ini'):
     app_default_conf = conf.pop('APP-DEFAULT')
     default_icon_path = app_default_conf['icon']
     default_groups = app_default_conf['groups']
+    default_contact = app_default_conf['contact']
 
     data = OrderedDict()
     for k, v in conf.items():
@@ -171,8 +187,10 @@ def get_app_data(path=None, filename='app_launcher.ini'):
         groups = v.get('groups', default_groups[:])
         version = v.get('version', get_app_version(imp_path_conf.get(k, 'undefined')))
         helpdoc = v.get('helpdoc', '')
+        contact_list = v.get('contact', default_contact[:])
+        contact = People(*contact_list)
         app_item = AppItem(v.get('name'), v.get('desc'), v.get('exec'), icon_path,
-                           groups, version, helpdoc)
+                           groups, version, helpdoc, contact)
         data.update([(app_item.name, app_item)])
 
     return data
