@@ -152,9 +152,8 @@ def get_app_version(pkg_path):
 
 
 def get_app_data(path=None, filename='app_launcher.ini'):
-    """Return a dict of app data, key: name.
+    """Return a dict of app data, key: name, value: AppItem
     """
-
     # app conf
     path_conf = find_dconf(path, filename)
     conf = toml.load(path_conf)
@@ -168,8 +167,7 @@ def get_app_data(path=None, filename='app_launcher.ini'):
     data = OrderedDict()
     for k, v in conf.items():
         icon_path = v.get('icon', default_icon_path)
-        if not QFile(icon_path).exists():
-            icon_path = default_icon_path
+        icon_path = config_icon_path(icon_path, os.path.dirname(path_conf))
         groups = v.get('groups', default_groups[:])
         version = v.get('version', get_app_version(imp_path_conf.get(k, 'undefined')))
         helpdoc = v.get('helpdoc', '')
@@ -178,6 +176,20 @@ def get_app_data(path=None, filename='app_launcher.ini'):
         data.update([(app_item.name, app_item)])
 
     return data
+
+def config_icon_path(icon_path, conf_path):
+    # 1. if in conf_path/icons
+    # 2. if in <app_name>/config/icons
+    icon_path0 = os.path.join(conf_path, 'icons', icon_path)
+    if os.path.isfile(icon_path0):
+        return icon_path0
+    else:
+        basedir = os.path.abspath(os.path.dirname(__file__))
+        icon_path1 = os.path.join(basedir, "config", "icons", icon_path)
+        if os.path.isfile(icon_path1):
+            return icon_path1
+        else:
+            return os.path.join(basedir, "config", "icons", "default.png")
 
 
 if __name__ == '__main__':
