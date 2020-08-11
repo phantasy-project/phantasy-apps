@@ -181,9 +181,10 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             desc = app_item.desc
             ver = app_item.ver
             fav_on = 'favorite' in groups
+            helpdoc = app_item.helpdoc
             if page in ['fav', 'fav1'] and not fav_on:
                 continue
-            card = AppCard(name, groups, cmd, fav_on, desc, ver, self, width=self._width)
+            card = AppCard(name, groups, cmd, fav_on, desc, ver, helpdoc, self, width=self._width)
             card.setIcon(app_item.icon_path)
             card.infoFormChanged.connect(partial(self.on_info_form_changed, page))
             card.favChanged.connect(self.on_fav_changed)
@@ -226,7 +227,8 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             group = meta_info['groups'][0]
             fav_on = meta_info['fav']
             desc = meta_info['desc']
-            info_form = AppCardInfoForm(name, group, fav_on, desc)
+            helpdoc = meta_info['helpdoc']
+            info_form = AppCardInfoForm(name, group, fav_on, desc, helpdoc)
             card = self._app_card_dict[page][name]
             info_form.favChanged.connect(card.on_fav_changed)
             info_form.sig_close.connect(card.on_close_info)
@@ -449,7 +451,8 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             desc = app_item.desc
             ver = app_item.ver
             name = app_item.name
-            card = AppCard(name, groups, cmd, True, desc, ver, self, width=self._width)
+            helpdoc = app_item.helpdoc
+            card = AppCard(name, groups, cmd, True, desc, ver, helpdoc, self, width=self._width)
             card.setIcon(app_item.icon_path)
             card.infoFormChanged.connect(partial(self.on_info_form_changed, 'search_fav'))
             card.favChanged.connect(self.on_fav_changed)
@@ -472,7 +475,8 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             desc = app_item.desc
             ver = app_item.ver
             name = app_item.name
-            card = AppCard(name, groups, cmd, False, desc, ver, self, width=self._width)
+            helpdoc = app_item.helpdoc
+            card = AppCard(name, groups, cmd, False, desc, ver, helpdoc, self, width=self._width)
             card.setIcon(app_item.icon_path)
             card.infoFormChanged.connect(partial(self.on_info_form_changed, 'search_apps'))
             card.favChanged.connect(self.on_fav_changed)

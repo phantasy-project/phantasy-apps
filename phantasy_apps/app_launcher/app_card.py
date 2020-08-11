@@ -6,6 +6,9 @@
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QFile
+from PyQt5.QtCore import QUrl
+from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPainter
 from PyQt5.QtGui import QPixmap
@@ -25,7 +28,7 @@ class AppCard(QWidget, Ui_AppForm):
     infoFormChanged = pyqtSignal(dict, bool)
 
     def __init__(self, name, groups, cmd=None, fav_on=False, desc=None,
-                 version=None, parent=None, **kws):
+                 version=None, helpdoc=None, parent=None, **kws):
         super(AppCard, self).__init__(parent)
 
         #
@@ -41,6 +44,7 @@ class AppCard(QWidget, Ui_AppForm):
         self.setCommand(cmd)
         self.setDescription(desc)
         self.setVersion(version)
+        self.setHelpdoc(helpdoc)
 
         self.setMouseTracking(True)
         for o in (self.fav_btn, self.app_btn, self.info_btn):
@@ -48,7 +52,8 @@ class AppCard(QWidget, Ui_AppForm):
 
     def get_meta_info(self):
         return {'name': self.name(), 'groups': self.groups(),
-                'fav': self.favorite(), 'desc': self.description()}
+                'fav': self.favorite(), 'desc': self.description(),
+                'helpdoc': self.helpdoc(), }
 
     @pyqtSlot()
     def on_close_info(self):
@@ -86,6 +91,14 @@ class AppCard(QWidget, Ui_AppForm):
     def setVersion(self, s):
         self._version = s
         self.app_ver_lbl.setText(s)
+
+    def helpdoc(self):
+        """str : Url/path for help doc.
+        """
+        return self._helpdoc
+
+    def setHelpdoc(self, s):
+        self._helpdoc = s
 
     def command(self):
         """str : Callback command.
@@ -183,7 +196,7 @@ class AppCardInfoForm(QWidget, Ui_InfoForm):
     runAppInTerminal = pyqtSignal(bool)
     sig_close = pyqtSignal()
 
-    def __init__(self, name, group, fav_on=False, desc=None,
+    def __init__(self, name, group, fav_on=False, desc=None, helpdoc=None,
                  parent=None, **kws):
         super(AppCardInfoForm, self).__init__(parent)
 
@@ -192,6 +205,7 @@ class AppCardInfoForm(QWidget, Ui_InfoForm):
         self.app_main_group.setText(group)
         self.desc_plainTextEdit.setPlainText(desc)
         self.on_fav_changed(fav_on)
+        self.config_helpdoc(helpdoc)
 
     @pyqtSlot(bool)
     def on_fav_changed(self, on):
@@ -227,3 +241,14 @@ class AppCardInfoForm(QWidget, Ui_InfoForm):
         opt.initFrom(self)
         p = QPainter(self)
         self.style().drawPrimitive(QStyle.PE_Widget, opt, p, self)
+
+    def config_helpdoc(self, doc):
+        url = QUrl.fromUserInput(doc)
+        if url.isLocalFile():
+            if QFile(url.path()).exists():
+                self.helpdoc_btn.setVisible(True)
+                self.helpdoc_btn.clicked.connect(lambda:QDesktopServices.openUrl(url))
+            else:
+                self.helpdoc_btn.setVisible(False)
+        else: # url?
+            self.helpdoc_btn.setVisible(False)

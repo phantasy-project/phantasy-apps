@@ -109,12 +109,13 @@ class AppDataModel(QStandardItemModel):
 
 
 class AppItem(object):
-    def __init__(self, name, desc, cmd, icon_path, groups, version):
+    def __init__(self, name, desc, cmd, icon_path, groups, version, helpdoc):
         # name : app name
         # desc : app descriptiono
         # cmd : command to start up app (exec)
         # icon_path : icon path for app icon (icon)
         # groups : a list of affiliated groups
+        # helpdoc : path for help doc
         super(self.__class__, self).__init__()
         self.name = name
         self.desc = desc
@@ -122,6 +123,7 @@ class AppItem(object):
         self.icon_path = icon_path
         self.groups = groups
         self.ver = version
+        self.helpdoc = helpdoc
 
     def __contains__(self, item):
         item = item.lower()
@@ -170,8 +172,9 @@ def get_app_data(path=None, filename='app_launcher.ini'):
             icon_path = default_icon_path
         groups = v.get('groups', default_groups[:])
         version = v.get('version', get_app_version(imp_path_conf.get(k, 'undefined')))
+        helpdoc = v.get('helpdoc', '')
         app_item = AppItem(v.get('name'), v.get('desc'), v.get('exec'), icon_path,
-                           groups, version)
+                           groups, version, helpdoc)
         data.update([(app_item.name, app_item)])
 
     return data
