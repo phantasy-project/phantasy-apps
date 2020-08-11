@@ -83,7 +83,8 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         self._app_card_dict = { 'fav': {}, 'fav1': {}, 'all': {},
                                 'search_apps': {}, 'search_fav': {}}
         # value: {name: (info_form, on/off, sender, iidx)}
-        self._info_form_dict = {'fav': {}, 'fav1': {}, 'all': {} }
+        self._info_form_dict = {'fav': {}, 'fav1': {}, 'all': {},
+                                'search_fav': {}, 'search_apps': {}}
         self._layout_dict = {'fav': None, 'fav1': None, 'all': None,
                              'search_fav': None, 'search_apps': None}
         self._area_dict = {'fav': self.fav_scrollArea,
@@ -438,6 +439,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
 
         # show filtered items, group by Favorites and Apps
         fav_area = w.findChild(QScrollArea, 'fav_area')
+        self._area_dict.update({'search_fav': fav_area})
         w1 = fav_area.takeWidget()
         if w1 is not None:
             w1.setParent(None)
@@ -462,6 +464,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         fav_area.setWidget(w1)
 
         apps_area = w.findChild(QScrollArea, 'apps_area')
+        self._area_dict.update({'search_apps': apps_area})
         w2 = apps_area.takeWidget()
         if w2 is not None:
             w2.setParent(None)
