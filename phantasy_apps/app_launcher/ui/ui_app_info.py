@@ -94,6 +94,9 @@ class Ui_InfoForm(object):
         self.contact_lbl.setObjectName("contact_lbl")
         self.horizontalLayout_2.addWidget(self.contact_lbl)
         self.contact_name_lbl = QtWidgets.QLabel(InfoForm)
+        self.contact_name_lbl.setStyleSheet("QLabel {\n"
+                                            "    margin-left: 10px;\n"
+                                            "}")
         self.contact_name_lbl.setObjectName("contact_name_lbl")
         self.horizontalLayout_2.addWidget(self.contact_name_lbl)
         self.contact_phone_lbl = QtWidgets.QLabel(InfoForm)
