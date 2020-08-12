@@ -103,7 +103,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         # slot
         item = self.v.model().item(index.row(), 0)
         if kws.get('detached', False):
-            cmdline = "x-terminal-emulator -e " + item.cmd
+            cmdline = "gnome-terminal -- " + item.cmd
         else:
             cmdline = item.cmd
         Popen(cmdline, shell=True)
