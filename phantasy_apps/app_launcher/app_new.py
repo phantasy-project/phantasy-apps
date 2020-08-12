@@ -12,8 +12,6 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QScrollArea
-from PyQt5.QtWidgets import QSizePolicy
-from PyQt5.QtWidgets import QSpacerItem
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
 
@@ -83,7 +81,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         # value: {name: AppCard}
         self._app_card_dict = { 'fav': {}, 'fav1': {}, 'all': {},
                                 'search_apps': {}, 'search_fav': {}}
-        # value: {name: (info_form, on/off, sender, iidx)}
+        # value: {name: (info_form, on/off, sender)}
         self._info_form_dict = {'fav': {}, 'fav1': {}, 'all': {},
                                 'search_fav': {}, 'search_apps': {}}
         self._layout_dict = {'fav': None, 'fav1': None, 'all': None,
@@ -151,10 +149,11 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         # clear info forms.
         del_names = []
         for k, v in self._info_form_dict[page].items():
-            info_form, show, _, iidx = v
+            print(v)
+            info_form, show, _ = v
             if show:
                 layout = self._layout_dict[page]
-                w = layout.itemAt(iidx).widget()
+                w = info_form
                 layout.removeWidget(w)
                 w.sig_close.emit()
                 w.setParent(None)
@@ -239,7 +238,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             info_form.sig_close.connect(card.on_close_info)
             info_form.runAppInTerminal.connect(card.on_launch_app)
             card.favChanged.connect(info_form.on_fav_changed)
-            self._info_form_dict[page][name] = [info_form, True, self.sender(), None]
+            self._info_form_dict[page][name] = [info_form, True, self.sender()]
 
         if show:
             for k, v in self._info_form_dict[page].items():
@@ -257,7 +256,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         #
         del_names = []
         for k, v in self._info_form_dict[page].items():
-            info_form, show, sender, iidx = v
+            info_form, show, sender = v
             n = self._get_row_item_count(area, self._spacing, self._width)
 
             if show:
@@ -267,13 +266,10 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
                 info_form.setFixedWidth(
                     n * (self._spacing + self._width) - self._spacing)
                 layout.insertWidget(iidx, info_form)
-                v[3] = iidx
             else:
-                print(iidx, layout.count())
-                w = layout.itemAt(iidx).widget()
-                layout.removeWidget(w)
-                w.sig_close.emit()
-                w.setParent(None)
+                layout.removeWidget(info_form)
+                info_form.sig_close.emit()
+                info_form.setParent(None)
                 del_names.append(k)
 
         for i in del_names:
