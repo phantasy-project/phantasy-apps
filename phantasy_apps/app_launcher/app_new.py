@@ -45,7 +45,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
 
         # config filepath
         config_file = kws.get('config', None)
-        self._app_data = get_app_data(config_file)
+        self._app_data = dict(sorted(get_app_data(config_file).items()))
 
         # app version
         self._version = version
