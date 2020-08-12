@@ -268,6 +268,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
                 layout.insertWidget(iidx, info_form)
                 v[3] = iidx
             else:
+                print(iidx, layout.count())
                 w = layout.itemAt(iidx).widget()
                 layout.removeWidget(w)
                 w.sig_close.emit()
@@ -516,3 +517,6 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             # collapse input box
             self.search_lineEdit.setVisible(enabled)
 
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key_Escape and self.search_btn.isChecked():
+            self.search_btn.setChecked(False)
