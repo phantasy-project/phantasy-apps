@@ -131,7 +131,7 @@ class AppItem(object):
         item = item.lower()
         if item in self.name.lower() or item.lower() in self.desc.lower() \
            or item in self.cmd.lower() or item in self.ver.lower() \
-           or item in ' '.join(self.groups).lower() or item in str(self.contact):
+           or item in ' '.join(self.groups).lower() or item in str(self.contact).lower():
                return True
         else:
             return False
