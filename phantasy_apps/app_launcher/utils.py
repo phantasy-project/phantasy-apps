@@ -198,6 +198,7 @@ def get_app_data(path=None, filename='app_launcher.ini'):
 def config_icon_path(icon_path, conf_path):
     # 1. if in conf_path/icons
     # 2. if in <app_name>/config/icons
+    # 3. resources
     icon_path0 = os.path.join(conf_path, 'icons', icon_path)
     if os.path.isfile(icon_path0):
         return icon_path0
@@ -207,7 +208,12 @@ def config_icon_path(icon_path, conf_path):
         if os.path.isfile(icon_path1):
             return icon_path1
         else:
-            return os.path.join(basedir, "config", "icons", "default.png")
+            #
+            icon_path2 = os.path.join(":/app-icons/app-icons/", icon_path)
+            if QFile(icon_path2).exists():
+                return icon_path2
+            else:
+                return ":/app-icons/app-icons/default.png"
 
 
 if __name__ == '__main__':
