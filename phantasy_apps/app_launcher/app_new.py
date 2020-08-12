@@ -62,11 +62,12 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             <html>
             <h4>About Launcher App</h4>
             <p>This app features the access portal of the available
-            physics apps for FRIB, current version is {}.
+            physics apps for FRIB, current version is {v}.
             </p>
             <p>Copyright (C) 2019 Facility for Rare Isotope Beams and other contributors.</p>
+            <p>Contact: <a href="mailto:zhangt@frib.msu.edu?subject=Questions about App Launcher v{v}">Tong Zhang</a></p>
             </html>
-        """.format(self._version)
+        """.format(v=self._version)
 
         # UI
         self.setupUi(self)
