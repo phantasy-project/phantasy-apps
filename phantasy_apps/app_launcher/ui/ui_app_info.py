@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_InfoForm(object):
     def setupUi(self, InfoForm):
         InfoForm.setObjectName("InfoForm")
-        InfoForm.resize(1047, 282)
+        InfoForm.resize(1047, 290)
         InfoForm.setStyleSheet("QWidget#InfoForm {\n"
                                "    border: 2px solid #04B13B;\n"
                                "}")
@@ -152,7 +152,7 @@ class Ui_InfoForm(object):
         self.gridLayout.addWidget(self.label_5, 1, 1, 1, 1)
         self.open_in_terminal_btn = QtWidgets.QToolButton(InfoForm)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/icons/console.png"),
+        icon3.addPixmap(QtGui.QPixmap(":/app-icons/app-icons/console.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.open_in_terminal_btn.setIcon(icon3)
         self.open_in_terminal_btn.setIconSize(QtCore.QSize(32, 32))
