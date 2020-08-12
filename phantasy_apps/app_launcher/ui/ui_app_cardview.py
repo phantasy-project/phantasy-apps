@@ -251,6 +251,10 @@ class Ui_MainWindow(object):
             "\n"
             "QTabWidget::pane { \n"
             "    border-top: 1px solid #C2C7CB;\n"
+            "}\n"
+            "\n"
+            "QScrollArea {\n"
+            "    border: none;\n"
             "}")
         self.apps_tab.setObjectName("apps_tab")
         self.all_apps_page = QtWidgets.QWidget()
