@@ -32,6 +32,8 @@ def run(cli=False):
         dev_mode = False
 
     if dev_mode:
+        import os
+        from subprocess import Popen
         dev_cmd = '/files/shared/ap/run_apps.sh'
         if os.path.isfile(dev_cmd):
             print("Run App Launcher in development mode: ")

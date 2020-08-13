@@ -36,7 +36,7 @@ class AppCard(QWidget, Ui_AppForm):
 
         # fix width
         if kws.get('width', None) is not None:
-            self.setFixedWidth(kws.get('width'));
+            self.setFixedWidth(kws.get('width'))
 
         self.setName(name)
         self.setGroups(groups)

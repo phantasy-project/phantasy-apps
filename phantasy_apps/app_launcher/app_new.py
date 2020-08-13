@@ -38,7 +38,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
 
         # logfile
         self._logfile = kws.get('logfile', None)
-        #print("logfile: ", self._logfile)
+        # print("logfile: ", self._logfile)
         self._logwidget = None
 
         # config filepath
@@ -79,8 +79,8 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         self._width = 300
         #
         # value: {name: AppCard}
-        self._app_card_dict = { 'fav': {}, 'fav1': {}, 'all': {},
-                                'search_apps': {}, 'search_fav': {}}
+        self._app_card_dict = {'fav': {}, 'fav1': {}, 'all': {},
+                               'search_apps': {}, 'search_fav': {}}
         # value: {name: (info_form, on/off, sender)}
         self._info_form_dict = {'fav': {}, 'fav1': {}, 'all': {},
                                 'search_fav': {}, 'search_apps': {}}
@@ -89,7 +89,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         self._area_dict = {'fav': self.fav_scrollArea,
                            'fav1': self.fav1_scrollArea,
                            'all': self.all_apps_scrollArea,
-                           'grps': self.grps_scrollArea,}
+                           'grps': self.grps_scrollArea, }
         self._apps_tab_page = {0: 'all', 1: 'fav1', 2: 'grps'}
 
         # post init ui
@@ -149,7 +149,6 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         # clear info forms.
         del_names = []
         for k, v in self._info_form_dict[page].items():
-            print(v)
             info_form, show, _ = v
             if show:
                 layout = self._layout_dict[page]
@@ -166,7 +165,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         if page == 'grps':
             from PyQt5.QtWidgets import QMessageBox
             QMessageBox.warning(self, "Group Page", "To be implemeneted",
-                    QMessageBox.Ok)
+                                QMessageBox.Ok)
             return
         #
         area = self._area_dict[page]
@@ -362,7 +361,6 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             self.on_enable_search(False, False)
             return
 
-
         total_items = len(fav_items) + len(other_items)
         if self.main_tab.widget(2) is None:
             w = QWidget()
@@ -371,13 +369,13 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             headtext_lbl = QLabel(w)
             headtext_lbl.setObjectName('headtext_lbl')
             headtext_lbl.setStyleSheet(
-                    "QLabel {\n"
-                    "    padding: 10px 10px 10px 0px;\n"
-                    "    border-bottom: 1px solid gray;\n"
-                    "    border-radius: 2px;\n"
-                    "    font-size: 22pt;\n"
-                    "    font-weight: bold;\n"
-                    "}")
+                "QLabel {\n"
+                "    padding: 10px 10px 10px 0px;\n"
+                "    border-bottom: 1px solid gray;\n"
+                "    border-radius: 2px;\n"
+                "    font-size: 22pt;\n"
+                "    font-weight: bold;\n"
+                "}")
             headtext_lbl.setText("Search Results: '{}' ({})".format(s, total_items))
             layout = QVBoxLayout()
             layout.addWidget(headtext_lbl)
@@ -386,11 +384,11 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             notfound_lbl = QLabel(w)
             notfound_lbl.setObjectName('notfound_lbl')
             notfound_lbl.setStyleSheet(
-                    "QLabel {\n"
-                    "    padding: 10px 10px 10px 0px;\n"
-                    "    font-size: 22pt;\n"
-                    "    color: gray;\n"
-                    "}")
+                "QLabel {\n"
+                "    padding: 10px 10px 10px 0px;\n"
+                "    font-size: 22pt;\n"
+                "    color: gray;\n"
+                "}")
             notfound_lbl.setText("No items match your search.")
             layout.addWidget(notfound_lbl, stretch=1, alignment=Qt.AlignCenter)
             notfound_lbl.setVisible(False)
@@ -400,11 +398,11 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             fav_lbl.setText("Favorites")
             fav_lbl.setObjectName('fav_group_lbl')
             fav_lbl.setStyleSheet(
-                    "QLabel {\n"
-                    "    padding: 10px 10px 10px 0px;\n"
-                    "    color: darkgreen;\n"
-                    "    font-size: 20pt;\n"
-                    "}")
+                "QLabel {\n"
+                "    padding: 10px 10px 10px 0px;\n"
+                "    color: darkgreen;\n"
+                "    font-size: 20pt;\n"
+                "}")
             layout.addWidget(fav_lbl)
             fav_area = QScrollArea(w)
             fav_area.setObjectName('fav_area')
@@ -416,11 +414,11 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             apps_lbl.setText("Apps")
             apps_lbl.setObjectName('apps_group_lbl')
             apps_lbl.setStyleSheet(
-                    "QLabel {\n"
-                    "    padding: 10px 10px 10px 0px;\n"
-                    "    color: darkgreen;\n"
-                    "    font-size: 20pt;\n"
-                    "}")
+                "QLabel {\n"
+                "    padding: 10px 10px 10px 0px;\n"
+                "    color: darkgreen;\n"
+                "    font-size: 20pt;\n"
+                "}")
             layout.addWidget(apps_lbl)
             apps_area = QScrollArea(w)
             apps_area.setObjectName('apps_area')
@@ -492,11 +490,11 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         apps_area.setWidget(w2)
 
         #
-        w.findChild(QLabel, 'fav_group_lbl').setVisible(not fav_items==[])
-        w.findChild(QLabel, 'apps_group_lbl').setVisible(not other_items==[])
-        w.findChild(QLabel, 'notfound_lbl').setVisible(other_items==[] and fav_items==[])
-        apps_area.setVisible(not other_items==[])
-        fav_area.setVisible(not fav_items==[])
+        w.findChild(QLabel, 'fav_group_lbl').setVisible(not fav_items == [])
+        w.findChild(QLabel, 'apps_group_lbl').setVisible(not other_items == [])
+        w.findChild(QLabel, 'notfound_lbl').setVisible(other_items == [] and fav_items == [])
+        apps_area.setVisible(not other_items == [])
+        fav_area.setVisible(not fav_items == [])
 
     @pyqtSlot(bool)
     def on_enable_search(self, auto_collapse, enabled):

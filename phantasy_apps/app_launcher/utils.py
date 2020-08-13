@@ -32,6 +32,7 @@ class AppDataModel(QStandardItemModel):
     """App data model.
 
     """
+
     def __init__(self, parent, app_items, **kws):
         # app_items: list of AppItem instances.
         super(self.__class__, self).__init__(parent)
@@ -40,9 +41,9 @@ class AppDataModel(QStandardItemModel):
 
         # header
         self.header = self.h_name, self.h_cat, self.h_desc, self.h_ver = \
-                ('Name', '', 'Description', 'Version')
+            ('Name', '', 'Description', 'Version')
         self.ids = self.i_name, self.i_cat, self.i_desc, self.i_ver = \
-                range(len(self.header))
+            range(len(self.header))
 
         #
         self.px_catpub = QPixmap(":/icons/public.png")
@@ -89,7 +90,7 @@ class AppDataModel(QStandardItemModel):
 
     def __post_init_ui(self, v):
         # view properties
-        #v.setStyleSheet("font-family: monospace;")
+        # v.setStyleSheet("font-family: monospace;")
         v.setIconSize(QSize(24, 24))
         v.setAlternatingRowColors(True)
         try:
@@ -104,8 +105,8 @@ class AppDataModel(QStandardItemModel):
             v.resizeColumnToContents(i)
         for i in range(self.rowCount()):
             v.resizeRowToContents(i)
-        #v.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        #v.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # v.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        # v.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
 
 class AppItem(object):
@@ -130,9 +131,9 @@ class AppItem(object):
     def __contains__(self, item):
         item = item.lower()
         if item in self.name.lower() or item.lower() in self.desc.lower() \
-           or item in self.cmd.lower() or item in self.ver.lower() \
-           or item in ' '.join(self.groups).lower() or item in str(self.contact).lower():
-               return True
+                or item in self.cmd.lower() or item in self.ver.lower() \
+                or item in ' '.join(self.groups).lower() or item in str(self.contact).lower():
+            return True
         else:
             return False
 
@@ -195,6 +196,7 @@ def get_app_data(path=None, filename='app_launcher.ini'):
 
     return data
 
+
 def config_icon_path(icon_path, conf_path):
     # 1. if in conf_path/icons
     # 2. if in <app_name>/config/icons
@@ -225,6 +227,7 @@ if __name__ == '__main__':
 
     data = get_app_data(filename='app_launcher.ini')
 
+
     class MyApp(QWidget):
         def __init__(self):
             super(self.__class__, self).__init__()
@@ -250,6 +253,7 @@ if __name__ == '__main__':
 
         def sizeHint(self):
             return QSize(800, 600)
+
 
     app = QApplication(sys.argv)
     w = MyApp()
