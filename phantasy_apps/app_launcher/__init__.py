@@ -25,6 +25,20 @@ def run(cli=False):
     else:
         config_file = None
 
+## FRIB/AP only
+    if '--dev-mode' in arg:
+        dev_mode = bool(arg[arg.index('--dev-mode') + 1])
+    else:
+        dev_mode = False
+
+    if dev_mode:
+        dev_cmd = '/files/shared/ap/run_apps.sh'
+        if os.path.isfile(dev_cmd):
+            print("Run App Launcher in development mode: ")
+            print("  " + dev_cmd)
+            Popen(dev_cmd, shell=True)
+            return
+##
     w = AppLauncherWindow(version=__version__,
                           logfile=logfile,
                           config=config_file)
