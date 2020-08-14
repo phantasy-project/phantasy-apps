@@ -1,3 +1,62 @@
+Version 4.0.0
+-------------
+2020-08-14
+
+- SN: Synoptic View  & Control
+  - Show tooltip when hovering device, and update live data
+  - Refactor JS code, use d3.js
+  - Add support for console debugging
+  - Re-organize svg,js,css files
+  - Update UI
+
+- AS: Allison Scanner
+  - Hide device geometry info by default, show in Advanced mode
+  - Integrate simulation IOC app
+  - Update UI
+
+- CV: Correlation Visualizer
+  - Fix Lattice Viewer invoking
+  - Support quick loading offline data, fix the slow issue
+  - Support loading data file by dnd file
+
+- TV: Trajectory Visualizer
+  - Support device selection by mouse events, with mpl toolbar
+  - Auto select correctors with shading area
+  - Add reference trajectory curves for both x and y
+  - Preset BPM/cors after device loading
+  - Update preloaded mpl config files
+  - Update UI
+  - Fully support save and load trajectory data, and UI restoration
+
+- LV: Lattice Viewer
+  - Separate lattice loading part to a method
+
+- OM: Online Model
+  - Adjust lattice info show routine with the updates of LatticeViewer
+
+- ORM: Orbit Response Matrix
+  - Adjust lattice info show routine with the updates of LatticeViewer
+  - Add support to keep polarity when scanning cors to measure ORM
+  - Update UI
+
+- SM: Settings Manager
+  - Adjust lattice info show routine with the updates of LatticeViewer
+
+- DV: Device Viewer
+  - Update UI
+  - Auto rotate xticks, add xylabels, fix annotation init issue
+  - Add device update button for DV launched from TV
+
+- AL: App Launcher
+  - This is a almost re-developed App Launcher
+  - Novel way to present apps, so-called cardview like Citrix Workspace
+  - New cardview support group, favorite, info page, search functionality
+  - Replace the configuration file with toml format
+  - Support --dev-mode option
+  - Support single application instance running mode
+  - Update UI
+
+
 Version 3.0.4
 -------------
 2020-04-24
