@@ -1,7 +1,11 @@
 # -*- coding: utf8 -*-
 
+import os
 import sys
+import getpass
+from subprocess import Popen
 from phantasy_ui import QApp as QApplication
+from PyQt5.QtCore import QSharedMemory
 
 from .app_new import AppLauncherWindow
 
@@ -14,6 +18,11 @@ __version__ = '4.0'
 
 
 def run(cli=False):
+    share_m = QSharedMemory(getpass.getuser() + __title__)
+    if not share_m.create(1):
+        raise_app()
+        return 0
+
     app = QApplication(sys.argv)
     arg = sys.argv
     if '--log' in arg:
@@ -32,8 +41,6 @@ def run(cli=False):
         dev_mode = False
 
     if dev_mode:
-        import os
-        from subprocess import Popen
         dev_cmd = '/files/shared/ap/run_apps.sh'
         if os.path.isfile(dev_cmd):
             print("Run App Launcher in development mode: ")
@@ -50,3 +57,8 @@ def run(cli=False):
         app.exec_()
     else:
         sys.exit(app.exec_())
+
+
+def raise_app():
+    # linux
+    Popen("wmctrl -a " + __title__, shell=True)
