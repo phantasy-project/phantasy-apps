@@ -12,7 +12,7 @@ def read_license():
     with open('LICENSE') as f:
         return f.read()
 
-app_version = "3.0.4"
+app_version = "4.0.0"
 app_name = "phantasy_apps"
 app_description = 'Physics high-level applications and toolkits for accelerator system -- applications'
 app_long_description = readme() + '\n\n'
