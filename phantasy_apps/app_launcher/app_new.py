@@ -204,7 +204,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
                 self.apps_tab.tabText(i).split(' ')[0], layout[0].count()))
 
     def sizeHint(self):
-        return QSize(1600, 1200)
+        return QSize(1780, 1200)
 
     def post_init_ui(self):
         # uid
