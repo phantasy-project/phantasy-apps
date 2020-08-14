@@ -27,7 +27,7 @@ def run(cli=False):
 
 ## FRIB/AP only
     if '--dev-mode' in arg:
-        dev_mode = bool(arg[arg.index('--dev-mode') + 1])
+        dev_mode = arg[arg.index('--dev-mode') + 1] == 'true'
     else:
         dev_mode = False
 
