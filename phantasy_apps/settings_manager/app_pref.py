@@ -53,6 +53,10 @@ class PreferencesDialog(QDialog, Ui_Dialog):
     # font
     font_changed = pyqtSignal(QFont)
 
+    # bool
+    init_settings_changed = pyqtSignal(bool)
+
+
     def __init__(self, parent=None, preference_dict=None):
         super(self.__class__, self).__init__()
         self.parent = parent
@@ -232,6 +236,7 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         lattice, otherwise the user should add elements into view.
         """
         self.init_settings = f
+        self.init_settings_changed.emit(f)
 
     @pyqtSlot()
     def on_select_font(self):

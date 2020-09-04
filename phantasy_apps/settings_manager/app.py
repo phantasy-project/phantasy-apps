@@ -58,6 +58,7 @@ from .ui.ui_app import Ui_MainWindow
 from .utils import FMT
 from .utils import SettingsModel
 from .utils import pack_settings
+from .utils import str2float
 from .utils import init_config_dir
 from .utils import VALID_FILTER_KEYS_NUM
 
@@ -113,6 +114,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     # font
     font_changed = pyqtSignal(QFont)
+
+    # bool
+    init_settings_changed = pyqtSignal(bool)
 
     def __init__(self, version, config_dir=None):
         super(SettingsManagerWindow, self).__init__()
@@ -202,6 +206,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.font = self.get_font_config()
         self.pref_dict['font'] = self.font
         self.font_changed.connect(self.on_font_changed)
+
+        # init settings boolean
+        self.init_settings_changed.connect(self.init_settings_chkbox.setChecked)
 
     @pyqtSlot(QFont)
     def on_font_changed(self, font):
@@ -375,7 +382,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.update_rate_cbb.currentIndex())
 
         # scaling factor lineEdit
-        self.scaling_factor_lineEdit.setValidator(QDoubleValidator(0.0, 10, 6))
+        #self.scaling_factor_lineEdit.setValidator(QDoubleValidator(0.0, 10, 6))
 
         # icon
         self.done_px = QPixmap(":/sm-icons/done.png")
@@ -620,6 +627,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._load_from_dlg.show()
 
     @pyqtSlot()
+    def on_input_scaling_factor(self):
+        """Input scaling factor and return.
+        """
+        v = str2float(self.scaling_factor_lineEdit.text())
+        if v is None:
+            v = 1.0
+        self.scaling_factor_lineEdit.setText(str(v))
+
+    @pyqtSlot()
     def on_apply_settings(self):
         """Apply selected element settings.
         """
@@ -778,8 +794,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         if idx.column() == src_m.i_name:
             ename_item = src_m.itemFromIndex(src_idx)
-            fobj = ename_item.fobj
-            printlog(fobj.get_auto_monitor())
+            if hasattr(ename_item, 'fobj'):
+                fobj = ename_item.fobj
+                printlog(fobj.get_auto_monitor())
 
     @pyqtSlot()
     def on_filter_changed(self):
@@ -879,6 +896,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         self.__init_lat = self.build_lattice()
 
+    @pyqtSlot(bool)
+    def on_toggle_init_lattice_settings(self, enabled):
+        """If checked, to initialize device settings with entire loaded lattice.
+        """
+        self.init_settings = enabled
+        self.pref_dict['init_settings'] = enabled
+
     @pyqtSlot()
     def on_launch_preferences(self):
         """Launch preferences dialog.
@@ -888,6 +912,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         pref_dlg.visibility_changed.connect(self.on_update_visibility)
         pref_dlg.config_changed.connect(self.on_config_updated)
         pref_dlg.font_changed.connect(self.font_changed)
+        pref_dlg.init_settings_changed.connect(self.init_settings_changed)
         r = pref_dlg.exec_()
         # if r == QDialog.Accepted:
         #     printlog("Updated pref --> {}".format(self.pref_dict))
