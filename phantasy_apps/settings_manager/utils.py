@@ -589,3 +589,18 @@ def init_config_dir(confdir):
     ms_confpath = os.path.join(confdir, 'settings.json')
     elem_confpath = os.path.join(confdir, 'elements.json')
     return confdir, ts_confpath, ms_confpath, elem_confpath
+
+
+def str2float(s):
+    """Convert string to float, if s is an valid expression, return
+    the evaluated result, otherwise return None.
+    """
+    try:
+        r = float(s)
+    except ValueError:
+        try:
+            r = eval(s)
+        except SyntaxError:
+            r = None
+    finally:
+        return r
