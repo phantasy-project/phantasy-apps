@@ -903,6 +903,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.init_settings = enabled
         self.pref_dict['init_settings'] = enabled
 
+    @pyqtSlot(int)
+    def on_ndigit_valueChanged(self, i):
+        self.ndigit = i
+        self.pref_dict['ndigit'] = i
+        self.ndigit_changed.emit(i)
+
     @pyqtSlot()
     def on_launch_preferences(self):
         """Launch preferences dialog.
@@ -913,6 +919,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         pref_dlg.config_changed.connect(self.on_config_updated)
         pref_dlg.font_changed.connect(self.font_changed)
         pref_dlg.init_settings_changed.connect(self.init_settings_changed)
+        pref_dlg.ndigit_sbox.valueChanged.connect(self.ndigit_sbox.setValue)
         r = pref_dlg.exec_()
         # if r == QDialog.Accepted:
         #     printlog("Updated pref --> {}".format(self.pref_dict))
@@ -1200,7 +1207,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Set widgets status for updating.
         """
         w1 = (self.update_ctrl_btn, self.update_rate_cbb, self.apply_btn,
-              self.single_update_btn,)
+              self.single_update_btn, self.ndigit_sbox)
         [i.setDisabled(status == 'START') for i in w1]
 
     def set_widgets_status_for_applying(self, status):
