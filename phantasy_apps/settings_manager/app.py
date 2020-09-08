@@ -718,10 +718,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.applyer.start()
 
     def apply_single(self, sf, tuple_idx_settings):
-        idx_src, settings = tuple_idx_settings
+        idx_src, settings, new_fval0 = tuple_idx_settings
         elem, fname, fld, fval0 = settings
         ename = elem.name
-        fval_to_set = fval0 * sf
+        print("New fval: {}, fval0: {}".format(new_fval0, fval0))
+        fval_to_set = new_fval0 * sf
         try:
             t0 = time.time()
             fval_current_settings = fld.current_setting()
@@ -731,7 +732,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             px = self.done_px
             printlog("- Set {} [{}] from {} to {} ({}).".format(
-                ename, fname, fval_current_settings, fval_to_set, fval0))
+                ename, fname, fval_current_settings, fval_to_set, new_fval0))
             dt = self.t_wait - (time.time() - t0)
             if dt > 0:
                 time.sleep(dt)
@@ -856,7 +857,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             ename_item = src_m.itemFromIndex(src_idx)
             if hasattr(ename_item, 'fobj'):
                 fobj = ename_item.fobj
-                printlog(fobj.get_auto_monitor())
+                printlog("Auto-monitor on? ", fobj.get_auto_monitor())
 
     @pyqtSlot()
     def on_filter_changed(self):

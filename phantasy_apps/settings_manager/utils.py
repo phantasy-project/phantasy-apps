@@ -453,8 +453,10 @@ class _SortProxyModel(QSortFilterProxyModel):
             idx_src = self.mapToSource(idx)
             it_name_src = self.m_src.itemFromIndex(idx_src)
             if is_item_checked(it_name_src):
-                print(self.data(idx), it_name_src.text(), idx_src.row())
-                settings_selected.append((idx_src, self.m_src._settings[idx_src.row()]))
+                # print(self.data(idx), it_name_src.text(), idx_src.row())
+                new_fval0 = float(self.m_src.data(
+                                  self.m_src.index(idx_src.row(), self.m_src.i_val0)))
+                settings_selected.append((idx_src, self.m_src._settings[idx_src.row()], new_fval0))
         return settings_selected
 
     def select_all(self):
