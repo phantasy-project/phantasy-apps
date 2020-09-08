@@ -56,6 +56,7 @@ from .data import ToleranceSettings
 from .data import get_csv_settings
 from .data import make_physics_settings
 from .ui.ui_app import Ui_MainWindow
+from .ui.ui_query_tips import Ui_Form as QueryTipsForm
 from .utils import FMT
 from .utils import SettingsModel
 from .utils import pack_settings
@@ -265,6 +266,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if (o.last_machine_name == self._last_machine_name) and \
                 (o.last_lattice_name == self._last_lattice_name):
             return
+
         # update lattice with the new one
         self._mp = o
         self._last_machine_name = self._mp.last_machine_name
@@ -366,6 +368,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.__settings = Settings()
         self.__flat_settings = None
 
+        self._eval_scaling_factor = False # not eval sf (hit enter)
+
         self._eng_phy_toggle = {'ENG': True, 'PHY': False}
         self.on_lattice_changed(self._mp)
 
@@ -427,6 +431,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.on_change_font_size, 1))
         self.shrink_fontsize_btn.clicked.connect(partial(
             self.on_change_font_size, -1))
+
+        # query tips
+        self._query_tips_form = None
+        self.filter_btn.toggled.connect(partial(self.on_enable_search, True))
+        self.filter_btn.toggled.emit(self.filter_btn.isChecked())
+
+    @pyqtSlot(bool)
+    def on_enable_search(self, auto_collapse, enabled):
+        if auto_collapse:
+            self.filter_lineEdit.setVisible(enabled)
+        if not enabled:
+            self.filter_lineEdit.setText('')
+            self.filter_lineEdit.editingFinished.emit()
+
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key_Escape and self.filter_btn.isChecked():
+            self.filter_btn.setChecked(False)
 
     def on_change_font_size(self, v):
         if v == 0:
@@ -658,6 +679,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._load_from_dlg.settingsLoaded.connect(self.on_settings_loaded)
         self._load_from_dlg.show()
 
+    @pyqtSlot('QString')
+    def on_scaling_factor_changed(self, s):
+        self._eval_scaling_factor = False
+
     @pyqtSlot()
     def on_input_scaling_factor(self):
         """Input scaling factor and return.
@@ -666,11 +691,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if v is None:
             v = 1.0
         self.scaling_factor_lineEdit.setText(str(v))
+        self._eval_scaling_factor = True
 
     @pyqtSlot()
     def on_apply_settings(self):
         """Apply selected element settings.
         """
+        if not self._eval_scaling_factor:
+            self.scaling_factor_lineEdit.returnPressed.emit()
+
         # scaling factor
         scaling_factor = float(self.scaling_factor_lineEdit.text())
         #
@@ -933,6 +962,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         self.init_settings = enabled
         self.pref_dict['init_settings'] = enabled
+        if enabled and self._mp is not None:
+            self._elem_list = self._lat[:]
+            self.element_list_changed.emit()
 
     @pyqtSlot(int)
     def on_ndigit_valueChanged(self, i):
@@ -1313,6 +1345,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for i in range(m.rowCount()):
             sp_val_str = m.data(m.index(i, current_sp_idx))
             m.setData(m.index(i, stored_sp_idx), sp_val_str)
+
+    @pyqtSlot()
+    def on_show_query_tips(self):
+        if self._query_tips_form is None:
+            self._query_tips_form = w = QWidget()
+            ui = QueryTipsForm()
+            ui.setupUi(w)
+            w.setWindowTitle("Query Tips")
+        self._query_tips_form.show()
 
 
 def make_tolerance_dict_from_table_settings(table_settings):
