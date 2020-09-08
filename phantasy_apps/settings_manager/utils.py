@@ -263,6 +263,9 @@ class SettingsModel(QStandardItemModel):
         proxy_model = _SortProxyModel(self)
         self._tv.setModel(proxy_model)
         #
+        # hide columns: writable (11)
+        self._tv.setColumnHidden(11, True)
+        #
         self.__post_init_ui()
 
     def __post_init_ui(self):
