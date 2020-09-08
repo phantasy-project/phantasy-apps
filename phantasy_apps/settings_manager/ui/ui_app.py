@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_app.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -19,13 +19,144 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setContentsMargins(6, 6, 6, 6)
         self.gridLayout_2.setSpacing(4)
         self.gridLayout_2.setObjectName("gridLayout_2")
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setSizeConstraint(
+            QtWidgets.QLayout.SetDefaultConstraint)
+        self.horizontalLayout.setSpacing(4)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.reload_lattice_btn = QtWidgets.QToolButton(self.centralwidget)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/sm-icons/reload.png"),
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.reload_lattice_btn.setIcon(icon)
+        self.reload_lattice_btn.setIconSize(QtCore.QSize(24, 24))
+        self.reload_lattice_btn.setAutoRaise(True)
+        self.reload_lattice_btn.setObjectName("reload_lattice_btn")
+        self.horizontalLayout.addWidget(self.reload_lattice_btn)
+        self.lv_lbl = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.lv_lbl.sizePolicy().hasHeightForWidth())
+        self.lv_lbl.setSizePolicy(sizePolicy)
+        self.lv_lbl.setObjectName("lv_lbl")
+        self.horizontalLayout.addWidget(self.lv_lbl)
+        self.lv_view_btn = QtWidgets.QToolButton(self.centralwidget)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/sm-icons/view-details.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.lv_view_btn.setIcon(icon1)
+        self.lv_view_btn.setAutoRaise(True)
+        self.lv_view_btn.setObjectName("lv_view_btn")
+        self.horizontalLayout.addWidget(self.lv_view_btn)
+        self.lv_mach_lbl = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.lv_mach_lbl.sizePolicy().hasHeightForWidth())
+        self.lv_mach_lbl.setSizePolicy(sizePolicy)
+        self.lv_mach_lbl.setStyleSheet("QLabel {\n"
+                                       "    color: #007BFF;\n"
+                                       "}")
+        self.lv_mach_lbl.setObjectName("lv_mach_lbl")
+        self.horizontalLayout.addWidget(self.lv_mach_lbl)
+        self.lv_segm_lbl = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.lv_segm_lbl.sizePolicy().hasHeightForWidth())
+        self.lv_segm_lbl.setSizePolicy(sizePolicy)
+        self.lv_segm_lbl.setStyleSheet("QLabel {\n"
+                                       "    color: #DC3545;\n"
+                                       "}")
+        self.lv_segm_lbl.setObjectName("lv_segm_lbl")
+        self.horizontalLayout.addWidget(self.lv_segm_lbl)
+        spacerItem = QtWidgets.QSpacerItem(40, 20,
+                                           QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
+        self.line = QtWidgets.QFrame(self.centralwidget)
+        self.line.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.horizontalLayout.addWidget(self.line)
+        self.label_6 = QtWidgets.QLabel(self.centralwidget)
+        self.label_6.setObjectName("label_6")
+        self.horizontalLayout.addWidget(self.label_6)
+        self.update_rate_cbb = QtWidgets.QComboBox(self.centralwidget)
+        self.update_rate_cbb.setEnabled(True)
+        self.update_rate_cbb.setObjectName("update_rate_cbb")
+        self.update_rate_cbb.addItem("")
+        self.update_rate_cbb.addItem("")
+        self.update_rate_cbb.addItem("")
+        self.update_rate_cbb.addItem("")
+        self.update_rate_cbb.addItem("")
+        self.horizontalLayout.addWidget(self.update_rate_cbb)
+        self.update_ctrl_btn = QtWidgets.QToolButton(self.centralwidget)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/start.png"),
+                        QtGui.QIcon.Active, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/stop.png"),
+                        QtGui.QIcon.Active, QtGui.QIcon.On)
+        self.update_ctrl_btn.setIcon(icon2)
+        self.update_ctrl_btn.setIconSize(QtCore.QSize(24, 24))
+        self.update_ctrl_btn.setCheckable(True)
+        self.update_ctrl_btn.setChecked(False)
+        self.update_ctrl_btn.setAutoRaise(True)
+        self.update_ctrl_btn.setObjectName("update_ctrl_btn")
+        self.horizontalLayout.addWidget(self.update_ctrl_btn)
+        self.single_update_btn = QtWidgets.QToolButton(self.centralwidget)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/single.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.single_update_btn.setIcon(icon3)
+        self.single_update_btn.setIconSize(QtCore.QSize(24, 24))
+        self.single_update_btn.setAutoRaise(True)
+        self.single_update_btn.setObjectName("single_update_btn")
+        self.horizontalLayout.addWidget(self.single_update_btn)
+        self.line_2 = QtWidgets.QFrame(self.centralwidget)
+        self.line_2.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_2.setObjectName("line_2")
+        self.horizontalLayout.addWidget(self.line_2)
+        self.apply_btn = QtWidgets.QPushButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.apply_btn.sizePolicy().hasHeightForWidth())
+        self.apply_btn.setSizePolicy(sizePolicy)
+        self.apply_btn.setFlat(False)
+        self.apply_btn.setObjectName("apply_btn")
+        self.horizontalLayout.addWidget(self.apply_btn)
+        self.label_8 = QtWidgets.QLabel(self.centralwidget)
+        self.label_8.setObjectName("label_8")
+        self.horizontalLayout.addWidget(self.label_8)
+        self.scaling_factor_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.scaling_factor_lineEdit.sizePolicy().hasHeightForWidth())
+        self.scaling_factor_lineEdit.setSizePolicy(sizePolicy)
+        self.scaling_factor_lineEdit.setObjectName("scaling_factor_lineEdit")
+        self.horizontalLayout.addWidget(self.scaling_factor_lineEdit)
+        self.gridLayout_2.addLayout(self.horizontalLayout, 2, 0, 1, 1)
         self.gridLayout = QtWidgets.QGridLayout()
         self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
-        spacerItem = QtWidgets.QSpacerItem(600, 20,
-                                           QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem, 0, 5, 1, 1)
+        spacerItem1 = QtWidgets.QSpacerItem(600, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout.addItem(spacerItem1, 0, 5, 1, 1)
         self.total_show_number_lbl = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -44,19 +175,19 @@ class Ui_MainWindow(object):
         self.total_show_number_lbl.setObjectName("total_show_number_lbl")
         self.gridLayout.addWidget(self.total_show_number_lbl, 0, 8, 1, 1)
         self.delete_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/sm-icons/delete.png"),
-                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.delete_btn.setIcon(icon)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/delete.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.delete_btn.setIcon(icon4)
         self.delete_btn.setIconSize(QtCore.QSize(24, 24))
         self.delete_btn.setAutoRaise(True)
         self.delete_btn.setObjectName("delete_btn")
         self.gridLayout.addWidget(self.delete_btn, 0, 4, 1, 1)
         self.reset_set_status_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/sm-icons/clear.png"),
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/clear.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.reset_set_status_btn.setIcon(icon1)
+        self.reset_set_status_btn.setIcon(icon5)
         self.reset_set_status_btn.setIconSize(QtCore.QSize(24, 24))
         self.reset_set_status_btn.setAutoRaise(True)
         self.reset_set_status_btn.setObjectName("reset_set_status_btn")
@@ -65,10 +196,10 @@ class Ui_MainWindow(object):
         self.label_5.setObjectName("label_5")
         self.gridLayout.addWidget(self.label_5, 0, 6, 1, 1)
         self.select_all_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/select-all.png"),
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/sm-icons/select-all.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.select_all_btn.setIcon(icon2)
+        self.select_all_btn.setIcon(icon6)
         self.select_all_btn.setIconSize(QtCore.QSize(24, 24))
         self.select_all_btn.setAutoRaise(True)
         self.select_all_btn.setObjectName("select_all_btn")
@@ -102,186 +233,43 @@ class Ui_MainWindow(object):
         self.show_all_selected_btn.setObjectName("show_all_selected_btn")
         self.gridLayout.addWidget(self.show_all_selected_btn, 1, 8, 1, 2)
         self.expand_all_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/expand.png"),
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(":/sm-icons/expand.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/collapse.png"),
+        icon7.addPixmap(QtGui.QPixmap(":/sm-icons/collapse.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.On)
-        self.expand_all_btn.setIcon(icon3)
+        self.expand_all_btn.setIcon(icon7)
         self.expand_all_btn.setIconSize(QtCore.QSize(24, 24))
         self.expand_all_btn.setCheckable(True)
         self.expand_all_btn.setAutoRaise(True)
         self.expand_all_btn.setObjectName("expand_all_btn")
         self.gridLayout.addWidget(self.expand_all_btn, 0, 0, 1, 1)
         self.invert_selection_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/invert-selection.png"),
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/sm-icons/invert-selection.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.invert_selection_btn.setIcon(icon4)
+        self.invert_selection_btn.setIcon(icon8)
         self.invert_selection_btn.setIconSize(QtCore.QSize(24, 24))
         self.invert_selection_btn.setAutoRaise(True)
         self.invert_selection_btn.setObjectName("invert_selection_btn")
         self.gridLayout.addWidget(self.invert_selection_btn, 0, 2, 1, 1)
         self.grow_fontsize_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/increase-font.png"),
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/sm-icons/increase-font.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.grow_fontsize_btn.setIcon(icon5)
+        self.grow_fontsize_btn.setIcon(icon9)
         self.grow_fontsize_btn.setAutoRaise(True)
         self.grow_fontsize_btn.setObjectName("grow_fontsize_btn")
         self.gridLayout.addWidget(self.grow_fontsize_btn, 1, 0, 1, 1)
         self.shrink_fontsize_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/sm-icons/decrease-font.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.shrink_fontsize_btn.setIcon(icon6)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap(":/sm-icons/decrease-font.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.shrink_fontsize_btn.setIcon(icon10)
         self.shrink_fontsize_btn.setAutoRaise(True)
         self.shrink_fontsize_btn.setObjectName("shrink_fontsize_btn")
         self.gridLayout.addWidget(self.shrink_fontsize_btn, 1, 1, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setSizeConstraint(
-            QtWidgets.QLayout.SetDefaultConstraint)
-        self.horizontalLayout.setSpacing(4)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.reload_lattice_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(":/sm-icons/reload.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.reload_lattice_btn.setIcon(icon7)
-        self.reload_lattice_btn.setIconSize(QtCore.QSize(24, 24))
-        self.reload_lattice_btn.setAutoRaise(True)
-        self.reload_lattice_btn.setObjectName("reload_lattice_btn")
-        self.horizontalLayout.addWidget(self.reload_lattice_btn)
-        self.lv_lbl = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lv_lbl.sizePolicy().hasHeightForWidth())
-        self.lv_lbl.setSizePolicy(sizePolicy)
-        self.lv_lbl.setObjectName("lv_lbl")
-        self.horizontalLayout.addWidget(self.lv_lbl)
-        self.lv_view_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(":/sm-icons/view-details.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.lv_view_btn.setIcon(icon8)
-        self.lv_view_btn.setAutoRaise(True)
-        self.lv_view_btn.setObjectName("lv_view_btn")
-        self.horizontalLayout.addWidget(self.lv_view_btn)
-        self.lv_mach_lbl = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lv_mach_lbl.sizePolicy().hasHeightForWidth())
-        self.lv_mach_lbl.setSizePolicy(sizePolicy)
-        self.lv_mach_lbl.setStyleSheet("QLabel {\n"
-                                       "    color: #007BFF;\n"
-                                       "}")
-        self.lv_mach_lbl.setObjectName("lv_mach_lbl")
-        self.horizontalLayout.addWidget(self.lv_mach_lbl)
-        self.lv_segm_lbl = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lv_segm_lbl.sizePolicy().hasHeightForWidth())
-        self.lv_segm_lbl.setSizePolicy(sizePolicy)
-        self.lv_segm_lbl.setStyleSheet("QLabel {\n"
-                                       "    color: #DC3545;\n"
-                                       "}")
-        self.lv_segm_lbl.setObjectName("lv_segm_lbl")
-        self.horizontalLayout.addWidget(self.lv_segm_lbl)
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setObjectName("label")
-        self.horizontalLayout.addWidget(self.label)
-        self.total_elem_number_lbl = QtWidgets.QLabel(self.centralwidget)
-        self.total_elem_number_lbl.setStyleSheet("QLabel {\n"
-                                                 "    color: #28A745;\n"
-                                                 "}")
-        self.total_elem_number_lbl.setObjectName("total_elem_number_lbl")
-        self.horizontalLayout.addWidget(self.total_elem_number_lbl)
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setObjectName("label_2")
-        self.horizontalLayout.addWidget(self.label_2)
-        self.total_sppv_number_lbl = QtWidgets.QLabel(self.centralwidget)
-        self.total_sppv_number_lbl.setStyleSheet("QLabel {\n"
-                                                 "    color: #28A745;\n"
-                                                 "}")
-        self.total_sppv_number_lbl.setObjectName("total_sppv_number_lbl")
-        self.horizontalLayout.addWidget(self.total_sppv_number_lbl)
-        self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        self.label_3.setObjectName("label_3")
-        self.horizontalLayout.addWidget(self.label_3)
-        self.total_rdpv_number_lbl = QtWidgets.QLabel(self.centralwidget)
-        self.total_rdpv_number_lbl.setStyleSheet("QLabel {\n"
-                                                 "    color: #28A745;\n"
-                                                 "}")
-        self.total_rdpv_number_lbl.setObjectName("total_rdpv_number_lbl")
-        self.horizontalLayout.addWidget(self.total_rdpv_number_lbl)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
-                                            QtWidgets.QSizePolicy.Expanding,
-                                            QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem1)
-        self.label_6 = QtWidgets.QLabel(self.centralwidget)
-        self.label_6.setObjectName("label_6")
-        self.horizontalLayout.addWidget(self.label_6)
-        self.update_rate_cbb = QtWidgets.QComboBox(self.centralwidget)
-        self.update_rate_cbb.setEnabled(True)
-        self.update_rate_cbb.setObjectName("update_rate_cbb")
-        self.update_rate_cbb.addItem("")
-        self.update_rate_cbb.addItem("")
-        self.update_rate_cbb.addItem("")
-        self.update_rate_cbb.addItem("")
-        self.update_rate_cbb.addItem("")
-        self.horizontalLayout.addWidget(self.update_rate_cbb)
-        self.update_ctrl_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(":/sm-icons/start.png"),
-                        QtGui.QIcon.Active, QtGui.QIcon.Off)
-        icon9.addPixmap(QtGui.QPixmap(":/sm-icons/stop.png"),
-                        QtGui.QIcon.Active, QtGui.QIcon.On)
-        self.update_ctrl_btn.setIcon(icon9)
-        self.update_ctrl_btn.setIconSize(QtCore.QSize(24, 24))
-        self.update_ctrl_btn.setCheckable(True)
-        self.update_ctrl_btn.setChecked(False)
-        self.update_ctrl_btn.setAutoRaise(True)
-        self.update_ctrl_btn.setObjectName("update_ctrl_btn")
-        self.horizontalLayout.addWidget(self.update_ctrl_btn)
-        self.single_update_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap(":/sm-icons/single.png"),
-                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.single_update_btn.setIcon(icon10)
-        self.single_update_btn.setIconSize(QtCore.QSize(24, 24))
-        self.single_update_btn.setAutoRaise(True)
-        self.single_update_btn.setObjectName("single_update_btn")
-        self.horizontalLayout.addWidget(self.single_update_btn)
-        self.line_2 = QtWidgets.QFrame(self.centralwidget)
-        self.line_2.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_2.setObjectName("line_2")
-        self.horizontalLayout.addWidget(self.line_2)
-        self.apply_btn = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.apply_btn.sizePolicy().hasHeightForWidth())
-        self.apply_btn.setSizePolicy(sizePolicy)
-        self.apply_btn.setFlat(False)
-        self.apply_btn.setObjectName("apply_btn")
-        self.horizontalLayout.addWidget(self.apply_btn)
-        self.scaling_factor_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        self.scaling_factor_lineEdit.setObjectName("scaling_factor_lineEdit")
-        self.horizontalLayout.addWidget(self.scaling_factor_lineEdit)
-        self.gridLayout_2.addLayout(self.horizontalLayout, 2, 0, 1, 1)
         self.treeView = QtWidgets.QTreeView(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Expanding)
@@ -290,11 +278,59 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.treeView.sizePolicy().hasHeightForWidth())
         self.treeView.setSizePolicy(sizePolicy)
+        self.treeView.setSelectionMode(
+            QtWidgets.QAbstractItemView.ExtendedSelection)
         self.treeView.setObjectName("treeView")
         self.gridLayout_2.addWidget(self.treeView, 1, 0, 1, 1)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setObjectName("label")
+        self.horizontalLayout_2.addWidget(self.label)
+        self.total_elem_number_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.total_elem_number_lbl.setStyleSheet("QLabel {\n"
+                                                 "    color: #28A745;\n"
+                                                 "}")
+        self.total_elem_number_lbl.setObjectName("total_elem_number_lbl")
+        self.horizontalLayout_2.addWidget(self.total_elem_number_lbl)
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setObjectName("label_2")
+        self.horizontalLayout_2.addWidget(self.label_2)
+        self.total_sppv_number_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.total_sppv_number_lbl.setStyleSheet("QLabel {\n"
+                                                 "    color: #28A745;\n"
+                                                 "}")
+        self.total_sppv_number_lbl.setObjectName("total_sppv_number_lbl")
+        self.horizontalLayout_2.addWidget(self.total_sppv_number_lbl)
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_2.addWidget(self.label_3)
+        self.total_rdpv_number_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.total_rdpv_number_lbl.setStyleSheet("QLabel {\n"
+                                                 "    color: #28A745;\n"
+                                                 "}")
+        self.total_rdpv_number_lbl.setObjectName("total_rdpv_number_lbl")
+        self.horizontalLayout_2.addWidget(self.total_rdpv_number_lbl)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem2)
+        self.label_9 = QtWidgets.QLabel(self.centralwidget)
+        self.label_9.setObjectName("label_9")
+        self.horizontalLayout_2.addWidget(self.label_9)
+        self.ndigit_sbox = QtWidgets.QSpinBox(self.centralwidget)
+        self.ndigit_sbox.setMaximum(20)
+        self.ndigit_sbox.setProperty("value", 3)
+        self.ndigit_sbox.setObjectName("ndigit_sbox")
+        self.horizontalLayout_2.addWidget(self.ndigit_sbox)
+        self.init_settings_chkbox = QtWidgets.QCheckBox(self.centralwidget)
+        self.init_settings_chkbox.setObjectName("init_settings_chkbox")
+        self.horizontalLayout_2.addWidget(self.init_settings_chkbox)
+        self.gridLayout_2.addLayout(self.horizontalLayout_2, 3, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 30))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -450,6 +486,12 @@ class Ui_MainWindow(object):
             MainWindow.on_toggle_all_selected)
         self.actionTake_Snapshot.triggered.connect(
             MainWindow.on_take_settings_snapshot)
+        self.scaling_factor_lineEdit.returnPressed.connect(
+            MainWindow.on_input_scaling_factor)
+        self.init_settings_chkbox.toggled['bool'].connect(
+            MainWindow.on_toggle_init_lattice_settings)
+        self.ndigit_sbox.valueChanged['int'].connect(
+            MainWindow.on_ndigit_valueChanged)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.expand_all_btn, self.select_all_btn)
         MainWindow.setTabOrder(self.select_all_btn, self.invert_selection_btn)
@@ -465,6 +507,49 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.reload_lattice_btn.setToolTip(
+            _translate("MainWindow", "Reload Lattice."))
+        self.reload_lattice_btn.setText(_translate("MainWindow", "..."))
+        self.lv_lbl.setText(_translate("MainWindow", "Loaded Lattice"))
+        self.lv_view_btn.setToolTip(
+            _translate("MainWindow", "See the details of loaded lattice."))
+        self.lv_view_btn.setText(_translate("MainWindow", "..."))
+        self.lv_mach_lbl.setToolTip(_translate("MainWindow", "Machine name."))
+        self.lv_mach_lbl.setText(_translate("MainWindow", "machine"))
+        self.lv_segm_lbl.setToolTip(_translate("MainWindow", "Segment name."))
+        self.lv_segm_lbl.setText(_translate("MainWindow", "segment"))
+        self.label_6.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Auto : Realtime update</p><p>1-5 : Update every 0.2 to 1 second</p></body></html>"
+            ))
+        self.label_6.setText(_translate("MainWindow", "Update Rate"))
+        self.update_rate_cbb.setItemText(0, _translate("MainWindow", "1.0 Hz"))
+        self.update_rate_cbb.setItemText(1, _translate("MainWindow", "0.5 Hz"))
+        self.update_rate_cbb.setItemText(2, _translate("MainWindow", "2.0 Hz"))
+        self.update_rate_cbb.setItemText(3, _translate("MainWindow", "0.2 Hz"))
+        self.update_rate_cbb.setItemText(4, _translate("MainWindow", "0.1 Hz"))
+        self.update_ctrl_btn.setToolTip(
+            _translate("MainWindow", "Start/stop updating values."))
+        self.update_ctrl_btn.setText(_translate("MainWindow", "..."))
+        self.single_update_btn.setToolTip(
+            _translate("MainWindow", "Update for one time."))
+        self.single_update_btn.setText(_translate("MainWindow", "..."))
+        self.apply_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Only apply the settings of checked items after scaling by the defined scaling factor.</p></body></html>"
+            ))
+        self.apply_btn.setText(_translate("MainWindow", "Apply"))
+        self.label_8.setText(
+            _translate("MainWindow",
+                       "<html><head/><body><p>×</p></body></html>"))
+        self.scaling_factor_lineEdit.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Scaling factor, input a number e.g. 0.8, or an expression, e.g. 12 / 18, then press Enter.</p></body></html>"
+            ))
+        self.scaling_factor_lineEdit.setText(_translate("MainWindow", "1.0"))
         self.total_show_number_lbl.setToolTip(
             _translate("MainWindow", "Total filtered items."))
         self.total_show_number_lbl.setText(_translate("MainWindow", "0"))
@@ -507,49 +592,20 @@ class Ui_MainWindow(object):
                 "Shrink font size by 1pt (Ctrl + minus, reset with Ctrl + 0).")
         )
         self.shrink_fontsize_btn.setText(_translate("MainWindow", "..."))
-        self.reload_lattice_btn.setToolTip(
-            _translate("MainWindow", "Reload Lattice."))
-        self.reload_lattice_btn.setText(_translate("MainWindow", "..."))
-        self.lv_lbl.setText(_translate("MainWindow", "Loaded Lattice"))
-        self.lv_view_btn.setToolTip(
-            _translate("MainWindow", "See the details of loaded lattice."))
-        self.lv_view_btn.setText(_translate("MainWindow", "..."))
-        self.lv_mach_lbl.setToolTip(_translate("MainWindow", "Machine name."))
-        self.lv_mach_lbl.setText(_translate("MainWindow", "machine"))
-        self.lv_segm_lbl.setToolTip(_translate("MainWindow", "Segment name."))
-        self.lv_segm_lbl.setText(_translate("MainWindow", "segment"))
         self.label.setText(_translate("MainWindow", "Total Elements"))
         self.total_elem_number_lbl.setText(_translate("MainWindow", "0"))
         self.label_2.setText(_translate("MainWindow", "Setpoint PVs"))
         self.total_sppv_number_lbl.setText(_translate("MainWindow", "0"))
         self.label_3.setText(_translate("MainWindow", "Readback PVs"))
         self.total_rdpv_number_lbl.setText(_translate("MainWindow", "0"))
-        self.label_6.setToolTip(
+        self.label_9.setText(_translate("MainWindow", "Precision number"))
+        self.init_settings_chkbox.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Auto : Realtime update</p><p>1-5 : Update every 0.2 to 1 second</p></body></html>"
+                "<html><head/><body><p>Initialize device settings with the whole loaded lattice.</p></body></html>"
             ))
-        self.label_6.setText(_translate("MainWindow", "Update Rate"))
-        self.update_rate_cbb.setItemText(0, _translate("MainWindow", "1.0 Hz"))
-        self.update_rate_cbb.setItemText(1, _translate("MainWindow", "0.5 Hz"))
-        self.update_rate_cbb.setItemText(2, _translate("MainWindow", "2.0 Hz"))
-        self.update_rate_cbb.setItemText(3, _translate("MainWindow", "0.2 Hz"))
-        self.update_rate_cbb.setItemText(4, _translate("MainWindow", "0.1 Hz"))
-        self.update_ctrl_btn.setToolTip(
-            _translate("MainWindow", "Start/stop updating values."))
-        self.update_ctrl_btn.setText(_translate("MainWindow", "..."))
-        self.single_update_btn.setToolTip(
-            _translate("MainWindow", "Update for one time."))
-        self.single_update_btn.setText(_translate("MainWindow", "..."))
-        self.apply_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "Apply the checked items\' settings after scaling by the defined scaling factor."
-            ))
-        self.apply_btn.setText(_translate("MainWindow", "Apply"))
-        self.scaling_factor_lineEdit.setToolTip(
-            _translate("MainWindow", "Scaling factor."))
-        self.scaling_factor_lineEdit.setText(_translate("MainWindow", "1.0"))
+        self.init_settings_chkbox.setText(
+            _translate("MainWindow", "Initialize with loaded lattice"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))

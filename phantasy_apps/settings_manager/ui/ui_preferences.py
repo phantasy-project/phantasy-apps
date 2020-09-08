@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_preferences.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(472, 274)
+        Dialog.resize(640, 342)
         self.gridLayout_9 = QtWidgets.QGridLayout(Dialog)
         self.gridLayout_9.setContentsMargins(6, 12, 6, 6)
         self.gridLayout_9.setSpacing(6)
@@ -286,7 +286,7 @@ class Ui_Dialog(object):
         self.live_rbtn.setText(_translate("Dialog", "Live"))
         self.label_4.setText(_translate("Dialog", "Float number precision"))
         self.label_2.setText(
-            _translate("Dialog", "Absolute Discrepancy Tolerance"))
+            _translate("Dialog", "Default absolute discrepancy tolerance"))
         self.dt_confsync_dsbox.setSuffix(_translate("Dialog", " second"))
         self.label.setText(
             _translate("Dialog", "Settling time between batch settings apply"))
