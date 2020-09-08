@@ -38,6 +38,7 @@ from phantasy_ui import BaseAppForm
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
 from phantasy_ui import printlog
+from phantasy_ui.widgets import is_item_checked
 from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from phantasy_ui.widgets import ElementSelectDialog
@@ -391,6 +392,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._ok_px = QPixmap(":/sm-icons/ok.png")
         self._copy_icon = QIcon(QPixmap(":/sm-icons/copy.png"))
         self._probe_icon = QIcon(QPixmap(":/sm-icons/probe.png"))
+        self._unsel_icon = QIcon(QPixmap(":/sm-icons/uncheck.png"))
+        self._sel_icon = QIcon(QPixmap(":/sm-icons/check.png"))
 
         # selection
         self.select_all_btn.clicked.connect(partial(self.on_select, 'all'))
@@ -490,8 +493,37 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     partial(self.on_probe_element, elem, fld.name))
             menu.addAction(probe_action)
 
+        # toggle items action
+        m = self._tv.model()
+        m_src = m.sourceModel()
+        selected_rows = {idx.row() for idx in self._tv.selectedIndexes()}
+        n_rows = len(selected_rows)
+        _item0 = m_src.itemFromIndex(m.mapToSource(self._tv.selectedIndexes()[0]))
+        is_checked = is_item_checked(_item0)
+        if n_rows == 1:
+            row_text = 'row'
+        else:
+            row_text = 'rows'
+        if is_checked:
+            new_check_state = Qt.Unchecked
+            act_icon = self._unsel_icon
+            act_text = "Uncheck all ({}) {}".format(n_rows, row_text)
+        else:
+            new_check_state = Qt.Checked
+            act_icon = self._sel_icon
+            act_text = "Check all ({}) {}".format(n_rows, row_text)
+        sel_action = QAction(act_icon, act_text, menu)
+        sel_action.triggered.connect(partial(self.on_toggle_selected_rows,
+                                     selected_rows, m, m_src, new_check_state))
+        menu.addAction(sel_action)
+
         #
         menu.exec_(self._tv.viewport().mapToGlobal(pos))
+
+    @pyqtSlot()
+    def on_toggle_selected_rows(self, selected_rows, m, m_src, new_check_state):
+        for i in selected_rows:
+            m_src.itemFromIndex(m.mapToSource(m.index(i, 0))).setCheckState(new_check_state)
 
     @pyqtSlot(QVariant)
     def on_update_widgets_status(self, o):
@@ -786,7 +818,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         printlog("Index of SrcModel ({}, {}), text: {}".format(
             src_r, src_c, str(src_m.data(src_idx))))
 
-        from phantasy_ui.widgets import is_item_checked
         item = src_m.itemFromIndex(src_idx)
         printlog("Clicked: ({}, {}), item is expanded? ({}), is checked? ({})".format(
             idx.row(), idx.column(), self._tv.isExpanded(idx),
