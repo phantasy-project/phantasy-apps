@@ -3,8 +3,11 @@
 import csv
 import os
 from collections import OrderedDict
+import time
+from datetime import datetime
 
 from phantasy import Settings
+from phantasy_ui import random_string
 
 CSV_HEADER = (
     'Name', 'Field', 'Type', 'Pos',
@@ -156,3 +159,14 @@ class ElementPVConfig(Settings):
             settingsPath = None
         super(self.__class__, self).__init__(settingsPath)
         self.settings_path = settings_path
+
+
+class SnapshotData:
+    """Snapshot data.
+    """
+    def __init__(self, tablesettings, name=None):
+        self.data = tablesettings
+        self.ts = time.time()
+        self.ts_as_str = datetime.fromtimestamp(self.ts).strftime('%Y-%m-%dT%H:%M:%S')
+        self.name = name if name is not None else random_string(6)
+        self.note = 'Input note ...'
