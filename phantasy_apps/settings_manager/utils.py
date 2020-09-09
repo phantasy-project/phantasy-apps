@@ -3,6 +3,7 @@
 
 import os
 import re
+import time
 from collections import OrderedDict
 from fnmatch import translate
 from functools import partial
@@ -17,9 +18,12 @@ from PyQt5.QtGui import QBrush
 from PyQt5.QtGui import QColor
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import QStyledItemDelegate
+from PyQt5.QtWidgets import QToolButton
+from PyQt5.QtWidgets import QSizePolicy
 from phantasy import get_settings_from_element_list
 from phantasy_ui.widgets import is_item_checked
 
@@ -609,3 +613,90 @@ def str2float(s):
             r = None
     finally:
         return r
+
+
+class SnapshotDataModel(QStandardItemModel):
+    def __init__(self,  parent, snp_list, **kws):
+        super(self.__class__, self).__init__(parent)
+        self._v = parent
+        self._snp_list = snp_list
+        # [
+        #  SnapshotData,
+        # ]
+        self.header = self.h_ts, self.h_name, \
+                      self.h_load, self.h_save, self.h_note \
+                    = "Timestamp", "Name", "Load", "Save", "Note"
+        self.ids = self.i_ts, self.i_name, \
+                   self.i_load, self.i_save, self.i_note \
+                 = range(len(self.header))
+        self.set_data()
+
+        self.itemChanged.connect(self.on_item_changed)
+
+    def set_model(self):
+        self._v.setModel(self)
+        self.set_actions()
+        self._post_init_ui(self._v)
+
+    def set_data(self):
+        for snp_data in self._snp_list:
+            # ts
+            it_ts = QStandardItem(snp_data.ts_as_str)
+            it_ts.setEditable(False)
+            # name
+            it_name = QStandardItem(snp_data.name)
+            # note
+            it_note = QStandardItem(snp_data.note)
+            it_note.setData(QPixmap(":/sm-icons/comment.png").scaled(24, 24), Qt.DecorationRole)
+            self.appendRow((it_ts, it_name,
+                            QStandardItem(''), QStandardItem(''),
+                            it_note,))
+
+    def set_actions(self):
+        for i, snp_data in enumerate(self._snp_list):
+            # load
+            load_btn = QToolButton(self._v)
+            load_btn.setIcon(QIcon(QPixmap(":/sm-icons/load-snp.png")))
+            load_btn.setText("Load")
+            load_btn.setToolTip("Load current snapshot.")
+            load_btn.setAutoRaise(False)
+            load_btn.clicked.connect(self.on_load_snp)
+            self._v.setIndexWidget(self.index(i, self.i_load), load_btn)
+            # save
+            save_btn = QToolButton(self._v)
+            save_btn.setIcon(QIcon(QPixmap(":/sm-icons/save-snp.png")))
+            save_btn.setText("Save")
+            save_btn.setToolTip("Save current snapshot as a file.")
+            save_btn.setAutoRaise(False)
+            save_btn.clicked.connect(self.on_save_snp)
+            self._v.setIndexWidget(self.index(i, self.i_save), save_btn)
+
+    def on_item_changed(self, item):
+        idx = item.index()
+        s = item.text()
+        i, j = idx.row(), idx.column()
+        snp_data = self._snp_list[i]
+        if j == self.i_note:
+            snp_data.note = s
+        elif j == self.i_name:
+            snp_data.name = s
+
+    @pyqtSlot()
+    def on_load_snp(self):
+        pass
+
+    @pyqtSlot()
+    def on_save_snp(self):
+        pass
+
+    def _post_init_ui(self, v):
+        for i, s in zip(self.ids, self.header):
+            self.setHeaderData(i, Qt.Horizontal, s)
+        # view properties
+        v.setStyleSheet("font-family: monospace;")
+        v.setAlternatingRowColors(True)
+        v.header().setStretchLastSection(True)
+        #v.expandAll()
+        for i in self.ids:
+            v.resizeColumnToContents(i)
+        #v.collapseAll()
