@@ -53,6 +53,7 @@ from .data import CSV_HEADER
 from .data import ElementPVConfig
 from .data import TableSettings
 from .data import ToleranceSettings
+from .data import SnapshotData
 from .data import get_csv_settings
 from .data import make_physics_settings
 from .ui.ui_app import Ui_MainWindow
@@ -63,6 +64,7 @@ from .utils import pack_settings
 from .utils import str2float
 from .utils import init_config_dir
 from .utils import VALID_FILTER_KEYS_NUM
+from .utils import SnapshotDataModel
 
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
 IDX_RATE_MAP = {0: 1.0, 1: 0.5, 2: 2.0, 3: 0.2, 4: 0.1}
@@ -119,6 +121,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     # bool
     init_settings_changed = pyqtSignal(bool)
+
+    # runtime snapshots
+    snapshots_number_changed = pyqtSignal(int)
 
     def __init__(self, version, config_dir=None):
         super(SettingsManagerWindow, self).__init__()
@@ -436,6 +441,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._query_tips_form = None
         self.filter_btn.toggled.connect(partial(self.on_enable_search, True))
         self.filter_btn.toggled.emit(self.filter_btn.isChecked())
+
+        # snapshot dock
+        self._snapshots_count = 0
+        self.snapshots_number_changed.connect(self.on_snapshots_changed)
+        self.snapshots_number_changed.emit(self._snapshots_count)
+        self._snp_docker_list = []  # for snp_treeView
 
     @pyqtSlot(bool)
     def on_enable_search(self, auto_collapse, enabled):
@@ -1346,6 +1357,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for i in range(m.rowCount()):
             sp_val_str = m.data(m.index(i, current_sp_idx))
             m.setData(m.index(i, stored_sp_idx), sp_val_str)
+        self.incr_snapshots_count()
 
     @pyqtSlot()
     def on_show_query_tips(self):
@@ -1355,6 +1367,26 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             ui.setupUi(w)
             w.setWindowTitle("Query Tips")
         self._query_tips_form.show()
+
+    @pyqtSlot(int)
+    def on_snapshots_changed(self, i):
+        """Number of runtime snapshots is changed.
+        """
+        self.snp_dock.setVisible(i!=0)
+        # update snpdata to snp dock.
+        if self._tv.model() is None:
+            return
+        snp_data = SnapshotData(get_csv_settings(self._tv.model()))
+        self._snp_docker_list.append(snp_data)
+        self.update_snp_docker_view()
+
+    def incr_snapshots_count(self, incr=1):
+        self._snapshots_count += incr
+        self.snapshots_number_changed.emit(self._snapshots_count)
+
+    def update_snp_docker_view(self):
+        m = SnapshotDataModel(self.snp_treeView, self._snp_docker_list)
+        m.set_model()
 
 
 def make_tolerance_dict_from_table_settings(table_settings):
