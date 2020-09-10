@@ -9,6 +9,7 @@ from fnmatch import translate
 from functools import partial
 from getpass import getuser
 
+from PyQt5.QtCore import QEventLoop
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QTimer
@@ -66,6 +67,15 @@ from .utils import str2float
 from .utils import init_config_dir
 from .utils import VALID_FILTER_KEYS_NUM
 from .utils import SnapshotDataModel
+
+LIVE = False
+
+if not LIVE:
+    DEFAULT_MACH = "FRIB_VA"
+    DEFAULT_SEGM = "LS1FS1"
+else:
+    DEFAULT_MACH = "FRIB"
+    DEFAULT_SEGM = "LINAC"
 
 PX_SIZE = 24
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
@@ -304,7 +314,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def show_init_settings_info(self):
         if not self.init_settings:
             QMessageBox.information(self, "Loaded Lattice",
-                                    "Lattice is loaded, add device settings via 'Add Devices' or 'Load Settings' tool.",
+                                    "Lattice is loaded, add device settings via 'Add Devices' or "
+                                    "'Load Settings' tools, "
+                                    "or initialize with all the devices in the loaded lattice.",
                                     QMessageBox.Ok)
 
     def _enable_widgets(self, enabled):
@@ -725,6 +737,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.idx_px_list = []  # list to apply icon [(idx_src, px)]
         m = self._tv.model()
         settings_selected = m.get_selection()
+        if len(settings_selected) == 0:
+            QMessageBox.warning(self, "Apply Settings",
+                    '<html><head/><body><p>Not any items are checked, <span style=" font-style:italic;">Apply </span>only work with checked items<span style=" font-style:italic;">.</span></p></body></html>',
+                    QMessageBox.Ok)
+            return
+
         self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor),
                             daq_seq=settings_selected)
         self.applyer.daqStarted.connect(partial(
@@ -941,17 +959,29 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.clear_cast_status()
 
     def _load_settings_from_csv(self, filepath):
-        if self._lat is None:
-            QMessageBox.warning(self, "Load CSV Settings File",
-                                "Lattice is not loaded.",
-                                QMessageBox.Ok)
-            raise RuntimeError("lattice is required")
-        lat = self.__init_lat
         table_settings = TableSettings(filepath)
+
+        if self._lat is None:
+            mach = table_settings.meta.get('machine', DEFAULT_MACH)
+            segm = table_settings.meta.get('segment', DEFAULT_SEGM)
+            self.__load_lattice(mach, segm)
+
+        lat = self.__init_lat
         s = make_physics_settings(table_settings, lat)
         lat.settings.update(s)
         self._elem_list = [lat[ename] for ename in s]
         self.element_list_changed.emit()
+
+    def __load_lattice(self, mach, segm):
+        self.actionLoad_Lattice.triggered.emit()
+        self._lattice_load_window.mach_cbb.setCurrentText(mach)
+        self._lattice_load_window.seg_cbb.setCurrentText(segm)
+        loop = QEventLoop()
+        self._lattice_load_window.latticeChanged.connect(loop.exit)
+        self._lattice_load_window.load_btn.clicked.emit()
+        loop.exec_()
+
+
 
     def _load_settings_from_json(self, filepath):
         pass
@@ -1440,9 +1470,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if filename is None:
             return
         settings = data.data
-        settings.meta.update({'app': 'Settings Manager',
-                              'version': f'{self._version}',
-                              'user': getuser()})
+        settings.meta.update({
+            'app': 'Settings Manager',
+            'version': f'{self._version}',
+            'user': getuser(),
+            'machine': self._mp.last_machine_name,
+            'segment': self._mp.last_lattice_name,
+        })
         settings.write(filename, header=CSV_HEADER)
         self.snp_saved.emit(data.name, filename)
 
@@ -1450,6 +1484,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # data: SnapshotData
         # settings(data.data): TableSettings
         settings = data.data
+        if self._lat is None:
+            mach = settings.meta.get('machine', DEFAULT_MACH)
+            segm = settings.meta.get('segment', DEFAULT_SEGM)
+            self.__load_lattice(mach, segm)
         lat = self.__init_lat
         table_settings = data.data
         s = make_physics_settings(table_settings, lat)
