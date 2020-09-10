@@ -1467,7 +1467,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
 def is_snp_data_exist(snpdata, snpdata_list):
     for i in snpdata_list:
-        if snpdata.name == i.name:
+        if snpdata.timestamp == i.timestamp:
             return True
     return False
 
