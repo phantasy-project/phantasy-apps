@@ -619,6 +619,7 @@ def str2float(s):
 class SnapshotDataModel(QStandardItemModel):
 
     save_settings = pyqtSignal(SnapshotData)
+    cast_settings = pyqtSignal(SnapshotData)
 
     def __init__(self,  parent, snp_list, **kws):
         super(self.__class__, self).__init__(parent)
@@ -628,10 +629,10 @@ class SnapshotDataModel(QStandardItemModel):
         #  SnapshotData,
         # ]
         self.header = self.h_ts, self.h_name, \
-                      self.h_load, self.h_save, self.h_note \
-                    = "Timestamp", "Name", "Load", "Save", "Note"
+                      self.h_cast, self.h_save, self.h_note \
+                    = "Timestamp", "Name", "Cast", "Save", "Note"
         self.ids = self.i_ts, self.i_name, \
-                   self.i_load, self.i_save, self.i_note \
+                   self.i_cast, self.i_save, self.i_note \
                  = range(len(self.header))
         self.set_data()
 
@@ -652,24 +653,30 @@ class SnapshotDataModel(QStandardItemModel):
             # note
             it_note = QStandardItem(snp_data.note)
             it_note.setData(QPixmap(":/sm-icons/comment.png").scaled(24, 24), Qt.DecorationRole)
+            # cast
+            it_cast = QStandardItem('Cast')
+            it_cast.setData(QPixmap(":/sm-icons/cast.png").scaled(24, 24), Qt.DecorationRole)
+            # save
+            it_save = QStandardItem('Save')
+            it_save.setData(QPixmap(":/sm-icons/save-snp.png").scaled(24, 24), Qt.DecorationRole)
             self.appendRow((it_ts, it_name,
-                            QStandardItem(''), QStandardItem(''),
+                            it_cast, it_save,
                             it_note,))
 
     def set_actions(self):
         for i, snp_data in enumerate(self._snp_list):
-            # load
-            load_btn = QToolButton(self._v)
-            load_btn.setProperty('data', snp_data)
-            load_btn.setIcon(QIcon(QPixmap(":/sm-icons/load-snp.png")))
-            load_btn.setText("Load")
-            load_btn.setToolTip("Load current snapshot.")
-            load_btn.setAutoRaise(False)
-            load_btn.clicked.connect(self.on_load_snp)
-            self._v.setIndexWidget(self.index(i, self.i_load), load_btn)
+            # cast
+            cast_btn = QToolButton(self._v)
+            cast_btn.setProperty('data', snp_data)
+            # cast_btn.setIcon(QIcon(QPixmap(":/sm-icons/cast.png")))
+            cast_btn.setText("Cast")
+            cast_btn.setToolTip("Cast current snapshot.")
+            cast_btn.setAutoRaise(False)
+            cast_btn.clicked.connect(self.on_cast_snp)
+            self._v.setIndexWidget(self.index(i, self.i_cast), cast_btn)
             # save
             save_btn = QToolButton(self._v)
-            save_btn.setIcon(QIcon(QPixmap(":/sm-icons/save-snp.png")))
+            # save_btn.setIcon(QIcon(QPixmap(":/sm-icons/save-snp.png")))
             save_btn.setText("Save")
             save_btn.setProperty('data', snp_data)
             save_btn.setToolTip("Save current snapshot as a file.")
@@ -688,9 +695,9 @@ class SnapshotDataModel(QStandardItemModel):
             snp_data.name = s
 
     @pyqtSlot()
-    def on_load_snp(self):
+    def on_cast_snp(self):
         data = self.sender().property('data')
-        print(data.ts_as_str, data.name, data.note)
+        self.cast_settings.emit(data)
 
     @pyqtSlot()
     def on_save_snp(self):
@@ -705,16 +712,28 @@ class SnapshotDataModel(QStandardItemModel):
         v.setStyleSheet("font-family: monospace;")
         v.setAlternatingRowColors(True)
         v.header().setStretchLastSection(True)
-        #v.expandAll()
-        for i in self.ids:
+
+        self.setData(self.index(self.rowCount() - 1, self.i_cast),
+                     QIcon(":/sm-icons/cast_connected.png"), Qt.DecorationRole)
+
+        for i in (self.i_ts, self.i_name):
             v.resizeColumnToContents(i)
-        #v.collapseAll()
 
     @pyqtSlot('QString')
     def on_snp_saved(self, snp_name):
         # tag as saved for *snp_name*
         for i in range(self.rowCount()):
             if self.item(i, self.i_name).text() == snp_name:
-                self.setData(self.index(i, self.i_ts),
+                self.setData(self.index(i, self.i_save),
                              QIcon(":/sm-icons/saved.png"), Qt.DecorationRole)
                 break
+
+    @pyqtSlot('QString')
+    def on_snp_casted(self, snp_name):
+        # updated casted dec role for ALL rows.
+        for i in range(self.rowCount()):
+            if self.item(i, self.i_name).text() == snp_name:
+                icon = QIcon(":/sm-icons/cast_connected.png")
+            else:
+                icon = QIcon(":/sm-icons/cast.png")
+            self.setData(self.index(i, self.i_cast), icon, Qt.DecorationRole)

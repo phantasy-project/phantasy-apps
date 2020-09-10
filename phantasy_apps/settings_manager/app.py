@@ -129,6 +129,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # snp saved, snpdata name
     snp_saved = pyqtSignal('QString')
 
+    # snp casted, snpdata name
+    snp_casted = pyqtSignal('QString')
+
     def __init__(self, version, config_dir=None):
         super(SettingsManagerWindow, self).__init__()
 
@@ -1382,17 +1385,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         snp_data = SnapshotData(get_csv_settings(self._tv.model()))
         self._snp_docker_list.append(snp_data)
-        self.update_snp_docker_view()
+        self.update_snp_dock_view()
+        # mark last one as casted.
 
     def incr_snapshots_count(self, incr=1):
         self._snapshots_count += incr
         self.snapshots_number_changed.emit(self._snapshots_count)
 
-    def update_snp_docker_view(self):
+    def update_snp_dock_view(self):
         m = SnapshotDataModel(self.snp_treeView, self._snp_docker_list)
         m.set_model()
         m.save_settings.connect(self.on_save_settings)
         self.snp_saved.connect(m.on_snp_saved)
+        m.cast_settings.connect(self.on_cast_settings)
+        self.snp_casted['QString'].connect(m.on_snp_casted)
 
     def on_save_settings(self, data):
         # data: SnapshotData
@@ -1408,6 +1414,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                               'user': getuser()})
         settings.write(filename, header=CSV_HEADER)
         self.snp_saved.emit(data.name)
+
+    def on_cast_settings(self, data):
+        # data: SnapshotData
+        # settings(data.data): TableSettings
+        settings = data.data
+        lat = self.__init_lat
+        table_settings = data.data
+        s = make_physics_settings(table_settings, lat)
+        lat.settings.update(s)
+        self._elem_list = [lat[ename] for ename in s]
+        self.element_list_changed.emit()
+        self.snp_casted['QString'].emit(data.name)
 
 
 def make_tolerance_dict_from_table_settings(table_settings):
