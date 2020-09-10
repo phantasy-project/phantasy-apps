@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 
 from phantasy import Settings
-from phantasy_ui import random_string
+from phantasy import get_random_name
 
 CSV_HEADER = (
     'Name', 'Field', 'Type', 'Pos',
@@ -185,7 +185,7 @@ class SnapshotData:
         self.data = tablesettings
         self.ts = time.time()
         self.ts_as_str = datetime.fromtimestamp(self.ts).strftime('%Y-%m-%dT%H:%M:%S')
-        self.name = name if name is not None else random_string(6)
+        self.name = name if name is not None else get_random_name()
         self.note = 'Input note ...'
 
     def update_meta(self):
