@@ -7,6 +7,7 @@ import time
 from collections import OrderedDict
 from fnmatch import translate
 from functools import partial
+from getpass import getuser
 
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QSize
@@ -124,6 +125,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     # runtime snapshots
     snapshots_number_changed = pyqtSignal(int)
+
+    # snp saved, snpdata name
+    snp_saved = pyqtSignal('QString')
 
     def __init__(self, version, config_dir=None):
         super(SettingsManagerWindow, self).__init__()
@@ -1387,6 +1391,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def update_snp_docker_view(self):
         m = SnapshotDataModel(self.snp_treeView, self._snp_docker_list)
         m.set_model()
+        m.save_settings.connect(self.on_save_settings)
+        self.snp_saved.connect(m.on_snp_saved)
+
+    def on_save_settings(self, data):
+        # data: SnapshotData
+        # settings(data.data): TableSettings
+        filename, ext = get_save_filename(self,
+                                          caption="Save Settings to a File",
+                                          type_filter="CSV Files (*.csv);;JSON Files (*.json);;HDF5 Files (*.h5)")
+        if filename is None:
+            return
+        settings = data.data
+        settings.meta.update({'app': 'Settings Manager',
+                              'version': f'{self._version}',
+                              'user': getuser()})
+        settings.write(filename, header=CSV_HEADER)
+        self.snp_saved.emit(data.name)
 
 
 def make_tolerance_dict_from_table_settings(table_settings):

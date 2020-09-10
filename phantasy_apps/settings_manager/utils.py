@@ -26,6 +26,7 @@ from PyQt5.QtWidgets import QToolButton
 from PyQt5.QtWidgets import QSizePolicy
 from phantasy import get_settings_from_element_list
 from phantasy_ui.widgets import is_item_checked
+from .data import SnapshotData
 
 FMT = "{0:.6g}"
 
@@ -616,6 +617,9 @@ def str2float(s):
 
 
 class SnapshotDataModel(QStandardItemModel):
+
+    save_settings = pyqtSignal(SnapshotData)
+
     def __init__(self,  parent, snp_list, **kws):
         super(self.__class__, self).__init__(parent)
         self._v = parent
@@ -656,6 +660,7 @@ class SnapshotDataModel(QStandardItemModel):
         for i, snp_data in enumerate(self._snp_list):
             # load
             load_btn = QToolButton(self._v)
+            load_btn.setProperty('data', snp_data)
             load_btn.setIcon(QIcon(QPixmap(":/sm-icons/load-snp.png")))
             load_btn.setText("Load")
             load_btn.setToolTip("Load current snapshot.")
@@ -666,6 +671,7 @@ class SnapshotDataModel(QStandardItemModel):
             save_btn = QToolButton(self._v)
             save_btn.setIcon(QIcon(QPixmap(":/sm-icons/save-snp.png")))
             save_btn.setText("Save")
+            save_btn.setProperty('data', snp_data)
             save_btn.setToolTip("Save current snapshot as a file.")
             save_btn.setAutoRaise(False)
             save_btn.clicked.connect(self.on_save_snp)
@@ -683,11 +689,14 @@ class SnapshotDataModel(QStandardItemModel):
 
     @pyqtSlot()
     def on_load_snp(self):
-        pass
+        data = self.sender().property('data')
+        print(data.ts_as_str, data.name, data.note)
 
     @pyqtSlot()
     def on_save_snp(self):
-        pass
+        data = self.sender().property('data')
+        data.update_meta()
+        self.save_settings.emit(data)
 
     def _post_init_ui(self, v):
         for i, s in zip(self.ids, self.header):
@@ -700,3 +709,12 @@ class SnapshotDataModel(QStandardItemModel):
         for i in self.ids:
             v.resizeColumnToContents(i)
         #v.collapseAll()
+
+    @pyqtSlot('QString')
+    def on_snp_saved(self, snp_name):
+        # tag as saved for *snp_name*
+        for i in range(self.rowCount()):
+            if self.item(i, self.i_name).text() == snp_name:
+                self.setData(self.index(i, self.i_ts),
+                             QIcon(":/sm-icons/saved.png"), Qt.DecorationRole)
+                break
