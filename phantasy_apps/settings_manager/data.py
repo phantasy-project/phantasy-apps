@@ -187,9 +187,11 @@ class SnapshotData:
         self.ts_as_str = datetime.fromtimestamp(self.ts).strftime('%Y-%m-%dT%H:%M:%S')
         self.name = name if name is not None else get_random_name()
         self.note = 'Input note ...'
+        self.filepath = None
 
     def update_meta(self):
         self.data.meta = {'timestamp': self.ts,
                           'datetime': self.ts_as_str,
                           'name': self.name,
-                          'note': self.note}
+                          'note': self.note,
+                          'filepath': self.filepath}
