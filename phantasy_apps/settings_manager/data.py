@@ -68,31 +68,48 @@ class TableSettings(list):
     """
 
     def __init__(self, settings_path=None, **kws):
+        # kws: delimiter
         # settings_path is csv file path.
         super(TableSettings, self).__init__()
         self.header = None
+        delimiter = kws.pop('delimiter', ',')
+        self.meta = kws
         if isinstance(settings_path, str):
-            delimiter = kws.get('delimiter', ',')
-            skipheader = kws.get('skipheader', True)
-            self.read(settings_path, delimiter, skipheader)
+            self.read(settings_path, delimiter)
 
-    def read(self, path, delimiter=',', skipheader=True):
-        """Read CSV file with the first line as header.
+    def read(self, path, delimiter=','):
+        """Read CSV file with the lines starting with '#' as dict of comments,
+        and the first line after comments section as header.
         """
+        meta_str_list = []
         with open(path, 'r') as f:
+            for line in f:
+                if line.startswith('#'):
+                    meta_str_list.append(line.strip('#').strip())
+                else:
+                    break
             ss = csv.reader(f, delimiter=delimiter, skipinitialspace=True)
-            if skipheader:
-                self.header = next(ss)
+            self.header = [i.strip() for i in line.split(',')]
             for ename, field, ftype, spos, sp, rd, last_sp, tol, writable in ss:
                 self.append(
                     (ename, field, ftype, spos,
                      float(sp), float(rd), float(last_sp),
                      float(tol), bool(writable)))
+        self.update_meta(meta_str_list)
+
+    def update_meta(self, s_list):
+        # update meta with a list of line startswith '#'
+        meta_dict = {k: v.strip() for k, v in (i.split(':', 1) for i in s_list)}
+        if 'timestamp' in meta_dict:
+            meta_dict['timestamp'] = float(meta_dict['timestamp'])
+        self.meta.update(meta_dict)
 
     def write(self, filepath, header=None, delimiter=','):
         """Write settings into *filepath*.
         """
         with open(filepath, 'w') as fp:
+            for k, v in self.meta.items():
+                fp.write(f"# {k}: {v}\n")
             ss = csv.writer(fp, delimiter=delimiter)
             if header is not None:
                 ss.writerow(header)
@@ -170,3 +187,9 @@ class SnapshotData:
         self.ts_as_str = datetime.fromtimestamp(self.ts).strftime('%Y-%m-%dT%H:%M:%S')
         self.name = name if name is not None else random_string(6)
         self.note = 'Input note ...'
+
+    def update_meta(self):
+        self.data.meta = {'timestamp': self.ts,
+                          'datetime': self.ts_as_str,
+                          'name': self.name,
+                          'note': self.note}
