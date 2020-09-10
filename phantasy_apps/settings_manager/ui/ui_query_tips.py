@@ -17,7 +17,10 @@ class Ui_Form(object):
         self.gridLayout.setObjectName("gridLayout")
         self.textBrowser = QtWidgets.QTextBrowser(Form)
         self.textBrowser.setObjectName("textBrowser")
-        self.gridLayout.addWidget(self.textBrowser, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.textBrowser, 1, 0, 1, 1)
+        self.label = QtWidgets.QLabel(Form)
+        self.label.setObjectName("label")
+        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -53,6 +56,11 @@ class Ui_Form(object):
                 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">6. pos=(1,) matches all the position value equal or greater than 1.0.</p>\n"
                 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">7. x1=(-1, 2) matches current readback value is in [-1, 2] range.</p>\n"
                 "<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">8. dx12=0.1 matches the discrenpacy between the live readback and setpoint is 0.1.</p></body></html>"
+            ))
+        self.label.setText(
+            _translate(
+                "Form",
+                "<html><head/><body><p><span style=\" font-size:16pt; font-weight:600; color:#0000ff;\">Search Tips</span></p></body></html>"
             ))
 
 

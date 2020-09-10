@@ -390,6 +390,25 @@ class Ui_MainWindow(object):
         self.toolBar.setFloatable(False)
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
+        self.snp_dock = QtWidgets.QDockWidget(MainWindow)
+        self.snp_dock.setFloating(False)
+        self.snp_dock.setFeatures(
+            QtWidgets.QDockWidget.DockWidgetFloatable
+            | QtWidgets.QDockWidget.DockWidgetMovable
+            | QtWidgets.QDockWidget.DockWidgetVerticalTitleBar)
+        self.snp_dock.setAllowedAreas(QtCore.Qt.BottomDockWidgetArea
+                                      | QtCore.Qt.TopDockWidgetArea)
+        self.snp_dock.setObjectName("snp_dock")
+        self.dockWidgetContents = QtWidgets.QWidget()
+        self.dockWidgetContents.setObjectName("dockWidgetContents")
+        self.gridLayout_3 = QtWidgets.QGridLayout(self.dockWidgetContents)
+        self.gridLayout_3.setContentsMargins(6, 6, 6, 6)
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.snp_treeView = QtWidgets.QTreeView(self.dockWidgetContents)
+        self.snp_treeView.setObjectName("snp_treeView")
+        self.gridLayout_3.addWidget(self.snp_treeView, 0, 0, 1, 1)
+        self.snp_dock.setWidget(self.dockWidgetContents)
+        MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(4), self.snp_dock)
         self.action_About = QtWidgets.QAction(MainWindow)
         self.action_About.setObjectName("action_About")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
@@ -646,6 +665,7 @@ class Ui_MainWindow(object):
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
+        self.snp_dock.setWindowTitle(_translate("MainWindow", "Snapshots"))
         self.action_About.setText(_translate("MainWindow", "&About"))
         self.action_About.setShortcut(_translate("MainWindow", "Ctrl+A"))
         self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
@@ -706,7 +726,10 @@ class Ui_MainWindow(object):
         self.actionTake_Snapshot.setText(
             _translate("MainWindow", "Take Snapshot"))
         self.actionTake_Snapshot.setToolTip(
-            _translate("MainWindow", "Record current settings."))
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Record current device settings, make sure fetch all live settings prior to this action.</p></body></html>"
+            ))
 
 
 from . import resources_rc
