@@ -936,6 +936,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             QMessageBox.information(
                 self, "Load Settings File", msg)
             printlog(msg)
+        finally:
+            self.clear_cast_status()
 
     def _load_settings_from_csv(self, filepath):
         if self._lat is None:
@@ -1391,7 +1393,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         snp_data = SnapshotData(get_csv_settings(self._tv.model()))
         self._snp_docker_list.append(snp_data)
         self.update_snp_dock_view()
-        # mark last one as casted.
 
     def incr_snapshots_count(self, incr=1):
         self._snapshots_count += incr
@@ -1431,6 +1432,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._elem_list = [lat[ename] for ename in s]
         self.element_list_changed.emit()
         self.snp_casted['QString'].emit(data.name)
+
+    def clear_cast_status(self):
+        # Clear cast status in snp dock.
+        if not self.snp_dock.isVisible():
+            return
+        self.snp_treeView.model().clear_cast_status()
 
 
 def make_tolerance_dict_from_table_settings(table_settings):

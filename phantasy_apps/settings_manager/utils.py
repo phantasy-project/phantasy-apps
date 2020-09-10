@@ -628,6 +628,8 @@ class SnapshotDataModel(QStandardItemModel):
         # [
         #  SnapshotData,
         # ]
+        self.casted_icon = QIcon(":/sm-icons/cast_connected.png")
+        self.cast_icon = QIcon(":/sm-icons/cast.png")
         self.header = self.h_ts, self.h_name, \
                       self.h_cast, self.h_save, self.h_note \
                     = "Timestamp", "Name", "Cast", "Save", "Note"
@@ -713,8 +715,7 @@ class SnapshotDataModel(QStandardItemModel):
         v.setAlternatingRowColors(True)
         v.header().setStretchLastSection(True)
 
-        self.setData(self.index(self.rowCount() - 1, self.i_cast),
-                     QIcon(":/sm-icons/cast_connected.png"), Qt.DecorationRole)
+        self.set_casted(self.index(self.rowCount() - 1, self.i_cast), True)
 
         for i in (self.i_ts, self.i_name):
             v.resizeColumnToContents(i)
@@ -733,7 +734,22 @@ class SnapshotDataModel(QStandardItemModel):
         # updated casted dec role for ALL rows.
         for i in range(self.rowCount()):
             if self.item(i, self.i_name).text() == snp_name:
-                icon = QIcon(":/sm-icons/cast_connected.png")
+                casted = True
             else:
-                icon = QIcon(":/sm-icons/cast.png")
-            self.setData(self.index(i, self.i_cast), icon, Qt.DecorationRole)
+                casted = False
+            self.set_casted(self.index(i, self.i_cast), casted)
+
+    def clear_cast_status(self):
+        for i in range(self.rowCount()):
+            idx = self.index(i, self.i_cast)
+            if self.data(idx, Qt.UserRole) == 'casted':
+                self.set_casted(idx, False)
+                break
+
+    def set_casted(self, idx, casted):
+        if casted:
+            self.setData(idx, self.casted_icon, Qt.DecorationRole)
+            self.setData(idx, 'casted', Qt.UserRole)
+        else:
+            self.setData(idx, self.cast_icon, Qt.DecorationRole)
+            self.setData(idx, 'not-casted', Qt.UserRole)
