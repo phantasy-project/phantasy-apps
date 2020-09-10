@@ -1057,6 +1057,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # Update values every *delt* second(s),
         # _update_mode: 'thread'
 
+        if self._tv.model() is None:
+            return
+
         if self._stop_update_thread:
             return
 
@@ -1274,6 +1277,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_single_update(self):
         """Update values, indicators for one time."""
+        if self._tv.model() is None:
+            return
         m = self._tv.model().sourceModel()
         self.one_updater = DAQT(daq_func=partial(self.update_value_single, m, 0),
                                 daq_seq=range(1))
