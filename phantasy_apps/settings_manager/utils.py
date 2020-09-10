@@ -754,7 +754,7 @@ class SnapshotDataModel(QStandardItemModel):
 
     def _post_init_ui(self, v):
 
-        v.setSortingEnabled(True)
+        # v.setSortingEnabled(True)
 
         for i, s in zip(self.ids, self.header):
             self.setHeaderData(i, Qt.Horizontal, s)
@@ -769,7 +769,7 @@ class SnapshotDataModel(QStandardItemModel):
         for i in (self.i_ts, self.i_name, self.i_browse, self.i_read):
             v.resizeColumnToContents(i)
 
-        self.sort(self.i_ts)
+        # self.sort(self.i_ts)
 
     @pyqtSlot('QString', 'QString')
     def on_snp_saved(self, snp_name, filepath):
