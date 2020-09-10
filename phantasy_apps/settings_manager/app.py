@@ -67,6 +67,7 @@ from .utils import init_config_dir
 from .utils import VALID_FILTER_KEYS_NUM
 from .utils import SnapshotDataModel
 
+PX_SIZE = 24
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
 IDX_RATE_MAP = {0: 1.0, 1: 0.5, 2: 2.0, 3: 0.2, 4: 0.1}
 FILTER_TT = """\
@@ -126,8 +127,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # runtime snapshots
     snapshots_number_changed = pyqtSignal(int)
 
-    # snp saved, snpdata name
-    snp_saved = pyqtSignal('QString')
+    # snp saved, snpdata name, filepath
+    snp_saved = pyqtSignal('QString', 'QString')
 
     # snp casted, snpdata name
     snp_casted = pyqtSignal('QString')
@@ -453,7 +454,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._snapshots_count = 0
         self.snapshots_number_changed.connect(self.on_snapshots_changed)
         self.snapshots_number_changed.emit(self._snapshots_count)
-        self._snp_docker_list = []  # for snp_treeView
+        self._snp_dock_list = []  # for snp_treeView
 
     @pyqtSlot(bool)
     def on_enable_search(self, auto_collapse, enabled):
@@ -761,7 +762,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_apply_settings_progress(self, idx_px_list, m, per, str_idx):
         printlog("Apply settings: {0:.1f} %".format(per * 100))
         idx_src, px = idx_px_list[-1]
-        m.setData(idx_src, QIcon(px), Qt.DecorationRole)
+        m.setData(idx_src, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole)
 
     def closeEvent(self, e):
         self.on_update_dump_config()
@@ -1117,7 +1118,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     diff_status_px = self._warning_px
                 else:
                     diff_status_px = self._ok_px
-                worker.meta_signal1.emit((dx12_idx, QIcon(diff_status_px), Qt.DecorationRole))
+                worker.meta_signal1.emit((dx12_idx, diff_status_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
 
         dt = time.time() - t0
         dt_residual = delt - dt
@@ -1391,7 +1392,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if self._tv.model() is None:
             return
         snp_data = SnapshotData(get_csv_settings(self._tv.model()))
-        self._snp_docker_list.append(snp_data)
+        self._snp_dock_list.append(snp_data)
         self.update_snp_dock_view()
 
     def incr_snapshots_count(self, incr=1):
@@ -1399,7 +1400,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snapshots_number_changed.emit(self._snapshots_count)
 
     def update_snp_dock_view(self):
-        m = SnapshotDataModel(self.snp_treeView, self._snp_docker_list)
+        m = SnapshotDataModel(self.snp_treeView, self._snp_dock_list)
         m.set_model()
         m.save_settings.connect(self.on_save_settings)
         self.snp_saved.connect(m.on_snp_saved)
@@ -1419,7 +1420,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                               'version': f'{self._version}',
                               'user': getuser()})
         settings.write(filename, header=CSV_HEADER)
-        self.snp_saved.emit(data.name)
+        self.snp_saved.emit(data.name, filename)
 
     def on_cast_settings(self, data):
         # data: SnapshotData

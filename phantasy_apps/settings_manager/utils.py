@@ -17,7 +17,6 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QBrush
 from PyQt5.QtGui import QColor
 from PyQt5.QtGui import QFontDatabase
-from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
@@ -75,6 +74,8 @@ FG_COLOR_MAP = {
     True: "#343A40",
     False: "#6C757D",
 }
+
+PX_SIZE = 24
 
 
 class SettingsModel(QStandardItemModel):
@@ -302,7 +303,7 @@ class SettingsModel(QStandardItemModel):
     def reset_setdone_icons(self):
         # reset set done icons.
         for i in range(self.rowCount()):
-            self.setData(self.index(i, self.i_name), QIcon(), Qt.DecorationRole)
+            self.setData(self.index(i, self.i_name), QPixmap(), Qt.DecorationRole)
 
     @pyqtSlot()
     def on_delete_selected_items(self):
@@ -628,8 +629,12 @@ class SnapshotDataModel(QStandardItemModel):
         # [
         #  SnapshotData,
         # ]
-        self.casted_icon = QIcon(":/sm-icons/cast_connected.png")
-        self.cast_icon = QIcon(":/sm-icons/cast.png")
+        self.casted_px = QPixmap(":/sm-icons/cast_connected.png").scaled(PX_SIZE, PX_SIZE)
+        self.cast_px = QPixmap(":/sm-icons/cast.png").scaled(PX_SIZE, PX_SIZE)
+        self.note_px = QPixmap(":/sm-icons/comment.png").scaled(PX_SIZE, PX_SIZE)
+        self.save_px = QPixmap(":/sm-icons/save-snp.png").scaled(PX_SIZE, PX_SIZE)
+        self.saved_px = QPixmap(":/sm-icons/saved.png").scaled(PX_SIZE, PX_SIZE)
+
         self.header = self.h_ts, self.h_name, \
                       self.h_cast, self.h_save, self.h_note \
                     = "Timestamp", "Name", "Cast", "Save", "Note"
@@ -652,15 +657,19 @@ class SnapshotDataModel(QStandardItemModel):
             it_ts.setEditable(False)
             # name
             it_name = QStandardItem(snp_data.name)
+            it_name.snp_data = snp_data
             # note
             it_note = QStandardItem(snp_data.note)
-            it_note.setData(QPixmap(":/sm-icons/comment.png").scaled(24, 24), Qt.DecorationRole)
+            it_note.setData(self.note_px, Qt.DecorationRole)
             # cast
             it_cast = QStandardItem('Cast')
-            it_cast.setData(QPixmap(":/sm-icons/cast.png").scaled(24, 24), Qt.DecorationRole)
+            it_cast.setData(self.cast_px, Qt.DecorationRole)
             # save
             it_save = QStandardItem('Save')
-            it_save.setData(QPixmap(":/sm-icons/save-snp.png").scaled(24, 24), Qt.DecorationRole)
+            if snp_data.filepath is None:
+                it_save.setData(self.save_px, Qt.DecorationRole)
+            else:
+                it_save.setData(self.saved_px, Qt.DecorationRole)
             self.appendRow((it_ts, it_name,
                             it_cast, it_save,
                             it_note,))
@@ -670,7 +679,6 @@ class SnapshotDataModel(QStandardItemModel):
             # cast
             cast_btn = QToolButton(self._v)
             cast_btn.setProperty('data', snp_data)
-            # cast_btn.setIcon(QIcon(QPixmap(":/sm-icons/cast.png")))
             cast_btn.setText("Cast")
             cast_btn.setToolTip("Cast current snapshot.")
             cast_btn.setAutoRaise(False)
@@ -678,7 +686,6 @@ class SnapshotDataModel(QStandardItemModel):
             self._v.setIndexWidget(self.index(i, self.i_cast), cast_btn)
             # save
             save_btn = QToolButton(self._v)
-            # save_btn.setIcon(QIcon(QPixmap(":/sm-icons/save-snp.png")))
             save_btn.setText("Save")
             save_btn.setProperty('data', snp_data)
             save_btn.setToolTip("Save current snapshot as a file.")
@@ -720,13 +727,14 @@ class SnapshotDataModel(QStandardItemModel):
         for i in (self.i_ts, self.i_name):
             v.resizeColumnToContents(i)
 
-    @pyqtSlot('QString')
-    def on_snp_saved(self, snp_name):
-        # tag as saved for *snp_name*
+    @pyqtSlot('QString', 'QString')
+    def on_snp_saved(self, snp_name, filepath):
+        # tag as saved for *snp_name*, update SnapshotData
         for i in range(self.rowCount()):
-            if self.item(i, self.i_name).text() == snp_name:
-                self.setData(self.index(i, self.i_save),
-                             QIcon(":/sm-icons/saved.png"), Qt.DecorationRole)
+            it = self.item(i, self.i_name)
+            if it.text() == snp_name:
+                self.setData(self.index(i, self.i_save), self.saved_px, Qt.DecorationRole)
+                it.snp_data.filepath = filepath
                 break
 
     @pyqtSlot('QString')
@@ -748,8 +756,8 @@ class SnapshotDataModel(QStandardItemModel):
 
     def set_casted(self, idx, casted):
         if casted:
-            self.setData(idx, self.casted_icon, Qt.DecorationRole)
+            self.setData(idx, self.casted_px, Qt.DecorationRole)
             self.setData(idx, 'casted', Qt.UserRole)
         else:
-            self.setData(idx, self.cast_icon, Qt.DecorationRole)
+            self.setData(idx, self.cast_px, Qt.DecorationRole)
             self.setData(idx, 'not-casted', Qt.UserRole)
