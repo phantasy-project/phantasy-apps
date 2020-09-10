@@ -1297,7 +1297,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Set widgets status for updating.
         """
         w1 = (self.update_ctrl_btn, self.update_rate_cbb, self.apply_btn,
-              self.single_update_btn, self.ndigit_sbox)
+              self.single_update_btn, self.ndigit_sbox, self.snp_dock)
         [i.setDisabled(status == 'START') for i in w1]
 
     def set_widgets_status_for_applying(self, status):
@@ -1351,9 +1351,32 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             e.ignore()
 
     def dropEvent(self, e):
-        path = e.mimeData().urls()[0].toLocalFile()
-        ext = path.rsplit('.', 1)[-1]
-        self.load_file(path, ext)
+        urls = e.mimeData().urls()
+        if len(urls) == 1:
+            path = urls[0].toLocalFile()
+            ext = path.rsplit('.', 1)[-1]
+            self.load_file(path, ext)
+        else:
+            i = 0
+            for url in urls:
+                path = url.toLocalFile()
+                ext = path.rsplit('.', 1)[-1]
+                if ext.upper() != 'CSV':
+                    continue
+                table_settings = TableSettings(path)
+                snp_data = SnapshotData(table_settings)
+                snp_data.name = table_settings.meta.get('name', None)
+                if is_snp_data_exist(snp_data, self._snp_dock_list):
+                    continue
+                snp_data.note = table_settings.meta.get('note', None)
+                snp_data.filepath = table_settings.meta.get('filepath', path)
+                snp_data.timestamp = table_settings.meta.get('timestamp', None)
+                i += 1
+                self._snp_dock_list.append(snp_data)
+            self._snapshots_count += i
+            self.snp_dock.setVisible(self._snapshots_count!=0)
+            self.update_snp_dock_view()
+            # self.load_file(path, ext)
 
     @pyqtSlot(int, bool)
     def on_update_visibility(self, idx, f):
@@ -1412,6 +1435,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # settings(data.data): TableSettings
         filename, ext = get_save_filename(self,
                                           caption="Save Settings to a File",
+                                          cdir=data.filepath,
                                           type_filter="CSV Files (*.csv);;JSON Files (*.json);;HDF5 Files (*.h5)")
         if filename is None:
             return
@@ -1439,6 +1463,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if not self.snp_dock.isVisible():
             return
         self.snp_treeView.model().clear_cast_status()
+
+
+def is_snp_data_exist(snpdata, snpdata_list):
+    for i in snpdata_list:
+        if snpdata.name == i.name:
+            return True
+    return False
 
 
 def make_tolerance_dict_from_table_settings(table_settings):
