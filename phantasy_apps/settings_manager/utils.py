@@ -9,14 +9,18 @@ from fnmatch import translate
 from functools import partial
 from numpy.testing import assert_almost_equal
 
+from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QSortFilterProxyModel
+from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QBrush
 from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtGui import QFontDatabase
+from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
@@ -636,10 +640,10 @@ class SnapshotDataModel(QStandardItemModel):
         self.saved_px = QPixmap(":/sm-icons/saved.png").scaled(PX_SIZE, PX_SIZE)
 
         self.header = self.h_ts, self.h_name, \
-                      self.h_cast, self.h_save, self.h_note \
-                    = "Timestamp", "Name", "Cast", "Save", "Note"
+                      self.h_cast, self.h_save, self.h_browse, self.h_read, self.h_note \
+                    = "Timestamp", "Name", "Cast", "Save", "", "", "Note"
         self.ids = self.i_ts, self.i_name, \
-                   self.i_cast, self.i_save, self.i_note \
+                   self.i_cast, self.i_save, self.i_browse, self.i_read, self.i_note \
                  = range(len(self.header))
         self.set_data()
 
@@ -670,9 +674,11 @@ class SnapshotDataModel(QStandardItemModel):
                 it_save.setData(self.save_px, Qt.DecorationRole)
             else:
                 it_save.setData(self.saved_px, Qt.DecorationRole)
-            self.appendRow((it_ts, it_name,
-                            it_cast, it_save,
-                            it_note,))
+            # browse
+            it_browse = QStandardItem('Browse')
+            # read
+            it_read = QStandardItem('Read')
+            self.appendRow((it_ts, it_name, it_cast, it_save, it_browse, it_read, it_note,))
 
     def set_actions(self):
         for i, snp_data in enumerate(self._snp_list):
@@ -692,6 +698,28 @@ class SnapshotDataModel(QStandardItemModel):
             save_btn.setAutoRaise(False)
             save_btn.clicked.connect(self.on_save_snp)
             self._v.setIndexWidget(self.index(i, self.i_save), save_btn)
+            # browse
+            browse_btn = QToolButton(self._v)
+            browse_btn.setDisabled(snp_data.filepath is None)
+            browse_btn.setIcon(QIcon(QPixmap(":/sm-icons/openfolder.png")))
+            browse_btn.setIconSize(QSize(PX_SIZE, PX_SIZE))
+            browse_btn.setText("Browse")
+            browse_btn.setProperty('data', snp_data)
+            browse_btn.setToolTip("Locate the saved folder.")
+            browse_btn.setAutoRaise(False)
+            browse_btn.clicked.connect(self.on_browse_snp)
+            self._v.setIndexWidget(self.index(i, self.i_browse), browse_btn)
+            # read file
+            read_btn = QToolButton(self._v)
+            read_btn.setDisabled(snp_data.filepath is None)
+            read_btn.setIcon(QIcon(QPixmap(":/sm-icons/readfile.png")))
+            read_btn.setIconSize(QSize(PX_SIZE, PX_SIZE))
+            read_btn.setText("read")
+            read_btn.setProperty('data', snp_data)
+            read_btn.setToolTip("Open and read saved file.")
+            read_btn.setAutoRaise(False)
+            read_btn.clicked.connect(self.on_read_snp)
+            self._v.setIndexWidget(self.index(i, self.i_read), read_btn)
 
     def on_item_changed(self, item):
         idx = item.index()
@@ -702,6 +730,16 @@ class SnapshotDataModel(QStandardItemModel):
             snp_data.note = s
         elif j == self.i_name:
             snp_data.name = s
+
+    @pyqtSlot()
+    def on_browse_snp(self):
+        data = self.sender().property('data')
+        QDesktopServices.openUrl(QUrl(os.path.dirname(data.filepath)))
+
+    @pyqtSlot()
+    def on_read_snp(self):
+        data = self.sender().property('data')
+        QDesktopServices.openUrl(QUrl(data.filepath))
 
     @pyqtSlot()
     def on_cast_snp(self):
@@ -724,17 +762,21 @@ class SnapshotDataModel(QStandardItemModel):
 
         self.set_casted(self.index(self.rowCount() - 1, self.i_cast), True)
 
-        for i in (self.i_ts, self.i_name):
+        for i in (self.i_ts, self.i_name, self.i_browse, self.i_read):
             v.resizeColumnToContents(i)
 
     @pyqtSlot('QString', 'QString')
     def on_snp_saved(self, snp_name, filepath):
         # tag as saved for *snp_name*, update SnapshotData
+        # enable locate and read.
         for i in range(self.rowCount()):
             it = self.item(i, self.i_name)
             if it.text() == snp_name:
                 self.setData(self.index(i, self.i_save), self.saved_px, Qt.DecorationRole)
                 it.snp_data.filepath = filepath
+                for j in (self.i_browse, self.i_read):
+                    idx = self.index(i, j)
+                    self._v.indexWidget(idx).setEnabled(True)
                 break
 
     @pyqtSlot('QString')
