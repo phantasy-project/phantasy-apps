@@ -657,7 +657,7 @@ class SnapshotDataModel(QStandardItemModel):
     def set_data(self):
         for snp_data in self._snp_list:
             # ts
-            it_ts = QStandardItem(snp_data.ts_as_str)
+            it_ts = QStandardItem(snp_data.ts_as_str())
             it_ts.setEditable(False)
             # name
             it_name = QStandardItem(snp_data.name)
@@ -753,6 +753,9 @@ class SnapshotDataModel(QStandardItemModel):
         self.save_settings.emit(data)
 
     def _post_init_ui(self, v):
+
+        v.setSortingEnabled(True)
+
         for i, s in zip(self.ids, self.header):
             self.setHeaderData(i, Qt.Horizontal, s)
         # view properties
@@ -760,10 +763,13 @@ class SnapshotDataModel(QStandardItemModel):
         v.setAlternatingRowColors(True)
         v.header().setStretchLastSection(True)
 
+        # usually, the newly added one is on cast.
         self.set_casted(self.index(self.rowCount() - 1, self.i_cast), True)
 
         for i in (self.i_ts, self.i_name, self.i_browse, self.i_read):
             v.resizeColumnToContents(i)
+
+        self.sort(self.i_ts)
 
     @pyqtSlot('QString', 'QString')
     def on_snp_saved(self, snp_name, filepath):
