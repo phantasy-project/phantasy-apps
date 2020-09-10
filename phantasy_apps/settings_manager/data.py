@@ -183,15 +183,61 @@ class SnapshotData:
     """
     def __init__(self, tablesettings, name=None):
         self.data = tablesettings
-        self.ts = time.time()
-        self.ts_as_str = datetime.fromtimestamp(self.ts).strftime('%Y-%m-%dT%H:%M:%S')
-        self.name = name if name is not None else get_random_name()
-        self.note = 'Input note ...'
-        self.filepath = None
+        self._ts = time.time()
+        self.name = name
+        self._note = 'Input note ...'
+        self._filepath = None
+
+    def ts_as_str(self):
+        return datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%dT%H:%M:%S')
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, s):
+        if s is None:
+            self._name = get_random_name()
+        else:
+            self._name = s
+
+    @property
+    def timestamp(self):
+        return self._ts
+
+    @timestamp.setter
+    def timestamp(self, x):
+        if x is None:
+            if self._filepath is not None:
+                self._ts = os.path.getmtime(self._filepath)
+            else:
+                self._ts = time.time()
+        else:
+            self._ts = x
+
+    @property
+    def note(self):
+        return self._note
+
+    @note.setter
+    def note(self, s):
+        if s is None:
+            self._note = 'Input note ...'
+        else:
+            self._note = s
+
+    @property
+    def filepath(self):
+        return self._filepath
+
+    @filepath.setter
+    def filepath(self, s):
+        self._filepath = s
 
     def update_meta(self):
-        self.data.meta = {'timestamp': self.ts,
-                          'datetime': self.ts_as_str,
-                          'name': self.name,
-                          'note': self.note,
-                          'filepath': self.filepath}
+        self.data.meta = {'timestamp': self._ts,
+                          'datetime': self.ts_as_str(),
+                          'name': self._name,
+                          'note': self._note,
+                          'filepath': self._filepath}
