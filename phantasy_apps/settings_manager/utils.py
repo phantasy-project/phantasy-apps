@@ -747,7 +747,7 @@ class SnapshotDataModel(QStandardItemModel):
         idx = item.index()
         s = item.text()
         i, j = idx.row(), idx.column()
-        snp_data = self._snp_list[i]
+        snp_data = self.itemFromIndex(self.index(i, 0, item.parent().index())).snp_data
         if j == self.i_note:
             snp_data.note = s
         elif j == self.i_name:
@@ -802,15 +802,21 @@ class SnapshotDataModel(QStandardItemModel):
     def on_snp_saved(self, snp_name, filepath):
         # tag as saved for *snp_name*, update SnapshotData
         # enable locate and read.
-        for i in range(self.rowCount()):
-            it = self.item(i, self.i_name)
-            if it.text() == snp_name:
-                self.setData(self.index(i, self.i_save), self.saved_px, Qt.DecorationRole)
-                it.snp_data.filepath = filepath
-                for j in (self.i_browse, self.i_read):
-                    idx = self.index(i, j)
-                    self._v.indexWidget(idx).setEnabled(True)
-                break
+        for ii in range(self.rowCount()):
+            ridx = self.index(ii, 0)
+            if not self.hasChildren(ridx):
+                continue
+            for i in range(self.rowCount(ridx)):
+                it = self.itemFromIndex(self.index(i, self.i_name, ridx))
+                print(it)
+                if it.text() == snp_name:
+                    self.setData(self.index(i, self.i_save, ridx), self.saved_px, Qt.DecorationRole)
+                    it.snp_data.filepath = filepath
+                    for j in (self.i_browse, self.i_read):
+                        idx = self.index(i, j, ridx)
+                        self._v.indexWidget(idx).setEnabled(True)
+                    break
+            break
 
     @pyqtSlot('QString')
     def on_snp_casted(self, snp_name):
@@ -836,6 +842,7 @@ class SnapshotDataModel(QStandardItemModel):
                 if self.data(idx, Qt.UserRole) == 'casted':
                     self.set_casted(idx, False)
                     break
+            break
 
     def set_casted(self, idx, casted):
         if casted:
