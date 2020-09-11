@@ -181,11 +181,16 @@ class ElementPVConfig(Settings):
 class SnapshotData:
     """Snapshot data.
     """
-    def __init__(self, tablesettings, name=None):
+    def __init__(self, tablesettings, name=None, **kws):
         self.data = tablesettings
         self._ts = time.time()
         self.name = name
-        self._note = 'Input note ...'
+        note = ''
+        for k, v in kws.items():
+            if v == '':
+                continue
+            note += f'{k}: {v}, '
+        self.note = note
         self._filepath = None
 
     def ts_as_str(self):
@@ -222,7 +227,7 @@ class SnapshotData:
 
     @note.setter
     def note(self, s):
-        if s is None:
+        if s is None or s == '':
             self._note = 'Input note ...'
         else:
             self._note = s

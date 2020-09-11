@@ -1455,7 +1455,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # update snpdata to snp dock.
         if self._tv.model() is None:
             return
-        snp_data = SnapshotData(get_csv_settings(self._tv.model()))
+        sp = self.beam_display_widget.get_species()
+        snp_data = SnapshotData(get_csv_settings(self._tv.model()),
+                ion=f'{sp[1]}{sp[0]}{sp[2]}+{sp[3]}',
+                machine=self._last_machine_name, segment=self._last_lattice_name,
+                filter=self.filter_lineEdit.text())
         self._snp_dock_list.append(snp_data)
         self.update_snp_dock_view()
 
