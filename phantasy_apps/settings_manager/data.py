@@ -196,6 +196,12 @@ class SnapshotData:
     def ts_as_str(self):
         return datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%dT%H:%M:%S')
 
+    def ts_as_date(self):
+        return datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%d')
+
+    def ts_as_time(self):
+        return datetime.fromtimestamp(self.timestamp).strftime('%H:%M:%S')
+
     @property
     def name(self):
         return self._name
