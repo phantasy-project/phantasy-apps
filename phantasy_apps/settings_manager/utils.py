@@ -655,71 +655,93 @@ class SnapshotDataModel(QStandardItemModel):
         self._post_init_ui(self._v)
 
     def set_data(self):
-        for snp_data in self._snp_list:
-            # ts
-            it_ts = QStandardItem(snp_data.ts_as_str())
-            it_ts.setEditable(False)
-            # name
-            it_name = QStandardItem(snp_data.name)
-            it_name.snp_data = snp_data
-            # note
-            it_note = QStandardItem(snp_data.note)
-            it_note.setData(self.note_px, Qt.DecorationRole)
-            # cast
-            it_cast = QStandardItem('Cast')
-            it_cast.setData(self.cast_px, Qt.DecorationRole)
-            # save
-            it_save = QStandardItem('Save')
-            if snp_data.filepath is None:
-                it_save.setData(self.save_px, Qt.DecorationRole)
-            else:
-                it_save.setData(self.saved_px, Qt.DecorationRole)
-            # browse
-            it_browse = QStandardItem('Browse')
-            # read
-            it_read = QStandardItem('Read')
-            self.appendRow((it_ts, it_name, it_cast, it_save, it_browse, it_read, it_note,))
+        data = {}
+        for i in self._snp_list:
+            data.setdefault(i.ts_as_date(), []).append(i)
+        self._data = data
+
+        for ts_date in sorted(data):
+            #
+            ts_data_list = data[ts_date]
+            it_root = QStandardItem(ts_date)
+            it_root.setEditable(False)
+
+            for snp_data in ts_data_list:
+                # ts
+                it_ts = QStandardItem(snp_data.ts_as_str())
+                it_ts.setEditable(False)
+                it_ts.snp_data = snp_data
+                # name
+                it_name = QStandardItem(snp_data.name)
+                it_name.snp_data = snp_data
+                # note
+                it_note = QStandardItem(snp_data.note)
+                it_note.setData(self.note_px, Qt.DecorationRole)
+                # cast
+                it_cast = QStandardItem('Cast')
+                it_cast.setData(self.cast_px, Qt.DecorationRole)
+                # save
+                it_save = QStandardItem('Save')
+                if snp_data.filepath is None:
+                    it_save.setData(self.save_px, Qt.DecorationRole)
+                else:
+                    it_save.setData(self.saved_px, Qt.DecorationRole)
+                # browse
+                it_browse = QStandardItem('Browse')
+                # read
+                it_read = QStandardItem('Read')
+                it_root.appendRow((it_ts, it_name, it_cast, it_save, it_browse, it_read, it_note,))
+
+            self.appendRow((it_root, QStandardItem(''), QStandardItem(''),
+                            QStandardItem(''), QStandardItem(''),
+                            QStandardItem(''), QStandardItem('')))
 
     def set_actions(self):
-        for i, snp_data in enumerate(self._snp_list):
-            # cast
-            cast_btn = QToolButton(self._v)
-            cast_btn.setProperty('data', snp_data)
-            cast_btn.setText("Cast")
-            cast_btn.setToolTip("Cast current snapshot.")
-            cast_btn.setAutoRaise(False)
-            cast_btn.clicked.connect(self.on_cast_snp)
-            self._v.setIndexWidget(self.index(i, self.i_cast), cast_btn)
-            # save
-            save_btn = QToolButton(self._v)
-            save_btn.setText("Save")
-            save_btn.setProperty('data', snp_data)
-            save_btn.setToolTip("Save current snapshot as a file.")
-            save_btn.setAutoRaise(False)
-            save_btn.clicked.connect(self.on_save_snp)
-            self._v.setIndexWidget(self.index(i, self.i_save), save_btn)
-            # browse
-            browse_btn = QToolButton(self._v)
-            browse_btn.setDisabled(snp_data.filepath is None)
-            browse_btn.setIcon(QIcon(QPixmap(":/sm-icons/openfolder.png")))
-            browse_btn.setIconSize(QSize(PX_SIZE, PX_SIZE))
-            browse_btn.setText("Browse")
-            browse_btn.setProperty('data', snp_data)
-            browse_btn.setToolTip("Locate the saved folder.")
-            browse_btn.setAutoRaise(False)
-            browse_btn.clicked.connect(self.on_browse_snp)
-            self._v.setIndexWidget(self.index(i, self.i_browse), browse_btn)
-            # read file
-            read_btn = QToolButton(self._v)
-            read_btn.setDisabled(snp_data.filepath is None)
-            read_btn.setIcon(QIcon(QPixmap(":/sm-icons/readfile.png")))
-            read_btn.setIconSize(QSize(PX_SIZE, PX_SIZE))
-            read_btn.setText("read")
-            read_btn.setProperty('data', snp_data)
-            read_btn.setToolTip("Open and read saved file.")
-            read_btn.setAutoRaise(False)
-            read_btn.clicked.connect(self.on_read_snp)
-            self._v.setIndexWidget(self.index(i, self.i_read), read_btn)
+        for ii in range(self.rowCount()):
+            ridx = self.index(ii, 0)
+            if self.hasChildren(ridx):
+                print(f"{ii} has children")
+                for i in range(self.rowCount(ridx)):
+                    print(f"--{i}")
+                    snp_data = self.itemFromIndex(self.index(i, 0, ridx)).snp_data
+                    # cast
+                    cast_btn = QToolButton(self._v)
+                    cast_btn.setProperty('data', snp_data)
+                    cast_btn.setText("Cast")
+                    cast_btn.setToolTip("Cast current snapshot.")
+                    cast_btn.setAutoRaise(False)
+                    cast_btn.clicked.connect(self.on_cast_snp)
+                    self._v.setIndexWidget(self.index(i, self.i_cast, ridx), cast_btn)
+                    # save
+                    save_btn = QToolButton(self._v)
+                    save_btn.setText("Save")
+                    save_btn.setProperty('data', snp_data)
+                    save_btn.setToolTip("Save current snapshot as a file.")
+                    save_btn.setAutoRaise(False)
+                    save_btn.clicked.connect(self.on_save_snp)
+                    self._v.setIndexWidget(self.index(i, self.i_save, ridx), save_btn)
+                    # browse
+                    browse_btn = QToolButton(self._v)
+                    browse_btn.setDisabled(snp_data.filepath is None)
+                    browse_btn.setIcon(QIcon(QPixmap(":/sm-icons/openfolder.png")))
+                    browse_btn.setIconSize(QSize(PX_SIZE, PX_SIZE))
+                    browse_btn.setText("Browse")
+                    browse_btn.setProperty('data', snp_data)
+                    browse_btn.setToolTip("Locate the saved folder.")
+                    browse_btn.setAutoRaise(False)
+                    browse_btn.clicked.connect(self.on_browse_snp)
+                    self._v.setIndexWidget(self.index(i, self.i_browse, ridx), browse_btn)
+                    # read file
+                    read_btn = QToolButton(self._v)
+                    read_btn.setDisabled(snp_data.filepath is None)
+                    read_btn.setIcon(QIcon(QPixmap(":/sm-icons/readfile.png")))
+                    read_btn.setIconSize(QSize(PX_SIZE, PX_SIZE))
+                    read_btn.setText("read")
+                    read_btn.setProperty('data', snp_data)
+                    read_btn.setToolTip("Open and read saved file.")
+                    read_btn.setAutoRaise(False)
+                    read_btn.clicked.connect(self.on_read_snp)
+                    self._v.setIndexWidget(self.index(i, self.i_read, ridx), read_btn)
 
     def on_item_changed(self, item):
         idx = item.index()
@@ -763,11 +785,16 @@ class SnapshotDataModel(QStandardItemModel):
         v.setAlternatingRowColors(True)
         v.header().setStretchLastSection(True)
 
-        # usually, the newly added one is on cast.
-        self.set_casted(self.index(self.rowCount() - 1, self.i_cast), True)
+        ## usually, the newly added one is on cast.
+        ##self.set_casted(self.index(self.rowCount() - 1, self.i_cast), True)
 
+        v.expandAll()
         for i in (self.i_ts, self.i_name, self.i_browse, self.i_read):
             v.resizeColumnToContents(i)
+        v.collapseAll()
+        last_item = self.item(self.rowCount() - 1, 0)
+        if last_item is not None:
+            v.expand(last_item.index())
 
         # self.sort(self.i_ts)
 
@@ -788,19 +815,27 @@ class SnapshotDataModel(QStandardItemModel):
     @pyqtSlot('QString')
     def on_snp_casted(self, snp_name):
         # updated casted dec role for ALL rows.
-        for i in range(self.rowCount()):
-            if self.item(i, self.i_name).text() == snp_name:
-                casted = True
-            else:
-                casted = False
-            self.set_casted(self.index(i, self.i_cast), casted)
+        for ii in range(self.rowCount()):
+            ridx = self.index(ii, 0)
+            if not self.hasChildren(ridx):
+                continue
+            for i in range(self.rowCount(ridx)):
+                if self.itemFromIndex(self.index(i, self.i_name, ridx)).text() == snp_name:
+                    casted = True
+                else:
+                    casted = False
+                self.set_casted(self.index(i, self.i_cast, ridx), casted)
 
     def clear_cast_status(self):
-        for i in range(self.rowCount()):
-            idx = self.index(i, self.i_cast)
-            if self.data(idx, Qt.UserRole) == 'casted':
-                self.set_casted(idx, False)
-                break
+        for ii in range(self.rowCount()):
+            ridx = self.index(ii, 0)
+            if not self.hasChildren(ridx):
+                continue
+            for i in range(self.rowCount(ridx)):
+                idx = self.index(i, self.i_cast, ridx)
+                if self.data(idx, Qt.UserRole) == 'casted':
+                    self.set_casted(idx, False)
+                    break
 
     def set_casted(self, idx, casted):
         if casted:
