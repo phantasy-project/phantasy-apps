@@ -981,8 +981,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lattice_load_window.load_btn.clicked.emit()
         loop.exec_()
 
-
-
     def _load_settings_from_json(self, filepath):
         pass
 
@@ -1109,6 +1107,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # update data tree for one time, iterate all items.
         if delt == 0:
             worker = self.one_updater
+        elif delt == -1:
+            worker = self._updater
         else:
             worker = self.updater
         t0 = time.time()
@@ -1420,6 +1420,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if m is None:
             return
         src_m = m.sourceModel()
+        # single update
+        self._updater = DAQT(daq_func=partial(self.update_value_single, src_m, -1),
+                                daq_seq=range(1))
+        self._updater.meta_signal1.connect(partial(self.on_update_display, src_m))
+        self._updater.daqStarted.connect(partial(self.set_widgets_status_for_updating, 'START'))
+        self._updater.finished.connect(partial(self.set_widgets_status_for_updating, 'STOP'))
+        loop = QEventLoop()
+        self._updater.finished.connect(loop.exit)
+        self._updater.start()
+        loop.exec_()
+        #
         current_sp_idx = src_m.i_cset
         stored_sp_idx = src_m.i_val0
         for i in range(m.rowCount()):
