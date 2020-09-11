@@ -1486,12 +1486,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         settings = data.data
         settings.meta.update({
-            'app': 'Settings Manager',
-            'version': f'{self._version}',
-            'user': getuser(),
-            'machine': self._mp.last_machine_name,
-            'segment': self._mp.last_lattice_name,
+            'filepath': filename,
         })
+        for k, v in zip(('app', 'version', 'user', 'machine', 'segment'),
+             ('Settings Manager', f'{self._version}', getuser(),
+               self._last_machine_name, self._last_lattice_name)):
+                 if not k in settings.meta:
+                     settings.meta.update({k: v})
         settings.write(filename, header=CSV_HEADER)
         self.snp_saved.emit(data.name, filename)
 
