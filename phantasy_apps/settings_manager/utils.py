@@ -11,6 +11,7 @@ from numpy.testing import assert_almost_equal
 
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QSortFilterProxyModel
+from PyQt5.QtCore import QItemSelectionModel
 from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import Qt
@@ -780,7 +781,67 @@ class SnapshotDataModel(QStandardItemModel):
         for i, s in zip(self.ids, self.header):
             self.setHeaderData(i, Qt.Horizontal, s)
         # view properties
-        v.setStyleSheet("font-family: monospace;")
+        v.setStyleSheet("""
+            QTreeView {
+                font-family: monospace;
+                show-decoration-selected: 1;
+                alternate-background-color: #F7F7F7;
+            }
+
+            QTreeView::item {
+                color: black;
+                border: 1px solid #D9D9D9;
+                border-top-color: transparent;
+                border-bottom-color: transparent;
+            }
+
+            QTreeView::item:hover {
+                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);
+                border: 1px solid #bfcde4;
+            }
+
+            QTreeView::item:selected {
+                border: 1px solid #567DBC;
+                background-color: #D3D7CF;
+            }
+
+            QTreeView::item:selected:active{
+                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);
+            }
+
+            QTreeView::branch {
+                    background: palette(base);
+            }
+
+            QTreeView::branch:has-siblings:!adjoins-item {
+                    background: cyan;
+            }
+
+            QTreeView::branch:has-siblings:adjoins-item {
+                    background: red;
+            }
+
+            QTreeView::branch:!has-children:!has-siblings:adjoins-item {
+                    background: blue;
+            }
+
+            QTreeView::branch:closed:has-children:has-siblings {
+                    background: pink;
+            }
+
+            QTreeView::branch:has-children:!has-siblings:closed {
+                    background: gray;
+            }
+
+            QTreeView::branch:open:has-children:has-siblings {
+                    background: magenta;
+            }
+
+            QTreeView::branch:open:has-children:!has-siblings {
+                    background: green;
+            }
+            """)
+        #
         v.setAlternatingRowColors(True)
         v.header().setStretchLastSection(True)
 
@@ -788,9 +849,10 @@ class SnapshotDataModel(QStandardItemModel):
         for i in (self.i_ts, self.i_name, self.i_browse, self.i_read):
             v.resizeColumnToContents(i)
         v.collapseAll()
-        last_item = self.item(self.rowCount() - 1, 0)
-        if last_item is not None:
-            v.expand(last_item.index())
+
+        #last_item = self.item(self.rowCount() - 1, 0)
+        #if last_item is not None:
+        #    v.expand(last_item.index())
 
         ## usually, the newly added one is on cast.
         ##self.set_casted(self.index(self.rowCount() - 1, self.i_cast), True)
@@ -822,7 +884,8 @@ class SnapshotDataModel(QStandardItemModel):
 
     @pyqtSlot('QString')
     def on_snp_casted(self, snp_name):
-        # updated casted dec role for ALL rows.
+        # updated casted dec role for ALL rows, hl casted row.
+        self._v.clearSelection()
         for ii in range(self.rowCount()):
             ridx = self.index(ii, 0)
             if not self.hasChildren(ridx):
@@ -832,7 +895,12 @@ class SnapshotDataModel(QStandardItemModel):
                     casted = True
                 else:
                     casted = False
-                self.set_casted(self.index(i, self.i_cast, ridx), casted)
+                idx = self.index(i, self.i_cast, ridx)
+                self.set_casted(idx, casted)
+                if casted:
+                    self._v.scrollTo(idx)
+                    self._v.selectionModel().select(idx,
+                            QItemSelectionModel.Select | QItemSelectionModel.Rows)
 
     def clear_cast_status(self):
         for ii in range(self.rowCount()):
