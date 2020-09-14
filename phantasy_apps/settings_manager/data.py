@@ -85,7 +85,7 @@ class TableSettings(list):
         with open(path, 'r') as f:
             for line in f:
                 if line.startswith('#'):
-                    meta_str_list.append(line.strip('#').strip())
+                    meta_str_list.append(line.strip('# ,\n'))
                 else:
                     break
             ss = csv.reader(f, delimiter=delimiter, skipinitialspace=True)
