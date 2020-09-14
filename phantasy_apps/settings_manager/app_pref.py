@@ -30,6 +30,7 @@ DEFAULT_TOLERANCE = 0.10
 DEFAULT_CONFIG_SYNC_TIME_INTERVAL = 10  # second
 DEFAULT_N_DIGITS = 3
 DEFAULT_CONFIG_PATH = "~/.phantasy-apps/settings-manager"
+DEFAULT_WDIR = "~/sm-wdir"
 
 DEFAULT_PREF = {
     'field_init_mode': DEFAULT_FIELD_INIT_MODE,
@@ -39,6 +40,7 @@ DEFAULT_PREF = {
     'dt_confsync': DEFAULT_CONFIG_SYNC_TIME_INTERVAL,
     'ndigit': DEFAULT_N_DIGITS,
     'config_path': os.path.abspath(os.path.expanduser(DEFAULT_CONFIG_PATH)),
+    'wdir': os.path.abspath(os.path.expanduser(DEFAULT_WDIR)),
 }
 
 
@@ -56,6 +58,8 @@ class PreferencesDialog(QDialog, Ui_Dialog):
     # bool
     init_settings_changed = pyqtSignal(bool)
 
+    # wdir
+    wdir_changed = pyqtSignal('QString')
 
     def __init__(self, parent=None, preference_dict=None):
         super(self.__class__, self).__init__()
@@ -126,6 +130,16 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         self.font_changed.connect(self.on_font_changed)
         font = self.pref_dict['font']
         self.font_changed.emit(font)
+
+        # wdir
+        wdir = self.pref_dict['wdir']
+        self.set_wdir(wdir)
+
+    def set_wdir(self, d):
+        if not os.access(d, os.W_OK):
+            return
+        self.wdir_lineEdit.setText(d)
+        self.wdir_changed.emit(d)
 
     @pyqtSlot()
     def on_reset_config(self):
@@ -228,6 +242,7 @@ class PreferencesDialog(QDialog, Ui_Dialog):
                 'tolerance': self.tol_dsbox.value(),
                 'dt_confsync': self.dt_confsync_dsbox.value(),
                 'ndigit': self.ndigit_sbox.value(),
+                'wdir' : self.wdir_lineEdit.text(),
                 }
 
     @pyqtSlot(bool)
@@ -253,3 +268,9 @@ class PreferencesDialog(QDialog, Ui_Dialog):
                                                     font.pointSize()))
         self.font_sample_lbl.setFont(font)
 
+    @pyqtSlot()
+    def on_choose_wdir(self):
+        """Select working directory.
+        """
+        d = get_open_directory(self)
+        self.set_wdir(d)

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import fnmatch
 import json
 import os
 import time
 from collections import OrderedDict
-from fnmatch import translate
 from functools import partial
 from getpass import getuser
 
@@ -193,6 +193,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.dt_confsync = self.pref_dict['dt_confsync']
         self.ndigit = self.pref_dict['ndigit']
         self.fmt = '{{0:.{0}f}}'.format(self.ndigit)
+        self.wdir = self.pref_dict['wdir']
 
         self.tolerance_changed[ToleranceSettings].connect(self.on_tolerance_dict_changed)
         self.tolerance_changed[float].connect(self.on_tolerance_float_changed)
@@ -928,7 +929,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if k in VALID_FILTER_KEYS_NUM:
             m.setFilterRegExp(v)
         else:
-            m.setFilterRegExp(translate(v))
+            m.setFilterRegExp(fnmatch.translate(v))
 
         self.total_show_number_lbl.setText(str(m.rowCount()))
         self.update_filter_completer(s)
@@ -1039,6 +1040,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         pref_dlg.font_changed.connect(self.font_changed)
         pref_dlg.init_settings_changed.connect(self.init_settings_changed)
         pref_dlg.ndigit_sbox.valueChanged.connect(self.ndigit_sbox.setValue)
+        pref_dlg.wdir_changed.connect(self.on_wdir_changed)
         r = pref_dlg.exec_()
         # if r == QDialog.Accepted:
         #     printlog("Updated pref --> {}".format(self.pref_dict))
@@ -1069,6 +1071,29 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         ndigit = self.pref_dict['ndigit']
         if ndigit != self.ndigit:
             self.ndigit_changed.emit(ndigit)
+
+    @pyqtSlot('QString')
+    def on_wdir_changed(self, d):
+        # reset snp dock with files in d (recursively)
+        self.wdir = d
+        self._snp_dock_list = []
+        self._snapshots_count = i = 0
+        for root, dnames, fnames in os.walk(d):
+            for fname in fnmatch.filter(fnames, "*.csv"):
+                path = os.path.join(root, fname)
+                table_settings = TableSettings(path)
+                snp_data = SnapshotData(table_settings)
+                snp_data.name = table_settings.meta.get('name', None)
+                if is_snp_data_exist(snp_data, self._snp_dock_list):
+                    continue
+                snp_data.note = table_settings.meta.get('note', None)
+                snp_data.filepath = table_settings.meta.get('filepath', path)
+                snp_data.timestamp = table_settings.meta.get('timestamp', None)
+                i += 1
+                self._snp_dock_list.append(snp_data)
+        self._snapshots_count += i
+        self.snp_dock.setVisible(self._snapshots_count!=0)
+        self.update_snp_dock_view()
 
     @pyqtSlot(int)
     def on_ndigit_changed(self, n):
@@ -1461,6 +1486,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         sp = self.beam_display_widget.get_species()
         snp_data = SnapshotData(get_csv_settings(self._tv.model()),
+                wdir = self.wdir,
                 ion=f'{sp[1]}{sp[0]}{sp[2]}+{sp[3]}',
                 machine=self._last_machine_name, segment=self._last_lattice_name,
                 filter=self.filter_lineEdit.text())
@@ -1483,9 +1509,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_save_settings(self, data):
         # data: SnapshotData
         # settings(data.data): TableSettings
+        if data.filepath is None:
+            cdir = data.wdir
+        else:
+            cdir = data.filepath
         filename, ext = get_save_filename(self,
                                           caption="Save Settings to a File",
-                                          cdir=data.filepath,
+                                          cdir=cdir,
                                           type_filter="CSV Files (*.csv);;JSON Files (*.json);;HDF5 Files (*.h5)")
         if filename is None:
             return
