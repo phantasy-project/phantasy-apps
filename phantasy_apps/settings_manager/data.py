@@ -185,6 +185,7 @@ class SnapshotData:
         self.data = tablesettings
         self._ts = time.time()
         self.name = name
+        self.wdir = kws.pop('wdir', '.')
         note = ''
         for k, v in kws.items():
             if v == '':
