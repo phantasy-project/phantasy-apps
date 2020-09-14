@@ -468,6 +468,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snapshots_number_changed.emit(self._snapshots_count)
         self._snp_dock_list = []  # for snp_treeView
 
+        # apply pb
+        self.apply_pb.setVisible(False)
+
     @pyqtSlot(bool)
     def on_enable_search(self, auto_collapse, enabled):
         if auto_collapse:
@@ -745,6 +748,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor),
                             daq_seq=settings_selected)
+        self.applyer.daqStarted.connect(lambda:self.apply_pb.setVisible(True))
         self.applyer.daqStarted.connect(partial(
             self.set_widgets_status_for_applying, 'START'))
         self.applyer.progressUpdated.connect(
@@ -752,6 +756,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     self.idx_px_list, m.sourceModel()))
         self.applyer.daqFinished.connect(partial(
             self.set_widgets_status_for_applying, 'STOP'))
+        self.applyer.daqFinished.connect(lambda:self.apply_pb.setVisible(False))
         self.applyer.start()
 
     def apply_single(self, sf, tuple_idx_settings):
@@ -781,6 +786,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         printlog("Apply settings: {0:.1f} %".format(per * 100))
         idx_src, px = idx_px_list[-1]
         m.setData(idx_src, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole)
+        self.apply_pb.setValue(per * 100)
 
     def closeEvent(self, e):
         self.on_update_dump_config()
