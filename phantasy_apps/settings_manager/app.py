@@ -1094,6 +1094,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._snapshots_count += i
         self.snp_dock.setVisible(self._snapshots_count!=0)
         self.update_snp_dock_view()
+        self.wdir_lineEdit.setText(self.wdir)
+        self.total_snp_lbl.setText(str(i))
 
     @pyqtSlot(int)
     def on_ndigit_changed(self, n):
@@ -1481,6 +1483,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Number of runtime snapshots is changed.
         """
         self.snp_dock.setVisible(i!=0)
+        self.wdir_lineEdit.setText(self.wdir)
+        self.total_snp_lbl.setText(str(i))
         # update snpdata to snp dock.
         if self._tv.model() is None:
             return
