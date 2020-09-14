@@ -1388,31 +1388,29 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def dropEvent(self, e):
         urls = e.mimeData().urls()
-        if len(urls) == 1:
-            path = urls[0].toLocalFile()
+        i = 0
+        for url in urls:
+            path = url.toLocalFile()
             ext = path.rsplit('.', 1)[-1]
-            self.load_file(path, ext)
-        else:
-            i = 0
-            for url in urls:
-                path = url.toLocalFile()
-                ext = path.rsplit('.', 1)[-1]
-                if ext.upper() != 'CSV':
-                    continue
-                table_settings = TableSettings(path)
-                snp_data = SnapshotData(table_settings)
-                snp_data.name = table_settings.meta.get('name', None)
-                if is_snp_data_exist(snp_data, self._snp_dock_list):
-                    continue
-                snp_data.note = table_settings.meta.get('note', None)
-                snp_data.filepath = table_settings.meta.get('filepath', path)
-                snp_data.timestamp = table_settings.meta.get('timestamp', None)
-                i += 1
-                self._snp_dock_list.append(snp_data)
-            self._snapshots_count += i
-            self.snp_dock.setVisible(self._snapshots_count!=0)
-            self.update_snp_dock_view()
-            # self.load_file(path, ext)
+            if ext.upper() != 'CSV':
+                continue
+            table_settings = TableSettings(path)
+            snp_data = SnapshotData(table_settings)
+            snp_data.name = table_settings.meta.get('name', None)
+            if is_snp_data_exist(snp_data, self._snp_dock_list):
+                continue
+            snp_data.note = table_settings.meta.get('note', None)
+            snp_data.filepath = table_settings.meta.get('filepath', path)
+            snp_data.timestamp = table_settings.meta.get('timestamp', None)
+            i += 1
+            self._snp_dock_list.append(snp_data)
+        self._snapshots_count += i
+        self.snp_dock.setVisible(self._snapshots_count!=0)
+        self.update_snp_dock_view()
+        #
+        # self.load_file(path, ext)
+        # cast last one
+        self.on_cast_settings(snp_data)
 
     @pyqtSlot(int, bool)
     def on_update_visibility(self, idx, f):
@@ -1468,6 +1466,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 filter=self.filter_lineEdit.text())
         self._snp_dock_list.append(snp_data)
         self.update_snp_dock_view()
+        self.on_cast_settings(snp_data)
 
     def incr_snapshots_count(self, incr=1):
         self._snapshots_count += incr
@@ -1526,8 +1525,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
 
 def is_snp_data_exist(snpdata, snpdata_list):
+    # if snpdata named 'name' exists.
     for i in snpdata_list:
-        if snpdata.timestamp == i.timestamp:
+        if snpdata.name == i.name:
             return True
     return False
 
