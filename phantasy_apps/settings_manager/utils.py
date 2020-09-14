@@ -775,7 +775,6 @@ class SnapshotDataModel(QStandardItemModel):
         self.save_settings.emit(data)
 
     def _post_init_ui(self, v):
-
         # v.setSortingEnabled(True)
 
         for i, s in zip(self.ids, self.header):
@@ -785,9 +784,6 @@ class SnapshotDataModel(QStandardItemModel):
         v.setAlternatingRowColors(True)
         v.header().setStretchLastSection(True)
 
-        ## usually, the newly added one is on cast.
-        ##self.set_casted(self.index(self.rowCount() - 1, self.i_cast), True)
-
         v.expandAll()
         for i in (self.i_ts, self.i_name, self.i_browse, self.i_read):
             v.resizeColumnToContents(i)
@@ -796,27 +792,33 @@ class SnapshotDataModel(QStandardItemModel):
         if last_item is not None:
             v.expand(last_item.index())
 
+        ## usually, the newly added one is on cast.
+        ##self.set_casted(self.index(self.rowCount() - 1, self.i_cast), True)
+
         # self.sort(self.i_ts)
 
     @pyqtSlot('QString', 'QString')
     def on_snp_saved(self, snp_name, filepath):
         # tag as saved for *snp_name*, update SnapshotData
         # enable locate and read.
+        found = False
         for ii in range(self.rowCount()):
             ridx = self.index(ii, 0)
             if not self.hasChildren(ridx):
                 continue
             for i in range(self.rowCount(ridx)):
                 it = self.itemFromIndex(self.index(i, self.i_name, ridx))
-                print(it)
+                print(it.text())
                 if it.text() == snp_name:
+                    found = True
                     self.setData(self.index(i, self.i_save, ridx), self.saved_px, Qt.DecorationRole)
                     it.snp_data.filepath = filepath
                     for j in (self.i_browse, self.i_read):
                         idx = self.index(i, j, ridx)
                         self._v.indexWidget(idx).setEnabled(True)
                     break
-            break
+            if found:
+                break
 
     @pyqtSlot('QString')
     def on_snp_casted(self, snp_name):
