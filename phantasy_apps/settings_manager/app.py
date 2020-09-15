@@ -1439,6 +1439,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # self.load_file(path, ext)
         # cast last one
         self.on_cast_settings(snp_data)
+        self.total_snp_lbl.setText(str(i))
 
     @pyqtSlot(int, bool)
     def on_update_visibility(self, idx, f):
@@ -1498,6 +1499,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._snp_dock_list.append(snp_data)
         self.update_snp_dock_view()
         self.on_cast_settings(snp_data)
+        self.total_snp_lbl.setText(str(i))
 
     def incr_snapshots_count(self, incr=1):
         self._snapshots_count += incr
