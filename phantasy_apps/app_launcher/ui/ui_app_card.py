@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_AppForm(object):
     def setupUi(self, AppForm):
         AppForm.setObjectName("AppForm")
-        AppForm.resize(196, 333)
+        AppForm.resize(226, 333)
         AppForm.setStyleSheet("QWidget#AppForm {\n"
                               "    border: 2px solid rgb(200,200,200);\n"
                               "}\n"
@@ -72,8 +72,8 @@ class Ui_AppForm(object):
         self.app_btn.setBaseSize(QtCore.QSize(128, 128))
         self.app_btn.setStyleSheet("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/icons/tux.png"), QtGui.QIcon.Normal,
-                       QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/app-icons/app-icons/default.png"),
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.app_btn.setIcon(icon)
         self.app_btn.setIconSize(QtCore.QSize(64, 64))
         self.app_btn.setAutoRaise(True)
