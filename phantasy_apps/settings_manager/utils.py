@@ -711,9 +711,7 @@ class SnapshotDataModel(QStandardItemModel):
         for ii in range(self.rowCount()):
             ridx = self.index(ii, 0)
             if self.hasChildren(ridx):
-                print(f"{ii} has children")
                 for i in range(self.rowCount(ridx)):
-                    print(f"--{i}")
                     snp_data = self.itemFromIndex(self.index(i, 0, ridx)).snp_data
                     # cast
                     cast_btn = QToolButton(self._v)
