@@ -1519,6 +1519,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def update_snp_dock_view(self):
         m = SnapshotDataModel(self.snp_treeView, self._snp_dock_list)
         m.set_model()
+        self.snp_expand_btn.toggled.emit(self.snp_expand_btn.isChecked())
         m.save_settings.connect(self.on_save_settings)
         self.snp_saved.connect(m.on_snp_saved)
         m.cast_settings.connect(self.on_cast_settings)
