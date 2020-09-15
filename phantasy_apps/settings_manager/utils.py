@@ -682,9 +682,11 @@ class SnapshotDataModel(QStandardItemModel):
                 it_note.setToolTip(snp_data.note)
                 # cast
                 it_cast = QStandardItem('Cast')
+                it_cast.setEditable(False)
                 it_cast.setData(self.cast_px, Qt.DecorationRole)
                 # save
                 it_save = QStandardItem('Save')
+                it_save.setEditable(False)
                 if snp_data.filepath is None:
                     it_save.setData(self.save_px, Qt.DecorationRole)
                 else:
@@ -692,13 +694,18 @@ class SnapshotDataModel(QStandardItemModel):
                     it_save.setToolTip(snp_data.filepath)
                 # browse
                 it_browse = QStandardItem('Browse')
+                it_browse.setEditable(False)
                 # read
                 it_read = QStandardItem('Read')
+                it_read.setEditable(False)
                 it_root.appendRow((it_ts, it_name, it_cast, it_save, it_browse, it_read, it_note,))
 
-            self.appendRow((it_root, QStandardItem(''), QStandardItem(''),
-                            QStandardItem(''), QStandardItem(''),
-                            QStandardItem(''), QStandardItem('')))
+            ph_list = []
+            for i in range(6):
+                it = QStandardItem('')
+                it.setEditable(False)
+                ph_list.append(it)
+            self.appendRow((it_root, *ph_list))
 
     def set_actions(self):
         for ii in range(self.rowCount()):
