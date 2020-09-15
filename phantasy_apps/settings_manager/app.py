@@ -384,6 +384,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._load_from_dlg = None
         self._elem_select_dlg = None
         self._lattice_load_window = None
+        self._fixnames_dlg = None
 
         self._mp = None
         self._last_machine_name = None
@@ -1556,6 +1557,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if not self.snp_dock.isVisible():
             return
         self.snp_treeView.model().clear_cast_status()
+
+    @pyqtSlot()
+    def onFixCorNames(self):
+        # ! only needed for ancient saved csv files before phantasy-machines commits (39c94e5)
+        from .app_fixnames import FixNamesDialog
+        if self._fixnames_dlg is None:
+            self._fixnames_dlg = FixNamesDialog(self)
+        self._fixnames_dlg.show()
 
 
 def is_snp_data_exist(snpdata, snpdata_list):
