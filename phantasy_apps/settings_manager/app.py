@@ -960,6 +960,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             msg = "Loaded data from {}".format(filepath)
             self.statusInfoChanged.emit(msg)
+            self._reset_status_info(5000)
             QMessageBox.information(
                 self, "Load Settings File", msg)
             printlog(msg)
