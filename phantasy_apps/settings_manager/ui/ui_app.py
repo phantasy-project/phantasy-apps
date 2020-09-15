@@ -388,6 +388,8 @@ class Ui_MainWindow(object):
         self.menu_File.setObjectName("menu_File")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
+        self.menuTools = QtWidgets.QMenu(self.menubar)
+        self.menuTools.setObjectName("menuTools")
         MainWindow.setMenuBar(self.menubar)
         self.toolBar = QtWidgets.QToolBar(MainWindow)
         self.toolBar.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
@@ -525,12 +527,17 @@ class Ui_MainWindow(object):
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionTake_Snapshot.setIcon(icon21)
         self.actionTake_Snapshot.setObjectName("actionTake_Snapshot")
+        self.actionFix_Corrector_Names = QtWidgets.QAction(MainWindow)
+        self.actionFix_Corrector_Names.setObjectName(
+            "actionFix_Corrector_Names")
         self.menu_File.addAction(self.actionLoad_From_Snapshot)
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.action_About)
         self.menu_Help.addAction(self.actionAbout_Qt)
+        self.menuTools.addAction(self.actionFix_Corrector_Names)
         self.menubar.addAction(self.menu_File.menuAction())
+        self.menubar.addAction(self.menuTools.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
         self.toolBar.addAction(self.actionLoad_Lattice)
         self.toolBar.addAction(self.actionAdd_Devices)
@@ -594,6 +601,8 @@ class Ui_MainWindow(object):
         self.filter_btn.toggled['bool'].connect(self.filter_lineEdit.setFocus)
         self.scaling_factor_lineEdit.textChanged['QString'].connect(
             MainWindow.on_scaling_factor_changed)
+        self.actionFix_Corrector_Names.triggered.connect(
+            MainWindow.onFixCorNames)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.expand_all_btn, self.select_all_btn)
         MainWindow.setTabOrder(self.select_all_btn, self.invert_selection_btn)
@@ -710,6 +719,7 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Initialize with loaded lattice"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
+        self.menuTools.setTitle(_translate("MainWindow", "Tools"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.snp_dock.setWindowTitle(_translate("MainWindow", "Snapshots"))
         self.label_5.setText(_translate("MainWindow", "Working Directory"))
@@ -781,6 +791,8 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p>Record current device settings, make sure fetch all live settings prior to this action.</p></body></html>"
             ))
+        self.actionFix_Corrector_Names.setText(
+            _translate("MainWindow", "Fix Corrector Names"))
 
 
 from . import resources_rc

@@ -65,6 +65,7 @@ class Ui_Dialog(object):
             "    background-color: rgb(239, 239, 239);\n"
             "   font-style: italic;\n"
             "}")
+        self.plainTextEdit_2.setReadOnly(True)
         self.plainTextEdit_2.setObjectName("plainTextEdit_2")
         self.gridLayout.addWidget(self.plainTextEdit_2, 2, 0, 1, 1)
         self.open_btn = QtWidgets.QPushButton(Dialog)
@@ -101,6 +102,7 @@ class Ui_Dialog(object):
         font = QtGui.QFont()
         font.setFamily("Monospace")
         self.csvfilelist_textEdit.setFont(font)
+        self.csvfilelist_textEdit.setReadOnly(True)
         self.csvfilelist_textEdit.setObjectName("csvfilelist_textEdit")
         self.gridLayout.addWidget(self.csvfilelist_textEdit, 1, 1, 2, 6)
 
