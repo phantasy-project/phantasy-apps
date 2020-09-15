@@ -417,8 +417,7 @@ class Ui_MainWindow(object):
             QtWidgets.QDockWidget.DockWidgetFloatable
             | QtWidgets.QDockWidget.DockWidgetMovable
             | QtWidgets.QDockWidget.DockWidgetVerticalTitleBar)
-        self.snp_dock.setAllowedAreas(QtCore.Qt.BottomDockWidgetArea
-                                      | QtCore.Qt.TopDockWidgetArea)
+        self.snp_dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.snp_dock.setObjectName("snp_dock")
         self.dockWidgetContents = QtWidgets.QWidget()
         self.dockWidgetContents.setObjectName("dockWidgetContents")
@@ -437,6 +436,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setContentsMargins(-1, 0, -1, -1)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.snp_expand_btn = QtWidgets.QToolButton(self.dockWidgetContents)
+        self.snp_expand_btn.setIcon(icon)
+        self.snp_expand_btn.setIconSize(QtCore.QSize(24, 24))
+        self.snp_expand_btn.setCheckable(True)
+        self.snp_expand_btn.setAutoRaise(True)
+        self.snp_expand_btn.setObjectName("snp_expand_btn")
+        self.horizontalLayout_4.addWidget(self.snp_expand_btn)
         self.label_5 = QtWidgets.QLabel(self.dockWidgetContents)
         self.label_5.setObjectName("label_5")
         self.horizontalLayout_4.addWidget(self.label_5)
@@ -603,6 +609,8 @@ class Ui_MainWindow(object):
             MainWindow.on_scaling_factor_changed)
         self.actionFix_Corrector_Names.triggered.connect(
             MainWindow.onFixCorNames)
+        self.snp_expand_btn.toggled['bool'].connect(
+            MainWindow.on_snp_expand_collapse)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.expand_all_btn, self.select_all_btn)
         MainWindow.setTabOrder(self.select_all_btn, self.invert_selection_btn)
@@ -722,6 +730,9 @@ class Ui_MainWindow(object):
         self.menuTools.setTitle(_translate("MainWindow", "Tools"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.snp_dock.setWindowTitle(_translate("MainWindow", "Snapshots"))
+        self.snp_expand_btn.setToolTip(
+            _translate("MainWindow", "Click to expand all."))
+        self.snp_expand_btn.setText(_translate("MainWindow", "..."))
         self.label_5.setText(_translate("MainWindow", "Working Directory"))
         self.label_10.setText(_translate("MainWindow", "Total"))
         self.total_snp_lbl.setText(
