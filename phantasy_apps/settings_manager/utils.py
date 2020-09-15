@@ -675,9 +675,11 @@ class SnapshotDataModel(QStandardItemModel):
                 # name
                 it_name = QStandardItem(snp_data.name)
                 it_name.snp_data = snp_data
+                it_name.setToolTip(snp_data.name)
                 # note
                 it_note = QStandardItem(snp_data.note)
                 it_note.setData(self.note_px, Qt.DecorationRole)
+                it_note.setToolTip(snp_data.note)
                 # cast
                 it_cast = QStandardItem('Cast')
                 it_cast.setData(self.cast_px, Qt.DecorationRole)
@@ -687,6 +689,7 @@ class SnapshotDataModel(QStandardItemModel):
                     it_save.setData(self.save_px, Qt.DecorationRole)
                 else:
                     it_save.setData(self.saved_px, Qt.DecorationRole)
+                    it_save.setToolTip(snp_data.filepath)
                 # browse
                 it_browse = QStandardItem('Browse')
                 # read
@@ -751,8 +754,10 @@ class SnapshotDataModel(QStandardItemModel):
         snp_data = self.itemFromIndex(self.index(i, 0, item.parent().index())).snp_data
         if j == self.i_note:
             snp_data.note = s
+            item.setToolTip(s)
         elif j == self.i_name:
             snp_data.name = s
+            item.setToolTip(s)
 
     @pyqtSlot()
     def on_browse_snp(self):
@@ -870,11 +875,12 @@ class SnapshotDataModel(QStandardItemModel):
                 continue
             for i in range(self.rowCount(ridx)):
                 it = self.itemFromIndex(self.index(i, self.i_name, ridx))
-                print(it.text())
                 if it.text() == snp_name:
                     found = True
-                    self.setData(self.index(i, self.i_save, ridx), self.saved_px, Qt.DecorationRole)
+                    idx = self.index(i, self.i_save, ridx)
+                    self.setData(idx, self.saved_px, Qt.DecorationRole)
                     it.snp_data.filepath = filepath
+                    self.itemFromIndex(idx).setToolTip(filepath)
                     for j in (self.i_browse, self.i_read):
                         idx = self.index(i, j, ridx)
                         self._v.indexWidget(idx).setEnabled(True)
