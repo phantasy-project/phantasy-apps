@@ -1,0 +1,21 @@
+Version 3.0: 2020-09-15
+
+- Initial settings:
+  - Add support initialize settings with loaded lattice
+
+- Settings apply:
+  - Add support to input math expression as scaling factor
+  - Show progress bar when iterating devices
+
+- Snapshots:
+  - Add module to manage snapshots from CSV files
+  - Ensure fetch the most recent setpoints before taking snapshot
+  - Add support to manage snapshots via drag and drop
+  - Add support to preload snapshots from working directory (Preferences)
+  - Introduced cast feature of snapshot
+  - Add support to input metadata to snapshots
+
+- Add tool dialog to fix LS1,2 corrector name issue for old saved CSV files,
+  due to the changes of phantasy-machines (commit: 39c94e5)
+
+- Do not need to manually load lattice before load settings from CSV file
