@@ -472,7 +472,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         #
         self.fm = QFileSystemWatcher([self.wdir], self)
-        self.fm.directoryChanged.connect(self.on_wdir_changed)
+        # !!! To fix: will purge runtime snapshots!!!
+        # self.fm.directoryChanged.connect(self.on_wdir_changed)
         # working directory
         self.on_wdir_changed(self.wdir)
 
@@ -1585,6 +1586,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if self._fixnames_dlg is None:
             self._fixnames_dlg = FixNamesDialog(self)
         self._fixnames_dlg.show()
+
+    @pyqtSlot()
+    def on_help(self):
+        from phantasy_apps.utils import launch_assistant
+        path = os.path.join(os.path.dirname(__file__), "docs", "settings_manager.qhc")
+        if os.path.isfile(path):
+            launch_assistant(path)
 
 
 def is_snp_data_exist(snpdata, snpdata_list):
