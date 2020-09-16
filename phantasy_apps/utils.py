@@ -4,6 +4,9 @@ import os
 import time
 from phantasy import epoch2human
 from mpl4qt.widgets.utils import MatplotlibCurveWidgetSettings
+from PyQt5.QtCore import QLibraryInfo
+from PyQt5.QtCore import QProcess
+from subprocess import Popen
 
 TS_FMT = "%Y-%m-%dT%H:%M:%S.%f"
 
@@ -74,12 +77,23 @@ def current_datetime(ctime=None, fmt=None):
     return epoch2human(t, fmt=f)
 
 
+class Assistant(object):
+
+    def __init__(self, path=None):
+        self.qhc_path = path
+        self.exec_path = os.path.join(
+            QLibraryInfo.location(QLibraryInfo.BinariesPath), 'assistant')
+
+    def start(self):
+        cmdline = self.exec_path + " -collectionFile " + self.qhc_path
+        Popen(cmdline, shell=True)
+
+
+def launch_assistant(path):
+    assistant = Assistant(path=path)
+    assistant.start()
+
+
 if __name__ == '__main__':
-    t = 12345
-    assert uptime(t) == "03:25:45"
-
-    t = 123455
-    assert uptime(t) == "1 day, 10:17:35"
-
-    t = 1234555
-    assert uptime(t) == "14 days, 06:55:55"
+    path = "/home/tong/Dropbox/phantasy-project/documentation/sm-doc/qhc/settings_manager.qhc"
+    launch_assistant(path)
