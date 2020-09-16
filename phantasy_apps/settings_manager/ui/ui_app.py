@@ -615,6 +615,7 @@ class Ui_MainWindow(object):
             MainWindow.onFixCorNames)
         self.snp_expand_btn.toggled['bool'].connect(
             MainWindow.on_snp_expand_collapse)
+        self.actionContents.triggered.connect(MainWindow.on_help)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.expand_all_btn, self.select_all_btn)
         MainWindow.setTabOrder(self.select_all_btn, self.invert_selection_btn)
