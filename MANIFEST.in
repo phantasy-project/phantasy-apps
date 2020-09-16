@@ -10,6 +10,7 @@ recursive-include phantasy_apps/correlation_visualizer/launcher *
 recursive-include phantasy_apps/diag_viewer/launcher *
 recursive-include phantasy_apps/quad_scan/launcher *
 recursive-include phantasy_apps/settings_manager/launcher *
+recursive-include phantasy_apps/settings_manager/docs *
 recursive-include phantasy_apps/trajectory_viewer/launcher *
 recursive-include phantasy_apps/unicorn/launcher *
 recursive-include phantasy_apps/va/launcher *
