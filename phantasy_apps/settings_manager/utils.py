@@ -616,7 +616,7 @@ def str2float(s):
     except ValueError:
         try:
             r = eval(s)
-        except SyntaxError:
+        except (SyntaxError, NameError):
             r = None
     finally:
         return r
