@@ -10,6 +10,7 @@ from functools import partial
 from getpass import getuser
 
 from PyQt5.QtCore import QEventLoop
+from PyQt5.QtCore import QFileSystemWatcher
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QTimer
@@ -469,6 +470,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # apply pb
         self.apply_pb.setVisible(False)
 
+        #
+        self.fm = QFileSystemWatcher([self.wdir], self)
+        self.fm.directoryChanged.connect(self.on_wdir_changed)
         # working directory
         self.on_wdir_changed(self.wdir)
 
@@ -1097,6 +1101,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.update_snp_dock_view()
         self.wdir_lineEdit.setText(self.wdir)
         self.total_snp_lbl.setText(str(i))
+        #
+        self.fm.removePaths(self.fm.directories())
+        self.fm.addPath(self.wdir)
 
     @pyqtSlot(int)
     def on_ndigit_changed(self, n):
