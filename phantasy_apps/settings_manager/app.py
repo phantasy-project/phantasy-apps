@@ -17,7 +17,6 @@ from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtGui import QFont
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QIcon
@@ -413,9 +412,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.update_rate_cbb.currentIndexChanged.emit(
             self.update_rate_cbb.currentIndex())
 
-        # scaling factor lineEdit
-        #self.scaling_factor_lineEdit.setValidator(QDoubleValidator(0.0, 10, 6))
-
         # icon
         self.done_px = QPixmap(":/sm-icons/done.png")
         self.fail_px = QPixmap(":/sm-icons/fail.png")
@@ -472,6 +468,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # apply pb
         self.apply_pb.setVisible(False)
+
+        # working directory
+        self.on_wdir_changed(self.wdir)
 
     @pyqtSlot(bool)
     def on_enable_search(self, auto_collapse, enabled):
