@@ -30,7 +30,8 @@ DEFAULT_TOLERANCE = 0.10
 DEFAULT_CONFIG_SYNC_TIME_INTERVAL = 10  # second
 DEFAULT_N_DIGITS = 3
 DEFAULT_CONFIG_PATH = "~/.phantasy-apps/settings-manager"
-DEFAULT_WDIR = "~/sm-wdir"
+# DEFAULT_WDIR = "~/sm-wdir"
+DEFAULT_WDIR = "/files/shared/ap/settings_manager"
 
 DEFAULT_PREF = {
     'field_init_mode': DEFAULT_FIELD_INIT_MODE,
