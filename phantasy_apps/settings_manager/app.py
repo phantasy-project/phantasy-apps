@@ -584,7 +584,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_toggle_selected_rows(self, selected_rows, m, m_src, new_check_state):
         for i in selected_rows:
-            m_src.itemFromIndex(m.mapToSource(m.index(i, 0))).setCheckState(new_check_state)
+            idx = m.mapToSource(m.index(i, 0))
+            it = m_src.itemFromIndex(idx)
+            if it.isEnabled():
+                it.setCheckState(new_check_state)
 
     @pyqtSlot(QVariant)
     def on_update_widgets_status(self, o):

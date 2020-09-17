@@ -74,10 +74,11 @@ BG_COLOR_MAP = {
     "FS2": "#fff3e0",
 }
 
+FG_NO_WRITE = "#6C757D"
 FG_COLOR_MAP = {
     # writable or not
     True: "#343A40",
-    False: "#6C757D",
+    False: FG_NO_WRITE,
 }
 
 PX_SIZE = 24
@@ -171,7 +172,7 @@ class SettingsModel(QStandardItemModel):
 
         for elem, fname, fld, fval0 in self._settings:
             item_ename = QStandardItem(elem.name)
-            bgcolor = get_bg_color(elem.ename)
+            # bgcolor = get_bg_color(elem.ename)
 
             if fld is None:
                 # debug
@@ -248,6 +249,7 @@ class SettingsModel(QStandardItemModel):
             # tolerance for dx12
             tol = fld.tolerance
             item_tol = QStandardItem(self.fmt.format(tol))
+            item_tol.setEditable(True)
             row.append(item_tol)
 
             # writable
@@ -255,12 +257,18 @@ class SettingsModel(QStandardItemModel):
             item_wa = QStandardItem(str(write_access))
             item_wa.setEditable(False)
             row.append(item_wa)
-            fgcolor = get_fg_color(write_access)
+            item_ename.setEnabled(write_access)
+            if not write_access:
+                for i in row:
+                    i.setSelectable(False)
+                    i.setData(QBrush(QColor(FG_NO_WRITE)), Qt.ForegroundRole)
+
+            # fgcolor = get_fg_color(write_access)
 
             # color
-            for i in row:
-                i.setData(QBrush(QColor(bgcolor)), Qt.BackgroundRole)
-                i.setData(QBrush(QColor(fgcolor)), Qt.ForegroundRole)
+            # for i in row:
+                # i.setData(QBrush(QColor(bgcolor)), Qt.BackgroundRole)
+                # i.setData(QBrush(QColor(fgcolor)), Qt.ForegroundRole)
 
             self.appendRow(row)
             ename_set.add(elem.name)
@@ -290,6 +298,33 @@ class SettingsModel(QStandardItemModel):
         #
         self.style_view(font=self._font)
         self.fit_view()
+        tv.setStyleSheet("""
+            QTreeView {
+                font-family: monospace;
+                show-decoration-selected: 1;
+                alternate-background-color: #D3D7CF;
+            }
+
+            QTreeView::item {
+                /*color: black;*/
+                border: 1px solid #D9D9D9;
+                border-top-color: transparent;
+                border-bottom-color: transparent;
+            }
+
+            QTreeView::item:hover {
+                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);
+                border: 1px solid #bfcde4;
+            }
+
+            QTreeView::item:selected {
+                border: 1px solid #567DBC;
+                background-color: #D3D7CF;
+            }
+
+            QTreeView::item:selected:active{
+                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);
+            }""")
 
     def style_view(self, **kws):
         """
@@ -475,13 +510,16 @@ class _SortProxyModel(QSortFilterProxyModel):
             idx = self.index(i, self.m_src.i_name)
             idx_src = self.mapToSource(idx)
             it_name_src = self.m_src.itemFromIndex(idx_src)
-            it_name_src.setCheckState(Qt.Checked)
+            if it_name_src.isEnabled():
+                it_name_src.setCheckState(Qt.Checked)
 
     def invert_selection(self):
         for i in range(self.rowCount()):
             idx = self.index(i, self.m_src.i_name)
             idx_src = self.mapToSource(idx)
             it_name_src = self.m_src.itemFromIndex(idx_src)
+            if not it_name_src.isEnabled():
+                continue
             if not is_item_checked(it_name_src):
                 it_name_src.setCheckState(Qt.Checked)
             else:
@@ -797,7 +835,6 @@ class SnapshotDataModel(QStandardItemModel):
             }
 
             QTreeView::item {
-                color: black;
                 border: 1px solid #D9D9D9;
                 border-top-color: transparent;
                 border-bottom-color: transparent;
@@ -817,6 +854,7 @@ class SnapshotDataModel(QStandardItemModel):
                 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);
             }
 
+            /*
             QTreeView::branch {
                     background: palette(base);
             }
@@ -848,6 +886,7 @@ class SnapshotDataModel(QStandardItemModel):
             QTreeView::branch:open:has-children:!has-siblings {
                     background: green;
             }
+            */
             """)
         #
         v.setAlternatingRowColors(True)
