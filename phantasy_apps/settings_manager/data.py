@@ -186,6 +186,7 @@ class SnapshotData:
     def __init__(self, tablesettings, name=None, **kws):
         self.data = tablesettings
         self._ts = time.time()
+        self._user = getuser()
         self.name = name
         self.wdir = kws.pop('wdir', '.')
         note = ''
