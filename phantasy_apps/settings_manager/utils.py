@@ -171,7 +171,7 @@ class SettingsModel(QStandardItemModel):
 
         for elem, fname, fld, fval0 in self._settings:
             item_ename = QStandardItem(elem.name)
-            bgcolor = get_bg_color(elem.ename)
+            # bgcolor = get_bg_color(elem.ename)
 
             if fld is None:
                 # debug
@@ -248,6 +248,7 @@ class SettingsModel(QStandardItemModel):
             # tolerance for dx12
             tol = fld.tolerance
             item_tol = QStandardItem(self.fmt.format(tol))
+            item_tol.setEditable(True)
             row.append(item_tol)
 
             # writable
@@ -255,12 +256,13 @@ class SettingsModel(QStandardItemModel):
             item_wa = QStandardItem(str(write_access))
             item_wa.setEditable(False)
             row.append(item_wa)
-            fgcolor = get_fg_color(write_access)
+            item_ename.setEnabled(write_access)
+            # fgcolor = get_fg_color(write_access)
 
             # color
-            for i in row:
-                i.setData(QBrush(QColor(bgcolor)), Qt.BackgroundRole)
-                i.setData(QBrush(QColor(fgcolor)), Qt.ForegroundRole)
+            # for i in row:
+                # i.setData(QBrush(QColor(bgcolor)), Qt.BackgroundRole)
+                # i.setData(QBrush(QColor(fgcolor)), Qt.ForegroundRole)
 
             self.appendRow(row)
             ename_set.add(elem.name)
@@ -290,6 +292,33 @@ class SettingsModel(QStandardItemModel):
         #
         self.style_view(font=self._font)
         self.fit_view()
+        tv.setStyleSheet("""
+            QTreeView {
+                font-family: monospace;
+                show-decoration-selected: 1;
+                alternate-background-color: #D3D7CF;
+            }
+
+            QTreeView::item {
+                /*color: black;*/
+                border: 1px solid #D9D9D9;
+                border-top-color: transparent;
+                border-bottom-color: transparent;
+            }
+
+            QTreeView::item:hover {
+                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);
+                border: 1px solid #bfcde4;
+            }
+
+            QTreeView::item:selected {
+                border: 1px solid #567DBC;
+                background-color: #D3D7CF;
+            }
+
+            QTreeView::item:selected:active{
+                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);
+            }""")
 
     def style_view(self, **kws):
         """
@@ -797,7 +826,6 @@ class SnapshotDataModel(QStandardItemModel):
             }
 
             QTreeView::item {
-                color: black;
                 border: 1px solid #D9D9D9;
                 border-top-color: transparent;
                 border-bottom-color: transparent;
@@ -817,6 +845,7 @@ class SnapshotDataModel(QStandardItemModel):
                 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);
             }
 
+            /*
             QTreeView::branch {
                     background: palette(base);
             }
@@ -848,6 +877,7 @@ class SnapshotDataModel(QStandardItemModel):
             QTreeView::branch:open:has-children:!has-siblings {
                     background: green;
             }
+            */
             """)
         #
         v.setAlternatingRowColors(True)
