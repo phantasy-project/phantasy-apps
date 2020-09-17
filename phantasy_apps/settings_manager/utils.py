@@ -74,10 +74,11 @@ BG_COLOR_MAP = {
     "FS2": "#fff3e0",
 }
 
+FG_NO_WRITE = "#6C757D"
 FG_COLOR_MAP = {
     # writable or not
     True: "#343A40",
-    False: "#6C757D",
+    False: FG_NO_WRITE,
 }
 
 PX_SIZE = 24
@@ -179,6 +180,7 @@ class SettingsModel(QStandardItemModel):
                 continue
             item_ename.fobj = fld
             item_ename.ftype = fld.ftype
+            item_ename.setCheckable(True)
 
             # PVs, setpoint and readback
             for sp_obj, rd_obj in zip(fld.setpoint_pv, fld.readback_pv):
@@ -256,7 +258,11 @@ class SettingsModel(QStandardItemModel):
             item_wa.setEditable(False)
             row.append(item_wa)
             item_ename.setEnabled(write_access)
-            item_ename.setCheckable(write_access)
+            if not write_access:
+                for i in row:
+                    i.setSelectable(False)
+                    i.setData(QBrush(QColor(FG_NO_WRITE)), Qt.ForegroundRole)
+
             # fgcolor = get_fg_color(write_access)
 
             # color
@@ -504,13 +510,16 @@ class _SortProxyModel(QSortFilterProxyModel):
             idx = self.index(i, self.m_src.i_name)
             idx_src = self.mapToSource(idx)
             it_name_src = self.m_src.itemFromIndex(idx_src)
-            it_name_src.setCheckState(Qt.Checked)
+            if it_name_src.isEnabled():
+                it_name_src.setCheckState(Qt.Checked)
 
     def invert_selection(self):
         for i in range(self.rowCount()):
             idx = self.index(i, self.m_src.i_name)
             idx_src = self.mapToSource(idx)
             it_name_src = self.m_src.itemFromIndex(idx_src)
+            if not it_name_src.isEnabled():
+                continue
             if not is_item_checked(it_name_src):
                 it_name_src.setCheckState(Qt.Checked)
             else:
