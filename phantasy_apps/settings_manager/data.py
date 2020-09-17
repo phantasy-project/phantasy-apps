@@ -5,6 +5,8 @@ import os
 from collections import OrderedDict
 import time
 from datetime import datetime
+from getpass import getuser
+import pwd
 
 from phantasy import Settings
 from phantasy import get_random_name
@@ -223,8 +225,10 @@ class SnapshotData:
         if x is None:
             if self._filepath is not None:
                 self._ts = os.path.getmtime(self._filepath)
+                self._user = pwd.getpwuid(os.stat(self._filepath).st_uid).pw_name
             else:
                 self._ts = time.time()
+                self._user = getuser()
         else:
             self._ts = x
 
@@ -252,4 +256,5 @@ class SnapshotData:
                           'datetime': self.ts_as_str(),
                           'name': self._name,
                           'note': self._note,
-                          'filepath': self._filepath}
+                          'filepath': self._filepath,
+                          'user': self._user}
