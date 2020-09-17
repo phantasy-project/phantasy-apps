@@ -25,9 +25,10 @@ for line in fin:
         name, leftover = line.split(',', 1)
         if 'DCH' in name or 'DCV' in name:
             a, b = name.rsplit('_', 1)
-            elem = mp.get_elements(name=a + '*_' + b)[0]
-            name1 = elem.name
-            line = ','.join((name1, leftover))
+            elems = mp.get_elements(name=a + '*_' + b)
+            if elems != []:
+                name1 = elems[0].name
+                line = ','.join((name1, leftover))
         fout.write(line)
 
 fin.close()
