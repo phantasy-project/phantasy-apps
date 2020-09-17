@@ -179,7 +179,6 @@ class SettingsModel(QStandardItemModel):
                 continue
             item_ename.fobj = fld
             item_ename.ftype = fld.ftype
-            item_ename.setCheckable(True)
 
             # PVs, setpoint and readback
             for sp_obj, rd_obj in zip(fld.setpoint_pv, fld.readback_pv):
@@ -257,6 +256,7 @@ class SettingsModel(QStandardItemModel):
             item_wa.setEditable(False)
             row.append(item_wa)
             item_ename.setEnabled(write_access)
+            item_ename.setCheckable(write_access)
             # fgcolor = get_fg_color(write_access)
 
             # color
