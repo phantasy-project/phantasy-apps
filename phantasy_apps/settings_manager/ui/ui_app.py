@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1300, 975)
+        MainWindow.resize(1920, 1440)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/sm-icons/logo.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -386,7 +386,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.horizontalLayout_2, 4, 0, 1, 12)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 30))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 30))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -416,6 +416,24 @@ class Ui_MainWindow(object):
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.snp_dock = QtWidgets.QDockWidget(MainWindow)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.snp_dock.sizePolicy().hasHeightForWidth())
+        self.snp_dock.setSizePolicy(sizePolicy)
+        self.snp_dock.setMinimumSize(QtCore.QSize(0, 0))
+        self.snp_dock.setWindowIcon(icon)
+        self.snp_dock.setStyleSheet("QDockWidget {\n"
+                                    "    font-weight: bold;\n"
+                                    "}\n"
+                                    "\n"
+                                    "QDockWidget::title {\n"
+                                    "    text-align: left;\n"
+                                    "    background: lightblue;\n"
+                                    "    padding-left: 15px;\n"
+                                    "}")
         self.snp_dock.setFloating(False)
         self.snp_dock.setFeatures(
             QtWidgets.QDockWidget.DockWidgetFloatable
