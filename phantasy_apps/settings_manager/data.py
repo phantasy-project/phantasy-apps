@@ -189,6 +189,10 @@ class SnapshotData:
         self._user = getuser()
         self.name = name
         self.wdir = kws.pop('wdir', '.')
+        self.ion_name = kws.pop('ion_name', None)
+        self.ion_number = kws.pop('ion_number', None) # Z (str)
+        self.ion_mass = kws.pop('ion_mass', None) # A (str)
+        self.ion_charge = kws.pop('ion_charge', None) # Q (str)
         note = ''
         for k, v in kws.items():
             if v == '':
@@ -206,6 +210,55 @@ class SnapshotData:
     def ts_as_time(self):
         return datetime.fromtimestamp(self.timestamp).strftime('%H:%M:%S')
 
+    def ion_as_str(self):
+        if self._ion_name is None:
+            return ""
+        return f"{self._ion_mass}{self._ion_name}{self._ion_number}(+{self._ion_charge})"
+
+    @property
+    def ion_name(self):
+        return self._ion_name
+
+    @ion_name.setter
+    def ion_name(self, s):
+        if s is None:
+            self._ion_name = '' 
+        else:
+            self._ion_name = s
+
+    @property
+    def ion_number(self):
+        return self._ion_number
+
+    @ion_number.setter
+    def ion_number(self, i):
+        if i is None:
+            self.ion_number = ''
+        else:
+            self._ion_number = str(i)
+
+    @property
+    def ion_mass(self):
+        return self._ion_mass
+
+    @ion_mass.setter
+    def ion_mass(self, i):
+        if i is None:
+            self._ion_mass = ''
+        else:
+            self._ion_mass = str(i)
+
+    @property
+    def ion_charge(self):
+        return self._ion_charge
+
+    @ion_charge.setter
+    def ion_charge(self, i):
+        if i is None:
+            self._ion_charge = ''
+        else:
+            self._ion_charge = str(i)
+
     @property
     def name(self):
         return self._name
@@ -216,6 +269,17 @@ class SnapshotData:
             self._name = get_random_name()
         else:
             self._name = s
+    
+    @property
+    def username(self):
+        return self._user
+
+    @username.setter
+    def username(self, s):
+        if s is None:
+            self._user = getuser()
+        else:
+            self._user = s
 
     @property
     def timestamp(self):
@@ -253,9 +317,24 @@ class SnapshotData:
         self._filepath = s
 
     def update_meta(self):
+        # update tablesettings meta
         self.data.meta = {'timestamp': self._ts,
                           'datetime': self.ts_as_str(),
                           'name': self._name,
                           'note': self._note,
                           'filepath': self._filepath,
-                          'user': self._user}
+                          'user': self._user,
+                          'ion_name': self._ion_name,
+                          'ion_number': self._ion_number,
+                          'ion_mass': self._ion_mass,
+                          'ion_charge': self._ion_charge,}
+
+    def update_properties(self):
+        # update with tablesettings meta
+        self.note = self.data.meta.get('note', None)
+        self.timestamp = self.data.meta.get('timestamp', None)
+        self.username = self.data.meta.get('user', None)
+        self.ion_name = self.data.meta.get('ion_name', None)
+        self.ion_number = self.data.meta.get('ion_number', None)
+        self.ion_mass = self.data.meta.get('ion_mass', None)
+        self.ion_charge = self.data.meta.get('ion_charge', None)

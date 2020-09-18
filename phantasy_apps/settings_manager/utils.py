@@ -679,10 +679,12 @@ class SnapshotDataModel(QStandardItemModel):
         self.saved_px = QPixmap(":/sm-icons/saved.png").scaled(PX_SIZE, PX_SIZE)
 
         self.header = self.h_ts, self.h_name, \
-                      self.h_cast, self.h_save, self.h_browse, self.h_read, self.h_note \
-                    = "Timestamp", "Name", "Cast", "Save", "", "", "Note"
+                      self.h_ion, self.h_ion_number, self.h_ion_mass, self.h_ion_charge, \
+                      self.h_cast, self.h_save, self.h_browse, self.h_read, self.h_user, self.h_note \
+                    = "Timestamp", "Name", "Ion", "Z", "A", "Q", "Cast", "Save", "", "", "User", "Note"
         self.ids = self.i_ts, self.i_name, \
-                   self.i_cast, self.i_save, self.i_browse, self.i_read, self.i_note \
+                      self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge, \
+                   self.i_cast, self.i_save, self.i_browse, self.i_read, self.i_user, self.i_note \
                  = range(len(self.header))
         self.set_data()
 
@@ -714,6 +716,17 @@ class SnapshotDataModel(QStandardItemModel):
                 it_name = QStandardItem(snp_data.name)
                 it_name.snp_data = snp_data
                 it_name.setToolTip(snp_data.name)
+                # ion
+                it_ion = QStandardItem(snp_data.ion_name)
+                # Z
+                it_ion_number = QStandardItem(snp_data.ion_number)
+                # A
+                it_ion_mass = QStandardItem(snp_data.ion_mass)
+                # Q
+                it_ion_charge = QStandardItem(snp_data.ion_charge)
+                # user
+                it_user = QStandardItem(snp_data.username)
+                it_user.setEditable(False)
                 # note
                 it_note = QStandardItem(snp_data.note)
                 it_note.setData(self.note_px, Qt.DecorationRole)
@@ -736,10 +749,13 @@ class SnapshotDataModel(QStandardItemModel):
                 # read
                 it_read = QStandardItem('Read')
                 it_read.setEditable(False)
-                it_root.appendRow((it_ts, it_name, it_cast, it_save, it_browse, it_read, it_note,))
+                it_root.appendRow((it_ts, it_name,
+                                   it_ion, it_ion_number, it_ion_mass, it_ion_charge,
+                                   it_cast, it_save, it_browse, it_read,
+                                   it_user, it_note,))
 
             ph_list = []
-            for i in range(6):
+            for i in range(11):
                 it = QStandardItem('')
                 it.setEditable(False)
                 ph_list.append(it)

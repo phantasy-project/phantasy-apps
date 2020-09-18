@@ -68,7 +68,7 @@ from .utils import init_config_dir
 from .utils import VALID_FILTER_KEYS_NUM
 from .utils import SnapshotDataModel
 
-LIVE = False
+LIVE = True
 
 if not LIVE:
     DEFAULT_MACH = "FRIB_VA"
@@ -1095,9 +1095,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 snp_data.name = table_settings.meta.get('name', None)
                 if is_snp_data_exist(snp_data, self._snp_dock_list):
                     continue
-                snp_data.note = table_settings.meta.get('note', None)
                 snp_data.filepath = table_settings.meta.get('filepath', path)
-                snp_data.timestamp = table_settings.meta.get('timestamp', None)
+                snp_data.update_properties()
+
                 i += 1
                 self._snp_dock_list.append(snp_data)
         self._snapshots_count += i
@@ -1511,10 +1511,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # update snpdata to snp dock.
         if self._tv.model() is None:
             return
-        sp = self.beam_display_widget.get_species()
+        ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species()
         snp_data = SnapshotData(get_csv_settings(self._tv.model()),
                 wdir = self.wdir,
-                ion=f'{sp[1]}{sp[0]}{sp[2]}+{sp[3]}',
+                ion_name=ion_name, ion_number=ion_number, ion_mass=ion_mass, ion_charge=ion_charge,
                 machine=self._last_machine_name, segment=self._last_lattice_name,
                 filter=self.filter_lineEdit.text())
         self._snp_dock_list.append(snp_data)
