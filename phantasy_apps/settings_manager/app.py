@@ -180,7 +180,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # post init ui
         self.__post_init_ui()
 
-        self.adjustSize()
+        #self.adjustSize()
 
     def init_config(self, confdir):
         # preferences
@@ -1392,7 +1392,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         [i.setDisabled(status == 'START') for i in w1]
 
     def sizeHint(self):
-        return QSize(1300, 975)
+        return QSize(1920, 1440)
 
     @pyqtSlot(list)
     def on_delete_items(self, fobj_list):
