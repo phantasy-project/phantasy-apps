@@ -617,8 +617,6 @@ class Ui_MainWindow(object):
             MainWindow.on_pressed_view)
         self.show_all_selected_btn.toggled['bool'].connect(
             MainWindow.on_toggle_all_selected)
-        self.actionTake_Snapshot.triggered.connect(
-            MainWindow.on_take_settings_snapshot)
         self.scaling_factor_lineEdit.returnPressed.connect(
             MainWindow.on_input_scaling_factor)
         self.init_settings_chkbox.toggled['bool'].connect(
