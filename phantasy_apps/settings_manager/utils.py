@@ -909,9 +909,14 @@ class SnapshotDataModel(QStandardItemModel):
         v.header().setStretchLastSection(True)
 
         v.expandAll()
-        for i in (self.i_ts, self.i_name, self.i_browse, self.i_read):
+        for i in (self.i_ts, self.i_name,
+                  self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge,
+                  self.i_browse, self.i_read, self.i_user):
             v.resizeColumnToContents(i)
         v.collapseAll()
+
+        # hide name col
+        v.setColumnHidden(self.i_name, True)
 
     @pyqtSlot('QString', 'QString')
     def on_snp_saved(self, snp_name, filepath):
