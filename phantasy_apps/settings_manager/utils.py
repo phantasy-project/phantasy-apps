@@ -294,10 +294,13 @@ class SettingsModel(QStandardItemModel):
         for i, s in zip(self.ids, self.header):
             self.setHeaderData(i, Qt.Horizontal, s)
         tv.model().sort(self.i_pos)
-
+        tv.header().setStyleSheet("""
+            QHeaderView {
+                font-weight: bold;
+                font-size: 14pt;
+            }""")
         #
         self.style_view(font=self._font)
-        self.fit_view()
         tv.setStyleSheet("""
             QTreeView {
                 font-family: monospace;
@@ -325,11 +328,7 @@ class SettingsModel(QStandardItemModel):
             QTreeView::item:selected:active{
                 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);
             }""")
-        tv.header().setStyleSheet("""
-            QHeaderView {
-                font-weight: bold;
-                font-size: 16pt;
-            }""")
+        self.fit_view()
 
     def style_view(self, **kws):
         """
