@@ -135,7 +135,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     init_settings_changed = pyqtSignal(bool)
 
     # runtime snapshots
-    snapshots_number_changed = pyqtSignal(int)
+    snapshots_changed = pyqtSignal()
 
     # snp saved, snpdata name, filepath
     snp_saved = pyqtSignal('QString', 'QString')
@@ -462,10 +462,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.filter_btn.toggled.emit(self.filter_btn.isChecked())
 
         # snapshot dock
-        self._snapshots_count = 0
-        self.snapshots_number_changed.connect(self.on_snapshots_changed)
-        self.snapshots_number_changed.emit(self._snapshots_count)
         self._snp_dock_list = []  # for snp_treeView
+        self.snapshots_changed.connect(lambda:self.on_snapshots_changed())
+        self.snapshots_changed.emit()
 
         # apply pb
         self.apply_pb.setVisible(False)
@@ -476,6 +475,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # self.fm.directoryChanged.connect(self.on_wdir_changed)
         # working directory
         self.on_wdir_changed(self.wdir)
+
+        # take snapshot tool
+        self.actionTake_Snapshot.triggered.connect(lambda:self.take_snapshot())
 
     @pyqtSlot(bool)
     def on_enable_search(self, auto_collapse, enabled):
@@ -760,9 +762,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                  QMessageBox.Yes | QMessageBox.No)
         if r == QMessageBox.Yes:
             # take a snapshot
-            pass
+            self.take_snapshot(cast=False, only_checked_items=False, post_current_sp=False)
+            msg = "Taked snapshot, now start to set device settings."
         else:
-            return
+            msg = "Now start to set device settings."
+
+        QMessageBox.information(self, "Apply Settings", msg, QMessageBox.Ok)
 
         self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor),
                             daq_seq=settings_selected)
@@ -1095,7 +1100,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # reset snp dock with files in d (recursively)
         self.wdir = d
         self._snp_dock_list = []
-        self._snapshots_count = i = 0
         for root, dnames, fnames in os.walk(d):
             for fname in fnmatch.filter(fnames, "*.csv"):
                 path = os.path.join(root, fname)
@@ -1106,14 +1110,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     continue
                 snp_data.filepath = table_settings.meta.get('filepath', path)
                 snp_data.update_properties()
-
-                i += 1
                 self._snp_dock_list.append(snp_data)
-        self._snapshots_count += i
-        self.snp_dock.setVisible(self._snapshots_count!=0)
+        n = len(self._snp_dock_list)
+        self.snp_dock.setVisible(n!=0)
         self.update_snp_dock_view()
         self.wdir_lineEdit.setText(self.wdir)
-        self.total_snp_lbl.setText(str(i))
+        self.total_snp_lbl.setText(str(n))
         #
         self.fm.removePaths(self.fm.directories())
         self.fm.addPath(self.wdir)
@@ -1446,7 +1448,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def dropEvent(self, e):
         urls = e.mimeData().urls()
-        i = 0
         for url in urls:
             path = url.toLocalFile()
             ext = path.rsplit('.', 1)[-1]
@@ -1460,32 +1461,32 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             snp_data.note = table_settings.meta.get('note', None)
             snp_data.filepath = table_settings.meta.get('filepath', path)
             snp_data.timestamp = table_settings.meta.get('timestamp', None)
-            i += 1
             self._snp_dock_list.append(snp_data)
-        self._snapshots_count += i
-        self.snp_dock.setVisible(self._snapshots_count!=0)
+        n = len(self._snp_dock_list)
+        self.snp_dock.setVisible(n!=0)
         self.update_snp_dock_view()
         #
         # self.load_file(path, ext)
         # cast last one
         self.on_cast_settings(snp_data)
-        self.total_snp_lbl.setText(str(i))
+        self.total_snp_lbl.setText(str(n))
 
     @pyqtSlot(int, bool)
     def on_update_visibility(self, idx, f):
         self._tv.setColumnHidden(idx, f)
 
-    @pyqtSlot()
-    def on_take_settings_snapshot(self):
-        """Take current settings, update 'Setpoint(x0)' column.
-        """
+    def take_snapshot(self, cast=True, only_checked_items=False, post_current_sp=True):
+        # take but not cast for only checked items or not.
+        # cast: if cast snapshot or not
+        # only_checked_items: if take snapshot of checked items or not
+        # post_current_sp: if update x0 with x2 column or not
         m = self._tv.model()
         if m is None:
             return
         src_m = m.sourceModel()
         # single update
         self._updater = DAQT(daq_func=partial(self.update_value_single, src_m, -1),
-                                daq_seq=range(1))
+                             daq_seq=range(1))
         self._updater.meta_signal1.connect(partial(self.on_update_display, src_m))
         self._updater.daqStarted.connect(partial(self.set_widgets_status_for_updating, 'START'))
         self._updater.finished.connect(partial(self.set_widgets_status_for_updating, 'STOP'))
@@ -1494,12 +1495,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._updater.start()
         loop.exec_()
         #
-        current_sp_idx = src_m.i_cset
-        stored_sp_idx = src_m.i_val0
-        for i in range(m.rowCount()):
-            sp_val_str = m.data(m.index(i, current_sp_idx))
-            m.setData(m.index(i, stored_sp_idx), sp_val_str)
-        self.incr_snapshots_count()
+        if post_current_sp:
+            current_sp_idx = src_m.i_cset
+            stored_sp_idx = src_m.i_val0
+            for i in range(m.rowCount()):
+                sp_val_str = m.data(m.index(i, current_sp_idx))
+                m.setData(m.index(i, stored_sp_idx), sp_val_str)
+        #
+        self.on_snapshots_changed(cast)
 
     @pyqtSlot()
     def on_show_query_tips(self):
@@ -1510,30 +1513,28 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             w.setWindowTitle("Query Tips")
         self._query_tips_form.show()
 
-    @pyqtSlot(int)
-    def on_snapshots_changed(self, i):
+    def on_snapshots_changed(self, cast=True):
         """Number of runtime snapshots is changed.
         """
-        self.snp_dock.setVisible(i!=0)
-        self.wdir_lineEdit.setText(self.wdir)
-        self.total_snp_lbl.setText(str(i))
         # update snpdata to snp dock.
         if self._tv.model() is None:
             return
+        #
         ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species()
         snp_data = SnapshotData(get_csv_settings(self._tv.model()),
                 wdir = self.wdir,
                 ion_name=ion_name, ion_number=ion_number, ion_mass=ion_mass, ion_charge=ion_charge,
                 machine=self._last_machine_name, segment=self._last_lattice_name,
                 filter=self.filter_lineEdit.text())
+        #
         self._snp_dock_list.append(snp_data)
+        n = len(self._snp_dock_list)
+        self.snp_dock.setVisible(n!=0)
+        self.wdir_lineEdit.setText(self.wdir)
+        self.total_snp_lbl.setText(str(n))
         self.update_snp_dock_view()
-        self.on_cast_settings(snp_data)
-        self.total_snp_lbl.setText(str(i))
-
-    def incr_snapshots_count(self, incr=1):
-        self._snapshots_count += incr
-        self.snapshots_number_changed.emit(self._snapshots_count)
+        if cast:
+            self.on_cast_settings(snp_data)
 
     def update_snp_dock_view(self):
         m = SnapshotDataModel(self.snp_treeView, self._snp_dock_list)
