@@ -180,7 +180,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # post init ui
         self.__post_init_ui()
 
-        #self.adjustSize()
+        # self.adjustSize()
 
     def init_config(self, confdir):
         # preferences
@@ -753,6 +753,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             QMessageBox.warning(self, "Apply Settings",
                     '<html><head/><body><p>Not any items are checked, <span style=" font-style:italic;">Apply </span>only work with checked items<span style=" font-style:italic;">.</span></p></body></html>',
                     QMessageBox.Ok)
+            return
+
+        # ask if want to take a snapshot of current settings of all checked devices
+        r = QMessageBox.question(self, "Take Snapshot", "Do you want to take a snapshot for all the checked items?",
+                                 QMessageBox.Yes | QMessageBox.No)
+        if r == QMessageBox.Yes:
+            # take a snapshot
+            pass
+        else:
             return
 
         self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor),
