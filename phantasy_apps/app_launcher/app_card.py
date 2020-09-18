@@ -51,6 +51,8 @@ class AppCard(QWidget, Ui_AppForm):
         for o in (self.fav_btn, self.app_btn, self.info_btn):
             o.setMouseTracking(True)
 
+        self.setToolTip(f"Click to run {name}")
+
     def get_meta_info(self):
         return {'name': self.name(), 'groups': self.groups(),
                 'fav': self.favorite(), 'desc': self.description(),
@@ -76,6 +78,9 @@ class AppCard(QWidget, Ui_AppForm):
 
     def setIcon(self, icon_path):
         self.app_btn.setIcon(QIcon(QPixmap(icon_path)))
+
+    def setToolTip(self, s):
+        self.app_btn.setToolTip(s)
 
     def description(self):
         """str : Description.
