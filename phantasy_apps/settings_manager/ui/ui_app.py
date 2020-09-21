@@ -405,6 +405,8 @@ class Ui_MainWindow(object):
         self.menu_Help.setObjectName("menu_Help")
         self.menuTools = QtWidgets.QMenu(self.menubar)
         self.menuTools.setObjectName("menuTools")
+        self.menu_View = QtWidgets.QMenu(self.menubar)
+        self.menu_View.setObjectName("menu_View")
         MainWindow.setMenuBar(self.menubar)
         self.toolBar = QtWidgets.QToolBar(MainWindow)
         self.toolBar.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
@@ -496,6 +498,23 @@ class Ui_MainWindow(object):
         self.gridLayout_3.addLayout(self.horizontalLayout_4, 2, 0, 1, 1)
         self.snp_dock.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(4), self.snp_dock)
+        self.log_dock = DockWidget(MainWindow)
+        self.log_dock.setObjectName("log_dock")
+        self.dockWidgetContents_2 = QtWidgets.QWidget()
+        self.dockWidgetContents_2.setObjectName("dockWidgetContents_2")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(
+            self.dockWidgetContents_2)
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.log_textEdit = QtWidgets.QTextEdit(self.dockWidgetContents_2)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.log_textEdit.setFont(font)
+        self.log_textEdit.setReadOnly(True)
+        self.log_textEdit.setObjectName("log_textEdit")
+        self.verticalLayout_2.addWidget(self.log_textEdit)
+        self.log_dock.setWidget(self.dockWidgetContents_2)
+        MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(8), self.log_dock)
         self.action_About = QtWidgets.QAction(MainWindow)
         self.action_About.setObjectName("action_About")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
@@ -569,14 +588,21 @@ class Ui_MainWindow(object):
         self.actionFix_Corrector_Names = QtWidgets.QAction(MainWindow)
         self.actionFix_Corrector_Names.setObjectName(
             "actionFix_Corrector_Names")
+        self.actionShow_Device_Settings_Log = QtWidgets.QAction(MainWindow)
+        self.actionShow_Device_Settings_Log.setCheckable(True)
+        self.actionShow_Device_Settings_Log.setChecked(True)
+        self.actionShow_Device_Settings_Log.setObjectName(
+            "actionShow_Device_Settings_Log")
         self.menu_File.addAction(self.actionLoad_From_Snapshot)
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.action_About)
         self.menu_Help.addAction(self.actionAbout_Qt)
         self.menuTools.addAction(self.actionFix_Corrector_Names)
+        self.menu_View.addAction(self.actionShow_Device_Settings_Log)
         self.menubar.addAction(self.menu_File.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
+        self.menubar.addAction(self.menu_View.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
         self.toolBar.addAction(self.actionLoad_Lattice)
         self.toolBar.addAction(self.actionAdd_Devices)
@@ -643,6 +669,8 @@ class Ui_MainWindow(object):
         self.snp_expand_btn.toggled['bool'].connect(
             MainWindow.on_snp_expand_collapse)
         self.actionContents.triggered.connect(MainWindow.on_help)
+        self.actionShow_Device_Settings_Log.toggled['bool'].connect(
+            MainWindow.on_enable_logdock)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.expand_all_btn, self.select_all_btn)
         MainWindow.setTabOrder(self.select_all_btn, self.invert_selection_btn)
@@ -766,6 +794,7 @@ class Ui_MainWindow(object):
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menuTools.setTitle(_translate("MainWindow", "Tools"))
+        self.menu_View.setTitle(_translate("MainWindow", "&View"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.snp_dock.setWindowTitle(_translate("MainWindow", "Snapshots"))
         self.snp_expand_btn.setToolTip(
@@ -776,6 +805,8 @@ class Ui_MainWindow(object):
         self.total_snp_lbl.setText(
             _translate("MainWindow",
                        "<html><head/><body><p>0</p></body></html>"))
+        self.log_dock.setWindowTitle(
+            _translate("MainWindow", "Device Setting Log"))
         self.action_About.setText(_translate("MainWindow", "&About"))
         self.action_About.setShortcut(_translate("MainWindow", "Ctrl+A"))
         self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
@@ -842,8 +873,11 @@ class Ui_MainWindow(object):
             ))
         self.actionFix_Corrector_Names.setText(
             _translate("MainWindow", "Fix Corrector Names"))
+        self.actionShow_Device_Settings_Log.setText(
+            _translate("MainWindow", "Device Settings Log"))
 
 
+from phantasy_apps.settings_manager.dockerwidget import DockWidget
 from . import resources_rc
 
 if __name__ == "__main__":
