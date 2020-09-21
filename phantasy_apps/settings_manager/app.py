@@ -64,6 +64,7 @@ from .utils import FMT
 from .utils import SettingsModel
 from .utils import pack_settings
 from .utils import str2float
+from .utils import get_ratio_as_string
 from .utils import init_config_dir
 from .utils import VALID_FILTER_KEYS_NUM
 from .utils import SnapshotDataModel
@@ -1189,6 +1190,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 dx01_idx = m.index(irow, m.i_val0_rd)
                 dx02_idx = m.index(irow, m.i_val0_cset)
                 dx12_idx = m.index(irow, m.i_rd_cset)
+                ratio_x20_idx = m.index(irow, m.i_ratio_x20)
                 x0 = float(m.data(x0_idx))
                 x1 = float(m.data(x1_idx))
                 x2 = float(m.data(x2_idx))
@@ -1201,6 +1203,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 v_tuple = (rd_val, sp_val, dx01, dx02, dx12)
                 for iidx, val in zip(idx_tuple, v_tuple):
                     worker.meta_signal1.emit((iidx, self.fmt.format(val), Qt.DisplayRole))
+                worker.meta_signal1.emit((ratio_x20_idx, get_ratio_as_string(x2, x0, self.fmt),
+                                          Qt.DisplayRole))
                 worker.meta_signal1.emit((wa_idx, str(wa), Qt.DisplayRole))
                 tol = float(m.data(tol_idx))
                 if abs(dx12) > tol:

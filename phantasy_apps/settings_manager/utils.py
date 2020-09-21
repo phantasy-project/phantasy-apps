@@ -48,7 +48,7 @@ COLUMN_NAMES2 = [
     '{D}({x0},{x1})'.format(D=DELTA, x0=X0, x1=X1),
     '{D}({x0},{x2})'.format(D=DELTA, x0=X0, x2=X2),
     '{D}({x1},{x2})'.format(D=DELTA, x1=X1, x2=X2),
-    'Tolerance', 'Writable'
+    'Tolerance', 'Writable', f'{X2}/{X0}'
 ]
 COLUMN_SFIELD_MAP = OrderedDict((
     ('Type', 'family'),
@@ -60,7 +60,7 @@ SFIELD_NAMES_ATTR = list(COLUMN_SFIELD_MAP.values())
 COLUMN_NAMES = COLUMN_NAMES1 + COLUMN_NAMES_ATTR + COLUMN_NAMES2
 
 VALID_FILTER_KEYS_NUM = ['x0', 'x1', 'x2', 'dx01', 'dx02', 'dx12',
-                         'pos', 'tolerance']
+                         'pos', 'tolerance', 'x2/x0']
 VALID_FILTER_KEYS = ['device', 'field', 'type',
                      'writable'] + VALID_FILTER_KEYS_NUM
 
@@ -137,12 +137,12 @@ class SettingsModel(QStandardItemModel):
         self.header = self.h_name, self.h_field, self.h_type, self.h_pos, \
                       self.h_val0, self.h_rd, self.h_cset, \
                       self.h_val0_rd, self.h_val0_cset, self.h_rd_cset, \
-                      self.h_tol, self.h_writable \
+                      self.h_tol, self.h_writable, self.h_ratio_x20 \
             = COLUMN_NAMES
         self.ids = self.i_name, self.i_field, self.i_type, self.i_pos, \
                    self.i_val0, self.i_rd, self.i_cset, \
                    self.i_val0_rd, self.i_val0_cset, self.i_rd_cset, \
-                   self.i_tol, self.i_writable \
+                   self.i_tol, self.i_writable, self.i_ratio_x20 \
             = range(len(self.header))
 
         #
@@ -234,10 +234,13 @@ class SettingsModel(QStandardItemModel):
                     row.append(item)
             #
             row.extend([item_val0, item_rd, item_cset])
+            x0 = float(item_val0.text())
+            x1 = float(item_rd.text())
+            x2 = float(item_cset.text())
             # dx01,02,12
-            v_d01 = float(item_val0.text()) - float(item_rd.text())
-            v_d02 = float(item_val0.text()) - float(item_cset.text())
-            v_d12 = float(item_rd.text()) - float(item_cset.text())
+            v_d01 = x0 - x1
+            v_d02 = x0 - x2
+            v_d12 = x1 - x2
             for v in (v_d01, v_d02, v_d12):
                 item = QStandardItem(self.fmt.format(v))
                 row.append(item)
@@ -264,6 +267,11 @@ class SettingsModel(QStandardItemModel):
                     i.setData(QBrush(QColor(FG_NO_WRITE)), Qt.ForegroundRole)
 
             # fgcolor = get_fg_color(write_access)
+
+            # x2/x0
+            item_ratio_x20 = QStandardItem(get_ratio_as_string(x2, x0, self.fmt))
+            item_ratio_x20.setEditable(False)
+            row.append(item_ratio_x20)
 
             # color
             # for i in row:
@@ -407,6 +415,7 @@ class _SortProxyModel(QSortFilterProxyModel):
             'dx12': model.i_rd_cset,
             'tolerance': model.i_tol,
             'writable': model.i_writable,
+            'x2/x0': model.i_ratio_x20,
         }
         self.filter_ftypes = ['ENG', 'PHY']
         # if True, filter checked items, otherwise show all items.
@@ -664,6 +673,15 @@ def str2float(s):
     finally:
         return r
 
+
+def get_ratio_as_string(a, b, fmt):
+    # return a/b, if b is zero, return -
+    try:
+        r = fmt.format(a / b)
+    except ZeroDivisionError:
+        r = 'inf'
+    finally:
+        return r
 
 class SnapshotDataModel(QStandardItemModel):
 
