@@ -489,6 +489,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # scaling factor hint
         self.snp_casted.connect(self.on_hint_scaling_factor)
 
+        # log dock
+        self.log_dock.closed.connect(lambda:self.actionShow_Device_Settings_Log.setChecked(False))
+
     @pyqtSlot(bool)
     def on_enable_search(self, auto_collapse, enabled):
         if auto_collapse:
@@ -1642,6 +1645,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 sf = 1.0
             finally:
                 self.scaling_factor_lineEdit.setText(f"{sf:.3g}")
+
+    @pyqtSlot(bool)
+    def on_enable_logdock(self, enabled):
+        if enabled:
+            self.log_dock.show()
+        else:
+            self.log_dock.close()
 
 
 def is_snp_data_exist(snpdata, snpdata_list):
