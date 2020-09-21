@@ -261,17 +261,18 @@ class SettingsModel(QStandardItemModel):
             item_wa.setEditable(False)
             row.append(item_wa)
             item_ename.setEnabled(write_access)
+
+            # x2/x0
+            item_ratio_x20 = QStandardItem(get_ratio_as_string(x2, x0, self.fmt))
+            item_ratio_x20.setEditable(False)
+            row.append(item_ratio_x20)
+
             if not write_access:
                 for i in row:
                     i.setSelectable(False)
                     i.setData(QBrush(QColor(FG_NO_WRITE)), Qt.ForegroundRole)
 
             # fgcolor = get_fg_color(write_access)
-
-            # x2/x0
-            item_ratio_x20 = QStandardItem(get_ratio_as_string(x2, x0, self.fmt))
-            item_ratio_x20.setEditable(False)
-            row.append(item_ratio_x20)
 
             # color
             # for i in row:
