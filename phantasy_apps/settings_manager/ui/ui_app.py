@@ -499,6 +499,19 @@ class Ui_MainWindow(object):
         self.snp_dock.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(4), self.snp_dock)
         self.log_dock = DockWidget(MainWindow)
+        self.log_dock.setStyleSheet("QDockWidget {\n"
+                                    "    font-weight: normal;\n"
+                                    "}\n"
+                                    "\n"
+                                    "QDockWidget::title {\n"
+                                    "    text-align: left;\n"
+                                    "    background: pink;\n"
+                                    "    padding-left: 15px;\n"
+                                    "}")
+        self.log_dock.setFeatures(
+            QtWidgets.QDockWidget.DockWidgetClosable
+            | QtWidgets.QDockWidget.DockWidgetFloatable
+            | QtWidgets.QDockWidget.DockWidgetVerticalTitleBar)
         self.log_dock.setObjectName("log_dock")
         self.dockWidgetContents_2 = QtWidgets.QWidget()
         self.dockWidgetContents_2.setObjectName("dockWidgetContents_2")
@@ -805,8 +818,7 @@ class Ui_MainWindow(object):
         self.total_snp_lbl.setText(
             _translate("MainWindow",
                        "<html><head/><body><p>0</p></body></html>"))
-        self.log_dock.setWindowTitle(
-            _translate("MainWindow", "Device Setting Log"))
+        self.log_dock.setWindowTitle(_translate("MainWindow", "Setting Logs"))
         self.action_About.setText(_translate("MainWindow", "&About"))
         self.action_About.setShortcut(_translate("MainWindow", "Ctrl+A"))
         self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
