@@ -830,7 +830,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # printlog("Apply settings: {0:.1f} %".format(per * 100))
         # idx_src, px, msg = idx_px_list[-1]
         # m.setData(idx_src, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole)
-        _, _, msg = idx_px_list[-1]
+        idx_src, _, msg = idx_px_list[-1]
+        m.hlrow(idx_src)
         self.log_textEdit.append(msg)
         self.apply_pb.setValue(per * 100)
 

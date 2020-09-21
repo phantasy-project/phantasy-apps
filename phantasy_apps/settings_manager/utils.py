@@ -396,6 +396,12 @@ class SettingsModel(QStandardItemModel):
         # field object list that to be deleted
         self.item_deletion_updated.emit(fobj_list)
 
+    def hlrow(self, idx_src):
+        idx = self._tv.model().mapFromSource(idx_src)
+        self._tv.scrollTo(idx)
+        self._tv.selectionModel().select(idx,
+                QItemSelectionModel.ClearAndSelect | QItemSelectionModel.Rows)
+
 
 class _SortProxyModel(QSortFilterProxyModel):
 
