@@ -321,6 +321,17 @@ class Ui_MainWindow(object):
         self.scaling_factor_lineEdit.setSizePolicy(sizePolicy)
         self.scaling_factor_lineEdit.setObjectName("scaling_factor_lineEdit")
         self.horizontalLayout_3.addWidget(self.scaling_factor_lineEdit)
+        self.auto_sf_btn = QtWidgets.QToolButton(self.centralwidget)
+        icon13 = QtGui.QIcon()
+        icon13.addPixmap(QtGui.QPixmap(":/sm-icons/calc-sf.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.auto_sf_btn.setIcon(icon13)
+        self.auto_sf_btn.setIconSize(QtCore.QSize(24, 24))
+        self.auto_sf_btn.setCheckable(True)
+        self.auto_sf_btn.setChecked(True)
+        self.auto_sf_btn.setAutoRaise(True)
+        self.auto_sf_btn.setObjectName("auto_sf_btn")
+        self.horizontalLayout_3.addWidget(self.auto_sf_btn)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.apply_pb = QtWidgets.QProgressBar(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -423,7 +434,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.snp_dock.sizePolicy().hasHeightForWidth())
         self.snp_dock.setSizePolicy(sizePolicy)
-        self.snp_dock.setMinimumSize(QtCore.QSize(0, 0))
+        self.snp_dock.setMinimumSize(QtCore.QSize(356, 139))
         self.snp_dock.setWindowIcon(icon)
         self.snp_dock.setStyleSheet("QDockWidget {\n"
                                     "    font-weight: bold;\n"
@@ -490,70 +501,70 @@ class Ui_MainWindow(object):
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionE_xit = QtWidgets.QAction(MainWindow)
-        icon13 = QtGui.QIcon()
-        icon13.addPixmap(QtGui.QPixmap(":/sm-icons/exit.png"),
+        icon14 = QtGui.QIcon()
+        icon14.addPixmap(QtGui.QPixmap(":/sm-icons/exit.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionE_xit.setIcon(icon13)
+        self.actionE_xit.setIcon(icon14)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionContents = QtWidgets.QAction(MainWindow)
         self.actionContents.setObjectName("actionContents")
         self.action_Save = QtWidgets.QAction(MainWindow)
-        icon14 = QtGui.QIcon()
-        icon14.addPixmap(QtGui.QPixmap(":/sm-icons/save.png"),
+        icon15 = QtGui.QIcon()
+        icon15.addPixmap(QtGui.QPixmap(":/sm-icons/save.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.action_Save.setIcon(icon14)
+        self.action_Save.setIcon(icon15)
         self.action_Save.setObjectName("action_Save")
         self.actionLoad_From_Snapshot = QtWidgets.QAction(MainWindow)
-        icon15 = QtGui.QIcon()
-        icon15.addPixmap(QtGui.QPixmap(":/sm-icons/folder-open-snp.png"),
+        icon16 = QtGui.QIcon()
+        icon16.addPixmap(QtGui.QPixmap(":/sm-icons/folder-open-snp.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_From_Snapshot.setIcon(icon15)
+        self.actionLoad_From_Snapshot.setIcon(icon16)
         self.actionLoad_From_Snapshot.setObjectName("actionLoad_From_Snapshot")
         self.actionPhysics_Fields = QtWidgets.QAction(MainWindow)
         self.actionPhysics_Fields.setCheckable(True)
         self.actionPhysics_Fields.setChecked(False)
-        icon16 = QtGui.QIcon()
-        icon16.addPixmap(QtGui.QPixmap(":/sm-icons/physics.png"),
+        icon17 = QtGui.QIcon()
+        icon17.addPixmap(QtGui.QPixmap(":/sm-icons/physics.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionPhysics_Fields.setIcon(icon16)
+        self.actionPhysics_Fields.setIcon(icon17)
         self.actionPhysics_Fields.setObjectName("actionPhysics_Fields")
         self.actionEngineering_Fields = QtWidgets.QAction(MainWindow)
         self.actionEngineering_Fields.setCheckable(True)
         self.actionEngineering_Fields.setChecked(True)
-        icon17 = QtGui.QIcon()
-        icon17.addPixmap(QtGui.QPixmap(":/sm-icons/engineering.png"),
+        icon18 = QtGui.QIcon()
+        icon18.addPixmap(QtGui.QPixmap(":/sm-icons/engineering.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionEngineering_Fields.setIcon(icon17)
+        self.actionEngineering_Fields.setIcon(icon18)
         self.actionEngineering_Fields.setObjectName("actionEngineering_Fields")
         self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
-        icon18 = QtGui.QIcon()
-        icon18.addPixmap(QtGui.QPixmap(":/sm-icons/load_lattice.png"),
+        icon19 = QtGui.QIcon()
+        icon19.addPixmap(QtGui.QPixmap(":/sm-icons/load_lattice.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Lattice.setIcon(icon18)
+        self.actionLoad_Lattice.setIcon(icon19)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
         self.actionLoad_Settings = QtWidgets.QAction(MainWindow)
-        icon19 = QtGui.QIcon()
-        icon19.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
+        icon20 = QtGui.QIcon()
+        icon20.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Settings.setIcon(icon19)
+        self.actionLoad_Settings.setIcon(icon20)
         self.actionLoad_Settings.setObjectName("actionLoad_Settings")
         self.actionPreferences = QtWidgets.QAction(MainWindow)
-        icon20 = QtGui.QIcon()
-        icon20.addPixmap(QtGui.QPixmap(":/sm-icons/preferences.png"),
+        icon21 = QtGui.QIcon()
+        icon21.addPixmap(QtGui.QPixmap(":/sm-icons/preferences.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionPreferences.setIcon(icon20)
+        self.actionPreferences.setIcon(icon21)
         self.actionPreferences.setObjectName("actionPreferences")
         self.actionAdd_Devices = QtWidgets.QAction(MainWindow)
-        icon21 = QtGui.QIcon()
-        icon21.addPixmap(QtGui.QPixmap(":/sm-icons/add.png"),
+        icon22 = QtGui.QIcon()
+        icon22.addPixmap(QtGui.QPixmap(":/sm-icons/add.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionAdd_Devices.setIcon(icon21)
+        self.actionAdd_Devices.setIcon(icon22)
         self.actionAdd_Devices.setObjectName("actionAdd_Devices")
         self.actionTake_Snapshot = QtWidgets.QAction(MainWindow)
-        icon22 = QtGui.QIcon()
-        icon22.addPixmap(QtGui.QPixmap(":/sm-icons/snapshot.png"),
+        icon23 = QtGui.QIcon()
+        icon23.addPixmap(QtGui.QPixmap(":/sm-icons/snapshot.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionTake_Snapshot.setIcon(icon22)
+        self.actionTake_Snapshot.setIcon(icon23)
         self.actionTake_Snapshot.setObjectName("actionTake_Snapshot")
         self.actionFix_Corrector_Names = QtWidgets.QAction(MainWindow)
         self.actionFix_Corrector_Names.setObjectName(
@@ -732,6 +743,12 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Scaling factor, input a number e.g. 0.8, or an expression, e.g. 12 / 18, then press Enter.</p></body></html>"
             ))
         self.scaling_factor_lineEdit.setText(_translate("MainWindow", "1.0"))
+        self.auto_sf_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Check to enable auto fill the scaling factor.</p></body></html>"
+            ))
+        self.auto_sf_btn.setText(_translate("MainWindow", "..."))
         self.label.setText(_translate("MainWindow", "Total Elements"))
         self.total_elem_number_lbl.setText(_translate("MainWindow", "0"))
         self.label_2.setText(_translate("MainWindow", "Setpoint PVs"))
