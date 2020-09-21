@@ -6,6 +6,7 @@ import json
 import os
 import time
 from collections import OrderedDict
+from datetime import datetime
 from functools import partial
 from getpass import getuser
 
@@ -101,6 +102,7 @@ For the number columns, value range or single value filter is supported, e.g.
 3. dx12=0.1 matches the discrenpacy between the live readback and setpoint is 0.1.
 4. x2/x0=(0.1,) matches the ratio of x2/x0 greater than 0.1.
 """
+TS_FMT = "%Y-%m-%dT%H:%M:%S.%f"
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -756,7 +758,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # scaling factor
         scaling_factor = float(self.scaling_factor_lineEdit.text())
         #
-        self.idx_px_list = []  # list to apply icon [(idx_src, px)]
+        self.idx_px_list = []  # list to apply icon [(idx_src, px, log_msg)]
         m = self._tv.model()
         settings_selected = m.get_selection()
         if len(settings_selected) == 0:
@@ -800,7 +802,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         idx_src, settings, new_fval0 = tuple_idx_settings
         elem, fname, fld, fval0 = settings
         ename = elem.name
-        print("New fval: {}, fval0: {}".format(new_fval0, fval0))
+        # print("New fval: {}, fval0: {}".format(new_fval0, fval0))
         fval_to_set = new_fval0 * sf
         try:
             t0 = time.time()
@@ -810,19 +812,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             px = self.fail_px
         else:
             px = self.done_px
-            printlog("- Set {} [{}] from {} to {} ({}).".format(
-                ename, fname, fval_current_settings, fval_to_set, new_fval0))
+            msg = "[{0}] Set {1:<20s} [{2}] from {3} to {4} (raw set value: {5}).".format(
+                    datetime.fromtimestamp(time.time()).strftime(TS_FMT),
+                    ename, fname, fval_current_settings, fval_to_set, new_fval0)
+            # print(msg)
             dt = self.t_wait - (time.time() - t0)
             if dt > 0:
                 time.sleep(dt)
-                printlog("Wait time: {} sec.".format(dt))
-        self.idx_px_list.append((idx_src, px))
+                # printlog("Wait time: {} sec.".format(dt))
+        self.idx_px_list.append((idx_src, px, msg))
 
     @pyqtSlot(float, 'QString')
     def on_apply_settings_progress(self, idx_px_list, m, per, str_idx):
-        printlog("Apply settings: {0:.1f} %".format(per * 100))
-        idx_src, px = idx_px_list[-1]
-        m.setData(idx_src, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole)
+        # printlog("Apply settings: {0:.1f} %".format(per * 100))
+        # idx_src, px, msg = idx_px_list[-1]
+        # m.setData(idx_src, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole)
+        _, _, msg = idx_px_list[-1]
+        self.log_textEdit.append(msg)
         self.apply_pb.setValue(per * 100)
 
     def closeEvent(self, e):
