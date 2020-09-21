@@ -763,7 +763,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
 
         # ask if want to take a snapshot of current settings of all checked devices
-        r = QMessageBox.question(self, "Take Snapshot", "Do you want to take a snapshot for all the checked items?",
+        r = QMessageBox.question(self, "Take Snapshot",
+                                 "Do you want to take a snapshot before changing devices?",
                                  QMessageBox.Yes | QMessageBox.No)
         if r == QMessageBox.Yes:
             # take a snapshot
@@ -772,7 +773,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             msg = "Now start to set device settings."
 
-        QMessageBox.information(self, "Apply Settings", msg, QMessageBox.Ok)
+        r = QMessageBox.information(self, "Apply Settings", msg, QMessageBox.Ok | QMessageBox.Cancel)
+        if r == QMessageBox.Cancel:
+            return
 
         self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor),
                             daq_seq=settings_selected)
