@@ -950,9 +950,10 @@ class SnapshotDataModel(QStandardItemModel):
             if found:
                 break
 
-    @pyqtSlot('QString')
-    def on_snp_casted(self, snp_name):
+    @pyqtSlot(SnapshotData)
+    def on_snp_casted(self, snpdata):
         # updated casted dec role for ALL rows, hl casted row.
+        snp_name = snpdata.name
         self._v.clearSelection()
         for ii in range(self.rowCount()):
             ridx = self.index(ii, 0)

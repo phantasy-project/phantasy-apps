@@ -140,8 +140,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # snp saved, snpdata name, filepath
     snp_saved = pyqtSignal('QString', 'QString')
 
-    # snp casted, snpdata name
-    snp_casted = pyqtSignal('QString')
+    # snp casted, snpdata
+    snp_casted = pyqtSignal(SnapshotData)
 
     def __init__(self, version, config_dir=None):
         super(SettingsManagerWindow, self).__init__()
@@ -478,6 +478,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # take snapshot tool
         self.actionTake_Snapshot.triggered.connect(lambda:self.take_snapshot())
+
+        # scaling factor hint
+        self.snp_casted.connect(self.on_hint_scaling_factor)
 
     @pyqtSlot(bool)
     def on_enable_search(self, auto_collapse, enabled):
@@ -1543,7 +1546,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.save_settings.connect(self.on_save_settings)
         self.snp_saved.connect(m.on_snp_saved)
         m.cast_settings.connect(self.on_cast_settings)
-        self.snp_casted['QString'].connect(m.on_snp_casted)
+        self.snp_casted.connect(m.on_snp_casted)
 
     def on_save_settings(self, data):
         # data: SnapshotData
@@ -1584,7 +1587,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         lat.settings.update(s)
         self._elem_list = [lat[ename] for ename in s]
         self.element_list_changed.emit()
-        self.snp_casted['QString'].emit(data.name)
+        self.snp_casted.emit(data)
 
     def clear_cast_status(self):
         # Clear cast status in snp dock.
@@ -1606,6 +1609,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         path = os.path.join(os.path.dirname(__file__), "docs", "settings_manager.qhc")
         if os.path.isfile(path):
             launch_assistant(path)
+
+    def on_hint_scaling_factor(self, snpdata):
+        btn = self.auto_sf_btn
+        _, a1, _, q1 = self.beam_display_widget.get_species()
+        if btn.isChecked():
+            a0, q0 = snpdata.ion_mass, snpdata.ion_charge
+            try:
+                sf = (float(q0) / float(a0)) / (q1 / a1)
+            except:
+                sf = 1.0
+            finally:
+                self.scaling_factor_lineEdit.setText(f"{sf:.3g}")
 
 
 def is_snp_data_exist(snpdata, snpdata_list):
