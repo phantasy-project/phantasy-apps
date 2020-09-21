@@ -51,7 +51,7 @@ class Ui_MainWindow(object):
         font.setFamily("aakar")
         font.setPointSize(14)
         self.matplotlibimageWidget.setFigureXYlabelFont(font)
-        self.matplotlibimageWidget.setProperty("figureToolbarToggle", False)
+        self.matplotlibimageWidget.setProperty("figureToolbarToggle", True)
         self.matplotlibimageWidget.setColorBarToggle(True)
         self.matplotlibimageWidget.setAutoColorLimit(True)
         self.matplotlibimageWidget.setObjectName("matplotlibimageWidget")
