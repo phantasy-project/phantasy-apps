@@ -909,6 +909,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self._reset_status_info()
 
     def on_click_view(self, idx):
+        return
         r, c = idx.row(), idx.column()
         m = self._tv.model()
         src_m = m.sourceModel()
