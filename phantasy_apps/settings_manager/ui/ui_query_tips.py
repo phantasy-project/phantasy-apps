@@ -19,6 +19,7 @@ class Ui_Form(object):
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
         self.textEdit = QtWidgets.QTextEdit(Form)
+        self.textEdit.setReadOnly(True)
         self.textEdit.setObjectName("textEdit")
         self.gridLayout.addWidget(self.textEdit, 1, 0, 1, 1)
 
