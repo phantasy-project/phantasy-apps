@@ -98,7 +98,8 @@ Press Enter to activate the filter, here is some examples:
 For the number columns, value range or single value filter is supported, e.g.
 1. pos=(1,) matches all the position value equal or greater than 1.0;
 2. x1=(-1, 2) matches current readback value is in [-1, 2] range.
-3. dx12=0.1 matches the discrenpacy between the live readback and setpoint is 0.1.\
+3. dx12=0.1 matches the discrenpacy between the live readback and setpoint is 0.1.
+4. x2/x0=(0.1,) matches the ratio of x2/x0 greater than 0.1.
 """
 
 
