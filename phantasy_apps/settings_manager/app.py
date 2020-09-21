@@ -317,9 +317,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def show_init_settings_info(self):
         if not self.init_settings:
             QMessageBox.information(self, "Loaded Lattice",
-                                    "Lattice is loaded, add device settings via 'Add Devices' or "
-                                    "'Load Settings' tools, "
-                                    "or initialize with all the devices in the loaded lattice.",
+                                    '<html><head/><body><p>Lattice is loaded, add device settings '
+                                    'via <span style=" font-style:italic;">Add Devices</span> or '
+                                    '<span style=" font-style:italic;">Load Settings </span>tools,'
+                                    ' or check <span style=" font-style:italic;">Initialize with '
+                                    'loaded lattice</span> in the right bottom window area to '
+                                    'list all the devices.</p></body></html>',
                                     QMessageBox.Ok)
 
     def _enable_widgets(self, enabled):
@@ -758,7 +761,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         settings_selected = m.get_selection()
         if len(settings_selected) == 0:
             QMessageBox.warning(self, "Apply Settings",
-                    '<html><head/><body><p>Not any items are checked, <span style=" font-style:italic;">Apply </span>only work with checked items<span style=" font-style:italic;">.</span></p></body></html>',
+                    '<html><head/><body><p>Not any items are checked, <span style=" '
+                    'font-style:italic;">Apply </span>only work with checked items<span style=" '
+                    'font-style:italic;">.</span></p></body></html>',
                     QMessageBox.Ok)
             return
 
@@ -788,6 +793,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.applyer.daqFinished.connect(partial(
             self.set_widgets_status_for_applying, 'STOP'))
         self.applyer.daqFinished.connect(lambda:self.apply_pb.setVisible(False))
+        self.applyer.daqFinished.connect(lambda:self.single_update_btn.clicked.emit())
         self.applyer.start()
 
     def apply_single(self, sf, tuple_idx_settings):
