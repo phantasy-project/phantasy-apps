@@ -69,15 +69,7 @@ from .utils import get_ratio_as_string
 from .utils import init_config_dir
 from .utils import VALID_FILTER_KEYS_NUM
 from .utils import SnapshotDataModel
-
-LIVE = True
-
-if not LIVE:
-    DEFAULT_MACH = "FRIB_VA"
-    DEFAULT_SEGM = "LS1FS1"
-else:
-    DEFAULT_MACH = "FRIB"
-    DEFAULT_SEGM = "LINAC"
+from .data import DEFAULT_MACHINE, DEFAULT_SEGMENT
 
 PX_SIZE = 24
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
@@ -1017,8 +1009,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         table_settings = TableSettings(filepath)
 
         if self._lat is None:
-            mach = table_settings.meta.get('machine', DEFAULT_MACH)
-            segm = table_settings.meta.get('segment', DEFAULT_SEGM)
+            mach = table_settings.meta.get('machine', DEFAULT_MACHINE)
+            segm = table_settings.meta.get('segment', DEFAULT_SEGMENT)
             self.__load_lattice(mach, segm)
 
         lat = self.__init_lat
@@ -1593,7 +1585,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for k, v in zip(('app', 'version', 'user', 'machine', 'segment'),
              ('Settings Manager', f'{self._version}', getuser(),
                self._last_machine_name, self._last_lattice_name)):
-                 if not k in settings.meta:
+                 if not k in settings.meta and v is not None:
                      settings.meta.update({k: v})
         settings.write(filename, header=CSV_HEADER)
         self.snp_saved.emit(data.name, filename)
@@ -1603,8 +1595,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # settings(data.data): TableSettings
         settings = data.data
         if self._lat is None:
-            mach = settings.meta.get('machine', DEFAULT_MACH)
-            segm = settings.meta.get('segment', DEFAULT_SEGM)
+            mach = settings.meta.get('machine', DEFAULT_MACHINE)
+            segm = settings.meta.get('segment', DEFAULT_SEGMENT)
             self.__load_lattice(mach, segm)
         lat = self.__init_lat
         table_settings = data.data

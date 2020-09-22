@@ -17,6 +17,15 @@ CSV_HEADER = (
     'Tolerance', 'Writable'
 )
 
+LIVE = True
+
+if not LIVE:
+    DEFAULT_MACHINE = "FRIB_VA"
+    DEFAULT_SEGMENT = "LS1FS1"
+else:
+    DEFAULT_MACHINE = "FRIB"
+    DEFAULT_SEGMENT = "LINAC"
+
 
 def make_physics_settings(csv_settings, lat):
     """Generate Settings (lattice settings) of *lat* from `TableSettings`
@@ -193,6 +202,8 @@ class SnapshotData:
         self.ion_number = kws.pop('ion_number', None) # Z (str)
         self.ion_mass = kws.pop('ion_mass', None) # A (str)
         self.ion_charge = kws.pop('ion_charge', None) # Q (str)
+        self.machine = kws.pop('machine', DEFAULT_MACHINE)
+        self.segment = kws.pop('segment', DEFAULT_SEGMENT)
         note = ''
         for k, v in kws.items():
             if v == '':
@@ -222,7 +233,7 @@ class SnapshotData:
     @ion_name.setter
     def ion_name(self, s):
         if s is None:
-            self._ion_name = '' 
+            self._ion_name = ''
         else:
             self._ion_name = s
 
@@ -269,7 +280,7 @@ class SnapshotData:
             self._name = get_random_name()
         else:
             self._name = s
-    
+
     @property
     def username(self):
         return self._user
@@ -327,7 +338,9 @@ class SnapshotData:
                           'ion_name': self._ion_name,
                           'ion_number': self._ion_number,
                           'ion_mass': self._ion_mass,
-                          'ion_charge': self._ion_charge,}
+                          'ion_charge': self._ion_charge,
+                          'machine': self.machine,
+                          'segment': self.segment, }
 
     def update_properties(self):
         # update with tablesettings meta
@@ -338,3 +351,5 @@ class SnapshotData:
         self.ion_number = self.data.meta.get('ion_number', None)
         self.ion_mass = self.data.meta.get('ion_mass', None)
         self.ion_charge = self.data.meta.get('ion_charge', None)
+        self.machine = self.data.meta.get('machine', DEFAULT_MACHINE)
+        self.segment = self.data.meta.get('segment', DEFAULT_SEGMENT)
