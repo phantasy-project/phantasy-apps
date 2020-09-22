@@ -1266,10 +1266,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.stop_auto_update()
             printlog("Stop auto updating.")
 
-    @pyqtSlot()
-    def on_reset_set_status(self):
-        self._tv.model().sourceModel().reset_icon.emit()
-
     @pyqtSlot(bool)
     def on_expand_collapse_view(self, expanded):
         if expanded:

@@ -107,9 +107,6 @@ class SettingsModel(QStandardItemModel):
     # statistics for loaded items, PVs
     settings_sts = pyqtSignal(int, int, int)
 
-    # reset item0 icon if applied
-    reset_icon = pyqtSignal()
-
     # delete checked items
     delete_selected_items = pyqtSignal()
 
@@ -153,7 +150,6 @@ class SettingsModel(QStandardItemModel):
 
         #
         self.data_changed.connect(self.update_data)
-        self.reset_icon.connect(self.reset_setdone_icons)
         self.delete_selected_items.connect(self.on_delete_selected_items)
 
         self._filter_key = 'device'
@@ -358,12 +354,6 @@ class SettingsModel(QStandardItemModel):
         for i in self.ids:
             tv.resizeColumnToContents(i)
         tv.collapseAll()
-
-    @pyqtSlot()
-    def reset_setdone_icons(self):
-        # reset set done icons.
-        for i in range(self.rowCount()):
-            self.setData(self.index(i, self.i_name), QPixmap(), Qt.DecorationRole)
 
     @pyqtSlot()
     def on_delete_selected_items(self):
