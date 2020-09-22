@@ -4,6 +4,7 @@
 import os
 import re
 import time
+import shutil
 from collections import OrderedDict
 from fnmatch import translate
 from functools import partial
@@ -30,6 +31,7 @@ from PyQt5.QtWidgets import QToolButton
 from PyQt5.QtWidgets import QSizePolicy
 from phantasy import get_settings_from_element_list
 from phantasy_ui.widgets import is_item_checked
+from phantasy_apps.utils import find_dconf
 from .data import SnapshotData
 
 FMT = "{0:.6g}"
@@ -82,6 +84,10 @@ FG_COLOR_MAP = {
 }
 
 PX_SIZE = 24
+
+DEFAULT_TS_PATH = find_dconf("settings_manager", "tolerance.json")
+DEFAULT_MS_PATH = find_dconf("settings_manager", "settings.json")
+DEFAULT_ELEM_PATH = find_dconf("settings_manager", "elements.json")
 
 
 class SettingsModel(QStandardItemModel):
@@ -660,10 +666,27 @@ def init_config_dir(confdir):
     confdir = os.path.expanduser(confdir)
     if not os.path.exists(confdir):
         os.makedirs(confdir)
+        reset_config(confdir)
+
     ts_confpath = os.path.join(confdir, 'tolerance.json')
     ms_confpath = os.path.join(confdir, 'settings.json')
     elem_confpath = os.path.join(confdir, 'elements.json')
+
+    if not os.path.exists(elem_confpath):
+        shutil.copy2(DEFAULT_ELEM_PATH, elem_confpath)
+
     return confdir, ts_confpath, ms_confpath, elem_confpath
+
+
+def reset_config(current_config_path):
+    ts_path = os.path.join(current_config_path, 'tolerance.json')
+    ms_path = os.path.join(current_config_path, 'settings.json')
+    elem_path = os.path.join(current_config_path, 'elements.json')
+
+    for default_path, path in zip(
+            (DEFAULT_TS_PATH, DEFAULT_MS_PATH, DEFAULT_ELEM_PATH),
+            (ts_path, ms_path, elem_path)):
+        shutil.copy2(default_path, path)
 
 
 def str2float(s):

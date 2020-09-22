@@ -18,9 +18,10 @@ from PyQt5.QtWidgets import QSpacerItem
 
 from phantasy_ui import get_open_directory
 from phantasy_ui import select_font
-from phantasy_apps.utils import find_dconf
 
 from .utils import COLUMN_NAMES
+from .utils import DEFAULT_TS_PATH, DEFAULT_MS_PATH, DEFAULT_ELEM_PATH
+from .utils import reset_config
 from .ui.ui_preferences import Ui_Dialog
 
 DEFAULT_FIELD_INIT_MODE = 'model'
@@ -152,18 +153,8 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         if r == QMessageBox.No:
             return
 
-        default_ts_path = find_dconf("settings_manager", "tolerance.json")
-        default_ms_path = find_dconf("settings_manager", "settings.json")
-        default_elem_path = find_dconf("settings_manager", "elements.json")
         current_config_path = self.config_path_lineEdit.text()
-        ts_path = os.path.join(current_config_path, 'tolerance.json')
-        ms_path = os.path.join(current_config_path, 'settings.json')
-        elem_path = os.path.join(current_config_path, 'elements.json')
-
-        for default_path, path in zip(
-                (default_ts_path, default_ms_path, default_elem_path),
-                (ts_path, ms_path, elem_path)):
-            shutil.copy2(default_path, path)
+        reset_config(current_config_path)
 
         self.config_changed.emit()
 
