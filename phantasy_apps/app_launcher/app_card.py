@@ -216,10 +216,6 @@ class AppCardInfoForm(QWidget, Ui_InfoForm):
         super(AppCardInfoForm, self).__init__(parent)
 
         self.setupUi(self)
-        self.desc_plainTextEdit.setStyleSheet("""
-            QPlainTextEdit {
-                font-size: 16pt;
-                font-family: monospace;}""")
         self.app_name.setText(name)
         self.app_main_group.setText(group)
         self.app_version = ver

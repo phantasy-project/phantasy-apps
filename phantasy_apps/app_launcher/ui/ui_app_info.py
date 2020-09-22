@@ -17,7 +17,7 @@ class Ui_InfoForm(object):
                                "    border: 2px solid #04B13B;\n"
                                "}")
         self.gridLayout_2 = QtWidgets.QGridLayout(InfoForm)
-        self.gridLayout_2.setContentsMargins(0, 0, 0, 6)
+        self.gridLayout_2.setContentsMargins(2, 1, 2, 6)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.headline_widget = QtWidgets.QWidget(InfoForm)
         self.headline_widget.setStyleSheet(
@@ -26,6 +26,7 @@ class Ui_InfoForm(object):
             "}")
         self.headline_widget.setObjectName("headline_widget")
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.headline_widget)
+        self.horizontalLayout.setContentsMargins(10, 10, 10, 10)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.app_name = QtWidgets.QLabel(self.headline_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -203,6 +204,7 @@ class Ui_InfoForm(object):
             self.label_3.sizePolicy().hasHeightForWidth())
         self.label_3.setSizePolicy(sizePolicy)
         self.label_3.setStyleSheet("QLabel {\n"
+                                   "    font-weight: bold;\n"
                                    "    margin-left: 10px;\n"
                                    "    font-size: 14px;\n"
                                    "}")
@@ -217,8 +219,9 @@ class Ui_InfoForm(object):
             self.desc_plainTextEdit.sizePolicy().hasHeightForWidth())
         self.desc_plainTextEdit.setSizePolicy(sizePolicy)
         self.desc_plainTextEdit.setStyleSheet("QPlainTextEdit {\n"
-                                              "    font-size: 13pt;\n"
-                                              "    border: none;\n"
+                                              "    font-size: 15pt;\n"
+                                              "    font-family: monospace;\n"
+                                              "    /*border: none;*/\n"
                                               "    margin-bottom: 6px;\n"
                                               "    margin-right: 6px;\n"
                                               "}")
@@ -229,9 +232,6 @@ class Ui_InfoForm(object):
         self.label_7.raise_()
         self.headline_widget.raise_()
         self.desc_plainTextEdit.raise_()
-        self.contact_phone_lbl.raise_()
-        self.contact_email_lbl.raise_()
-        self.contact_name_lbl.raise_()
 
         self.retranslateUi(InfoForm)
         self.close_btn.clicked.connect(InfoForm.on_close)
