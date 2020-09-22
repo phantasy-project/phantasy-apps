@@ -14,7 +14,7 @@ __copyright__ = "(c) 2019, Facility for Rare Isotope beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
 __title__ = "Global Launcher for FRIB Physics Applications"
-__version__ = '4.0'
+__version__ = '4.1'
 
 
 def run(cli=False):
