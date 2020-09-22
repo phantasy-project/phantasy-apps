@@ -767,7 +767,6 @@ class SnapshotDataModel(QStandardItemModel):
                 it_ts.snp_data = snp_data
                 # name
                 it_name = QStandardItem(snp_data.name)
-                it_name.snp_data = snp_data
                 it_name.setToolTip(snp_data.name)
                 # ion
                 it_ion = QStandardItem(snp_data.ion_name)
@@ -819,7 +818,8 @@ class SnapshotDataModel(QStandardItemModel):
             ridx = self.index(ii, 0)
             if self.hasChildren(ridx):
                 for i in range(self.rowCount(ridx)):
-                    snp_data = self.itemFromIndex(self.index(i, 0, ridx)).snp_data
+                    it0 = self.itemFromIndex(self.index(i, self.i_ts, ridx))
+                    snp_data = it0.snp_data
                     # cast
                     cast_btn = QToolButton(self._v)
                     cast_btn.setProperty('data', snp_data)
@@ -863,7 +863,7 @@ class SnapshotDataModel(QStandardItemModel):
         idx = item.index()
         s = item.text()
         i, j = idx.row(), idx.column()
-        snp_data = self.itemFromIndex(self.index(i, 0, item.parent().index())).snp_data
+        snp_data = self.itemFromIndex(self.index(i, self.i_ts, item.parent().index())).snp_data
         if j == self.i_note:
             snp_data.note = s
             item.setToolTip(s)
@@ -985,16 +985,22 @@ class SnapshotDataModel(QStandardItemModel):
             if not self.hasChildren(ridx):
                 continue
             for i in range(self.rowCount(ridx)):
+                it0 = self.itemFromIndex(self.index(i, self.i_ts, ridx))
                 it = self.itemFromIndex(self.index(i, self.i_name, ridx))
                 if it.text() == snp_name:
                     found = True
                     idx = self.index(i, self.i_save, ridx)
                     self.setData(idx, self.saved_px, Qt.DecorationRole)
-                    it.snp_data.filepath = filepath
+                    it0.snp_data.filepath = filepath
                     self.itemFromIndex(idx).setToolTip(filepath)
                     for j in (self.i_browse, self.i_read):
                         idx = self.index(i, j, ridx)
-                        self._v.indexWidget(idx).setEnabled(True)
+                        w = self._v.indexWidget(idx)
+                        # !! not fully understood !!
+                        if w is None:
+                            pass
+                        else:
+                            w.setEnabled(True)
                     break
             if found:
                 break
