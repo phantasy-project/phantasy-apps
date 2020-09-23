@@ -4,6 +4,7 @@
 import fnmatch
 import json
 import os
+import tempfile
 import time
 from collections import OrderedDict
 from datetime import datetime
@@ -15,6 +16,7 @@ from PyQt5.QtCore import QFileSystemWatcher
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
@@ -25,6 +27,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QGuiApplication
+from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QCompleter
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
@@ -95,6 +98,7 @@ For the number columns, value range or single value filter is supported, e.g.
 4. x2/x0=(0.1,) matches the ratio of x2/x0 greater than 0.1.
 """
 TS_FMT = "%Y-%m-%dT%H:%M:%S.%f"
+_, LOG_FILE = tempfile.mkstemp(datetime.now().strftime(TS_FMT), "settings_manager_setlog_", "/tmp")
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -484,6 +488,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # log dock
         self.log_dock.closed.connect(lambda:self.actionShow_Device_Settings_Log.setChecked(False))
 
+        # hide findtext_lbl and findtext_lineEdit
+        for o in (self.findtext_lbl, self.findtext_lineEdit):
+            o.setVisible(False)
+
     @pyqtSlot(bool)
     def on_enable_search(self, auto_collapse, enabled):
         if auto_collapse:
@@ -830,6 +838,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def closeEvent(self, e):
         self.on_update_dump_config()
         r = BaseAppForm.closeEvent(self, e)
+        if r:
+            os.remove(LOG_FILE)
 
     def snapshot_tolerance_settings(self):
         """Iterate all the tolerance settings, update and save.
@@ -1641,6 +1651,60 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.log_dock.show()
         else:
             self.log_dock.close()
+
+    @pyqtSlot()
+    def on_find_text_in_setlog(self):
+        # find text in device set log window
+        from PyQt5.QtGui import QTextCursor
+        from PyQt5.QtGui import QTextCharFormat
+        from PyQt5.QtGui import QTextDocument
+        from PyQt5.QtCore import Qt
+        from PyQt5.QtCore import QRegExp
+
+        search_string = self.sender().text()
+
+        def clear(cursor):
+            cursor.select(QTextCursor.Document)
+            cursor.setCharFormat(QTextCharFormat())
+            cursor.clearSelection()
+
+        document = self.log_textEdit.document()
+        cursor = QTextCursor(document)
+
+        clear(cursor)
+        if search_string == '':
+            return
+
+        plain_fmt = QTextCharFormat(cursor.charFormat())
+        color_fmt = plain_fmt
+        color_fmt.setBackground(Qt.yellow)
+
+        regex = QRegExp(search_string, Qt.CaseSensitive, QRegExp.Wildcard)
+
+        pos = 0
+        plainText = self.log_textEdit.toPlainText()
+        index = regex.indexIn(plainText, pos)
+        while (index != -1):
+            cursor.setPosition(index)
+            cursor.movePosition(QTextCursor.EndOfWord, 1)
+            cursor.mergeCharFormat(color_fmt)
+            pos = index + regex.matchedLength()
+            index = regex.indexIn(plainText, pos)
+
+    @pyqtSlot()
+    def on_open_texteditor(self):
+        with open(LOG_FILE, "w") as fp:
+            fp.write(self.log_textEdit.toPlainText())
+        QDesktopServices.openUrl(QUrl(LOG_FILE))
+
+    @pyqtSlot()
+    def on_setlog_changed(self):
+        doc = self.log_textEdit.document()
+        if doc.isEmpty():
+            cnt = 0
+        else:
+            cnt = doc.lineCount()
+        self.setlog_count_lbl.setText(str(cnt))
 
 
 def is_snp_data_exist(snpdata, snpdata_list):
