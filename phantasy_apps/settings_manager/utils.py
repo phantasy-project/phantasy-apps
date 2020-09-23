@@ -723,11 +723,14 @@ class SnapshotDataModel(QStandardItemModel):
 
         self.header = self.h_ts, self.h_name, \
                       self.h_ion, self.h_ion_number, self.h_ion_mass, self.h_ion_charge, \
-                      self.h_cast, self.h_save, self.h_browse, self.h_read, self.h_user, self.h_note \
-                    = "Timestamp", "Name", "Ion", "Z", "A", "Q", "Cast", "Save", "", "", "User", "Note"
+                      self.h_cast, self.h_save, self.h_browse, self.h_read, self.h_user, \
+                      self.h_tags, self.h_note \
+                    = "Timestamp", "Name", "Ion", "Z", "A", "Q", "Cast", "Save", "", "", "User", \
+                      "Tags", "Note"
         self.ids = self.i_ts, self.i_name, \
-                      self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge, \
-                   self.i_cast, self.i_save, self.i_browse, self.i_read, self.i_user, self.i_note \
+                   self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge, \
+                   self.i_cast, self.i_save, self.i_browse, self.i_read, self.i_user, \
+                   self.i_tags, self.i_note \
                  = range(len(self.header))
         self.set_data()
 
@@ -760,15 +763,27 @@ class SnapshotDataModel(QStandardItemModel):
                 it_name.setToolTip(snp_data.name)
                 # ion
                 it_ion = QStandardItem(snp_data.ion_name)
+                it_ion.setEditable(False)
                 # Z
                 it_ion_number = QStandardItem(snp_data.ion_number)
+                it_ion_number.setEditable(False)
                 # A
                 it_ion_mass = QStandardItem(snp_data.ion_mass)
+                it_ion_mass.setEditable(False)
                 # Q
                 it_ion_charge = QStandardItem(snp_data.ion_charge)
+                it_ion_charge.setEditable(False)
                 # user
                 it_user = QStandardItem(snp_data.username)
                 it_user.setEditable(False)
+
+                # tags
+                tags_as_str = snp_data.tags_as_str()
+                it_tags = QStandardItem(tags_as_str)
+                it_tags.setToolTip(tags_as_str)
+                is_golden = 'golden' in snp_data.tags
+                print("is golden? ", is_golden)
+
                 # note
                 it_note = QStandardItem(snp_data.note)
                 it_note.setData(self.note_px, Qt.DecorationRole)
@@ -794,10 +809,10 @@ class SnapshotDataModel(QStandardItemModel):
                 it_root.appendRow((it_ts, it_name,
                                    it_ion, it_ion_number, it_ion_mass, it_ion_charge,
                                    it_cast, it_save, it_browse, it_read,
-                                   it_user, it_note,))
+                                   it_user, it_tags, it_note,))
 
             ph_list = []
-            for i in range(11):
+            for i in range(12):
                 it = QStandardItem('')
                 it.setEditable(False)
                 ph_list.append(it)
@@ -859,6 +874,10 @@ class SnapshotDataModel(QStandardItemModel):
             item.setToolTip(s)
         elif j == self.i_name:
             snp_data.name = s
+            item.setToolTip(s)
+        elif j == self.i_tags:
+            snp_data.tags = s
+            print("golden in tags", 'golden' in snp_data.tags)
             item.setToolTip(s)
 
     @pyqtSlot()
@@ -963,7 +982,7 @@ class SnapshotDataModel(QStandardItemModel):
         v.expandAll()
         for i in (self.i_ts, self.i_name,
                   self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge,
-                  self.i_browse, self.i_read, self.i_user):
+                  self.i_browse, self.i_read, self.i_user, self.i_tags):
             v.resizeColumnToContents(i)
         v.collapseAll()
 

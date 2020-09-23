@@ -204,6 +204,7 @@ class SnapshotData:
         self.ion_charge = kws.pop('ion_charge', None) # Q (str)
         self.machine = kws.pop('machine', DEFAULT_MACHINE)
         self.segment = kws.pop('segment', DEFAULT_SEGMENT)
+        self.tags = kws.pop('tags', None) # list of string as tags
         note = ''
         for k, v in kws.items():
             if v == '':
@@ -211,6 +212,20 @@ class SnapshotData:
             note += f'{k}: {v}, '
         self.note = note
         self._filepath = None
+
+    @property
+    def tags(self):
+        return self._tags
+
+    @tags.setter
+    def tags(self, tags):
+        if tags is None:
+            self._tags = []
+        else:
+            if isinstance(tags, str):
+                self._tags = [s.strip() for s in tags.split(',')]
+            elif isinstance(tags, (list, tuple)):
+                self._tags = tags
 
     def ts_as_str(self):
         return datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%dT%H:%M:%S')
@@ -225,6 +240,9 @@ class SnapshotData:
         if self._ion_name is None:
             return ""
         return f"{self._ion_mass}{self._ion_name}{self._ion_number}(+{self._ion_charge})"
+
+    def tags_as_str(self):
+        return ",".join(self._tags)
 
     @property
     def ion_name(self):
@@ -329,18 +347,21 @@ class SnapshotData:
 
     def update_meta(self):
         # update tablesettings meta
-        self.data.meta = {'timestamp': self._ts,
-                          'datetime': self.ts_as_str(),
-                          'name': self._name,
-                          'note': self._note,
-                          'filepath': self._filepath,
-                          'user': self._user,
-                          'ion_name': self._ion_name,
-                          'ion_number': self._ion_number,
-                          'ion_mass': self._ion_mass,
-                          'ion_charge': self._ion_charge,
-                          'machine': self.machine,
-                          'segment': self.segment, }
+        self.data.meta = {
+            'timestamp': self._ts,
+            'datetime': self.ts_as_str(),
+            'name': self._name,
+            'note': self._note,
+            'filepath': self._filepath,
+            'user': self._user,
+            'ion_name': self._ion_name,
+            'ion_number': self._ion_number,
+            'ion_mass': self._ion_mass,
+            'ion_charge': self._ion_charge,
+            'machine': self.machine,
+            'segment': self.segment,
+            'tags': ','.join(self.tags),
+        }
 
     def update_properties(self):
         # update with tablesettings meta
@@ -353,3 +374,4 @@ class SnapshotData:
         self.ion_charge = self.data.meta.get('ion_charge', None)
         self.machine = self.data.meta.get('machine', DEFAULT_MACHINE)
         self.segment = self.data.meta.get('segment', DEFAULT_SEGMENT)
+        self.tags = self.data.meta.get('tags', None)
