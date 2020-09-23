@@ -1575,7 +1575,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # data: SnapshotData
         # settings(data.data): TableSettings
         if data.filepath is None:
-            cdir = data.wdir
+            fn = f"{data.ion_mass}{data.ion_name}+{data.ion_charge}_{data.ts_as_str()}"
+            cdir = os.path.join(data.wdir, fn)
         else:
             cdir = data.filepath
         filename, ext = get_save_filename(self,
