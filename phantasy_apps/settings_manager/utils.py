@@ -863,8 +863,13 @@ class SnapshotDataModel(QStandardItemModel):
 
     @pyqtSlot()
     def on_browse_snp(self):
+        # !! requires nautilus !!
+        from PyQt5.QtCore import QProcess
         data = self.sender().property('data')
-        QDesktopServices.openUrl(QUrl(os.path.dirname(data.filepath)))
+        p = QProcess(self)
+        p.setArguments(["-s", data.filepath])
+        p.setProgram("nautilus")
+        p.startDetached()
 
     @pyqtSlot()
     def on_read_snp(self):
