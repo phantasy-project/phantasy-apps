@@ -491,6 +491,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # hide findtext_lbl and findtext_lineEdit
         for o in (self.findtext_lbl, self.findtext_lineEdit):
             o.setVisible(False)
+        # hide save/load settings tools
+        for o in (self.actionLoad_Settings, self.action_Save):
+            o.setVisible(False)
 
     @pyqtSlot(bool)
     def on_enable_search(self, auto_collapse, enabled):
