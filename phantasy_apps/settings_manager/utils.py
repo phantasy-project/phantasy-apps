@@ -705,6 +705,7 @@ def get_ratio_as_string(a, b, fmt):
 
 class SnapshotDataModel(QStandardItemModel):
 
+    saveas_settings = pyqtSignal(SnapshotData)
     save_settings = pyqtSignal(SnapshotData)
     cast_settings = pyqtSignal(SnapshotData)
 
@@ -835,9 +836,10 @@ class SnapshotDataModel(QStandardItemModel):
                     self._v.setIndexWidget(self.index(i, self.i_cast, ridx), cast_btn)
                     # save
                     save_btn = QToolButton(self._v)
-                    save_btn.setText("Save")
+                    save_btn.setText("Save As")
                     save_btn.setProperty('data', snp_data)
-                    save_btn.setToolTip("Save current snapshot as a file.")
+                    save_btn.setToolTip(
+                        "Save the snapshot as a file, after that, all the row changes will be saved in place.")
                     save_btn.setAutoRaise(False)
                     save_btn.clicked.connect(self.on_save_snp)
                     self._v.setIndexWidget(self.index(i, self.i_save, ridx), save_btn)
@@ -879,6 +881,8 @@ class SnapshotDataModel(QStandardItemModel):
             snp_data.tags = s
             print("golden in tags", 'golden' in snp_data.tags)
             item.setToolTip(s)
+        # in place save
+        self.save_settings.emit(snp_data)
 
     @pyqtSlot()
     def on_browse_snp(self):
@@ -903,12 +907,14 @@ class SnapshotDataModel(QStandardItemModel):
     @pyqtSlot()
     def on_save_snp(self):
         data = self.sender().property('data')
-        data.update_meta()
-        self.save_settings.emit(data)
+        # data.update_meta()
+        self.saveas_settings.emit(data)
 
     def _post_init_ui(self, v):
         for i, s in zip(self.ids, self.header):
             self.setHeaderData(i, Qt.Horizontal, s)
+        # for i in (self.i_note, ):
+        #     self.setHeaderData(i, Qt.Horizontal, 1, Qt.UserRole)
         # view properties
         v.setStyleSheet("""
             QTreeView {
@@ -971,6 +977,8 @@ class SnapshotDataModel(QStandardItemModel):
             }
             */
             """)
+        #
+        # self.style_view(v)
         #
         v.setAlternatingRowColors(True)
         v.header().setStretchLastSection(True)
@@ -1059,3 +1067,6 @@ class SnapshotDataModel(QStandardItemModel):
         else:
             self.setData(idx, self.cast_px, Qt.DecorationRole)
             self.setData(idx, 'not-casted', Qt.UserRole)
+
+    # def style_view(self, v):
+    #    v.setItemDelegate(_DelegateSnapshot(v))

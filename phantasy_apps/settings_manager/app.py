@@ -1570,11 +1570,22 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.set_model()
         self.snp_expand_btn.toggled.emit(self.snp_expand_btn.isChecked())
         m.save_settings.connect(self.on_save_settings)
+        m.saveas_settings.connect(self.on_saveas_settings)
         self.snp_saved.connect(m.on_snp_saved)
         m.cast_settings.connect(self.on_cast_settings)
         self.snp_casted.connect(m.on_snp_casted)
 
     def on_save_settings(self, data):
+        # in-place save data to filepath.
+        if data.filepath is None or not os.path.exists(data.filepath):
+            #QMessageBox.warning(self, "Save Snapshot",
+            #                    "File not exists, failed to save.",
+            #                    QMessageBox.Ok)
+            return
+        print(f"Save snp to {data.filepath}")
+        self._save_settings(data, data.filepath)
+
+    def on_saveas_settings(self, data):
         # data: SnapshotData
         # settings(data.data): TableSettings
         if data.filepath is None:
@@ -1588,6 +1599,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                           type_filter="CSV Files (*.csv);;JSON Files (*.json);;HDF5 Files (*.h5)")
         if filename is None:
             return
+        self._save_settings(data, filename)
+
+    def _save_settings(self, data, filename):
+        data.update_meta()
         settings = data.data
         settings.meta.update({
             'filepath': filename,
