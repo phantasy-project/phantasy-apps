@@ -780,7 +780,7 @@ class SnapshotDataModel(QStandardItemModel):
                 # tags
                 tags_as_str = snp_data.tags_as_str()
                 it_tags = QStandardItem(tags_as_str)
-                it_tags.setToolTip(tags_as_str)
+                it_tags.setToolTip("Input strings seperated by comma as tags.")
                 is_golden = 'golden' in snp_data.tags
                 print("is golden? ", is_golden)
 
