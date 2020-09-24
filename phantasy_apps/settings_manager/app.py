@@ -472,10 +472,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # apply pb
         self.apply_pb.setVisible(False)
 
+        # current snp lbl/le
+        self._current_snp = None
+        for i in (self.current_snp_lbl, self.current_snp_lineEdit):
+            i.setVisible(False)
+
         #
         self.fm = QFileSystemWatcher([self.wdir], self)
         # !!! To fix: will purge runtime snapshots!!!
-        # self.fm.directoryChanged.connect(self.on_wdir_changed)
+        self.fm.directoryChanged.connect(self.on_wdir_changed)
         # working directory
         self.on_wdir_changed(self.wdir)
 
@@ -484,6 +489,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # scaling factor hint
         self.snp_casted.connect(self.on_hint_scaling_factor)
+        # show current snpname
+        self.snp_casted.connect(self.on_current_snp_changed)
 
         # log dock
         self.log_dock.closed.connect(lambda:self.actionShow_Device_Settings_Log.setChecked(False))
@@ -494,6 +501,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # hide save/load settings tools
         for o in (self.actionLoad_Settings, self.action_Save):
             o.setVisible(False)
+
+    def on_current_snp_changed(self, snpdata):
+        # update current casted snapshot
+        # !not needed!
+        # for i in (self.current_snp_lbl, self.current_snp_lineEdit):
+        #    i.setVisible(True)
+        # self.current_snp_lineEdit.setText(snpdata.name)
+        self._current_snp = snpdata
 
     @pyqtSlot(bool)
     def on_enable_search(self, auto_collapse, enabled):
@@ -1149,6 +1164,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.fm.removePaths(self.fm.directories())
         self.fm.addPath(self.wdir)
+        # current snp
+        if self._current_snp is not None:
+            self.snp_casted.emit(self._current_snp)
 
     @pyqtSlot(int)
     def on_ndigit_changed(self, n):
@@ -1582,7 +1600,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             #                    "File not exists, failed to save.",
             #                    QMessageBox.Ok)
             return
-        print(f"Save snp to {data.filepath}")
         self._save_settings(data, data.filepath)
 
     def on_saveas_settings(self, data):
