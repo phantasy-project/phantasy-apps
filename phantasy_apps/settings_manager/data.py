@@ -375,3 +375,6 @@ class SnapshotData:
         self.machine = self.data.meta.get('machine', DEFAULT_MACHINE)
         self.segment = self.data.meta.get('segment', DEFAULT_SEGMENT)
         self.tags = self.data.meta.get('tags', None)
+
+    def is_golden(self):
+        return 'golden' in self.tags
