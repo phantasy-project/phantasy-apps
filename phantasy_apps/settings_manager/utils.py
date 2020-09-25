@@ -729,7 +729,7 @@ class SnapshotDataModel(QStandardItemModel):
                       self.h_ion, self.h_ion_number, self.h_ion_mass, self.h_ion_charge, \
                       self.h_cast, self.h_save, self.h_browse, self.h_read, self.h_user, \
                       self.h_is_golden, self.h_tags, self.h_note \
-                    = "Timestamp", "Name", "Ion", "Z", "A", "Q", "Cast", "Save", "", "", "User", \
+                    = "Timestamp", "Name", "Ion", "Z", "A", "Q", "Cast", "Save As", "", "", "User", \
                       "", "Tags", "Note"
         self.ids = self.i_ts, self.i_name, \
                    self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge, \
