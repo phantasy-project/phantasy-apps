@@ -783,7 +783,10 @@ class SnapshotDataModel(QStandardItemModel):
                 # tags
                 tags_as_str = snp_data.tags_as_str()
                 it_tags = QStandardItem(tags_as_str)
-                it_tags.setToolTip(tags_as_str)
+                if tags_as_str == '':
+                    it_tags.setToolTip("Input strings seperated by comma as tags.")
+                else:
+                    it_tags.setToolTip(tags_as_str)
                 # is golden?
                 it_is_golden = QStandardItem()
                 px = QPixmap(QSize(24, 24))
