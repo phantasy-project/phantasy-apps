@@ -479,10 +479,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         #
         self.fm = QFileSystemWatcher([self.wdir], self)
-        # !!! To fix: will purge runtime snapshots!!!
-        self.fm.directoryChanged.connect(self.on_wdir_changed)
-        # working directory
-        self.on_wdir_changed(self.wdir)
+        #
+        self.auto_snp_refresh_chkbox.toggled.emit(
+                self.auto_snp_refresh_chkbox.isChecked())
+        # self.fm.directoryChanged.connect(self.on_wdir_changed)
+        ## working directory
+        #self.on_wdir_changed(self.wdir)
 
         # take snapshot tool
         self.actionTake_Snapshot.triggered.connect(lambda:self.take_snapshot())
@@ -1741,6 +1743,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             cnt = doc.lineCount()
         self.setlog_count_lbl.setText(str(cnt))
+
+    @pyqtSlot(bool)
+    def on_enable_snp_watcher(self, enabled):
+        if enabled:
+            self.fm.directoryChanged.connect(self.on_wdir_changed)
+            self.fm.directoryChanged.emit(self.wdir)
+        else:
+            try:
+                self.fm.directoryChanged.disconnect()
+            except:
+                pass
 
 
 def is_snp_data_exist(snpdata, snpdata_list):
