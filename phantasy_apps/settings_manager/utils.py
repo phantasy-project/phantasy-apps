@@ -66,6 +66,8 @@ VALID_FILTER_KEYS_NUM = ['x0', 'x1', 'x2', 'dx01', 'dx02', 'dx12',
 VALID_FILTER_KEYS = ['device', 'field', 'type',
                      'writable'] + VALID_FILTER_KEYS_NUM
 
+BG_COLOR_GOLDEN_YES = "#FFDE03"
+BG_COLOR_GOLDEN_NO = "#FFFFFF"
 BG_COLOR_DEFAULT = "#FFFFFF"
 BG_COLOR_MAP = {
     # system: background
@@ -725,13 +727,13 @@ class SnapshotDataModel(QStandardItemModel):
         self.header = self.h_ts, self.h_name, \
                       self.h_ion, self.h_ion_number, self.h_ion_mass, self.h_ion_charge, \
                       self.h_cast, self.h_save, self.h_browse, self.h_read, self.h_user, \
-                      self.h_tags, self.h_note \
+                      self.h_is_golden, self.h_tags, self.h_note \
                     = "Timestamp", "Name", "Ion", "Z", "A", "Q", "Cast", "Save", "", "", "User", \
-                      "Tags", "Note"
+                      "", "Tags", "Note"
         self.ids = self.i_ts, self.i_name, \
                    self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge, \
                    self.i_cast, self.i_save, self.i_browse, self.i_read, self.i_user, \
-                   self.i_tags, self.i_note \
+                   self.i_is_golden, self.i_tags, self.i_note \
                  = range(len(self.header))
         self.set_data()
 
@@ -782,8 +784,18 @@ class SnapshotDataModel(QStandardItemModel):
                 tags_as_str = snp_data.tags_as_str()
                 it_tags = QStandardItem(tags_as_str)
                 it_tags.setToolTip(tags_as_str)
-                is_golden = 'golden' in snp_data.tags
-                print("is golden? ", is_golden)
+                # is golden?
+                it_is_golden = QStandardItem()
+                px = QPixmap(QSize(24, 24))
+                if snp_data.is_golden():
+                    bgc = BG_COLOR_GOLDEN_YES
+                    is_golden_tip = "Golden Setting!"
+                else:
+                    bgc = BG_COLOR_GOLDEN_NO
+                    is_golden_tip = "Not Golden Setting!"
+                px.fill(QColor(bgc))
+                it_is_golden.setData(px, Qt.DecorationRole)
+                it_is_golden.setToolTip(is_golden_tip)
 
                 # note
                 it_note = QStandardItem(snp_data.note)
@@ -807,13 +819,14 @@ class SnapshotDataModel(QStandardItemModel):
                 # read
                 it_read = QStandardItem('Read')
                 it_read.setEditable(False)
-                it_root.appendRow((it_ts, it_name,
-                                   it_ion, it_ion_number, it_ion_mass, it_ion_charge,
-                                   it_cast, it_save, it_browse, it_read,
-                                   it_user, it_tags, it_note,))
+                row = (it_ts, it_name,
+                       it_ion, it_ion_number, it_ion_mass, it_ion_charge,
+                       it_cast, it_save, it_browse, it_read,
+                       it_user, it_is_golden, it_tags, it_note,)
+                it_root.appendRow(row)
 
             ph_list = []
-            for i in range(12):
+            for i in range(13):
                 it = QStandardItem('')
                 it.setEditable(False)
                 ph_list.append(it)
@@ -879,8 +892,18 @@ class SnapshotDataModel(QStandardItemModel):
             item.setToolTip(s)
         elif j == self.i_tags:
             snp_data.tags = s
-            print("golden in tags", 'golden' in snp_data.tags)
             item.setToolTip(s)
+            it = self.itemFromIndex(self.index(i, self.i_is_golden, item.parent().index()))
+            if snp_data.is_golden():
+                bgc = BG_COLOR_GOLDEN_YES
+                is_golden_tip = "Golden Setting!"
+            else:
+                bgc = BG_COLOR_GOLDEN_NO
+                is_golden_tip = "Not Golden Setting!"
+            px = QPixmap(QSize(24, 24))
+            px.fill(QColor(bgc))
+            it.setData(px, Qt.DecorationRole)
+            it.setToolTip(is_golden_tip)
         # in place save
         self.save_settings.emit(snp_data)
 
@@ -990,7 +1013,7 @@ class SnapshotDataModel(QStandardItemModel):
         v.expandAll()
         for i in (self.i_ts, self.i_name,
                   self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge,
-                  self.i_browse, self.i_read, self.i_user, self.i_tags):
+                  self.i_browse, self.i_read, self.i_user, self.i_is_golden, self.i_tags):
             v.resizeColumnToContents(i)
         v.collapseAll()
 
