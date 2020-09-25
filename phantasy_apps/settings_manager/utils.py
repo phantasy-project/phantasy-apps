@@ -721,6 +721,7 @@ class SnapshotDataModel(QStandardItemModel):
         self.casted_px = QPixmap(":/sm-icons/cast_connected.png").scaled(PX_SIZE, PX_SIZE)
         self.cast_px = QPixmap(":/sm-icons/cast.png").scaled(PX_SIZE, PX_SIZE)
         self.note_px = QPixmap(":/sm-icons/comment.png").scaled(PX_SIZE, PX_SIZE)
+        self.tags_px = QPixmap(":/sm-icons/label.png").scaled(PX_SIZE, PX_SIZE)
         self.save_px = QPixmap(":/sm-icons/save-snp.png").scaled(PX_SIZE, PX_SIZE)
         self.saved_px = QPixmap(":/sm-icons/saved.png").scaled(PX_SIZE, PX_SIZE)
 
@@ -783,13 +784,14 @@ class SnapshotDataModel(QStandardItemModel):
                 # tags
                 tags_as_str = snp_data.tags_as_str()
                 it_tags = QStandardItem(tags_as_str)
+                it_tags.setData(self.tags_px, Qt.DecorationRole)
                 if tags_as_str == '':
                     it_tags.setToolTip("Input strings seperated by comma as tags.")
                 else:
                     it_tags.setToolTip(tags_as_str)
                 # is golden?
                 it_is_golden = QStandardItem()
-                px = QPixmap(QSize(24, 24))
+                px = QPixmap(QSize(PX_SIZE, PX_SIZE))
                 if snp_data.is_golden():
                     bgc = BG_COLOR_GOLDEN_YES
                     is_golden_tip = "Golden Setting!"
@@ -903,7 +905,7 @@ class SnapshotDataModel(QStandardItemModel):
             else:
                 bgc = BG_COLOR_GOLDEN_NO
                 is_golden_tip = "Not Golden Setting!"
-            px = QPixmap(QSize(24, 24))
+            px = QPixmap(QSize(PX_SIZE, PX_SIZE))
             px.fill(QColor(bgc))
             it.setData(px, Qt.DecorationRole)
             it.setToolTip(is_golden_tip)
