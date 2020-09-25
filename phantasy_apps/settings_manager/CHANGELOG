@@ -1,3 +1,32 @@
+Version 4.0: 2020-09-25
+
+- Hide Save and Load Settings tools, use Save and Cast in Snapshots Window instead
+- Initialize cofiguration files for new users
+- Update values before taking snapshot
+- Add x2/x0 column to show the ratio between current setpoint and saved one
+- Auto fill scaling factor if loaded snapshot working with different Q/A
+- Updated settings view
+- Support open Help contents from menu or F1
+
+- Snapshots Window:
+  - Support manage data files from a directory, recursively search all possible files
+  - Update TableSettings, SnapshotData and SnapshotDataModel to support show more metadata
+  - Support in-place saving data
+  - Support input tags, golden setting indicator, ion species
+  - Keep cast status after taking snapshot or auto refreshing working directory
+
+- Settings Apply:
+  - Remove setdone status
+  - Implement applying progress bar, and highlight current applying device
+  - Support saving snapshot before apply option
+  - Show log messages when applying
+  - Support Cancel before Apply
+  - Update values after applying is done
+
+- Device Set Log Window:
+  - Capture all set log when doing settings apply
+  - Support open in system text editor, e.g. do searching
+
 Version 3.0: 2020-09-15
 
 - Initial settings:
