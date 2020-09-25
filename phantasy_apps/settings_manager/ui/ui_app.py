@@ -432,7 +432,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.snp_dock.sizePolicy().hasHeightForWidth())
         self.snp_dock.setSizePolicy(sizePolicy)
-        self.snp_dock.setMinimumSize(QtCore.QSize(452, 251))
+        self.snp_dock.setMinimumSize(QtCore.QSize(509, 251))
         self.snp_dock.setWindowIcon(icon)
         self.snp_dock.setStyleSheet("QDockWidget {\n"
                                     "    font-weight: bold;\n"
@@ -472,6 +472,10 @@ class Ui_MainWindow(object):
         self.wdir_lineEdit.setReadOnly(True)
         self.wdir_lineEdit.setObjectName("wdir_lineEdit")
         self.horizontalLayout_4.addWidget(self.wdir_lineEdit)
+        self.auto_snp_refresh_chkbox = QtWidgets.QCheckBox(
+            self.dockWidgetContents)
+        self.auto_snp_refresh_chkbox.setObjectName("auto_snp_refresh_chkbox")
+        self.horizontalLayout_4.addWidget(self.auto_snp_refresh_chkbox)
         self.label_10 = QtWidgets.QLabel(self.dockWidgetContents)
         self.label_10.setObjectName("label_10")
         self.horizontalLayout_4.addWidget(self.label_10)
@@ -724,6 +728,8 @@ class Ui_MainWindow(object):
         self.pushButton.clicked.connect(MainWindow.on_open_texteditor)
         self.log_textEdit.textChanged.connect(MainWindow.on_setlog_changed)
         self.toolButton_2.clicked.connect(self.log_textEdit.clear)
+        self.auto_snp_refresh_chkbox.toggled['bool'].connect(
+            MainWindow.on_enable_snp_watcher)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.select_all_btn, self.invert_selection_btn)
         MainWindow.setTabOrder(self.invert_selection_btn, self.filter_lineEdit)
@@ -848,6 +854,12 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Click to expand all."))
         self.snp_expand_btn.setText(_translate("MainWindow", "..."))
         self.label_5.setText(_translate("MainWindow", "Working Directory"))
+        self.auto_snp_refresh_chkbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "Auto refresh Snapshots if new snapshot files are saved."))
+        self.auto_snp_refresh_chkbox.setText(
+            _translate("MainWindow", "Auto Refresh"))
         self.label_10.setText(_translate("MainWindow", "Total"))
         self.total_snp_lbl.setText(
             _translate("MainWindow",
