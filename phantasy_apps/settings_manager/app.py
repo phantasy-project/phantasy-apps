@@ -480,11 +480,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.fm = QFileSystemWatcher([self.wdir], self)
         #
-        self.auto_snp_refresh_chkbox.toggled.emit(
-                self.auto_snp_refresh_chkbox.isChecked())
-        # self.fm.directoryChanged.connect(self.on_wdir_changed)
-        ## working directory
-        #self.on_wdir_changed(self.wdir)
+        if self.auto_snp_refresh_chkbox.isChecked():
+            self.fm.directoryChanged.connect(self.on_wdir_changed)
+            self.on_wdir_changed(self.wdir)
+        else:
+            # working directory
+            self.on_wdir_changed(self.wdir)
 
         # take snapshot tool
         self.actionTake_Snapshot.triggered.connect(lambda:self.take_snapshot())
