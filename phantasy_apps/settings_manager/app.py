@@ -143,6 +143,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # snp casted, snpdata
     snp_casted = pyqtSignal(SnapshotData)
 
+    # snp filter (snp dock)
+    snp_filters_updated = pyqtSignal()
+
     def __init__(self, version, config_dir=None):
         super(SettingsManagerWindow, self).__init__()
 
@@ -477,6 +480,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for i in (self.current_snp_lbl, self.current_snp_lineEdit):
             i.setVisible(False)
 
+        # snp filters, {btn_text:ischecked?}
+        self._current_btn_filter = dict()
+        self.snp_filters_updated.connect(self.on_snp_filters_updated)
         #
         self.fm = QFileSystemWatcher([self.wdir], self)
         self.fm.directoryChanged.connect(self.on_wdir_new)
@@ -1167,6 +1173,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # current snp
         if self._current_snp is not None:
             self.snp_casted.emit(self._current_snp)
+        self.snp_filters_updated.emit()
 
     @pyqtSlot(int)
     def on_ndigit_changed(self, n):
@@ -1582,6 +1589,50 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.update_snp_dock_view()
         if cast:
             self.on_cast_settings(snp_data)
+        self.snp_filters_updated.emit()
+
+    def on_snp_filters_updated(self):
+        # update btn filters
+        self.update_btn_filters()
+        # apply filter
+        self.apply_snp_btn_filters()
+
+    def update_btn_filters(self):
+        filters = {}
+        for data in self._snp_dock_list:
+            d = filters.setdefault(data.ion_name, {})
+            d.setdefault(data.ion_mass, set()).add(data.ion_charge)
+        del d
+        self._build_btn_filters(self.snp_filter_hbox, filters)
+
+    def _build_btn_filters(self, container, filters):
+        from PyQt5.QtWidgets import QPushButton
+        child = container.takeAt(0)
+        while child:
+            w = child.widget()
+            if w is not None:
+                self._current_btn_filter[w.text()] = w.isChecked()
+            del w
+            del child
+            child = container.takeAt(0)
+        container.addStretch(1)
+        for k, v in filters.items():
+            # k: ion name, v: {A: {Q...}}
+            btn = QPushButton(k, self.snp_dock)
+            btn.setCheckable(True)
+            btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
+            container.addWidget(btn)
+            btn.setChecked(self._current_btn_filter.get(k, False))
+            btn.toggled.connect(partial(self.on_update_snp_filters, k))
+
+    def apply_snp_btn_filters(self):
+        self.snp_treeView.model().m_src.set_filters(self._current_btn_filter)
+
+    @pyqtSlot(bool)
+    def on_update_snp_filters(self, text, is_checked):
+        self._current_btn_filter[text] = is_checked
+        self.apply_snp_btn_filters()
+        self.snp_treeView.model().setFilterRegExp('')
 
     def update_snp_dock_view(self):
         m = SnapshotDataModel(self.snp_treeView, self._snp_dock_list)
@@ -1605,11 +1656,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             if d.name == data.name:
                 data_to_del = self._snp_dock_list.pop(i)
                 break
-        m = self.snp_treeView.model()
+        m = self.snp_treeView.model().m_src
         m.remove_data(data_to_del)
         filepath = data_to_del.filepath
         if filepath is not None and os.path.isfile(filepath):
             os.remove(filepath)
+        self.total_snp_lbl.setText(str(len(self._snp_dock_list)))
 
     def on_save_settings(self, data):
         # in-place save data to filepath.

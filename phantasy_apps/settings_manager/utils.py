@@ -752,12 +752,22 @@ class SnapshotDataModel(QStandardItemModel):
                    self.i_browse, self.i_read, self.i_user, \
                    self.i_is_golden, self.i_tags, self.i_delete, self.i_note \
                  = range(len(self.header))
-        self.set_data()
 
         self.itemChanged.connect(self.on_item_changed)
 
+        #
+        self._filter_list = []
+
+    def set_filters(self, d):
+        self._filter_list = [k for k, v in d.items() if v]
+
+    def get_filters(self):
+        return self._filter_list
+
     def set_model(self):
-        self._v.setModel(self)
+        self.set_data()
+        _model = _SnpProxyModel(self)
+        self._v.setModel(_model)
         self._post_init_ui(self._v)
 
     def set_data(self):
@@ -1154,18 +1164,23 @@ class _DelegateSnapshot(QStyledItemDelegate):
     @pyqtSlot()
     def on_btn_clicked(self, index, op):
         m = index.model()
-        data = m.itemFromIndex(m.index(index.row(), m.i_ts, index.parent())).snp_data
+        src_m = m.sourceModel()
+        src_idx = m.mapToSource(index)
+        data = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_ts, src_idx.parent())).snp_data
+        # test:
+        print(data.ts_as_str(), data.name)
+        #
         self.sender().setProperty('data', data)
         if op == 'del':
-            m.on_del_snp()
+            src_m.on_del_snp()
         elif op == 'cast':
-            m.on_cast_snp()
+            src_m.on_cast_snp()
         elif op == 'save':
-            m.on_save_snp()
+            src_m.on_save_snp()
         elif op == 'reveal':
-            m.on_browse_snp()
+            src_m.on_browse_snp()
         elif op == 'read':
-            m.on_read_snp()
+            src_m.on_read_snp()
 
     def setEditorData(self, editor, index):
         QStyledItemDelegate.setEditorData(self, editor, index)
@@ -1199,3 +1214,20 @@ class _DelegateSnapshot(QStyledItemDelegate):
         size = QStyledItemDelegate.sizeHint(self, option, index)
         size.setHeight(48)
         return size
+
+
+class _SnpProxyModel(QSortFilterProxyModel):
+
+    def __init__(self, model):
+        super(self.__class__, self).__init__()
+        self.m_src = model
+        self.setSourceModel(model)
+        self.setRecursiveFilteringEnabled(True)
+
+    def filterAcceptsRow(self, src_row, src_parent):
+        m = self.sourceModel()
+        filter_list = m.get_filters()
+        if filter_list == []:
+            return True
+        ion_name = m.data(m.index(src_row, m.i_ion, src_parent))
+        return ion_name in filter_list
