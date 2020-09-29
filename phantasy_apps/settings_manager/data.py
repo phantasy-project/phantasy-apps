@@ -295,7 +295,7 @@ class SnapshotData:
     @name.setter
     def name(self, s):
         if s is None:
-            self._name = get_random_name()
+            self._name = get_random_name() + "_" + str(time.time())
         else:
             self._name = s
 
