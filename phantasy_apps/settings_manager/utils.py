@@ -1004,6 +1004,8 @@ class SnapshotDataModel(QStandardItemModel):
 
         # hide name col
         v.setColumnHidden(self.i_name, True)
+        #
+        v.setSortingEnabled(True)
 
     @pyqtSlot('QString', 'QString')
     def on_snp_saved(self, snp_name, filepath):
