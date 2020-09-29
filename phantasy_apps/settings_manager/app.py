@@ -479,13 +479,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         #
         self.fm = QFileSystemWatcher([self.wdir], self)
-        #
-        if self.auto_snp_refresh_chkbox.isChecked():
-            self.fm.directoryChanged.connect(self.on_wdir_changed)
-            self.on_wdir_changed(self.wdir)
-        else:
-            # working directory
-            self.on_wdir_changed(self.wdir)
+        self.fm.directoryChanged.connect(self.on_wdir_new)
+        # working directory
+        self.on_wdir_changed(True, self.wdir)
 
         # take snapshot tool
         self.actionTake_Snapshot.triggered.connect(lambda:self.take_snapshot())
@@ -504,6 +500,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # hide save/load settings tools
         for o in (self.actionLoad_Settings, self.action_Save):
             o.setVisible(False)
+
+        # snp wdir new?
+        self.snp_new_lbl.setPixmap(QPixmap(":/sm-icons/new.png").scaled(24, 24))
+        self.snp_new_lbl.setVisible(False)
 
     def on_current_snp_changed(self, snpdata):
         # update current casted snapshot
@@ -1111,12 +1111,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         pref_dlg.font_changed.connect(self.font_changed)
         pref_dlg.init_settings_changed.connect(self.init_settings_changed)
         pref_dlg.ndigit_sbox.valueChanged.connect(self.ndigit_sbox.setValue)
-        pref_dlg.wdir_changed.connect(self.on_wdir_changed)
+        pref_dlg.wdir_changed.connect(partial(self.on_wdir_changed, True))
         r = pref_dlg.exec_()
-        # if r == QDialog.Accepted:
-        #     printlog("Updated pref --> {}".format(self.pref_dict))
-        # else:
-        #     printlog("Unchanged pref: {}".format(self.pref_dict))
 
     @pyqtSlot(dict)
     def on_update_pref(self, d):
@@ -1144,10 +1140,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.ndigit_changed.emit(ndigit)
 
     @pyqtSlot('QString')
-    def on_wdir_changed(self, d):
+    def on_wdir_changed(self, purge, d):
         # reset snp dock with files in d (recursively)
         self.wdir = d
-        self._snp_dock_list = []
+        if purge:
+            self._snp_dock_list = []
         for root, dnames, fnames in os.walk(d):
             for fname in fnmatch.filter(fnames, "*.csv"):
                 path = os.path.join(root, fname)
@@ -1592,16 +1589,31 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_expand_btn.toggled.emit(self.snp_expand_btn.isChecked())
         m.save_settings.connect(self.on_save_settings)
         m.saveas_settings.connect(self.on_saveas_settings)
+        m.del_settings.connect(self.on_del_settings)
         self.snp_saved.connect(m.on_snp_saved)
         m.cast_settings.connect(self.on_cast_settings)
         self.snp_casted.connect(m.on_snp_casted)
 
+    def on_del_settings(self, data):
+        # delete from MEM (done), and model, and datafile (if exists)
+        r = QMessageBox.warning(None, "Delete Snapshot",
+                "Are you sure to delete this snapshot?",
+                QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if r == QMessageBox.No:
+            return
+        for i, d in enumerate(self._snp_dock_list):
+            if d.name == data.name:
+                data_to_del = self._snp_dock_list.pop(i)
+                break
+        m = self.snp_treeView.model()
+        m.remove_data(data_to_del)
+        filepath = data_to_del.filepath
+        if filepath is not None and os.path.isfile(filepath):
+            os.remove(filepath)
+
     def on_save_settings(self, data):
         # in-place save data to filepath.
         if data.filepath is None or not os.path.exists(data.filepath):
-            #QMessageBox.warning(self, "Save Snapshot",
-            #                    "File not exists, failed to save.",
-            #                    QMessageBox.Ok)
             return
         self._save_settings(data, data.filepath)
 
@@ -1745,16 +1757,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             cnt = doc.lineCount()
         self.setlog_count_lbl.setText(str(cnt))
 
-    @pyqtSlot(bool)
-    def on_enable_snp_watcher(self, enabled):
-        if enabled:
-            self.fm.directoryChanged.connect(self.on_wdir_changed)
-            self.fm.directoryChanged.emit(self.wdir)
-        else:
-            try:
-                self.fm.directoryChanged.disconnect()
-            except:
-                pass
+    def on_wdir_new(self, path):
+        self.snp_new_lbl.setVisible(True)
+
+    def on_refresh_snp(self,):
+        # refresh snp as wdir is updated.
+        self.on_wdir_changed(False, self.wdir)
+        self.snp_new_lbl.setVisible(False)
 
 
 def is_snp_data_exist(snpdata, snpdata_list):

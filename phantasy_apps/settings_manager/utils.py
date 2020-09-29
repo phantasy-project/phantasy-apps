@@ -32,7 +32,6 @@ from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtWidgets import QToolButton
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QSizePolicy
-from PyQt5.QtWidgets import QMessageBox
 from phantasy import get_settings_from_element_list
 from phantasy_ui.widgets import is_item_checked
 from phantasy_apps.utils import find_dconf
@@ -723,6 +722,7 @@ class SnapshotDataModel(QStandardItemModel):
     saveas_settings = pyqtSignal(SnapshotData)
     save_settings = pyqtSignal(SnapshotData)
     cast_settings = pyqtSignal(SnapshotData)
+    del_settings = pyqtSignal(SnapshotData)
 
     def __init__(self,  parent, snp_list, **kws):
         super(self.__class__, self).__init__(parent)
@@ -915,8 +915,12 @@ class SnapshotDataModel(QStandardItemModel):
     @pyqtSlot()
     def on_save_snp(self):
         data = self.sender().property('data')
-        # data.update_meta()
         self.saveas_settings.emit(data)
+
+    @pyqtSlot()
+    def on_del_snp(self):
+        data = self.sender().property('data')
+        self.del_settings.emit(data)
 
     def _post_init_ui(self, v):
         for i, s in zip(self.ids, self.header):
@@ -1006,6 +1010,26 @@ class SnapshotDataModel(QStandardItemModel):
         v.setColumnHidden(self.i_name, True)
         #
         v.setSortingEnabled(True)
+
+    def remove_data(self, data):
+        # remove snp
+        found = False
+        for ii in range(self.rowCount()):
+            ridx = self.index(ii, 0)
+            if not self.hasChildren(ridx):
+                continue
+            for i in range(self.rowCount(ridx)):
+                it = self.itemFromIndex(self.index(i, self.i_name, ridx))
+                if it.text() == data.name:
+                    irow = i
+                    iidx = ridx
+                    found = True
+                    break
+            if found:
+                break
+        if found:
+            self.removeRow(irow, iidx)
+            del data
 
     @pyqtSlot('QString', 'QString')
     def on_snp_saved(self, snp_name, filepath):
@@ -1133,19 +1157,7 @@ class _DelegateSnapshot(QStyledItemDelegate):
         data = m.itemFromIndex(m.index(index.row(), m.i_ts, index.parent())).snp_data
         self.sender().setProperty('data', data)
         if op == 'del':
-            filepath = data.filepath
-            if filepath is None:
-                # delete from MEM
-                pass
-            else:
-                if os.path.isfile(filepath):
-                    r = QMessageBox.warning(None, "Delete Snapshot",
-                            "Are you sure to delete this snapshot?",
-                            QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-                    if r == QMessageBox.Yes:
-                        os.remove(filepath)
-                    else:
-                        return
+            m.on_del_snp()
         elif op == 'cast':
             m.on_cast_snp()
         elif op == 'save':
