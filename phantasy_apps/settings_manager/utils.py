@@ -1091,6 +1091,7 @@ class SnapshotDataModel(QStandardItemModel):
                 idx = self.index(i, self.i_cast_status, ridx)
                 self.set_casted(idx, casted)
                 if casted:
+                    idx = self._v.model().mapFromSource(idx)
                     self._v.scrollTo(idx)
                     self._v.selectionModel().select(idx,
                             QItemSelectionModel.Select | QItemSelectionModel.Rows)
