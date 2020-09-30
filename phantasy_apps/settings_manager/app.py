@@ -33,6 +33,7 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QShortcut
 from PyQt5.QtWidgets import QWidget
@@ -510,6 +511,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # snp wdir new?
         self.snp_new_lbl.setPixmap(QPixmap(":/sm-icons/new.png").scaled(24, 24))
         self.snp_new_lbl.setVisible(False)
+
+        # expand all snps
+        self.snp_expand_btn.setChecked(True)
 
     def on_current_snp_changed(self, snpdata):
         # update current casted snapshot
@@ -1606,7 +1610,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._build_btn_filters(self.snp_filter_hbox, filters)
 
     def _build_btn_filters(self, container, filters):
-        from PyQt5.QtWidgets import QPushButton
         child = container.takeAt(0)
         while child:
             w = child.widget()
@@ -1626,13 +1629,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             btn.toggled.connect(partial(self.on_update_snp_filters, k))
 
     def apply_snp_btn_filters(self):
-        self.snp_treeView.model().m_src.set_filters(self._current_btn_filter)
+        m = self.snp_treeView.model()
+        m.m_src.set_filters(self._current_btn_filter)
+        m.invalidate()
+        self.snp_expand_btn.toggled.emit(self.snp_expand_btn.isChecked())
 
     @pyqtSlot(bool)
     def on_update_snp_filters(self, text, is_checked):
         self._current_btn_filter[text] = is_checked
         self.apply_snp_btn_filters()
-        self.snp_treeView.model().setFilterRegExp('')
 
     def update_snp_dock_view(self):
         m = SnapshotDataModel(self.snp_treeView, self._snp_dock_list)
