@@ -1614,7 +1614,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         while child:
             w = child.widget()
             if w is not None:
-                self._current_btn_filter[w.text()] = w.isChecked()
+                self._current_btn_filter[w.text().split()[0]] = w.isChecked()
             del w
             del child
             child = container.takeAt(0)
@@ -1624,15 +1624,24 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             btn = QPushButton(k, self.snp_dock)
             btn.setCheckable(True)
             btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
-            container.addWidget(btn)
-            btn.setChecked(self._current_btn_filter.get(k, False))
             btn.toggled.connect(partial(self.on_update_snp_filters, k))
+            container.addWidget(btn)
+            btn.setChecked(self._current_btn_filter.get(k, True))
 
     def apply_snp_btn_filters(self):
         m = self.snp_treeView.model()
         m.m_src.set_filters(self._current_btn_filter)
         m.invalidate()
         self.snp_expand_btn.toggled.emit(self.snp_expand_btn.isChecked())
+        # cnt
+        cnt = self.snp_treeView.model().m_src._filter_cnt
+        layout = self.snp_filter_hbox
+        for i in range(layout.count()):
+            w = layout.itemAt(i).widget()
+            if w is None:
+                continue
+            k = w.text().split()[0]
+            w.setText(f"{k} ({cnt[k]})")
 
     @pyqtSlot(bool)
     def on_update_snp_filters(self, text, is_checked):

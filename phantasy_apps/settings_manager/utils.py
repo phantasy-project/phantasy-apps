@@ -5,6 +5,7 @@ import os
 import re
 import time
 import shutil
+from collections import Counter
 from collections import OrderedDict
 from fnmatch import translate
 from functools import partial
@@ -756,9 +757,11 @@ class SnapshotDataModel(QStandardItemModel):
         self.itemChanged.connect(self.on_item_changed)
 
         #
-        self._filter_list = []
+        self._filter_list = None
+        self._filter_cnt = Counter()
 
     def set_filters(self, d):
+        self._filter_cnt = Counter()
         self._filter_list = [k for k, v in d.items() if v]
 
     def get_filters(self):
@@ -1225,9 +1228,12 @@ class _SnpProxyModel(QSortFilterProxyModel):
         self.setRecursiveFilteringEnabled(True)
 
     def filterAcceptsRow(self, src_row, src_parent):
+        if not src_parent.isValid():
+            return True
         m = self.sourceModel()
         filter_list = m.get_filters()
-        if filter_list == []:
+        if filter_list is None:
             return True
         ion_name = m.data(m.index(src_row, m.i_ion, src_parent))
+        m._filter_cnt[ion_name] += 1
         return ion_name in filter_list
