@@ -760,15 +760,25 @@ class SnapshotDataModel(QStandardItemModel):
         self.itemChanged.connect(self.on_item_changed)
 
         #
-        self._filter_list = None
-        self._filter_cnt = Counter()
+        self._ion_filter_list = None
+        self._ion_filter_cnt = Counter()
+        #
+        self._tag_filter_list = None
+        self._tag_filter_cnt = Counter()
 
-    def set_filters(self, d):
-        self._filter_cnt = Counter()
-        self._filter_list = [k for k, v in d.items() if v]
+    def set_ion_filters(self, d):
+        self._ion_filter_cnt = Counter()
+        self._ion_filter_list = [k for k, v in d.items() if v]
 
-    def get_filters(self):
-        return self._filter_list
+    def get_ion_filters(self):
+        return self._ion_filter_list
+
+    def set_tag_filters(self, d):
+        self._tag_filter_cnt = Counter()
+        self._tag_filter_list = [k for k, v in d.items() if v]
+
+    def get_tag_filters(self):
+        return self._tag_filter_list
 
     def set_model(self):
         self.set_data()
@@ -1248,9 +1258,23 @@ class _SnpProxyModel(QSortFilterProxyModel):
         if not src_parent.isValid():
             return True
         m = self.sourceModel()
-        filter_list = m.get_filters()
-        if filter_list is None:
-            return True
-        ion_name = m.data(m.index(src_row, m.i_ion, src_parent))
-        m._filter_cnt[ion_name] += 1
-        return ion_name in filter_list
+        ion_filter_list = m.get_ion_filters()
+        tag_filter_list = m.get_tag_filters()
+        if ion_filter_list is None:
+            ion_test = True
+        else:
+            ion_name = m.data(m.index(src_row, m.i_ion, src_parent))
+            m._ion_filter_cnt[ion_name] += 1
+            ion_test = ion_name in ion_filter_list
+
+        if tag_filter_list is None:
+            tag_test = True
+        else:
+            tag_str = m.data(m.index(src_row, m.i_tags, src_parent))
+            tags = [s.strip() for s in tag_str.strip().split(',')]
+            tag_test = False
+            for tag in tags:
+                if not tag_test and tag in tag_filter_list:
+                    tag_test = True
+                m._tag_filter_cnt[tag] += 1
+        return ion_test and tag_test

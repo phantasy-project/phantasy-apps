@@ -51,6 +51,7 @@ from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from phantasy_ui.widgets import ElementSelectDialog
 from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui.widgets import ProbeWidget
+from phantasy_apps.app_launcher.layout import FlowLayout
 
 from .app_loadfrom import LoadSettingsDialog
 from .app_pref import DEFAULT_PREF
@@ -482,8 +483,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for i in (self.current_snp_lbl, self.current_snp_lineEdit):
             i.setVisible(False)
 
-        # snp filters, {btn_text:ischecked?}
+        # snp filters, {btn_text (elemt, tag):ischecked?}
         self._current_btn_filter = dict()
+        self._current_tag_filter = dict()
         self.snp_filters_updated.connect(self.on_snp_filters_updated)
         #
         self.fm = QFileSystemWatcher([self.wdir], self)
@@ -515,6 +517,26 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # expand all snps
         self.snp_expand_btn.setChecked(True)
+
+        # tag,ions filters, radiobtn
+        self.select_all_tags_rbtn.setChecked(True)
+        self.select_all_ions_rbtn.setChecked(True)
+        self.select_all_ions_rbtn.toggled.connect(partial(self.on_snp_filters_select_all_ions, True))
+        self.select_none_ions_rbtn.toggled.connect(partial(self.on_snp_filters_select_all_ions, False))
+        self.select_all_tags_rbtn.toggled.connect(partial(self.on_snp_filters_select_all_tags, True))
+        self.select_none_tags_rbtn.toggled.connect(partial(self.on_snp_filters_select_all_tags, False))
+
+    def on_snp_filters_select_all_tags(self, is_checked):
+        for i in self.tag_filter_area.findChildren(QToolButton):
+            i.setChecked(is_checked)
+
+    def on_snp_filters_select_all_ions(self, is_checked):
+        l = self.snp_filter_hbox
+        for i in range(l.count()):
+            w = l.itemAt(i).widget()
+            if w is None:
+                continue
+            w.setChecked(is_checked)
 
     def on_current_snp_changed(self, snpdata):
         # update current casted snapshot
@@ -1603,12 +1625,37 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.apply_snp_btn_filters()
 
     def update_btn_filters(self):
-        filters = {}
+        ion_btn_filters = {}
+        tag_btn_filters = set()
         for data in self._snp_dock_list:
-            d = filters.setdefault(data.ion_name, {})
+            d = ion_btn_filters.setdefault(data.ion_name, {})
             d.setdefault(data.ion_mass, set()).add(data.ion_charge)
+            tag_btn_filters.update(data.tags)
         del d
-        self._build_btn_filters(self.snp_filter_hbox, filters)
+        self._build_btn_filters(self.snp_filter_hbox, ion_btn_filters)
+        self._build_tag_filters(self.tag_filter_area, tag_btn_filters)
+
+    def _build_tag_filters(self, area, filters):
+        w = area.takeWidget()
+        w.setParent(None)
+        w = QWidget(self)
+        w.setContentsMargins(0, 1, 0, 1)
+        layout = FlowLayout()
+        for tag in filters:
+            o = QToolButton(self.snp_dock)
+            o.setText(tag)
+            o.setCheckable(True)
+            o.toggled.connect(partial(self.on_update_tag_filters, tag))
+            layout.addWidget(o)
+            o.setChecked(self._current_tag_filter.get(tag, True))
+        w.setLayout(layout)
+        area.setWidget(w)
+
+    @pyqtSlot(bool)
+    def on_update_tag_filters(self, tag, is_checked):
+        # printlog(f"{tag} button filter is {is_checked}")
+        self._current_tag_filter[tag] = is_checked
+        self.apply_snp_btn_filters()
 
     def _build_btn_filters(self, container, filters):
         child = container.takeAt(0)
@@ -1640,19 +1687,36 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             btn.setChecked(self._current_btn_filter.get(k, True))
 
     def apply_snp_btn_filters(self):
+        # ion, tag
         m = self.snp_treeView.model()
-        m.m_src.set_filters(self._current_btn_filter)
+        m.m_src.set_ion_filters(self._current_btn_filter)
+        m.m_src.set_tag_filters(self._current_tag_filter)
         m.invalidate()
         self.snp_expand_btn.toggled.emit(self.snp_expand_btn.isChecked())
-        # cnt
-        cnt = self.snp_treeView.model().m_src._filter_cnt
+        # ion cnt
+        ion_cnt = self.snp_treeView.model().m_src._ion_filter_cnt
         layout = self.snp_filter_hbox
         for i in range(layout.count()):
             w = layout.itemAt(i).widget()
             if w is None:
                 continue
             k = w.text()
-            w.setToolTip(f"Hit {cnt[w.text()]} entries of {k}.")
+            w.setToolTip(f"Hit {ion_cnt[w.text()]} entries of {k}.")
+        # tag cnt
+        tag_cnt = self.snp_treeView.model().m_src._tag_filter_cnt
+        layouts = self.tag_filter_area.findChildren(FlowLayout)
+        if layouts == []:
+            return
+        layout = layouts[0]
+        for i in range(layout.count()):
+            w = layout.itemAt(i).widget()
+            if w is None:
+                continue
+            if w.text() == '':
+                k = ''
+            else:
+                k = w.text().split(' ')[0]
+            w.setText(f"{k} ({tag_cnt[k]})")
 
     @pyqtSlot(bool)
     def on_update_snp_filters(self, text, is_checked):
