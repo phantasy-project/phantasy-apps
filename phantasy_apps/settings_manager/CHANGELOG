@@ -1,3 +1,12 @@
+Version 4.1: 2020-10-01
+
+- Refactor SnapshotDataModel, w.r.t. the solution to handle buttons in row
+- Implement dynamic filter buttons for ion names and tag names to Snapshots
+- Add support to delete snapshot from memory or disk drive
+- Enable sorting of Snapshots
+- Change the naming rule of SnapshotData to avoid name collision
+- Other bug fixes and feature enhancements
+
 Version 4.0: 2020-09-25
 
 - Hide Save and Load Settings tools, use Save and Cast in Snapshots Window instead
