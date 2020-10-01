@@ -100,6 +100,9 @@ ACT_BTN_CONF = {
     'read': ('Oprn and read data file.', '', ':/sm-icons/readfile.png'),
 }
 
+ELEMT_PX_MAP = {i: [f':/elements/elements/{i}{s}.png' for s in ('', '-off')]
+                for i in ('Ne', 'Ar', 'Kr', 'Xe', 'U')}
+
 DEFAULT_TS_PATH = find_dconf("settings_manager", "tolerance.json")
 DEFAULT_MS_PATH = find_dconf("settings_manager", "settings.json")
 DEFAULT_ELEM_PATH = find_dconf("settings_manager", "elements.json")

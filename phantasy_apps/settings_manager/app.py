@@ -33,7 +33,7 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
-from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QToolButton
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QShortcut
 from PyQt5.QtWidgets import QWidget
@@ -66,6 +66,7 @@ from .data import make_physics_settings
 from .ui.ui_app import Ui_MainWindow
 from .ui.ui_query_tips import Ui_Form as QueryTipsForm
 from .utils import FMT
+from .utils import ELEMT_PX_MAP
 from .utils import SettingsModel
 from .utils import pack_settings
 from .utils import str2float
@@ -1621,7 +1622,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         container.addStretch(1)
         for k, v in filters.items():
             # k: ion name, v: {A: {Q...}}
-            btn = QPushButton(k, self.snp_dock)
+            btn = QToolButton(self.snp_dock)
+            btn.setText(k)
+            px_tuple = ELEMT_PX_MAP.get(k, None)
+            if px_tuple is not None:
+                icon = QIcon()
+                icon.addPixmap(QPixmap(px_tuple[0]), QIcon.Normal, QIcon.On)
+                icon.addPixmap(QPixmap(px_tuple[1]), QIcon.Normal, QIcon.Off)
+                btn.setIcon(icon)
+                btn.setIconSize(QSize(64, 64))
             btn.setCheckable(True)
             btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
             btn.toggled.connect(partial(self.on_update_snp_filters, k))
@@ -1640,8 +1649,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             w = layout.itemAt(i).widget()
             if w is None:
                 continue
-            k = w.text().split()[0]
-            w.setText(f"{k} ({cnt[k]})")
+            k = w.text()
+            w.setToolTip(f"Hit {cnt[w.text()]} entries of {k}.")
 
     @pyqtSlot(bool)
     def on_update_snp_filters(self, text, is_checked):
