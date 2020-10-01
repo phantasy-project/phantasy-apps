@@ -536,6 +536,7 @@ class Ui_MainWindow(object):
         self.snp_dock.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(4), self.snp_dock)
         self.log_dock = DockWidget(MainWindow)
+        self.log_dock.setMinimumSize(QtCore.QSize(642, 150))
         self.log_dock.setStyleSheet("QDockWidget {\n"
                                     "    font-weight: normal;\n"
                                     "}\n"
