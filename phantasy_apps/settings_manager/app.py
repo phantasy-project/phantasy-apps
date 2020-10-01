@@ -1639,11 +1639,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         w = area.takeWidget()
         w.setParent(None)
         w = QWidget(self)
-        w.setContentsMargins(0, 1, 0, 1)
+        w.setContentsMargins(10, 10, 10, 10)
         layout = FlowLayout()
         for tag in filters:
             o = QToolButton(self.snp_dock)
             o.setText(tag)
+            # if tag == 'golden': # style golden tag button
             o.setCheckable(True)
             o.toggled.connect(partial(self.on_update_tag_filters, tag))
             layout.addWidget(o)
@@ -1733,6 +1734,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_saved.connect(m.on_snp_saved)
         m.cast_settings.connect(self.on_cast_settings)
         self.snp_casted.connect(m.on_snp_casted)
+        m.save_settings.connect(self.snp_filters_updated) # update dynamic filter buttons (tag)
 
     def on_del_settings(self, data):
         # delete from MEM (done), and model, and datafile (if exists)
