@@ -108,6 +108,29 @@ DEFAULT_MS_PATH = find_dconf("settings_manager", "settings.json")
 DEFAULT_ELEM_PATH = find_dconf("settings_manager", "elements.json")
 
 
+
+TBTN_STY_COLOR_TUPLE = ('#EEEEEC', '#F7F7F7', '#90B5F0', '#6EA1F1', '#E7EFFD', '#CBDAF1')
+TBTN_STY_COLOR_TUPLE_GOLDEN = ('#FFF7B3', '#F5E345', '#FFCD03', '#FFC503', '#FAED11', '#FAE111')
+TBTN_STY_BASE = """
+QToolButton {{
+    border: 1px solid #2E3436;
+    border-radius: 4px;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 {c[0]}, stop: 1 {c[1]});
+}}
+QToolButton:pressed {{
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 {c[2]}, stop: 1 {c[3]});
+}}
+QToolButton:hover {{
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 {c[4]}, stop: 1 {c[5]});
+    border: 2px solid #2E3436;
+}}
+QToolButton:checked {{
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 {c[2]}, stop: 1 {c[3]});
+}}"""
+TBTN_STY_GOLDEN = TBTN_STY_BASE.format(c=TBTN_STY_COLOR_TUPLE_GOLDEN)
+TBTN_STY_REGULAR = TBTN_STY_BASE.format(c=TBTN_STY_COLOR_TUPLE)
+
+
 class SettingsModel(QStandardItemModel):
     """Settings model from Settings instance.
 

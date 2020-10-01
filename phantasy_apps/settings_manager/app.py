@@ -68,6 +68,8 @@ from .ui.ui_app import Ui_MainWindow
 from .ui.ui_query_tips import Ui_Form as QueryTipsForm
 from .utils import FMT
 from .utils import ELEMT_PX_MAP
+from .utils import TBTN_STY_REGULAR
+from .utils import TBTN_STY_GOLDEN
 from .utils import SettingsModel
 from .utils import pack_settings
 from .utils import str2float
@@ -519,12 +521,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_expand_btn.setChecked(True)
 
         # tag,ions filters, radiobtn
-        self.select_all_tags_rbtn.setChecked(True)
-        self.select_all_ions_rbtn.setChecked(True)
-        self.select_all_ions_rbtn.toggled.connect(partial(self.on_snp_filters_select_all_ions, True))
-        self.select_none_ions_rbtn.toggled.connect(partial(self.on_snp_filters_select_all_ions, False))
-        self.select_all_tags_rbtn.toggled.connect(partial(self.on_snp_filters_select_all_tags, True))
-        self.select_none_tags_rbtn.toggled.connect(partial(self.on_snp_filters_select_all_tags, False))
+        self.select_all_ions_btn.clicked.connect(partial(self.on_snp_filters_select_all_ions, True))
+        self.select_none_ions_btn.clicked.connect(partial(self.on_snp_filters_select_all_ions, False))
+        self.select_all_tags_btn.clicked.connect(partial(self.on_snp_filters_select_all_tags, True))
+        self.select_none_tags_btn.clicked.connect(partial(self.on_snp_filters_select_all_tags, False))
 
     def on_snp_filters_select_all_tags(self, is_checked):
         for i in self.tag_filter_area.findChildren(QToolButton):
@@ -1644,7 +1644,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for tag in filters:
             o = QToolButton(self.snp_dock)
             o.setText(tag)
-            # if tag == 'golden': # style golden tag button
+            #if tag == 'golden':
+            #    o.setStyleSheet(TBTN_STY_GOLDEN)
+            #else:
+            #    o.setStyleSheet(TBTN_STY_REGULAR)
             o.setCheckable(True)
             o.toggled.connect(partial(self.on_update_tag_filters, tag))
             layout.addWidget(o)
