@@ -828,6 +828,7 @@ class SnapshotDataModel(QStandardItemModel):
                     is_golden_tip = "Not Golden Setting!"
                 px.fill(QColor(bgc))
                 it_is_golden.setData(px, Qt.DecorationRole)
+                it_is_golden.setData(is_golden_tip, Qt.UserRole)
                 it_is_golden.setToolTip(is_golden_tip)
 
                 # note
@@ -837,6 +838,7 @@ class SnapshotDataModel(QStandardItemModel):
                 # cast
                 it_cast_status = QStandardItem()
                 it_cast_status.setData(self.cast_px, Qt.DecorationRole)
+                it_cast_status.setData("not-casted", Qt.UserRole)
                 it_cast = QStandardItem('Cast')
                 it_cast.setEditable(False)
                 it_cast.setData("cast", Qt.UserRole + 1)
@@ -847,8 +849,10 @@ class SnapshotDataModel(QStandardItemModel):
                 it_save.setData("save", Qt.UserRole + 1)
                 if snp_data.filepath is None:
                     it_save_status.setData(self.save_px, Qt.DecorationRole)
+                    it_save_status.setData('not-saved', Qt.UserRole)
                 else:
                     it_save_status.setData(self.saved_px, Qt.DecorationRole)
+                    it_save_status.setData('saved', Qt.UserRole)
                     it_save_status.setToolTip(snp_data.filepath)
                 # browse
                 it_browse = QStandardItem('Browse')
@@ -1060,6 +1064,7 @@ class SnapshotDataModel(QStandardItemModel):
                     found = True
                     idx = self.index(i, self.i_save_status, ridx)
                     self.setData(idx, self.saved_px, Qt.DecorationRole)
+                    self.setData(idx, "saved", Qt.UserRole)
                     it0.snp_data.filepath = filepath
                     self.itemFromIndex(idx).setToolTip(filepath)
                     #for j in (self.i_browse, self.i_read):
@@ -1102,7 +1107,7 @@ class SnapshotDataModel(QStandardItemModel):
             if not self.hasChildren(ridx):
                 continue
             for i in range(self.rowCount(ridx)):
-                idx = self.index(i, self.i_cast, ridx)
+                idx = self.index(i, self.i_cast_status, ridx)
                 if self.data(idx, Qt.UserRole) == 'casted':
                     self.set_casted(idx, False)
                     break
@@ -1227,6 +1232,14 @@ class _SnpProxyModel(QSortFilterProxyModel):
         self.m_src = model
         self.setSourceModel(model)
         self.setRecursiveFilteringEnabled(True)
+
+    def lessThan(self, left, right):
+        left_data1, left_data2 = left.data(Qt.DisplayRole), left.data(Qt.UserRole)
+        right_data1, right_data2 = right.data(Qt.DisplayRole), right.data(Qt.UserRole)
+        if left_data1 is None:
+            if left_data2 is not None:
+                return left_data2 < right_data2
+        return QSortFilterProxyModel.lessThan(self, left, right)
 
     def filterAcceptsRow(self, src_row, src_parent):
         if not src_parent.isValid():
