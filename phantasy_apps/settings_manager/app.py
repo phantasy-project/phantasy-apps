@@ -1615,7 +1615,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         while child:
             w = child.widget()
             if w is not None:
-                self._current_btn_filter[w.text().split()[0]] = w.isChecked()
+                self._current_btn_filter[w.text()] = w.isChecked()
+                w.setParent(None)
             del w
             del child
             child = container.takeAt(0)
@@ -1627,12 +1628,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             px_tuple = ELEMT_PX_MAP.get(k, None)
             if px_tuple is not None:
                 icon = QIcon()
-                icon.addPixmap(QPixmap(px_tuple[0]), QIcon.Normal, QIcon.On)
-                icon.addPixmap(QPixmap(px_tuple[1]), QIcon.Normal, QIcon.Off)
+                for pi, st in zip(px_tuple, (QIcon.On, QIcon.Off)):
+                    icon.addPixmap(QPixmap(pi), QIcon.Normal, st)
                 btn.setIcon(icon)
                 btn.setIconSize(QSize(64, 64))
+            else:
+                btn.setFixedSize(QSize(64, 64))
             btn.setCheckable(True)
-            btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Preferred)
             btn.toggled.connect(partial(self.on_update_snp_filters, k))
             container.addWidget(btn)
             btn.setChecked(self._current_btn_filter.get(k, True))
