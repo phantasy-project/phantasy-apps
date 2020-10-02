@@ -41,7 +41,8 @@ from phantasy_apps.synoptic_app.webview import MyWebView
 from phantasy_apps.synoptic_app.data import DataAgent
 from phantasy_apps.synoptic_app.ui.ui_app import Ui_MainWindow
 
-DEFAULT_SVGFILE = find_dconf("synoptic_app", "svgfiles/fs1-arc.svg")
+# DEFAULT_SVGFILE = find_dconf("synoptic_app", "svgfiles/fs1-arc.svg")
+DEFAULT_SVGFILE = find_dconf("synoptic_app", "svgfiles/fs1-arc_w_AB.svg")
 SVGFILE_DIR = os.path.dirname(DEFAULT_SVGFILE)
 
 
