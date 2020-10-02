@@ -106,6 +106,15 @@ class Controller(QObject):
     
     def on_data_changed(self, data):
         # data changed.
+        printlog(data)
+        if self.pointed_device is None:
+            return
+
+        printlog(self.pointed_device)
+        if self.pointed_device not in data:
+            printlog("device is not in data", self.pointed_device)
+            return
+
         value_list = []
         for (fname, handle), (value, nprec) in sorted(data[self.pointed_device].items()):
             l = "[{0}]({1}): {2}".format(fname, HANDLE[handle], round(value, nprec))
