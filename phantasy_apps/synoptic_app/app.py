@@ -230,7 +230,6 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
             self._lattice_load_window.latticeChanged.connect(
                 self.on_lattice_changed)
             self._lattice_load_window.latticeChanged.connect(self._lattice_load_window.close)
-            #self._lattice_load_window.latticeChanged.connect(self.show_init_settings_info)
         self._lattice_load_window.show()
 
     @pyqtSlot(float)
