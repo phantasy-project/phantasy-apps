@@ -891,9 +891,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def closeEvent(self, e):
         self.on_update_dump_config()
-        r = BaseAppForm.closeEvent(self, e)
-        if r:
-            os.remove(LOG_FILE)
+        os.remove(LOG_FILE)
+        BaseAppForm.closeEvent(self, e)
 
     def snapshot_tolerance_settings(self):
         """Iterate all the tolerance settings, update and save.
