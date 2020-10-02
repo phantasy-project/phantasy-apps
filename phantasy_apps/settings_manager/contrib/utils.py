@@ -3,6 +3,8 @@
 import csv
 import os
 import xlrd
+import time
+from datetime import datetime
 
 
 class SettingsRow(object):
@@ -11,11 +13,12 @@ class SettingsRow(object):
     *write* method can export a CSV file for `Settings Manager`.
     """
 
-    def __init__(self, row, index_elem_list, last_settings_row=None):
+    def __init__(self, row, index_elem_list, last_settings_row=None, **kws):
         # cryo module name
         self.name = self._cell_to_string(row[0])
         if self.name is None:
             self.name = last_settings_row.name
+        self.name = self.name.replace(' ', '_')
         # cavity id
         self.cid = self._cell_to_cid(row[1])
         # energy, MeV/u
@@ -45,6 +48,7 @@ class SettingsRow(object):
                     0.1, fld.write_access)
             settings_table.append(settings_row)
         self.settings = settings_table
+        self.meta = kws
 
     def __eq__(self, other):
         if other is None:
@@ -100,15 +104,29 @@ class SettingsRow(object):
         if row_id is None:
             prefix = ''
         else:
-            prefix = "{0:02d}-".format(row_id)
+            prefix = "{0:03d}".format(row_id)
         if filename is None:
-            filename = "{prefix}{name}-{cid}-{ek:.3f}.csv".format(
+            filename = "{prefix}-{name}-{cid}-{ek:.3f}.csv".format(
                 prefix=prefix, name=self.name, cid=self.cid, ek=self.ek)
         filepath = os.path.abspath(
                 os.path.expanduser(os.path.join(rootpath, filename)))
         if not os.path.exists(os.path.dirname(filepath)):
             os.mkdir(os.path.dirname(filepath))
+        #
+        note = "Row {prefix}, {ek:.3f} MeV, {name}-#{cid}".format(
+                prefix=prefix, name=self.name, cid=self.cid, ek=self.ek)
+        name = "{prefix}-{name}-{cid}-{ek:.3f}".format(
+                prefix=prefix, name=self.name, cid=self.cid, ek=self.ek)
+        ts = time.time()
+        ts_as_str = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+        self.meta.update({'filepath': filepath, 'note': note, 'name': name,
+                          'timestamp': ts, 'datetime': ts_as_str, })
+        #
         with open(filepath, 'w') as fp:
+            #
+            for k, v in self.meta.items():
+                fp.write(f"# {k}: {v}\n")
+            #
             ss = csv.writer(fp, delimiter=',')
             ss.writerow(self.settings_header)
             for row in self.settings:
