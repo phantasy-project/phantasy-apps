@@ -248,5 +248,35 @@
     "family": "PV",
     "field": "POS",
     "field_phy": "POS_PHY"
+  },
+  "FS1_BBS:CSEL_D2405:L": {
+    "setpoint": "FS1_BBS:CSEL_D2405:L_RD",
+    "readback": "FS1_BBS:CSEL_D2405:L_RD",
+    "index": -1,
+    "length": 0.0,
+    "sb": 240.5,
+    "family": "PV",
+    "field": "L",
+    "field_phy": "L_PHY"
+  },
+  "FS1_BBS:CSEL_D2405:R": {
+    "setpoint": "FS1_BBS:CSEL_D2405:R_RD",
+    "readback": "FS1_BBS:CSEL_D2405:R_RD",
+    "index": -1,
+    "length": 0.0,
+    "sb": 240.5,
+    "family": "PV",
+    "field": "R",
+    "field_phy": "R_PHY"
+  },
+  "FS1_BBS:CSEL_D2405:CTR_MTR.RBV": {
+    "setpoint": "FS1_BBS:CSEL_D2405:CTR_MTR.RBV",
+    "readback": "FS1_BBS:CSEL_D2405:CTR_MTR.RBV",
+    "index": -1,
+    "length": 0.0,
+    "sb": 240.5,
+    "family": "PV",
+    "field": "CTR_MTR.RBV",
+    "field_phy": "CTR_MTR.RBV_PHY"
   }
 }

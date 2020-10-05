@@ -26,6 +26,10 @@ else:
     DEFAULT_MACHINE = "FRIB"
     DEFAULT_SEGMENT = "LINAC"
 
+#
+ELEMT_PATH = os.path.join(os.path.dirname(__file__), 'config', 'elements.json')
+DEFAULT_SETTINGS = Settings(ELEMT_PATH)
+#
 
 def make_physics_settings(csv_settings, lat):
     """Generate Settings (lattice settings) of *lat* from `TableSettings`
@@ -187,6 +191,7 @@ class ElementPVConfig(Settings):
             settingsPath = None
         super(self.__class__, self).__init__(settingsPath)
         self.settings_path = settings_path
+        self.update(DEFAULT_SETTINGS)
 
 
 class SnapshotData:
