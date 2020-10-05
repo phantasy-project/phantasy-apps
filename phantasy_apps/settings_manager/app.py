@@ -505,6 +505,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # log dock
         self.log_dock.closed.connect(lambda:self.actionShow_Device_Settings_Log.setChecked(False))
+        self.actionShow_Device_Settings_Log.setChecked(False)
 
         # hide findtext_lbl and findtext_lineEdit
         for o in (self.findtext_lbl, self.findtext_lineEdit):
