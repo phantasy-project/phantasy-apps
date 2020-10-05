@@ -113,14 +113,16 @@ class SettingsRow(object):
         if not os.path.exists(os.path.dirname(filepath)):
             os.mkdir(os.path.dirname(filepath))
         #
-        note = "Row {prefix}, {ek:.3f} MeV, {name}-#{cid}".format(
-                prefix=prefix, name=self.name, cid=self.cid, ek=self.ek)
         name = "{prefix}-{name}-{cid}-{ek:.3f}".format(
                 prefix=prefix, name=self.name, cid=self.cid, ek=self.ek)
         ts = time.time()
         ts_as_str = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        self.meta.update({'filepath': filepath, 'note': note, 'name': name,
+        self.meta.update({'filepath': filepath, 'name': name,
                           'timestamp': ts, 'datetime': ts_as_str, })
+        if 'note' not in self.meta:
+            note = "Row {prefix}, {ek:.3f} MeV, {name}-#{cid}".format(
+                    prefix=prefix, name=self.name, cid=self.cid, ek=self.ek)
+            self.meta.update({'note': note})
         #
         with open(filepath, 'w') as fp:
             #
