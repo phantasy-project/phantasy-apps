@@ -18,10 +18,10 @@ __version__ = '4.1'
 
 
 def run(cli=False):
-    share_m = QSharedMemory(getpass.getuser() + __title__)
-    if not share_m.create(1):
-        raise_app()
-        return 0
+    #share_m = QSharedMemory(getpass.getuser() + __title__)
+    #if not share_m.create(1):
+    #    raise_app()
+    #    return 0
 
     app = QApplication(sys.argv)
     arg = sys.argv
