@@ -864,14 +864,19 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         try:
             t0 = time.time()
             fval_current_settings = fld.current_setting()
-            fld.value = fval_to_set
+            if is_close(fval_current_settings, fval_to_set, self.ndigit):
+                msg = "[{0}] [Skip] Set {1:<20s} [{2}] from {3} to {4} (raw set value: {5}).".format(
+                        datetime.fromtimestamp(time.time()).strftime(TS_FMT),
+                        ename, fname, fval_current_settings, fval_to_set, new_fval0)
+            else:
+                fld.value = fval_to_set
+                msg = "[{0}] Set {1:<20s} [{2}] from {3} to {4} (raw set value: {5}).".format(
+                        datetime.fromtimestamp(time.time()).strftime(TS_FMT),
+                        ename, fname, fval_current_settings, fval_to_set, new_fval0)
         except:
             px = self.fail_px
         else:
             px = self.done_px
-            msg = "[{0}] Set {1:<20s} [{2}] from {3} to {4} (raw set value: {5}).".format(
-                    datetime.fromtimestamp(time.time()).strftime(TS_FMT),
-                    ename, fname, fval_current_settings, fval_to_set, new_fval0)
             # print(msg)
             dt = self.t_wait - (time.time() - t0)
             if dt > 0:
@@ -1930,3 +1935,9 @@ def make_tolerance_dict_from_table_settings(table_settings):
         else:
             r[ename] = {fname: tol}
     return r
+
+
+def is_close(x, y, decimal=6):
+    if abs(x - y) < 1.5 * 10 ** (-decimal):
+        return True
+    return False
