@@ -814,6 +814,8 @@ class Ui_MainWindow(object):
         self.snp_refresh_btn.clicked.connect(MainWindow.on_refresh_snp)
         self.snp_treeView.clicked['QModelIndex'].connect(
             MainWindow.on_click_snpview)
+        self.snp_dock.topLevelChanged['bool'].connect(
+            MainWindow.on_snpdock_top_level_changed)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.filter_lineEdit, self.treeView)
         MainWindow.setTabOrder(self.treeView, self.reload_lattice_btn)

@@ -988,6 +988,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self.statusInfoChanged.emit(msg)
                 self._reset_status_info()
 
+    def on_snpdock_top_level_changed(self, is_floating):
+        if is_floating:
+            self.sender().setWindowFlags(Qt.CustomizeWindowHint | Qt.Window |
+                    Qt.WindowMinimizeButtonHint |
+                    Qt.WindowMaximizeButtonHint)
+            self.sender().show()
+
     def on_click_snpview(self, idx):
         return
         print("SNP Model: ", idx.model())
