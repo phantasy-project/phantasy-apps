@@ -113,9 +113,9 @@ class SettingsRow(object):
         if not os.path.exists(os.path.dirname(filepath)):
             os.mkdir(os.path.dirname(filepath))
         #
-        name = "{prefix}-{name}-{cid}-{ek:.3f}".format(
-                prefix=prefix, name=self.name, cid=self.cid, ek=self.ek)
         ts = time.time()
+        name = "{prefix}-{name}-{cid}-{ek:.3f}_{ts}".format(
+                prefix=prefix, name=self.name, cid=self.cid, ek=self.ek, ts=ts)
         ts_as_str = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         self.meta.update({'filepath': filepath, 'name': name,
                           'timestamp': ts, 'datetime': ts_as_str, })
