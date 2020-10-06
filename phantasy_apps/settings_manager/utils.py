@@ -97,7 +97,7 @@ ACT_BTN_CONF = {
     'save': ('Save the snapshot as a file, after that, all the row changes will be saved in place.',
              'Save As', None),
     'reveal': ('Reveal in File Explorer.', '', ':/sm-icons/openfolder.png'),
-    'read': ('Oprn and read data file.', '', ':/sm-icons/readfile.png'),
+    'read': ('Open and read data file.', '', ':/sm-icons/readfile.png'),
 }
 
 ELEMT_PX_MAP = {i: [f':/elements/elements/{i}{s}.png' for s in ('', '-off')]
