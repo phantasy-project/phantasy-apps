@@ -459,9 +459,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_7.setContentsMargins(-1, 0, 0, -1)
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.tag_filter_area = QtWidgets.QScrollArea(self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.tag_filter_area.sizePolicy().hasHeightForWidth())
