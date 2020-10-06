@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_app.ui'
 #
-# Created by: PyQt5 UI code generator 5.14.2
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1300, 975)
+        MainWindow.resize(1920, 1440)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/work.png"), QtGui.QIcon.Normal,
                        QtGui.QIcon.Off)
@@ -319,7 +319,7 @@ class Ui_MainWindow(object):
         self.operations_toolBox.setFrameShadow(QtWidgets.QFrame.Plain)
         self.operations_toolBox.setObjectName("operations_toolBox")
         self.orm_measurement = QtWidgets.QWidget()
-        self.orm_measurement.setGeometry(QtCore.QRect(0, 0, 933, 529))
+        self.orm_measurement.setGeometry(QtCore.QRect(0, 0, 1553, 973))
         self.orm_measurement.setObjectName("orm_measurement")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.orm_measurement)
         self.gridLayout_4.setContentsMargins(6, 12, 6, 6)
@@ -670,7 +670,7 @@ class Ui_MainWindow(object):
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.operations_toolBox.addItem(self.orm_measurement, icon10, "")
         self.orm_apply = QtWidgets.QWidget()
-        self.orm_apply.setGeometry(QtCore.QRect(0, 0, 933, 529))
+        self.orm_apply.setGeometry(QtCore.QRect(0, 0, 853, 411))
         self.orm_apply.setObjectName("orm_apply")
         self.gridLayout = QtWidgets.QGridLayout(self.orm_apply)
         self.gridLayout.setContentsMargins(6, 12, 6, 6)
@@ -1054,7 +1054,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.splitter_2, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 23))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 30))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
