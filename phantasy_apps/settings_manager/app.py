@@ -988,6 +988,24 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self.statusInfoChanged.emit(msg)
                 self._reset_status_info()
 
+    def on_click_snpview(self, idx):
+        return
+        print("SNP Model: ", idx.model())
+        r, c = idx.row(), idx.column()
+        m = self.snp_treeView.model()
+        src_m = m.sourceModel()
+        src_idx = m.mapToSource(idx)
+        src_r, src_c = src_idx.row(), src_idx.column()
+        printlog("SNP, Index of PxyModel ({}, {}), text: {}".format(
+            r, c, str(m.data(idx))))
+        printlog("SNP, Index of SrcModel ({}, {}), text: {}".format(
+            src_r, src_c, str(src_m.data(src_idx))))
+
+        item = src_m.itemFromIndex(src_idx)
+        printlog("SNP, Clicked: ({}, {}), item is expanded? ({}), is checked? ({})".format(
+            idx.row(), idx.column(), self.snp_treeView.isExpanded(idx),
+            is_item_checked(item)))
+
     def on_click_view(self, idx):
         return
         r, c = idx.row(), idx.column()
