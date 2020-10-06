@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_app.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1300, 975)
+        MainWindow.resize(1920, 1440)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/app.png"), QtGui.QIcon.Normal,
                        QtGui.QIcon.Off)
@@ -44,7 +44,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.v_splitter.sizePolicy().hasHeightForWidth())
         self.v_splitter.setSizePolicy(sizePolicy)
-        self.v_splitter.setMinimumSize(QtCore.QSize(360, 0))
+        self.v_splitter.setMinimumSize(QtCore.QSize(420, 0))
         self.v_splitter.setOrientation(QtCore.Qt.Vertical)
         self.v_splitter.setObjectName("v_splitter")
         self.scan_groupBox = QtWidgets.QGroupBox(self.v_splitter)
@@ -76,7 +76,7 @@ class Ui_MainWindow(object):
             "}")
         self.scan_groupBox.setObjectName("scan_groupBox")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.scan_groupBox)
-        self.verticalLayout_3.setContentsMargins(4, 8, 4, 4)
+        self.verticalLayout_3.setContentsMargins(4, 12, 4, 4)
         self.verticalLayout_3.setSpacing(4)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.widget = QtWidgets.QWidget(self.scan_groupBox)
@@ -647,10 +647,11 @@ class Ui_MainWindow(object):
             "}")
         self.plot_groupBox.setObjectName("plot_groupBox")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.plot_groupBox)
-        self.verticalLayout.setContentsMargins(6, 12, 6, 6)
-        self.verticalLayout.setSpacing(6)
+        self.verticalLayout.setContentsMargins(4, 12, 4, 4)
+        self.verticalLayout.setSpacing(4)
         self.verticalLayout.setObjectName("verticalLayout")
         self.scan_plot_widget = MatplotlibErrorbarWidget(self.plot_groupBox)
+        self.scan_plot_widget.setFigureAutoScale(True)
         font = QtGui.QFont()
         font.setFamily("sans-serif")
         font.setPointSize(12)
@@ -666,11 +667,10 @@ class Ui_MainWindow(object):
         font.setWeight(50)
         self.scan_plot_widget.setFigureTitleFont(font)
         self.scan_plot_widget.setProperty("figureDPI", 120.0)
-        self.scan_plot_widget.setFigureMTicksToggle(True)
-        self.scan_plot_widget.setFigureGridToggle(True)
         self.scan_plot_widget.setProperty("figureBackgroundColor",
                                           QtGui.QColor(239, 235, 231))
-        self.scan_plot_widget.setFigureAutoScale(True)
+        self.scan_plot_widget.setFigureGridToggle(True)
+        self.scan_plot_widget.setFigureMTicksToggle(True)
         self.scan_plot_widget.setObjectName("scan_plot_widget")
         self.verticalLayout.addWidget(self.scan_plot_widget)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -778,7 +778,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.addWidget(self.h_splitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 30))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")

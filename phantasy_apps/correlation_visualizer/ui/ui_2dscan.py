@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_2dscan.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1300, 910)
+        MainWindow.resize(1600, 1200)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -344,6 +344,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.setSpacing(4)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.curve_mplebwidget = MatplotlibErrorbarWidget(self.tab)
+        self.curve_mplebwidget.setFigureAutoScale(True)
         font = QtGui.QFont()
         font.setFamily("sans-serif")
         font.setPointSize(14)
@@ -367,7 +368,6 @@ class Ui_MainWindow(object):
         font.setItalic(False)
         font.setWeight(50)
         self.curve_mplebwidget.setFigureXYticksFont(font)
-        self.curve_mplebwidget.setFigureAutoScale(True)
         self.curve_mplebwidget.setProperty("figureToolbarToggle", False)
         self.curve_mplebwidget.setObjectName("curve_mplebwidget")
         self.horizontalLayout_6.addWidget(self.curve_mplebwidget)
@@ -590,7 +590,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.vsplitter)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 30))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
