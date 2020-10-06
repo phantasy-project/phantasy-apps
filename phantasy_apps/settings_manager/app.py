@@ -515,7 +515,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             o.setVisible(False)
 
         # snp wdir new?
-        self.snp_new_lbl.setPixmap(QPixmap(":/sm-icons/new.png").scaled(24, 24))
+        self.snp_new_lbl.setPixmap(QPixmap(":/sm-icons/new.png").scaled(PX_SIZE, PX_SIZE))
         self.snp_new_lbl.setVisible(False)
 
         # expand all snps
@@ -897,7 +897,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def closeEvent(self, e):
         self.on_update_dump_config()
-        os.remove(LOG_FILE)
+        # os.remove(LOG_FILE)
         BaseAppForm.closeEvent(self, e)
 
     def snapshot_tolerance_settings(self):
