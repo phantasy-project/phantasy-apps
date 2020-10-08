@@ -670,7 +670,7 @@ class Ui_MainWindow(object):
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.operations_toolBox.addItem(self.orm_measurement, icon10, "")
         self.orm_apply = QtWidgets.QWidget()
-        self.orm_apply.setGeometry(QtCore.QRect(0, 0, 853, 411))
+        self.orm_apply.setGeometry(QtCore.QRect(0, 0, 1553, 973))
         self.orm_apply.setObjectName("orm_apply")
         self.gridLayout = QtWidgets.QGridLayout(self.orm_apply)
         self.gridLayout.setContentsMargins(6, 12, 6, 6)
@@ -1058,6 +1058,8 @@ class Ui_MainWindow(object):
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
+        self.menuTools = QtWidgets.QMenu(self.menubar)
+        self.menuTools.setObjectName("menuTools")
         MainWindow.setMenuBar(self.menubar)
         self.toolBar = QtWidgets.QToolBar(MainWindow)
         self.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
@@ -1105,11 +1107,15 @@ class Ui_MainWindow(object):
         self.actionOpen = QtWidgets.QAction(MainWindow)
         self.actionOpen.setIcon(icon15)
         self.actionOpen.setObjectName("actionOpen")
+        self.actionExpert_Console = QtWidgets.QAction(MainWindow)
+        self.actionExpert_Console.setObjectName("actionExpert_Console")
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.actionAbout)
         self.menu_Help.addAction(self.actionAbout_Qt)
+        self.menuTools.addAction(self.actionExpert_Console)
         self.menubar.addAction(self.menu_Help.menuAction())
+        self.menubar.addAction(self.menuTools.menuAction())
         self.toolBar.addAction(self.actionOpen)
         self.toolBar.addAction(self.actionSave)
         self.toolBar.addAction(self.load_settings)
@@ -1148,6 +1154,7 @@ class Ui_MainWindow(object):
             MainWindow.on_config_monitor_fields)
         self.cor_eva_btn.clicked.connect(
             MainWindow.on_evaluate_settings_from_orm)
+        self.actionExpert_Console.triggered.connect(MainWindow.on_open_console)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1322,6 +1329,7 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Central Trajectory Correction"))
         self.log_gbox.setTitle(_translate("MainWindow", "Log"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
+        self.menuTools.setTitle(_translate("MainWindow", "Tools"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.load_settings.setText(
             _translate("MainWindow", "Open Corrector Settings"))
@@ -1365,6 +1373,8 @@ class Ui_MainWindow(object):
             _translate("MainWindow",
                        "Open response matrix from a file (Ctrl+O)."))
         self.actionOpen.setShortcut(_translate("MainWindow", "Ctrl+O"))
+        self.actionExpert_Console.setText(
+            _translate("MainWindow", "Expert Console"))
 
 
 from . import resources_rc
