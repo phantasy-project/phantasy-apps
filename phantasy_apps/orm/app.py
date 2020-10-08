@@ -1106,6 +1106,8 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_open_console(self):
+        if self._mp is None:
+            return
         code = "import phantasy;phantasy.disable_warnings();mp = phantasy.MachinePortal('{mach}','{segm}');correctors = mp.get_elements(name=[{cor_names}]);bpms = mp.get_elements(name=[{bpm_names}])".format(
                 mach=self._mp.last_machine_name, segm=self._mp.last_lattice_name,
                 cor_names=','.join([f"'{i}'" for i in self._cors_dict]),
@@ -1116,7 +1118,6 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
             fp.write(code)
         cmdline = "x-terminal-emulator -e ipython -i {}".format(tmpfile)
         Popen(cmdline, shell=True)
-
 
 
 def _str2float(s):
