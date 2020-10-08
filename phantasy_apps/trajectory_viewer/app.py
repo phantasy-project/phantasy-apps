@@ -300,6 +300,8 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
         bpms = self.__mp.get_elements(srange=xlim, type='BPM')
         bpm0, bpm1 = bpms[0], bpms[-1]
         cors0 = self.__mp.next_elements(bpm0, type=['HCOR', 'VCOR'], count=-1)
+        if cors0 == []: # select the first two
+            cors0 = self.__mp.get_elements(type='*COR')[:2]
         cors1 = self.__mp.next_elements(bpm1, type=['HCOR', 'VCOR'], count=-1)
         cors = self.__mp.get_elements(srange=(cors0[0].sb - 0.001, cors1[0].sb - 0.001), type=['HCOR', 'VCOR'])
         tv1 = self.bpms_treeView
