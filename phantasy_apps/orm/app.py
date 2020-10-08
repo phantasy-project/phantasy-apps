@@ -5,6 +5,7 @@ import time
 from collections import OrderedDict
 from collections import deque
 from functools import partial
+from subprocess import Popen
 
 import numpy as np
 from PyQt5.QtCore import QThread
@@ -1102,6 +1103,20 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
                 self._orb_field = (xfld, yfld)
             else:
                 print("Not change fields.")
+
+    @pyqtSlot()
+    def on_open_console(self):
+        code = "import phantasy;phantasy.disable_warnings();mp = phantasy.MachinePortal('{mach}','{segm}');correctors = mp.get_elements(name=[{cor_names}]);bpms = mp.get_elements(name=[{bpm_names}])".format(
+                mach=self._mp.last_machine_name, segm=self._mp.last_lattice_name,
+                cor_names=','.join([f"'{i}'" for i in self._cors_dict]),
+                bpm_names=','.join([f"'{i}'" for i in self._bpms_dict]))
+        import tempfile
+        _, tmpfile = tempfile.mkstemp('', '_exp_orm', '/tmp')
+        with open(tmpfile, 'w') as fp:
+            fp.write(code)
+        cmdline = "x-terminal-emulator -e ipython -i {}".format(tmpfile)
+        Popen(cmdline, shell=True)
+
 
 
 def _str2float(s):
