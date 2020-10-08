@@ -1316,10 +1316,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 worker.meta_signal1.emit((wa_idx, str(wa), Qt.DisplayRole))
                 tol = float(m.data(tol_idx))
                 if abs(dx12) > tol:
-                    diff_status_px = self._warning_px
-                else:
-                    diff_status_px = self._ok_px
-                worker.meta_signal1.emit((dx12_idx, diff_status_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                    worker.meta_signal1.emit((dx12_idx, self._warning_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+
+                if abs(dx02) > 1e-8 :
+                    worker.meta_signal1.emit((dx02_idx, self._warning_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
 
         dt = time.time() - t0
         dt_residual = delt - dt
