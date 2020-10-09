@@ -49,10 +49,11 @@ class OrmWorker(QObject):
         self._mode = mode
         if mode == 'measure':
             (bpms, cors), \
-            (source, srange_list, cor_field, orb_field, xoy, wait, ndigits), \
+            (source, srange_list, tol_list, cor_field, orb_field, xoy, wait, ndigits), \
             (daq_rate, daq_nshot, reset_wait, keep_all_data) = params
             self._source = source
             self._srange_list = srange_list
+            self._tol_list = tol_list
             self._cor_field = cor_field
             self._orb_field = orb_field
             self._bpms = bpms
@@ -94,6 +95,7 @@ class OrmWorker(QObject):
                 r, d = get_orm_for_one_corrector(
                         cor, self._bpms,
                         scan=self._srange_list[i][-1],
+                        tol=self._tol_list[i][-1],
                         cor_field=self._cor_field,
                         orb_field=self._orb_field,
                         xoy=self._xoy, wait=self._wait, msg_queue=q,
@@ -360,6 +362,7 @@ class ScanRangeModel(QStandardItemModel):
         self._rel_range = rel_range
         self.fmt = kws.get('fmt', '{0:>.8g}')
         self.keep_polarity = kws.get('keep_polarity', True)
+        self.tol = kws.get('tol', 0.1)
 
         #
         self._pvs = []
@@ -367,14 +370,14 @@ class ScanRangeModel(QStandardItemModel):
         # header
         self.header = self.h_idx, self.h_name, self.h_field, \
                       self.h_cset, \
-                      self.h_sstart, self.h_sstop, self.h_rd = \
+                      self.h_sstart, self.h_sstop, self.h_tol, self.h_rd = \
             "ID", "Name", "Field", \
             "Setpoint", \
-            "Scan Start", "Scan Stop", "Readback",
+            "Scan Start", "Scan Stop", "Tolerance", "Readback",
 
         self.ids = self.i_idx, self.i_name, self.i_field, \
                    self.i_cset, \
-                   self.i_sstart, self.i_sstop, self.i_rd = \
+                   self.i_sstart, self.i_sstop, self.i_tol, self.i_rd = \
             range(len(self.header))
         #
         self.set_data()
@@ -406,11 +409,12 @@ class ScanRangeModel(QStandardItemModel):
             item_rd = QStandardItem(self.fmt.format(getattr(c, f)))
             item_sstart = QStandardItem(self.fmt.format(x1))
             item_sstop = QStandardItem(self.fmt.format(x2))
+            item_tol = QStandardItem(str(self.tol))
 
             for item, idx in zip((item_idx, item_ename, item_fname,
                                   item_cset, item_sstart, item_sstop,
-                                  item_rd), self.ids):
-                if idx not in (self.i_sstart, self.i_sstop):
+                                  item_tol, item_rd), self.ids):
+                if idx not in (self.i_sstart, self.i_sstop, self.i_tol):
                     item.setEditable(False)
                 row.append(item)
 
@@ -456,6 +460,20 @@ class ScanRangeModel(QStandardItemModel):
             x1, x2 = get_rel_range(x0, rel, keep_polarity)
             self.item(i, self.i_sstart).setText(self.fmt.format(x1))
             self.item(i, self.i_sstop).setText(self.fmt.format(x2))
+
+    def update_tolerance(self, tol):
+        for i in range(self.rowCount()):
+            self.item(i, self.i_tol).setText(str(tol))
+
+    def get_tol_list(self):
+        # one device has one tolerance
+        s = []
+        for i in range(self.rowCount()):
+            item_ename = self.item(i, self.i_name)
+            item_tol = self.item(i, self.i_tol)
+            tol = float(item_tol.text())
+            s.append((item_ename.text(), tol))
+        return s
 
     def get_scan_range(self, n):
         #
@@ -582,9 +600,9 @@ def get_orm_with_residuals(filepath):
 def get_rel_range(x0, rel, keep_polarity):
     x1, x2 = np.asarray((x0 - rel, x0 + rel))
     if keep_polarity:
-        drel = rel / 10.0
-        while x1 * x2 <=0:
-            if x0 >=0:
+        drel = rel / 2.0
+        while x1 * x2 <= 0:
+            if x0 >= 0:
                 x1 += drel
                 x2 += drel
             else:
