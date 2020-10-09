@@ -59,14 +59,18 @@ class ElementListModel(QStandardItemModel):
     def __init__(self, parent, mp, enames, **kws):
         QStandardItemModel.__init__(self, parent)
         self._v = parent
-        self._mp = mp
         self._enames = enames
 
-        # mapping of ename and element
-        if self._mp is not None:
-            self.name_elem_map = {i.name: i for i in self._mp.work_lattice_conf}
+        if kws.get('elem_objs_list', None) is not None:
+            self.name_elem_map = {i.name: i for i in kws.get('elem_objs_list')}
+            # set mp as not None var
         else:
-            self.name_elem_map = {}
+            self._mp = mp
+            # mapping of ename and element
+            if self._mp is not None:
+                self.name_elem_map = {i.name: i for i in self._mp.work_lattice_conf}
+            else:
+                self.name_elem_map = {}
 
         col_name_map = OrderedDict((
             ('Name', 'name'),
@@ -90,7 +94,7 @@ class ElementListModel(QStandardItemModel):
         self._selected_nelem = 0
 
     def set_model(self):
-        if self._mp is None:
+        if self.name_elem_map == {}:
             return
         # set model
         self._v.setModel(self)
