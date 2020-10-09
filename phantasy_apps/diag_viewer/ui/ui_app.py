@@ -105,6 +105,53 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setContentsMargins(4, 10, 4, 4)
         self.verticalLayout_2.setSpacing(4)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.label_4 = QtWidgets.QLabel(self.device_gbox)
+        self.label_4.setStyleSheet("QLabel {\n"
+                                   "    margin-right: 10px;\n"
+                                   "}")
+        self.label_4.setAlignment(QtCore.Qt.AlignRight
+                                  | QtCore.Qt.AlignTrailing
+                                  | QtCore.Qt.AlignVCenter)
+        self.label_4.setObjectName("label_4")
+        self.horizontalLayout.addWidget(self.label_4)
+        self.choose_elems_btn = QtWidgets.QPushButton(self.device_gbox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.choose_elems_btn.sizePolicy().hasHeightForWidth())
+        self.choose_elems_btn.setSizePolicy(sizePolicy)
+        self.choose_elems_btn.setIconSize(QtCore.QSize(20, 20))
+        self.choose_elems_btn.setObjectName("choose_elems_btn")
+        self.horizontalLayout.addWidget(self.choose_elems_btn)
+        self.verticalLayout_2.addLayout(self.horizontalLayout)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label_3 = QtWidgets.QLabel(self.device_gbox)
+        self.label_3.setStyleSheet("QLabel {\n"
+                                   "    margin-right: 10px;\n"
+                                   "}")
+        self.label_3.setAlignment(QtCore.Qt.AlignRight
+                                  | QtCore.Qt.AlignTrailing
+                                  | QtCore.Qt.AlignVCenter)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_2.addWidget(self.label_3)
+        self.choose_elems_pv_btn = QtWidgets.QPushButton(self.device_gbox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.choose_elems_pv_btn.sizePolicy().hasHeightForWidth())
+        self.choose_elems_pv_btn.setSizePolicy(sizePolicy)
+        self.choose_elems_pv_btn.setObjectName("choose_elems_pv_btn")
+        self.horizontalLayout_2.addWidget(self.choose_elems_pv_btn)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
         self.device_select_hbox = QtWidgets.QHBoxLayout()
         self.device_select_hbox.setSpacing(6)
         self.device_select_hbox.setObjectName("device_select_hbox")
@@ -131,6 +178,10 @@ class Ui_MainWindow(object):
         self.inverse_selection_btn.setIconSize(QtCore.QSize(20, 20))
         self.inverse_selection_btn.setObjectName("inverse_selection_btn")
         self.device_select_hbox.addWidget(self.inverse_selection_btn)
+        spacerItem = QtWidgets.QSpacerItem(40, 20,
+                                           QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Minimum)
+        self.device_select_hbox.addItem(spacerItem)
         self.field_cbb = QtWidgets.QComboBox(self.device_gbox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -141,14 +192,6 @@ class Ui_MainWindow(object):
         self.field_cbb.setSizePolicy(sizePolicy)
         self.field_cbb.setObjectName("field_cbb")
         self.device_select_hbox.addWidget(self.field_cbb)
-        spacerItem = QtWidgets.QSpacerItem(40, 20,
-                                           QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Minimum)
-        self.device_select_hbox.addItem(spacerItem)
-        self.choose_elems_btn = QtWidgets.QPushButton(self.device_gbox)
-        self.choose_elems_btn.setIconSize(QtCore.QSize(20, 20))
-        self.choose_elems_btn.setObjectName("choose_elems_btn")
-        self.device_select_hbox.addWidget(self.choose_elems_btn)
         self.verticalLayout_2.addLayout(self.device_select_hbox)
         self.devices_treeView = QtWidgets.QTreeView(self.device_gbox)
         self.devices_treeView.setObjectName("devices_treeView")
@@ -441,7 +484,15 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.plot_gbox.setTitle(_translate("MainWindow", "Data Visualization"))
-        self.device_gbox.setTitle(_translate("MainWindow", "Devices"))
+        self.device_gbox.setTitle(_translate("MainWindow", "List of Devices"))
+        self.label_4.setText(_translate("MainWindow", "Devices from Lattice"))
+        self.choose_elems_btn.setToolTip(
+            _translate("MainWindow", "Select devices from preload lattice."))
+        self.choose_elems_btn.setText(_translate("MainWindow", "Choose"))
+        self.label_3.setText(_translate("MainWindow", "Devices from PVs"))
+        self.choose_elems_pv_btn.setToolTip(
+            _translate("MainWindow", "Select devices built from input PVs."))
+        self.choose_elems_pv_btn.setText(_translate("MainWindow", "Choose"))
         self.refresh_bpm_btn.setToolTip(
             _translate("MainWindow", "Refresh BPMs selection."))
         self.refresh_bpm_btn.setText(_translate("MainWindow", "..."))
@@ -457,7 +508,6 @@ class Ui_MainWindow(object):
             ))
         self.inverse_selection_btn.setText(
             _translate("MainWindow", "Inverse Selection"))
-        self.choose_elems_btn.setText(_translate("MainWindow", "Choose"))
         self.control_gbox.setTitle(_translate("MainWindow", "Control Panel"))
         self.label_2.setText(_translate("MainWindow", "Frequency"))
         self.daqfreq_dSpinbox.setToolTip(
