@@ -464,7 +464,7 @@ class Ui_MainWindow(object):
         self.label_31 = QtWidgets.QLabel(self.orm_measurement)
         self.label_31.setObjectName("label_31")
         self.horizontalLayout_19.addWidget(self.label_31)
-        spacerItem3 = QtWidgets.QSpacerItem(400, 20,
+        spacerItem3 = QtWidgets.QSpacerItem(200, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_19.addItem(spacerItem3)
@@ -496,6 +496,18 @@ class Ui_MainWindow(object):
         self.label_15 = QtWidgets.QLabel(self.orm_measurement)
         self.label_15.setObjectName("label_15")
         self.horizontalLayout_19.addWidget(self.label_15)
+        spacerItem4 = QtWidgets.QSpacerItem(100, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_19.addItem(spacerItem4)
+        self.label_4 = QtWidgets.QLabel(self.orm_measurement)
+        self.label_4.setObjectName("label_4")
+        self.horizontalLayout_19.addWidget(self.label_4)
+        self.tol_dspinbox = QtWidgets.QDoubleSpinBox(self.orm_measurement)
+        self.tol_dspinbox.setDecimals(4)
+        self.tol_dspinbox.setMinimum(0.0001)
+        self.tol_dspinbox.setObjectName("tol_dspinbox")
+        self.horizontalLayout_19.addWidget(self.tol_dspinbox)
         self.gridLayout_4.addLayout(self.horizontalLayout_19, 1, 1, 1, 2)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -557,34 +569,45 @@ class Ui_MainWindow(object):
         self.label_18.setSizePolicy(sizePolicy)
         self.label_18.setObjectName("label_18")
         self.horizontalLayout_2.addWidget(self.label_18)
-        self.eta_lbl = QtWidgets.QLabel(self.orm_measurement)
+        self.min_eta_lbl = QtWidgets.QLabel(self.orm_measurement)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.min_eta_lbl.setFont(font)
+        self.min_eta_lbl.setObjectName("min_eta_lbl")
+        self.horizontalLayout_2.addWidget(self.min_eta_lbl)
+        self.label_39 = QtWidgets.QLabel(self.orm_measurement)
+        self.label_39.setObjectName("label_39")
+        self.horizontalLayout_2.addWidget(self.label_39)
+        self.max_eta_lbl = QtWidgets.QLabel(self.orm_measurement)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.eta_lbl.sizePolicy().hasHeightForWidth())
-        self.eta_lbl.setSizePolicy(sizePolicy)
-        self.eta_lbl.setStyleSheet("QLabel {\n"
-                                   "    font-family: monospace;\n"
-                                   "}")
-        self.eta_lbl.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft
-                                  | QtCore.Qt.AlignVCenter)
-        self.eta_lbl.setObjectName("eta_lbl")
-        self.horizontalLayout_2.addWidget(self.eta_lbl)
-        spacerItem4 = QtWidgets.QSpacerItem(40, 20,
+            self.max_eta_lbl.sizePolicy().hasHeightForWidth())
+        self.max_eta_lbl.setSizePolicy(sizePolicy)
+        self.max_eta_lbl.setStyleSheet("QLabel {\n"
+                                       "    font-family: monospace;\n"
+                                       "}")
+        self.max_eta_lbl.setAlignment(QtCore.Qt.AlignLeading
+                                      | QtCore.Qt.AlignLeft
+                                      | QtCore.Qt.AlignVCenter)
+        self.max_eta_lbl.setObjectName("max_eta_lbl")
+        self.horizontalLayout_2.addWidget(self.max_eta_lbl)
+        spacerItem5 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem4)
+        self.horizontalLayout_2.addItem(spacerItem5)
+        self.label_37 = QtWidgets.QLabel(self.orm_measurement)
+        self.label_37.setObjectName("label_37")
+        self.horizontalLayout_2.addWidget(self.label_37)
+        self.eta_lbl = QtWidgets.QLabel(self.orm_measurement)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.eta_lbl.setFont(font)
+        self.eta_lbl.setObjectName("eta_lbl")
+        self.horizontalLayout_2.addWidget(self.eta_lbl)
         self.label_19 = QtWidgets.QLabel(self.orm_measurement)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_19.sizePolicy().hasHeightForWidth())
-        self.label_19.setSizePolicy(sizePolicy)
-        self.label_19.setText("")
         self.label_19.setObjectName("label_19")
         self.horizontalLayout_2.addWidget(self.label_19)
         self.eta_timer_lbl = QtWidgets.QLabel(self.orm_measurement)
@@ -634,10 +657,10 @@ class Ui_MainWindow(object):
         self.label_21.setObjectName("label_21")
         self.horizontalLayout_20.addWidget(self.label_21)
         self.gridLayout_4.addLayout(self.horizontalLayout_20, 5, 1, 1, 2)
-        spacerItem5 = QtWidgets.QSpacerItem(793, 20,
+        spacerItem6 = QtWidgets.QSpacerItem(793, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_4.addItem(spacerItem5, 0, 2, 1, 1)
+        self.gridLayout_4.addItem(spacerItem6, 0, 2, 1, 1)
         self.label_3 = QtWidgets.QLabel(self.orm_measurement)
         self.label_3.setObjectName("label_3")
         self.gridLayout_4.addWidget(self.label_3, 2, 0, 1, 1)
@@ -731,10 +754,10 @@ class Ui_MainWindow(object):
         self.upper_limit_lineEdit.setSizePolicy(sizePolicy)
         self.upper_limit_lineEdit.setObjectName("upper_limit_lineEdit")
         self.horizontalLayout_13.addWidget(self.upper_limit_lineEdit)
-        spacerItem6 = QtWidgets.QSpacerItem(20, 20,
+        spacerItem7 = QtWidgets.QSpacerItem(20, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_13.addItem(spacerItem6)
+        self.horizontalLayout_13.addItem(spacerItem7)
         self.enable_limit_change_chkbox = QtWidgets.QCheckBox(self.orm_apply)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -771,7 +794,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.cor_wait_time_dsbox.sizePolicy().hasHeightForWidth())
         self.cor_wait_time_dsbox.setSizePolicy(sizePolicy)
-        self.cor_wait_time_dsbox.setDecimals(1)
+        self.cor_wait_time_dsbox.setDecimals(2)
         self.cor_wait_time_dsbox.setMaximum(60.0)
         self.cor_wait_time_dsbox.setSingleStep(0.5)
         self.cor_wait_time_dsbox.setProperty("value", 1.0)
@@ -921,10 +944,10 @@ class Ui_MainWindow(object):
         self.cor_apply_pb.setProperty("value", 24)
         self.cor_apply_pb.setObjectName("cor_apply_pb")
         self.horizontalLayout_8.addWidget(self.cor_apply_pb)
-        spacerItem7 = QtWidgets.QSpacerItem(10, 20,
+        spacerItem8 = QtWidgets.QSpacerItem(10, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_8.addItem(spacerItem7)
+        self.horizontalLayout_8.addItem(spacerItem8)
         self.stop_apply_btn = QtWidgets.QPushButton(self.orm_apply)
         self.stop_apply_btn.setIcon(icon6)
         self.stop_apply_btn.setIconSize(QtCore.QSize(24, 24))
@@ -1155,6 +1178,8 @@ class Ui_MainWindow(object):
         self.cor_eva_btn.clicked.connect(
             MainWindow.on_evaluate_settings_from_orm)
         self.actionExpert_Console.triggered.connect(MainWindow.on_open_console)
+        self.measure_pb.valueChanged['int'].connect(
+            MainWindow.on_measure_pb_value_changed)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1207,7 +1232,7 @@ class Ui_MainWindow(object):
         self.nelem_selected_cors_lineEdit.setText(_translate(
             "MainWindow", "0"))
         self.cors_gbox.setTitle(_translate("MainWindow", "Correctors"))
-        self.label_2.setText(_translate("MainWindow", "Wait Time"))
+        self.label_2.setText(_translate("MainWindow", "Max Wait Time"))
         self.stop_measure_btn.setToolTip(
             _translate("MainWindow", "Stop ORM measurement"))
         self.stop_measure_btn.setText(_translate("MainWindow", "Stop"))
@@ -1224,6 +1249,7 @@ class Ui_MainWindow(object):
         self.label_31.setText(_translate("MainWindow", "Second(s)"))
         self.label_32.setText(_translate("MainWindow", "Reset"))
         self.label_15.setText(_translate("MainWindow", "Second(s)"))
+        self.label_4.setText(_translate("MainWindow", "Tolerance"))
         self.label_5.setText(_translate("MainWindow", "Total # of points"))
         self.label_35.setText(
             _translate(
@@ -1235,8 +1261,14 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Keep Polarity"))
         self.label.setText(_translate("MainWindow", "Operation Mode"))
         self.update_eta_btn.setText(_translate("MainWindow", "Update"))
-        self.label_18.setText(_translate("MainWindow", "Estimated Time"))
+        self.label_18.setText(
+            _translate("MainWindow", "Estimated Required Time:"))
+        self.min_eta_lbl.setText(_translate("MainWindow", "00:00:00"))
+        self.label_39.setText(_translate("MainWindow", "-"))
+        self.max_eta_lbl.setText(_translate("MainWindow", "00:00:00"))
+        self.label_37.setText(_translate("MainWindow", "ETA:"))
         self.eta_lbl.setText(_translate("MainWindow", "00:00:00"))
+        self.label_19.setText(_translate("MainWindow", "Time Elapsed:"))
         self.eta_timer_lbl.setText(_translate("MainWindow", "00:00:00"))
         self.label_21.setText(
             _translate(
@@ -1327,7 +1359,8 @@ class Ui_MainWindow(object):
         self.operations_toolBox.setItemText(
             self.operations_toolBox.indexOf(self.orm_apply),
             _translate("MainWindow", "Central Trajectory Correction"))
-        self.log_gbox.setTitle(_translate("MainWindow", "Log"))
+        self.log_gbox.setTitle(
+            _translate("MainWindow", "Device Set Log of ORM Measurement"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menuTools.setTitle(_translate("MainWindow", "Tools"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
