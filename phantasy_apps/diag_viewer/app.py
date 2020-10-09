@@ -18,6 +18,7 @@ from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from phantasy_ui.widgets import ElementSelectionWidget
 from phantasy_ui.widgets import LatticeWidget
 
+from .app_device_selection import DeviceSelectionWidget
 from .app_save import SaveDataDialog
 from .ui.ui_app import Ui_MainWindow
 from .utils import ElementListModelDV as ElementListModel
@@ -82,6 +83,8 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self._lattice_load_window = None
         # elem selection widget
         self._elem_sel_widget = None
+        # pv elems sel widget
+        self._pv_elem_sel_widget = None
         #
         # list of field names of selected elements
         self.__mp = None
@@ -131,7 +134,8 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self._show_annote = self.annote_height_chkbox.isChecked()
 
         # device selection
-        self.choose_elems_btn.clicked.connect(self.on_list_devices)
+        self.choose_elems_btn.clicked.connect(self.on_choose_devices)
+        self.choose_elems_pv_btn.clicked.connect(self.on_choose_devices_pv)
         self.select_all_elems_btn.clicked.connect(self.on_select_all_elems)
         self.inverse_selection_btn.clicked.connect(self.on_inverse_current_elem_selection)
 
@@ -294,7 +298,15 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self.segments_updated.emit(self.__mp.lattice_names)
 
     @pyqtSlot()
-    def on_list_devices(self):
+    def on_choose_devices_pv(self):
+        # elements from PVs
+        if self._pv_elem_sel_widget is None:
+            self._pv_elem_sel_widget = DeviceSelectionWidget(self)
+            self._pv_elem_sel_widget.pv_elems_selected.connect(self.on_update_elem_objs)
+        self._pv_elem_sel_widget.show()
+
+    @pyqtSlot()
+    def on_choose_devices(self):
         if self.__mp is None:
             QMessageBox.warning(self, "Device Selection",
                     "Cannot find loaded lattice, try to load first, either by clicking Tools > Load Lattice or Ctrl+Shift+L.",
@@ -304,6 +316,21 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
                 self.__mp, dtypes=DTYPE_LIST)
         w.elementsSelected.connect(self.on_update_elems)
         w.show()
+
+    @pyqtSlot(list)
+    def on_update_elem_objs(self, elem_objs):
+        # CaElement objs from PVs
+        tv = self.devices_treeView
+
+        enames = [i.name for i in elem_objs]
+        model = ElementListModel(tv, None, enames, elem_objs_list=elem_objs)
+        # list of fields of selected element type
+        model.fieldsSelected.connect(self.on_selected_fields_updated)
+        model.set_model()
+
+        m = tv.model()
+        m.elementSelected.connect(self.on_elem_selection_updated)
+        model.select_all_items()
 
     @pyqtSlot(list)
     def on_update_elems(self, enames):
