@@ -1116,7 +1116,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         _, tmpfile = tempfile.mkstemp('', '_exp_orm', '/tmp')
         with open(tmpfile, 'w') as fp:
             fp.write(code)
-        cmdline = "x-terminal-emulator -e ipython3 -i {}".format(tmpfile)
+        cmdline = "gnome-terminal -- ipython3 -i {}".format(tmpfile)
         Popen(cmdline, shell=True)
 
 
