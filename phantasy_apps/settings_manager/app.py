@@ -362,7 +362,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # visualize settings
         printlog("Setting data model...")
         model = SettingsModel(self._tv, self.__flat_settings,
-                              ndigit=self.ndigit, font=self.font)
+                              ndigit=self.ndigit, font=self.font,
+                              auto_fmt=self.auto_ndigit_chkbox.isChecked())
         model.settings_sts.connect(self.on_settings_sts)
         model.item_deletion_updated[list].connect(self.on_delete_items)
         model.set_model()
@@ -1242,7 +1243,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_auto_ndigit(self, enabled):
         # if enabled, use .g format
         if enabled:
-            self.fmt = '{{0:.{0}g}}'.format(self.ndigit)
+            self.fmt = '{{0:{0}g}}'.format(self.ndigit)
         else:
             self.fmt = '{{0:.{0}f}}'.format(self.ndigit)
         self.element_list_changed.emit()

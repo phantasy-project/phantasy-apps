@@ -156,13 +156,14 @@ class SettingsModel(QStandardItemModel):
     item_deletion_updated = pyqtSignal(list)
 
     def __init__(self, parent, flat_settings, **kws):
-        # kw: ndigit, font
+        # kw: ndigit, font, auto_fmt
         super(self.__class__, self).__init__(parent)
-        self._ndigit = kws.get('ndigit', None)
+        self._ndigit = kws.get('ndigit', 6)
         self._font = kws.get('font', None)
+        self._auto_fmt = kws.get('auto_fmt', False)
 
-        if self._ndigit is None:
-            self.fmt = FMT
+        if self._auto_fmt:
+            self.fmt = '{{0:{0}g}}'.format(self._ndigit)
         else:
             self.fmt = '{{0:.{0}f}}'.format(self._ndigit)
 
