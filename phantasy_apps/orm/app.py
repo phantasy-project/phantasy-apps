@@ -117,6 +117,8 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
 
     def post_init(self):
         #
+        self._start_time = None
+        #
         for o in (self.rel_range_lineEdit,
                   self.lower_limit_lineEdit, self.upper_limit_lineEdit,
                   self.scaling_factor_lineEdit):
@@ -138,6 +140,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
             partial(self.on_value_changed, '_rel_range'))
         self.rel_range_lineEdit.returnPressed.connect(
             self.on_update_srange)
+        self.tol_dspinbox.valueChanged.connect(self.on_update_tol)
 
         # mprec
         self.mprec_sbox.valueChanged.connect(
@@ -406,11 +409,12 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
 
     def __prepare_inputs_for_orm_measurement(self):
         #
-        self._srange_list = self.get_srange_list()
+        self._srange_list, self._tol_list = self.get_srange_list()
         # debug
         print("\nTo Measure Response Matrix...")
         print("--- Mode:", self._source)
         print("--- Alter Range: ", self._srange_list)
+        print("--- Tolerance: ", self._tol_list)
         print("--- Field of CORs to write: ", self._cor_field)
         print("--- Field of BPMs to read: ", self._xoy)
         print("--- BPM Fields: ", self._orb_field)
@@ -421,7 +425,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         print("--- Keep ORM data?: ", self._keep_all)
         #
         return (self._bpms, self._cors), \
-               (self._source, self._srange_list,
+               (self._source, self._srange_list, self._tol_list,
                 self._cor_field, self._orb_field, self._xoy,
                 self._wait_sec, self._mprec), \
                (self._daq_rate, self._daq_nshot, self._reset_wait_sec,
@@ -436,8 +440,10 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         nshot = self._daq_nshot
         daq_rate = self._daq_rate
 
-        eta = ns * nc * (dt + nshot * 1.0 / daq_rate) + nc * r_dt
-        self.eta_lbl.setText(uptime(int(eta)))
+        eta_max = ns * nc * (dt + nshot * 1.0 / daq_rate) + nc * r_dt
+        eta_min = ns * nc * (1 + nshot * 1.0 / daq_rate) + nc * 1
+        self.min_eta_lbl.setText(uptime(int(eta_min)))
+        self.max_eta_lbl.setText(uptime(int(eta_max)))
 
         print("ETA Info:")
         print("--- # of alter points: ", ns)
@@ -446,7 +452,8 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         print("--- Reset wait sec: ", r_dt)
         print("--- DAQ # of shot: ", nshot)
         print("--- DAQ rate: ", daq_rate)
-        print("--- ETA {} [s], or {}".format(eta, uptime(int(eta))))
+        print("--- Min ETA {} [s], or {}".format(eta_min, uptime(int(eta_min))))
+        print("--- Max ETA {} [s], or {}".format(eta_max, uptime(int(eta_max))))
 
     def __apply_with_settings(self, settings=None, **kws):
         # apply settings to correct central trajectory
@@ -864,6 +871,7 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
 
         model = ScanRangeModel(self.cor_srange_tableView, data,
                                self._rel_range,
+                               tol=self.tol_dspinbox.value(),
                                keep_polarity=self.keep_polarity_chkbox.isChecked(),
                                fmt=self.get_fmt(mode="measure"))
         model.set_model()
@@ -884,11 +892,15 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
             n = self.alter_steps_sbox.value()
         srange_list = m.get_scan_range(n)
         self._srange_list = srange_list
+        #
+        tol_list = m.get_tol_list()
+        self._tol_list = tol_list
+
         # debug
         for i, (cname, srange) in enumerate(srange_list):
             print("[{}] {}: {}".format(i, cname, srange))
         #
-        return srange_list
+        return srange_list, tol_list
 
     @staticmethod
     def _pb_msg_to_index(msg):
@@ -971,6 +983,13 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
         self.stop_measure_btn.setEnabled(False)
         self.stop_apply_btn.setEnabled(False)
 
+    @pyqtSlot(int)
+    def on_measure_pb_value_changed(self, i):
+        if self._start_time is None or i == 0:
+            return
+        eta = (time.time() - self._start_time) * 100.0 / i
+        self.eta_lbl.setText(uptime(eta))
+
     @pyqtSlot('QString')
     def on_source_changed(self, s):
         # operation mode changed, Simuation/Live
@@ -1031,11 +1050,21 @@ class OrbitResponseMatrixWindow(BaseAppForm, Ui_MainWindow):
             self._lat = self._mp.work_lattice_conf
         self.set_orm()
 
+    @pyqtSlot(float)
+    def on_update_tol(self, tol):
+        # update tol of scanrangemodel
+        m = self.cor_srange_tableView.model()
+        if m is None:
+            return
+        m.update_tolerance(tol)
+
     @pyqtSlot()
     def on_update_srange(self):
         # update scan range list model with updated rel_range.
         # print(self._rel_range)
         m = self.cor_srange_tableView.model()
+        if m is None:
+            return
         m.update_scan_range(self._rel_range, self.keep_polarity_chkbox.isChecked())
 
     def on_update_selection(self, mode, d):
