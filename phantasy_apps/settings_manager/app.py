@@ -1238,6 +1238,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.fmt = '{{0:.{0}f}}'.format(n)
         self.element_list_changed.emit()
 
+    @pyqtSlot(bool)
+    def on_auto_ndigit(self, enabled):
+        # if enabled, use .g format
+        self.fmt = '{{0:.{0}g}}'.format(self.ndigit)
+        self.element_list_changed.emit()
+
     @pyqtSlot(int)
     def on_update_rate(self, i):
         # update_rate_cbb index
@@ -1504,14 +1510,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Set widgets status for updating.
         """
         w1 = (self.update_ctrl_btn, self.update_rate_cbb, self.apply_btn,
-              self.single_update_btn, self.ndigit_sbox, self.snp_dock)
-        [i.setDisabled(status == 'START') for i in w1]
+              self.single_update_btn, self.snp_dock, self.auto_ndigit_chkbox)
+        [i.setDisabled(status=='START') for i in w1]
+        # auto ndigit
+        self.ndigit_sbox.setDisabled(status=='START' or self.auto_ndigit_chkbox.isChecked())
 
     def set_widgets_status_for_applying(self, status):
         """Set widgets status for applying.
         """
         w1 = (self.apply_btn,)
-        [i.setDisabled(status == 'START') for i in w1]
+        [i.setDisabled(status=='START') for i in w1]
 
     def sizeHint(self):
         return QSize(1920, 1440)
