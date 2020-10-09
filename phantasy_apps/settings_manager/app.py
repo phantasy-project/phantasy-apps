@@ -1241,7 +1241,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(bool)
     def on_auto_ndigit(self, enabled):
         # if enabled, use .g format
-        self.fmt = '{{0:.{0}g}}'.format(self.ndigit)
+        if enabled:
+            self.fmt = '{{0:.{0}g}}'.format(self.ndigit)
+        else:
+            self.fmt = '{{0:.{0}f}}'.format(self.ndigit)
         self.element_list_changed.emit()
 
     @pyqtSlot(int)
@@ -1274,6 +1277,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                             daq_seq=range(1))
         self.updater.meta_signal1.connect(partial(
             self.on_update_display, m))
+        self.updater.daqStarted.connect(partial(
+            self.set_widgets_status_for_updating, 'START', False))
+        self.updater.finished.connect(partial(
+            self.set_widgets_status_for_updating, 'STOP', False))
         self.updater.finished.connect(self.start_thread_update)
         self.updater.start()
 
@@ -1506,11 +1513,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.set_widgets_status_for_updating, 'STOP'))
         self.one_updater.start()
 
-    def set_widgets_status_for_updating(self, status):
+    def set_widgets_status_for_updating(self, status, is_single=True):
         """Set widgets status for updating.
         """
-        w1 = (self.update_ctrl_btn, self.update_rate_cbb, self.apply_btn,
-              self.single_update_btn, self.snp_dock, self.auto_ndigit_chkbox)
+        w1 = [self.update_rate_cbb, self.apply_btn,
+              self.single_update_btn, self.snp_dock, self.auto_ndigit_chkbox]
+        if is_single:
+            w1.append(self.update_ctrl_btn)
         [i.setDisabled(status=='START') for i in w1]
         # auto ndigit
         self.ndigit_sbox.setDisabled(status=='START' or self.auto_ndigit_chkbox.isChecked())
