@@ -880,7 +880,7 @@ class Ui_MainWindow(object):
         self.total_rdpv_number_lbl.setText(_translate("MainWindow", "0"))
         self.auto_ndigit_chkbox.setToolTip(
             _translate("MainWindow",
-                       "Change data presenting format to .{n}g."))
+                       "Change data presenting format to \'{n}g\'."))
         self.auto_ndigit_chkbox.setText(_translate("MainWindow", "Auto"))
         self.label_9.setText(_translate("MainWindow", "Precision number"))
         self.init_settings_chkbox.setToolTip(
