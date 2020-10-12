@@ -104,6 +104,9 @@ class Ui_AppForm(object):
         sizePolicy.setHeightForWidth(
             self.app_group_lbl.sizePolicy().hasHeightForWidth())
         self.app_group_lbl.setSizePolicy(sizePolicy)
+        self.app_group_lbl.setStyleSheet("QLabel {\n"
+                                         "    color: rgb(50, 50, 50);\n"
+                                         "}")
         self.app_group_lbl.setAlignment(QtCore.Qt.AlignCenter)
         self.app_group_lbl.setObjectName("app_group_lbl")
         self.verticalLayout.addWidget(self.app_group_lbl)
