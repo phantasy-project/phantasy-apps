@@ -180,27 +180,43 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setObjectName("label")
-        self.horizontalLayout_2.addWidget(self.label)
+        self.show_sts_btn = QtWidgets.QToolButton(self.centralwidget)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/sm-icons/right-arrow.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon8.addPixmap(QtGui.QPixmap(":/sm-icons/left-arrow.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.On)
+        self.show_sts_btn.setIcon(icon8)
+        self.show_sts_btn.setIconSize(QtCore.QSize(24, 24))
+        self.show_sts_btn.setCheckable(True)
+        self.show_sts_btn.setChecked(True)
+        self.show_sts_btn.setAutoRaise(True)
+        self.show_sts_btn.setObjectName("show_sts_btn")
+        self.horizontalLayout_2.addWidget(self.show_sts_btn)
+        self.total_elem_number_title_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.total_elem_number_title_lbl.setObjectName(
+            "total_elem_number_title_lbl")
+        self.horizontalLayout_2.addWidget(self.total_elem_number_title_lbl)
         self.total_elem_number_lbl = QtWidgets.QLabel(self.centralwidget)
         self.total_elem_number_lbl.setStyleSheet("QLabel {\n"
                                                  "    color: #28A745;\n"
                                                  "}")
         self.total_elem_number_lbl.setObjectName("total_elem_number_lbl")
         self.horizontalLayout_2.addWidget(self.total_elem_number_lbl)
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setObjectName("label_2")
-        self.horizontalLayout_2.addWidget(self.label_2)
+        self.total_sppv_number_title_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.total_sppv_number_title_lbl.setObjectName(
+            "total_sppv_number_title_lbl")
+        self.horizontalLayout_2.addWidget(self.total_sppv_number_title_lbl)
         self.total_sppv_number_lbl = QtWidgets.QLabel(self.centralwidget)
         self.total_sppv_number_lbl.setStyleSheet("QLabel {\n"
                                                  "    color: #28A745;\n"
                                                  "}")
         self.total_sppv_number_lbl.setObjectName("total_sppv_number_lbl")
         self.horizontalLayout_2.addWidget(self.total_sppv_number_lbl)
-        self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        self.label_3.setObjectName("label_3")
-        self.horizontalLayout_2.addWidget(self.label_3)
+        self.total_rdpv_number_title_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.total_rdpv_number_title_lbl.setObjectName(
+            "total_rdpv_number_title_lbl")
+        self.horizontalLayout_2.addWidget(self.total_rdpv_number_title_lbl)
         self.total_rdpv_number_lbl = QtWidgets.QLabel(self.centralwidget)
         self.total_rdpv_number_lbl.setStyleSheet("QLabel {\n"
                                                  "    color: #28A745;\n"
@@ -233,10 +249,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setSpacing(4)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.reload_lattice_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(":/sm-icons/reload.png"),
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/sm-icons/reload.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.reload_lattice_btn.setIcon(icon8)
+        self.reload_lattice_btn.setIcon(icon9)
         self.reload_lattice_btn.setIconSize(QtCore.QSize(24, 24))
         self.reload_lattice_btn.setAutoRaise(True)
         self.reload_lattice_btn.setObjectName("reload_lattice_btn")
@@ -252,10 +268,10 @@ class Ui_MainWindow(object):
         self.lv_lbl.setObjectName("lv_lbl")
         self.horizontalLayout.addWidget(self.lv_lbl)
         self.lv_view_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(":/sm-icons/view-details.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.lv_view_btn.setIcon(icon9)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap(":/sm-icons/view-details.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.lv_view_btn.setIcon(icon10)
         self.lv_view_btn.setAutoRaise(True)
         self.lv_view_btn.setObjectName("lv_view_btn")
         self.horizontalLayout.addWidget(self.lv_view_btn)
@@ -307,12 +323,12 @@ class Ui_MainWindow(object):
         self.update_rate_cbb.addItem("")
         self.horizontalLayout.addWidget(self.update_rate_cbb)
         self.update_ctrl_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap(":/sm-icons/start.png"),
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap(":/sm-icons/start.png"),
                          QtGui.QIcon.Active, QtGui.QIcon.Off)
-        icon10.addPixmap(QtGui.QPixmap(":/sm-icons/stop.png"),
+        icon11.addPixmap(QtGui.QPixmap(":/sm-icons/stop.png"),
                          QtGui.QIcon.Active, QtGui.QIcon.On)
-        self.update_ctrl_btn.setIcon(icon10)
+        self.update_ctrl_btn.setIcon(icon11)
         self.update_ctrl_btn.setIconSize(QtCore.QSize(32, 32))
         self.update_ctrl_btn.setCheckable(True)
         self.update_ctrl_btn.setChecked(False)
@@ -320,10 +336,10 @@ class Ui_MainWindow(object):
         self.update_ctrl_btn.setObjectName("update_ctrl_btn")
         self.horizontalLayout.addWidget(self.update_ctrl_btn)
         self.single_update_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon11 = QtGui.QIcon()
-        icon11.addPixmap(QtGui.QPixmap(":/sm-icons/single.png"),
+        icon12 = QtGui.QIcon()
+        icon12.addPixmap(QtGui.QPixmap(":/sm-icons/single.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.single_update_btn.setIcon(icon11)
+        self.single_update_btn.setIcon(icon12)
         self.single_update_btn.setIconSize(QtCore.QSize(32, 32))
         self.single_update_btn.setToolButtonStyle(
             QtCore.Qt.ToolButtonTextBesideIcon)
@@ -368,10 +384,10 @@ class Ui_MainWindow(object):
         self.scaling_factor_lineEdit.setObjectName("scaling_factor_lineEdit")
         self.horizontalLayout_3.addWidget(self.scaling_factor_lineEdit)
         self.auto_sf_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon12 = QtGui.QIcon()
-        icon12.addPixmap(QtGui.QPixmap(":/sm-icons/calc-sf.png"),
+        icon13 = QtGui.QIcon()
+        icon13.addPixmap(QtGui.QPixmap(":/sm-icons/calc-sf.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.auto_sf_btn.setIcon(icon12)
+        self.auto_sf_btn.setIcon(icon13)
         self.auto_sf_btn.setIconSize(QtCore.QSize(24, 24))
         self.auto_sf_btn.setCheckable(True)
         self.auto_sf_btn.setChecked(True)
@@ -578,10 +594,10 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem4)
         self.snp_refresh_btn = QtWidgets.QToolButton(self.dockWidgetContents)
-        icon13 = QtGui.QIcon()
-        icon13.addPixmap(QtGui.QPixmap(":/sm-icons/refresh.png"),
+        icon14 = QtGui.QIcon()
+        icon14.addPixmap(QtGui.QPixmap(":/sm-icons/refresh.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.snp_refresh_btn.setIcon(icon13)
+        self.snp_refresh_btn.setIcon(icon14)
         self.snp_refresh_btn.setIconSize(QtCore.QSize(24, 24))
         self.snp_refresh_btn.setAutoRaise(True)
         self.snp_refresh_btn.setObjectName("snp_refresh_btn")
@@ -661,70 +677,70 @@ class Ui_MainWindow(object):
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionE_xit = QtWidgets.QAction(MainWindow)
-        icon14 = QtGui.QIcon()
-        icon14.addPixmap(QtGui.QPixmap(":/sm-icons/exit.png"),
+        icon15 = QtGui.QIcon()
+        icon15.addPixmap(QtGui.QPixmap(":/sm-icons/exit.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionE_xit.setIcon(icon14)
+        self.actionE_xit.setIcon(icon15)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionContents = QtWidgets.QAction(MainWindow)
         self.actionContents.setObjectName("actionContents")
         self.action_Save = QtWidgets.QAction(MainWindow)
-        icon15 = QtGui.QIcon()
-        icon15.addPixmap(QtGui.QPixmap(":/sm-icons/save.png"),
+        icon16 = QtGui.QIcon()
+        icon16.addPixmap(QtGui.QPixmap(":/sm-icons/save.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.action_Save.setIcon(icon15)
+        self.action_Save.setIcon(icon16)
         self.action_Save.setObjectName("action_Save")
         self.actionLoad_From_Snapshot = QtWidgets.QAction(MainWindow)
-        icon16 = QtGui.QIcon()
-        icon16.addPixmap(QtGui.QPixmap(":/sm-icons/folder-open-snp.png"),
+        icon17 = QtGui.QIcon()
+        icon17.addPixmap(QtGui.QPixmap(":/sm-icons/folder-open-snp.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_From_Snapshot.setIcon(icon16)
+        self.actionLoad_From_Snapshot.setIcon(icon17)
         self.actionLoad_From_Snapshot.setObjectName("actionLoad_From_Snapshot")
         self.actionPhysics_Fields = QtWidgets.QAction(MainWindow)
         self.actionPhysics_Fields.setCheckable(True)
         self.actionPhysics_Fields.setChecked(False)
-        icon17 = QtGui.QIcon()
-        icon17.addPixmap(QtGui.QPixmap(":/sm-icons/physics.png"),
+        icon18 = QtGui.QIcon()
+        icon18.addPixmap(QtGui.QPixmap(":/sm-icons/physics.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionPhysics_Fields.setIcon(icon17)
+        self.actionPhysics_Fields.setIcon(icon18)
         self.actionPhysics_Fields.setObjectName("actionPhysics_Fields")
         self.actionEngineering_Fields = QtWidgets.QAction(MainWindow)
         self.actionEngineering_Fields.setCheckable(True)
         self.actionEngineering_Fields.setChecked(True)
-        icon18 = QtGui.QIcon()
-        icon18.addPixmap(QtGui.QPixmap(":/sm-icons/engineering.png"),
+        icon19 = QtGui.QIcon()
+        icon19.addPixmap(QtGui.QPixmap(":/sm-icons/engineering.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionEngineering_Fields.setIcon(icon18)
+        self.actionEngineering_Fields.setIcon(icon19)
         self.actionEngineering_Fields.setObjectName("actionEngineering_Fields")
         self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
-        icon19 = QtGui.QIcon()
-        icon19.addPixmap(QtGui.QPixmap(":/sm-icons/load_lattice.png"),
+        icon20 = QtGui.QIcon()
+        icon20.addPixmap(QtGui.QPixmap(":/sm-icons/load_lattice.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Lattice.setIcon(icon19)
+        self.actionLoad_Lattice.setIcon(icon20)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
         self.actionLoad_Settings = QtWidgets.QAction(MainWindow)
-        icon20 = QtGui.QIcon()
-        icon20.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
+        icon21 = QtGui.QIcon()
+        icon21.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Settings.setIcon(icon20)
+        self.actionLoad_Settings.setIcon(icon21)
         self.actionLoad_Settings.setObjectName("actionLoad_Settings")
         self.actionPreferences = QtWidgets.QAction(MainWindow)
-        icon21 = QtGui.QIcon()
-        icon21.addPixmap(QtGui.QPixmap(":/sm-icons/preferences.png"),
+        icon22 = QtGui.QIcon()
+        icon22.addPixmap(QtGui.QPixmap(":/sm-icons/preferences.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionPreferences.setIcon(icon21)
+        self.actionPreferences.setIcon(icon22)
         self.actionPreferences.setObjectName("actionPreferences")
         self.actionAdd_Devices = QtWidgets.QAction(MainWindow)
-        icon22 = QtGui.QIcon()
-        icon22.addPixmap(QtGui.QPixmap(":/sm-icons/add.png"),
+        icon23 = QtGui.QIcon()
+        icon23.addPixmap(QtGui.QPixmap(":/sm-icons/add.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionAdd_Devices.setIcon(icon22)
+        self.actionAdd_Devices.setIcon(icon23)
         self.actionAdd_Devices.setObjectName("actionAdd_Devices")
         self.actionTake_Snapshot = QtWidgets.QAction(MainWindow)
-        icon23 = QtGui.QIcon()
-        icon23.addPixmap(QtGui.QPixmap(":/sm-icons/snapshot.png"),
+        icon24 = QtGui.QIcon()
+        icon24.addPixmap(QtGui.QPixmap(":/sm-icons/snapshot.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionTake_Snapshot.setIcon(icon23)
+        self.actionTake_Snapshot.setIcon(icon24)
         self.actionTake_Snapshot.setObjectName("actionTake_Snapshot")
         self.actionFix_Corrector_Names = QtWidgets.QAction(MainWindow)
         self.actionFix_Corrector_Names.setObjectName(
@@ -824,6 +840,18 @@ class Ui_MainWindow(object):
             self.label_9.setDisabled)
         self.auto_ndigit_chkbox.toggled['bool'].connect(
             MainWindow.on_auto_ndigit)
+        self.show_sts_btn.toggled['bool'].connect(
+            self.total_elem_number_title_lbl.setVisible)
+        self.show_sts_btn.toggled['bool'].connect(
+            self.total_elem_number_lbl.setVisible)
+        self.show_sts_btn.toggled['bool'].connect(
+            self.total_sppv_number_title_lbl.setVisible)
+        self.show_sts_btn.toggled['bool'].connect(
+            self.total_sppv_number_lbl.setVisible)
+        self.show_sts_btn.toggled['bool'].connect(
+            self.total_rdpv_number_title_lbl.setVisible)
+        self.show_sts_btn.toggled['bool'].connect(
+            self.total_rdpv_number_lbl.setVisible)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.filter_lineEdit, self.treeView)
         MainWindow.setTabOrder(self.treeView, self.reload_lattice_btn)
@@ -872,11 +900,15 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Show all selected items."))
         self.show_all_selected_btn.setText(
             _translate("MainWindow", "All Selected"))
-        self.label.setText(_translate("MainWindow", "Total Elements"))
+        self.show_sts_btn.setText(_translate("MainWindow", "..."))
+        self.total_elem_number_title_lbl.setText(
+            _translate("MainWindow", "Total Elements"))
         self.total_elem_number_lbl.setText(_translate("MainWindow", "0"))
-        self.label_2.setText(_translate("MainWindow", "Setpoint PVs"))
+        self.total_sppv_number_title_lbl.setText(
+            _translate("MainWindow", "Setpoint PVs"))
         self.total_sppv_number_lbl.setText(_translate("MainWindow", "0"))
-        self.label_3.setText(_translate("MainWindow", "Readback PVs"))
+        self.total_rdpv_number_title_lbl.setText(
+            _translate("MainWindow", "Readback PVs"))
         self.total_rdpv_number_lbl.setText(_translate("MainWindow", "0"))
         self.auto_ndigit_chkbox.setToolTip(
             _translate("MainWindow",
