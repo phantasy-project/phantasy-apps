@@ -27,6 +27,7 @@ from PyQt5.QtWidgets import QPushButton
 from phantasy import CaField
 from phantasy_ui import BaseAppForm
 from phantasy_ui import random_string
+from phantasy_ui import uptime
 from phantasy_ui import delayed_exec
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
@@ -1177,9 +1178,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
         ts_start = self.scan_task.ts_start
         ts_stop = self.scan_task.ts_stop
-        title = "Completed at {ts}\nSCAN Duration: {t:.2f} s".format(
-            ts=current_datetime(ts_stop),
-            t=ts_stop - ts_start)
+        title = "Completed at {ts}\nTime Elapsed: {t}".format(
+            ts=current_datetime(ts_stop, fmt="%Y-%m-%dT%H:%M:%S"),
+            t=uptime(ts_stop - ts_start))
         self.scan_plot_widget.setFigureTitle(title)
 
     @pyqtSlot()
