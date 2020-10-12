@@ -220,6 +220,8 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
     def on_init_dataviz(self):
         # initial plot (reset figure btn)
         s, h, herr = self.__refresh_data()
+        if len(np.unique(s)) != len(s):
+            self.pos_as_x_rbtn.setEnabled(False)
         self.data_initialized.emit(s, h, herr)
         # reset daq bit
         self._daq_stop = False
