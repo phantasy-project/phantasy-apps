@@ -89,7 +89,7 @@ class Ui_AppForm(object):
             self.app_name_lbl.sizePolicy().hasHeightForWidth())
         self.app_name_lbl.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(16)
         font.setBold(True)
         font.setWeight(75)
         self.app_name_lbl.setFont(font)
