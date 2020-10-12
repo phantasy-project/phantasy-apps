@@ -20,7 +20,7 @@ class Ui_MainWindow(object):
         MainWindow.setToolTip("")
         MainWindow.setStyleSheet("QProgressBar {\n"
                                  "    border: 1px solid gray;\n"
-                                 "    border-radius: 10px;\n"
+                                 "    border-radius: 4px;\n"
                                  "    text-align: center;\n"
                                  "}\n"
                                  "\n"
@@ -44,7 +44,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.v_splitter.sizePolicy().hasHeightForWidth())
         self.v_splitter.setSizePolicy(sizePolicy)
-        self.v_splitter.setMinimumSize(QtCore.QSize(420, 0))
+        self.v_splitter.setMinimumSize(QtCore.QSize(450, 0))
         self.v_splitter.setOrientation(QtCore.Qt.Vertical)
         self.v_splitter.setObjectName("v_splitter")
         self.scan_groupBox = QtWidgets.QGroupBox(self.v_splitter)
@@ -118,6 +118,7 @@ class Ui_MainWindow(object):
             "enable_arbitary_array_chkbox")
         self.horizontalLayout_6.addWidget(self.enable_arbitary_array_chkbox)
         self.alter_array_btn = QtWidgets.QPushButton(self.widget)
+        self.alter_array_btn.setEnabled(False)
         self.alter_array_btn.setObjectName("alter_array_btn")
         self.horizontalLayout_6.addWidget(self.alter_array_btn)
         self.gridLayout_2.addLayout(self.horizontalLayout_6, 2, 4, 1, 1)
@@ -668,7 +669,7 @@ class Ui_MainWindow(object):
         self.scan_plot_widget.setFigureTitleFont(font)
         self.scan_plot_widget.setProperty("figureDPI", 120.0)
         self.scan_plot_widget.setProperty("figureBackgroundColor",
-                                          QtGui.QColor(239, 235, 231))
+                                          QtGui.QColor(239, 239, 239))
         self.scan_plot_widget.setFigureGridToggle(True)
         self.scan_plot_widget.setFigureMTicksToggle(True)
         self.scan_plot_widget.setObjectName("scan_plot_widget")
@@ -900,6 +901,8 @@ class Ui_MainWindow(object):
             MainWindow.onConfigDeviceProcessor)
         self.actionAchromat_Analysis.triggered.connect(
             MainWindow.onAchromatAnalysisAction)
+        self.enable_arbitary_array_chkbox.toggled['bool'].connect(
+            self.alter_array_btn.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.alter_elem_lineEdit,
                                self.select_alter_elem_btn)
@@ -940,8 +943,7 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.scan_groupBox.setTitle(
-            _translate("MainWindow", "Scan Configuration"))
+        self.scan_groupBox.setTitle(_translate("MainWindow", "Task"))
         self.lv_segm.setToolTip(_translate("MainWindow", "Segment name."))
         self.alter_elem_lineEdit.setPlaceholderText(
             _translate("MainWindow", "Click \'Select\' to set element"))
@@ -1012,8 +1014,7 @@ class Ui_MainWindow(object):
         self.inc_fontsize_tbtn.setText(_translate("MainWindow", "FS+"))
         self.dec_fontsize_tbtn.setText(_translate("MainWindow", "FS-"))
         self.clear_log_tbtn.setText(_translate("MainWindow", "Clear"))
-        self.daq_groupBox.setTitle(
-            _translate("MainWindow", "DAQ Configuration"))
+        self.daq_groupBox.setTitle(_translate("MainWindow", "DAQ"))
         self.label_2.setText(_translate("MainWindow", "Shot Number"))
         self.waitsec_dSpinBox.setToolTip(
             _translate(
@@ -1077,8 +1078,7 @@ class Ui_MainWindow(object):
                 "Additional wait time in second after setting the alter element."
             ))
         self.label_17.setText(_translate("MainWindow", "Second"))
-        self.plot_groupBox.setTitle(
-            _translate("MainWindow", "Data Visualization"))
+        self.plot_groupBox.setTitle(_translate("MainWindow", "Data"))
         self.autoscale_tbtn.setText(_translate("MainWindow", "..."))
         self.save_data_tbtn.setText(_translate("MainWindow", "save_data"))
         self.auto_title_tbtn.setText(_translate("MainWindow", "auto_title"))
@@ -1117,7 +1117,7 @@ class Ui_MainWindow(object):
         self.actionMPS_guardian.setShortcut(
             _translate("MainWindow", "Ctrl+Shift+M"))
         self.actionSave_Task.setText(_translate("MainWindow", "Save Task"))
-        self.actionSave_Task.setIconText(_translate("MainWindow", "Save Data"))
+        self.actionSave_Task.setIconText(_translate("MainWindow", "Save"))
         self.actionSave_Task.setToolTip(
             _translate("MainWindow",
                        "Save data with scan task configurations."))
@@ -1126,7 +1126,7 @@ class Ui_MainWindow(object):
         self.actionSave.setText(_translate("MainWindow", "Save"))
         self.actionSave.setShortcut(_translate("MainWindow", "Ctrl+S"))
         self.actionLoad_Task.setText(_translate("MainWindow", "Load Task"))
-        self.actionLoad_Task.setIconText(_translate("MainWindow", "Load Data"))
+        self.actionLoad_Task.setIconText(_translate("MainWindow", "Open"))
         self.actionLoad_Task.setToolTip(
             _translate("MainWindow",
                        "Load data with scan task configurations."))
