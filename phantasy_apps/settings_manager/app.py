@@ -384,6 +384,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             o.setText(str(v))
 
     def __post_init_ui(self):
+        # hide sts info
+        self.show_sts_btn.setChecked(False)
         # add beamSpeciesDisplayWidget
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
