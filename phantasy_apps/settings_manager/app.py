@@ -1303,8 +1303,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     idx = m.indexFromItem(iit)
                     worker.meta_signal1.emit((idx, self.fmt.format(val), Qt.DisplayRole))
             else:  # CaField
-                idx0 = m.indexFromItem(it[0])
-                idx1 = m.indexFromItem(it[1])
+                idx0 = m.indexFromItem(it[0]) # rd
+                idx1 = m.indexFromItem(it[1]) # cset
                 irow = idx0.row()
                 rd_val, sp_val = o.value, o.current_setting()
                 x0_idx = m.index(irow, m.i_val0)
@@ -1315,28 +1315,35 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 dx02_idx = m.index(irow, m.i_val0_cset)
                 dx12_idx = m.index(irow, m.i_rd_cset)
                 ratio_x20_idx = m.index(irow, m.i_ratio_x20)
+                wa_idx = m.index(irow, m.i_writable)
+                wa = o.write_access
+                idx_tuple = (idx0, idx1)
+                v_tuple = (rd_val, sp_val)
+                for iidx, val in zip(idx_tuple, v_tuple):
+                    worker.meta_signal1.emit((iidx, self.fmt.format(val), Qt.DisplayRole))
+                worker.meta_signal1.emit((wa_idx, str(wa), Qt.DisplayRole))
+
                 x0 = float(m.data(x0_idx))
-                x1 = float(m.data(x1_idx))
-                x2 = float(m.data(x2_idx))
+                x1, x2 = rd_val, sp_val
+                #x1 = float(m.data(x1_idx))
+                #x2 = float(m.data(x2_idx))
                 dx01 = x0 - x1
                 dx02 = x0 - x2
                 dx12 = x1 - x2
-                wa_idx = m.index(irow, m.i_writable)
-                wa = o.write_access
-                idx_tuple = (idx0, idx1, dx01_idx, dx02_idx, dx12_idx)
-                v_tuple = (rd_val, sp_val, dx01, dx02, dx12)
+                idx_tuple = (dx01_idx, dx02_idx, dx12_idx)
+                v_tuple = (dx01, dx02, dx12)
                 for iidx, val in zip(idx_tuple, v_tuple):
                     worker.meta_signal1.emit((iidx, self.fmt.format(val), Qt.DisplayRole))
                 worker.meta_signal1.emit((ratio_x20_idx, get_ratio_as_string(x2, x0, self.fmt),
                                           Qt.DisplayRole))
-                worker.meta_signal1.emit((wa_idx, str(wa), Qt.DisplayRole))
+
                 tol = float(m.data(tol_idx))
                 if abs(dx12) > tol:
                     worker.meta_signal1.emit((dx12_idx, self._warning_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
                 else:
                     worker.meta_signal1.emit((dx12_idx, None, Qt.DecorationRole))
 
-                if abs(dx02) > 1e-8 :
+                if abs(dx02) > 1e-3 :
                     worker.meta_signal1.emit((dx02_idx, self._warning_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
                 else:
                     worker.meta_signal1.emit((dx02_idx, None, Qt.DecorationRole))
