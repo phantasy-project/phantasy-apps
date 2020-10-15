@@ -1055,7 +1055,7 @@ class Ui_MainWindow(object):
         self.label_15.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Tolerance of <span style=\" font-style:italic;\">Δ</span><span style=\" font-style:italic; vertical-align:sub;\">rd, set</span></p></body></html>"
+                "<html><head/><body><p>Tolerance of <span style=\" font-style:italic;\">Δ</span><span style=\" font-style:italic; vertical-align:sub;\">read, set</span></p></body></html>"
             ))
         self.niter_spinBox.setToolTip(
             _translate("MainWindow", "Total number of points to scan."))
