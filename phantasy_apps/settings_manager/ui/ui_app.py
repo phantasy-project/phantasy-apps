@@ -899,7 +899,7 @@ class Ui_MainWindow(object):
         self.show_all_selected_btn.setToolTip(
             _translate("MainWindow", "Show all selected items."))
         self.show_all_selected_btn.setText(
-            _translate("MainWindow", "All Selected"))
+            _translate("MainWindow", "All Checked"))
         self.show_sts_btn.setText(_translate("MainWindow", "..."))
         self.total_elem_number_title_lbl.setText(
             _translate("MainWindow", "Total Elements"))
