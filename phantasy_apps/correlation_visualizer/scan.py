@@ -22,6 +22,7 @@ from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 from phantasy_apps.correlation_visualizer.alter_actions import DEFAULT_ALTER_ACTION
 from phantasy_apps.correlation_visualizer.alter_actions import DEFAULT_ALTER_ACTION_CODE
 from phantasy_ui import random_string
+from phantasy_ui import milli_sleep
 from phantasy_ui.widgets import str2func
 
 
@@ -571,6 +572,7 @@ def load_task(filepath, o):
     mp = load_lattice(machine, segment, o)
     if mp.last_load_success:
         scan_task.lattice = mp
+    milli_sleep(100)
     printlog("Loaded {}/{} for task '{}'.".format(machine, segment, scan_task.name))
 
     # alter device
