@@ -1244,8 +1244,12 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.scanlogUpdated.emit(
             "Setting alter element to {0:.3f}...".format(x0))
         # self.scan_task.alter_element.value = x0
-        print("--- reset element: ", x0)
-        self.scan_task.alter_action(x0, alter_elem=self.scan_task.alter_element)
+        tol = self.scan_task.tolerance
+        timeout = self.scan_task.t_wait
+        extra_wait = self.scan_task.t_wait_extra
+        print(f"--- reset element: value: {x0}, tol: {tol}, timeout: {timeout}, extra_wait: {extra_wait}")
+        self.scan_task.alter_action(x0, alter_elem=self.scan_task.alter_element,
+                                    tolerance=tol, timeout=timeout, extra_wait=extra_wait)
         self.scanlogUpdated.emit(
             "Alter element reaches {0:.3f}".format(x0))
         # in case it is 'resume' while scan is done
