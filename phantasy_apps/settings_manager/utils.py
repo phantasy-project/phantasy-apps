@@ -573,6 +573,7 @@ class _SortProxyModel(QSortFilterProxyModel):
                 it_name_src.setCheckState(Qt.Checked)
 
     def invert_selection(self):
+        check_status_list = []
         for i in range(self.rowCount()):
             idx = self.index(i, self.m_src.i_name)
             idx_src = self.mapToSource(idx)
@@ -580,9 +581,11 @@ class _SortProxyModel(QSortFilterProxyModel):
             if not it_name_src.isEnabled():
                 continue
             if not is_item_checked(it_name_src):
-                it_name_src.setCheckState(Qt.Checked)
+                checked_status = Qt.Checked
             else:
-                it_name_src.setCheckState(Qt.Unchecked)
+                checked_status = Qt.Unchecked
+            check_status_list.append((it_name_src, Qt.Unchecked))
+        [it.setCheckState(st) for it, st in check_status_list]
 
 
 class _Delegate(QStyledItemDelegate):
