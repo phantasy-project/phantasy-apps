@@ -786,8 +786,6 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.scan_worker.moveToThread(self.thread)
         self.scan_worker.scanOneIterFinished.connect(self.on_one_iter_finished)
         self.scan_worker.scanAllDataReady.connect(self.on_scan_data_ready)
-        self.scan_worker.scanFinished.connect(self.thread.quit)
-        self.scan_worker.scanFinished.connect(self.scan_worker.deleteLater)
         self.scan_worker.scanFinished.connect(self.reset_alter_element)
         self.scan_worker.scanFinished.connect(lambda: self.set_btn_status(mode='stop'))
         self.scan_worker.scanFinished.connect(lambda: self.set_timestamp(type='stop'))
@@ -806,6 +804,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.scan_worker.scanFinished.connect(self.test_scan_finished)
 
         self.scan_worker.scanFinished.connect(partial(self.set_scan_ctrl_status, 'stop'))
+
+        self.scan_worker.scanFinished.connect(self.thread.quit)
+        self.scan_worker.scanFinished.connect(self.scan_worker.deleteLater)
 
         self.thread.finished.connect(self.thread.deleteLater)
 
@@ -1243,6 +1244,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.scanlogUpdated.emit(
             "Setting alter element to {0:.3f}...".format(x0))
         # self.scan_task.alter_element.value = x0
+        print("--- reset element: ", x0)
         self.scan_task.alter_action(x0, alter_elem=self.scan_task.alter_element)
         self.scanlogUpdated.emit(
             "Alter element reaches {0:.3f}".format(x0))
