@@ -1901,7 +1901,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             except:
                 sf = 1.0
             finally:
-                self.scaling_factor_lineEdit.setText(f"{sf:.3g}")
+                self.scaling_factor_lineEdit.setText(f"{sf:.5g}")
 
     @pyqtSlot(bool)
     def on_enable_logdock(self, enabled):
