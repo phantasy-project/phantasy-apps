@@ -1343,7 +1343,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 else:
                     worker.meta_signal1.emit((dx12_idx, None, Qt.DecorationRole))
 
-                if abs(dx02) > 1e-8 :
+                if not is_close(x0, x2, self.ndigit):
                     worker.meta_signal1.emit((dx02_idx, self._warning_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
                 else:
                     worker.meta_signal1.emit((dx02_idx, None, Qt.DecorationRole))
