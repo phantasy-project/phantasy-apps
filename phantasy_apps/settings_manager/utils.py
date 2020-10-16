@@ -465,6 +465,8 @@ class _SortProxyModel(QSortFilterProxyModel):
         self.filter_ftypes = ['ENG', 'PHY']
         # if True, filter checked items, otherwise show all items.
         self.filter_checked_enabled = False
+        self.filter_dx12_warning_enabled = False
+        self.filter_dx02_warning_enabled = False
 
     def lessThan(self, left, right):
         left_data = left.data(Qt.DisplayRole)
@@ -489,17 +491,36 @@ class _SortProxyModel(QSortFilterProxyModel):
     def filterAcceptsRow(self, src_row, src_parent):
         if src_parent.isValid():
             return True
-
         src_model = self.sourceModel()
         filter_key = src_model.get_filter_key()
+
         # ENG/PHY
         ftype = src_model.item(src_row, src_model.i_name).ftype
+        ftype_test = ftype in self.filter_ftypes
+
         # checked items
         if self.filter_checked_enabled:
-            item_checked = is_item_checked(
+            item_checked_test = is_item_checked(
                     src_model.item(src_row, src_model.i_name))
         else:
-            item_checked = True
+            item_checked_test = True
+
+        # dx12 checked
+        if self.filter_dx12_warning_enabled:
+            data = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['dx12']),
+                    Qt.DecorationRole)
+            dx12_warning_test = data is not None
+        else:
+            dx12_warning_test = True
+
+        if self.filter_dx02_warning_enabled:
+            data = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['dx02']),
+                    Qt.DecorationRole)
+            dx02_warning_test = data is not None
+        else:
+            dx02_warning_test = True
 
         idx = self.filter_col_index[filter_key]
         src_index = src_model.index(src_row, idx)
@@ -518,25 +539,36 @@ class _SortProxyModel(QSortFilterProxyModel):
                 if isinstance(t, (tuple, list)):
                     if len(t) > 1:
                         x1, x2 = t[0], t[1]
-                        return ftype in self.filter_ftypes and \
-                                item_checked and \
-                                (var >= x1 and var <= x2)
+                        val_test = (var >= x1 and var <= x2)
+                        #
+                        #return ftype in self.filter_ftypes and \
+                        #        item_checked and \
+                        #        (var >= x1 and var <= x2)
                     elif len(t) == 1:
                         # (x1,) or [x1,]
-                        return ftype in self.filter_ftypes and \
-                                item_checked and \
-                                var >= t[0]
+                        val_test = var >= t[0]
+                        #
+                        #return ftype in self.filter_ftypes and \
+                        #        item_checked and \
+                        #        var >= t[0]
                     else:
                         raise SyntaxError
                 elif isinstance(t, (float, int)):
-                        return ftype in self.filter_ftypes and \
-                                item_checked and \
-                                is_equal(var, t, 3)
+                        val_test = is_equal(var, t, 3)
+                        #
+                        #return ftype in self.filter_ftypes and \
+                        #        item_checked and \
+                        #        is_equal(var, t, 3)
                 else:
                     raise SyntaxError
             except SyntaxError:
-                return ftype in self.filter_ftypes and item_checked and \
-                    re.match(translate(filter_str), str(var)) is not None
+                val_test = re.match(translate(filter_str), str(var)) is not None
+                #
+                #return ftype in self.filter_ftypes and item_checked and \
+                #    re.match(translate(filter_str), str(var)) is not None
+            finally:
+                return ftype_test and item_checked_test and val_test and \
+                        dx12_warning_test and dx02_warning_test
         else:
             # Qt >= 5.12
             # regex = self.filterRegularExpression()
@@ -545,10 +577,10 @@ class _SortProxyModel(QSortFilterProxyModel):
             # wildcardunix
             # regex = self.filterRegExp()
             # return ftype in self.filter_ftypes and regex.exactMatch(var)
-
             #
-            return ftype in self.filter_ftypes and item_checked and \
-                   re.match(self.filterRegExp().pattern(), var) is not None
+            return ftype_test and item_checked_test and \
+                   re.match(self.filterRegExp().pattern(), var) is not None and \
+                   dx12_warning_test and dx02_warning_test
 
     def get_selection(self):
         # Return a list of selected items, [(idx_src, settings)].

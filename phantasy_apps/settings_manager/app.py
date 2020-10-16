@@ -1343,7 +1343,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 else:
                     worker.meta_signal1.emit((dx12_idx, None, Qt.DecorationRole))
 
-                if abs(dx02) > 1e-3 :
+                if abs(dx02) > 1e-8 :
                     worker.meta_signal1.emit((dx02_idx, self._warning_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
                 else:
                     worker.meta_signal1.emit((dx02_idx, None, Qt.DecorationRole))
@@ -1580,6 +1580,24 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if m is None:
             return
         m.filter_checked_enabled = selected
+        self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
+    def on_show_warning_dx12(self, is_checked):
+        # show all items with dx12 > tolerance
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_dx12_warning_enabled = is_checked
+        self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
+    def on_show_warning_dx02(self, is_checked):
+        # show all items with dx02 > tolerance
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_dx02_warning_enabled = is_checked
         self.filter_lineEdit.editingFinished.emit()
 
     def dragEnterEvent(self, e):
