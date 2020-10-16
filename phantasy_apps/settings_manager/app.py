@@ -75,6 +75,7 @@ from .utils import pack_settings
 from .utils import str2float
 from .utils import get_ratio_as_string
 from .utils import init_config_dir
+from .utils import VALID_FILTER_KEYS
 from .utils import VALID_FILTER_KEYS_NUM
 from .utils import SnapshotDataModel
 from .data import DEFAULT_MACHINE, DEFAULT_SEGMENT
@@ -1044,31 +1045,42 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m = self._tv.model()
         if m is None:
             return
-        s = self.sender().text().strip()
-        k = None
-        kv = s.split('=', 1)
-        if len(kv) == 2:
-            k, v = kv[0].strip(), kv[1].strip()
-        else:
-            v = s
-        if v == '':
-            v = '*'
-        m.sourceModel().set_filter_key(k)
+        full_str = self.sender().text().strip()
+        filter_key_value_tuples = [] # list of tuples of k, is_number_key, v
+        for s in full_str.split('and'):
+            s = s.strip()
+            k = None
+            kv = s.split('=', 1)
+            if len(kv) == 2:
+                k, v = kv[0].strip().lower(), kv[1].strip()
+            else:
+                v = s
+            if v == '':
+                v = '*'
+            if k not in VALID_FILTER_KEYS:
+                k = 'device'
+            if k in VALID_FILTER_KEYS_NUM:
+                is_number_key = True
+            else:
+                is_number_key = False
+            filter_key_value_tuples.append((k, is_number_key, v))
+            m.set_filters(filter_key_value_tuples)
 
-        # Qt >= 5.12
-        # re_str = QRegularExpression.wildcardToRegularExpression(v)
-        # m.setFilterRegularExpression(re_str)
+            # Qt >= 5.12
+            # re_str = QRegularExpression.wildcardToRegularExpression(v)
+            # m.setFilterRegularExpression(re_str)
 
-        # m.setFilterRegExp(QRegExp(v, Qt.CaseSensitive,
-        #                          QRegExp.WildcardUnix))
+            # m.setFilterRegExp(QRegExp(v, Qt.CaseSensitive,
+            #                          QRegExp.WildcardUnix))
 
-        if k in VALID_FILTER_KEYS_NUM:
-            m.setFilterRegExp(v)
-        else:
-            m.setFilterRegExp(fnmatch.translate(v))
-
+            #if k in VALID_FILTER_KEYS_NUM:
+            #    m.setFilterRegExp(v)
+            #else:
+            #    m.setFilterRegExp(fnmatch.translate(v))
+        m.invalidate()
+        #
         self.total_show_number_lbl.setText(str(m.rowCount()))
-        self.update_filter_completer(s)
+        self.update_filter_completer(full_str)
 
     @pyqtSlot()
     def on_load(self):
