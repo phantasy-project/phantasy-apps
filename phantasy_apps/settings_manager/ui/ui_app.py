@@ -44,9 +44,11 @@ class Ui_MainWindow(object):
             "total_elem_number_title_lbl")
         self.horizontalLayout_2.addWidget(self.total_elem_number_title_lbl)
         self.total_elem_number_lbl = QtWidgets.QLabel(self.centralwidget)
-        self.total_elem_number_lbl.setStyleSheet("QLabel {\n"
-                                                 "    color: #28A745;\n"
-                                                 "}")
+        self.total_elem_number_lbl.setStyleSheet(
+            "QLabel {\n"
+            "    font-family: monospace;\n"
+            "    color: #28A745;\n"
+            "}")
         self.total_elem_number_lbl.setObjectName("total_elem_number_lbl")
         self.horizontalLayout_2.addWidget(self.total_elem_number_lbl)
         self.total_sppv_number_title_lbl = QtWidgets.QLabel(self.centralwidget)
@@ -54,9 +56,11 @@ class Ui_MainWindow(object):
             "total_sppv_number_title_lbl")
         self.horizontalLayout_2.addWidget(self.total_sppv_number_title_lbl)
         self.total_sppv_number_lbl = QtWidgets.QLabel(self.centralwidget)
-        self.total_sppv_number_lbl.setStyleSheet("QLabel {\n"
-                                                 "    color: #28A745;\n"
-                                                 "}")
+        self.total_sppv_number_lbl.setStyleSheet(
+            "QLabel {\n"
+            "    font-family: monospace;\n"
+            "    color: #28A745;\n"
+            "}")
         self.total_sppv_number_lbl.setObjectName("total_sppv_number_lbl")
         self.horizontalLayout_2.addWidget(self.total_sppv_number_lbl)
         self.total_rdpv_number_title_lbl = QtWidgets.QLabel(self.centralwidget)
@@ -64,9 +68,11 @@ class Ui_MainWindow(object):
             "total_rdpv_number_title_lbl")
         self.horizontalLayout_2.addWidget(self.total_rdpv_number_title_lbl)
         self.total_rdpv_number_lbl = QtWidgets.QLabel(self.centralwidget)
-        self.total_rdpv_number_lbl.setStyleSheet("QLabel {\n"
-                                                 "    color: #28A745;\n"
-                                                 "}")
+        self.total_rdpv_number_lbl.setStyleSheet(
+            "QLabel {\n"
+            "    font-family: monospace;\n"
+            "    color: #28A745;\n"
+            "}")
         self.total_rdpv_number_lbl.setObjectName("total_rdpv_number_lbl")
         self.horizontalLayout_2.addWidget(self.total_rdpv_number_lbl)
         spacerItem = QtWidgets.QSpacerItem(40, 20,
@@ -392,17 +398,20 @@ class Ui_MainWindow(object):
         self.toolButton.setObjectName("toolButton")
         self.horizontalLayout_9.addWidget(self.toolButton)
         self.total_show_number_lbl = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.total_show_number_lbl.sizePolicy().hasHeightForWidth())
         self.total_show_number_lbl.setSizePolicy(sizePolicy)
-        self.total_show_number_lbl.setStyleSheet("QLabel {\n"
-                                                 "    color: #28A745;\n"
-                                                 "    font-weight: bold;\n"
-                                                 "}")
+        self.total_show_number_lbl.setMinimumSize(QtCore.QSize(80, 0))
+        self.total_show_number_lbl.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.total_show_number_lbl.setStyleSheet(
+            "QLabel {\n"
+            "    font-family: monospace;\n"
+            "    color: #28A745;\n"
+            "}")
         self.total_show_number_lbl.setAlignment(QtCore.Qt.AlignRight
                                                 | QtCore.Qt.AlignTrailing
                                                 | QtCore.Qt.AlignVCenter)
