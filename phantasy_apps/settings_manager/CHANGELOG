@@ -1,4 +1,60 @@
+Version 4.2: 2020-10-19
+=======================
+
+- Settings view filtering:
+  - Add support to 'in' test to Settings View filtering.
+  - Add support compound 'and' filter for settings view.
+  - Compare x0 and x2 with precision number.
+  - Implement buttons for filtering with dx12, dx02 warning signs.
+
+- Apply settings:
+  - Skip setting device if current setting is close to the proposed.
+
+- Fixes:
+  - Fix crash when do inverse selection on all checked items.
+  - Fix delta x0, x2 updating retarding issue.
+  - Hint typoes.
+
+- Scaling factor:
+  - Set scaling factor format with '.5g'.
+
+- Maintaince:
+  - Update default device sp/rd tolerance list.
+  - Always keep set log file.
+  - Load elements from config.
+  - Update notebook for generating settings files.
+  - Support add note meta in contrib notebook for generating settings.
+  - Update the notebook to generate settings files for cavity tuning.
+
+- GUI:
+  - Hide settings statistics info by default.
+  - Update symbol for dx02 and dx12.
+  - SettingsModel support 'auto_fmt' argument, '{0:{n}g}' as auto format.
+  - Handle the widget control permission for data updaters.
+  - Add option to set .{n}g format for presenting data.
+  - Add min/max-imize buttons to floating snapshots window.
+  - Close device set log by default.
+
+- Tools:
+  - Update the command to evoke ipython console.
+
+- Data/FRIB:
+  - Update settings data file for cavity tuning.
+  - Add generated settings file for 129Xe50 cavity tuning.
+  - Add revised settings xlsx file for LS2 phasing.
+  - Add setting files for 129Xe27 to 50 from MEBT to FS1A,B, FS2.
+  - Add xlsx file for 129Xe27 to 50 for MEBT to FS1A/B, FS2.
+  - Add settings with reduced solenoid current, 2020-10-06.
+  - Append timestamp to the generated filename.
+  - Update settings files for LS1,2 cavity tuning.
+  - Add settings files for LS1,2 cavity tuning.
+
+- Doc:
+  - Update settings manager guide doc, pdf.
+  - Add user guide .doc file.
+
 Version 4.1: 2020-10-01
+=======================
 
 - Refactor SnapshotDataModel, w.r.t. the solution to handle buttons in row
 - Implement dynamic filter buttons for ion names and tag names to Snapshots
@@ -8,6 +64,7 @@ Version 4.1: 2020-10-01
 - Other bug fixes and feature enhancements
 
 Version 4.0: 2020-09-25
+=======================
 
 - Hide Save and Load Settings tools, use Save and Cast in Snapshots Window instead
 - Initialize cofiguration files for new users
@@ -37,6 +94,7 @@ Version 4.0: 2020-09-25
   - Support open in system text editor, e.g. do searching
 
 Version 3.0: 2020-09-15
+=======================
 
 - Initial settings:
   - Add support initialize settings with loaded lattice
