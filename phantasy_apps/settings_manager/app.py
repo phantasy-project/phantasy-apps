@@ -84,25 +84,8 @@ PX_SIZE = 24
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
 IDX_RATE_MAP = {0: 1.0, 1: 0.5, 2: 2.0, 3: 0.2, 4: 0.1}
 FILTER_TT = """\
-Input filter string with the format of 'keyword=pattern', valid keywords as
-the headers show, pattern applies Unix wildcard rules.
-Keyword is case insensitive, if keyword is not defined, 'device' is used.
-For 'setpoint', the keyword 'x0' is used, the same rule applies to 'x1', 'x2',
-'dx01', 'dx02', 'dx03', where 'dxij' is 'xi - xj' as show in the headers.
-
-Press Enter to activate the filter, here is some examples:
-1. *: match all device names, which is equivalent of device=*;
-2. *LEBT*: match device name which has string 'LEBT';
-3. type='CAV': match all devices of type 'CAV';
-4. dx12=0.00*: match the diff between readback and setpoint of 0.00xx..;
-5. ? is to match one char or digit, pure '' is to interpret as *.
-
-For the number columns, value range or single value filter is supported, e.g.
-1. pos=(1,) matches all the position value equal or greater than 1.0;
-2. x1=(-1, 2) matches current readback value is in [-1, 2] range.
-3. dx12=0.1 matches the discrenpacy between the live readback and setpoint is 0.1.
-4. x2/x0=(0.1,) matches the ratio of x2/x0 greater than 0.1.
-"""
+Filter strings 'keyword=pattern', multiple conditions could be linked with 'and', support 'in'
+test. More details please click the right help button."""
 TS_FMT = "%Y-%m-%dT%H:%M:%S.%f"
 _, LOG_FILE = tempfile.mkstemp(datetime.now().strftime(TS_FMT), "settings_manager_setlog_", "/tmp")
 

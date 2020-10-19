@@ -487,6 +487,9 @@ class _SortProxyModel(QSortFilterProxyModel):
 
     def test_one_string_filter(self, src_row, m_src, key, is_number_key, value):
         # test if the value of *key* of *m_src* matches *value*
+        # 1. for number columns: value range is supported
+        # 2. for string columns: 'in' operation is supported
+        #
         idx = self.filter_col_index[key]
         src_index = m_src.index(src_row, idx)
         var = src_index.data(Qt.DisplayRole)
@@ -498,6 +501,15 @@ class _SortProxyModel(QSortFilterProxyModel):
         if is_number_key:
             var = float(var)
             filter_str = value
+            # in test?
+            if 'in' in value:
+                try:
+                    val_test = eval(f'{var} {value}')
+                except (SyntaxError, NameError):
+                    pass
+                else:
+                    return val_test
+            #
             try:
                 t = eval(filter_str)
                 # (x1, x2) or [x1, x2], or (x1, x2, x3) (only use x1, x2)
@@ -519,6 +531,13 @@ class _SortProxyModel(QSortFilterProxyModel):
             finally:
                 return val_test
         else:
+            if 'in' in value:
+                try:
+                    val_test = eval(f'"{var}" {value}')
+                except (SyntaxError, NameError):
+                    pass
+                else:
+                    return val_test
             # Qt >= 5.12
             # regex = self.filterRegularExpression()
             # return ftype in self.filter_ftypes and regex.match(var).hasMatch()
