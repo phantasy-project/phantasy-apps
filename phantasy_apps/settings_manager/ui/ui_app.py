@@ -83,9 +83,9 @@ class Ui_MainWindow(object):
         self.auto_ndigit_chkbox.setEnabled(True)
         self.auto_ndigit_chkbox.setObjectName("auto_ndigit_chkbox")
         self.horizontalLayout_2.addWidget(self.auto_ndigit_chkbox)
-        self.label_9 = QtWidgets.QLabel(self.centralwidget)
-        self.label_9.setObjectName("label_9")
-        self.horizontalLayout_2.addWidget(self.label_9)
+        self.ndigit_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.ndigit_lbl.setObjectName("ndigit_lbl")
+        self.horizontalLayout_2.addWidget(self.ndigit_lbl)
         self.ndigit_sbox = QtWidgets.QSpinBox(self.centralwidget)
         self.ndigit_sbox.setMaximum(20)
         self.ndigit_sbox.setProperty("value", 3)
@@ -910,7 +910,7 @@ class Ui_MainWindow(object):
         self.snp_dock.topLevelChanged['bool'].connect(
             MainWindow.on_snpdock_top_level_changed)
         self.auto_ndigit_chkbox.toggled['bool'].connect(
-            self.label_9.setDisabled)
+            self.ndigit_lbl.setDisabled)
         self.auto_ndigit_chkbox.toggled['bool'].connect(
             MainWindow.on_auto_ndigit)
         self.show_sts_btn.toggled['bool'].connect(
@@ -952,7 +952,7 @@ class Ui_MainWindow(object):
             _translate("MainWindow",
                        "Change data presenting format to \'{n}g\'."))
         self.auto_ndigit_chkbox.setText(_translate("MainWindow", "Auto"))
-        self.label_9.setText(_translate("MainWindow", "Precision number"))
+        self.ndigit_lbl.setText(_translate("MainWindow", "Precision number"))
         self.init_settings_chkbox.setToolTip(
             _translate(
                 "MainWindow",
@@ -1046,7 +1046,7 @@ class Ui_MainWindow(object):
         self.show_warning_dx02_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Show x<span style=\" vertical-align:sub;\">0 </span>!= x<span style=\" vertical-align:sub;\">2</span></p></body></html>"
+                "<html><head/><body><p>Show x<span style=\" vertical-align:sub;\">0 </span>!= x<span style=\" vertical-align:sub;\">2</span>, up to number of precision.</p></body></html>"
             ))
         self.show_warning_dx02_btn.setText(_translate("MainWindow", "0,2"))
         self.show_warning_dx12_btn.setToolTip(
