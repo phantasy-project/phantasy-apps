@@ -1270,8 +1270,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
 
         delt = self._update_delt
-        m = self._tv.model().sourceModel()
-        self.updater = DAQT(daq_func=partial(self.update_value_single, m, delt),
+        m0 = self._tv.model()
+        m = m0.sourceModel()
+        self.updater = DAQT(daq_func=partial(self.update_value_single, m, m0, delt, True),
                             daq_seq=range(1))
         self.updater.meta_signal1.connect(partial(
             self.on_update_display, m))
@@ -1282,7 +1283,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.updater.finished.connect(self.start_thread_update)
         self.updater.start()
 
-    def update_value_single(self, m, delt, iiter):
+    def update_value_single(self, m, m0, delt, viewport_only, iiter):
         # update data tree for one time, iterate all items.
         if delt == 0:
             worker = self.one_updater
@@ -1291,14 +1292,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             worker = self.updater
         t0 = time.time()
+        cnt_fld = 0
+        cnt_pv = 0
         for o, it in zip(self._fld_obj + self._pv_obj, self._fld_it + self._pv_it):
             if not isinstance(o, CaField):  # PV
-                val = o.get()
                 for iit in it:
                     idx = m.indexFromItem(iit)
-                    worker.meta_signal1.emit((idx, self.fmt.format(val), Qt.DisplayRole))
+                    if viewport_only and not self.is_idx_visible(m0.mapFromSource(idx)):
+                        continue
+                    worker.meta_signal1.emit((idx, self.fmt.format(o.get()), Qt.DisplayRole))
+                    cnt_pv += 1
             else:  # CaField
                 idx0 = m.indexFromItem(it[0]) # rd
+                if viewport_only and not self.is_idx_visible(m0.mapFromSource(idx0)):
+                    continue
                 idx1 = m.indexFromItem(it[1]) # cset
                 irow = idx0.row()
                 rd_val, sp_val = o.value, o.current_setting()
@@ -1342,6 +1349,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     worker.meta_signal1.emit((dx02_idx, self._warning_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
                 else:
                     worker.meta_signal1.emit((dx02_idx, None, Qt.DecorationRole))
+                cnt_fld += 1
 
         dt = time.time() - t0
         dt_residual = delt - dt
@@ -1350,9 +1358,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             if dt_residual > 0:
                 time.sleep(dt_residual)
-                printlog("Waited {0:.0f} msec.".format(dt_residual * 1000))
+                printlog("Waited {0:.0f} msec (PV: {1}, Field: {2}).".format(dt_residual * 1000,
+                         cnt_pv, cnt_fld))
             else:
-                printlog("Rate is {0:.1f} Hz.".format(1.0 / dt))
+                printlog("Rate is {0:.1f} Hz (PV: {1}, Field: {2}).".format(1.0 / dt,
+                         cnt_pv, cnt_fld))
 
     @pyqtSlot(bool)
     def on_toggle_update_btn(self, f):
@@ -1506,13 +1516,46 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         m.data_changed.emit(res)
 
+    def is_idx_visible(self, idx):
+        #
+        # test if current row is visible in current viewport
+        #
+        viewport_rect = self._tv.viewport().rect()
+        rect = self._tv.visualRect(idx)
+        if not viewport_rect.contains(rect):
+            return False
+        if not rect.isValid():
+            return False
+        # print(f"- ({idx.row()}, {idx.column()}), {rect.x(), rect.y(), rect.width(), rect.height()}")
+        return True
+
+    def on_click_test_btn(self):
+        # debug
+        # list all rows currently are in the viewport
+        #
+        if self._tv.model() is None:
+            return
+        m = self._tv.model()
+        m_src = m.sourceModel()
+        # print("=" * 20)
+        for i in range(m.rowCount()):
+            idx = m.index(i, 0)
+            is_visible = self.is_idx_visible(idx)
+            if not is_visible:
+                continue
+            idx_src = m.mapToSource(idx)
+            it_src = m_src.itemFromIndex(idx_src)
+        #    print(f"-- Item in source model: {it_src.text()}, index: ({idx_src.row()}, {idx_src.column()})")
+        # print("=" * 20)
+
     @pyqtSlot()
     def on_single_update(self):
         """Update values, indicators for one time."""
         if self._tv.model() is None:
             return
-        m = self._tv.model().sourceModel()
-        self.one_updater = DAQT(daq_func=partial(self.update_value_single, m, 0),
+        m0 = self._tv.model()
+        m = m0.sourceModel()
+        self.one_updater = DAQT(daq_func=partial(self.update_value_single, m, m0, 0, False),
                                 daq_seq=range(1))
         self.one_updater.meta_signal1.connect(partial(
             self.on_update_display, m))
@@ -1526,12 +1569,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Set widgets status for updating.
         """
         w1 = [self.update_rate_cbb, self.apply_btn,
-              self.single_update_btn, self.snp_dock, self.auto_ndigit_chkbox]
+              self.single_update_btn, self.auto_ndigit_chkbox]
         if is_single:
             w1.append(self.update_ctrl_btn)
+            w1.append(self.snp_dock)
         [i.setDisabled(status=='START') for i in w1]
         # auto ndigit
-        self.ndigit_sbox.setDisabled(status=='START' or self.auto_ndigit_chkbox.isChecked())
+        for o in (self.ndigit_sbox, self.ndigit_lbl):
+            o.setDisabled(status=='START' or self.auto_ndigit_chkbox.isChecked())
 
     def set_widgets_status_for_applying(self, status):
         """Set widgets status for applying.
@@ -1640,7 +1685,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         src_m = m.sourceModel()
         # single update
-        self._updater = DAQT(daq_func=partial(self.update_value_single, src_m, -1),
+        self._updater = DAQT(daq_func=partial(self.update_value_single, src_m, m, -1, False),
                              daq_seq=range(1))
         self._updater.meta_signal1.connect(partial(self.on_update_display, src_m))
         self._updater.daqStarted.connect(partial(self.set_widgets_status_for_updating, 'START'))
