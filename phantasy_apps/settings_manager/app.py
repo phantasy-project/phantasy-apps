@@ -45,6 +45,7 @@ from phantasy_ui import BaseAppForm
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
 from phantasy_ui import printlog
+from phantasy_ui import milli_sleep
 from phantasy_ui.widgets import is_item_checked
 from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
@@ -1682,7 +1683,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # post_current_sp: if update x0 with x2 column or not
         m = self._tv.model()
         if m is None:
-            return
+             return
+        if self.update_ctrl_btn.isChecked():
+            self.update_ctrl_btn.setChecked(False)
+            milli_sleep(100)
         src_m = m.sourceModel()
         # single update
         self._updater = DAQT(daq_func=partial(self.update_value_single, src_m, m, -1, False),
