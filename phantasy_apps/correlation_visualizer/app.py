@@ -7,6 +7,7 @@ from getpass import getuser
 
 import epics
 import numpy as np
+from PyQt5.QtCore import QEventLoop
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QThread
 from PyQt5.QtCore import QTimer
@@ -790,6 +791,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.scan_worker.scanFinished.connect(lambda: self.set_btn_status(mode='stop'))
         self.scan_worker.scanFinished.connect(lambda: self.set_timestamp(type='stop'))
         self.scan_worker.scanFinished.connect(self.on_auto_title)
+        self.scan_worker.scanFinished.connect(self.on_scan_finished)
 
         # scan is stopped by STOP btn
         self.scan_worker.scanStopped.connect(self.scan_worker.scanFinished)
@@ -820,6 +822,12 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
         self.thread.started.connect(self.scan_worker.run)
         self.thread.start()
+
+    @pyqtSlot()
+    def on_scan_finished(self):
+        QMessageBox.information(self, "Job is done",
+                f"Scan task is done at {current_datetime(fmt='%Y-%m-%dT%H:%M:%S')}, it is good to save data now.",
+                QMessageBox.Ok)
 
     @pyqtSlot(int, float, QVariant)
     def on_one_iter_finished(self, idx, x, arr):
@@ -854,6 +862,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             self.scanlogTextColor.emit(COLOR_PRIMARY)
             self.scanlogUpdated.emit("[STOP] button is pushed")
             self.scan_worker.stop()
+            loop = QEventLoop()
+            self.scan_worker.scanStopped.connect(loop.exit)
+            loop.exec_()
             self.scanlogTextColor.emit(COLOR_WARNING)
             self.scanlogUpdated.emit("Scan task is stopped.")
             self.scan_pb.setValue(100)
