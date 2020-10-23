@@ -616,6 +616,8 @@ class ScanWorker(QObject):
     scanFinished = pyqtSignal()
     # scan routine is stopped by STOP btn
     scanStopped = pyqtSignal()
+    # scan routine is stopped at (index, value)
+    scanStoppedAt = pyqtSignal(int, float)
     # scan routine is paused by PAUSE btn
     scanPaused = pyqtSignal()
     scanPausedAtIndex = pyqtSignal(int)
@@ -669,6 +671,7 @@ class ScanWorker(QObject):
             if not self.run_flag:
                 printlog("Break scan by STOP button.")
                 self.scanStopped.emit()
+                self.scanStoppedAt.emit(idx, alter_array[idx - 1])
                 break
 
             if self.pause_flag:

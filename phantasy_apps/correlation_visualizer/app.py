@@ -856,6 +856,11 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def on_click_stop_btn(self):
         """Stop scan routine, can only start again.
         """
+        def on_stop_at_index(index, value):
+            QMessageBox.information(self, "Job is stopped",
+                    f"Scan task is stopped at {value:g}, {index}th iteration, however data still could be saved and loaded.",
+                    QMessageBox.Ok)
+
         if self.scan_worker is None:
             return
         if self.scan_worker.is_running():
@@ -863,6 +868,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             self.scanlogUpdated.emit("[STOP] button is pushed")
             self.scan_worker.stop()
             loop = QEventLoop()
+            self.scan_worker.scanStoppedAt.connect(on_stop_at_index)
             self.scan_worker.scanStopped.connect(loop.exit)
             loop.exec_()
             self.scanlogTextColor.emit(COLOR_WARNING)
