@@ -1,0 +1,64 @@
+{
+  "figure": {
+    "title": {
+      "value": "",
+      "font": "Cantarell,18,-1,5,50,0,0,0,0,0,Regular"
+    },
+    "labels": {
+      "xlabel": "",
+      "ylabel": "",
+      "font": "Cantarell,16,-1,5,50,0,0,0,0,0,Regular"
+    },
+    "xy_range": {
+      "auto_scale": true,
+      "xmin": 0,
+      "xmax": 1,
+      "ymin": 0,
+      "ymax": 1
+    },
+    "legend": {
+      "show": false,
+      "location": 0
+    }
+  },
+  "curve": [
+    {
+      "label": "_nolegend_",
+      "line_id": 0,
+      "line": {
+        "style": "--",
+        "drawstyle": "Line",
+        "color": "#0000FF",
+        "width": 2.0,
+        "alpha": 0.95
+      },
+      "marker": {
+        "style": "o",
+        "edgecolor": "#FF0000",
+        "facecolor": "#FFFFFF",
+        "size": 10.0,
+        "width": 2.0
+      }
+    }
+  ],
+  "style": {
+    "figsize": {
+      "width": 6.4,
+      "height": 4.8,
+      "dpi": 130.0
+    },
+    "background": {
+      "color": "#EFEFEF"
+    },
+    "ticks": {
+      "mticks_on": true,
+      "font": "Cantarell,12,-1,5,50,0,0,0,0,0,Regular",
+      "color": "#000000"
+    },
+    "layout": {
+      "tight_on": false,
+      "grid_on": true,
+      "grid_color": "#c5c5c5"
+    }
+  }
+}
