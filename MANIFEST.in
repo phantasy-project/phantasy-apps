@@ -7,6 +7,7 @@ recursive-include phantasy_apps/online_model/config *
 recursive-include phantasy_apps/achromat_tuning/config *
 recursive-include phantasy_apps/app_launcher/launcher *
 recursive-include phantasy_apps/correlation_visualizer/launcher *
+recursive-include phantasy_apps/correlation_visualizer/config *
 recursive-include phantasy_apps/diag_viewer/launcher *
 recursive-include phantasy_apps/quad_scan/launcher *
 recursive-include phantasy_apps/settings_manager/launcher *
