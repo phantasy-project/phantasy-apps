@@ -36,6 +36,7 @@ from phantasy_ui import printlog
 from phantasy_ui.widgets import ElementWidget
 from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui.widgets import ElementSelectDialog
+from phantasy_apps.utils import apply_mplcurve_settings
 from phantasy_apps.utils import current_datetime
 
 from .app_array_set import ArraySetDialog
@@ -266,6 +267,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.regular_alter_action_rbtn.setChecked(True)
 
         self.setAcceptDrops(True)
+
+        # mpl settings
+        delayed_exec(lambda: self.init_mpl_settings(), 500)
 
     @pyqtSlot(bool)
     def on_pause_scan(self, f):
@@ -545,15 +549,12 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
                    delimiter='\t')
 
     def init_mpl_settings(self):
-        o = self.scan_plot_widget
-        o.setFigureMTicksToggle(True)
-        o.setFigureGridToggle(True)
+        apply_mplcurve_settings(self.scan_plot_widget, 'correlation_visualizer',
+                                filename='mpl_settings.json')
 
     def _post_init_ui(self):
         """post init ui
         """
-        # mpl settings
-        self.init_mpl_settings()
         # toolbtns
         # save data
         self.save_data_tbtn.setIconSize(BOTTOM_TBTN_ICON_QSIZE)
