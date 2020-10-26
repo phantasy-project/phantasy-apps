@@ -83,7 +83,7 @@ from .data import DEFAULT_MACHINE, DEFAULT_SEGMENT
 
 PX_SIZE = 24
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
-IDX_RATE_MAP = {0: 1.0, 1: 0.5, 2: 2.0, 3: 0.2, 4: 0.1}
+IDX_RATE_MAP = {0: 1.0, 1: 2.0, 2: 5.0, 3: 0.5, 4: 0.2, 5: 0.1}
 FILTER_TT = """\
 Filter strings 'keyword=pattern', multiple conditions could be linked with 'and', support 'in'
 test. More details please click the right help button."""
@@ -724,7 +724,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(int)
     def on_update_rate_changed(self, i):
-        if i == 5:  # add 'auto' back to cbb index 5
+        if i == 6:  # add 'auto' back to cbb index 6
             self._update_mode = 'auto'
             tt = "Auto updating rate."
         else:
