@@ -130,6 +130,8 @@ QToolButton:checked {{
 TBTN_STY_GOLDEN = TBTN_STY_BASE.format(c=TBTN_STY_COLOR_TUPLE_GOLDEN)
 TBTN_STY_REGULAR = TBTN_STY_BASE.format(c=TBTN_STY_COLOR_TUPLE)
 
+DEFAULT_X12_TOL = 0.15
+DEFAULT_X12_TOL_AS_STR = '0.15'
 
 class SettingsModel(QStandardItemModel):
     """Settings model from Settings instance.
@@ -204,11 +206,8 @@ class SettingsModel(QStandardItemModel):
 
         for elem, fname, fld, fval0 in self._settings:
             item_ename = QStandardItem(elem.name)
-            # bgcolor = get_bg_color(elem.ename)
 
             if fld is None:
-                # debug
-                # printlog("{} [{}] is invalid.".format(elem.name, fname))
                 continue
             item_ename.fobj = fld
             item_ename.ftype = fld.ftype
@@ -217,9 +216,9 @@ class SettingsModel(QStandardItemModel):
             # PVs, setpoint and readback
             for sp_obj, rd_obj in zip(fld.setpoint_pv, fld.readback_pv):
                 it_sp_n = QStandardItem(sp_obj.pvname)
-                it_sp_v = QStandardItem(self.fmt.format(sp_obj.value))
+                it_sp_v = QStandardItem('-')
                 it_rd_n = QStandardItem(rd_obj.pvname)
-                it_rd_v = QStandardItem(self.fmt.format(rd_obj.value))
+                it_rd_v = QStandardItem('-')
 
                 [i.setEditable(False) for i in (it_sp_n, it_sp_v,
                                                 it_rd_n, it_rd_v)]
@@ -249,41 +248,28 @@ class SettingsModel(QStandardItemModel):
             #
             item_fname = QStandardItem(fname)
             item_val0 = QStandardItem(self.fmt.format(fval0))
-
-            item_rd = QStandardItem(self.fmt.format(fld.value))
-            item_cset = QStandardItem(self.fmt.format(elem.current_setting(fname)))
+            item_rd = QStandardItem('-')
+            item_cset = QStandardItem('-')
 
             self._fld_obj.append(fld)
             self._fld_it.append([item_rd, item_cset])
 
             row = [item_ename, item_fname]
-            for i, f in enumerate(COLUMN_NAMES):
-                if f in COLUMN_NAMES_ATTR:
-                    v = getattr(elem, COLUMN_SFIELD_MAP[f])
-                    if not isinstance(v, str):
-                        v = '{0:.4f}'.format(v)
-                    item = QStandardItem(v)
-                    row.append(item)
-            #
-            row.extend([item_val0, item_rd, item_cset])
-            x0 = float(item_val0.text())
-            x1 = float(item_rd.text())
-            x2 = float(item_cset.text())
-            # dx01,02,12
-            v_d01 = x0 - x1
-            v_d02 = x0 - x2
-            v_d12 = x1 - x2
-            for v in (v_d01, v_d02, v_d12):
-                item = QStandardItem(self.fmt.format(v))
+            for _, f in zip(COLUMN_NAMES_ATTR, SFIELD_NAMES_ATTR):
+                v = getattr(elem, f)
+                if not isinstance(v, str):
+                    v = '{0:.4f}'.format(v)
+                item = QStandardItem(v)
                 row.append(item)
 
-            # editable
-            for i in row:
-                i.setEditable(False)
+            #
+            row.extend([item_val0, item_rd, item_cset,
+                        QStandardItem('-'), QStandardItem('-'), QStandardItem('-')])
+            [i.setEditable(False) for i in row]
 
             # tolerance for dx12
-            tol = fld.tolerance
-            item_tol = QStandardItem(self.fmt.format(tol))
+            # tol = fld.tolerance
+            item_tol = QStandardItem(DEFAULT_X12_TOL_AS_STR)
             item_tol.setEditable(True)
             row.append(item_tol)
 
@@ -295,7 +281,7 @@ class SettingsModel(QStandardItemModel):
             item_ename.setEnabled(write_access)
 
             # x2/x0
-            item_ratio_x20 = QStandardItem(get_ratio_as_string(x2, x0, self.fmt))
+            item_ratio_x20 = QStandardItem('-')
             item_ratio_x20.setEditable(False)
             row.append(item_ratio_x20)
 
@@ -303,13 +289,6 @@ class SettingsModel(QStandardItemModel):
                 for i in row:
                     i.setSelectable(False)
                     i.setData(QBrush(QColor(FG_NO_WRITE)), Qt.ForegroundRole)
-
-            # fgcolor = get_fg_color(write_access)
-
-            # color
-            # for i in row:
-                # i.setData(QBrush(QColor(bgcolor)), Qt.BackgroundRole)
-                # i.setData(QBrush(QColor(fgcolor)), Qt.ForegroundRole)
 
             self.appendRow(row)
             ename_set.add(elem.name)
