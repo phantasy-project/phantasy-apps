@@ -185,6 +185,7 @@ class Ui_MainWindow(object):
         icon1.addPixmap(QtGui.QPixmap(":/icons/view-details.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.lv_view.setIcon(icon1)
+        self.lv_view.setIconSize(QtCore.QSize(24, 24))
         self.lv_view.setObjectName("lv_view")
         self.gridLayout_2.addWidget(self.lv_view, 5, 4, 1, 1)
         self.lv_mach = QtWidgets.QLabel(self.widget)
@@ -448,6 +449,7 @@ class Ui_MainWindow(object):
         icon6.addPixmap(QtGui.QPixmap(":/icons/mps_skipped.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.mps_status_btn.setIcon(icon6)
+        self.mps_status_btn.setIconSize(QtCore.QSize(24, 24))
         self.mps_status_btn.setAutoRaise(True)
         self.mps_status_btn.setObjectName("mps_status_btn")
         self.horizontalLayout_3.addWidget(self.mps_status_btn)
@@ -472,6 +474,7 @@ class Ui_MainWindow(object):
         icon7.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
         self.start_btn.setIcon(icon7)
+        self.start_btn.setIconSize(QtCore.QSize(24, 24))
         self.start_btn.setAutoDefault(True)
         self.start_btn.setObjectName("start_btn")
         self.horizontalLayout_3.addWidget(self.start_btn)
@@ -487,6 +490,7 @@ class Ui_MainWindow(object):
         icon8.addPixmap(QtGui.QPixmap(":/icons/pause.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
         self.pause_btn.setIcon(icon8)
+        self.pause_btn.setIconSize(QtCore.QSize(24, 24))
         self.pause_btn.setAutoDefault(True)
         self.pause_btn.setObjectName("pause_btn")
         self.horizontalLayout_3.addWidget(self.pause_btn)
@@ -502,6 +506,7 @@ class Ui_MainWindow(object):
         icon9.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
         self.stop_btn.setIcon(icon9)
+        self.stop_btn.setIconSize(QtCore.QSize(24, 24))
         self.stop_btn.setAutoDefault(True)
         self.stop_btn.setObjectName("stop_btn")
         self.horizontalLayout_3.addWidget(self.stop_btn)
@@ -517,6 +522,7 @@ class Ui_MainWindow(object):
         icon10.addPixmap(QtGui.QPixmap(":/icons/retake.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.retake_btn.setIcon(icon10)
+        self.retake_btn.setIconSize(QtCore.QSize(24, 24))
         self.retake_btn.setAutoDefault(True)
         self.retake_btn.setObjectName("retake_btn")
         self.horizontalLayout_3.addWidget(self.retake_btn)
@@ -667,7 +673,7 @@ class Ui_MainWindow(object):
         font.setItalic(False)
         font.setWeight(50)
         self.scan_plot_widget.setFigureTitleFont(font)
-        self.scan_plot_widget.setProperty("figureDPI", 120.0)
+        self.scan_plot_widget.setProperty("figureDPI", 125.0)
         self.scan_plot_widget.setProperty("figureBackgroundColor",
                                           QtGui.QColor(239, 239, 239))
         self.scan_plot_widget.setFigureGridToggle(True)
@@ -681,6 +687,7 @@ class Ui_MainWindow(object):
         icon11.addPixmap(QtGui.QPixmap(":/icons/auto-scale.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.autoscale_tbtn.setIcon(icon11)
+        self.autoscale_tbtn.setIconSize(QtCore.QSize(24, 24))
         self.autoscale_tbtn.setCheckable(True)
         self.autoscale_tbtn.setChecked(False)
         self.autoscale_tbtn.setAutoRaise(True)
@@ -691,6 +698,7 @@ class Ui_MainWindow(object):
         icon12.addPixmap(QtGui.QPixmap(":/icons/save_figure.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.save_data_tbtn.setIcon(icon12)
+        self.save_data_tbtn.setIconSize(QtCore.QSize(24, 24))
         self.save_data_tbtn.setAutoRaise(True)
         self.save_data_tbtn.setObjectName("save_data_tbtn")
         self.horizontalLayout.addWidget(self.save_data_tbtn)
@@ -699,6 +707,7 @@ class Ui_MainWindow(object):
         icon13.addPixmap(QtGui.QPixmap(":/icons/title.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.auto_title_tbtn.setIcon(icon13)
+        self.auto_title_tbtn.setIconSize(QtCore.QSize(24, 24))
         self.auto_title_tbtn.setAutoRaise(True)
         self.auto_title_tbtn.setObjectName("auto_title_tbtn")
         self.horizontalLayout.addWidget(self.auto_title_tbtn)
@@ -707,6 +716,7 @@ class Ui_MainWindow(object):
         icon14.addPixmap(QtGui.QPixmap(":/icons/xylabel.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.auto_labels_tbtn.setIcon(icon14)
+        self.auto_labels_tbtn.setIconSize(QtCore.QSize(24, 24))
         self.auto_labels_tbtn.setAutoRaise(True)
         self.auto_labels_tbtn.setObjectName("auto_labels_tbtn")
         self.horizontalLayout.addWidget(self.auto_labels_tbtn)
@@ -715,6 +725,7 @@ class Ui_MainWindow(object):
         icon15.addPixmap(QtGui.QPixmap(":/icons/moveto.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.moveto_tbtn.setIcon(icon15)
+        self.moveto_tbtn.setIconSize(QtCore.QSize(24, 24))
         self.moveto_tbtn.setPopupMode(QtWidgets.QToolButton.MenuButtonPopup)
         self.moveto_tbtn.setAutoRaise(True)
         self.moveto_tbtn.setArrowType(QtCore.Qt.NoArrow)
@@ -725,6 +736,7 @@ class Ui_MainWindow(object):
         icon16.addPixmap(QtGui.QPixmap(":/icons/set.png"), QtGui.QIcon.Normal,
                          QtGui.QIcon.Off)
         self.set_tbtn.setIcon(icon16)
+        self.set_tbtn.setIconSize(QtCore.QSize(24, 24))
         self.set_tbtn.setAutoRaise(True)
         self.set_tbtn.setObjectName("set_tbtn")
         self.horizontalLayout.addWidget(self.set_tbtn)
@@ -733,6 +745,7 @@ class Ui_MainWindow(object):
         icon17.addPixmap(QtGui.QPixmap(":/icons/points.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.view_selected_pts_tbtn.setIcon(icon17)
+        self.view_selected_pts_tbtn.setIconSize(QtCore.QSize(24, 24))
         self.view_selected_pts_tbtn.setPopupMode(
             QtWidgets.QToolButton.MenuButtonPopup)
         self.view_selected_pts_tbtn.setAutoRaise(True)
@@ -748,7 +761,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.label_13)
         self.xdata_cbb = QtWidgets.QComboBox(self.plot_groupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
+                                           QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
@@ -764,7 +777,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.label_14)
         self.ydata_cbb = QtWidgets.QComboBox(self.plot_groupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
+                                           QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
