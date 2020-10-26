@@ -17,6 +17,17 @@ class Ui_MainWindow(object):
         icon.addPixmap(QtGui.QPixmap(":/sm-icons/logo.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
+        MainWindow.setStyleSheet("QProgressBar {\n"
+                                 "    border: 1px solid gray;\n"
+                                 "    border-radius: 1px;\n"
+                                 "    text-align: center;\n"
+                                 "}\n"
+                                 "\n"
+                                 "QProgressBar::chunk {\n"
+                                 "    background-color: #05B8CC;\n"
+                                 "    width: 10px;\n"
+                                 "    margin: 0.5px;\n"
+                                 "}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -188,6 +199,10 @@ class Ui_MainWindow(object):
         self.update_ctrl_btn.setAutoRaise(True)
         self.update_ctrl_btn.setObjectName("update_ctrl_btn")
         self.horizontalLayout.addWidget(self.update_ctrl_btn)
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_3.setContentsMargins(0, -1, -1, -1)
+        self.verticalLayout_3.setSpacing(1)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.single_update_btn = QtWidgets.QToolButton(self.centralwidget)
         icon5 = QtGui.QIcon()
         icon5.addPixmap(QtGui.QPixmap(":/sm-icons/single.png"),
@@ -198,7 +213,22 @@ class Ui_MainWindow(object):
             QtCore.Qt.ToolButtonTextBesideIcon)
         self.single_update_btn.setAutoRaise(True)
         self.single_update_btn.setObjectName("single_update_btn")
-        self.horizontalLayout.addWidget(self.single_update_btn)
+        self.verticalLayout_3.addWidget(self.single_update_btn)
+        self.refresh_pb = QtWidgets.QProgressBar(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.refresh_pb.sizePolicy().hasHeightForWidth())
+        self.refresh_pb.setSizePolicy(sizePolicy)
+        self.refresh_pb.setMinimumSize(QtCore.QSize(0, 10))
+        self.refresh_pb.setMaximumSize(QtCore.QSize(16777215, 10))
+        self.refresh_pb.setProperty("value", 0)
+        self.refresh_pb.setFormat("")
+        self.refresh_pb.setObjectName("refresh_pb")
+        self.verticalLayout_3.addWidget(self.refresh_pb)
+        self.horizontalLayout.addLayout(self.verticalLayout_3)
         self.line_2 = QtWidgets.QFrame(self.centralwidget)
         self.line_2.setFrameShape(QtWidgets.QFrame.VLine)
         self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -989,8 +1019,8 @@ class Ui_MainWindow(object):
         self.update_ctrl_btn.setText(_translate("MainWindow", "..."))
         self.single_update_btn.setToolTip(
             _translate("MainWindow", "Update for one time."))
-        self.single_update_btn.setText(
-            _translate("MainWindow", "Single Update"))
+        self.single_update_btn.setText(_translate("MainWindow",
+                                                  "Refresh Data"))
         self.apply_btn.setToolTip(
             _translate(
                 "MainWindow",
