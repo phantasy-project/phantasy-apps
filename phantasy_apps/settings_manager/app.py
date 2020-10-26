@@ -866,18 +866,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             px = self.fail_px
         else:
             px = self.done_px
-            # print(msg)
             dt = self.t_wait - (time.time() - t0)
             if dt > 0:
                 time.sleep(dt)
-                # printlog("Wait time: {} sec.".format(dt))
         self.idx_px_list.append((idx_src, px, msg))
 
     @pyqtSlot(float, 'QString')
     def on_apply_settings_progress(self, idx_px_list, m, per, str_idx):
-        # printlog("Apply settings: {0:.1f} %".format(per * 100))
-        # idx_src, px, msg = idx_px_list[-1]
-        # m.setData(idx_src, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole)
         idx_src, _, msg = idx_px_list[-1]
         m.hlrow(idx_src)
         self.log_textEdit.append(msg)
@@ -1328,8 +1323,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
                 x0 = float(m.data(x0_idx))
                 x1, x2 = rd_val, sp_val
-                #x1 = float(m.data(x1_idx))
-                #x2 = float(m.data(x2_idx))
                 dx01 = x0 - x1
                 dx02 = x0 - x2
                 dx12 = x1 - x2
