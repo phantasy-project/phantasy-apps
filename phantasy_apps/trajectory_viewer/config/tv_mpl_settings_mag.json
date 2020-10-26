@@ -1,62 +1,80 @@
 {
+  "figure": {
+    "title": {
+      "value": "",
+      "font": "Cantarell,18,-1,5,75,0,0,0,0,0"
+    },
+    "labels": {
+      "xlabel": "",
+      "ylabel": "Intensity",
+      "font": "Cantarell,14,-1,5,75,0,0,0,0,0"
+    },
+    "xy_range": {
+      "auto_scale": false,
+      "xmin": -0.055,
+      "xmax": 440.0,
+      "ymin": -0.055,
+      "ymax": 0.055
+    },
+    "legend": {
+      "show": false,
+      "location": 0
+    }
+  },
   "curve": [
     {
       "label": "Intensity",
+      "line_id": 0,
       "line": {
-        "color": "#FF5500",
         "style": "--",
+        "drawstyle": "Line",
+        "color": "#FF5500",
         "width": 1.0
       },
-      "line_id": 0,
       "marker": {
+        "style": "d",
         "edgecolor": "#00AA00",
         "facecolor": "#00AA00",
         "size": 8.0,
-        "style": "d",
+        "width": 1.0
+      }
+    },
+    {
+      "label": "_line1",
+      "line_id": 1,
+      "line": {
+        "style": "-",
+        "drawstyle": "Line",
+        "color": "#1F77B4",
+        "width": 1.5
+      },
+      "marker": {
+        "style": "None",
+        "edgecolor": "#1F77B4",
+        "facecolor": "#1F77B4",
+        "size": 6.0,
         "width": 1.0
       }
     }
   ],
-  "figure": {
-    "labels": {
-      "font": "Sans,14,-1,5,50,0,0,0,0,0",
-      "xlabel": "",
-      "ylabel": "Intensity"
-    },
-    "legend": {
-      "location": 0,
-      "show": false
-    },
-    "title": {
-      "font": "Sans,18,-1,5,50,0,0,0,0,0",
-      "value": ""
-    },
-    "xy_range": {
-      "auto_scale": false,
-      "xmax": 160.0,
-      "xmin": 0.0,
-      "ymax": 10,
-      "ymin": 0
-    }
-  },
   "style": {
-    "background": {
-      "color": "#efefef"
-    },
     "figsize": {
-      "dpi": 120,
+      "width": 4,
       "height": 3,
-      "width": 4
+      "dpi": 120
     },
-    "layout": {
-      "grid_color": "#aaaaaa",
-      "grid_on": true,
-      "tight_on": false
+    "background": {
+      "color": "#EFEFEF"
     },
     "ticks": {
-      "color": "#000000",
-      "font": "Sans,12,-1,5,50,0,0,0,0,0",
-      "mticks_on": true
+      "mticks_on": true,
+      "font": "Cantarell,12,-1,5,50,0,0,0,0,0",
+      "color": "#000000"
+    },
+    "layout": {
+      "tight_on": false,
+      "grid_on": true,
+      "grid_color": "#aaaaaa"
     }
   }
 }

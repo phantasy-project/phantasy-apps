@@ -1,110 +1,114 @@
 {
+  "figure": {
+    "title": {
+      "value": "",
+      "font": "Cantarell,20,-1,5,75,0,0,0,0,0"
+    },
+    "labels": {
+      "xlabel": "$s$ [m]",
+      "ylabel": "Monitors Readings [mm]",
+      "font": "Cantarell,16,-1,5,75,0,0,0,0,0"
+    },
+    "xy_range": {
+      "auto_scale": false,
+      "xmin": 100.0,
+      "xmax": 440.0,
+      "ymin": -10.0,
+      "ymax": 10.0
+    },
+    "legend": {
+      "show": true,
+      "location": 0
+    }
+  },
   "curve": [
     {
-      "label": "$X$",
+      "label": "X",
+      "line_id": 0,
       "line": {
-        "color": "#0000FF",
         "style": "--",
+        "drawstyle": "Line",
+        "color": "#0000FF",
         "width": 2.0
       },
-      "line_id": 0,
       "marker": {
+        "style": "s",
         "edgecolor": "#0000FF",
         "facecolor": "#FFFFFF",
         "size": 6.0,
-        "style": "s",
         "width": 1.5
       }
     },
     {
-      "label": "$Y$",
+      "label": "Y",
+      "line_id": 1,
       "line": {
-        "color": "#FF0000",
         "style": "--",
+        "drawstyle": "Line",
+        "color": "#FF0000",
         "width": 2.0
       },
-      "line_id": 1,
       "marker": {
+        "style": "o",
         "edgecolor": "#FF0000",
         "facecolor": "#FFFFFF",
         "size": 6.0,
-        "style": "o",
         "width": 1.5
       }
     },
     {
-      "label": "$X$-ref",
+      "label": "X-ref",
+      "line_id": 2,
       "line": {
-        "color": "#5500FF",
         "style": "-",
+        "drawstyle": "Line",
+        "color": "#5500FF",
         "width": 2.0
       },
-      "line_id": 2,
       "marker": {
+        "style": "None",
         "edgecolor": "#00AA00",
         "facecolor": "#FFFFFF",
         "size": 6.0,
-        "style": "None",
         "width": 1.0
       }
     },
     {
-      "label": "$Y$-ref",
+      "label": "Y-ref",
+      "line_id": 3,
       "line": {
-        "color": "#AA007F",
         "style": "-",
+        "drawstyle": "Line",
+        "color": "#AA007F",
         "width": 2.0
       },
-      "line_id": 3,
       "marker": {
+        "style": "None",
         "edgecolor": "#FF00FF",
         "facecolor": "#FFFFFF",
         "size": 6.0,
-        "style": "None",
         "width": 1.0
       }
     }
   ],
-  "figure": {
-    "labels": {
-      "font": "sans,16,-1,5,50,0,0,0,0,0,Regular",
-      "xlabel": "$s$ [m]",
-      "ylabel": "Monitors Readings [mm]"
-    },
-    "legend": {
-      "location": 0,
-      "show": true
-    },
-    "title": {
-      "font": "sans,20,-1,5,50,0,0,0,0,0,Regular",
-      "value": ""
-    },
-    "xy_range": {
-      "auto_scale": false,
-      "xmax": 160.0,
-      "xmin": 0.0,
-      "ymax": 6.0,
-      "ymin": -6.0
-    }
-  },
   "style": {
-    "background": {
-      "color": "#efefef"
-    },
     "figsize": {
-      "dpi": 120,
+      "width": 4,
       "height": 3,
-      "width": 4
+      "dpi": 120
     },
-    "layout": {
-      "grid_color": "#aaaaaa",
-      "grid_on": true,
-      "tight_on": false
+    "background": {
+      "color": "#EFEFEF"
     },
     "ticks": {
-      "color": "#000000",
-      "font": "Sans,12,-1,5,50,0,0,0,0,0",
-      "mticks_on": true
+      "mticks_on": true,
+      "font": "Cantarell,12,-1,5,50,0,0,0,0,0",
+      "color": "#000000"
+    },
+    "layout": {
+      "tight_on": false,
+      "grid_on": true,
+      "grid_color": "#aaaaaa"
     }
   }
 }
