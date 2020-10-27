@@ -81,6 +81,7 @@ from .utils import VALID_FILTER_KEYS_NUM
 from .utils import SnapshotDataModel
 from .data import DEFAULT_MACHINE, DEFAULT_SEGMENT
 
+NPROC = 8
 PX_SIZE = 24
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
 IDX_RATE_MAP = {0: 1.0, 1: 2.0, 2: 5.0, 3: 0.5, 4: 0.2, 5: 0.1}
@@ -1566,7 +1567,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m0 = self._tv.model()
         m = m0.sourceModel()
         self.one_updater = DAQT(daq_func=partial(self._refresh_single, m, m0, False),
-                                daq_seq=self.obj_it_tuple)
+                                daq_seq=self.obj_it_tuple, nproc=NPROC)
         self.one_updater.meta_signal1.connect(partial(
             self.on_update_display, m))
         self.one_updater.daqStarted.connect(lambda:self.refresh_pb.setVisible(True))
