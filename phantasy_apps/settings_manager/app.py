@@ -81,7 +81,7 @@ from .utils import VALID_FILTER_KEYS_NUM
 from .utils import SnapshotDataModel
 from .data import DEFAULT_MACHINE, DEFAULT_SEGMENT
 
-NPROC = 8
+NPROC = 4
 PX_SIZE = 24
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
 IDX_RATE_MAP = {0: 1.0, 1: 2.0, 2: 5.0, 3: 0.5, 4: 0.2, 5: 0.1}
@@ -1570,13 +1570,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                 daq_seq=self.obj_it_tuple, nproc=NPROC)
         self.one_updater.meta_signal1.connect(partial(
             self.on_update_display, m))
-        self.one_updater.daqStarted.connect(lambda:self.refresh_pb.setVisible(True))
+        #self.one_updater.daqStarted.connect(lambda:self.refresh_pb.setVisible(True))
+        self.one_updater.daqStarted.connect(lambda:printlog("Data refreshing..."))
         self.one_updater.daqStarted.connect(partial(
             self.set_widgets_status_for_updating, 'START'))
-        self.one_updater.progressUpdated.connect(self._on_data_refresh_progressed)
+        #self.one_updater.progressUpdated.connect(self._on_data_refresh_progressed)
         self.one_updater.finished.connect(partial(
             self.set_widgets_status_for_updating, 'STOP'))
-        self.one_updater.daqFinished.connect(lambda:self.refresh_pb.setVisible(False))
+        #self.one_updater.daqFinished.connect(lambda:self.refresh_pb.setVisible(False))
+        self.one_updater.daqFinished.connect(lambda:printlog("Data refreshing...done."))
         self.one_updater.start()
 
     def set_widgets_status_for_updating(self, status, is_single=True):
