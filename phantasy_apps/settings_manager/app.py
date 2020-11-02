@@ -1691,6 +1691,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_update_visibility(self, idx, f):
         self._tv.setColumnHidden(idx, f)
 
+    def turn_off_updater_if_necessary(self):
+        if self.update_ctrl_btn.isChecked():
+            self.update_ctrl_btn.setChecked(False)
+            milli_sleep(100)
+
     def take_snapshot(self, cast=True, only_checked_items=False, post_current_sp=True):
         # take but not cast for only checked items or not.
         # cast: if cast snapshot or not
@@ -1699,9 +1704,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m = self._tv.model()
         if m is None:
              return
-        if self.update_ctrl_btn.isChecked():
-            self.update_ctrl_btn.setChecked(False)
-            milli_sleep(100)
+        self.turn_off_updater_if_necessary()
         src_m = m.sourceModel()
         # single update
         self._updater = DAQT(daq_func=partial(self.update_value_single, src_m, m, -1, False),
@@ -1934,6 +1937,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_cast_settings(self, data):
         # data: SnapshotData
         # settings(data.data): TableSettings
+        self.turn_off_updater_if_necessary()
         settings = data.data
         if self._lat is None:
             mach = settings.meta.get('machine', DEFAULT_MACHINE)
