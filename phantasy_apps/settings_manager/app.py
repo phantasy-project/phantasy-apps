@@ -1391,16 +1391,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             printlog("Stop auto updating.")
 
     @pyqtSlot(bool)
-    def on_expand_collapse_view(self, expanded):
-        if expanded:
-            self._tv.expandAll()
-            tt = "Click to collapse all."
-        else:
-            self._tv.collapseAll()
-            tt = "Click to expand all."
-        self.sender().setToolTip(tt)
-
-    @pyqtSlot(bool)
     def on_snp_expand_collapse(self, expanded):
         if expanded:
             self.snp_treeView.expandAll()
