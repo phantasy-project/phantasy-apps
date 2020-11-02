@@ -353,10 +353,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         model.settings_sts.connect(self.on_settings_sts)
         model.item_deletion_updated[list].connect(self.on_delete_items)
         model.set_model()
-        self._fld_obj, self._pv_obj = model._fld_obj, model._pv_obj
-        self._fld_it, self._pv_it = model._fld_it, model._pv_it
+        self._fld_obj = model._fld_obj
+        self._fld_it = model._fld_it
 
-        self.obj_it_tuple = tuple(zip(self._fld_obj + self._pv_obj, self._fld_it + self._pv_it))
+        self.obj_it_tuple = tuple(zip(self._fld_obj, self._fld_it))
 
         #
         self.toggle_ftype()
@@ -365,9 +365,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.update_ctrl_btn.toggled.emit(self.update_ctrl_btn.isChecked())
         self.single_update_btn.clicked.emit()
 
-    @pyqtSlot(int, int, int)
-    def on_settings_sts(self, i, j, k):
-        for s, v in zip(('elem', 'sppv', 'rdpv'), (i, j, k)):
+    @pyqtSlot(int, int)
+    def on_settings_sts(self, i, j):
+        for s, v in zip(('elem', 'field'), (i, j)):
             o = getattr(self, 'total_{}_number_lbl'.format(s))
             o.setText(str(v))
 
@@ -1285,64 +1285,56 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.updater.start()
 
     def _refresh_single(self, m, m0, viewport_only, iter_param, **kws):
-        # refresh a single pair of (PV,CaField) object and items.
+        # refresh a single pair of CaField object and items.
         worker = kws.get('worker', self.one_updater)
         o, it = iter_param
-        cnt_pv = cnt_fld = 0
-        if not isinstance(o, CaField):  # PV
-            for iit in it:
-                idx = m.indexFromItem(iit)
-                if viewport_only and not self.is_idx_visible(m0.mapFromSource(idx)):
-                    continue
-                worker.meta_signal1.emit((idx, self.fmt.format(o.get()), Qt.DisplayRole))
-                cnt_pv += 1
-        else:  # CaField
-            idx0 = m.indexFromItem(it[0]) # rd
-            if viewport_only and not self.is_idx_visible(m0.mapFromSource(idx0)):
-                return cnt_pv, cnt_fld
-            idx1 = m.indexFromItem(it[1]) # cset
-            irow = idx0.row()
-            rd_val, sp_val = o.value, o.current_setting()
-            x0_idx = m.index(irow, m.i_val0)
-            x1_idx = m.index(irow, m.i_rd)
-            x2_idx = m.index(irow, m.i_cset)
-            tol_idx = m.index(irow, m.i_tol)
-            dx01_idx = m.index(irow, m.i_val0_rd)
-            dx02_idx = m.index(irow, m.i_val0_cset)
-            dx12_idx = m.index(irow, m.i_rd_cset)
-            ratio_x20_idx = m.index(irow, m.i_ratio_x20)
-            wa_idx = m.index(irow, m.i_writable)
-            wa = o.write_access
-            idx_tuple = (idx0, idx1)
-            v_tuple = (rd_val, sp_val)
-            for iidx, val in zip(idx_tuple, v_tuple):
-                worker.meta_signal1.emit((iidx, self.fmt.format(val), Qt.DisplayRole))
-            worker.meta_signal1.emit((wa_idx, str(wa), Qt.DisplayRole))
+        cnt_fld = 0
+        idx0 = m.indexFromItem(it[0]) # rd
+        if viewport_only and not self.is_idx_visible(m0.mapFromSource(idx0)):
+            return cnt_fld
+        idx1 = m.indexFromItem(it[1]) # cset
+        irow = idx0.row()
+        rd_val, sp_val = o.value, o.current_setting()
+        x0_idx = m.index(irow, m.i_val0)
+        x1_idx = m.index(irow, m.i_rd)
+        x2_idx = m.index(irow, m.i_cset)
+        tol_idx = m.index(irow, m.i_tol)
+        dx01_idx = m.index(irow, m.i_val0_rd)
+        dx02_idx = m.index(irow, m.i_val0_cset)
+        dx12_idx = m.index(irow, m.i_rd_cset)
+        ratio_x20_idx = m.index(irow, m.i_ratio_x20)
+        wa_idx = m.index(irow, m.i_writable)
+        wa = o.write_access
+        idx_tuple = (idx0, idx1)
+        v_tuple = (rd_val, sp_val)
+        for iidx, val in zip(idx_tuple, v_tuple):
+            worker.meta_signal1.emit((iidx, self.fmt.format(val), Qt.DisplayRole))
+        worker.meta_signal1.emit((wa_idx, str(wa), Qt.DisplayRole))
 
-            x0 = float(m.data(x0_idx))
-            x1, x2 = rd_val, sp_val
-            dx01 = x0 - x1
-            dx02 = x0 - x2
-            dx12 = x1 - x2
-            idx_tuple = (dx01_idx, dx02_idx, dx12_idx)
-            v_tuple = (dx01, dx02, dx12)
-            for iidx, val in zip(idx_tuple, v_tuple):
-                worker.meta_signal1.emit((iidx, self.fmt.format(val), Qt.DisplayRole))
-            worker.meta_signal1.emit((ratio_x20_idx, get_ratio_as_string(x2, x0, self.fmt),
-                                      Qt.DisplayRole))
+        x0 = float(m.data(x0_idx))
+        x1, x2 = rd_val, sp_val
+        dx01 = x0 - x1
+        dx02 = x0 - x2
+        dx12 = x1 - x2
+        idx_tuple = (dx01_idx, dx02_idx, dx12_idx)
+        v_tuple = (dx01, dx02, dx12)
+        for iidx, val in zip(idx_tuple, v_tuple):
+            worker.meta_signal1.emit((iidx, self.fmt.format(val), Qt.DisplayRole))
+        worker.meta_signal1.emit((ratio_x20_idx, get_ratio_as_string(x2, x0, self.fmt),
+                                  Qt.DisplayRole))
 
-            tol = float(m.data(tol_idx))
-            if abs(dx12) > tol:
-                worker.meta_signal1.emit((dx12_idx, self._warning_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
-            else:
-                worker.meta_signal1.emit((dx12_idx, None, Qt.DecorationRole))
+        tol = float(m.data(tol_idx))
+        if abs(dx12) > tol:
+            worker.meta_signal1.emit((dx12_idx, self._warning_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+        else:
+            worker.meta_signal1.emit((dx12_idx, None, Qt.DecorationRole))
 
-            if not is_close(x0, x2, self.ndigit):
-                worker.meta_signal1.emit((dx02_idx, self._warning_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
-            else:
-                worker.meta_signal1.emit((dx02_idx, None, Qt.DecorationRole))
-            cnt_fld += 1
-        return cnt_pv, cnt_fld
+        if not is_close(x0, x2, self.ndigit):
+            worker.meta_signal1.emit((dx02_idx, self._warning_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+        else:
+            worker.meta_signal1.emit((dx02_idx, None, Qt.DecorationRole))
+        cnt_fld += 1
+        return cnt_fld
 
     def update_value_single(self, m, m0, delt, viewport_only, iiter):
         # update data tree for one time, iterate all items.
@@ -1352,11 +1344,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             worker = self.updater
         t0 = time.time()
         cnt_fld = 0
-        cnt_pv = 0
         for o, it in self.obj_it_tuple:
-            _cnt_pv, _cnt_fld = self._refresh_single(m, m0, viewport_only, (o, it), worker=worker)
+            _cnt_fld = self._refresh_single(m, m0, viewport_only, (o, it), worker=worker)
             cnt_fld += _cnt_fld
-            cnt_pv += _cnt_pv
 
         dt = time.time() - t0
         dt_residual = delt - dt
@@ -1365,11 +1355,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             if dt_residual > 0:
                 time.sleep(dt_residual)
-                printlog("Waited {0:.0f} msec (PV: {1}, Field: {2}).".format(dt_residual * 1000,
-                         cnt_pv, cnt_fld))
+                printlog("Waited {0:.0f} msec (Field: {1}).".format(dt_residual * 1000,
+                         cnt_fld))
             else:
-                printlog("Rate is {0:.1f} Hz (PV: {1}, Field: {2}).".format(1.0 / dt,
-                         cnt_pv, cnt_fld))
+                printlog("Rate is {0:.1f} Hz (Field: {1}).".format(1.0 / dt,
+                         cnt_fld))
 
     @pyqtSlot(bool)
     def on_toggle_update_btn(self, f):

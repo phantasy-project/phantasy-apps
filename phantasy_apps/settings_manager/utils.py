@@ -147,8 +147,8 @@ class SettingsModel(QStandardItemModel):
     # data changed, e.g. field/PV value is updated
     data_changed = pyqtSignal(QVariant)
 
-    # statistics for loaded items, PVs
-    settings_sts = pyqtSignal(int, int, int)
+    # statistics for loaded items (element name and CaField count)
+    settings_sts = pyqtSignal(int, int)
 
     # delete checked items
     delete_selected_items = pyqtSignal()
@@ -174,11 +174,9 @@ class SettingsModel(QStandardItemModel):
 
         self._settings = flat_settings
         self._tv = parent
-        # [obj(PV/CaField)] --> [items]
+        # [obj(CaField)] --> [items]
         self._fld_obj = []  # CaField
         self._fld_it = []   # list of items, [rd/sp]
-        self._pv_obj = []   # PV
-        self._pv_it = []    # list of items, [rd/sp]
 
         # header
         self.header = self.h_name, self.h_field, self.h_type, self.h_pos, \
@@ -200,8 +198,7 @@ class SettingsModel(QStandardItemModel):
         self.setData(*p)
 
     def set_data(self):
-        sppv_set = set()
-        rdpv_set = set()
+        field_cnt = 0
         ename_set = set()
 
         for elem, fname, fld, fval0 in self._settings:
@@ -212,38 +209,6 @@ class SettingsModel(QStandardItemModel):
             item_ename.fobj = fld
             item_ename.ftype = fld.ftype
             item_ename.setCheckable(True)
-
-            # PVs, setpoint and readback
-            for sp_obj, rd_obj in zip(fld.setpoint_pv, fld.readback_pv):
-                it_sp_n = QStandardItem(sp_obj.pvname)
-                it_sp_v = QStandardItem('-')
-                it_rd_n = QStandardItem(rd_obj.pvname)
-                it_rd_v = QStandardItem('-')
-
-                [i.setEditable(False) for i in (it_sp_n, it_sp_v,
-                                                it_rd_n, it_rd_v)]
-
-                item_ename.appendRow(
-                    (it_sp_n, QStandardItem('-'), QStandardItem('-'),
-                     QStandardItem('-'), QStandardItem('-'),
-                     QStandardItem('-'), it_sp_v)
-                )
-                item_ename.appendRow(
-                    (it_rd_n, QStandardItem('-'), QStandardItem('-'),
-                     QStandardItem('-'), QStandardItem('-'),
-                     it_rd_v, QStandardItem('-'))
-                )
-
-                for o, item in zip((sp_obj, rd_obj), (it_sp_v, it_rd_v)):
-                    # PHY and ENG fields share the same sp/rd pvs.
-                    if o not in self._pv_obj:
-                        self._pv_obj.append(o)
-                        self._pv_it.append([item])  # put item instead of idx
-                    else:
-                        self._pv_it[self._pv_obj.index(o)].append(item)
-
-                sppv_set.add(sp_obj.pvname)
-                rdpv_set.add(rd_obj.pvname)
 
             #
             item_fname = QStandardItem(fname)
@@ -292,8 +257,9 @@ class SettingsModel(QStandardItemModel):
 
             self.appendRow(row)
             ename_set.add(elem.name)
+            field_cnt += 1
 
-        self.settings_sts.emit(len(ename_set), len(sppv_set), len(rdpv_set))
+        self.settings_sts.emit(len(ename_set), field_cnt)
 
     def set_model(self):
         # set data
@@ -386,13 +352,6 @@ class SettingsModel(QStandardItemModel):
             ind = self._fld_obj.index(fobj)
             self._fld_it.pop(ind)
             self._fld_obj.pop(ind)
-            for pv in fobj.setpoint_pv + fobj.readback_pv:
-                # ENH and PHY fields share the same sp/rd/ pvs.
-                if pv not in self._pv_obj:
-                    continue
-                i = self._pv_obj.index(pv)
-                self._pv_it.pop(i)
-                self._pv_obj.pop(i)
             #
             fobj_list.append(fobj)
             # delete

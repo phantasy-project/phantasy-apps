@@ -62,30 +62,19 @@ class Ui_MainWindow(object):
             "}")
         self.total_elem_number_lbl.setObjectName("total_elem_number_lbl")
         self.horizontalLayout_2.addWidget(self.total_elem_number_lbl)
-        self.total_sppv_number_title_lbl = QtWidgets.QLabel(self.centralwidget)
-        self.total_sppv_number_title_lbl.setObjectName(
-            "total_sppv_number_title_lbl")
-        self.horizontalLayout_2.addWidget(self.total_sppv_number_title_lbl)
-        self.total_sppv_number_lbl = QtWidgets.QLabel(self.centralwidget)
-        self.total_sppv_number_lbl.setStyleSheet(
+        self.total_field_number_title_lbl = QtWidgets.QLabel(
+            self.centralwidget)
+        self.total_field_number_title_lbl.setObjectName(
+            "total_field_number_title_lbl")
+        self.horizontalLayout_2.addWidget(self.total_field_number_title_lbl)
+        self.total_field_number_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.total_field_number_lbl.setStyleSheet(
             "QLabel {\n"
             "    font-family: monospace;\n"
             "    color: #28A745;\n"
             "}")
-        self.total_sppv_number_lbl.setObjectName("total_sppv_number_lbl")
-        self.horizontalLayout_2.addWidget(self.total_sppv_number_lbl)
-        self.total_rdpv_number_title_lbl = QtWidgets.QLabel(self.centralwidget)
-        self.total_rdpv_number_title_lbl.setObjectName(
-            "total_rdpv_number_title_lbl")
-        self.horizontalLayout_2.addWidget(self.total_rdpv_number_title_lbl)
-        self.total_rdpv_number_lbl = QtWidgets.QLabel(self.centralwidget)
-        self.total_rdpv_number_lbl.setStyleSheet(
-            "QLabel {\n"
-            "    font-family: monospace;\n"
-            "    color: #28A745;\n"
-            "}")
-        self.total_rdpv_number_lbl.setObjectName("total_rdpv_number_lbl")
-        self.horizontalLayout_2.addWidget(self.total_rdpv_number_lbl)
+        self.total_field_number_lbl.setObjectName("total_field_number_lbl")
+        self.horizontalLayout_2.addWidget(self.total_field_number_lbl)
         spacerItem = QtWidgets.QSpacerItem(40, 20,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
@@ -949,13 +938,9 @@ class Ui_MainWindow(object):
         self.show_sts_btn.toggled['bool'].connect(
             self.total_elem_number_lbl.setVisible)
         self.show_sts_btn.toggled['bool'].connect(
-            self.total_sppv_number_title_lbl.setVisible)
+            self.total_field_number_title_lbl.setVisible)
         self.show_sts_btn.toggled['bool'].connect(
-            self.total_sppv_number_lbl.setVisible)
-        self.show_sts_btn.toggled['bool'].connect(
-            self.total_rdpv_number_title_lbl.setVisible)
-        self.show_sts_btn.toggled['bool'].connect(
-            self.total_rdpv_number_lbl.setVisible)
+            self.total_field_number_lbl.setVisible)
         self.show_warning_dx12_btn.toggled['bool'].connect(
             MainWindow.on_show_warning_dx12)
         self.show_warning_dx02_btn.toggled['bool'].connect(
@@ -973,12 +958,9 @@ class Ui_MainWindow(object):
         self.total_elem_number_title_lbl.setText(
             _translate("MainWindow", "Total Elements"))
         self.total_elem_number_lbl.setText(_translate("MainWindow", "0"))
-        self.total_sppv_number_title_lbl.setText(
-            _translate("MainWindow", "Setpoint PVs"))
-        self.total_sppv_number_lbl.setText(_translate("MainWindow", "0"))
-        self.total_rdpv_number_title_lbl.setText(
-            _translate("MainWindow", "Readback PVs"))
-        self.total_rdpv_number_lbl.setText(_translate("MainWindow", "0"))
+        self.total_field_number_title_lbl.setText(
+            _translate("MainWindow", "Fields"))
+        self.total_field_number_lbl.setText(_translate("MainWindow", "0"))
         self.auto_ndigit_chkbox.setToolTip(
             _translate("MainWindow",
                        "Change data presenting format to \'{n}g\'."))
