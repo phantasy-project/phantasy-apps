@@ -382,7 +382,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.toolBar.addWidget(self.beam_display_widget)
         #
 
-        self._tv = self.treeView
+        self._tv = self.settingsView
         self._load_from_dlg = None
         self._elem_select_dlg = None
         self._lattice_load_window = None

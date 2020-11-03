@@ -325,10 +325,10 @@ class SettingsModel(QStandardItemModel):
 
     def fit_view(self):
         tv = self._tv
-        tv.expandAll()
+        #tv.expandAll()
         for i in self.ids:
             tv.resizeColumnToContents(i)
-        tv.collapseAll()
+        #tv.collapseAll()
 
     @pyqtSlot()
     def on_delete_selected_items(self):

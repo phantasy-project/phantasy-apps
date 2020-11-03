@@ -283,18 +283,6 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.apply_pb)
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.gridLayout.addLayout(self.horizontalLayout, 4, 0, 1, 15)
-        self.treeView = QtWidgets.QTreeView(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(
-            self.treeView.sizePolicy().hasHeightForWidth())
-        self.treeView.setSizePolicy(sizePolicy)
-        self.treeView.setSelectionMode(
-            QtWidgets.QAbstractItemView.ExtendedSelection)
-        self.treeView.setObjectName("treeView")
-        self.gridLayout.addWidget(self.treeView, 3, 0, 1, 15)
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.select_all_btn = QtWidgets.QToolButton(self.centralwidget)
@@ -389,22 +377,22 @@ class Ui_MainWindow(object):
         self.filter_btn.setCheckable(True)
         self.filter_btn.setObjectName("filter_btn")
         self.horizontalLayout_9.addWidget(self.filter_btn)
-        self.toolButton = QtWidgets.QToolButton(self.centralwidget)
+        self.filter_tip_btn = QtWidgets.QToolButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.toolButton.sizePolicy().hasHeightForWidth())
-        self.toolButton.setSizePolicy(sizePolicy)
+            self.filter_tip_btn.sizePolicy().hasHeightForWidth())
+        self.filter_tip_btn.setSizePolicy(sizePolicy)
         icon12 = QtGui.QIcon()
         icon12.addPixmap(QtGui.QPixmap(":/sm-icons/help.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.toolButton.setIcon(icon12)
-        self.toolButton.setIconSize(QtCore.QSize(28, 28))
-        self.toolButton.setAutoRaise(True)
-        self.toolButton.setObjectName("toolButton")
-        self.horizontalLayout_9.addWidget(self.toolButton)
+        self.filter_tip_btn.setIcon(icon12)
+        self.filter_tip_btn.setIconSize(QtCore.QSize(28, 28))
+        self.filter_tip_btn.setAutoRaise(True)
+        self.filter_tip_btn.setObjectName("filter_tip_btn")
+        self.horizontalLayout_9.addWidget(self.filter_tip_btn)
         self.total_show_number_lbl = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -492,6 +480,18 @@ class Ui_MainWindow(object):
         self.show_all_selected_btn.setObjectName("show_all_selected_btn")
         self.filter_hbox.addWidget(self.show_all_selected_btn)
         self.gridLayout.addLayout(self.filter_hbox, 1, 14, 1, 1)
+        self.settingsView = QtWidgets.QTreeView(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(
+            self.settingsView.sizePolicy().hasHeightForWidth())
+        self.settingsView.setSizePolicy(sizePolicy)
+        self.settingsView.setSelectionMode(
+            QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.settingsView.setObjectName("settingsView")
+        self.gridLayout.addWidget(self.settingsView, 3, 0, 1, 15)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 30))
@@ -742,12 +742,12 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_5.addItem(spacerItem5)
-        self.pushButton = QtWidgets.QPushButton(self.dockWidgetContents_2)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout_5.addWidget(self.pushButton)
-        self.toolButton_2 = QtWidgets.QToolButton(self.dockWidgetContents_2)
-        self.toolButton_2.setObjectName("toolButton_2")
-        self.horizontalLayout_5.addWidget(self.toolButton_2)
+        self.open_log_btn = QtWidgets.QPushButton(self.dockWidgetContents_2)
+        self.open_log_btn.setObjectName("open_log_btn")
+        self.horizontalLayout_5.addWidget(self.open_log_btn)
+        self.clear_log_btn = QtWidgets.QToolButton(self.dockWidgetContents_2)
+        self.clear_log_btn.setObjectName("clear_log_btn")
+        self.horizontalLayout_5.addWidget(self.clear_log_btn)
         self.verticalLayout_2.addLayout(self.horizontalLayout_5)
         self.log_textEdit = QtWidgets.QTextEdit(self.dockWidgetContents_2)
         font = QtGui.QFont()
@@ -874,7 +874,6 @@ class Ui_MainWindow(object):
         self.filter_lineEdit.editingFinished.connect(
             MainWindow.on_filter_changed)
         self.actionLoad_Settings.triggered.connect(MainWindow.on_load)
-        self.treeView.clicked['QModelIndex'].connect(MainWindow.on_click_view)
         self.actionPreferences.triggered.connect(
             MainWindow.on_launch_preferences)
         self.reload_lattice_btn.clicked.connect(MainWindow.on_reload_lattice)
@@ -889,8 +888,6 @@ class Ui_MainWindow(object):
         self.update_ctrl_btn.toggled['bool'].connect(
             self.single_update_btn.setDisabled)
         self.single_update_btn.clicked.connect(MainWindow.on_single_update)
-        self.treeView.pressed['QModelIndex'].connect(
-            MainWindow.on_pressed_view)
         self.show_all_selected_btn.toggled['bool'].connect(
             MainWindow.on_toggle_all_selected)
         self.scaling_factor_lineEdit.returnPressed.connect(
@@ -899,7 +896,7 @@ class Ui_MainWindow(object):
             MainWindow.on_toggle_init_lattice_settings)
         self.ndigit_sbox.valueChanged['int'].connect(
             MainWindow.on_ndigit_valueChanged)
-        self.toolButton.clicked.connect(MainWindow.on_show_query_tips)
+        self.filter_tip_btn.clicked.connect(MainWindow.on_show_query_tips)
         self.filter_btn.toggled['bool'].connect(self.filter_lineEdit.setFocus)
         self.scaling_factor_lineEdit.textChanged['QString'].connect(
             MainWindow.on_scaling_factor_changed)
@@ -912,9 +909,9 @@ class Ui_MainWindow(object):
             MainWindow.on_enable_logdock)
         self.findtext_lineEdit.returnPressed.connect(
             MainWindow.on_find_text_in_setlog)
-        self.pushButton.clicked.connect(MainWindow.on_open_texteditor)
+        self.open_log_btn.clicked.connect(MainWindow.on_open_texteditor)
         self.log_textEdit.textChanged.connect(MainWindow.on_setlog_changed)
-        self.toolButton_2.clicked.connect(self.log_textEdit.clear)
+        self.clear_log_btn.clicked.connect(self.log_textEdit.clear)
         self.snp_refresh_btn.clicked.connect(MainWindow.on_refresh_snp)
         self.snp_treeView.clicked['QModelIndex'].connect(
             MainWindow.on_click_snpview)
@@ -936,8 +933,12 @@ class Ui_MainWindow(object):
             MainWindow.on_show_warning_dx12)
         self.show_warning_dx02_btn.toggled['bool'].connect(
             MainWindow.on_show_warning_dx02)
+        self.settingsView.pressed['QModelIndex'].connect(
+            MainWindow.on_pressed_view)
+        self.settingsView.clicked['QModelIndex'].connect(
+            MainWindow.on_click_view)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        MainWindow.setTabOrder(self.treeView, self.reload_lattice_btn)
+        MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
         MainWindow.setTabOrder(self.lv_view_btn, self.update_rate_cbb)
         MainWindow.setTabOrder(self.update_rate_cbb, self.update_ctrl_btn)
@@ -1040,7 +1041,7 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p>Search (Ctrl + F).</p></body></html>"))
         self.filter_btn.setShortcut(_translate("MainWindow", "Ctrl+F"))
-        self.toolButton.setText(_translate("MainWindow", "?"))
+        self.filter_tip_btn.setText(_translate("MainWindow", "?"))
         self.total_show_number_lbl.setToolTip(
             _translate("MainWindow", "Total filtered items."))
         self.total_show_number_lbl.setText(_translate("MainWindow", "0"))
@@ -1095,9 +1096,9 @@ class Ui_MainWindow(object):
         self.findtext_lbl.setText(_translate("MainWindow", "Find Text"))
         self.label_11.setText(_translate("MainWindow", "Total log entries:"))
         self.setlog_count_lbl.setText(_translate("MainWindow", "0"))
-        self.pushButton.setText(_translate("MainWindow",
-                                           "Open in Text Editor"))
-        self.toolButton_2.setText(_translate("MainWindow", "Clear All"))
+        self.open_log_btn.setText(
+            _translate("MainWindow", "Open in Text Editor"))
+        self.clear_log_btn.setText(_translate("MainWindow", "Clear All"))
         self.action_About.setText(_translate("MainWindow", "&About"))
         self.action_About.setShortcut(_translate("MainWindow", "Ctrl+A"))
         self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
