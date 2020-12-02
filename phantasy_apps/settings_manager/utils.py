@@ -997,13 +997,17 @@ class SnapshotDataModel(QStandardItemModel):
                 border: 1px solid #bfcde4;
             }
 
-            QTreeView::item:selected {
+            QTreeView::item:selected:!has-children {
                 border: 1px solid #567DBC;
                 background-color: #D3D7CF;
             }
 
-            QTreeView::item:selected:active{
-                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);
+            QTreeView::item:selected:active:!has-children {
+                background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #99C0FC, stop: 1 #7BACF9);
+            }
+
+            QTreeView::item::has-children {
+                color: #308CC6;
             }
 
             /*
