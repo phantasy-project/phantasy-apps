@@ -1024,6 +1024,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 fobj = ename_item.fobj
                 printlog("Auto-monitor on? ", fobj.get_auto_monitor())
 
+    def on_dblclicked_view(self, idx):
+        r, c = idx.row(), idx.column()
+        self._tv.model().toggle_selection_one(r)
+
     @pyqtSlot()
     def on_filter_changed(self):
         m = self._tv.model()
