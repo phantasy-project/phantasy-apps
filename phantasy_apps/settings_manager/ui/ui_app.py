@@ -361,7 +361,7 @@ class Ui_MainWindow(object):
             "    background-repeat: no-repeat;\n"
             "}\n"
             "QToolButton::hover {\n"
-            "    border-image: url(:/sm-icons/search-on.svg);\n"
+            "    border-image: url(:/sm-icons/search-hover.svg);\n"
             "    background-repeat: no-repeat;\n"
             "}\n"
             "QToolButton::checked {\n"
@@ -937,6 +937,8 @@ class Ui_MainWindow(object):
             MainWindow.on_pressed_view)
         self.settingsView.clicked['QModelIndex'].connect(
             MainWindow.on_click_view)
+        self.settingsView.doubleClicked['QModelIndex'].connect(
+            MainWindow.on_dblclicked_view)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
