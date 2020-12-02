@@ -595,7 +595,7 @@ class _SortProxyModel(QSortFilterProxyModel):
                 checked_status = Qt.Checked
             else:
                 checked_status = Qt.Unchecked
-            check_status_list.append((it_name_src, Qt.Unchecked))
+            check_status_list.append((it_name_src, checked_status))
         [it.setCheckState(st) for it, st in check_status_list]
 
 
