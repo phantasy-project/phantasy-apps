@@ -1279,7 +1279,7 @@ class _SnpProxyModel(QSortFilterProxyModel):
 
     def filterAcceptsRow(self, src_row, src_parent):
         if not src_parent.isValid():
-            return True
+            return False
         m = self.sourceModel()
         ion_filter_list = m.get_ion_filters()
         tag_filter_list = m.get_tag_filters()
