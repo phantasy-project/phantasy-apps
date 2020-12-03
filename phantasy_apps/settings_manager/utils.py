@@ -38,6 +38,8 @@ from phantasy_ui.widgets import is_item_checked
 from phantasy_apps.utils import find_dconf
 from .data import SnapshotData
 
+AVAILABLE_IONS = ('Ne', 'Ar', 'Kr', 'Xe', 'U', 'Se')
+
 FMT = "{0:.6g}"
 
 X0 = 'x\N{SUBSCRIPT ZERO}'
@@ -101,7 +103,7 @@ ACT_BTN_CONF = {
 }
 
 ELEMT_PX_MAP = {i: [f':/elements/elements/{i}{s}.png' for s in ('', '-off')]
-                for i in ('Ne', 'Ar', 'Kr', 'Xe', 'U')}
+                for i in AVAILABLE_IONS}
 
 DEFAULT_TS_PATH = find_dconf("settings_manager", "tolerance.json")
 DEFAULT_MS_PATH = find_dconf("settings_manager", "settings.json")
