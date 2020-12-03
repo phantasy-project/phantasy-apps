@@ -424,6 +424,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._probe_icon = QIcon(QPixmap(":/sm-icons/probe.png"))
         self._unsel_icon = QIcon(QPixmap(":/sm-icons/uncheck.png"))
         self._sel_icon = QIcon(QPixmap(":/sm-icons/check.png"))
+        self._sel3_icon = QIcon(QPixmap(":/sm-icons/check3.png"))
 
         # selection
         self.select_all_btn.clicked.connect(partial(self.on_select, 'all'))
@@ -618,9 +619,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             menu.addAction(probe_action)
 
         # toggle items action
-        m = self._tv.model()
-        m_src = m.sourceModel()
         selected_rows = {idx.row() for idx in self._tv.selectedIndexes()}
+
+        selected_rows = []
+        checked_status = []
+        for _idx in self._tv.selectedIndexes():
+            if _idx.column() == src_m.i_name:
+                selected_rows.append(_idx.row())
+                checked_status.append(is_item_checked(src_m.itemFromIndex(m.mapToSource(_idx))))
+
         n_rows = len(selected_rows)
         _item0 = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_name))
         is_checked = is_item_checked(_item0)
@@ -630,15 +637,21 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             row_text = 'rows'
         if is_checked:
             new_check_state = Qt.Unchecked
-            act_icon = self._unsel_icon
             act_text = "Uncheck all ({}) {}".format(n_rows, row_text)
         else:
             new_check_state = Qt.Checked
-            act_icon = self._sel_icon
             act_text = "Check all ({}) {}".format(n_rows, row_text)
+
+        if all(checked_status):
+            act_icon = self._unsel_icon
+        elif not any(checked_status):
+            act_icon = self._sel_icon
+        else:
+            act_icon = self._sel3_icon
+
         sel_action = QAction(act_icon, act_text, menu)
         sel_action.triggered.connect(partial(self.on_toggle_selected_rows,
-                                     selected_rows, m, m_src, new_check_state))
+                                     selected_rows, m, src_m, new_check_state))
         menu.addAction(sel_action)
 
         #
