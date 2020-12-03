@@ -622,7 +622,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m_src = m.sourceModel()
         selected_rows = {idx.row() for idx in self._tv.selectedIndexes()}
         n_rows = len(selected_rows)
-        _item0 = m_src.itemFromIndex(m.mapToSource(self._tv.selectedIndexes()[0]))
+        _item0 = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_name))
         is_checked = is_item_checked(_item0)
         if n_rows == 1:
             row_text = 'row'
