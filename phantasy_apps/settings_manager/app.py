@@ -521,6 +521,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.select_all_tags_btn.clicked.connect(partial(self.on_snp_filters_select_all_tags, True))
         self.select_none_tags_btn.clicked.connect(partial(self.on_snp_filters_select_all_tags, False))
 
+    def resizeEvent(self, e):
+        self.resizeDocks([self.snp_dock], [self.width() * 0.5],
+                          Qt.Horizontal)
+        BaseAppForm.resizeEvent(self, e)
+
     def on_snp_filters_select_all_tags(self, is_checked):
         for i in self.tag_filter_area.findChildren(QToolButton):
             i.setChecked(is_checked)
