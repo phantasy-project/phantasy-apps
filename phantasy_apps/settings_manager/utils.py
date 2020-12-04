@@ -95,7 +95,7 @@ PX_SIZE = 24
 ACT_BTN_CONF = {
     # op, (tt, text, px_path)
     'del': ('Delete this snapshot.', '', ":/sm-icons/delete.png"),
-    'cast': ('Cast this snapshot', 'Cast', None),
+    'cast': ('Load this snapshot', 'Load', None),
     'save': ('Save the snapshot as a file, after that, all the row changes will be saved in place.',
              'Save As', None),
     'reveal': ('Reveal in File Explorer.', '', ':/sm-icons/openfolder.png'),
