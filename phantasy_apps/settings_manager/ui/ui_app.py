@@ -579,7 +579,7 @@ class Ui_MainWindow(object):
         self.tag_filter_area.setWidgetResizable(True)
         self.tag_filter_area.setObjectName("tag_filter_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 604, 83))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1872, 83))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tag_filter_area.setWidget(self.scrollAreaWidgetContents)
         self.horizontalLayout_7.addWidget(self.tag_filter_area)
@@ -706,7 +706,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.addWidget(self.total_snp_lbl)
         self.gridLayout_3.addLayout(self.horizontalLayout_4, 2, 0, 1, 1)
         self.snp_dock.setWidget(self.dockWidgetContents)
-        MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.snp_dock)
+        MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(4), self.snp_dock)
         self.log_dock = DockWidget(MainWindow)
         self.log_dock.setMinimumSize(QtCore.QSize(642, 150))
         self.log_dock.setStyleSheet("QDockWidget {\n"
