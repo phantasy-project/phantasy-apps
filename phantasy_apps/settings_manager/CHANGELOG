@@ -1,3 +1,14 @@
+Version 5.2: 2020-12-04
+=======================
+
+- Snapshots Window:
+  - Add Selenium icon
+  - Fix window height retaining issue
+  - Rename 'Cast' to 'Load'
+
+- Settings Treeview:
+  - Fix bug: cannot invert selection from unchecked to checked
+
 Version 5.1: 2020-12-03
 =======================
 
