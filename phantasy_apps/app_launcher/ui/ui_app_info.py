@@ -27,10 +27,14 @@ class Ui_InfoForm(object):
         sizePolicy.setHeightForWidth(
             self.desc_plainTextEdit.sizePolicy().hasHeightForWidth())
         self.desc_plainTextEdit.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("monospace")
+        font.setPointSize(14)
+        self.desc_plainTextEdit.setFont(font)
         self.desc_plainTextEdit.setStyleSheet("QPlainTextEdit {\n"
-                                              "    font-size: 15pt;\n"
+                                              "    font-size: 14pt;\n"
                                               "    font-family: monospace;\n"
-                                              "    /*border: none;*/\n"
+                                              "    border: none;\n"
                                               "    margin-bottom: 6px;\n"
                                               "    margin-right: 6px;\n"
                                               "}")
@@ -163,7 +167,7 @@ class Ui_InfoForm(object):
         self.horizontalLayout_2.addWidget(self.contact_email_lbl)
         self.gridLayout_2.addLayout(self.horizontalLayout_2, 5, 1, 1, 1)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_2.setContentsMargins(10, 0, -1, 6)
+        self.verticalLayout_2.setContentsMargins(10, 6, 40, 6)
         self.verticalLayout_2.setSpacing(6)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.open_btn = QtWidgets.QToolButton(InfoForm)
