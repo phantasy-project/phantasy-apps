@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_AppForm(object):
     def setupUi(self, AppForm):
         AppForm.setObjectName("AppForm")
-        AppForm.resize(226, 333)
+        AppForm.resize(300, 400)
         AppForm.setStyleSheet("QWidget#AppForm {\n"
                               "    border: 2px solid rgb(200,200,200);\n"
                               "}\n"
@@ -89,7 +89,7 @@ class Ui_AppForm(object):
             self.app_name_lbl.sizePolicy().hasHeightForWidth())
         self.app_name_lbl.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
-        font.setPointSize(16)
+        font.setPointSize(14)
         font.setBold(True)
         font.setWeight(75)
         self.app_name_lbl.setFont(font)
@@ -116,6 +116,7 @@ class Ui_AppForm(object):
         self.verticalLayout.addItem(spacerItem1)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_3.setSpacing(0)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.info_btn = QtWidgets.QToolButton(AppForm)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
@@ -128,9 +129,10 @@ class Ui_AppForm(object):
         self.info_btn.setStyleSheet(
             "QToolButton {\n"
             "    border-image: url(:/icons/arrow_down-thin-off.png);\n"
-            "    width: 64px;\n"
-            "    height: 27px;\n"
+            "    width: 80px;\n"
+            "    height: 30px;\n"
             "    background-repeat: no-repeat;\n"
+            "    margin: 10px 100px 10px 100px;\n"
             "}\n"
             "QToolButton::hover {\n"
             "    border-image: url(:/icons/arrow_down-thin-on.png);\n"
