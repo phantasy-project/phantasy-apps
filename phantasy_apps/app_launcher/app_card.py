@@ -240,9 +240,9 @@ class AppCardInfoForm(QWidget, Ui_InfoForm):
     def on_toggle_fav(self, on):
         self.favChanged.emit(on)
         if on:
-            self.fav_on_lbl.setText("Remove from Favorites")
+            self.fav_btn.setText("Remove from Favorites")
         else:
-            self.fav_on_lbl.setText("Add to Favorites")
+            self.fav_btn.setText("Add to Favorites")
 
     @pyqtSlot()
     def on_close(self):
