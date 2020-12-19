@@ -6,6 +6,7 @@
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QEvent
 from PyQt5.QtCore import QFile
 from PyQt5.QtCore import QUrl
 from PyQt5.QtGui import QDesktopServices
@@ -38,6 +39,9 @@ class AppCard(QWidget, Ui_AppForm):
         if kws.get('width', None) is not None:
             self.setFixedWidth(kws.get('width'))
 
+        self.app_btn_widget.installEventFilter(self)
+        self.app_btn_widget.setToolTip(f"Click to run {name}")
+
         self.setName(name)
         self.setGroups(groups)
         self.setFavorite(fav_on)
@@ -46,12 +50,6 @@ class AppCard(QWidget, Ui_AppForm):
         self.setVersion(version)
         self.setHelpdoc(helpdoc)
         self.setContact(contact)
-
-        self.setMouseTracking(True)
-        for o in (self.fav_btn, self.app_btn, self.info_btn):
-            o.setMouseTracking(True)
-
-        self.setToolTip(f"Click to run {name}")
 
     def get_meta_info(self):
         return {'name': self.name(), 'groups': self.groups(),
@@ -182,13 +180,20 @@ class AppCard(QWidget, Ui_AppForm):
 
     def mouseMoveEvent(self, evt):
         change_cursor = False
-        for o in (self.app_btn, self.fav_btn, self.info_btn):
+        for o in (self.fav_btn, self.info_btn, self.app_btn_widget):
             if o.rect().contains(o.mapFromGlobal(evt.globalPos())):
                 change_cursor = True
         if change_cursor:
             self.setCursor(Qt.PointingHandCursor)
         else:
             self.unsetCursor()
+
+    def eventFilter(self, obj, evt):
+        if evt.type() == QEvent.MouseButtonPress:
+            self.app_btn.clicked.emit()
+            return True
+        else:
+            return False
 
     def paintEvent(self, evt):
         opt = QStyleOption()
