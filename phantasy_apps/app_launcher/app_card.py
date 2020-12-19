@@ -206,7 +206,7 @@ class AppCard(QWidget, Ui_AppForm):
         if not console:
             cmdline = self._cmd
         else:
-            cmdline = "x-terminal-emulator -e " + self._cmd
+            cmdline = "gnome-terminal -- " + self._cmd
         Popen(cmdline, shell=True)
 
 
