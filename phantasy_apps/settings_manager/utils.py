@@ -878,7 +878,7 @@ class SnapshotDataModel(QStandardItemModel):
                     is_golden_tip = "Golden Setting!"
                 else:
                     bgc = BG_COLOR_GOLDEN_NO
-                    is_golden_tip = "Not Golden Setting!"
+                    is_golden_tip = "Light up if 'golden' in tags!"
                 px.fill(QColor(bgc))
                 it_is_golden.setData(px, Qt.DecorationRole)
                 it_is_golden.setData(is_golden_tip, Qt.UserRole)
@@ -954,7 +954,7 @@ class SnapshotDataModel(QStandardItemModel):
                 is_golden_tip = "Golden Setting!"
             else:
                 bgc = BG_COLOR_GOLDEN_NO
-                is_golden_tip = "Not Golden Setting!"
+                is_golden_tip = "Light up if 'golden' in tags!"
             px = QPixmap(QSize(PX_SIZE, PX_SIZE))
             px.fill(QColor(bgc))
             it.setData(px, Qt.DecorationRole)
