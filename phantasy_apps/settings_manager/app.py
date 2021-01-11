@@ -42,6 +42,7 @@ from phantasy import Settings
 from phantasy import build_element
 from phantasy import Lattice
 from phantasy_ui import BaseAppForm
+from phantasy_ui import delayed_exec
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
 from phantasy_ui import printlog
@@ -550,9 +551,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_enable_search(self, auto_collapse, enabled):
         if auto_collapse:
             self.filter_lineEdit.setVisible(enabled)
+            self.strict_wildcard_chkbox.setVisible(enabled)
         if not enabled:
             self.filter_lineEdit.setText('')
             self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
+    def on_toggle_strict_wildcard(self, on):
+        delayed_exec(self.on_filter_changed, 100)
 
     def keyPressEvent(self, e):
         if e.key() == Qt.Key_Escape and self.filter_btn.isChecked():
@@ -1051,7 +1057,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m = self._tv.model()
         if m is None:
             return
-        full_str = self.sender().text().strip()
+        full_str = self.filter_lineEdit.text().strip()
         filter_key_value_tuples = [] # list of tuples of k, is_number_key, v
         for s in full_str.split('and'):
             s = s.strip()
@@ -1063,6 +1069,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 v = s
             if v == '':
                 v = '*'
+            if not self.strict_wildcard_chkbox.isChecked():
+                v = f"*{v}*"
             if k not in VALID_FILTER_KEYS:
                 k = 'device'
             if k in VALID_FILTER_KEYS_NUM:

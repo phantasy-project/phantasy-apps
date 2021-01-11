@@ -499,6 +499,9 @@ class Ui_MainWindow(object):
             QtWidgets.QAbstractItemView.ExtendedSelection)
         self.settingsView.setObjectName("settingsView")
         self.gridLayout.addWidget(self.settingsView, 3, 0, 1, 15)
+        self.strict_wildcard_chkbox = QtWidgets.QCheckBox(self.centralwidget)
+        self.strict_wildcard_chkbox.setObjectName("strict_wildcard_chkbox")
+        self.gridLayout.addWidget(self.strict_wildcard_chkbox, 1, 13, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 30))
@@ -945,6 +948,8 @@ class Ui_MainWindow(object):
             MainWindow.on_click_view)
         self.settingsView.doubleClicked['QModelIndex'].connect(
             MainWindow.on_dblclicked_view)
+        self.strict_wildcard_chkbox.toggled['bool'].connect(
+            MainWindow.on_toggle_strict_wildcard)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
@@ -1072,6 +1077,13 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Show all checked items.</p></body></html>"
             ))
         self.show_all_selected_btn.setText(_translate("MainWindow", "Checked"))
+        self.strict_wildcard_chkbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>When checked, apply wildcard matching with input filter string as-is.</p></body></html>"
+            ))
+        self.strict_wildcard_chkbox.setText(
+            _translate("MainWindow", "Strict Wildcard"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menuTools.setTitle(_translate("MainWindow", "Tools"))
