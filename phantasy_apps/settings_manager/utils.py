@@ -94,7 +94,7 @@ PX_SIZE = 24
 ACT_BTN_CONF = {
     # op, (tt, text, px_path)
 #    'del': ('Delete this snapshot.', '', ":/sm-icons/delete.png"),
-    'cast': ('Load this snapshot', 'Load', None),
+#    'cast': ('Load this snapshot', 'Load', None),
 #    'save': ('Save the snapshot as a file, after that, all the row changes will be saved in place.',
 #             'Save As', None),
 #    'reveal': ('Reveal in File Explorer.', '', ':/sm-icons/openfolder.png'),
@@ -784,15 +784,15 @@ class SnapshotDataModel(QStandardItemModel):
 
         self.header = self.h_ts, self.h_name, \
                       self.h_ion, self.h_ion_number, self.h_ion_mass, self.h_ion_charge, \
-                      self.h_cast_status, self.h_cast, self.h_save_status, \
+                      self.h_cast_status, self.h_save_status, \
                       self.h_user, \
                       self.h_is_golden, self.h_tags, self.h_note \
-                    = "Timestamp", "Name", "Ion", "Z", "A", "Q", "", "", "", \
+                    = "Timestamp", "Name", "Ion", "Z", "A", "Q", "", "", \
                       "User", \
                       "", "Tags", "Note"
         self.ids = self.i_ts, self.i_name, \
                    self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge, \
-                   self.i_cast_status, self.i_cast, self.i_save_status, \
+                   self.i_cast_status, self.i_save_status, \
                    self.i_user, \
                    self.i_is_golden, self.i_tags, self.i_note \
                  = range(len(self.header))
@@ -892,13 +892,11 @@ class SnapshotDataModel(QStandardItemModel):
                 it_note = QStandardItem(snp_data.note)
                 it_note.setData(self.note_px, Qt.DecorationRole)
                 it_note.setToolTip(snp_data.note)
-                # cast
+                # cast status
                 it_cast_status = QStandardItem()
                 it_cast_status.setData(self.cast_px, Qt.DecorationRole)
                 it_cast_status.setData("not-casted", Qt.UserRole)
-                it_cast = QStandardItem('Cast')
-                it_cast.setEditable(False)
-                it_cast.setData("cast", Qt.UserRole + 1)
+                it_cast_status.setToolTip("Load snapshot by double-clicking")
                 # save status
                 it_save_status = QStandardItem()
                 if snp_data.filepath is None:
@@ -910,7 +908,7 @@ class SnapshotDataModel(QStandardItemModel):
                     it_save_status.setToolTip(snp_data.filepath)
                 row = (it_ts, it_name,
                        it_ion, it_ion_number, it_ion_mass, it_ion_charge,
-                       it_cast_status, it_cast, it_save_status,
+                       it_cast_status, it_save_status,
                        it_user, it_is_golden, it_tags, it_note,)
                 it_root.appendRow(row)
 
@@ -1149,9 +1147,12 @@ class SnapshotDataModel(QStandardItemModel):
         if casted:
             self.setData(idx, self.casted_px, Qt.DecorationRole)
             self.setData(idx, 'casted', Qt.UserRole)
+            tt = "Snapshot loaded."
         else:
             self.setData(idx, self.cast_px, Qt.DecorationRole)
             self.setData(idx, 'not-casted', Qt.UserRole)
+            tt = "Load snapshot by double-clicking"
+        self.setData(idx, tt, Qt.ToolTipRole)
 
     def style_view(self, v):
         v.setItemDelegate(_DelegateSnapshot(v))
@@ -1214,8 +1215,8 @@ class _DelegateSnapshot(QStyledItemDelegate):
         self.sender().setProperty('data', data)
 #        if op == 'del':
 #            src_m.on_del_snp()
-        if op == 'cast':
-            src_m.on_cast_snp()
+#        if op == 'cast':
+#            src_m.on_cast_snp()
 #        elif op == 'save':
 #            src_m.on_save_snp()
 #        elif op == 'reveal':

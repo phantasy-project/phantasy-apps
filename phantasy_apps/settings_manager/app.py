@@ -1125,7 +1125,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         item0 = src_m.itemFromIndex(src_m.index(src_idx.row(), 0, item.parent().index()))
         self.on_cast_settings(item0.snp_data)
 
-
     @pyqtSlot()
     def on_filter_changed(self):
         m = self._tv.model()
