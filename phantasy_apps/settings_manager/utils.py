@@ -22,7 +22,6 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QBrush
 from PyQt5.QtGui import QColor
-from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
@@ -94,12 +93,12 @@ FG_COLOR_MAP = {
 PX_SIZE = 24
 ACT_BTN_CONF = {
     # op, (tt, text, px_path)
-    'del': ('Delete this snapshot.', '', ":/sm-icons/delete.png"),
+#    'del': ('Delete this snapshot.', '', ":/sm-icons/delete.png"),
     'cast': ('Load this snapshot', 'Load', None),
-    'save': ('Save the snapshot as a file, after that, all the row changes will be saved in place.',
-             'Save As', None),
-    'reveal': ('Reveal in File Explorer.', '', ':/sm-icons/openfolder.png'),
-    'read': ('Open and read data file.', '', ':/sm-icons/readfile.png'),
+#    'save': ('Save the snapshot as a file, after that, all the row changes will be saved in place.',
+#             'Save As', None),
+#    'reveal': ('Reveal in File Explorer.', '', ':/sm-icons/openfolder.png'),
+#    'read': ('Open and read data file.', '', ':/sm-icons/readfile.png'),
 }
 
 ELEMT_PX_MAP = {i: [f':/elements/elements/{i}{s}.png' for s in ('', '-off')]
@@ -764,10 +763,10 @@ def get_ratio_as_string(a, b, fmt):
 
 class SnapshotDataModel(QStandardItemModel):
 
-    saveas_settings = pyqtSignal(SnapshotData)
+#    saveas_settings = pyqtSignal(SnapshotData)
     save_settings = pyqtSignal(SnapshotData)
     cast_settings = pyqtSignal(SnapshotData)
-    del_settings = pyqtSignal(SnapshotData)
+#    del_settings = pyqtSignal(SnapshotData)
 
     def __init__(self,  parent, snp_list, **kws):
         super(self.__class__, self).__init__(parent)
@@ -785,17 +784,17 @@ class SnapshotDataModel(QStandardItemModel):
 
         self.header = self.h_ts, self.h_name, \
                       self.h_ion, self.h_ion_number, self.h_ion_mass, self.h_ion_charge, \
-                      self.h_cast_status, self.h_cast, self.h_save_status, self.h_save, \
-                      self.h_browse, self.h_read, self.h_user, \
-                      self.h_is_golden, self.h_tags, self.h_delete, self.h_note \
-                    = "Timestamp", "Name", "Ion", "Z", "A", "Q", "", "", "", "", \
-                      "", "", "User", \
-                      "", "Tags", "", "Note"
+                      self.h_cast_status, self.h_cast, self.h_save_status, \
+                      self.h_user, \
+                      self.h_is_golden, self.h_tags, self.h_note \
+                    = "Timestamp", "Name", "Ion", "Z", "A", "Q", "", "", "", \
+                      "User", \
+                      "", "Tags", "Note"
         self.ids = self.i_ts, self.i_name, \
                    self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge, \
-                   self.i_cast_status, self.i_cast, self.i_save_status, self.i_save, \
-                   self.i_browse, self.i_read, self.i_user, \
-                   self.i_is_golden, self.i_tags, self.i_delete, self.i_note \
+                   self.i_cast_status, self.i_cast, self.i_save_status, \
+                   self.i_user, \
+                   self.i_is_golden, self.i_tags, self.i_note \
                  = range(len(self.header))
 
         self.itemChanged.connect(self.on_item_changed)
@@ -900,11 +899,8 @@ class SnapshotDataModel(QStandardItemModel):
                 it_cast = QStandardItem('Cast')
                 it_cast.setEditable(False)
                 it_cast.setData("cast", Qt.UserRole + 1)
-                # save
+                # save status
                 it_save_status = QStandardItem()
-                it_save = QStandardItem('Save')
-                it_save.setEditable(False)
-                it_save.setData("save", Qt.UserRole + 1)
                 if snp_data.filepath is None:
                     it_save_status.setData(self.save_px, Qt.DecorationRole)
                     it_save_status.setData('not-saved', Qt.UserRole)
@@ -912,22 +908,10 @@ class SnapshotDataModel(QStandardItemModel):
                     it_save_status.setData(self.saved_px, Qt.DecorationRole)
                     it_save_status.setData('saved', Qt.UserRole)
                     it_save_status.setToolTip(snp_data.filepath)
-                # browse
-                it_browse = QStandardItem('Browse')
-                it_browse.setEditable(False)
-                it_browse.setData("reveal", Qt.UserRole + 1)
-                # read
-                it_read = QStandardItem('Read')
-                it_read.setEditable(False)
-                it_read.setData("read", Qt.UserRole + 1)
-                # delete
-                it_delete = QStandardItem('Delete')
-                it_delete.setEditable(False)
-                it_delete.setData("del", Qt.UserRole + 1)
                 row = (it_ts, it_name,
                        it_ion, it_ion_number, it_ion_mass, it_ion_charge,
-                       it_cast_status, it_cast, it_save_status, it_save, it_browse, it_read,
-                       it_user, it_is_golden, it_tags, it_delete, it_note,)
+                       it_cast_status, it_cast, it_save_status,
+                       it_user, it_is_golden, it_tags, it_note,)
                 it_root.appendRow(row)
 
             ph_list = []
@@ -968,34 +952,19 @@ class SnapshotDataModel(QStandardItemModel):
         self.save_settings.emit(snp_data)
 
     @pyqtSlot()
-    def on_browse_snp(self):
-        # !! requires nautilus !!
-        from PyQt5.QtCore import QProcess
-        data = self.sender().property('data')
-        p = QProcess(self)
-        p.setArguments(["-s", data.filepath])
-        p.setProgram("nautilus")
-        p.startDetached()
-
-    @pyqtSlot()
-    def on_read_snp(self):
-        data = self.sender().property('data')
-        QDesktopServices.openUrl(QUrl(data.filepath))
-
-    @pyqtSlot()
     def on_cast_snp(self):
         data = self.sender().property('data')
         self.cast_settings.emit(data)
 
-    @pyqtSlot()
-    def on_save_snp(self):
-        data = self.sender().property('data')
-        self.saveas_settings.emit(data)
+#    @pyqtSlot()
+#    def on_save_snp(self):
+#        data = self.sender().property('data')
+#        self.saveas_settings.emit(data)
 
-    @pyqtSlot()
-    def on_del_snp(self):
-        data = self.sender().property('data')
-        self.del_settings.emit(data)
+#    @pyqtSlot()
+#    def on_del_snp(self):
+#        data = self.sender().property('data')
+#        self.del_settings.emit(data)
 
     def _post_init_ui(self, v):
         for i, s in zip(self.ids, self.header):
@@ -1080,7 +1049,7 @@ class SnapshotDataModel(QStandardItemModel):
         for i in (self.i_ts, self.i_name,
                   self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge,
                   self.i_cast_status, self.i_save_status,
-                  self.i_browse, self.i_read, self.i_delete, self.i_user, self.i_is_golden,
+                  self.i_user, self.i_is_golden,
                   self.i_tags):
             v.resizeColumnToContents(i)
         v.collapseAll()
@@ -1112,6 +1081,7 @@ class SnapshotDataModel(QStandardItemModel):
 
     @pyqtSlot('QString', 'QString')
     def on_snp_saved(self, snp_name, filepath):
+        # void
         # tag as saved for *snp_name*, update SnapshotData
         # enable locate and read.
         found = False
@@ -1242,16 +1212,16 @@ class _DelegateSnapshot(QStyledItemDelegate):
         print(data.ts_as_str(), data.name)
         #
         self.sender().setProperty('data', data)
-        if op == 'del':
-            src_m.on_del_snp()
-        elif op == 'cast':
+#        if op == 'del':
+#            src_m.on_del_snp()
+        if op == 'cast':
             src_m.on_cast_snp()
-        elif op == 'save':
-            src_m.on_save_snp()
-        elif op == 'reveal':
-            src_m.on_browse_snp()
-        elif op == 'read':
-            src_m.on_read_snp()
+#        elif op == 'save':
+#            src_m.on_save_snp()
+#        elif op == 'reveal':
+#            src_m.on_browse_snp()
+#        elif op == 'read':
+#            src_m.on_read_snp()
 
     def setEditorData(self, editor, index):
         QStyledItemDelegate.setEditorData(self, editor, index)

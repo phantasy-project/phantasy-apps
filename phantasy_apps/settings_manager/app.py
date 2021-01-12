@@ -426,6 +426,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._unsel_icon = QIcon(QPixmap(":/sm-icons/uncheck.png"))
         self._sel_icon = QIcon(QPixmap(":/sm-icons/check.png"))
         self._sel3_icon = QIcon(QPixmap(":/sm-icons/check3.png"))
+        self._saveas_icon = QIcon(QPixmap(":/sm-icons/save.png"))
+        self._read_icon = QIcon(QPixmap(":/sm-icons/readfile.png"))
+        self._reveal_icon = QIcon(QPixmap(":/sm-icons/openfolder.png"))
+        self._del_icon = QIcon(QPixmap(":/sm-icons/delete.png"))
+        self._load_icon = QIcon(QPixmap(":/sm-icons/cast.png"))
 
         # selection
         self.select_all_btn.clicked.connect(partial(self.on_select, 'all'))
@@ -573,8 +578,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.font_changed.emit(self.font)
 
     def set_context_menu(self):
-        self._tv.setContextMenuPolicy(Qt.CustomContextMenu)
-        self._tv.customContextMenuRequested.connect(self.on_custom_context_menu)
+        for o in (self._tv, self.snp_treeView):
+            o.setContextMenuPolicy(Qt.CustomContextMenu)
+            o.customContextMenuRequested.connect(partial(self.on_custom_context_menu, o))
 
     @pyqtSlot()
     def on_copy_text(self, m, idx):
@@ -598,16 +604,71 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         w.fields_cbb.setCurrentText(fname)
 
     @pyqtSlot(QPoint)
-    def on_custom_context_menu(self, pos):
-        m = self._tv.model()
+    def on_custom_context_menu(self, view, pos):
+        m = view.model()
         if m is None:
             return
+        idx = view.indexAt(pos)
+        if view == self._tv:
+            menu = self._build_settings_context_menu(idx, m)
+        else:
+            menu = self._build_snp_context_menu(idx, m)
+        #
+        if menu is not None:
+            menu.exec_(view.viewport().mapToGlobal(pos))
+
+    def _build_snp_context_menu(self, idx, m):
         src_m = m.sourceModel()
-        idx = self._tv.indexAt(pos)
         src_idx = m.mapToSource(idx)
         item = src_m.itemFromIndex(src_idx)
         text = item.text()
+        if item.parent() is None:
+            return None
+        #
+        menu = QMenu(self)
+        menu.setStyleSheet('QMenu {margin: 2px;}')
 
+        #
+        copy_action = QAction(self._copy_icon,
+                              "Copy Text", menu)
+        copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
+        menu.addAction(copy_action)
+
+        item0 = src_m.itemFromIndex(src_m.index(src_idx.row(), 0, item.parent().index()))
+        #
+        if not hasattr(item0, 'snp_data'):
+            return menu
+        snpdata = item0.snp_data
+        # save-as
+        saveas_action = QAction(self._saveas_icon, "Export", menu)
+        saveas_action.triggered.connect(partial(self.on_saveas_settings, snpdata))
+        # read
+        read_action = QAction(self._read_icon, "Read", menu)
+        read_action.triggered.connect(partial(self.on_read_snp, snpdata))
+        # reveal
+        reveal_action = QAction(self._reveal_icon, "Show in Files", menu)
+        reveal_action.triggered.connect(partial(self.on_reveal_snp, snpdata))
+        # del
+        del_action = QAction(self._del_icon, "Delete", menu)
+        del_action.triggered.connect(partial(self.on_del_settings, snpdata))
+        # load
+        load_action = QAction(self._load_icon, "Load", menu)
+        load_action.triggered.connect(partial(self.on_cast_settings, snpdata))
+        #
+        menu.insertAction(copy_action, load_action)
+        menu.addSeparator()
+        menu.addAction(read_action)
+        menu.addAction(reveal_action)
+        menu.addSeparator()
+        menu.addAction(saveas_action)
+        menu.addAction(del_action)
+        return menu
+
+    def _build_settings_context_menu(self, idx, m):
+        src_m = m.sourceModel()
+        src_idx = m.mapToSource(idx)
+        item = src_m.itemFromIndex(src_idx)
+        text = item.text()
         #
         menu = QMenu(self)
         menu.setStyleSheet('QMenu {margin: 2px;}')
@@ -664,9 +725,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         sel_action.triggered.connect(partial(self.on_toggle_selected_rows,
                                      selected_rows, m, src_m, new_check_state))
         menu.addAction(sel_action)
-
-        #
-        menu.exec_(self._tv.viewport().mapToGlobal(pos))
+        return menu
 
     @pyqtSlot()
     def on_toggle_selected_rows(self, selected_rows, m, m_src, new_check_state):
@@ -1769,6 +1828,19 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.on_cast_settings(snp_data)
         self.snp_filters_updated.emit()
 
+    @pyqtSlot()
+    def on_reveal_snp(self, data):
+        # !! requires nautilus !!
+        from PyQt5.QtCore import QProcess
+        p = QProcess(self)
+        p.setArguments(["-s", data.filepath])
+        p.setProgram("nautilus")
+        p.startDetached()
+
+    @pyqtSlot()
+    def on_read_snp(self, data):
+        QDesktopServices.openUrl(QUrl(data.filepath))
+
     def on_snp_filters_updated(self):
         # update btn filters
         self.update_btn_filters()
@@ -1883,9 +1955,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.set_model()
         self.snp_expand_btn.toggled.emit(self.snp_expand_btn.isChecked())
         m.save_settings.connect(self.on_save_settings)
-        m.saveas_settings.connect(self.on_saveas_settings)
-        m.del_settings.connect(self.on_del_settings)
-        self.snp_saved.connect(m.on_snp_saved)
+        # m.saveas_settings.connect(self.on_saveas_settings)
+        # m.del_settings.connect(self.on_del_settings)
+        # self.snp_saved.connect(m.on_snp_saved)
         m.cast_settings.connect(self.on_cast_settings)
         self.snp_casted.connect(m.on_snp_casted)
         m.save_settings.connect(self.snp_filters_updated) # update dynamic filter buttons (tag)
