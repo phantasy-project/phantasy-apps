@@ -950,6 +950,8 @@ class Ui_MainWindow(object):
             MainWindow.on_dblclicked_view)
         self.strict_wildcard_chkbox.toggled['bool'].connect(
             MainWindow.on_toggle_strict_wildcard)
+        self.snp_treeView.doubleClicked['QModelIndex'].connect(
+            MainWindow.on_dblclicked_snp)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)

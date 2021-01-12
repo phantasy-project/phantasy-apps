@@ -1111,6 +1111,21 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         r, c = idx.row(), idx.column()
         self._tv.model().toggle_selection_one(r)
 
+    def on_dblclicked_snp(self, idx):
+        m = self.snp_treeView.model()
+        if m is None:
+            return
+        src_m = m.sourceModel()
+        src_idx = m.mapToSource(idx)
+        item = src_m.itemFromIndex(src_idx)
+        if item.parent() is None:
+            return
+        if src_idx.column() in (src_m.i_tags, src_m.i_note):
+            return
+        item0 = src_m.itemFromIndex(src_m.index(src_idx.row(), 0, item.parent().index()))
+        self.on_cast_settings(item0.snp_data)
+
+
     @pyqtSlot()
     def on_filter_changed(self):
         m = self._tv.model()
