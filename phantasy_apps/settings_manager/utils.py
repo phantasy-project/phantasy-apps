@@ -761,6 +761,7 @@ def get_ratio_as_string(a, b, fmt):
     finally:
         return r
 
+
 class SnapshotDataModel(QStandardItemModel):
 
     saveas_settings = pyqtSignal(SnapshotData)
@@ -849,14 +850,18 @@ class SnapshotDataModel(QStandardItemModel):
                 # ion
                 it_ion = QStandardItem(snp_data.ion_name)
                 it_ion.setEditable(False)
+                _z, _a, _q = snp_data.ion_number, snp_data.ion_mass, snp_data.ion_charge
                 # Z
-                it_ion_number = QStandardItem(snp_data.ion_number)
+                it_ion_number = QStandardItem(_z)
+                it_ion_number.setData(int(_z), Qt.UserRole)
                 it_ion_number.setEditable(False)
                 # A
-                it_ion_mass = QStandardItem(snp_data.ion_mass)
+                it_ion_mass = QStandardItem(_a)
+                it_ion_mass.setData(int(_a), Qt.UserRole)
                 it_ion_mass.setEditable(False)
                 # Q
-                it_ion_charge = QStandardItem(snp_data.ion_charge)
+                it_ion_charge = QStandardItem(_q)
+                it_ion_charge.setData(int(_q), Qt.UserRole)
                 it_ion_charge.setEditable(False)
                 # user
                 it_user = QStandardItem(snp_data.username)
@@ -1293,9 +1298,8 @@ class _SnpProxyModel(QSortFilterProxyModel):
     def lessThan(self, left, right):
         left_data1, left_data2 = left.data(Qt.DisplayRole), left.data(Qt.UserRole)
         right_data1, right_data2 = right.data(Qt.DisplayRole), right.data(Qt.UserRole)
-        if left_data1 is None:
-            if left_data2 is not None:
-                return left_data2 < right_data2
+        if left_data2 is not None:
+            return left_data2 < right_data2
         return QSortFilterProxyModel.lessThan(self, left, right)
 
     def filterAcceptsRow(self, src_row, src_parent):
