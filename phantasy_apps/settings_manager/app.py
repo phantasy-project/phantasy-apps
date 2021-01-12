@@ -1827,7 +1827,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species()
         snp_data = SnapshotData(get_csv_settings(self._tv.model()),
-                wdir = self.wdir,
+                wdir=self.wdir,
                 ion_name=ion_name, ion_number=ion_number, ion_mass=ion_mass, ion_charge=ion_charge,
                 machine=self._last_machine_name, segment=self._last_lattice_name,
                 filter=self.filter_lineEdit.text())
@@ -1841,6 +1841,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if cast:
             self.on_cast_settings(snp_data)
         self.snp_filters_updated.emit()
+        # save by default
+        self.on_save_settings(snp_data)
 
     @pyqtSlot()
     def on_reveal_snp(self, data):
@@ -1997,7 +1999,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_save_settings(self, data):
         # in-place save data to filepath.
         if data.filepath is None or not os.path.exists(data.filepath):
-            return
+            fn = f"{data.ion_mass}{data.ion_name}+{data.ion_charge}_{data.ts_as_str()}.csv"
+            data.filepath = os.path.join(data.wdir, fn)
         self._save_settings(data, data.filepath)
 
     def on_saveas_settings(self, data):
