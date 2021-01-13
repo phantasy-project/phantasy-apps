@@ -1844,7 +1844,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if cast:
             self.on_cast_settings(snp_data)
         self.snp_filters_updated.emit()
-        # save by default
+        # save by default // to control with preference option.
         self.on_save_settings(snp_data)
 
     @pyqtSlot()
@@ -2004,6 +2004,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if data.filepath is None or not os.path.exists(data.filepath):
             fn = f"{data.ion_mass}{data.ion_name}+{data.ion_charge}_{data.ts_as_str()}.csv"
             data.filepath = os.path.join(data.wdir, fn)
+            dirname = os.path.dirname(data.filepath)
+            if not os.path.exists(dirname):
+                os.makedirs(dirname)
         self._save_settings(data, data.filepath)
 
     def on_saveas_settings(self, data):
