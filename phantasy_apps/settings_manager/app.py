@@ -408,6 +408,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lv = None
         self.lv_view_btn.clicked.connect(self.on_show_latinfo)
 
+        # snp dock
+        self.snp_dock.closed.connect(lambda:self.actionSnapshots.setChecked(False))
+        self.actionSnapshots.setChecked(True)
+
         # show lattice settings
         self.settingsLoaded.connect(self.on_settings_loaded)
 
@@ -1062,8 +1066,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_snpdock_top_level_changed(self, is_floating):
         if is_floating:
             self.sender().setWindowFlags(Qt.CustomizeWindowHint | Qt.Window |
-                    Qt.WindowMinimizeButtonHint |
-                    Qt.WindowMaximizeButtonHint)
+                    Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint)
             self.sender().show()
 
     def on_click_snpview(self, idx):
@@ -2089,6 +2092,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.log_dock.show()
         else:
             self.log_dock.close()
+
+    @pyqtSlot(bool)
+    def on_enable_snpdock(self, enabled):
+        if enabled:
+            self.snp_dock.show()
+        else:
+            self.snp_dock.close()
 
     @pyqtSlot()
     def on_find_text_in_setlog(self):

@@ -285,7 +285,6 @@ class SettingsModel(QStandardItemModel):
         tv.header().setStyleSheet("""
             QHeaderView {
                 font-weight: bold;
-                font-size: 14pt;
             }""")
         #
         self.style_view(font=self._font)

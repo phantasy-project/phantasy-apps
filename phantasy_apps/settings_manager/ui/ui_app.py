@@ -555,8 +555,8 @@ class Ui_MainWindow(object):
                                     "}")
         self.snp_dock.setFloating(False)
         self.snp_dock.setFeatures(
-            QtWidgets.QDockWidget.DockWidgetFloatable
-            | QtWidgets.QDockWidget.DockWidgetMovable
+            QtWidgets.QDockWidget.DockWidgetClosable
+            | QtWidgets.QDockWidget.DockWidgetFloatable
             | QtWidgets.QDockWidget.DockWidgetVerticalTitleBar)
         self.snp_dock.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.snp_dock.setObjectName("snp_dock")
@@ -845,6 +845,10 @@ class Ui_MainWindow(object):
         self.actionShow_Device_Settings_Log.setChecked(True)
         self.actionShow_Device_Settings_Log.setObjectName(
             "actionShow_Device_Settings_Log")
+        self.actionSnapshots = QtWidgets.QAction(MainWindow)
+        self.actionSnapshots.setCheckable(True)
+        self.actionSnapshots.setChecked(True)
+        self.actionSnapshots.setObjectName("actionSnapshots")
         self.menu_File.addAction(self.actionLoad_From_Snapshot)
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
@@ -852,6 +856,7 @@ class Ui_MainWindow(object):
         self.menu_Help.addAction(self.actionAbout_Qt)
         self.menuTools.addAction(self.actionFix_Corrector_Names)
         self.menu_View.addAction(self.actionShow_Device_Settings_Log)
+        self.menu_View.addAction(self.actionSnapshots)
         self.menubar.addAction(self.menu_File.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
         self.menubar.addAction(self.menu_View.menuAction())
@@ -952,6 +957,8 @@ class Ui_MainWindow(object):
             MainWindow.on_toggle_strict_wildcard)
         self.snp_treeView.doubleClicked['QModelIndex'].connect(
             MainWindow.on_dblclicked_snp)
+        self.actionSnapshots.toggled['bool'].connect(
+            MainWindow.on_enable_snpdock)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
@@ -1188,7 +1195,8 @@ class Ui_MainWindow(object):
         self.actionFix_Corrector_Names.setText(
             _translate("MainWindow", "Fix Corrector Names"))
         self.actionShow_Device_Settings_Log.setText(
-            _translate("MainWindow", "Device Settings Log"))
+            _translate("MainWindow", "Settings Log"))
+        self.actionSnapshots.setText(_translate("MainWindow", "Snapshots"))
 
 
 from phantasy_apps.settings_manager.dockerwidget import DockWidget
