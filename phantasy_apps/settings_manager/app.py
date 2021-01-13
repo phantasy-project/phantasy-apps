@@ -1869,6 +1869,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def update_btn_filters(self):
         ion_btn_filters = {}
         tag_btn_filters = set()
+        d = None
         for data in self._snp_dock_list:
             d = ion_btn_filters.setdefault(data.ion_name, {})
             d.setdefault(data.ion_mass, set()).add(data.ion_charge)
