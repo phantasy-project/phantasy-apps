@@ -235,6 +235,9 @@ class SnapshotData:
     def ts_as_str(self):
         return datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%dT%H:%M:%S')
 
+    def ts_as_fn(self):
+        return datetime.fromtimestamp(self.timestamp).strftime('%Y%m%dT%H%M%S')
+
     def ts_as_date(self):
         return datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%d %A')
 

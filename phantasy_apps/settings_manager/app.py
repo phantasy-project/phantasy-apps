@@ -2003,7 +2003,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_save_settings(self, data):
         # in-place save data to filepath.
         if data.filepath is None or not os.path.exists(data.filepath):
-            fn = f"{data.ion_mass}{data.ion_name}+{data.ion_charge}_{data.ts_as_str()}.csv"
+            fn = f"{data.ion_mass}{data.ion_name}+{data.ion_charge}_{data.ts_as_fn()}.csv"
             data.filepath = os.path.join(data.wdir, fn)
             dirname = os.path.dirname(data.filepath)
             if not os.path.exists(dirname):
@@ -2014,7 +2014,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # data: SnapshotData
         # settings(data.data): TableSettings
         if data.filepath is None:
-            fn = f"{data.ion_mass}{data.ion_name}+{data.ion_charge}_{data.ts_as_str()}"
+            fn = f"{data.ion_mass}{data.ion_name}+{data.ion_charge}_{data.ts_as_fn()}"
             cdir = os.path.join(data.wdir, fn)
         else:
             cdir = data.filepath
