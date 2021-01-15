@@ -90,16 +90,13 @@ FG_COLOR_MAP = {
     False: FG_NO_WRITE,
 }
 
+TT_LOADED = "loaded"
+TT_NOT_LOADED= "not-loaded"
+TT_GOLDEN = "Golden Setting!"
+TT_NOT_GOLDEN = "Light up if 'golden' in tags!"
+
 PX_SIZE = 24
-ACT_BTN_CONF = {
-    # op, (tt, text, px_path)
-#    'del': ('Delete this snapshot.', '', ":/sm-icons/delete.png"),
-#    'cast': ('Load this snapshot', 'Load', None),
-#    'save': ('Save the snapshot as a file, after that, all the row changes will be saved in place.',
-#             'Save As', None),
-#    'reveal': ('Reveal in File Explorer.', '', ':/sm-icons/openfolder.png'),
-#    'read': ('Open and read data file.', '', ':/sm-icons/readfile.png'),
-}
+ACT_BTN_CONF = {}
 
 ELEMT_PX_MAP = {i: [f':/elements/elements/{i}{s}.png' for s in ('', '-off')]
                 for i in AVAILABLE_IONS}
@@ -762,10 +759,7 @@ def get_ratio_as_string(a, b, fmt):
 
 class SnapshotDataModel(QStandardItemModel):
 
-#    saveas_settings = pyqtSignal(SnapshotData)
     save_settings = pyqtSignal(SnapshotData)
-    load_settings = pyqtSignal(SnapshotData)
-#    del_settings = pyqtSignal(SnapshotData)
 
     def __init__(self, parent, snp_list, **kws):
         super(self.__class__, self).__init__(parent)
@@ -783,22 +777,21 @@ class SnapshotDataModel(QStandardItemModel):
 
         self.header = self.h_ts, self.h_name, \
                       self.h_ion, self.h_ion_number, self.h_ion_mass, self.h_ion_charge, \
-                      self.h_load_status, self.h_save_status, \
-                      self.h_user, \
+                      self.h_load_status, self.h_save_status, self.h_user, \
                       self.h_is_golden, self.h_tags, self.h_note \
-                    = "Timestamp", "Name", "Ion", "Z", "A", "Q", "", "", \
-                      "User", \
+                    = "Timestamp", "Name", \
+                      "Ion", "Z", "A", "Q", \
+                      "", "", "User", \
                       "", "Tags", "Note"
         self.ids = self.i_ts, self.i_name, \
                    self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge, \
-                   self.i_load_status, self.i_save_status, \
-                   self.i_user, \
+                   self.i_load_status, self.i_save_status, self.i_user, \
                    self.i_is_golden, self.i_tags, self.i_note \
                  = range(len(self.header))
 
-        self.itemChanged.connect(self.on_item_changed)
+        self.dataChanged.connect(self.on_data_changed)
 
-        #
+        # filters
         self._ion_filter_list = None
         self._ion_filter_cnt = Counter()
         #
@@ -821,51 +814,51 @@ class SnapshotDataModel(QStandardItemModel):
 
     def set_model(self):
         self.set_data()
-        _model = _SnpProxyModel(self)
-        self._v.setModel(_model)
+        self._v.setModel(_SnpProxyModel(self))
         self._post_init_ui(self._v)
 
     def set_data(self):
-        data = {}
+        data = {}  # root-i: [snp-1, snp-2, ...]
         for i in self._snp_list:
             data.setdefault(i.ts_as_date(), []).append(i)
         self._data = data
 
         for ts_date in sorted(data):
             #
-            ts_data_list = data[ts_date]
+            ts_snp_data_list = data[ts_date]  # snp data under ts_date root
             it_root = QStandardItem(ts_date)
             it_root.setEditable(False)
 
-            for snp_data in ts_data_list:
+            for snp_data in ts_snp_data_list:
                 # ts
                 it_ts = QStandardItem(snp_data.ts_as_str())
                 it_ts.setEditable(False)
                 it_ts.snp_data = snp_data
-                # name
+
+                # name (invisible)
                 it_name = QStandardItem(snp_data.name)
-                it_name.setToolTip(snp_data.name)
-                # ion
-                it_ion = QStandardItem(snp_data.ion_name)
-                it_ion.setEditable(False)
+
+                # ion: name
+                it_ion_name = QStandardItem(snp_data.ion_name)
+                it_ion_name.setEditable(False)
                 _z, _a, _q = snp_data.ion_number, snp_data.ion_mass, snp_data.ion_charge
-                # Z
+                # ion: Z (str)
                 it_ion_number = QStandardItem(_z)
                 it_ion_number.setData(int(_z), Qt.UserRole)
                 it_ion_number.setEditable(False)
-                # A
+                # ion: A (str)
                 it_ion_mass = QStandardItem(_a)
                 it_ion_mass.setData(int(_a), Qt.UserRole)
                 it_ion_mass.setEditable(False)
-                # Q
+                # ion: Q (str)
                 it_ion_charge = QStandardItem(_q)
                 it_ion_charge.setData(int(_q), Qt.UserRole)
                 it_ion_charge.setEditable(False)
                 # user
-                it_user = QStandardItem(snp_data.username)
+                it_user = QStandardItem(snp_data.user)
                 it_user.setEditable(False)
 
-                # tags
+                # tags (list), editable
                 tags_as_str = snp_data.tags_as_str()
                 it_tags = QStandardItem(tags_as_str)
                 it_tags.setData(self.tags_px, Qt.DecorationRole)
@@ -875,42 +868,38 @@ class SnapshotDataModel(QStandardItemModel):
                     it_tags.setToolTip(tags_as_str)
                 # is golden?
                 it_is_golden = QStandardItem()
-                px = QPixmap(QSize(PX_SIZE, PX_SIZE))
-                if snp_data.is_golden():
-                    bgc = BG_COLOR_GOLDEN_YES
-                    is_golden_tip = "Golden Setting!"
-                else:
-                    bgc = BG_COLOR_GOLDEN_NO
-                    is_golden_tip = "Light up if 'golden' in tags!"
-                px.fill(QColor(bgc))
-                it_is_golden.setData(px, Qt.DecorationRole)
-                it_is_golden.setData(is_golden_tip, Qt.UserRole)
-                it_is_golden.setToolTip(is_golden_tip)
+                self.set_golden_status(snp_data.is_golden(), it_is_golden)
 
-                # note
+                # note (str)
                 it_note = QStandardItem(snp_data.note)
                 it_note.setData(self.note_px, Qt.DecorationRole)
                 it_note.setToolTip(snp_data.note)
+
                 # load status
                 it_load_status = QStandardItem()
                 it_load_status.setData(self.load_px, Qt.DecorationRole)
                 it_load_status.setData("not-loaded", Qt.UserRole)
                 it_load_status.setToolTip("Load snapshot by double-clicking")
+
                 # save status
                 it_save_status = QStandardItem()
-                if snp_data.filepath is None:
+                if snp_data.data_path is None:
                     it_save_status.setData(self.save_px, Qt.DecorationRole)
                     it_save_status.setData('not-saved', Qt.UserRole)
                 else:
                     it_save_status.setData(self.saved_px, Qt.DecorationRole)
                     it_save_status.setData('saved', Qt.UserRole)
-                    it_save_status.setToolTip(snp_data.filepath)
-                row = (it_ts, it_name,
-                       it_ion, it_ion_number, it_ion_mass, it_ion_charge,
-                       it_load_status, it_save_status,
-                       it_user, it_is_golden, it_tags, it_note,)
+                    it_save_status.setToolTip(snp_data.data_path)
+                #
+                row = (
+                    it_ts, it_name,
+                    it_ion_name, it_ion_number, it_ion_mass, it_ion_charge,
+                    it_load_status, it_save_status,
+                    it_user, it_is_golden, it_tags, it_note
+                )
                 it_root.appendRow(row)
 
+            #
             ph_list = []
             for i in range(len(self.header) - 1):
                 it = QStandardItem('')
@@ -918,50 +907,25 @@ class SnapshotDataModel(QStandardItemModel):
                 ph_list.append(it)
             self.appendRow((it_root, *ph_list))
 
-    def on_item_changed(self, item):
-        if item.parent() is None:
+    def on_data_changed(self, idx1, idx2):
+        if idx1.column() in (self.i_load_status, self.i_is_golden, self.i_save_status):
             return
-        idx = item.index()
-        s = item.text()
-        i, j = idx.row(), idx.column()
-        snp_data = self.itemFromIndex(self.index(i, self.i_ts, item.parent().index())).snp_data
+        s = idx1.data(Qt.DisplayRole)
+        i, j = idx1.row(), idx1.column()
+        pindex = idx1.parent()
+        snp_data = self.itemFromIndex(self.index(i, self.i_ts, pindex)).snp_data
         if j == self.i_note:
             snp_data.note = s
-            item.setToolTip(s)
         elif j == self.i_name:
             snp_data.name = s
-            item.setToolTip(s)
         elif j == self.i_tags:
             snp_data.tags = s
-            item.setToolTip(s)
-            it = self.itemFromIndex(self.index(i, self.i_is_golden, item.parent().index()))
-            if snp_data.is_golden():
-                bgc = BG_COLOR_GOLDEN_YES
-                is_golden_tip = "Golden Setting!"
-            else:
-                bgc = BG_COLOR_GOLDEN_NO
-                is_golden_tip = "Light up if 'golden' in tags!"
-            px = QPixmap(QSize(PX_SIZE, PX_SIZE))
-            px.fill(QColor(bgc))
-            it.setData(px, Qt.DecorationRole)
-            it.setToolTip(is_golden_tip)
-        # in place save
+            it = self.itemFromIndex(self.index(i, self.i_is_golden, pindex))
+            self.set_golden_status(snp_data.is_golden(), it)
+        self.dataChanged.disconnect()
+        self.itemFromIndex(idx1).setToolTip(s)
+        self.dataChanged.connect(self.on_data_changed)
         self.save_settings.emit(snp_data)
-
-    @pyqtSlot()
-    def on_load_snp(self):
-        data = self.sender().property('data')
-        self.load_settings.emit(data)
-
-#    @pyqtSlot()
-#    def on_save_snp(self):
-#        data = self.sender().property('data')
-#        self.saveas_settings.emit(data)
-
-#    @pyqtSlot()
-#    def on_del_snp(self):
-#        data = self.sender().property('data')
-#        self.del_settings.emit(data)
 
     def _post_init_ui(self, v):
         for i, s in zip(self.ids, self.header):
@@ -1042,11 +1006,11 @@ class SnapshotDataModel(QStandardItemModel):
                 font-weight: bold;
             }""")
 
+        #
         v.expandAll()
         for i in (self.i_ts, self.i_name,
                   self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge,
-                  self.i_load_status, self.i_save_status,
-                  self.i_user, self.i_is_golden,
+                  self.i_load_status, self.i_save_status, self.i_user, self.i_is_golden,
                   self.i_tags):
             v.resizeColumnToContents(i)
         v.collapseAll()
@@ -1074,13 +1038,10 @@ class SnapshotDataModel(QStandardItemModel):
                 break
         if found:
             self.removeRow(irow, iidx)
-            del data
 
     @pyqtSlot('QString', 'QString')
     def on_snp_saved(self, snp_name, filepath):
-        # void
-        # tag as saved for *snp_name*, update SnapshotData
-        # enable locate and read.
+        # snp data is saved/updated
         found = False
         for ii in range(self.rowCount()):
             ridx = self.index(ii, 0)
@@ -1094,19 +1055,23 @@ class SnapshotDataModel(QStandardItemModel):
                     idx = self.index(i, self.i_save_status, ridx)
                     self.setData(idx, self.saved_px, Qt.DecorationRole)
                     self.setData(idx, "saved", Qt.UserRole)
-                    it0.snp_data.filepath = filepath
                     self.itemFromIndex(idx).setToolTip(filepath)
-                    #for j in (self.i_browse, self.i_read):
-                    #    idx = self.index(i, j, ridx)
-                    #    w = self._v.indexWidget(idx)
-                    #    # !! not fully understood !!
-                    #    if w is None:
-                    #        pass
-                    #    else:
-                    #        w.setEnabled(True)
                     break
             if found:
                 break
+
+    def set_golden_status(self, is_golden: bool, it: QStandardItem) -> None:
+        px = QPixmap(QSize(PX_SIZE, PX_SIZE))
+        if is_golden:
+            bgc = BG_COLOR_GOLDEN_YES
+            tt = TT_GOLDEN
+        else:
+            bgc = BG_COLOR_GOLDEN_NO
+            tt = TT_NOT_GOLDEN
+        px.fill(QColor(bgc))
+        it.setData(px, Qt.DecorationRole)
+        it.setData(tt, Qt.UserRole)
+        it.setToolTip(tt)
 
     @pyqtSlot(SnapshotData)
     def on_snp_loaded(self, snpdata):
@@ -1145,11 +1110,11 @@ class SnapshotDataModel(QStandardItemModel):
     def set_loaded(self, idx, loaded):
         if loaded:
             self.setData(idx, self.loaded_px, Qt.DecorationRole)
-            self.setData(idx, 'loaded', Qt.UserRole)
+            self.setData(idx, TT_LOADED, Qt.UserRole)
             tt = "Snapshot loaded."
         else:
             self.setData(idx, self.load_px, Qt.DecorationRole)
-            self.setData(idx, 'not-loaded', Qt.UserRole)
+            self.setData(idx, TT_NOT_LOADED, Qt.UserRole)
             tt = "Load snapshot by double-clicking"
         self.setData(idx, tt, Qt.ToolTipRole)
 
@@ -1208,20 +1173,6 @@ class _DelegateSnapshot(QStyledItemDelegate):
         src_m = m.sourceModel()
         src_idx = m.mapToSource(index)
         data = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_ts, src_idx.parent())).snp_data
-        # test:
-        print(data.ts_as_str(), data.name)
-        #
-        self.sender().setProperty('data', data)
-#        if op == 'del':
-#            src_m.on_del_snp()
-#        if op == 'cast':
-#            src_m.on_cast_snp()
-#        elif op == 'save':
-#            src_m.on_save_snp()
-#        elif op == 'reveal':
-#            src_m.on_browse_snp()
-#        elif op == 'read':
-#            src_m.on_read_snp()
 
     def setEditorData(self, editor, index):
         QStyledItemDelegate.setEditorData(self, editor, index)

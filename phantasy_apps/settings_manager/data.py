@@ -2,6 +2,7 @@
 
 import csv
 import os
+import re
 from collections import OrderedDict
 import time
 from datetime import datetime
@@ -30,6 +31,13 @@ else:
 ELEMT_PATH = os.path.join(os.path.dirname(__file__), 'config', 'elements.json')
 DEFAULT_SETTINGS = Settings(ELEMT_PATH)
 #
+
+# default attr keys of snapshotdata
+ATTR_KEYS = (
+    "timestamp", "datetime", "name", "note", "user",
+    "ion_name", "ion_number", "ion_mass", "ion_charge",
+    "machine", "segment", "tags", "app", "version",
+)
 
 def make_physics_settings(csv_settings, lat):
     """Generate Settings (lattice settings) of *lat* from `TableSettings`
@@ -194,43 +202,141 @@ class ElementPVConfig(Settings):
         self.update(DEFAULT_SETTINGS)
 
 
-class SnapshotData:
-    """Snapshot data.
+def read_data(data_source, data_type='csv'):
+    """Read settings data with attribute values from data source.
+
+    Supported data source: .csv file.
+    To be supported data source: .sql file.
+    Each .csv file is one snapshot, while each .sql may contain multiple.
+
+    Parameters
+    ----------
+    data_source : str
+        Path of the data source.
+    data_type : str
+        Data type, currently only 'csv' is supported.
+
+    Returns
+    -------
+    (data, attr) : A tuple of settings list and attributes dict.
     """
-    def __init__(self, tablesettings, name=None, **kws):
-        self.data = tablesettings
-        self._ts = time.time()
-        self._user = getuser()
-        self.name = name
-        self.wdir = kws.pop('wdir', '.')
-        self.ion_name = kws.pop('ion_name', None)
-        self.ion_number = kws.pop('ion_number', None) # Z (str)
-        self.ion_mass = kws.pop('ion_mass', None) # A (str)
-        self.ion_charge = kws.pop('ion_charge', None) # Q (str)
-        self.machine = kws.pop('machine', DEFAULT_MACHINE)
-        self.segment = kws.pop('segment', DEFAULT_SEGMENT)
-        self.tags = kws.pop('tags', None) # list of string as tags
-        note = ''
-        for k, v in kws.items():
-            if v == '':
-                continue
-            note += f'{k}: {v}, '
-        self.note = note
-        self._filepath = None
+    if data_type == 'csv':
+        _path = os.path.abspath(os.path.expanduser(data_source))
+        data_list, attr_dict = _read_csv_data(_path)
+        # instantiate SnapshotData
+        snp_data = SnapshotData(data_list, **attr_dict)
+    else:
+        raise RuntimeError(f"Load data source of type '{data_type}' is not implemented.")
+    return snp_data
+
+
+def _read_csv_data(data_source, delimiter=','):
+    """Load data from .csv file to SnapshotData instance, initial attribute key: 'data_path'.
+
+    Read CSV file with the lines starting with '#' as dict of comments,
+    and the first line after comments section as header.
+    """
+    attr_dict = {'data_path': data_source}
+    data_list = []
+    with open(data_source, 'r') as fp:
+        for line in fp:
+            if line.startswith('#'):
+                k, v = line.strip('# ,\n').split(':', 1)
+                if k == 'timestamp':
+                    attr_dict[k] = float(v.strip())
+                else:
+                    attr_dict[k] = v.strip()
+            else:
+                break
+        ss = csv.reader(fp, delimiter=delimiter, skipinitialspace=True)
+        header = [i.strip() for i in line.split(delimiter)]
+        for ename, field, ftype, spos, sp, rd, last_sp, tol, writable in ss:
+            data_list.append(
+                (ename, field, ftype, spos,
+                 float(sp), float(rd), float(last_sp),
+                 float(tol), bool(writable)))
+    return data_list, attr_dict
+
+
+
+class SnapshotData:
+    """Snapshot data object, instantiated from settings data with attributes.
+
+    Parameters
+    ----------
+    data_list : list
+        A list of settings tuple.
+    """
+    def __init__(self, data_list, **kws):
+        self.data = data_list
+        self.init_attr()
+        self.meta_keys = [k for k in kws if k != 'data_path']
+        self.init_attr_dict(**kws)
+
+    def init_attr(self):
+        self._ts = None
+        self._datetime = None
+        self._name = None
+        self._note = None
+        self._user = None
+        self._ion_name = None
+        self._ion_number = None
+        self._ion_mass = None
+        self._ion_charge = None
+        self._machine = None
+        self._segment = None
+        self._tags = None
+        self.data_path = None
+
+    def init_attr_dict(self, **kws):
+        d = {k: None for k in ATTR_KEYS}
+        d.update(kws)
+        for k, v in d.items():
+            if k == 'datetime':
+                continue  # present timestamp in another way
+            elif k == 'app' and v is None: # app name
+                v = 'Settings Manager'
+            elif k == 'version' and v is None: # app version
+                v = 'undefined'
+            setattr(self, k, v)
+
+#        self._ts = time.time()
+#        self._user = getuser()
+#        self.name = name
+#        self.wdir = kws.pop('wdir', '.')
+#        self.ion_name = kws.pop('ion_name', None)
+#        self.ion_number = kws.pop('ion_number', None) # Z (str)
+#        self.ion_mass = kws.pop('ion_mass', None) # A (str)
+#        self.ion_charge = kws.pop('ion_charge', None) # Q (str)
+#        self.machine = kws.pop('machine', DEFAULT_MACHINE)
+#        self.segment = kws.pop('segment', DEFAULT_SEGMENT)
+#        self.tags = kws.pop('tags', None) # list of string as tags
+#        note = ''
+#        for k, v in kws.items():
+#            if v == '':
+#                continue
+#            note += f'{k}: {v}, '
+#        self.note = note
+#        self._filepath = None
 
     @property
     def tags(self):
+        """List of strings.
+        """
         return self._tags
 
     @tags.setter
     def tags(self, tags):
+        # input: str separated by ',', delete whitespace if any, or list of strings.
+        # ignore empty str ''.
         if tags is None:
             self._tags = []
         else:
             if isinstance(tags, str):
-                self._tags = [s.strip() for s in tags.split(',')]
+                _tags = tags.split(',')
             elif isinstance(tags, (list, tuple)):
-                self._tags = tags
+                _tags = tags
+            self._tags = [i for i in [re.sub(r'\s+', '', s) for s in _tags] if i != '']
 
     def ts_as_str(self):
         return datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%dT%H:%M:%S')
@@ -251,6 +357,17 @@ class SnapshotData:
 
     def tags_as_str(self):
         return ",".join(self._tags)
+
+    def get_default_data_path(self, working_directory=None, data_type='csv'):
+        """Return full data path for saving by naming convention,
+        the data directory by default is ., e.g. ./40Ar+9_20200929T104317.csv.
+        """
+        if working_directory is None:
+            wdir = '.'
+        else:
+            wdir = os.path.expanduser(working_directory)
+        fn = f"{self.ion_mass}{self.ion_name}+{self.ion_charge}_{self.ts_as_fn()}.csv"
+        return os.path.abspath(os.path.join(wdir, fn))
 
     @property
     def ion_name(self):
@@ -303,16 +420,38 @@ class SnapshotData:
     @name.setter
     def name(self, s):
         if s is None:
-            self._name = get_random_name() + "_" + str(time.time())
+            self._name = get_random_name() + "_" + str(time.time_ns())
         else:
             self._name = s
 
     @property
-    def username(self):
+    def machine(self):
+        return self._machine
+
+    @machine.setter
+    def machine(self, s):
+        if s is None:
+            self._machine = DEFAULT_MACHINE
+        else:
+            self._machine = s
+
+    @property
+    def segment(self):
+        return self._segment
+
+    @segment.setter
+    def segment(self, s):
+        if s is None:
+            self._segment = DEFAULT_SEGMENT
+        else:
+            self._segment = s
+
+    @property
+    def user(self):
         return self._user
 
-    @username.setter
-    def username(self, s):
+    @user.setter
+    def user(self, s):
         if s is None:
             self._user = getuser()
         else:
@@ -325,14 +464,14 @@ class SnapshotData:
     @timestamp.setter
     def timestamp(self, x):
         if x is None:
-            if self._filepath is not None:
-                self._ts = os.path.getmtime(self._filepath)
-                self._user = pwd.getpwuid(os.stat(self._filepath).st_uid).pw_name
-            else:
-                self._ts = time.time()
-                self._user = getuser()
+            self._ts = time.time()
         else:
             self._ts = x
+        self._datetime = self.ts_as_str()
+
+    @property
+    def datetime(self):
+        return self._datetime
 
     @property
     def note(self):
@@ -345,44 +484,20 @@ class SnapshotData:
         else:
             self._note = s
 
-    @property
-    def filepath(self):
-        return self._filepath
-
-    @filepath.setter
-    def filepath(self, s):
-        self._filepath = s
-
-    def update_meta(self):
-        # update tablesettings meta
-        self.data.meta = {
-            'timestamp': self._ts,
-            'datetime': self.ts_as_str(),
-            'name': self._name,
-            'note': self._note,
-            'filepath': self._filepath,
-            'user': self._user,
-            'ion_name': self._ion_name,
-            'ion_number': self._ion_number,
-            'ion_mass': self._ion_mass,
-            'ion_charge': self._ion_charge,
-            'machine': self.machine,
-            'segment': self.segment,
-            'tags': ','.join(self.tags),
-        }
-
-    def update_properties(self):
-        # update with tablesettings meta
-        self.note = self.data.meta.get('note', None)
-        self.timestamp = self.data.meta.get('timestamp', None)
-        self.username = self.data.meta.get('user', None)
-        self.ion_name = self.data.meta.get('ion_name', None)
-        self.ion_number = self.data.meta.get('ion_number', None)
-        self.ion_mass = self.data.meta.get('ion_mass', None)
-        self.ion_charge = self.data.meta.get('ion_charge', None)
-        self.machine = self.data.meta.get('machine', DEFAULT_MACHINE)
-        self.segment = self.data.meta.get('segment', DEFAULT_SEGMENT)
-        self.tags = self.data.meta.get('tags', None)
-
     def is_golden(self):
         return 'golden' in self.tags
+
+    def write(self, filepath, delimiter=','):
+        """Write settings into *filepath*.
+        """
+        with open(filepath, 'w') as fp:
+            for k in self.meta_keys:
+                v = getattr(self, k)
+                if k == 'tags':
+                    v = self.tags_as_str()
+                fp.write(f"# {k}: {v}\n")
+            ss = csv.writer(fp, delimiter=delimiter)
+            ss.writerow(CSV_HEADER)
+            for ename, fname, ftype, spos, sp, rd, old_sp, tol, writable in self.data:
+                ss.writerow(
+                    (ename, fname, ftype, spos, sp, rd, old_sp, tol, writable))
