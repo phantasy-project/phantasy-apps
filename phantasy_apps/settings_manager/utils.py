@@ -764,18 +764,18 @@ class SnapshotDataModel(QStandardItemModel):
 
 #    saveas_settings = pyqtSignal(SnapshotData)
     save_settings = pyqtSignal(SnapshotData)
-    cast_settings = pyqtSignal(SnapshotData)
+    load_settings = pyqtSignal(SnapshotData)
 #    del_settings = pyqtSignal(SnapshotData)
 
-    def __init__(self,  parent, snp_list, **kws):
+    def __init__(self, parent, snp_list, **kws):
         super(self.__class__, self).__init__(parent)
         self._v = parent
         self._snp_list = snp_list
         # [
         #  SnapshotData,
         # ]
-        self.casted_px = QPixmap(":/sm-icons/cast_connected.png").scaled(PX_SIZE, PX_SIZE)
-        self.cast_px = QPixmap(":/sm-icons/cast.png").scaled(PX_SIZE, PX_SIZE)
+        self.loaded_px = QPixmap(":/sm-icons/cast_connected.png").scaled(PX_SIZE, PX_SIZE)
+        self.load_px = QPixmap(":/sm-icons/cast.png").scaled(PX_SIZE, PX_SIZE)
         self.note_px = QPixmap(":/sm-icons/comment.png").scaled(PX_SIZE, PX_SIZE)
         self.tags_px = QPixmap(":/sm-icons/label.png").scaled(PX_SIZE, PX_SIZE)
         self.save_px = QPixmap(":/sm-icons/save-snp.png").scaled(PX_SIZE, PX_SIZE)
@@ -783,7 +783,7 @@ class SnapshotDataModel(QStandardItemModel):
 
         self.header = self.h_ts, self.h_name, \
                       self.h_ion, self.h_ion_number, self.h_ion_mass, self.h_ion_charge, \
-                      self.h_cast_status, self.h_save_status, \
+                      self.h_load_status, self.h_save_status, \
                       self.h_user, \
                       self.h_is_golden, self.h_tags, self.h_note \
                     = "Timestamp", "Name", "Ion", "Z", "A", "Q", "", "", \
@@ -791,7 +791,7 @@ class SnapshotDataModel(QStandardItemModel):
                       "", "Tags", "Note"
         self.ids = self.i_ts, self.i_name, \
                    self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge, \
-                   self.i_cast_status, self.i_save_status, \
+                   self.i_load_status, self.i_save_status, \
                    self.i_user, \
                    self.i_is_golden, self.i_tags, self.i_note \
                  = range(len(self.header))
@@ -891,11 +891,11 @@ class SnapshotDataModel(QStandardItemModel):
                 it_note = QStandardItem(snp_data.note)
                 it_note.setData(self.note_px, Qt.DecorationRole)
                 it_note.setToolTip(snp_data.note)
-                # cast status
-                it_cast_status = QStandardItem()
-                it_cast_status.setData(self.cast_px, Qt.DecorationRole)
-                it_cast_status.setData("not-casted", Qt.UserRole)
-                it_cast_status.setToolTip("Load snapshot by double-clicking")
+                # load status
+                it_load_status = QStandardItem()
+                it_load_status.setData(self.load_px, Qt.DecorationRole)
+                it_load_status.setData("not-loaded", Qt.UserRole)
+                it_load_status.setToolTip("Load snapshot by double-clicking")
                 # save status
                 it_save_status = QStandardItem()
                 if snp_data.filepath is None:
@@ -907,7 +907,7 @@ class SnapshotDataModel(QStandardItemModel):
                     it_save_status.setToolTip(snp_data.filepath)
                 row = (it_ts, it_name,
                        it_ion, it_ion_number, it_ion_mass, it_ion_charge,
-                       it_cast_status, it_save_status,
+                       it_load_status, it_save_status,
                        it_user, it_is_golden, it_tags, it_note,)
                 it_root.appendRow(row)
 
@@ -949,9 +949,9 @@ class SnapshotDataModel(QStandardItemModel):
         self.save_settings.emit(snp_data)
 
     @pyqtSlot()
-    def on_cast_snp(self):
+    def on_load_snp(self):
         data = self.sender().property('data')
-        self.cast_settings.emit(data)
+        self.load_settings.emit(data)
 
 #    @pyqtSlot()
 #    def on_save_snp(self):
@@ -1045,7 +1045,7 @@ class SnapshotDataModel(QStandardItemModel):
         v.expandAll()
         for i in (self.i_ts, self.i_name,
                   self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge,
-                  self.i_cast_status, self.i_save_status,
+                  self.i_load_status, self.i_save_status,
                   self.i_user, self.i_is_golden,
                   self.i_tags):
             v.resizeColumnToContents(i)
@@ -1109,8 +1109,8 @@ class SnapshotDataModel(QStandardItemModel):
                 break
 
     @pyqtSlot(SnapshotData)
-    def on_snp_casted(self, snpdata):
-        # updated casted dec role for ALL rows, hl casted row.
+    def on_snp_loaded(self, snpdata):
+        # updated loaded dec role for ALL rows, hl casted row.
         snp_name = snpdata.name
         self._v.clearSelection()
         for ii in range(self.rowCount()):
@@ -1119,37 +1119,37 @@ class SnapshotDataModel(QStandardItemModel):
                 continue
             for i in range(self.rowCount(ridx)):
                 if self.itemFromIndex(self.index(i, self.i_name, ridx)).text() == snp_name:
-                    casted = True
+                    loaded = True
                 else:
-                    casted = False
-                idx = self.index(i, self.i_cast_status, ridx)
-                self.set_casted(idx, casted)
-                if casted:
+                    loaded = False
+                idx = self.index(i, self.i_load_status, ridx)
+                self.set_loaded(idx, loaded)
+                if loaded:
                     idx = self._v.model().mapFromSource(idx)
                     self._v.scrollTo(idx)
                     self._v.selectionModel().select(idx,
                             QItemSelectionModel.Select | QItemSelectionModel.Rows)
 
-    def clear_cast_status(self):
+    def clear_load_status(self):
         for ii in range(self.rowCount()):
             ridx = self.index(ii, 0)
             if not self.hasChildren(ridx):
                 continue
             for i in range(self.rowCount(ridx)):
-                idx = self.index(i, self.i_cast_status, ridx)
-                if self.data(idx, Qt.UserRole) == 'casted':
-                    self.set_casted(idx, False)
+                idx = self.index(i, self.i_load_status, ridx)
+                if self.data(idx, Qt.UserRole) == 'loaded':
+                    self.set_loaded(idx, False)
                     break
             break
 
-    def set_casted(self, idx, casted):
-        if casted:
-            self.setData(idx, self.casted_px, Qt.DecorationRole)
-            self.setData(idx, 'casted', Qt.UserRole)
+    def set_loaded(self, idx, loaded):
+        if loaded:
+            self.setData(idx, self.loaded_px, Qt.DecorationRole)
+            self.setData(idx, 'loaded', Qt.UserRole)
             tt = "Snapshot loaded."
         else:
-            self.setData(idx, self.cast_px, Qt.DecorationRole)
-            self.setData(idx, 'not-casted', Qt.UserRole)
+            self.setData(idx, self.load_px, Qt.DecorationRole)
+            self.setData(idx, 'not-loaded', Qt.UserRole)
             tt = "Load snapshot by double-clicking"
         self.setData(idx, tt, Qt.ToolTipRole)
 
