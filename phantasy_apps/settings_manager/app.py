@@ -52,9 +52,9 @@ from phantasy_ui.widgets import is_item_checked
 from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from phantasy_ui.widgets import ElementSelectDialog
+from phantasy_ui.widgets import FlowLayout
 from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui.widgets import ProbeWidget
-from phantasy_apps.app_launcher.layout import FlowLayout
 
 from .app_loadfrom import LoadSettingsDialog
 from .app_pref import DEFAULT_PREF
@@ -1854,7 +1854,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for data in self._snp_dock_list:
             d = ion_btn_filters.setdefault(data.ion_name, {})
             d.setdefault(data.ion_mass, set()).add(data.ion_charge)
-            tag_btn_filters.update(data.tags)
+            if data.tags == []:
+                tag_btn_filters.add('NOTAG')
+            else:
+                tag_btn_filters.update(data.tags)
         del d
         self._build_btn_filters(self.snp_filter_hbox, ion_btn_filters)
         self._build_tag_filters(self.tag_filter_area, tag_btn_filters)
@@ -1863,15 +1866,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         w = area.takeWidget()
         w.setParent(None)
         w = QWidget(self)
-        w.setContentsMargins(10, 10, 10, 10)
+        w.setContentsMargins(0, 6, 0, 0)
         layout = FlowLayout()
-        for tag in filters:
+        if 'NOTAG' in filters:
+            filters.remove('NOTAG')
+            _filters = ['NOTAG'] + list(filters)
+        else:
+            _filters = list(filters)
+        for tag in _filters:
             o = QToolButton(self.snp_dock)
             o.setText(tag)
-            #if tag == 'golden':
-            #    o.setStyleSheet(TBTN_STY_GOLDEN)
-            #else:
-            #    o.setStyleSheet(TBTN_STY_REGULAR)
             o.setCheckable(True)
             o.toggled.connect(partial(self.on_update_tag_filters, tag))
             layout.addWidget(o)
