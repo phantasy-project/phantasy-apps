@@ -4,6 +4,7 @@
 import fnmatch
 import json
 import os
+import re
 import tempfile
 import time
 from collections import OrderedDict
@@ -42,6 +43,7 @@ from phantasy import Settings
 from phantasy import build_element
 from phantasy import Lattice
 from phantasy_ui import BaseAppForm
+from phantasy_ui import delayed_exec
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
 from phantasy_ui import printlog
@@ -65,6 +67,7 @@ from .data import ToleranceSettings
 from .data import SnapshotData
 from .data import get_csv_settings
 from .data import make_physics_settings
+from .data import read_data
 from .ui.ui_app import Ui_MainWindow
 from .ui.ui_query_tips import Ui_Form as QueryTipsForm
 from .utils import FMT
@@ -131,8 +134,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # snp saved, snpdata name, filepath
     snp_saved = pyqtSignal('QString', 'QString')
 
-    # snp casted, snpdata
-    snp_casted = pyqtSignal(SnapshotData)
+    # snp loaded, snpdata
+    snp_loaded = pyqtSignal(SnapshotData)
 
     # snp filter (snp dock)
     snp_filters_updated = pyqtSignal()
@@ -407,6 +410,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lv = None
         self.lv_view_btn.clicked.connect(self.on_show_latinfo)
 
+        # snp dock
+        self.snp_dock.closed.connect(lambda:self.actionSnapshots.setChecked(False))
+        self.actionSnapshots.setChecked(True)
+
         # show lattice settings
         self.settingsLoaded.connect(self.on_settings_loaded)
 
@@ -425,6 +432,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._unsel_icon = QIcon(QPixmap(":/sm-icons/uncheck.png"))
         self._sel_icon = QIcon(QPixmap(":/sm-icons/check.png"))
         self._sel3_icon = QIcon(QPixmap(":/sm-icons/check3.png"))
+        self._saveas_icon = QIcon(QPixmap(":/sm-icons/save.png"))
+        self._read_icon = QIcon(QPixmap(":/sm-icons/readfile.png"))
+        self._reveal_icon = QIcon(QPixmap(":/sm-icons/openfolder.png"))
+        self._del_icon = QIcon(QPixmap(":/sm-icons/delete.png"))
+        self._load_icon = QIcon(QPixmap(":/sm-icons/cast.png"))
 
         # selection
         self.select_all_btn.clicked.connect(partial(self.on_select, 'all'))
@@ -475,7 +487,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.refresh_pb.setVisible(False)
 
         # current snp lbl/le
-        self._current_snp = None
+        self._current_snpdata = None
         for i in (self.current_snp_lbl, self.current_snp_lineEdit):
             i.setVisible(False)
 
@@ -493,9 +505,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.actionTake_Snapshot.triggered.connect(lambda:self.take_snapshot())
 
         # scaling factor hint
-        self.snp_casted.connect(self.on_hint_scaling_factor)
-        # show current snpname
-        self.snp_casted.connect(self.on_current_snp_changed)
+        self.snp_loaded.connect(self.on_hint_scaling_factor)
+        #
+        self.snp_loaded.connect(self.on_snp_loaded)
+        self.snp_saved.connect(self.on_snp_saved)
 
         # log dock
         self.log_dock.closed.connect(lambda:self.actionShow_Device_Settings_Log.setChecked(False))
@@ -538,21 +551,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 continue
             w.setChecked(is_checked)
 
-    def on_current_snp_changed(self, snpdata):
-        # update current casted snapshot
-        # !not needed!
-        # for i in (self.current_snp_lbl, self.current_snp_lineEdit):
-        #    i.setVisible(True)
-        # self.current_snp_lineEdit.setText(snpdata.name)
-        self._current_snp = snpdata
-
     @pyqtSlot(bool)
     def on_enable_search(self, auto_collapse, enabled):
         if auto_collapse:
             self.filter_lineEdit.setVisible(enabled)
+            self.strict_wildcard_chkbox.setVisible(enabled)
         if not enabled:
             self.filter_lineEdit.setText('')
             self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
+    def on_toggle_strict_wildcard(self, on):
+        delayed_exec(self.on_filter_changed, 100)
 
     def keyPressEvent(self, e):
         if e.key() == Qt.Key_Escape and self.filter_btn.isChecked():
@@ -567,8 +577,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.font_changed.emit(self.font)
 
     def set_context_menu(self):
-        self._tv.setContextMenuPolicy(Qt.CustomContextMenu)
-        self._tv.customContextMenuRequested.connect(self.on_custom_context_menu)
+        for o in (self._tv, self.snp_treeView):
+            o.setContextMenuPolicy(Qt.CustomContextMenu)
+            o.customContextMenuRequested.connect(partial(self.on_custom_context_menu, o))
 
     @pyqtSlot()
     def on_copy_text(self, m, idx):
@@ -592,16 +603,70 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         w.fields_cbb.setCurrentText(fname)
 
     @pyqtSlot(QPoint)
-    def on_custom_context_menu(self, pos):
-        m = self._tv.model()
+    def on_custom_context_menu(self, view, pos):
+        m = view.model()
         if m is None:
             return
+        idx = view.indexAt(pos)
+        if view == self._tv:
+            menu = self._build_settings_context_menu(idx, m)
+        else:
+            menu = self._build_snp_context_menu(idx, m)
+        #
+        if menu is not None:
+            menu.exec_(view.viewport().mapToGlobal(pos))
+
+    def _build_snp_context_menu(self, idx, m):
         src_m = m.sourceModel()
-        idx = self._tv.indexAt(pos)
         src_idx = m.mapToSource(idx)
         item = src_m.itemFromIndex(src_idx)
         text = item.text()
+        if item.parent() is None:
+            return None
+        pindex = item.parent().index()
+        #
+        menu = QMenu(self)
+        menu.setStyleSheet('QMenu {margin: 2px;}')
+        #
+        copy_action = QAction(self._copy_icon, "Copy Text", menu)
+        copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
+        menu.addAction(copy_action)
+        #
+        item0 = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_ts, pindex))
+        #
+        if not hasattr(item0, 'snp_data'):
+            return menu
+        snpdata = item0.snp_data
+        # save-as
+        saveas_action = QAction(self._saveas_icon, "Export", menu)
+        saveas_action.triggered.connect(partial(self.on_saveas_settings, snpdata))
+        # read
+        read_action = QAction(self._read_icon, "Read", menu)
+        read_action.triggered.connect(partial(self.on_read_snp, snpdata))
+        # reveal
+        reveal_action = QAction(self._reveal_icon, "Show in Files", menu)
+        reveal_action.triggered.connect(partial(self.on_reveal_snp, snpdata))
+        # del
+        del_action = QAction(self._del_icon, "Delete", menu)
+        del_action.triggered.connect(partial(self.on_del_settings, snpdata))
+        # load
+        load_action = QAction(self._load_icon, "Load", menu)
+        load_action.triggered.connect(partial(self.on_load_settings, snpdata))
+        #
+        menu.insertAction(copy_action, load_action)
+        menu.addSeparator()
+        menu.addAction(read_action)
+        menu.addAction(reveal_action)
+        menu.addSeparator()
+        menu.addAction(saveas_action)
+        menu.addAction(del_action)
+        return menu
 
+    def _build_settings_context_menu(self, idx, m):
+        src_m = m.sourceModel()
+        src_idx = m.mapToSource(idx)
+        item = src_m.itemFromIndex(src_idx)
+        text = item.text()
         #
         menu = QMenu(self)
         menu.setStyleSheet('QMenu {margin: 2px;}')
@@ -658,9 +723,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         sel_action.triggered.connect(partial(self.on_toggle_selected_rows,
                                      selected_rows, m, src_m, new_check_state))
         menu.addAction(sel_action)
-
-        #
-        menu.exec_(self._tv.viewport().mapToGlobal(pos))
+        return menu
 
     @pyqtSlot()
     def on_toggle_selected_rows(self, selected_rows, m, m_src, new_check_state):
@@ -997,8 +1060,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_snpdock_top_level_changed(self, is_floating):
         if is_floating:
             self.sender().setWindowFlags(Qt.CustomizeWindowHint | Qt.Window |
-                    Qt.WindowMinimizeButtonHint |
-                    Qt.WindowMaximizeButtonHint)
+                    Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint)
             self.sender().show()
 
     def on_click_snpview(self, idx):
@@ -1046,12 +1108,26 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         r, c = idx.row(), idx.column()
         self._tv.model().toggle_selection_one(r)
 
+    def on_dblclicked_snp(self, idx):
+        m = self.snp_treeView.model()
+        if m is None:
+            return
+        src_m = m.sourceModel()
+        src_idx = m.mapToSource(idx)
+        item = src_m.itemFromIndex(src_idx)
+        if item.parent() is None:
+            return
+        if src_idx.column() in (src_m.i_tags, src_m.i_note):
+            return
+        item0 = src_m.itemFromIndex(src_m.index(src_idx.row(), 0, item.parent().index()))
+        self.on_load_settings(item0.snp_data)
+
     @pyqtSlot()
     def on_filter_changed(self):
         m = self._tv.model()
         if m is None:
             return
-        full_str = self.sender().text().strip()
+        full_str = self.filter_lineEdit.text().strip()
         filter_key_value_tuples = [] # list of tuples of k, is_number_key, v
         for s in full_str.split('and'):
             s = s.strip()
@@ -1063,6 +1139,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 v = s
             if v == '':
                 v = '*'
+            if not self.strict_wildcard_chkbox.isChecked():
+                v = f"*{v}*"
             if k not in VALID_FILTER_KEYS:
                 k = 'device'
             if k in VALID_FILTER_KEYS_NUM:
@@ -1118,7 +1196,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self, "Load Settings File", msg)
             printlog(msg)
         finally:
-            self.clear_cast_status()
+            self.clear_load_status()
 
     def _load_settings_from_csv(self, filepath):
         table_settings = TableSettings(filepath)
@@ -1228,29 +1306,25 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # reset snp dock with files in d (recursively)
         self.wdir = d
         if purge:
-            self._snp_dock_list = []
+            del self._snp_dock_list[:]
         for root, dnames, fnames in os.walk(d):
             for fname in fnmatch.filter(fnames, "*.csv"):
                 path = os.path.join(root, fname)
-                table_settings = TableSettings(path)
-                snp_data = SnapshotData(table_settings)
-                snp_data.name = table_settings.meta.get('name', None)
+                snp_data = read_data(path)
+                # skip snapshot that name conflicts
                 if is_snp_data_exist(snp_data, self._snp_dock_list):
                     continue
-                snp_data.filepath = table_settings.meta.get('filepath', path)
-                snp_data.update_properties()
                 self._snp_dock_list.append(snp_data)
-        n = len(self._snp_dock_list)
-        self.snp_dock.setVisible(n!=0)
         self.update_snp_dock_view()
         self.wdir_lineEdit.setText(self.wdir)
+        n = len(self._snp_dock_list)
         self.total_snp_lbl.setText(str(n))
         #
         self.fm.removePaths(self.fm.directories())
         self.fm.addPath(self.wdir)
         # current snp
-        if self._current_snp is not None:
-            self.snp_casted.emit(self._current_snp)
+        if self._current_snpdata is not None:
+            self.snp_loaded.emit(self._current_snpdata)
         self.snp_filters_updated.emit()
 
     @pyqtSlot(int)
@@ -1671,22 +1745,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             ext = path.rsplit('.', 1)[-1]
             if ext.upper() != 'CSV':
                 continue
-            table_settings = TableSettings(path)
-            snp_data = SnapshotData(table_settings)
-            snp_data.name = table_settings.meta.get('name', None)
-            if is_snp_data_exist(snp_data, self._snp_dock_list):
-                continue
-            snp_data.note = table_settings.meta.get('note', None)
-            snp_data.filepath = table_settings.meta.get('filepath', path)
-            snp_data.timestamp = table_settings.meta.get('timestamp', None)
-            self._snp_dock_list.append(snp_data)
-        n = len(self._snp_dock_list)
-        self.snp_dock.setVisible(n!=0)
+            snp_data = read_data(path)
+            if not is_snp_data_exist(snp_data, self._snp_dock_list):
+                self._snp_dock_list.append(snp_data)
         self.update_snp_dock_view()
-        #
-        # self.load_file(path, ext)
-        # cast last one
-        self.on_cast_settings(snp_data)
+        self.on_load_settings(snp_data)
+        n = len(self._snp_dock_list)
         self.total_snp_lbl.setText(str(n))
 
     @pyqtSlot(int, bool)
@@ -1746,7 +1810,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species()
         snp_data = SnapshotData(get_csv_settings(self._tv.model()),
-                wdir = self.wdir,
+                wdir=self.wdir,
                 ion_name=ion_name, ion_number=ion_number, ion_mass=ion_mass, ion_charge=ion_charge,
                 machine=self._last_machine_name, segment=self._last_lattice_name,
                 filter=self.filter_lineEdit.text())
@@ -1758,8 +1822,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.total_snp_lbl.setText(str(n))
         self.update_snp_dock_view()
         if cast:
-            self.on_cast_settings(snp_data)
+            self.on_load_settings(snp_data)
         self.snp_filters_updated.emit()
+        # save by default // to control with preference option.
+        self.on_save_settings(snp_data)
+
+    @pyqtSlot()
+    def on_reveal_snp(self, data):
+        # !! requires nautilus !!
+        from PyQt5.QtCore import QProcess
+        p = QProcess(self)
+        p.setArguments(["-s", data.data_path])
+        p.setProgram("nautilus")
+        p.startDetached()
+
+    @pyqtSlot()
+    def on_read_snp(self, data):
+        QDesktopServices.openUrl(QUrl(data.data_path))
 
     def on_snp_filters_updated(self):
         # update btn filters
@@ -1770,6 +1849,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def update_btn_filters(self):
         ion_btn_filters = {}
         tag_btn_filters = set()
+        d = None
         for data in self._snp_dock_list:
             d = ion_btn_filters.setdefault(data.ion_name, {})
             d.setdefault(data.ion_mass, set()).add(data.ion_charge)
@@ -1875,12 +1955,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.set_model()
         self.snp_expand_btn.toggled.emit(self.snp_expand_btn.isChecked())
         m.save_settings.connect(self.on_save_settings)
-        m.saveas_settings.connect(self.on_saveas_settings)
-        m.del_settings.connect(self.on_del_settings)
-        self.snp_saved.connect(m.on_snp_saved)
-        m.cast_settings.connect(self.on_cast_settings)
-        self.snp_casted.connect(m.on_snp_casted)
-        m.save_settings.connect(self.snp_filters_updated) # update dynamic filter buttons (tag)
+        #m.save_settings.connect(self.snp_filters_updated) # update dynamic filter buttons (tag)
 
     def on_del_settings(self, data):
         # delete from MEM (done), and model, and datafile (if exists)
@@ -1895,69 +1970,82 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 break
         m = self.snp_treeView.model().m_src
         m.remove_data(data_to_del)
-        filepath = data_to_del.filepath
+        filepath = data_to_del.data_path
         if filepath is not None and os.path.isfile(filepath):
             os.remove(filepath)
         self.total_snp_lbl.setText(str(len(self._snp_dock_list)))
+        del data_to_del
 
     def on_save_settings(self, data):
-        # in-place save data to filepath.
-        if data.filepath is None or not os.path.exists(data.filepath):
-            return
-        self._save_settings(data, data.filepath)
+        # in-place save data to data_path.
+        if data.data_path is None or not os.path.exists(data.data_path):
+            data.data_path = data.get_default_data_path(self.wdir, 'csv')
+            dirname = os.path.dirname(data.data_path)
+            if not os.path.exists(dirname):
+                os.makedirs(dirname)
+        self._save_settings(data, data.data_path)
+        self.snp_saved.emit(data.name, data.data_path)
 
     def on_saveas_settings(self, data):
         # data: SnapshotData
         # settings(data.data): TableSettings
-        if data.filepath is None:
-            fn = f"{data.ion_mass}{data.ion_name}+{data.ion_charge}_{data.ts_as_str()}"
-            cdir = os.path.join(data.wdir, fn)
+        # !won't update data_path attr!
+        # !update name attr to be uniqe!
+        # !add 'copy' into tag list!
+        if data.data_path is None or not os.path.exists(data.data_path):
+            cdir = data.get_default_data_path(self.wdir, 'csv')
         else:
-            cdir = data.filepath
+            cdir = data.data_path
         filename, ext = get_save_filename(self,
                                           caption="Save Settings to a File",
                                           cdir=cdir,
                                           type_filter="CSV Files (*.csv);;JSON Files (*.json);;HDF5 Files (*.h5)")
         if filename is None:
             return
+        data.name = re.sub(r"(.*)_[0-9]+\.[0-9]+",r"\1_{}".format(time.time()), data.name)
+        if 'copy' not in data.tags:
+            data.tags.append('copy')
         self._save_settings(data, filename)
 
     def _save_settings(self, data, filename):
-        data.update_meta()
-        settings = data.data
-        settings.meta.update({
-            'filepath': filename,
-        })
         for k, v in zip(('app', 'version', 'user', 'machine', 'segment'),
-             ('Settings Manager', f'{self._version}', getuser(),
-               self._last_machine_name, self._last_lattice_name)):
-                 if not k in settings.meta and v is not None:
-                     settings.meta.update({k: v})
-        settings.write(filename, header=CSV_HEADER)
-        self.snp_saved.emit(data.name, filename)
+                ('Settings Manager', f'{self._version}', getuser(),
+                    self._last_machine_name, self._last_lattice_name)):
+                 if not k in data.meta_keys and v is not None:
+                     setattr(data, k, v)
+        data.write(filename)
 
-    def on_cast_settings(self, data):
+    def on_load_settings(self, data):
         # data: SnapshotData
         # settings(data.data): TableSettings
         self.turn_off_updater_if_necessary()
-        settings = data.data
         if self._lat is None:
-            mach = settings.meta.get('machine', DEFAULT_MACHINE)
-            segm = settings.meta.get('segment', DEFAULT_SEGMENT)
-            self.__load_lattice(mach, segm)
+            self.__load_lattice(data.machine, data.segment)
         lat = self.__init_lat
-        table_settings = data.data
-        s = make_physics_settings(table_settings, lat)
+        s = make_physics_settings(data.data, lat)
         lat.settings.update(s)
         self._elem_list = [lat[ename] for ename in s]
         self.element_list_changed.emit()
-        self.snp_casted.emit(data)
+        self.snp_loaded.emit(data)
 
-    def clear_cast_status(self):
-        # Clear cast status in snp dock.
+    def on_snp_loaded(self, data):
+        m = self.snp_treeView.model()
+        if m is None:
+            return
+        m.m_src.on_snp_loaded(data)
+        self._current_snpdata = data
+
+    def on_snp_saved(self, name, path):
+        m = self.snp_treeView.model()
+        if m is None:
+            return
+        m.m_src.on_snp_saved(name, path)
+
+    def clear_load_status(self):
+        # Clear load status in snp dock.
         if not self.snp_dock.isVisible():
             return
-        self.snp_treeView.model().clear_cast_status()
+        self.snp_treeView.model().clear_load_status()
 
     @pyqtSlot()
     def onFixCorNames(self):
@@ -1992,6 +2080,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.log_dock.show()
         else:
             self.log_dock.close()
+
+    @pyqtSlot(bool)
+    def on_enable_snpdock(self, enabled):
+        if enabled:
+            self.snp_dock.show()
+        else:
+            self.snp_dock.close()
 
     @pyqtSlot()
     def on_find_text_in_setlog(self):
@@ -2050,9 +2145,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_wdir_new(self, path):
         self.snp_new_lbl.setVisible(True)
 
-    def on_refresh_snp(self,):
+    def on_refresh_snp(self):
         # refresh snp as wdir is updated.
-        self.on_wdir_changed(False, self.wdir)
+        self.on_wdir_changed(True, self.wdir)
         self.snp_new_lbl.setVisible(False)
 
 
