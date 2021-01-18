@@ -1937,6 +1937,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m = self.snp_treeView.model()
         m.m_src.set_ion_filters(self._current_btn_filter)
         m.m_src.set_tag_filters(self._current_tag_filter)
+        m.reset_cache()
         m.invalidate()
         self.snp_expand_btn.toggled.emit(self.snp_expand_btn.isChecked())
         # ion cnt
