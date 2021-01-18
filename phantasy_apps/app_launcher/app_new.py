@@ -21,12 +21,12 @@ import os
 import pwd
 
 from phantasy_ui import BaseAppForm
+from phantasy_ui.widgets import FlowLayout
 
 from .ui.ui_app_cardview import Ui_MainWindow
 from .app_add import AddLauncherDialog
 from .utils import get_app_data
 from .app_log import LogWidget
-from .layout import FlowLayout
 from .app_card import AppCard
 from .app_card import AppCardInfoForm
 
