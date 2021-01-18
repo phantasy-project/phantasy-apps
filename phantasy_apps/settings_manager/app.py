@@ -428,7 +428,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.fail_px = QPixmap(":/sm-icons/fail.png")
         self._warning_px = QPixmap(":/sm-icons/warning.png")
         self._ok_px = QPixmap(":/sm-icons/ok.png")
-        self._copy_icon = QIcon(QPixmap(":/sm-icons/copy.png"))
+        self._copy_text_icon = QIcon(QPixmap(":/sm-icons/copy_text.png"))
+        self._copy_data_icon = QIcon(QPixmap(":/sm-icons/copy_data.png"))
         self._probe_icon = QIcon(QPixmap(":/sm-icons/probe.png"))
         self._unsel_icon = QIcon(QPixmap(":/sm-icons/uncheck.png"))
         self._sel_icon = QIcon(QPixmap(":/sm-icons/check.png"))
@@ -629,7 +630,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu = QMenu(self)
         menu.setStyleSheet('QMenu {margin: 2px;}')
         #
-        copy_action = QAction(self._copy_icon, "Copy Text", menu)
+        copy_action = QAction(self._copy_text_icon, "Copy Text", menu)
         copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
         menu.addAction(copy_action)
         #
@@ -638,6 +639,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if not hasattr(item0, 'snp_data'):
             return menu
         snpdata = item0.snp_data
+        # copy data
+        dcopy_action = QAction(self._copy_data_icon, "Copy Data", menu)
+        dcopy_action.triggered.connect(partial(self.on_copy_snp, snpdata))
         # save-as
         saveas_action = QAction(self._saveas_icon, "Export", menu)
         saveas_action.triggered.connect(partial(self.on_saveas_settings, snpdata))
@@ -655,6 +659,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         load_action.triggered.connect(partial(self.on_load_settings, snpdata))
         #
         menu.insertAction(copy_action, load_action)
+        menu.insertAction(copy_action, dcopy_action)
         menu.addSeparator()
         menu.addAction(read_action)
         menu.addAction(reveal_action)
@@ -673,8 +678,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.setStyleSheet('QMenu {margin: 2px;}')
 
         #
-        copy_action = QAction(self._copy_icon,
-                              "Copy '{}'".format(text), menu)
+        copy_action = QAction(self._copy_text_icon, "Copy '{}'".format(text), menu)
         copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
         menu.addAction(copy_action)
 
@@ -1838,6 +1842,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         p.setArguments(["-s", data.data_path])
         p.setProgram("nautilus")
         p.startDetached()
+
+    @pyqtSlot()
+    def on_copy_snp(self, data):
+        cb = QGuiApplication.clipboard()
+        cb.setText(str(data))
+        msg = '<html><head/><body><p><span style="color:#007BFF;">Copied snapshot data at: </span><span style="color:#DC3545;">{}</span></p></body></html>'.format(data.ts_as_str())
+        self.statusInfoChanged.emit(msg)
+        self._reset_status_info()
 
     @pyqtSlot()
     def on_read_snp(self, data):

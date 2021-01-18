@@ -3,11 +3,11 @@
 import csv
 import os
 import re
-from collections import OrderedDict
 import time
+from collections import OrderedDict
 from datetime import datetime
 from getpass import getuser
-import pwd
+from io import StringIO
 
 from phantasy import Settings
 from phantasy import get_random_name
@@ -472,6 +472,17 @@ class SnapshotData:
     def is_golden(self):
         return 'golden' in self.tags
 
+    def __str__(self):
+        sio = StringIO()
+        sio.write("\t".join(CSV_HEADER))
+        sio.write("\n")
+        for ename, fname, ftype, spos, sp, rd, old_sp, tol, writable in self.data:
+            sio.write(
+                f"{ename}\t{fname}\t{ftype}\t{spos}\t{sp}\t{rd}\t{old_sp}\t{tol}\t{writable}\n")
+        text = sio.getvalue()
+        sio.close()
+        return text
+
     def write(self, filepath, delimiter=','):
         """Write settings into *filepath*.
         """
@@ -486,3 +497,4 @@ class SnapshotData:
             for ename, fname, ftype, spos, sp, rd, old_sp, tol, writable in self.data:
                 ss.writerow(
                     (ename, fname, ftype, spos, sp, rd, old_sp, tol, writable))
+
