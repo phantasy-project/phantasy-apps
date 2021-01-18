@@ -39,6 +39,7 @@ ATTR_KEYS = (
     "machine", "segment", "tags", "app", "version",
 )
 
+
 def make_physics_settings(csv_settings, lat):
     """Generate Settings (lattice settings) of *lat* from `TableSettings`
     instance defined by *csv_settings*.
@@ -258,7 +259,6 @@ def _read_csv_data(data_source, delimiter=','):
     return data_list, attr_dict
 
 
-
 class SnapshotData:
     """Snapshot data object, instantiated from settings data with attributes.
 
@@ -270,8 +270,12 @@ class SnapshotData:
     def __init__(self, data_list, **kws):
         self.data = data_list
         self.init_attr()
-        self.meta_keys = [k for k in kws if k != 'data_path']
         self.init_attr_dict(**kws)
+        self.meta_keys = ATTR_KEYS
+        for k in kws:
+            if k == 'data_path' or k in self.meta_keys:
+                continue
+            self.meta_keys.append(k)
 
     def init_attr(self):
         self._ts = None
@@ -299,25 +303,6 @@ class SnapshotData:
             elif k == 'version' and v is None: # app version
                 v = 'undefined'
             setattr(self, k, v)
-
-#        self._ts = time.time()
-#        self._user = getuser()
-#        self.name = name
-#        self.wdir = kws.pop('wdir', '.')
-#        self.ion_name = kws.pop('ion_name', None)
-#        self.ion_number = kws.pop('ion_number', None) # Z (str)
-#        self.ion_mass = kws.pop('ion_mass', None) # A (str)
-#        self.ion_charge = kws.pop('ion_charge', None) # Q (str)
-#        self.machine = kws.pop('machine', DEFAULT_MACHINE)
-#        self.segment = kws.pop('segment', DEFAULT_SEGMENT)
-#        self.tags = kws.pop('tags', None) # list of string as tags
-#        note = ''
-#        for k, v in kws.items():
-#            if v == '':
-#                continue
-#            note += f'{k}: {v}, '
-#        self.note = note
-#        self._filepath = None
 
     @property
     def tags(self):

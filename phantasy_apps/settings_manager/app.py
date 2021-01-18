@@ -1764,7 +1764,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             milli_sleep(100)
 
     def take_snapshot(self, cast=True, only_checked_items=False, post_current_sp=True):
-        # take but not cast for only checked items or not.
+        # take but not cast (show in the settings view) for only checked items or not.
         # cast: if cast snapshot or not
         # only_checked_items: if take snapshot of checked items or not
         # post_current_sp: if update x0 with x2 column or not
@@ -1810,15 +1810,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         #
         ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species()
+        if self.filter_lineEdit.text() == '':
+            note = None
+        else:
+            note = f"Filter: {self.filter_lineEdit.text()}, "
         snp_data = SnapshotData(get_csv_settings(self._tv.model()),
-                wdir=self.wdir,
                 ion_name=ion_name, ion_number=ion_number, ion_mass=ion_mass, ion_charge=ion_charge,
                 machine=self._last_machine_name, segment=self._last_lattice_name,
-                filter=self.filter_lineEdit.text())
+                version=self._version, note=note)
         #
         self._snp_dock_list.append(snp_data)
         n = len(self._snp_dock_list)
-        self.snp_dock.setVisible(n!=0)
         self.wdir_lineEdit.setText(self.wdir)
         self.total_snp_lbl.setText(str(n))
         self.update_snp_dock_view()
