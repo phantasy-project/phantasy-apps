@@ -105,8 +105,6 @@ DEFAULT_TS_PATH = find_dconf("settings_manager", "tolerance.json")
 DEFAULT_MS_PATH = find_dconf("settings_manager", "settings.json")
 DEFAULT_ELEM_PATH = find_dconf("settings_manager", "elements.json")
 
-
-
 TBTN_STY_COLOR_TUPLE = ('#EEEEEC', '#F7F7F7', '#90B5F0', '#6EA1F1', '#E7EFFD', '#CBDAF1')
 TBTN_STY_COLOR_TUPLE_GOLDEN = ('#FFF7B3', '#F5E345', '#FFCD03', '#FFC503', '#FAED11', '#FAE111')
 TBTN_STY_BASE = """
@@ -1229,18 +1227,21 @@ class _SnpProxyModel(QSortFilterProxyModel):
         m = self.sourceModel()
         ion_filter_list = m.get_ion_filters()
         tag_filter_list = m.get_tag_filters()
+        snp_data = m.itemFromIndex(m.index(src_row, m.i_ts, src_parent)).snp_data
         if ion_filter_list is None:
             ion_test = True
         else:
-            ion_name = m.data(m.index(src_row, m.i_ion, src_parent))
+            ion_name = snp_data.ion_name
             m._ion_filter_cnt[ion_name] += 1
             ion_test = ion_name in ion_filter_list
 
         if tag_filter_list is None:
             tag_test = True
         else:
-            tag_str = m.data(m.index(src_row, m.i_tags, src_parent))
-            tags = [s.strip() for s in tag_str.strip().split(',')]
+            if snp_data.tags == []:
+                tags = ['NOTAG']
+            else:
+                tags = snp_data.tags
             tag_test = False
             for tag in tags:
                 if not tag_test and tag in tag_filter_list:

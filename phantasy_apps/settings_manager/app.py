@@ -52,9 +52,9 @@ from phantasy_ui.widgets import is_item_checked
 from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from phantasy_ui.widgets import ElementSelectDialog
+from phantasy_ui.widgets import FlowLayout
 from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui.widgets import ProbeWidget
-from phantasy_apps.app_launcher.layout import FlowLayout
 
 from .app_loadfrom import LoadSettingsDialog
 from .app_pref import DEFAULT_PREF
@@ -86,6 +86,7 @@ from .data import DEFAULT_MACHINE, DEFAULT_SEGMENT
 
 NPROC = 4
 PX_SIZE = 24
+ION_ICON_SIZE = 64
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
 IDX_RATE_MAP = {0: 1.0, 1: 2.0, 2: 5.0, 3: 0.5, 4: 0.2, 5: 0.1}
 FILTER_TT = """\
@@ -1853,7 +1854,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for data in self._snp_dock_list:
             d = ion_btn_filters.setdefault(data.ion_name, {})
             d.setdefault(data.ion_mass, set()).add(data.ion_charge)
-            tag_btn_filters.update(data.tags)
+            if data.tags == []:
+                tag_btn_filters.add('NOTAG')
+            else:
+                tag_btn_filters.update(data.tags)
         del d
         self._build_btn_filters(self.snp_filter_hbox, ion_btn_filters)
         self._build_tag_filters(self.tag_filter_area, tag_btn_filters)
@@ -1862,15 +1866,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         w = area.takeWidget()
         w.setParent(None)
         w = QWidget(self)
-        w.setContentsMargins(10, 10, 10, 10)
+        w.setContentsMargins(0, 6, 0, 0)
         layout = FlowLayout()
-        for tag in filters:
+        if 'NOTAG' in filters:
+            filters.remove('NOTAG')
+            _filters = ['NOTAG'] + list(filters)
+        else:
+            _filters = list(filters)
+        for tag in _filters:
             o = QToolButton(self.snp_dock)
             o.setText(tag)
-            #if tag == 'golden':
-            #    o.setStyleSheet(TBTN_STY_GOLDEN)
-            #else:
-            #    o.setStyleSheet(TBTN_STY_REGULAR)
             o.setCheckable(True)
             o.toggled.connect(partial(self.on_update_tag_filters, tag))
             layout.addWidget(o)
@@ -1905,9 +1910,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 for pi, st in zip(px_tuple, (QIcon.On, QIcon.Off)):
                     icon.addPixmap(QPixmap(pi), QIcon.Normal, st)
                 btn.setIcon(icon)
-                btn.setIconSize(QSize(64, 64))
+                btn.setIconSize(QSize(ION_ICON_SIZE, ION_ICON_SIZE))
             else:
-                btn.setFixedSize(QSize(64, 64))
+                btn.setFixedSize(QSize(ION_ICON_SIZE, ION_ICON_SIZE))
             btn.setCheckable(True)
             btn.toggled.connect(partial(self.on_update_snp_filters, k))
             container.addWidget(btn)
@@ -1955,7 +1960,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.set_model()
         self.snp_expand_btn.toggled.emit(self.snp_expand_btn.isChecked())
         m.save_settings.connect(self.on_save_settings)
-        #m.save_settings.connect(self.snp_filters_updated) # update dynamic filter buttons (tag)
+        m.save_settings.connect(self.snp_filters_updated) # update dynamic filter buttons (tag)
 
     def on_del_settings(self, data):
         # delete from MEM (done), and model, and datafile (if exists)
