@@ -86,6 +86,7 @@ from .data import DEFAULT_MACHINE, DEFAULT_SEGMENT
 
 NPROC = 4
 PX_SIZE = 24
+ION_ICON_SIZE = 64
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
 IDX_RATE_MAP = {0: 1.0, 1: 2.0, 2: 5.0, 3: 0.5, 4: 0.2, 5: 0.1}
 FILTER_TT = """\
@@ -1905,9 +1906,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 for pi, st in zip(px_tuple, (QIcon.On, QIcon.Off)):
                     icon.addPixmap(QPixmap(pi), QIcon.Normal, st)
                 btn.setIcon(icon)
-                btn.setIconSize(QSize(64, 64))
+                btn.setIconSize(QSize(ION_ICON_SIZE, ION_ICON_SIZE))
             else:
-                btn.setFixedSize(QSize(64, 64))
+                btn.setFixedSize(QSize(ION_ICON_SIZE, ION_ICON_SIZE))
             btn.setCheckable(True)
             btn.toggled.connect(partial(self.on_update_snp_filters, k))
             container.addWidget(btn)
@@ -1955,7 +1956,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.set_model()
         self.snp_expand_btn.toggled.emit(self.snp_expand_btn.isChecked())
         m.save_settings.connect(self.on_save_settings)
-        #m.save_settings.connect(self.snp_filters_updated) # update dynamic filter buttons (tag)
+        m.save_settings.connect(self.snp_filters_updated) # update dynamic filter buttons (tag)
 
     def on_del_settings(self, data):
         # delete from MEM (done), and model, and datafile (if exists)
