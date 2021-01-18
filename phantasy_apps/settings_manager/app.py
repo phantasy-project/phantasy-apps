@@ -428,7 +428,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.fail_px = QPixmap(":/sm-icons/fail.png")
         self._warning_px = QPixmap(":/sm-icons/warning.png")
         self._ok_px = QPixmap(":/sm-icons/ok.png")
-        self._copy_icon = QIcon(QPixmap(":/sm-icons/copy.png"))
+        self._copy_text_icon = QIcon(QPixmap(":/sm-icons/copy_text.png"))
+        self._copy_data_icon = QIcon(QPixmap(":/sm-icons/copy_data.png"))
         self._probe_icon = QIcon(QPixmap(":/sm-icons/probe.png"))
         self._unsel_icon = QIcon(QPixmap(":/sm-icons/uncheck.png"))
         self._sel_icon = QIcon(QPixmap(":/sm-icons/check.png"))
@@ -629,7 +630,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu = QMenu(self)
         menu.setStyleSheet('QMenu {margin: 2px;}')
         #
-        copy_action = QAction(self._copy_icon, "Copy Text", menu)
+        copy_action = QAction(self._copy_text_icon, "Copy Text", menu)
         copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
         menu.addAction(copy_action)
         #
@@ -638,6 +639,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if not hasattr(item0, 'snp_data'):
             return menu
         snpdata = item0.snp_data
+        # copy data
+        dcopy_action = QAction(self._copy_data_icon, "Copy Data", menu)
+        dcopy_action.triggered.connect(partial(self.on_copy_snp, snpdata))
         # save-as
         saveas_action = QAction(self._saveas_icon, "Export", menu)
         saveas_action.triggered.connect(partial(self.on_saveas_settings, snpdata))
@@ -655,6 +659,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         load_action.triggered.connect(partial(self.on_load_settings, snpdata))
         #
         menu.insertAction(copy_action, load_action)
+        menu.insertAction(copy_action, dcopy_action)
         menu.addSeparator()
         menu.addAction(read_action)
         menu.addAction(reveal_action)
@@ -673,8 +678,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.setStyleSheet('QMenu {margin: 2px;}')
 
         #
-        copy_action = QAction(self._copy_icon,
-                              "Copy '{}'".format(text), menu)
+        copy_action = QAction(self._copy_text_icon, "Copy '{}'".format(text), menu)
         copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
         menu.addAction(copy_action)
 
@@ -1764,7 +1768,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             milli_sleep(100)
 
     def take_snapshot(self, cast=True, only_checked_items=False, post_current_sp=True):
-        # take but not cast for only checked items or not.
+        # take but not cast (show in the settings view) for only checked items or not.
         # cast: if cast snapshot or not
         # only_checked_items: if take snapshot of checked items or not
         # post_current_sp: if update x0 with x2 column or not
@@ -1810,15 +1814,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         #
         ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species()
+        if self.filter_lineEdit.text() == '':
+            note = None
+        else:
+            note = f"Filter: {self.filter_lineEdit.text()}, "
         snp_data = SnapshotData(get_csv_settings(self._tv.model()),
-                wdir=self.wdir,
                 ion_name=ion_name, ion_number=ion_number, ion_mass=ion_mass, ion_charge=ion_charge,
                 machine=self._last_machine_name, segment=self._last_lattice_name,
-                filter=self.filter_lineEdit.text())
+                version=self._version, note=note)
         #
         self._snp_dock_list.append(snp_data)
         n = len(self._snp_dock_list)
-        self.snp_dock.setVisible(n!=0)
         self.wdir_lineEdit.setText(self.wdir)
         self.total_snp_lbl.setText(str(n))
         self.update_snp_dock_view()
@@ -1836,6 +1842,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         p.setArguments(["-s", data.data_path])
         p.setProgram("nautilus")
         p.startDetached()
+
+    @pyqtSlot()
+    def on_copy_snp(self, data):
+        cb = QGuiApplication.clipboard()
+        cb.setText(str(data))
+        msg = '<html><head/><body><p><span style="color:#007BFF;">Copied snapshot data at: </span><span style="color:#DC3545;">{}</span></p></body></html>'.format(data.ts_as_str())
+        self.statusInfoChanged.emit(msg)
+        self._reset_status_info()
 
     @pyqtSlot()
     def on_read_snp(self, data):
@@ -1923,6 +1937,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m = self.snp_treeView.model()
         m.m_src.set_ion_filters(self._current_btn_filter)
         m.m_src.set_tag_filters(self._current_tag_filter)
+        m.reset_cache()
         m.invalidate()
         self.snp_expand_btn.toggled.emit(self.snp_expand_btn.isChecked())
         # ion cnt

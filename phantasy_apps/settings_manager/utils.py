@@ -1213,6 +1213,11 @@ class _SnpProxyModel(QSortFilterProxyModel):
         self.m_src = model
         self.setSourceModel(model)
         self.setRecursiveFilteringEnabled(True)
+        self.reset_cache()
+
+    def reset_cache(self):
+        self._ion_hit_cache = {}
+        self._tag_hit_cache = {}
 
     def lessThan(self, left, right):
         left_data1, left_data2 = left.data(Qt.DisplayRole), left.data(Qt.UserRole)
@@ -1232,7 +1237,10 @@ class _SnpProxyModel(QSortFilterProxyModel):
             ion_test = True
         else:
             ion_name = snp_data.ion_name
-            m._ion_filter_cnt[ion_name] += 1
+            is_cnted = self._ion_hit_cache.setdefault(snp_data.name, False)
+            if not is_cnted:
+                m._ion_filter_cnt[ion_name] += 1
+                self._ion_hit_cache[snp_data.name] = True
             ion_test = ion_name in ion_filter_list
 
         if tag_filter_list is None:
@@ -1246,5 +1254,8 @@ class _SnpProxyModel(QSortFilterProxyModel):
             for tag in tags:
                 if not tag_test and tag in tag_filter_list:
                     tag_test = True
-                m._tag_filter_cnt[tag] += 1
+                is_cnted = self._tag_hit_cache.setdefault(snp_data.name, False)
+                if not is_cnted:
+                    m._tag_filter_cnt[tag] += 1
+                    self._tag_hit_cache[snp_data.name] = True
         return ion_test and tag_test
