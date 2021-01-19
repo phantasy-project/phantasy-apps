@@ -648,19 +648,19 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         dcopy_action = QAction(self._copy_data_icon, "Copy Data", menu)
         dcopy_action.triggered.connect(partial(self.on_copy_snp, snpdata))
         # save-as
-        saveas_action = QAction(self._saveas_icon, "Export", menu)
+        saveas_action = QAction(self._saveas_icon, "E&xport", menu)
         saveas_action.triggered.connect(partial(self.on_saveas_settings, snpdata))
         # read
-        read_action = QAction(self._read_icon, "Read", menu)
+        read_action = QAction(self._read_icon, "&Read", menu)
         read_action.triggered.connect(partial(self.on_read_snp, snpdata))
         # reveal
-        reveal_action = QAction(self._reveal_icon, "Show in Files", menu)
+        reveal_action = QAction(self._reveal_icon, "Show in &Files", menu)
         reveal_action.triggered.connect(partial(self.on_reveal_snp, snpdata))
         # del
-        del_action = QAction(self._del_icon, "Delete", menu)
+        del_action = QAction(self._del_icon, "&Delete", menu)
         del_action.triggered.connect(partial(self.on_del_settings, snpdata))
         # load
-        load_action = QAction(self._load_icon, "Load", menu)
+        load_action = QAction(self._load_icon, "&Load", menu)
         load_action.triggered.connect(partial(self.on_load_settings, snpdata))
         #
         menu.insertAction(copy_action, load_action)
