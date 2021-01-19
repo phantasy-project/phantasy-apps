@@ -178,7 +178,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # post init ui
         self.__post_init_ui()
 
-        # self.adjustSize()
+        #
+        self.show()
+        self.preload_lattice(DEFAULT_MACHINE, DEFAULT_SEGMENT)
 
     def init_config(self, confdir):
         # preferences
@@ -311,6 +313,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             pass
 
     def show_init_settings_info(self):
+        if not self._post_info:
+            return
         if not self.init_settings:
             QMessageBox.information(self, "Loaded Lattice",
                                     '<html><head/><body><p>Lattice is loaded, add device settings '
@@ -385,7 +389,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.beam_display_widget = BeamSpeciesDisplayWidget()
         self.toolBar.addWidget(self.beam_display_widget)
         #
-
+        self._post_info = True  # post info after loading lattice
+        #
         self._tv = self.settingsView
         self._load_from_dlg = None
         self._elem_select_dlg = None
@@ -1217,7 +1222,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._elem_list = [lat[ename] for ename in s]
         self.element_list_changed.emit()
 
-    def __load_lattice(self, mach, segm):
+    def __load_lattice(self, mach, segm, post_info=True):
+        self._post_info = post_info
         self.actionLoad_Lattice.triggered.emit()
         self._lattice_load_window.mach_cbb.setCurrentText(mach)
         self._lattice_load_window.seg_cbb.setCurrentText(segm)
@@ -2039,7 +2045,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # data: SnapshotData
         # settings(data.data): TableSettings
         self.turn_off_updater_if_necessary()
-        if self._lat is None:
+        if self._lat is None or self._last_machine_name != data.machine or \
+                self._last_lattice_name != data.segment:
             self.__load_lattice(data.machine, data.segment)
         lat = self.__init_lat
         s = make_physics_settings(data.data, lat)
@@ -2169,6 +2176,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # refresh snp as wdir is updated.
         self.on_wdir_changed(True, self.wdir)
         self.snp_new_lbl.setVisible(False)
+
+    def preload_lattice(self, mach, segm):
+        return self.__load_lattice(mach, segm, False)
 
 
 def is_snp_data_exist(snpdata, snpdata_list):
