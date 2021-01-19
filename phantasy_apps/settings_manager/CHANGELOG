@@ -1,3 +1,28 @@
+Version 6.0: 2021-01-19
+=======================
+
+- Snapshots Window:
+  - Add support to show 'Ca' icon
+  - Refactor the snapshot data model --> SnapshotData
+    - Create unittests for snapshot data
+    - Eliminate 'filepath' attribute
+    - Support freely re-organize data directory structure
+    - Change default naming rule: eliminate ':' from file name
+  - Refactor treeview of snapshot data presentation
+    - Create context menu actions to perform snapshot operations
+  - Fix duplicated signal emit issue
+  - Fix 'wrong index when mapFromSource' issue
+  - Rename operation 'cast' to 'Load'
+  - Treat empty tags as 'NOTAG' when doing tag filtering
+  - Fix wrong hit statistics when doing tag/ion filtering
+  - New action to copy snapshot data as a table
+
+- Settings View:
+  - Add loose/strict wildcard option for filtering
+
+- Preload default machine and segment when starting up app
+
+
 Version 5.2: 2020-12-04
 =======================
 
