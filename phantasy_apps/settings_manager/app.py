@@ -894,6 +894,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_apply_settings(self):
         """Apply selected element settings.
         """
+        m = self._tv.model()
+        if m is None:
+            return
         if not self._eval_scaling_factor:
             self.scaling_factor_lineEdit.returnPressed.emit()
 
@@ -901,7 +904,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         scaling_factor = float(self.scaling_factor_lineEdit.text())
         #
         self.idx_px_list = []  # list to apply icon [(idx_src, px, log_msg)]
-        m = self._tv.model()
         settings_selected = m.get_selection()
         if len(settings_selected) == 0:
             QMessageBox.warning(self, "Apply Settings",
