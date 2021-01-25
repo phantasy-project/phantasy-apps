@@ -33,11 +33,11 @@ DEFAULT_SETTINGS = Settings(ELEMT_PATH)
 #
 
 # default attr keys of snapshotdata
-ATTR_KEYS = (
+ATTR_KEYS = [
     "timestamp", "datetime", "name", "note", "user",
     "ion_name", "ion_number", "ion_mass", "ion_charge",
     "machine", "segment", "tags", "app", "version",
-)
+]
 
 
 def make_physics_settings(csv_settings, lat):
@@ -271,7 +271,7 @@ class SnapshotData:
         self.data = data_list
         self.init_attr()
         self.init_attr_dict(**kws)
-        self.meta_keys = ATTR_KEYS
+        self.meta_keys = ATTR_KEYS[:]
         for k in kws:
             if k == 'data_path' or k in self.meta_keys:
                 continue
