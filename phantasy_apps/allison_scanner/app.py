@@ -390,13 +390,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._ems_orientation = s
         self._ems_device.xoy = s
         self._oid = oid = self._ems_device._id
-        self._pos_begin_fname = "START_POS{}".format(oid)
-        self._pos_end_fname = "STOP_POS{}".format(oid)
-        self._pos_step_fname = "STEP_POS{}".format(oid)
-        self._volt_begin_fname = "START_VOLT{}".format(oid)
-        self._volt_end_fname = "STOP_VOLT{}".format(oid)
-        self._volt_step_fname = "STEP_VOLT{}".format(oid)
-        self._data_pv = self._ems_device.elem.pv("DATA{}".format(oid))[0]
+        self._pos_begin_fname = f"START_POS{oid}"
+        self._pos_end_fname = f"STOP_POS{oid}"
+        self._pos_step_fname = f"STEP_POS{oid}"
+        self._volt_begin_fname = f"START_VOLT{oid}"
+        self._volt_end_fname = f"STOP_VOLT{oid}"
+        self._volt_step_fname = f"STEP_VOLT{oid}"
+        self._data_pv = self._ems_device.elem.pv(f"DATA{oid}")[0]
         # sync config
         self.sync_config()
         # update xylabels
@@ -1062,7 +1062,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # show Twiss parameters as figure.
         if hasattr(self, '_plot_results_window'):
             self._plot_results_window.close()
-        self._plot_results_window = PlotResults(self)
+        self._plot_results_window = PlotResults(self._ems_device.elem, self)
         self._plot_results_window.results = self._results
         self._plot_results_window.plot_data()
         self._plot_results_window.show()
