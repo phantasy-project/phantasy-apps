@@ -219,6 +219,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # auto analysis?
         self._auto_analysis = True
         self._results = None
+        # auto push?
+        self._auto_push_results = False
         # save dlg
         self._data_save_dlg = None
         # loading mode (open data from file)
@@ -253,6 +255,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def _init_scan_settings(self):
         self._scan_settings_list = []
         self._scan_settings_list.append(self.build_default_scan_settings())
+
+    @pyqtSlot(bool)
+    def on_auto_push_results(self, enabled):
+        # Auto push results to PVs after data-processing?
+        self._auto_push_results = enabled
 
     @pyqtSlot()
     def show_settings_list(self):
@@ -1062,7 +1069,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # show Twiss parameters as figure.
         if hasattr(self, '_plot_results_window'):
             self._plot_results_window.close()
-        self._plot_results_window = PlotResults(self._ems_device.elem, self)
+        self._plot_results_window = PlotResults(self._ems_device.elem, self._auto_push_results, self)
         self._plot_results_window.results = self._results
         self._plot_results_window.plot_data()
         self._plot_results_window.show()

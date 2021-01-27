@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from PyQt5.QtWidgets import QMessageBox
 
 from phantasy_ui import BaseAppForm
 from phantasy_ui import delayed_exec
@@ -10,18 +11,21 @@ from .ui.ui_plot_results import Ui_MainWindow
 
 class PlotResults(BaseAppForm, Ui_MainWindow):
 
-    def __init__(self, elem, parent=None):
+    def __init__(self, elem, auto_push, parent=None):
         super(PlotResults, self).__init__()
         self.setupUi(self)
         self._o = self.matplotlibimageWidget
+        self._r = None
         self._ax = self._o.axes
         self._parent = parent
         self._data = parent._data
         self._elem = elem
+        self._auto_push = auto_push
 
         self.setAppVersion(parent._version)
         self.setAppTitle("{} - {}".format(parent.getAppTitle(), 'Results'))
 
+        self.push_to_pv_btn.clicked.connect(self.on_push_results)
         self._norm_inten = False
         self.norm_chkbox.toggled.connect(self.on_norm_inten)
         delayed_exec(lambda: self.norm_chkbox.setChecked(True), 0)
@@ -64,7 +68,8 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
         self._o.setFigureXlabel("${}\,\mathrm{{[mm]}}$".format(u))
         self._o.setFigureYlabel("${}'\,\mathrm{{[mrad]}}$".format(u))
         # push results to PVs
-        self._push_results(self._r, u, ks, fs)
+        if self._auto_push:
+            self._push_results(self._r, u, ks, fs)
 
     def _get_keys(self, r):
         for k in r:
@@ -75,6 +80,16 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
         ks = f'{u}_cen,{u}p_cen,{u}_rms,{u}p_rms,alpha_{u},beta_{u},gamma_{u},emit_{u},emitn_{u},total_intensity'.split(',')
         fs = f'{U}CEN,{U}PCEN,{U}RMS,{U}PRMS,{U}ALPHA,{U}BETA,{U}GAMMA,{U}EMIT,{U}NEMIT,{U}INTEN'.split(',')
         return u, ks, fs
+
+    def on_push_results(self):
+        if self._r is None:
+            QMessageBox.warning(self, "Push Results",
+                    "No data to push to PVs.", QMessageBox.Ok)
+        else:
+            u, ks, fs = self._get_keys(self._r)
+            self._push_results(self._r, u, ks, fs)
+            QMessageBox.information(self, "Push Results",
+                    "Pushed results to PVs.", QMessageBox.Ok)
 
     def _push_results(self, r, u, ks, fs):
         # push results to PVs.
