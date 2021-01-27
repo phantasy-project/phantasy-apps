@@ -91,6 +91,9 @@ class Ui_MainWindow(object):
         self.textEdit.setReadOnly(True)
         self.textEdit.setObjectName("textEdit")
         self.gridLayout_2.addWidget(self.textEdit, 0, 0, 1, 1)
+        self.push_to_pv_btn = QtWidgets.QPushButton(self.groupBox_2)
+        self.push_to_pv_btn.setObjectName("push_to_pv_btn")
+        self.gridLayout_2.addWidget(self.push_to_pv_btn, 1, 0, 1, 1)
         self.gridLayout_3.addWidget(self.splitter, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -113,6 +116,7 @@ class Ui_MainWindow(object):
         self.norm_chkbox.setText(
             _translate("MainWindow", "Normalize Intensity"))
         self.groupBox_2.setTitle(_translate("MainWindow", "Parameter List"))
+        self.push_to_pv_btn.setText(_translate("MainWindow", "Push To PVs"))
 
 
 from mpl4qt.widgets.mplimagewidget import MatplotlibImageWidget

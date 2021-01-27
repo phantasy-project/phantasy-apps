@@ -1719,6 +1719,11 @@ class Ui_MainWindow(object):
         self.actionSaveData.setObjectName("actionSaveData")
         self.actionRunXY = QtWidgets.QAction(MainWindow)
         self.actionRunXY.setObjectName("actionRunXY")
+        self.actionAuto_Push_Results_to_PVs = QtWidgets.QAction(MainWindow)
+        self.actionAuto_Push_Results_to_PVs.setCheckable(True)
+        self.actionAuto_Push_Results_to_PVs.setChecked(False)
+        self.actionAuto_Push_Results_to_PVs.setObjectName(
+            "actionAuto_Push_Results_to_PVs")
         self.menu_Help.addAction(self.actionAbout)
         self.menu_Help.addAction(self.actionAbout_Qt)
         self.menuConfiguration.addAction(self.actionReload)
@@ -1730,6 +1735,7 @@ class Ui_MainWindow(object):
         self.menu_Device.addAction(self.actionSimulation_Mode)
         self.menu_Device.addAction(self.actionRunXY)
         self.menu_Data.addAction(self.actionAuto_Analysis)
+        self.menu_Data.addAction(self.actionAuto_Push_Results_to_PVs)
         self.menubar.addAction(self.menuConfiguration.menuAction())
         self.menubar.addAction(self.menu_Data.menuAction())
         self.menubar.addAction(self.menu_Device.menuAction())
@@ -1787,6 +1793,8 @@ class Ui_MainWindow(object):
             self.auto_fill_beam_params_btn.click)
         self.adv_ctrl_chkbox.toggled['bool'].connect(
             MainWindow.on_enable_advctrl)
+        self.actionAuto_Push_Results_to_PVs.toggled['bool'].connect(
+            MainWindow.on_auto_push_results)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.ems_names_cbb, self.ems_detail_btn)
         MainWindow.setTabOrder(self.ems_detail_btn, self.ems_orientation_cbb)
@@ -2116,6 +2124,8 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Save data to a file."))
         self.actionSaveData.setShortcut(_translate("MainWindow", "Ctrl+S"))
         self.actionRunXY.setText(_translate("MainWindow", "Run X and Y"))
+        self.actionAuto_Push_Results_to_PVs.setText(
+            _translate("MainWindow", "Auto Push Results to PVs"))
 
 
 from mpl4qt.widgets.mplbasewidget import MatplotlibBaseWidget
