@@ -405,7 +405,7 @@ class Ui_MainWindow(object):
             self.waitsec_dSpinBox.sizePolicy().hasHeightForWidth())
         self.waitsec_dSpinBox.setSizePolicy(sizePolicy)
         self.waitsec_dSpinBox.setSingleStep(0.5)
-        self.waitsec_dSpinBox.setProperty("value", 2.0)
+        self.waitsec_dSpinBox.setProperty("value", 10.0)
         self.waitsec_dSpinBox.setObjectName("waitsec_dSpinBox")
         self.gridLayout.addWidget(self.waitsec_dSpinBox, 2, 1, 1, 1)
         self.label_5 = QtWidgets.QLabel(self.daq_groupBox)
@@ -560,7 +560,7 @@ class Ui_MainWindow(object):
         self.tol_dSpinBox.setDecimals(4)
         self.tol_dSpinBox.setMaximum(20.0)
         self.tol_dSpinBox.setSingleStep(0.05)
-        self.tol_dSpinBox.setProperty("value", 0.1)
+        self.tol_dSpinBox.setProperty("value", 0.01)
         self.tol_dSpinBox.setObjectName("tol_dSpinBox")
         self.gridLayout.addWidget(self.tol_dSpinBox, 4, 1, 1, 1)
         self.label_7 = QtWidgets.QLabel(self.daq_groupBox)
@@ -1027,7 +1027,8 @@ class Ui_MainWindow(object):
         self.inc_fontsize_tbtn.setText(_translate("MainWindow", "FS+"))
         self.dec_fontsize_tbtn.setText(_translate("MainWindow", "FS-"))
         self.clear_log_tbtn.setText(_translate("MainWindow", "Clear"))
-        self.daq_groupBox.setTitle(_translate("MainWindow", "DAQ"))
+        self.daq_groupBox.setTitle(_translate("MainWindow",
+                                              "Data Acquisition"))
         self.label_2.setText(_translate("MainWindow", "Shot Number"))
         self.waitsec_dSpinBox.setToolTip(
             _translate(
