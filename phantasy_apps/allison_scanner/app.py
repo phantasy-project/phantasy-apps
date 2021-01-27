@@ -91,21 +91,21 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._version = version
 
         # window title/version
-        self.setWindowTitle("Allison Scanner App")
+        self.setWindowTitle("Allison Scanner")
 
         # set app properties
-        self.setAppTitle("Allison Scanner App")
+        self.setAppTitle("Allison Scanner")
         self.setAppVersion(self._version)
 
         # about info
         self.app_about_info = """
             <html>
-            <h4>About Allison Scanner App</h4>
+            <h4>About Allison Scanner</h4>
             <p>This app is created for the operation of allison-scanner
             devices, including the DAQ and post data analysis,
             current version is {}.
             </p>
-            <p>Copyright (C) 2019 Facility for Rare Isotope Beams and other contributors.</p>
+            <p>Copyright (C) 2019-2020 Facility for Rare Isotope Beams and other contributors.</p>
             </html>
         """.format(self._version)
 
