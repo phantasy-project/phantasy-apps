@@ -826,3 +826,7 @@ class TwoParamsScanWindow(BaseAppForm, Ui_MainWindow):
         """Enable/disable widgets for post processing.
         """
         self.analysis_gbox.setEnabled(enable)
+
+    def closeEvent(self, evt):
+        self._2d_mode = False
+        pass

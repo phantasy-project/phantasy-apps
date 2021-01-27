@@ -212,6 +212,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         # key: (ename, fname, mode), value: ElementWidget
         self.elem_widgets_dict = {}
 
+        self._2d_mode = False
+
         # UI post_init
         self._post_init_ui()
 
@@ -826,6 +828,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_scan_finished(self):
+        if self._2d_mode:
+            return
         QMessageBox.information(self, "Job is done",
                 f"Scan task is done at {current_datetime(fmt='%Y-%m-%dT%H:%M:%S')}, it is good to save data now.",
                 QMessageBox.Ok)
@@ -1101,6 +1105,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         msg = "Two-dimensional parameters scan is enabled."
         self.scanlogTextColor.emit(COLOR_DANGER)
         self.scanlogUpdated.emit(msg)
+        self._2d_mode = True
         if self._2dscan_window is None:
             self._2dscan_window = TwoParamsScanWindow(self)
         self._2dscan_window.show()
