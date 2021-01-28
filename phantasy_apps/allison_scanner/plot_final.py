@@ -11,7 +11,7 @@ from .ui.ui_plot_results import Ui_MainWindow
 
 class PlotResults(BaseAppForm, Ui_MainWindow):
 
-    def __init__(self, elem, auto_push, parent=None):
+    def __init__(self, elem, auto_push, is_file_load, parent=None):
         super(PlotResults, self).__init__()
         self.setupUi(self)
         self._o = self.matplotlibimageWidget
@@ -21,6 +21,7 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
         self._data = parent._data
         self._elem = elem
         self._auto_push = auto_push
+        self._last_loading = is_file_load
 
         self.setAppVersion(parent._version)
         self.setAppTitle("{} - {}".format(parent.getAppTitle(), 'Results'))
@@ -68,7 +69,7 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
         self._o.setFigureXlabel("${}\,\mathrm{{[mm]}}$".format(u))
         self._o.setFigureYlabel("${}'\,\mathrm{{[mrad]}}$".format(u))
         # push results to PVs
-        if self._auto_push:
+        if self._auto_push and not self._last_loading:
             self._push_results(self._r, u, ks, fs)
 
     def _get_keys(self, r):

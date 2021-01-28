@@ -220,7 +220,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._auto_analysis = True
         self._results = None
         # auto push?
-        self._auto_push_results = False
+        self._auto_push_results = True
+        self.actionAuto_Push_Results_to_PVs.setChecked(True)
         # save dlg
         self._data_save_dlg = None
         # loading mode (open data from file)
@@ -1069,7 +1070,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # show Twiss parameters as figure.
         if hasattr(self, '_plot_results_window'):
             self._plot_results_window.close()
-        self._plot_results_window = PlotResults(self._ems_device.elem, self._auto_push_results, self)
+        self._plot_results_window = PlotResults(self._ems_device.elem,
+                                                self._auto_push_results,
+                                                self._last_loading, self)
         self._plot_results_window.results = self._results
         self._plot_results_window.plot_data()
         self._plot_results_window.show()
@@ -1086,6 +1089,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_sync_data(self):
+        auto_push = self._auto_push_results
+        self.actionAuto_Push_Results_to_PVs.setChecked(False)
         if self._valid_device(100) is False:
             return
         self.on_add_current_config(show=False)
@@ -1112,6 +1117,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
         #
         self._last_loading = False
+        #
+        self.actionAuto_Push_Results_to_PVs.setChecked(auto_push)
 
     def check_data_size(self, data):
         if data.size != self._xdim * self._ydim:
