@@ -86,7 +86,7 @@ from .data import DEFAULT_MACHINE, DEFAULT_SEGMENT
 
 NPROC = 4
 PX_SIZE = 24
-ION_ICON_SIZE = 64
+ION_ICON_SIZE = 48
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
 IDX_RATE_MAP = {0: 1.0, 1: 2.0, 2: 5.0, 3: 0.5, 4: 0.2, 5: 0.1}
 FILTER_TT = """\
@@ -602,12 +602,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_probe_element(self, elem, fname):
         ename = elem.name
         if ename not in self._probe_widgets_dict:
-            w = ProbeWidget(element=elem)
-            [o.setEnabled(False) for o in (w.locate_btn, w.lattice_load_btn)]
+            w = ProbeWidget(element=elem, detached=False)
             self._probe_widgets_dict[ename] = w
         w = self._probe_widgets_dict[ename]
         w.show()
-        w.fields_cbb.setCurrentText(fname)
+        w.set_field(fname)
 
     @pyqtSlot(QPoint)
     def on_custom_context_menu(self, view, pos):
@@ -683,7 +682,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.setStyleSheet('QMenu {margin: 2px;}')
 
         #
-        copy_action = QAction(self._copy_text_icon, "Copy '{}'".format(text), menu)
+        copy_action = QAction(self._copy_text_icon, "Copy Text", menu)
         copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
         menu.addAction(copy_action)
 
@@ -692,8 +691,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             ename = text
             elem = self.__init_lat[ename]
             fld = item.fobj
-            probe_action = QAction(self._probe_icon,
-                                   "Probe '{}'".format(ename), menu)
+            probe_action = QAction(self._probe_icon, "Probe Element", menu)
             probe_action.triggered.connect(
                     partial(self.on_probe_element, elem, fld.name))
             menu.addAction(probe_action)
@@ -712,15 +710,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         _item0 = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_name))
         is_checked = is_item_checked(_item0)
         if n_rows == 1:
-            row_text = 'row'
+            row_text = 'Row'
         else:
-            row_text = 'rows'
+            row_text = 'Rows'
         if is_checked:
             new_check_state = Qt.Unchecked
-            act_text = "Uncheck all ({}) {}".format(n_rows, row_text)
+            act_text = f"Uncheck All ({n_rows}) {row_text}"
         else:
             new_check_state = Qt.Checked
-            act_text = "Check all ({}) {}".format(n_rows, row_text)
+            act_text = f"Check All ({n_rows}) {row_text}"
 
         if all(checked_status):
             act_icon = self._unsel_icon
