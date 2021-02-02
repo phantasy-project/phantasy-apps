@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import toml
 import os
 import re
 import time
@@ -128,6 +129,16 @@ TBTN_STY_REGULAR = TBTN_STY_BASE.format(c=TBTN_STY_COLOR_TUPLE)
 
 DEFAULT_X12_TOL = 0.15
 DEFAULT_X12_TOL_AS_STR = '0.15'
+
+def get_foi_dict(filepath):
+    """Return a dict of field of interest per element type.
+    """
+    conf = toml.load(filepath)
+    return {k: v['fields'] for k, v in conf.items()}
+
+DEFAULT_FOI_PATH = find_dconf("settings_manager", "fields.toml")
+DEFAULT_FOI_DICT = get_foi_dict(DEFAULT_FOI_PATH)
+
 
 class SettingsModel(QStandardItemModel):
     """Settings model from Settings instance.
@@ -671,7 +682,10 @@ def pack_settings(elem_list, lat, **kws):
         Tuple of (flat_s[list], s[Settings]), element of flat_s:
         (CaElement, field_name, CaField, field_value)
     """
-    settings = get_settings_from_element_list(elem_list, **kws)
+    foi = kws.pop('field_of_interest', DEFAULT_FOI_DICT)
+    settings = get_settings_from_element_list(elem_list,
+                                              field_of_interest=foi,
+                                              **kws)
     flat_settings = convert_settings(settings, lat)
     return flat_settings, settings
 
