@@ -302,7 +302,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lat = o.combined_lattice()
         self.lattice_loaded.emit(o)
 
-        self.__init_lat = self.__init_lat + self._lat
+        self._lat = self.__init_lat + self._lat
         # show element settings
         if self.init_settings:  # in Preferences
             # if init settings, show settings to the view.
@@ -703,7 +703,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         if hasattr(item, 'fobj'):
             ename = text
-            elem = self.__init_lat[ename]
+            elem = self._lat[ename]
             fld = item.fobj
             probe_action = QAction(self._probe_icon, "Probe Element", menu)
             probe_action.triggered.connect(
@@ -767,8 +767,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # update flat_settings and settings
         # update settings view
         flat_settings, settings = pack_settings(
-            self._elem_list, self.__init_lat,
-            settings=self.__init_lat.settings,
+            self._elem_list, self._lat,
+            settings=self._lat.settings,
             data_source=DATA_SRC_MAP[self.field_init_mode],
             only_physics=False)
         self.settingsLoaded.emit(flat_settings, settings)
@@ -1230,7 +1230,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             segm = table_settings.meta.get('segment', DEFAULT_SEGMENT)
             self.__load_lattice(mach, segm)
 
-        lat = self.__init_lat
+        lat = self._lat
         s = make_physics_settings(table_settings, lat)
         lat.settings.update(s)
         self._elem_list = [lat[ename] for ename in s]
@@ -1566,14 +1566,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
                 is_added_list = []
                 for i in sel_elems_dis:
-                    self.__init_lat.append(i)
+                    self._lat.append(i)
                     is_added_list.append(self.add_element(i))
                 is_added = True in is_added_list
             else:
                 sel_elems, _, _ = self._elem_selected
                 pv_elem = sel_elems[0]
                 elem = build_element(pv_elem.setpoint[0], pv_elem.readback[0])
-                self.__init_lat.append(elem)
+                self._lat.append(elem)
                 is_added = self.add_element(elem)
                 if is_added:
                     self.element_from_pv_added.emit(elem)
@@ -1711,7 +1711,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Delete the element(s) from element list by given field object list.
         """
         for fobj in fobj_list:
-            elem = self.__init_lat[fobj.ename]
+            elem = self._lat[fobj.ename]
             # !! note: delete both ENG/PHY fields even if any one of ENG/PHY is deleted.
             if elem in self._elem_list:
                 self._elem_list.remove(elem)
@@ -2066,7 +2066,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if self._lat is None or self._last_machine_name != data.machine or \
                 self._last_lattice_name != data.segment:
             self.__load_lattice(data.machine, data.segment)
-        lat = self.__init_lat
+        lat = self._lat
         s = make_physics_settings(data.data, lat)
         lat.settings.update(s)
         self._elem_list = [lat[ename] for ename in s]
