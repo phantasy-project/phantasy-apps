@@ -18,7 +18,9 @@ CSV_HEADER = (
     'Tolerance', 'Writable'
 )
 
-LIVE = True
+LIVE = os.environ.get('LIVE_MODE', True)
+if isinstance(LIVE, str):
+    LIVE = LIVE.capitalize() == 'True'
 
 if not LIVE:
     DEFAULT_MACHINE = "FRIB_VA"
