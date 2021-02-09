@@ -447,6 +447,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._reveal_icon = QIcon(QPixmap(":/sm-icons/openfolder.png"))
         self._del_icon = QIcon(QPixmap(":/sm-icons/delete.png"))
         self._load_icon = QIcon(QPixmap(":/sm-icons/cast.png"))
+        self._pwr_on_px = QPixmap(":/sm-icons/on.png")
+        self._pwr_off_px = QPixmap(":/sm-icons/off.png")
+        self._pwr_unknown_px = QPixmap(":/sm-icons/unknown.png")
 
         # selection
         self.select_all_btn.clicked.connect(partial(self.on_select, 'all'))
@@ -547,7 +550,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # settings view filter btn status
         self.filter_btn_group_status_changed.connect(self.on_filter_btn_group_status_changed)
         self.filter_btn_group_status_changed.emit()
-        print(self._filter_btn_enabled)
 
     @pyqtSlot()
     def on_filter_btn_group_status_changed(self):
@@ -1423,6 +1425,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         dx01_idx = m.index(irow, m.i_val0_rd)
         dx02_idx = m.index(irow, m.i_val0_cset)
         dx12_idx = m.index(irow, m.i_rd_cset)
+        pwr_idx = m.index(irow, m.i_pwr)
         ratio_x20_idx = m.index(irow, m.i_ratio_x20)
         wa_idx = m.index(irow, m.i_writable)
         wa = o.write_access
@@ -1454,6 +1457,26 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             worker.meta_signal1.emit((dx02_idx, self._warning_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
         else:
             worker.meta_signal1.emit((dx02_idx, None, Qt.DecorationRole))
+
+        #
+        pwr_is_on = 'Unknown'
+        elem = self._lat[o.ename]
+        if 'PWRSTS' in elem.fields:
+            pwr_fld = elem.get_field('PWRSTS')
+            pwr_is_on = pwr_fld.value
+        if pwr_is_on == 1.0:
+            px = self._pwr_on_px
+            tt = "Power is ON"
+        elif pwr_is_on == 0.0:
+            px = self._pwr_off_px
+            tt = "Power is OFF"
+        else:
+            px = self._pwr_unknown_px
+            tt = "Power is UNKNOWN"
+        # emit signal to update power status
+        worker.meta_signal1.emit((pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+        worker.meta_signal1.emit((pwr_idx, tt, Qt.ToolTipRole))
+        #
         cnt_fld += 1
         return cnt_fld
 

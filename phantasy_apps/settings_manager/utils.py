@@ -50,13 +50,14 @@ DELTA = '\N{GREEK CAPITAL LETTER DELTA}'
 COLUMN_NAMES1 = ['Device', 'Field']
 
 COLUMN_NAMES2 = [
-    'Setpoint({})'.format(X0),
-    'Live Readback({})'.format(X1),
-    'Live Setpoint({})'.format(X2),
-    '{D}({x0},{x1})'.format(D=DELTA, x0=X0, x1=X1),
-    '{D}({x0},{x2})'.format(D=DELTA, x0=X0, x2=X2),
-    '{D}({x1},{x2})'.format(D=DELTA, x1=X1, x2=X2),
-    'Tolerance', 'Writable', f'{X2}/{X0}'
+    f'Setpoint({X0})',
+    f'Live Readback({X1})',
+    f'Live Setpoint({X2})',
+    f'{DELTA}({X0},{X1})',
+    f'{DELTA}({X0},{X2})',
+    f'{DELTA}({X1},{X2})',
+    'Tolerance', 'Writable', f'{X2}/{X0}',
+    'Power',
 ]
 COLUMN_SFIELD_MAP = OrderedDict((
     ('Type', 'family'),
@@ -189,12 +190,14 @@ class SettingsModel(QStandardItemModel):
         self.header = self.h_name, self.h_field, self.h_type, self.h_pos, \
                       self.h_val0, self.h_rd, self.h_cset, \
                       self.h_val0_rd, self.h_val0_cset, self.h_rd_cset, \
-                      self.h_tol, self.h_writable, self.h_ratio_x20 \
+                      self.h_tol, self.h_writable, self.h_ratio_x20, \
+                      self.h_pwr \
             = COLUMN_NAMES
         self.ids = self.i_name, self.i_field, self.i_type, self.i_pos, \
                    self.i_val0, self.i_rd, self.i_cset, \
                    self.i_val0_rd, self.i_val0_cset, self.i_rd_cset, \
-                   self.i_tol, self.i_writable, self.i_ratio_x20 \
+                   self.i_tol, self.i_writable, self.i_ratio_x20, \
+                   self.i_pwr \
             = range(len(self.header))
 
         #
@@ -261,6 +264,11 @@ class SettingsModel(QStandardItemModel):
                 for i in row:
                     i.setSelectable(False)
                     i.setData(QBrush(QColor(FG_NO_WRITE)), Qt.ForegroundRole)
+
+            # pwrsts
+            item_pwr = QStandardItem('')
+            row.append(item_pwr)
+            #
 
             self.appendRow(row)
             ename_set.add(elem.name)
