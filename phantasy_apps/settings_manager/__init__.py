@@ -11,6 +11,7 @@ __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
 __title__ = "Settings Manager: Manage Physics Configurations of Accelerator System"
 __version__ = '6.0'
 
+# ENV: LIVE_MODE, e.g.: LIVE_MODE=False settings_manager
 
 def run(cli=False):
     args = sys.argv
