@@ -97,6 +97,9 @@ _, LOG_FILE = tempfile.mkstemp(datetime.now().strftime(TS_FMT), "settings_manage
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
+    # settings view filter button group status (or) changed --> update
+    filter_btn_group_status_changed = pyqtSignal()
+
     # signal: settings loaded, emit flat_settings and settings.
     settingsLoaded = pyqtSignal(QVariant, QVariant)
 
@@ -540,6 +543,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.select_none_ions_btn.clicked.connect(partial(self.on_snp_filters_select_all_ions, False))
         self.select_all_tags_btn.clicked.connect(partial(self.on_snp_filters_select_all_tags, True))
         self.select_none_tags_btn.clicked.connect(partial(self.on_snp_filters_select_all_tags, False))
+
+        # settings view filter btn status
+        self.filter_btn_group_status_changed.connect(self.on_filter_btn_group_status_changed)
+        self.filter_btn_group_status_changed.emit()
+        print(self._filter_btn_enabled)
+
+    @pyqtSlot()
+    def on_filter_btn_group_status_changed(self):
+        # Do logic 'or', if True, do global refresh when data refresher is on.
+        self._filter_btn_enabled = self.show_warning_dx02_btn.isChecked() \
+                or self.show_warning_dx12_btn.isChecked()
 
     def resizeEvent(self, e):
         self.resizeDocks([self.snp_dock], [self.width() * 0.5],
@@ -1451,6 +1465,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             worker = self.updater
         t0 = time.time()
         cnt_fld = 0
+        if self._filter_btn_enabled: # force iterate all if any (2) filter btn is on
+            viewport_only = False
         for o, it in self.obj_it_tuple:
             _cnt_fld = self._refresh_single(m, m0, viewport_only, (o, it), worker=worker)
             cnt_fld += _cnt_fld
@@ -1728,6 +1744,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(bool)
     def on_show_warning_dx12(self, is_checked):
         # show all items with dx12 > tolerance
+        self.filter_btn_group_status_changed.emit()
         m = self._tv.model()
         if m is None:
             return
@@ -1737,6 +1754,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(bool)
     def on_show_warning_dx02(self, is_checked):
         # show all items with dx02 > tolerance
+        self.filter_btn_group_status_changed.emit()
         m = self._tv.model()
         if m is None:
             return
