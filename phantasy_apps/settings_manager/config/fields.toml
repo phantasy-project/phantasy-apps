@@ -1,0 +1,33 @@
+# Field-of-interest per element type for settings view
+# Define ENG and PHY fields in pair
+# key name could be element type and element name (higher priority)
+
+[DEFAULT]
+fields = ['I', 'V']
+
+[CAV]
+fields = ['PHA', 'AMP', 'PHASE', 'AMPLITUDE']
+
+[HCOR]
+fields = ['I', 'TM']
+
+[VCOR]
+fields = ['I', 'TM']
+
+[SOL]
+fields = ['I', 'B']
+
+[BEND]
+fields = ['I', 'B']
+
+[EBEND]
+fields = ['V']
+
+[EQUAD]
+fields = ['V']
+
+[QUAD]
+fields = ['I', 'B2']
+
+[SEXT]
+fields = ['I', 'B3']

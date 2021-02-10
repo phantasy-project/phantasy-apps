@@ -1011,12 +1011,14 @@ class Ui_MainWindow(object):
         self.update_rate_cbb.setItemText(4, _translate("MainWindow", "0.2 Hz"))
         self.update_rate_cbb.setItemText(5, _translate("MainWindow", "0.1 Hz"))
         self.update_ctrl_btn.setToolTip(
-            _translate("MainWindow", "Start/stop updating values."))
+            _translate("MainWindow", "Start/stop updating values (Ctrl+F5)."))
         self.update_ctrl_btn.setText(_translate("MainWindow", "..."))
+        self.update_ctrl_btn.setShortcut(_translate("MainWindow", "Ctrl+F5"))
         self.single_update_btn.setToolTip(
-            _translate("MainWindow", "Update for one time."))
+            _translate("MainWindow", "Update for one time (F5)."))
         self.single_update_btn.setText(_translate("MainWindow",
                                                   "Refresh Data"))
+        self.single_update_btn.setShortcut(_translate("MainWindow", "F5"))
         self.apply_btn.setToolTip(
             _translate(
                 "MainWindow",
