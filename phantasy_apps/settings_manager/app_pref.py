@@ -119,8 +119,6 @@ class PreferencesDialog(QDialog, Ui_Dialog):
             i = idx // 4
             j = idx - 4 * i
             layout.addWidget(btn, i, j)
-        layout.addItem(QSpacerItem(20, 20,
-                       QSizePolicy.Preferred, QSizePolicy.Expanding))
 
         # config path
         config_path = self.pref_dict['config_path']

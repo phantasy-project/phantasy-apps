@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(640, 342)
+        Dialog.resize(640, 382)
         self.gridLayout_9 = QtWidgets.QGridLayout(Dialog)
         self.gridLayout_9.setContentsMargins(6, 12, 6, 6)
         self.gridLayout_9.setSpacing(6)
@@ -160,10 +160,6 @@ class Ui_Dialog(object):
         self.gridLayout_2.setContentsMargins(4, 10, 4, 4)
         self.gridLayout_2.setSpacing(4)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.col_visibility_gbox = QtWidgets.QGridLayout()
-        self.col_visibility_gbox.setSpacing(4)
-        self.col_visibility_gbox.setObjectName("col_visibility_gbox")
-        self.gridLayout_2.addLayout(self.col_visibility_gbox, 2, 0, 1, 2)
         self.label_5 = QtWidgets.QLabel(self.view_tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -209,6 +205,14 @@ class Ui_Dialog(object):
         self.select_font_btn.setObjectName("select_font_btn")
         self.horizontalLayout_2.addWidget(self.select_font_btn)
         self.gridLayout_2.addLayout(self.horizontalLayout_2, 0, 0, 1, 2)
+        self.col_visibility_gbox = QtWidgets.QGridLayout()
+        self.col_visibility_gbox.setSpacing(6)
+        self.col_visibility_gbox.setObjectName("col_visibility_gbox")
+        self.gridLayout_2.addLayout(self.col_visibility_gbox, 2, 0, 1, 2)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 40,
+                                            QtWidgets.QSizePolicy.Minimum,
+                                            QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_2.addItem(spacerItem1, 3, 0, 1, 1)
         self.tabWidget.addTab(self.view_tab, "")
         self.config_tab = QtWidgets.QWidget()
         self.config_tab.setObjectName("config_tab")
@@ -220,10 +224,10 @@ class Ui_Dialog(object):
         self.change_config_path_btn.setEnabled(False)
         self.change_config_path_btn.setObjectName("change_config_path_btn")
         self.gridLayout_3.addWidget(self.change_config_path_btn, 0, 2, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40,
+        spacerItem2 = QtWidgets.QSpacerItem(20, 40,
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_3.addItem(spacerItem1, 2, 0, 1, 1)
+        self.gridLayout_3.addItem(spacerItem2, 2, 0, 1, 1)
         self.label_9 = QtWidgets.QLabel(self.config_tab)
         self.label_9.setObjectName("label_9")
         self.gridLayout_3.addWidget(self.label_9, 0, 0, 1, 1)
@@ -247,10 +251,10 @@ class Ui_Dialog(object):
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_12.setSpacing(4)
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_12.addItem(spacerItem2)
+        self.horizontalLayout_12.addItem(spacerItem3)
         self.cancel_btn = QtWidgets.QPushButton(Dialog)
         self.cancel_btn.setObjectName("cancel_btn")
         self.horizontalLayout_12.addWidget(self.cancel_btn)
