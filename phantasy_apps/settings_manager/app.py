@@ -239,6 +239,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # init settings boolean
         self.init_settings_changed.connect(self.init_settings_chkbox.setChecked)
 
+    @pyqtSlot()
+    def on_auto_column_width(self):
+        # auto adjust column width
+        m = self._tv.model()
+        if m is None:
+            return
+        m.m_src.fit_view()
+
     @pyqtSlot(QFont)
     def on_font_changed(self, font):
         """Update font config.
@@ -375,6 +383,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         printlog("Updating data values...")
         self.update_ctrl_btn.toggled.emit(self.update_ctrl_btn.isChecked())
         self.single_update_btn.clicked.emit()
+        loop = QEventLoop()
+        self.one_updater.finished.connect(self.on_auto_column_width)
+        loop.exec_()
 
     @pyqtSlot(int, int)
     def on_settings_sts(self, i, j):
