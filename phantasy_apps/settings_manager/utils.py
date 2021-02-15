@@ -401,6 +401,7 @@ class _SortProxyModel(QSortFilterProxyModel):
             'tolerance': model.i_tol,
             'writable': model.i_writable,
             'x2/x0': model.i_ratio_x20,
+            'power': model.i_pwr,
         }
         self.filter_ftypes = ['ENG', 'PHY']
         # if True, filter checked items, otherwise show all items.
@@ -419,13 +420,15 @@ class _SortProxyModel(QSortFilterProxyModel):
         try:
             r = float(left_data) < float(right_data)
         except ValueError:
-            if left.column() == 0:  # ename
+            if left.column() == self.filter_col_index['device']:  # ename
                 r_left = re.match(r'.*_(D[0-9]{4}).*', left_data)
                 r_right = re.match(r'.*_(D[0-9]{4}).*', right_data)
                 if r_left is not None and r_right is not None:
                     left_data = r_left.group(1)
                     right_data = r_right.group(1)
-
+            elif left.column() == self.filter_col_index['power']: # pwrsts
+                left_data = left.data(Qt.ToolTipRole)
+                right_data = right.data(Qt.ToolTipRole)
             r = left_data < right_data
         return r
 
