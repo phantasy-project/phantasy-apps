@@ -41,6 +41,17 @@ ATTR_KEYS = [
     "machine", "segment", "tags", "app", "version",
 ]
 
+#
+# key is old element name, value is the new name for loading.
+#
+ELEM_ALIAS_MAP = {
+ 'FE_ISRC1:SOLR_D0690:I': 'FE_ISRC1:SOLR_D0690',
+ 'FE_ISRC1:DCH_D0695:I': 'FE_ISRC1:DCH_D0695',
+ 'FE_ISRC1:DCV_D0695:I': 'FE_ISRC1:DCV_D0695',
+ 'FE_ISRC1:PSOL_D0682:I': 'FE_ISRC1:SOLR_D0682',
+ 'FE_ISRC1:PSOL_D0685:I': 'FE_ISRC1:SOLR_D0685',
+}
+
 
 def make_physics_settings(csv_settings, lat):
     """Generate Settings (lattice settings) of *lat* from `TableSettings`
@@ -61,6 +72,8 @@ def make_physics_settings(csv_settings, lat):
     """
     s = Settings()  # physics settings
     for name, field, _, _, sp, rd, last_sp, _, _ in csv_settings:
+        if name in ELEM_ALIAS_MAP:
+            name = ELEM_ALIAS_MAP[name]
         elem = lat[name]
         eng_fields = elem.get_eng_fields()
         phy_fields = elem.get_phy_fields()
