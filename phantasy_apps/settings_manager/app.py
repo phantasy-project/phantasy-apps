@@ -1461,9 +1461,19 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         pwr_is_on = 'Unknown'
         elem = self._lat[o.ename]
-        if 'PWRSTS' in elem.fields:
-            pwr_fld = elem.get_field('PWRSTS')
-            pwr_is_on = pwr_fld.value
+        if elem.family != 'CAV':
+            if 'PWRSTS' in elem.fields:
+                pwr_fld = elem.get_field('PWRSTS')
+                pwr_is_on = pwr_fld.value
+        else: # CAV
+            r = re.match(r".*([1-3]+).*", o.name)
+            if r is not None: # D0987
+                _fname = 'ITLKSTS' + r.group(1)
+            else:
+                _fname = 'ITLKSTS'
+            if _fname in elem.fields:
+                pwr_fld = elem.get_field(_fname)
+                pwr_is_on = pwr_fld.value
         if pwr_is_on == 1.0:
             px = self._pwr_on_px
             tt = "Power is ON"
