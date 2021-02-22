@@ -57,6 +57,13 @@ ELEM_ALIAS_MAP = {
  'FE_ISRC1:DCV_D0695:I': 'FE_ISRC1:DCV_D0695',
  'FE_ISRC1:PSOL_D0682:I': 'FE_ISRC1:SOLR_D0682',
  'FE_ISRC1:PSOL_D0685:I': 'FE_ISRC1:SOLR_D0685',
+ 'FE_RFQ:RFC_D1005:PHA': 'FE_RFQ:CAV_D1005',
+ 'FE_RFQ:RFC_D1005:E': 'FE_RFQ:CAV_D1005',
+}
+
+# field alias (RFQ)
+FIELD_ALIAS_MAP = {
+ 'E': 'AMP',
 }
 
 
@@ -84,6 +91,7 @@ def make_physics_settings(csv_settings, lat):
         elem = lat[name]
         eng_fields = elem.get_eng_fields()
         phy_fields = elem.get_phy_fields()
+        field = FIELD_ALIAS_MAP.get(field, field)
         fld = elem.get_field(field)
         if name not in s:
             s[name] = OrderedDict()
