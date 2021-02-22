@@ -42,3 +42,15 @@ fields = ['I', 'B2']
 
 [SEXT]
 fields = ['I', 'B3']
+
+# ISRC1
+[HVP]
+fields = ['V', 'VOLT']
+[SEL]
+fields = ['V', 'VOLT']
+[SB]
+fields = ['V', 'VOLT']
+[SX]
+fields = ['V', 'VOLT']
+[SE]
+fields = ['V', 'VOLT']
