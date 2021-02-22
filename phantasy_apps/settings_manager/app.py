@@ -1468,11 +1468,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         tol = float(m.data(tol_idx))
         if abs(dx12) > tol:
             worker.meta_signal1.emit((dx12_idx, self._warning_px, Qt.DecorationRole))
+            worker.meta_signal1.emit((dx12_idx, 'warning', Qt.UserRole))
         else:
             worker.meta_signal1.emit((dx12_idx, self._no_warning_px, Qt.DecorationRole))
 
         if not is_close(x0, x2, self.ndigit):
             worker.meta_signal1.emit((dx02_idx, self._warning_px, Qt.DecorationRole))
+            worker.meta_signal1.emit((dx02_idx, 'warning', Qt.UserRole))
         else:
             worker.meta_signal1.emit((dx02_idx, self._no_warning_px, Qt.DecorationRole))
 

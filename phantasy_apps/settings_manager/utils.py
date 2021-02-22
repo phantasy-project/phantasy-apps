@@ -540,7 +540,7 @@ class _SortProxyModel(QSortFilterProxyModel):
         if self.filter_dx12_warning_enabled:
             data = src_model.data(
                     src_model.index(src_row, self.filter_col_index['dx12']),
-                    Qt.DecorationRole)
+                    Qt.UserRole)
             dx12_warning_test = data is not None
         else:
             dx12_warning_test = True
@@ -552,7 +552,7 @@ class _SortProxyModel(QSortFilterProxyModel):
         if self.filter_dx02_warning_enabled:
             data = src_model.data(
                     src_model.index(src_row, self.filter_col_index['dx02']),
-                    Qt.DecorationRole)
+                    Qt.UserRole)
             dx02_warning_test = data is not None
         else:
             dx02_warning_test = True
