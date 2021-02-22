@@ -83,6 +83,7 @@ from .utils import VALID_FILTER_KEYS
 from .utils import VALID_FILTER_KEYS_NUM
 from .utils import SnapshotDataModel
 from .data import DEFAULT_MACHINE, DEFAULT_SEGMENT
+from .utils import ELEM_WRITE_PERM
 
 NPROC = 4
 PX_SIZE = 24
@@ -1440,7 +1441,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         pwr_idx = m.index(irow, m.i_pwr)
         ratio_x20_idx = m.index(irow, m.i_ratio_x20)
         wa_idx = m.index(irow, m.i_writable)
-        wa = o.write_access
+        wa = ELEM_WRITE_PERM.get(o.ename, o.write_access)
         idx_tuple = (idx0, idx1)
         v_tuple = (rd_val, sp_val)
         for iidx, val in zip(idx_tuple, v_tuple):

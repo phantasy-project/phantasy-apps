@@ -140,6 +140,13 @@ def get_foi_dict(filepath):
 DEFAULT_FOI_PATH = find_dconf("settings_manager", "fields.toml")
 DEFAULT_FOI_DICT = get_foi_dict(DEFAULT_FOI_PATH)
 
+# override write permission (for those does not have correct ACF)
+ELEM_WRITE_PERM = {
+ 'FE_ISRC1:BEAM': False,
+ 'FE_RFQ:CAV_D1005': False,
+ 'FE_ISRC1:DRV_D0686:POS': False,
+}
+
 
 class SettingsModel(QStandardItemModel):
     """Settings model from Settings instance.
@@ -249,7 +256,7 @@ class SettingsModel(QStandardItemModel):
             row.append(item_tol)
 
             # writable
-            write_access = fld.write_access
+            write_access = ELEM_WRITE_PERM.get(fld.ename, fld.write_access)
             item_wa = QStandardItem(str(write_access))
             item_wa.setEditable(False)
             row.append(item_wa)
