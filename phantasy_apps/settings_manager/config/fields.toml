@@ -54,3 +54,6 @@ fields = ['V', 'VOLT']
 fields = ['V', 'VOLT']
 [SE]
 fields = ['V', 'VOLT']
+[ION]
+fields = ['A', 'ION_MASS', 'Q', 'ION_CHARGE', 'Z', 'ION_NUMBER']
+
