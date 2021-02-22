@@ -1,3 +1,16 @@
+Version 7.0: 2021-02-22
+=======================
+
+- Setting View
+  - Support only showing field-of-interest, defined in config/field.toml
+  - Support show device power status in a new column
+  - Support running with LIVE_MODE environmental variable
+  - Do global data refreshing when any filter button is checked
+  - F5 (Ctrl+F5) for single data refresher (continuously)
+  - Manage all devices in phantasy-machines for ISRC1
+
+- other bug fixes
+
 Version 6.0: 2021-01-19
 =======================
 
