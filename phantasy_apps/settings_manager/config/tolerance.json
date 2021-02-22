@@ -1,331 +1,337 @@
 {
   "FE_SCS1:SOLR_D0704": {
-    "B": 0.2,
-    "I": 0.2
+    "B": 0.15,
+    "I": 0.15
   },
   "FE_SCS1:DCV_D0709": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_SCS1:DCH_D0709": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_SCS1:DH_D0717": {
-    "B": 0.2,
-    "I": 0.2
+    "B": 0.15,
+    "I": 0.15
   },
   "FE_SCS1:DCV_D0723": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_SCS1:DCH_D0723": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_SCS1:QHE_D0726": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_SCS1:QVE_D0730": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_SCS1:QHE_D0733": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_SCS1:QHE_D0743": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_SCS1:QVE_D0746": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_SCS1:QHE_D0749": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:DH_D0759": {
-    "B": 0.2,
-    "I": 0.2
+    "B": 0.15,
+    "I": 0.15
   },
   "FE_LEBT:QVE_D0767": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:QHE_D0770": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:DCV_D0773": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:DCH_D0773": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:QHE_D0776": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:QVE_D0780": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:SOLR_D0787": {
-    "B": 0.2,
-    "I": 0.2
+    "B": 0.15,
+    "I": 0.15
   },
   "FE_LEBT:DCV_D0790": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:DCH_D0790": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:SOLR_D0802": {
-    "B": 0.2,
-    "I": 0.2
+    "B": 0.15,
+    "I": 0.15
   },
   "FE_LEBT:DCV_D0805": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:DCH_D0805": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:SOLR_D0818": {
-    "B": 0.2,
-    "I": 0.2
+    "B": 0.15,
+    "I": 0.15
   },
   "FE_LEBT:DCV_D0821": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:DCH_D0821": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:DVE_D0833": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:DCV_D0840": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:DCH_D0840": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:QHE_D0844": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:QVE_D0848": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:QHE_D0851": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:DCV_D0868": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:DCH_D0868": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:QVE_D0871": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:QHE_D0874": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:QVE_D0878": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:DCV_D0880": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:DCH_D0880": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:QVE_D0891": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:QHE_D0895": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:QVE_D0898": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:DCV_D0901": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:DCH_D0901": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:QHE_D0918": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:QVE_D0921": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:QHE_D0924": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:DCV_D0929": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:DCH_D0929": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:DVE_D0936": {
-    "VOLT": 0.2,
-    "V": 0.2
+    "VOLT": 0.15,
+    "V": 0.15
   },
   "FE_LEBT:DCV_D0948": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:DCH_D0948": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:SOLR_D0951": {
-    "B": 0.2,
-    "I": 0.2
+    "B": 0.15,
+    "I": 0.15
   },
   "FE_LEBT:DCV_D0964": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:DCH_D0964": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:SOLR_D0967": {
-    "B": 0.2,
-    "I": 0.2
+    "B": 0.15,
+    "I": 0.15
   },
   "FE_LEBT:DCV_D0979": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:DCH_D0979": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:SOLR_D0982": {
-    "B": 0.2,
-    "I": 0.2
+    "B": 0.15,
+    "I": 0.15
   },
   "FE_LEBT:CAV_D0987": {
-    "PHASE1": 0.2,
-    "PHA1": 0.2,
-    "PHASE2": 0.2,
-    "PHA2": 0.2,
-    "PHASE3": 0.2,
-    "PHA3": 0.2,
-    "AMPLITUDE1": 0.2,
-    "AMP1": 0.2,
-    "AMPLITUDE2": 0.2,
-    "AMP2": 0.2,
-    "AMPLITUDE3": 0.2,
-    "AMP3": 0.2,
-    "PHASE1_CREST": 0.2,
-    "PHA1_CREST": 0.2,
-    "PHASE2_CREST": 0.2,
-    "PHA2_CREST": 0.2,
-    "PHASE3_CREST": 0.2,
-    "PHA3_CREST": 0.2,
-    "AMPLITUDE1_COEF": 0.2,
-    "AMP1_COEF": 0.2,
-    "AMPLITUDE2_COEF": 0.2,
-    "AMP2_COEF": 0.2,
-    "AMPLITUDE3_COEF": 0.2,
-    "AMP3_COEF": 0.2
+    "PHASE1": 0.15,
+    "PHA1": 0.15,
+    "PHASE2": 0.15,
+    "PHA2": 0.15,
+    "PHASE3": 0.15,
+    "PHA3": 0.15,
+    "AMPLITUDE1": 0.15,
+    "AMP1": 0.15,
+    "AMPLITUDE2": 0.15,
+    "AMP2": 0.15,
+    "AMPLITUDE3": 0.15,
+    "AMP3": 0.15,
+    "PHASE1_CREST": 0.15,
+    "PHA1_CREST": 0.15,
+    "PHASE2_CREST": 0.15,
+    "PHA2_CREST": 0.15,
+    "PHASE3_CREST": 0.15,
+    "PHA3_CREST": 0.15,
+    "AMPLITUDE1_COEF": 0.15,
+    "AMP1_COEF": 0.15,
+    "AMPLITUDE2_COEF": 0.15,
+    "AMP2_COEF": 0.15,
+    "AMPLITUDE3_COEF": 0.15,
+    "AMP3_COEF": 0.15
   },
   "FE_LEBT:DCV_D0992": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:DCH_D0992": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_LEBT:SOLR_D0995": {
-    "B": 0.2,
-    "I": 0.2
+    "B": 0.15,
+    "I": 0.15
   },
   "FE_ISRC1:BEAM": {
     "A_BOOK_PHY": 0.1,
-    "A_BOOK": 0.1
+    "A_BOOK": 0.1,
+    "ION_MASS": 0.15,
+    "A": 0.15,
+    "ION_CHARGE": 0.15,
+    "Q": 0.15,
+    "ION_NUMBER": 0.15,
+    "Z": 0.15
   },
   "FE_ISRC1:BEAM:A_BOOK": {
-    "A_BOOK_PHY": 0.2,
-    "A_BOOK": 0.2
+    "A_BOOK_PHY": 0.15,
+    "A_BOOK": 0.15
   },
   "FE_ISRC1:BEAM:Z_BOOK": {
-    "Z_BOOK_PHY": 0.2,
-    "Z_BOOK": 0.2
+    "Z_BOOK_PHY": 0.15,
+    "Z_BOOK": 0.15
   },
   "FE_ISRC1:BEAM:Q_BOOK": {
-    "Q_BOOK_PHY": 0.2,
-    "Q_BOOK": 0.2
+    "Q_BOOK_PHY": 0.15,
+    "Q_BOOK": 0.15
   },
   "FE_ISRC1:HVP_D0679:V_CSET": {
     "V_PHY": 0.01,
@@ -2753,127 +2759,127 @@
   },
   "FE_MEBT:Q_D1057": {
     "GRAD": 0.15,
-    "I": 0.2,
-    "B2": 0.2
+    "I": 0.15,
+    "B2": 0.15
   },
   "FE_MEBT:Q_D1060": {
     "GRAD": 0.15,
-    "I": 0.2,
-    "B2": 0.2
+    "I": 0.15,
+    "B2": 0.15
   },
   "FE_MEBT:Q_D1062": {
     "GRAD": 0.15,
-    "I": 0.2,
-    "B2": 0.2
+    "I": 0.15,
+    "B2": 0.15
   },
   "FE_MEBT:DCV_D1062": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_MEBT:DCH_D1062": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_MEBT:CAV_D1066": {
-    "PHASE": 0.2,
-    "PHA": 0.2,
-    "AMPLITUDE": 0.2,
-    "AMP": 0.2,
-    "PHASE_CREST": 0.2,
-    "PHA_CREST": 0.2,
-    "AMPLITUDE_COEF": 0.2,
-    "AMP_COEF": 0.2
+    "PHASE": 0.15,
+    "PHA": 0.15,
+    "AMPLITUDE": 0.15,
+    "AMP": 0.15,
+    "PHASE_CREST": 0.15,
+    "PHA_CREST": 0.15,
+    "AMPLITUDE_COEF": 0.15,
+    "AMP_COEF": 0.15
   },
   "FE_MEBT:Q_D1074": {
     "GRAD": 0.15,
-    "I": 0.2,
-    "B2": 0.2
+    "I": 0.15,
+    "B2": 0.15
   },
   "FE_MEBT:Q_D1076": {
     "GRAD": 0.15,
-    "I": 0.2,
-    "B2": 0.2
+    "I": 0.15,
+    "B2": 0.15
   },
   "FE_MEBT:Q_D1078": {
     "GRAD": 0.15,
-    "I": 0.2,
-    "B2": 0.2
+    "I": 0.15,
+    "B2": 0.15
   },
   "FE_MEBT:DCV_D1078": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_MEBT:DCH_D1078": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_MEBT:DH_D1086": {
-    "B": 0.2,
-    "I": 0.2
+    "B": 0.15,
+    "I": 0.15
   },
   "FE_MEBT:Q_D1095": {
     "GRAD": 0.15,
-    "I": 0.2,
-    "B2": 0.2
+    "I": 0.15,
+    "B2": 0.15
   },
   "FE_MEBT:Q_D1098": {
     "GRAD": 0.15,
-    "I": 0.2,
-    "B2": 0.2
+    "I": 0.15,
+    "B2": 0.15
   },
   "FE_MEBT:Q_D1100": {
     "GRAD": 0.15,
-    "I": 0.2,
-    "B2": 0.2
+    "I": 0.15,
+    "B2": 0.15
   },
   "FE_MEBT:DCV_D1100": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_MEBT:DCH_D1100": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_MEBT:CAV_D1107": {
-    "PHASE": 0.2,
-    "PHA": 0.2,
-    "AMPLITUDE": 0.2,
-    "AMP": 0.2,
-    "PHASE_CREST": 0.2,
-    "PHA_CREST": 0.2,
-    "AMPLITUDE_COEF": 0.2,
-    "AMP_COEF": 0.2
+    "PHASE": 0.15,
+    "PHA": 0.15,
+    "AMPLITUDE": 0.15,
+    "AMP": 0.15,
+    "PHASE_CREST": 0.15,
+    "PHA_CREST": 0.15,
+    "AMPLITUDE_COEF": 0.15,
+    "AMP_COEF": 0.15
   },
   "FE_MEBT:Q_D1113": {
     "GRAD": 0.15,
-    "I": 0.2,
-    "B2": 0.2
+    "I": 0.15,
+    "B2": 0.15
   },
   "FE_MEBT:Q_D1115": {
     "GRAD": 0.15,
-    "I": 0.2,
-    "B2": 0.2
+    "I": 0.15,
+    "B2": 0.15
   },
   "FE_MEBT:Q_D1117": {
     "GRAD": 0.15,
-    "I": 0.2,
-    "B2": 0.2
+    "I": 0.15,
+    "B2": 0.15
   },
   "FE_MEBT:DCV_D1117": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "FE_MEBT:DCH_D1117": {
     "ANG": 0.15,
-    "I": 0.2,
-    "TM": 0.2
+    "I": 0.15,
+    "TM": 0.15
   },
   "LS1_CA01:CAV1_D1127": {
     "PHASE": 0.2,
@@ -4781,20 +4787,20 @@
     "I": 0.01
   },
   "FE_ISRC1:HVP_D0679:V": {
-    "V_PHY": 0.2,
-    "V": 0.2
+    "V_PHY": 0.15,
+    "V": 0.15
   },
   "FE_ISRC1:PSB_D0679:V": {
-    "V_PHY": 0.2,
-    "V": 0.2
+    "V_PHY": 0.15,
+    "V": 0.15
   },
   "FE_ISRC1:PSEL_D0679:V": {
-    "V_PHY": 0.2,
-    "V": 0.2
+    "V_PHY": 0.15,
+    "V": 0.15
   },
   "FE_ISRC1:PSX_D0679:V": {
-    "V_PHY": 0.2,
-    "V": 0.2
+    "V_PHY": 0.15,
+    "V": 0.15
   },
   "FE_ISRC1:PSOL_D0682:I": {
     "I_PHY": 0.2,
@@ -4805,12 +4811,12 @@
     "I": 0.2
   },
   "FE_ISRC1:PSE_D0686:V": {
-    "V_PHY": 0.2,
-    "V": 0.2
+    "V_PHY": 0.15,
+    "V": 0.15
   },
   "FE_ISRC1:DRV_D0686:POS": {
-    "POS_PHY": 0.2,
-    "POS": 0.2
+    "POS_PHY": 0.15,
+    "POS": 0.15
   },
   "FE_ISRC1:SOLR_D0690:I": {
     "I_PHY": 0.2,
@@ -4825,36 +4831,36 @@
     "I": 0.2
   },
   "FE_ISRC1:HVP_D0698:V": {
-    "V_PHY": 0.2,
-    "V": 0.2
+    "V_PHY": 0.15,
+    "V": 0.15
   },
   "FE_ISRC1:PSEL_D0698:V": {
-    "V_PHY": 0.2,
-    "V": 0.2
+    "V_PHY": 0.15,
+    "V": 0.15
   },
   "FE_SCS1:STPC01_D0736:SLT.VAL": {
-    "SLT.VAL_PHY": 0.2,
-    "SLT.VAL": 0.2
+    "SLT.VAL_PHY": 0.15,
+    "SLT.VAL": 0.15
   },
   "FE_SCS1:STPC01_D0736:SLB.VAL": {
-    "SLB.VAL_PHY": 0.2,
-    "SLB.VAL": 0.2
+    "SLB.VAL_PHY": 0.15,
+    "SLB.VAL": 0.15
   },
   "FE_SCS1:STPC01_D0736:SLL.VAL": {
-    "SLL.VAL_PHY": 0.2,
-    "SLL.VAL": 0.2
+    "SLL.VAL_PHY": 0.15,
+    "SLL.VAL": 0.15
   },
   "FE_SCS1:STPC01_D0736:SLR.VAL": {
-    "SLR.VAL_PHY": 0.2,
-    "SLR.VAL": 0.2
+    "SLR.VAL_PHY": 0.15,
+    "SLR.VAL": 0.15
   },
   "FE_RFQ:RFC_D1005:E": {
-    "E_PHY": 0.2,
-    "E": 0.2
+    "E_PHY": 0.15,
+    "E": 0.15
   },
   "FE_RFQ:RFC_D1005:PHA": {
-    "PHA_PHY": 0.2,
-    "PHA": 0.2
+    "PHA_PHY": 0.15,
+    "PHA": 0.15
   },
   "FS1_STRS:STPC03_D2237:DRV1": {
     "DRV1_PHY": 0.01,
@@ -5383,5 +5389,67 @@
   "LS2_CD12:DCH1_D3894": {
     "TM": 0.2,
     "I": 0.2
+  },
+  "FE_ISRC1:SOLR_D0690": {
+    "B": 0.15,
+    "I": 0.15
+  },
+  "FE_ISRC1:DCV_D0695": {
+    "TM": 0.15,
+    "I": 0.15
+  },
+  "FE_ISRC1:DCH_D0695": {
+    "TM": 0.15,
+    "I": 0.15
+  },
+  "FE_ISRC1:SOLR_D0682": {
+    "B": 0.15,
+    "I": 0.15
+  },
+  "FE_ISRC1:SOLR_D0685": {
+    "B": 0.15,
+    "I": 0.15
+  },
+  "FE_ISRC1:HVP_D0679": {
+    "VOLT": 0.15,
+    "V": 0.15,
+    "POWER_STATUS": 0.15,
+    "PWRSTS": 0.15
+  },
+  "FE_ISRC1:PSEL_D0679": {
+    "VOLT": 0.15,
+    "V": 0.15,
+    "POWER_STATUS": 0.15,
+    "PWRSTS": 0.15
+  },
+  "FE_ISRC1:PSX_D0679": {
+    "VOLT": 0.15,
+    "V": 0.15,
+    "POWER_STATUS": 0.15,
+    "PWRSTS": 0.15
+  },
+  "FE_ISRC1:PSB_D0679": {
+    "VOLT": 0.15,
+    "V": 0.15,
+    "POWER_STATUS": 0.15,
+    "PWRSTS": 0.15
+  },
+  "FE_ISRC1:PSE_D0686": {
+    "VOLT": 0.15,
+    "V": 0.15,
+    "POWER_STATUS": 0.15,
+    "PWRSTS": 0.15
+  },
+  "FE_ISRC1:PSEL_D0698": {
+    "VOLT": 0.15,
+    "V": 0.15,
+    "POWER_STATUS": 0.15,
+    "PWRSTS": 0.15
+  },
+  "FE_ISRC1:HVP_D0698": {
+    "VOLT": 0.15,
+    "V": 0.15,
+    "POWER_STATUS": 0.15,
+    "PWRSTS": 0.15
   }
 }
