@@ -73,8 +73,8 @@ VALID_FILTER_KEYS_NUM = ['x0', 'x1', 'x2', 'dx01', 'dx02', 'dx12',
 VALID_FILTER_KEYS = ['device', 'field', 'type',
                      'writable'] + VALID_FILTER_KEYS_NUM
 
-BG_COLOR_GOLDEN_YES = "#FFDE03"
-BG_COLOR_GOLDEN_NO = "#FFFFFF"
+BG_COLOR_GOLDEN_YES = (255, 222, 3, 200) # #FFDE03
+BG_COLOR_GOLDEN_NO = (255, 255, 255, 0) # #FFFFFF
 BG_COLOR_DEFAULT = "#FFFFFF"
 BG_COLOR_MAP = {
     # system: background
@@ -1101,7 +1101,7 @@ class SnapshotDataModel(QStandardItemModel):
         else:
             bgc = BG_COLOR_GOLDEN_NO
             tt = TT_NOT_GOLDEN
-        px.fill(QColor(bgc))
+        px.fill(QColor(*bgc))
         it.setData(px, Qt.DecorationRole)
         it.setData(tt, Qt.UserRole)
         it.setToolTip(tt)

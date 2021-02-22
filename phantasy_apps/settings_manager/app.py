@@ -22,6 +22,7 @@ from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QColor
 from PyQt5.QtGui import QFont
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QIcon
@@ -85,6 +86,7 @@ from .utils import SnapshotDataModel
 from .data import DEFAULT_MACHINE, DEFAULT_SEGMENT
 from .utils import ELEM_WRITE_PERM
 from .utils import NUM_LENGTH
+from .utils import BG_COLOR_GOLDEN_NO
 
 NPROC = 4
 PX_SIZE = 24
@@ -448,7 +450,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # icon
         self.done_px = QPixmap(":/sm-icons/done.png")
         self.fail_px = QPixmap(":/sm-icons/fail.png")
-        self._warning_px = QPixmap(":/sm-icons/warning.png")
+        self._warning_px = QPixmap(":/sm-icons/warning.png").scaled(PX_SIZE, PX_SIZE)
+        self._no_warning_px = QPixmap(QSize(PX_SIZE, PX_SIZE))
+        self._no_warning_px.fill(QColor(*BG_COLOR_GOLDEN_NO))
         self._ok_px = QPixmap(":/sm-icons/ok.png")
         self._copy_text_icon = QIcon(QPixmap(":/sm-icons/copy_text.png"))
         self._copy_data_icon = QIcon(QPixmap(":/sm-icons/copy_data.png"))
@@ -1463,14 +1467,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         tol = float(m.data(tol_idx))
         if abs(dx12) > tol:
-            worker.meta_signal1.emit((dx12_idx, self._warning_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit((dx12_idx, self._warning_px, Qt.DecorationRole))
         else:
-            worker.meta_signal1.emit((dx12_idx, None, Qt.DecorationRole))
+            worker.meta_signal1.emit((dx12_idx, self._no_warning_px, Qt.DecorationRole))
 
         if not is_close(x0, x2, self.ndigit):
-            worker.meta_signal1.emit((dx02_idx, self._warning_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit((dx02_idx, self._warning_px, Qt.DecorationRole))
         else:
-            worker.meta_signal1.emit((dx02_idx, None, Qt.DecorationRole))
+            worker.meta_signal1.emit((dx02_idx, self._no_warning_px, Qt.DecorationRole))
 
         #
         pwr_is_on = 'Unknown'
