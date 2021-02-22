@@ -84,6 +84,7 @@ from .utils import VALID_FILTER_KEYS_NUM
 from .utils import SnapshotDataModel
 from .data import DEFAULT_MACHINE, DEFAULT_SEGMENT
 from .utils import ELEM_WRITE_PERM
+from .utils import NUM_LENGTH
 
 NPROC = 4
 PX_SIZE = 24
@@ -196,7 +197,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.tolerance = self.pref_dict['tolerance']
         self.dt_confsync = self.pref_dict['dt_confsync']
         self.ndigit = self.pref_dict['ndigit']
-        self.fmt = '{{0:.{0}f}}'.format(self.ndigit)
+        self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self.ndigit)
         self.wdir = self.pref_dict['wdir']
 
         self.tolerance_changed[ToleranceSettings].connect(self.on_tolerance_dict_changed)
@@ -1370,7 +1371,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(int)
     def on_ndigit_changed(self, n):
         self.ndigit = n
-        self.fmt = '{{0:.{0}f}}'.format(n)
+        self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, n)
         self.element_list_changed.emit()
 
     @pyqtSlot(bool)
@@ -1379,7 +1380,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if enabled:
             self.fmt = '{{0:{0}g}}'.format(self.ndigit)
         else:
-            self.fmt = '{{0:.{0}f}}'.format(self.ndigit)
+            self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self.ndigit)
         self.element_list_changed.emit()
 
     @pyqtSlot(int)

@@ -147,6 +147,9 @@ ELEM_WRITE_PERM = {
  'FE_ISRC1:DRV_D0686:POS': False,
 }
 
+# default length for number display
+NUM_LENGTH = 9
+
 
 class SettingsModel(QStandardItemModel):
     """Settings model from Settings instance.
@@ -182,7 +185,7 @@ class SettingsModel(QStandardItemModel):
         if self._auto_fmt:
             self.fmt = '{{0:{0}g}}'.format(self._ndigit)
         else:
-            self.fmt = '{{0:.{0}f}}'.format(self._ndigit)
+            self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self._ndigit)
 
         if self._font is None:
             self._font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
