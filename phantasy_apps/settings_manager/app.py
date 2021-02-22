@@ -385,6 +385,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.single_update_btn.clicked.emit()
         loop = QEventLoop()
         self.one_updater.finished.connect(self.on_auto_column_width)
+        self.one_updater.finished.connect(loop.exit)
         loop.exec_()
 
     @pyqtSlot(int, int)
