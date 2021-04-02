@@ -29,7 +29,7 @@ fields = ['I', 'TM']
 fields = ['I', 'B']
 
 [BEND]
-fields = ['I', 'B']
+fields = ['I', 'B', 'I_TC', 'B_TC']
 
 [EBEND]
 fields = ['V', 'VOLT']
