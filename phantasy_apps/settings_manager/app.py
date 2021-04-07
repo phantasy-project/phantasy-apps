@@ -731,13 +731,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             menu.addAction(probe_action)
 
         # toggle items action
-        selected_rows = {idx.row() for idx in self._tv.selectedIndexes()}
+        # selected_rows = {idx.row() for idx in self._tv.selectedIndexes()}
 
         selected_rows = []
         checked_status = []
+        power_status = [] # list of (CaElement, PWRSTS)
         for _idx in self._tv.selectedIndexes():
             if _idx.column() == src_m.i_name:
                 selected_rows.append(_idx.row())
+                power_status.append(self._get_pwrsts(src_m, m, _idx))
                 checked_status.append(is_item_checked(src_m.itemFromIndex(m.mapToSource(_idx))))
 
         n_rows = len(selected_rows)
@@ -765,6 +767,27 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         sel_action.triggered.connect(partial(self.on_toggle_selected_rows,
                                      selected_rows, m, src_m, new_check_state))
         menu.addAction(sel_action)
+
+        # turn on/off PWRSTS field
+        if n_rows == 1:
+            if power_status[0][1] != None: # show switch action
+                new_power_status = not power_status[0][1]
+                act_text = "Turn ON" if new_power_status else "Turn OFF"
+                switch_action = QAction(act_text, menu)
+                switch_action.triggered.connect(partial(self.on_toggle_pwrsts,
+                                                selected_rows, m, src_m, new_power_status,
+                                                power_status))
+                menu.addAction(switch_action)
+        else:
+            if not all(i is None for _,i in power_status): # show switch action
+                new_power_status = not self._get_pwrsts(src_m, m, idx)[1]
+                act_text = "Turn All ON" if new_power_status else "Turn All OFF"
+                switch_action = QAction(act_text, menu)
+                switch_action.triggered.connect(partial(self.on_toggle_pwrsts,
+                                                selected_rows, m, src_m, new_power_status,
+                                                power_status))
+                menu.addAction(switch_action)
+
         return menu
 
     @pyqtSlot()
@@ -774,6 +797,33 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             it = m_src.itemFromIndex(idx)
             if it.isEnabled():
                 it.setCheckState(new_check_state)
+
+    def _get_pwrsts(self, m_src, m, idx):
+        # power status from selected index, return tuple of CaElement, PWRSTS (None if not defined).
+        it = m_src.itemFromIndex(m.mapToSource(m.index(idx.row(), idx.column())))
+        elem = self._lat[it.text()]
+        try:
+            r = elem.PWRSTS
+        except AttributeError:
+            r = None
+        finally:
+            return elem, r
+
+    @pyqtSlot()
+    def on_toggle_pwrsts(self, selected_rows, m, m_src, new_power_status, current_power_status):
+        # current_power_status: list of (CaElement, PWRSTS)
+        for elem, _  in current_power_status:
+            if 'PWRSTS' in elem.fields:
+                elem.PWRSTS = int(new_power_status)
+                sts = 'ON' if new_power_status else 'OFF'
+                msg = "[{0}] Turn power {2} for {1:<20s}".format(
+                        datetime.fromtimestamp(time.time()).strftime(TS_FMT),
+                        elem.name + '.', sts)
+            else:
+                msg = "[{0}] [Skip] Set power status for {1:<20s}".format(
+                        datetime.fromtimestamp(time.time()).strftime(TS_FMT),
+                        elem.name + '.')
+            self.log_textEdit.append(msg)
 
     @pyqtSlot(QVariant)
     def on_update_widgets_status(self, o):
