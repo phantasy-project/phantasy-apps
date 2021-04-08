@@ -837,6 +837,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                         datetime.fromtimestamp(time.time()).strftime(TS_FMT),
                         elem.name + '.')
             self.log_textEdit.append(msg)
+        # refresh
+        delayed_exec(lambda:self.single_update_btn.clicked.emit(), 1000)
 
     @pyqtSlot(QVariant)
     def on_update_widgets_status(self, o):
