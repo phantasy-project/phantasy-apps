@@ -29,22 +29,22 @@ fields = ['I', 'TM']
 fields = ['I', 'B']
 
 [PM]
-fields = ['PWRSTS', 'POWER_STATUS', 'BIAS_VOLT', 'BIAS_VOLTAGE']
+fields = ['BIAS_VOLT', 'BIAS_VOLTAGE']
 
 [EMS]
-fields = ['PWRSTS', 'POWER_STATUS', 'BIAS_VOLT', 'BIAS_VOLTAGE']
+fields = ['BIAS_VOLT', 'BIAS_VOLTAGE']
 
 [IC]
-fields = ['PWRSTS', 'POWER_STATUS', 'BIAS_VOLT', 'BIAS_VOLTAGE']
+fields = ['BIAS_VOLT', 'BIAS_VOLTAGE']
 
 [ND]
-fields = ['PWRSTS', 'POWER_STATUS', 'BIAS_VOLT', 'BIAS_VOLTAGE']
+fields = ['BIAS_VOLT', 'BIAS_VOLTAGE']
 
 [HMR]
-fields = ['PWRSTS', 'POWER_STATUS', 'BIAS_VOLT', 'BIAS_VOLTAGE']
+fields = ['BIAS_VOLT', 'BIAS_VOLTAGE']
 
 [FC]
-fields = ['PWRSTS', 'POWER_STATUS', 'BIAS_VOLT', 'BIAS_VOLTAGE']
+fields = ['BIAS_VOLT', 'BIAS_VOLTAGE']
 
 [BEND]
 fields = ['I', 'B', 'I_TC', 'B_TC']
