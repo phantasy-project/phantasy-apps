@@ -468,6 +468,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._pwr_on_px = QPixmap(":/sm-icons/on.png")
         self._pwr_off_px = QPixmap(":/sm-icons/off.png")
         self._pwr_unknown_px = QPixmap(":/sm-icons/unknown.png")
+        self._turn_on_icon = QIcon(QPixmap(":/sm-icons/bolt_on.png"))
+        self._turn_off_icon = QIcon(QPixmap(":/sm-icons/bolt_off.png"))
 
         # selection
         self.select_all_btn.clicked.connect(partial(self.on_select, 'all'))
@@ -772,8 +774,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if n_rows == 1:
             if power_status[0][1] != None: # show switch action
                 new_power_status = not power_status[0][1]
-                act_text = "Turn ON" if new_power_status else "Turn OFF"
-                switch_action = QAction(act_text, menu)
+                if new_power_status:
+                    act_text = "Turn on"
+                    act_icon = self._turn_on_icon
+                else:
+                    act_text = "Turn off"
+                    act_icon = self._turn_off_icon
+                switch_action = QAction(act_icon, act_text, menu)
                 switch_action.triggered.connect(partial(self.on_toggle_pwrsts,
                                                 selected_rows, m, src_m, new_power_status,
                                                 power_status))
@@ -781,8 +788,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             if not all(i is None for _,i in power_status): # show switch action
                 new_power_status = not self._get_pwrsts(src_m, m, idx)[1]
-                act_text = "Turn All ON" if new_power_status else "Turn All OFF"
-                switch_action = QAction(act_text, menu)
+                if new_power_status:
+                    act_text = "Turn All on"
+                    act_icon = self._turn_on_icon
+                else:
+                    act_text = "Turn All off"
+                    act_icon = self._turn_off_icon
+                switch_action = QAction(act_icon, act_text, menu)
                 switch_action.triggered.connect(partial(self.on_toggle_pwrsts,
                                                 selected_rows, m, src_m, new_power_status,
                                                 power_status))
@@ -1487,7 +1499,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         idx1 = m.indexFromItem(it[1]) # cset
         irow = idx0.row()
         rd_val, sp_val = o.value, o.current_setting()
-        
+
         # !! only for devices that cannot be reached !!
         if rd_val is None:
             rd_val = 0
@@ -2340,7 +2352,7 @@ def is_close(x, y, decimal=6):
 
 
 _ISEG_PVS = (
-     # N0106 
+     # N0106
     'ISEG:5230096:0:0:Control:doClear',
     'ISEG:5230096:0:1:Control:doClear',
     'ISEG:5230096:0:2:Control:doClear',
@@ -2380,14 +2392,14 @@ _ISEG_PVS = (
     'ISEG:5230095:0:1:Control:doClear',
 
      # FS2_N0108
-    'ISEG:5230094:0:0:Control:doClear', 
+    'ISEG:5230094:0:0:Control:doClear',
     'ISEG:5230094:0:1:Control:doClear',
 
      # LS3_N1108
-     # 'ISEG:5230099:0:0:Control:doClear', 
+     # 'ISEG:5230099:0:0:Control:doClear',
 
      # LS3_N2101
-    'ISEG:5230101:0:0:Control:doClear', 
+    'ISEG:5230101:0:0:Control:doClear',
     'ISEG:5230101:0:1:Control:doClear',
 )
 
