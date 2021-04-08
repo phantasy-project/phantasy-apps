@@ -470,6 +470,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._pwr_unknown_px = QPixmap(":/sm-icons/unknown.png")
         self._turn_on_icon = QIcon(QPixmap(":/sm-icons/bolt_on.png"))
         self._turn_off_icon = QIcon(QPixmap(":/sm-icons/bolt_off.png"))
+        self._power_switch_icon = QIcon(QPixmap(":/sm-icons/power_switch.png"))
+        self._warning_amber_icon = QIcon(QPixmap(":/sm-icons/warning_amber.png"))
 
         # selection
         self.select_all_btn.clicked.connect(partial(self.on_select, 'all'))
@@ -771,6 +773,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.addAction(sel_action)
 
         # turn on/off PWRSTS field
+        _add_switch_menu = False
         if n_rows == 1:
             if power_status[0][1] != None: # show switch action
                 new_power_status = not power_status[0][1]
@@ -780,11 +783,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 else:
                     act_text = "Turn off"
                     act_icon = self._turn_off_icon
-                switch_action = QAction(act_icon, act_text, menu)
-                switch_action.triggered.connect(partial(self.on_toggle_pwrsts,
-                                                selected_rows, m, src_m, new_power_status,
-                                                power_status))
-                menu.addAction(switch_action)
+                switch_menu = menu.addMenu("Power Switch")
+                sm_action = QAction(act_icon, act_text, switch_menu)
+                sm_action.triggered.connect(partial(self.on_toggle_pwrsts,
+                                            selected_rows, m, src_m, new_power_status,
+                                            power_status))
+                switch_menu.addAction(sm_action)
+                _add_switch_menu = True
         else:
             if not all(i is None for _,i in power_status): # show switch action
                 new_power_status = not self._get_pwrsts(src_m, m, idx)[1]
@@ -794,11 +799,21 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 else:
                     act_text = "Turn All off"
                     act_icon = self._turn_off_icon
-                switch_action = QAction(act_icon, act_text, menu)
-                switch_action.triggered.connect(partial(self.on_toggle_pwrsts,
-                                                selected_rows, m, src_m, new_power_status,
-                                                power_status))
-                menu.addAction(switch_action)
+                switch_menu = menu.addMenu("Power Switch")
+                sm_action = QAction(act_icon, act_text, switch_menu)
+                sm_action.triggered.connect(partial(self.on_toggle_pwrsts,
+                                            selected_rows, m, src_m, new_power_status,
+                                            power_status))
+                switch_menu.addAction(sm_action)
+                _add_switch_menu = True
+
+        if _add_switch_menu:
+            sm_reset_act = QAction(self._warning_amber_icon, "Reset Trip Events", switch_menu)
+            sm_reset_act.setToolTip("Only for turn on bias voltages.")
+            sm_reset_act.triggered.connect(self.on_reset_trip_events)
+            switch_menu.addAction(sm_reset_act)
+            switch_menu.setIcon(self._power_switch_icon)
+            switch_menu.setToolTipsVisible(True)
 
         return menu
 
@@ -809,6 +824,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             it = m_src.itemFromIndex(idx)
             if it.isEnabled():
                 it.setCheckState(new_check_state)
+
+    @pyqtSlot()
+    def on_reset_trip_events(self):
+        # reset trip events, for ISEG PSs
+        msg = "[{0}] Reset trip events.".format(
+                datetime.fromtimestamp(time.time()).strftime(TS_FMT))
+        self.log_textEdit.append(msg)
+        # _reset_trip_events()
 
     def _get_pwrsts(self, m_src, m, idx):
         # power status from selected index, return tuple of CaElement, PWRSTS (None if not defined).
@@ -826,7 +849,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # current_power_status: list of (CaElement, PWRSTS)
         for elem, _  in current_power_status:
             if 'PWRSTS' in elem.fields:
-                _reset_trip_events(elem.family)
                 elem.PWRSTS = int(new_power_status)
                 sts = 'ON' if new_power_status else 'OFF'
                 msg = "[{0}] Turn power {2} for {1:<20s}".format(
@@ -2405,9 +2427,9 @@ _ISEG_PVS = (
     'ISEG:5230101:0:1:Control:doClear',
 )
 
-def _reset_trip_events(dtype):
+def _reset_trip_events():
     from epics import caput
     # reset trip events only for BIAS_VOLTAGE controls of PM, FC, EMS
-    if dtype in ('PM', 'FC', 'EMS', 'ND', 'HMR', 'IC'):
-        for pv in _ISEG_PVS:
-            caput(pv, 1)
+    # 'PM', 'FC', 'EMS', 'ND', 'HMR', 'IC'):
+    for pv in _ISEG_PVS:
+        caput(pv, 1)
