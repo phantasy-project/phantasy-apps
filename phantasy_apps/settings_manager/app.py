@@ -814,6 +814,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # current_power_status: list of (CaElement, PWRSTS)
         for elem, _  in current_power_status:
             if 'PWRSTS' in elem.fields:
+                _reset_trip_events(elem.family)
                 elem.PWRSTS = int(new_power_status)
                 sts = 'ON' if new_power_status else 'OFF'
                 msg = "[{0}] Turn power {2} for {1:<20s}".format(
@@ -1486,6 +1487,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         idx1 = m.indexFromItem(it[1]) # cset
         irow = idx0.row()
         rd_val, sp_val = o.value, o.current_setting()
+        
+        # !! only for devices that cannot be reached !!
+        if rd_val is None:
+            rd_val = 0
+            print(f"{o.ename} [{o.name}] RD cannot be reached.")
+        if sp_val is None:
+            sp_val = 0
+            print(f"{o.ename} [{o.name}] CSET cannot be reached.")
+
         x0_idx = m.index(irow, m.i_val0)
         x1_idx = m.index(irow, m.i_rd)
         x2_idx = m.index(irow, m.i_cset)
@@ -2327,3 +2337,63 @@ def is_close(x, y, decimal=6):
     if abs(x - y) < 1.5 * 10 ** (-decimal):
         return True
     return False
+
+
+_ISEG_PVS = (
+     # N0106 
+    'ISEG:5230096:0:0:Control:doClear',
+    'ISEG:5230096:0:1:Control:doClear',
+    'ISEG:5230096:0:2:Control:doClear',
+    'ISEG:5230096:0:3:Control:doClear',
+
+     # N0306
+    'ISEG:5230103:0:0:Control:doClear',
+    'ISEG:5230103:0:1:Control:doClear',
+
+     # LS1_N0604
+    'ISEG:5230127:0:0:Control:doClear',
+    'ISEG:5230127:0:1:Control:doClear',
+
+     # LS1_N1501
+    'ISEG:5230126:0:0:Control:doClear',
+
+     # LS1_N1902
+    'ISEG:5230100:0:0:Control:doClear',
+
+     # FS1_N0302
+    'ISEG:5230093:0:0:Control:doClear',
+    'ISEG:5230093:0:1:Control:doClear',
+
+     # FS1_N0506
+    'ISEG:5230104:0:0:Control:doClear',
+
+     # LS2_N0808
+    'ISEG:5230097:0:0:Control:doClear',
+    'ISEG:5230097:0:1:Control:doClear',
+
+     # LS2_N1708
+    'ISEG:5230098:0:0:Control:doClear',
+    'ISEG:5230098:0:1:Control:doClear',
+
+     # LS2_N4202
+    'ISEG:5230095:0:0:Control:doClear',
+    'ISEG:5230095:0:1:Control:doClear',
+
+     # FS2_N0108
+    'ISEG:5230094:0:0:Control:doClear', 
+    'ISEG:5230094:0:1:Control:doClear',
+
+     # LS3_N1108
+     # 'ISEG:5230099:0:0:Control:doClear', 
+
+     # LS3_N2101
+    'ISEG:5230101:0:0:Control:doClear', 
+    'ISEG:5230101:0:1:Control:doClear',
+)
+
+def _reset_trip_events(dtype):
+    from epics import caput
+    # reset trip events only for BIAS_VOLTAGE controls of PM, FC, EMS
+    if dtype in ('PM', 'FC', 'EMS', 'ND', 'HMR', 'IC'):
+        for pv in _ISEG_PVS:
+            caput(pv, 1)
