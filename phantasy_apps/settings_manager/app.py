@@ -9,6 +9,7 @@ import tempfile
 import time
 from collections import OrderedDict
 from datetime import datetime
+from epics import caget, caput
 from functools import partial
 from getpass import getuser
 
@@ -810,7 +811,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if _add_switch_menu:
             sm_reset_act = QAction(self._warning_amber_icon, "Reset Trip Events", switch_menu)
             sm_reset_act.setToolTip("Only for turn on bias voltages.")
-            sm_reset_act.triggered.connect(self.on_reset_trip_events)
+            sm_reset_act.triggered.connect(partial(self.on_reset_trip_events, power_status))
             switch_menu.addAction(sm_reset_act)
             switch_menu.setIcon(self._power_switch_icon)
             switch_menu.setToolTipsVisible(True)
@@ -826,12 +827,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 it.setCheckState(new_check_state)
 
     @pyqtSlot()
-    def on_reset_trip_events(self):
+    def on_reset_trip_events(self, power_status):
         # reset trip events, for ISEG PSs
-        msg = "[{0}] Reset trip events.".format(
-                datetime.fromtimestamp(time.time()).strftime(TS_FMT))
-        self.log_textEdit.append(msg)
         # _reset_trip_events()
+        put_iseg_pvs = []
+        for elem, _ in power_status:
+            iseg_pv = caget(f"{elem.name}:VBS:doClear.NAME")
+            if iseg_pv in put_iseg_pvs:
+                continue
+            caput(iseg_pv, 1)
+            msg = "[{0}] Reset {1}.".format(
+                    datetime.fromtimestamp(time.time()).strftime(TS_FMT),
+                    iseg_pv)
+            self.log_textEdit.append(msg)
+            put_iseg_pvs.append(iseg_pv)
 
     def _get_pwrsts(self, m_src, m, idx):
         # power status from selected index, return tuple of CaElement, PWRSTS (None if not defined).
@@ -2428,7 +2437,6 @@ _ISEG_PVS = (
 )
 
 def _reset_trip_events():
-    from epics import caput
     # reset trip events only for BIAS_VOLTAGE controls of PM, FC, EMS
     # 'PM', 'FC', 'EMS', 'ND', 'HMR', 'IC'):
     for pv in _ISEG_PVS:
