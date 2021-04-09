@@ -860,7 +860,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                         elem.name + '.')
             self.log_textEdit.append(msg)
         # refresh
-        delayed_exec(lambda:self.single_update_btn.clicked.emit(), 1000)
+        delayed_exec(lambda:self.single_update_btn.clicked.emit(), 2000)
 
     @pyqtSlot(QVariant)
     def on_update_widgets_status(self, o):
