@@ -9,7 +9,7 @@ __copyright__ = "(c) 2019-2020, Facility for Rare Isotope beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
 __title__ = "Settings Manager: Manage Physics Configurations of Accelerator System"
-__version__ = '7.0'
+__version__ = '7.1'
 
 # ENV: LIVE_MODE, e.g.: LIVE_MODE=False settings_manager
 
