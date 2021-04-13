@@ -1,3 +1,11 @@
+Version 7.1: 2021-04-13
+=======================
+
+- Setting View
+  - Support to show devices readonly by maintaining hardcode name list
+  - Add field of interest for more diagnostic devices
+  - Support switch power status via context menu
+
 Version 7.0: 2021-02-22
 =======================
 
