@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1920, 1440)
+        MainWindow.resize(1920, 1434)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/sm-icons/logo.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -281,6 +281,9 @@ class Ui_MainWindow(object):
         self.show_all_selected_btn.setCheckable(True)
         self.show_all_selected_btn.setObjectName("show_all_selected_btn")
         self.filter_hbox.addWidget(self.show_all_selected_btn)
+        self.filter_ctrls_hbox = QtWidgets.QHBoxLayout()
+        self.filter_ctrls_hbox.setObjectName("filter_ctrls_hbox")
+        self.filter_hbox.addLayout(self.filter_ctrls_hbox)
         self.gridLayout.addLayout(self.filter_hbox, 1, 15, 1, 1)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
@@ -591,7 +594,7 @@ class Ui_MainWindow(object):
         self.tag_filter_area.setWidgetResizable(True)
         self.tag_filter_area.setObjectName("tag_filter_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1872, 83))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1870, 83))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tag_filter_area.setWidget(self.scrollAreaWidgetContents)
         self.horizontalLayout_7.addWidget(self.tag_filter_area)
@@ -720,7 +723,7 @@ class Ui_MainWindow(object):
         self.snp_dock.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(4), self.snp_dock)
         self.log_dock = DockWidget(MainWindow)
-        self.log_dock.setMinimumSize(QtCore.QSize(642, 150))
+        self.log_dock.setMinimumSize(QtCore.QSize(660, 152))
         self.log_dock.setStyleSheet("QDockWidget {\n"
                                     "    font-weight: normal;\n"
                                     "}\n"
