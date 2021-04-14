@@ -418,6 +418,13 @@ class _SortProxyModel(QSortFilterProxyModel):
         self.filter_checked_enabled = False
         self.filter_dx12_warning_enabled = False
         self.filter_dx02_warning_enabled = False
+        # field filter
+        self.filter_field_enabled = False
+        self.filter_field_list = []
+        # dtype filter
+        self.filter_dtype_enabled = False
+        self.filter_dtype_list = []
+        #
         self._filter_tuples = None
 
     def lessThan(self, left, right):
@@ -558,6 +565,30 @@ class _SortProxyModel(QSortFilterProxyModel):
             dx02_warning_test = True
         #
         if not dx02_warning_test:
+            return False
+
+        # field test
+        if self.filter_field_enabled:
+            data = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['field']),
+                    Qt.DisplayRole)
+            field_test = data in self.filter_field_list
+        else:
+            field_test = True
+        #
+        if not field_test:
+            return False
+
+        # dtype test
+        if self.filter_dtype_enabled:
+            data = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['type']),
+                    Qt.DisplayRole)
+            dtype_test = data in self.filter_dtype_list
+        else:
+            dtype_test = True
+        #
+        if not dtype_test:
             return False
 
         # string filters
