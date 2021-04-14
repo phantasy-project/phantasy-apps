@@ -89,6 +89,9 @@ from .utils import ELEM_WRITE_PERM
 from .utils import NUM_LENGTH
 from .utils import BG_COLOR_GOLDEN_NO
 
+# sb pos of stripper
+STRIPPER_POS = 223.743568
+
 NPROC = 4
 PX_SIZE = 24
 ION_ICON_SIZE = 48
@@ -542,8 +545,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # scaling factor hint
         self.snp_loaded.connect(self.on_hint_scaling_factor)
-        # update filter button area
+        # update filter button area (by field, type, ...)
         self.snp_loaded.connect(self.on_update_filter_controls)
+        # update pos filter area
+        self.snp_loaded.connect(self.on_update_pos_filter)
         #
         self.snp_loaded.connect(self.on_snp_loaded)
         self.snp_saved.connect(self.on_snp_saved)
@@ -576,6 +581,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.filter_btn_group_status_changed.connect(self.on_filter_btn_group_status_changed)
         self.filter_btn_group_status_changed.emit()
 
+        # pos filter button, apply logic OR for pos1 and pos2 filter
+        self.pos_filter_btn.clicked.connect(lambda:self.pos_dspin.setValue(STRIPPER_POS))
+        self.pos_filter_btn.clicked.connect(self.filter_lineEdit.editingFinished)
+        self.pos1_filter_btn.toggled.connect(self.on_toggle_pos1_filter_btn)
+        self.pos2_filter_btn.toggled.connect(self.on_toggle_pos2_filter_btn)
+        self.pos_dspin.valueChanged.connect(self.update_pos_dspin_tooltip)
+        self.pos_dspin.valueChanged.connect(lambda:self.pos1_filter_btn.toggled.emit(self.pos1_filter_btn.isChecked()))
+        self.pos_dspin.valueChanged.connect(lambda:self.pos2_filter_btn.toggled.emit(self.pos2_filter_btn.isChecked()))
+        self.pos_dspin.valueChanged.emit(self.pos_dspin.value())
+        # do when snp_loaded as well
+        self.on_update_pos_filter(None) # pass fake (None) param as snpdata
+
     def on_update_filter_controls(self, snpdata):
         """Update filter controls
         """
@@ -587,7 +604,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             dtype_set.add(dtype)
         self._build_filter_ctrls(self.filter_ctrls_hbox,
                                  sorted(fname_set), sorted(dtype_set))
-
 
     def _build_filter_ctrls(self, container, fnames, dtypes):
         #
@@ -665,19 +681,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # list of checkable field/dtype button actions
         self._fname_btn = fname_btn = QToolButton(self)
+        fname_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self._dtype_btn = dtype_btn = QToolButton(self)
-        _h = self.show_all_selected_btn.height()
+        dtype_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 
         fname_btn.setText("Field")
         fname_btn.setCheckable(True)
-        fname_btn.setMinimumHeight(_h)
         fname_btn.setToolTip("Filter by Field")
         fname_btn.setPopupMode(QToolButton.MenuButtonPopup)
         fname_btn.toggled.connect(partial(on_toggle_filter_btn, 'field', fname_btn))
 
         dtype_btn.setText("Type")
         dtype_btn.setCheckable(True)
-        dtype_btn.setMinimumHeight(_h)
         dtype_btn.setToolTip("Filter by Type")
         dtype_btn.setPopupMode(QToolButton.MenuButtonPopup)
         dtype_btn.toggled.connect(partial(on_toggle_filter_btn, 'type', dtype_btn))
@@ -2032,6 +2047,36 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         m.filter_dx02_warning_enabled = is_checked
         self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
+    def on_toggle_pos1_filter_btn(self, is_checked):
+        # show all item sb <= pos
+        #
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_pos1_enabled = is_checked
+        m.filter_pos_value = self.pos_dspin.value()
+        self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
+    def on_toggle_pos2_filter_btn(self, is_checked):
+        # show all item sb > pos
+        #
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_pos2_enabled = is_checked
+        m.filter_pos_value = self.pos_dspin.value()
+        self.filter_lineEdit.editingFinished.emit()
+
+    def update_pos_dspin_tooltip(self, v):
+        self.pos1_filter_btn.setToolTip(f"Filter devices locating before (<=) {v} m.")
+        self.pos2_filter_btn.setToolTip(f"Filter devices locating after (>) {v} m.")
+
+    def on_update_pos_filter(self, snpdata):
+        self.pos_filter_btn.toggled.emit(self.pos_filter_btn.isChecked())
+        self.pos_dspin.valueChanged.emit(self.pos_dspin.value())
 
     def dragEnterEvent(self, e):
         if e.mimeData().hasUrls():
