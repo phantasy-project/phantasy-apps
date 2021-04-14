@@ -424,6 +424,10 @@ class _SortProxyModel(QSortFilterProxyModel):
         # dtype filter
         self.filter_dtype_enabled = False
         self.filter_dtype_list = []
+        # pos filter <->
+        self.filter_pos1_enabled = False
+        self.filter_pos2_enabled = False
+        self.filter_pos_value = None
         #
         self._filter_tuples = None
 
@@ -589,6 +593,26 @@ class _SortProxyModel(QSortFilterProxyModel):
             dtype_test = True
         #
         if not dtype_test:
+            return False
+
+        # pos test (sb <= pos or sb > pos)
+        if self.filter_pos1_enabled or self.filter_pos2_enabled:
+            data = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['pos']),
+                    Qt.DisplayRole)
+            v = float(data)
+            pos1_test = False
+            pos2_test = False
+            pos = self.filter_pos_value
+            if self.filter_pos1_enabled:
+                pos1_test = v <= pos
+            if self.filter_pos2_enabled:
+                pos2_test = v > pos
+            pos_test = pos1_test or pos2_test
+        else:
+            pos_test = True
+        #
+        if not pos_test:
             return False
 
         # string filters
