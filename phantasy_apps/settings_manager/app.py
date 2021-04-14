@@ -2267,8 +2267,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def on_hint_scaling_factor(self, snpdata):
         btn = self.auto_sf_btn
-        _, a1, _, q1 = self.beam_display_widget.get_species()
         if btn.isChecked():
+            _, a1, _, q1 = self.beam_display_widget.get_species()
             a0, q0 = snpdata.ion_mass, snpdata.ion_charge
             try:
                 sf = (float(q0) / float(a0)) / (q1 / a1)
