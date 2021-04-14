@@ -542,6 +542,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # scaling factor hint
         self.snp_loaded.connect(self.on_hint_scaling_factor)
+        # update filter button area
+        self.snp_loaded.connect(self.on_update_filter_controls)
         #
         self.snp_loaded.connect(self.on_snp_loaded)
         self.snp_saved.connect(self.on_snp_saved)
@@ -573,6 +575,118 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # settings view filter btn status
         self.filter_btn_group_status_changed.connect(self.on_filter_btn_group_status_changed)
         self.filter_btn_group_status_changed.emit()
+
+    def on_update_filter_controls(self, snpdata):
+        """Update filter controls
+        """
+        settings_list = snpdata.data
+        fname_set = set()
+        dtype_set = set()
+        for _, fname, dtype, _, _, _, _, _, _ in settings_list:
+            fname_set.add(fname)
+            dtype_set.add(dtype)
+        self._build_filter_ctrls(self.filter_ctrls_hbox,
+                                 sorted(fname_set), sorted(dtype_set))
+
+
+    def _build_filter_ctrls(self, container, fnames, dtypes):
+        #
+        # reset field filter check states
+        #
+        _act_name_dict = {'field': fnames, 'type': dtypes}
+        self._check_state_dict = {'field': {i: True for i in fnames},
+                                  'type': {i: True for i in dtypes}}
+
+        #
+        # reset and build filter controls.
+        #
+        child = container.takeAt(0)
+        while child:
+            w = child.widget()
+            if w is not None:
+                w.setParent(None)
+            del w
+            del child
+            child = container.takeAt(0)
+        #
+        def on_update_filter_string(k, category, btn, is_toggled):
+            # field filter button actions is triggered.
+            _d = self._check_state_dict[category]
+            if k == 'All': # update checkstates for other actions
+                btn.toggled.disconnect()
+                for obj in self.sender().parent().findChildren(QAction):
+                    obj.setChecked(is_toggled)
+                btn.toggled.connect(partial(on_toggle_filter_btn, category, btn))
+            else:
+                _d[k] = is_toggled
+                obj = self.sender().parent().findChild(QAction, "sel_act")
+                obj.toggled.disconnect()
+                obj.setChecked(all(_d.values()))
+                obj.toggled.connect(partial(on_update_filter_string, 'All', category, btn))
+
+            btn.setToolTip(
+                    "Filter by {}\nChecked: {}".format(
+                        category.capitalize(),
+                        ','.join(
+                            [k for k, v in _d.items() if v])))
+            btn.toggled.emit(btn.isChecked())
+
+        #
+        def on_toggle_filter_btn(category, btn, is_checked):
+            # enable filtering by field if button is checked
+            m = self._tv.model()
+            if m is None:
+                return
+            _d = self._check_state_dict[category]
+            if category == "field":
+                m.filter_field_enabled = is_checked
+                m.filter_field_list = [k for k, v in _d.items() if v]
+            elif category == "type":
+                m.filter_dtype_enabled = is_checked
+                m.filter_dtype_list = [k for k, v in _d.items() if v]
+            self.filter_lineEdit.editingFinished.emit()
+
+        def _build_actions(btn, category):
+            menu = QMenu(self)
+            for i in _act_name_dict[category]:
+                iact = QAction(i, menu)
+                iact.setCheckable(True)
+                iact.setChecked(True)
+                iact.toggled.connect(partial(on_update_filter_string, i, category, btn))
+                menu.addAction(iact)
+            menu.addSeparator()
+            sel_act = QAction("All", menu)
+            sel_act.setObjectName("sel_act")
+            sel_act.setCheckable(True)
+            sel_act.setChecked(True)
+            sel_act.toggled.connect(partial(on_update_filter_string, 'All', category, btn))
+            menu.addAction(sel_act)
+            btn.setMenu(menu)
+
+        # list of checkable field/dtype button actions
+        self._fname_btn = fname_btn = QToolButton(self)
+        self._dtype_btn = dtype_btn = QToolButton(self)
+        _h = self.show_all_selected_btn.height()
+
+        fname_btn.setText("Field")
+        fname_btn.setCheckable(True)
+        fname_btn.setMinimumHeight(_h)
+        fname_btn.setToolTip("Filter by Field")
+        fname_btn.setPopupMode(QToolButton.MenuButtonPopup)
+        fname_btn.toggled.connect(partial(on_toggle_filter_btn, 'field', fname_btn))
+
+        dtype_btn.setText("Type")
+        dtype_btn.setCheckable(True)
+        dtype_btn.setMinimumHeight(_h)
+        dtype_btn.setToolTip("Filter by Type")
+        dtype_btn.setPopupMode(QToolButton.MenuButtonPopup)
+        dtype_btn.toggled.connect(partial(on_toggle_filter_btn, 'type', dtype_btn))
+
+        container.addWidget(fname_btn)
+        container.addWidget(dtype_btn)
+        _build_actions(fname_btn, 'field')
+        _build_actions(dtype_btn, 'type')
+
 
     @pyqtSlot()
     def on_filter_btn_group_status_changed(self):
