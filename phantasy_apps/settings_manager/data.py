@@ -368,6 +368,10 @@ class SnapshotData:
     def ts_as_date(self):
         return datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%d %A')
 
+    def ts_as_datetime(self):
+        s = datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%d')
+        return datetime.strptime(s, "%Y-%m-%d")
+
     def ts_as_time(self):
         return datetime.fromtimestamp(self.timestamp).strftime('%H:%M:%S')
 
