@@ -434,30 +434,40 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.settingsView, 3, 0, 1, 16)
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
-        self.select_all_btn = QtWidgets.QToolButton(self.centralwidget)
+        self.grow_fontsize_btn = QtWidgets.QToolButton(self.centralwidget)
         icon12 = QtGui.QIcon()
-        icon12.addPixmap(QtGui.QPixmap(":/sm-icons/select-all.png"),
+        icon12.addPixmap(QtGui.QPixmap(":/sm-icons/increase-font.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.select_all_btn.setIcon(icon12)
-        self.select_all_btn.setIconSize(QtCore.QSize(30, 30))
-        self.select_all_btn.setAutoRaise(True)
-        self.select_all_btn.setObjectName("select_all_btn")
-        self.horizontalLayout_9.addWidget(self.select_all_btn)
-        self.invert_selection_btn = QtWidgets.QToolButton(self.centralwidget)
+        self.grow_fontsize_btn.setIcon(icon12)
+        self.grow_fontsize_btn.setIconSize(QtCore.QSize(30, 30))
+        self.grow_fontsize_btn.setAutoRaise(True)
+        self.grow_fontsize_btn.setObjectName("grow_fontsize_btn")
+        self.horizontalLayout_9.addWidget(self.grow_fontsize_btn)
+        self.shrink_fontsize_btn = QtWidgets.QToolButton(self.centralwidget)
         icon13 = QtGui.QIcon()
-        icon13.addPixmap(QtGui.QPixmap(":/sm-icons/invert-selection.png"),
+        icon13.addPixmap(QtGui.QPixmap(":/sm-icons/decrease-font.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.invert_selection_btn.setIcon(icon13)
-        self.invert_selection_btn.setIconSize(QtCore.QSize(30, 30))
-        self.invert_selection_btn.setAutoRaise(True)
-        self.invert_selection_btn.setObjectName("invert_selection_btn")
-        self.horizontalLayout_9.addWidget(self.invert_selection_btn)
-        self.delete_btn = QtWidgets.QToolButton(self.centralwidget)
+        self.shrink_fontsize_btn.setIcon(icon13)
+        self.shrink_fontsize_btn.setIconSize(QtCore.QSize(30, 30))
+        self.shrink_fontsize_btn.setAutoRaise(True)
+        self.shrink_fontsize_btn.setObjectName("shrink_fontsize_btn")
+        self.horizontalLayout_9.addWidget(self.shrink_fontsize_btn)
+        self.toolButton = QtWidgets.QToolButton(self.centralwidget)
         icon14 = QtGui.QIcon()
-        icon14.addPixmap(QtGui.QPixmap(":/sm-icons/delete.png"),
+        icon14.addPixmap(QtGui.QPixmap(":/sm-icons/resize-horizontal.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.delete_btn.setIcon(icon14)
+        self.toolButton.setIcon(icon14)
+        self.toolButton.setIconSize(QtCore.QSize(30, 30))
+        self.toolButton.setAutoRaise(True)
+        self.toolButton.setObjectName("toolButton")
+        self.horizontalLayout_9.addWidget(self.toolButton)
+        self.delete_btn = QtWidgets.QToolButton(self.centralwidget)
+        icon15 = QtGui.QIcon()
+        icon15.addPixmap(QtGui.QPixmap(":/sm-icons/delete.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.delete_btn.setIcon(icon15)
         self.delete_btn.setIconSize(QtCore.QSize(30, 30))
+        self.delete_btn.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
         self.delete_btn.setAutoRaise(True)
         self.delete_btn.setObjectName("delete_btn")
         self.horizontalLayout_9.addWidget(self.delete_btn)
@@ -516,10 +526,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.filter_tip_btn.sizePolicy().hasHeightForWidth())
         self.filter_tip_btn.setSizePolicy(sizePolicy)
-        icon15 = QtGui.QIcon()
-        icon15.addPixmap(QtGui.QPixmap(":/sm-icons/help.png"),
+        icon16 = QtGui.QIcon()
+        icon16.addPixmap(QtGui.QPixmap(":/sm-icons/help.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.filter_tip_btn.setIcon(icon15)
+        self.filter_tip_btn.setIcon(icon16)
         self.filter_tip_btn.setIconSize(QtCore.QSize(30, 30))
         self.filter_tip_btn.setAutoRaise(True)
         self.filter_tip_btn.setObjectName("filter_tip_btn")
@@ -561,33 +571,28 @@ class Ui_MainWindow(object):
         self.strict_wildcard_chkbox = QtWidgets.QCheckBox(self.centralwidget)
         self.strict_wildcard_chkbox.setObjectName("strict_wildcard_chkbox")
         self.gridLayout.addWidget(self.strict_wildcard_chkbox, 1, 14, 1, 1)
-        self.grow_fontsize_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon16 = QtGui.QIcon()
-        icon16.addPixmap(QtGui.QPixmap(":/sm-icons/increase-font.png"),
-                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.grow_fontsize_btn.setIcon(icon16)
-        self.grow_fontsize_btn.setIconSize(QtCore.QSize(30, 30))
-        self.grow_fontsize_btn.setAutoRaise(True)
-        self.grow_fontsize_btn.setObjectName("grow_fontsize_btn")
-        self.gridLayout.addWidget(self.grow_fontsize_btn, 1, 0, 1, 1)
-        self.shrink_fontsize_btn = QtWidgets.QToolButton(self.centralwidget)
+        self.select_all_btn = QtWidgets.QToolButton(self.centralwidget)
         icon17 = QtGui.QIcon()
-        icon17.addPixmap(QtGui.QPixmap(":/sm-icons/decrease-font.png"),
+        icon17.addPixmap(QtGui.QPixmap(":/sm-icons/select-all.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.shrink_fontsize_btn.setIcon(icon17)
-        self.shrink_fontsize_btn.setIconSize(QtCore.QSize(30, 30))
-        self.shrink_fontsize_btn.setAutoRaise(True)
-        self.shrink_fontsize_btn.setObjectName("shrink_fontsize_btn")
-        self.gridLayout.addWidget(self.shrink_fontsize_btn, 1, 1, 1, 1)
-        self.toolButton = QtWidgets.QToolButton(self.centralwidget)
+        self.select_all_btn.setIcon(icon17)
+        self.select_all_btn.setIconSize(QtCore.QSize(30, 30))
+        self.select_all_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.select_all_btn.setAutoRaise(True)
+        self.select_all_btn.setObjectName("select_all_btn")
+        self.gridLayout.addWidget(self.select_all_btn, 1, 0, 1, 1)
+        self.invert_selection_btn = QtWidgets.QToolButton(self.centralwidget)
         icon18 = QtGui.QIcon()
-        icon18.addPixmap(QtGui.QPixmap(":/sm-icons/resize-horizontal.png"),
+        icon18.addPixmap(QtGui.QPixmap(":/sm-icons/invert-selection.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.toolButton.setIcon(icon18)
-        self.toolButton.setIconSize(QtCore.QSize(30, 30))
-        self.toolButton.setAutoRaise(True)
-        self.toolButton.setObjectName("toolButton")
-        self.gridLayout.addWidget(self.toolButton, 1, 2, 1, 1)
+        self.invert_selection_btn.setIcon(icon18)
+        self.invert_selection_btn.setIconSize(QtCore.QSize(30, 30))
+        self.invert_selection_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.invert_selection_btn.setAutoRaise(True)
+        self.invert_selection_btn.setObjectName("invert_selection_btn")
+        self.gridLayout.addWidget(self.invert_selection_btn, 1, 1, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 30))
@@ -668,7 +673,7 @@ class Ui_MainWindow(object):
         self.tag_filter_area.setWidgetResizable(True)
         self.tag_filter_area.setObjectName("tag_filter_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1870, 83))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1872, 83))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tag_filter_area.setWidget(self.scrollAreaWidgetContents)
         self.horizontalLayout_7.addWidget(self.tag_filter_area)
@@ -1158,15 +1163,23 @@ class Ui_MainWindow(object):
             ))
         self.init_settings_chkbox.setText(
             _translate("MainWindow", "Initialize with loaded lattice"))
-        self.select_all_btn.setToolTip(_translate("MainWindow", "Select all."))
-        self.select_all_btn.setText(_translate("MainWindow", "Select All"))
-        self.invert_selection_btn.setToolTip(
-            _translate("MainWindow", "Invert current selections."))
-        self.invert_selection_btn.setText(
-            _translate("MainWindow", "Invert Selection"))
+        self.grow_fontsize_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "Grow font size by 1pt (Ctrl + plus, reset with Ctrl + 0)."))
+        self.grow_fontsize_btn.setText(_translate("MainWindow", "..."))
+        self.shrink_fontsize_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "Shrink font size by 1pt (Ctrl + minus, reset with Ctrl + 0).")
+        )
+        self.shrink_fontsize_btn.setText(_translate("MainWindow", "..."))
+        self.toolButton.setToolTip(
+            _translate("MainWindow", "Auto adjust column width."))
+        self.toolButton.setText(_translate("MainWindow", "Auto Width"))
         self.delete_btn.setToolTip(
             _translate("MainWindow", "Delete selected items."))
-        self.delete_btn.setText(_translate("MainWindow", "..."))
+        self.delete_btn.setText(_translate("MainWindow", "Delete"))
         self.filter_btn.setToolTip(
             _translate(
                 "MainWindow",
@@ -1184,20 +1197,13 @@ class Ui_MainWindow(object):
             ))
         self.strict_wildcard_chkbox.setText(
             _translate("MainWindow", "Strict Wildcard"))
-        self.grow_fontsize_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "Grow font size by 1pt (Ctrl + plus, reset with Ctrl + 0)."))
-        self.grow_fontsize_btn.setText(_translate("MainWindow", "..."))
-        self.shrink_fontsize_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "Shrink font size by 1pt (Ctrl + minus, reset with Ctrl + 0).")
-        )
-        self.shrink_fontsize_btn.setText(_translate("MainWindow", "..."))
-        self.toolButton.setToolTip(
-            _translate("MainWindow", "Auto adjust column width."))
-        self.toolButton.setText(_translate("MainWindow", "Auto Width"))
+        self.select_all_btn.setToolTip(
+            _translate("MainWindow", "Check all in current page."))
+        self.select_all_btn.setText(_translate("MainWindow", "Check All"))
+        self.invert_selection_btn.setToolTip(
+            _translate("MainWindow", "Invert checkstate of current page."))
+        self.invert_selection_btn.setText(
+            _translate("MainWindow", "Invert Checkstate"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menuTools.setTitle(_translate("MainWindow", "Tools"))
