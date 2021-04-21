@@ -13,6 +13,7 @@ from epics import caget, caput
 from functools import partial
 from getpass import getuser
 
+from PyQt5.QtCore import QDate
 from PyQt5.QtCore import QEventLoop
 from PyQt5.QtCore import QFileSystemWatcher
 from PyQt5.QtCore import QPoint
@@ -102,6 +103,11 @@ Filter strings 'keyword=pattern', multiple conditions could be linked with 'and'
 test. More details please click the right help button."""
 TS_FMT = "%Y-%m-%dT%H:%M:%S.%f"
 _, LOG_FILE = tempfile.mkstemp(datetime.now().strftime(TS_FMT), "settings_manager_setlog_", "/tmp")
+
+NOW_DT = datetime.now()
+NOW_YEAR = NOW_DT.year
+NOW_MONTH = NOW_DT.month
+NOW_DAY = NOW_DT.day
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -592,6 +598,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.pos_dspin.valueChanged.emit(self.pos_dspin.value())
         # do when snp_loaded as well
         self.on_update_pos_filter(None) # pass fake (None) param as snpdata
+
+        # snp date range filter
+        self.snp_date_range_filter_enabled = False
+        self.dateEdit1.setDate(QDate(NOW_YEAR, NOW_MONTH, NOW_DAY))
+        self.dateEdit2.setDate(QDate(NOW_YEAR, NOW_MONTH, NOW_DAY))
 
     def on_update_filter_controls(self, snpdata):
         """Update filter controls
@@ -2317,6 +2328,47 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_expand_btn.toggled.emit(self.snp_expand_btn.isChecked())
         m.save_settings.connect(self.on_save_settings)
         m.save_settings.connect(self.snp_filters_updated) # update dynamic filter buttons (tag)
+
+    def on_snp_filter_date_range_updated(self):
+        """Filter snapshots by data range
+        """
+        if not self.snp_date_range_filter_enabled:
+            return
+        m = self.snp_treeView.model()
+        if m is None:
+            return
+        m.filter_date_enabled = self.snp_date_range_filter_enabled
+        self._apply_snp_date_range_filter(m)
+
+    def _apply_snp_date_range_filter(self, m):
+        _d1 = self.dateEdit1.date()
+        _d2 = self.dateEdit2.date()
+        date1 = datetime.strptime(_d1.toString("yyyy-MM-dd"), "%Y-%m-%d")
+        date2 = datetime.strptime(_d2.toString("yyyy-MM-dd"), "%Y-%m-%d")
+        if date1 > date2:
+            date1, date2 = date2, date1
+        m.filter_date_tuple = (date1, date2)
+        m.invalidate()
+
+    @pyqtSlot(bool)
+    def on_toggle_snp_filter_date_range(self, is_checked):
+        """Enable/Disable snp date range filter.
+        """
+        self.snp_date_range_filter_enabled = is_checked
+        if is_checked:
+            self.on_snp_filter_date_range_updated()
+        else:
+            m = self.snp_treeView.model()
+            if m is None:
+                return
+            m.filter_date_enabled = is_checked
+            m.invalidate()
+
+    @pyqtSlot()
+    def on_snp_filter_note(self):
+        """Filter snapshots by note
+        """
+        pass
 
     def on_del_settings(self, data):
         # delete from MEM (done), and model, and datafile (if exists)

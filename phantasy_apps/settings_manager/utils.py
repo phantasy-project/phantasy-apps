@@ -1304,6 +1304,9 @@ class _SnpProxyModel(QSortFilterProxyModel):
         self.setSourceModel(model)
         self.setRecursiveFilteringEnabled(True)
         self.reset_cache()
+        # date filer
+        self.filter_date_enabled = False
+        self.filter_date_tuple = None # (date1, date2)
 
     def reset_cache(self):
         self._ion_hit_cache = {}
@@ -1332,6 +1335,8 @@ class _SnpProxyModel(QSortFilterProxyModel):
                 m._ion_filter_cnt[ion_name] += 1
                 self._ion_hit_cache[snp_data.name] = True
             ion_test = ion_name in ion_filter_list
+        if not ion_test:
+            return False
 
         if tag_filter_list is None:
             tag_test = True
@@ -1348,4 +1353,17 @@ class _SnpProxyModel(QSortFilterProxyModel):
                 if not is_cnted:
                     m._tag_filter_cnt[tag] += 1
                     self._tag_hit_cache[snp_data.name] = True
-        return ion_test and tag_test
+        if not tag_test:
+            return False
+
+        # date
+        if self.filter_date_enabled:
+            dt1, dt2 = self.filter_date_tuple
+            date_test = (dt1 <= snp_data.ts_as_datetime() <= dt2)
+        else:
+            date_test = True
+        if not date_test:
+            return False
+
+        #
+        return True
