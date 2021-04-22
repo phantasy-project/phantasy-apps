@@ -805,9 +805,6 @@ class Ui_MainWindow(object):
         self.filter_date_chkbox = QtWidgets.QCheckBox(self.dockWidgetContents)
         self.filter_date_chkbox.setObjectName("filter_date_chkbox")
         self.horizontalLayout_10.addWidget(self.filter_date_chkbox)
-        self.label_3 = QtWidgets.QLabel(self.dockWidgetContents)
-        self.label_3.setObjectName("label_3")
-        self.horizontalLayout_10.addWidget(self.label_3)
         self.dateEdit1 = QtWidgets.QDateEdit(self.dockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -837,20 +834,20 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_10.addItem(spacerItem5)
-        self.label = QtWidgets.QLabel(self.dockWidgetContents)
-        self.label.setObjectName("label")
-        self.horizontalLayout_10.addWidget(self.label)
-        self.search_note_lineEdit = QtWidgets.QLineEdit(
+        self.filter_note_chkbox = QtWidgets.QCheckBox(self.dockWidgetContents)
+        self.filter_note_chkbox.setObjectName("filter_note_chkbox")
+        self.horizontalLayout_10.addWidget(self.filter_note_chkbox)
+        self.snp_note_filter_lineEdit = QtWidgets.QLineEdit(
             self.dockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(3)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.search_note_lineEdit.sizePolicy().hasHeightForWidth())
-        self.search_note_lineEdit.setSizePolicy(sizePolicy)
-        self.search_note_lineEdit.setObjectName("search_note_lineEdit")
-        self.horizontalLayout_10.addWidget(self.search_note_lineEdit)
+            self.snp_note_filter_lineEdit.sizePolicy().hasHeightForWidth())
+        self.snp_note_filter_lineEdit.setSizePolicy(sizePolicy)
+        self.snp_note_filter_lineEdit.setObjectName("snp_note_filter_lineEdit")
+        self.horizontalLayout_10.addWidget(self.snp_note_filter_lineEdit)
         self.gridLayout_3.addLayout(self.horizontalLayout_10, 5, 0, 1, 1)
         self.snp_dock.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(4), self.snp_dock)
@@ -1104,14 +1101,16 @@ class Ui_MainWindow(object):
         self.actionSnapshots.toggled['bool'].connect(
             MainWindow.on_enable_snpdock)
         self.toolButton.clicked.connect(MainWindow.on_auto_column_width)
-        self.search_note_lineEdit.editingFinished.connect(
-            MainWindow.on_snp_filter_note)
         self.dateEdit1.dateChanged['QDate'].connect(
             MainWindow.on_snp_filter_date_range_updated)
         self.dateEdit2.dateChanged['QDate'].connect(
             MainWindow.on_snp_filter_date_range_updated)
         self.filter_date_chkbox.toggled['bool'].connect(
             MainWindow.on_toggle_snp_filter_date_range)
+        self.filter_note_chkbox.toggled['bool'].connect(
+            MainWindow.on_toggle_snp_filter_note)
+        self.snp_note_filter_lineEdit.editingFinished.connect(
+            MainWindow.on_snp_filter_note_updated)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
@@ -1294,12 +1293,14 @@ class Ui_MainWindow(object):
             _translate("MainWindow",
                        "<html><head/><body><p>0</p></body></html>"))
         self.filter_date_chkbox.setText(
-            _translate("MainWindow", "Filter Date Range"))
-        self.label_3.setText(_translate("MainWindow", "Between"))
+            _translate("MainWindow", "Filter between"))
         self.dateEdit1.setDisplayFormat(_translate("MainWindow", "yyyy-MM-dd"))
         self.label_7.setText(_translate("MainWindow", "and"))
         self.dateEdit2.setDisplayFormat(_translate("MainWindow", "yyyy-MM-dd"))
-        self.label.setText(_translate("MainWindow", "Search Note:"))
+        self.filter_note_chkbox.setText(_translate("MainWindow",
+                                                   "Filter Note"))
+        self.snp_note_filter_lineEdit.setToolTip(
+            _translate("MainWindow", "Ignore cases, loose wildcard match."))
         self.log_dock.setWindowTitle(_translate("MainWindow", "Setting Logs"))
         self.findtext_lbl.setText(_translate("MainWindow", "Find Text"))
         self.label_11.setText(_translate("MainWindow", "Total log entries:"))
