@@ -603,6 +603,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_date_range_filter_enabled = False
         self.dateEdit1.setDate(QDate(NOW_YEAR, NOW_MONTH, NOW_DAY))
         self.dateEdit2.setDate(QDate(NOW_YEAR, NOW_MONTH, NOW_DAY))
+        # snp note filter
+        self.snp_note_filter_enabled = False
 
     def on_update_filter_controls(self, snpdata):
         """Update filter controls
@@ -2350,9 +2352,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.filter_date_tuple = (date1, date2)
         m.invalidate()
 
+    def _apply_snp_note_filter(self, m):
+        m.filter_note_string = f"*{self.snp_note_filter_lineEdit.text().strip()}*"
+        m.invalidate()
+
     @pyqtSlot(bool)
     def on_toggle_snp_filter_date_range(self, is_checked):
-        """Enable/Disable snp date range filter.
+        """Enable/disable snp date range filter.
         """
         self.snp_date_range_filter_enabled = is_checked
         if is_checked:
@@ -2364,11 +2370,30 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             m.filter_date_enabled = is_checked
             m.invalidate()
 
-    @pyqtSlot()
-    def on_snp_filter_note(self):
-        """Filter snapshots by note
+    def on_snp_filter_note_updated(self):
+        """Filter snapshots by note string.
         """
-        pass
+        if not self.snp_note_filter_enabled:
+            return
+        m = self.snp_treeView.model()
+        if m is None:
+            return
+        m.filter_note_enabled = self.snp_note_filter_enabled
+        self._apply_snp_note_filter(m)
+
+    @pyqtSlot(bool)
+    def on_toggle_snp_filter_note(self, is_checked):
+        """Enable/disable snp note filter.
+        """
+        self.snp_note_filter_enabled = is_checked
+        if is_checked:
+            self.on_snp_filter_note_updated()
+        else:
+            m = self.snp_treeView.model()
+            if m is None:
+                return
+            m.filter_note_enabled = is_checked
+            m.invalidate()
 
     def on_del_settings(self, data):
         # delete from MEM (done), and model, and datafile (if exists)

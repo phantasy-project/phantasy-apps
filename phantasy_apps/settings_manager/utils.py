@@ -1307,6 +1307,9 @@ class _SnpProxyModel(QSortFilterProxyModel):
         # date filer
         self.filter_date_enabled = False
         self.filter_date_tuple = None # (date1, date2)
+        # note filter
+        self.filter_note_enabled = False
+        self.filter_note_string = None
 
     def reset_cache(self):
         self._ion_hit_cache = {}
@@ -1363,6 +1366,16 @@ class _SnpProxyModel(QSortFilterProxyModel):
         else:
             date_test = True
         if not date_test:
+            return False
+
+        # note
+        if self.filter_note_enabled:
+            # ignore case, loose wild card match
+            note_test = re.match(translate(self.filter_note_string.lower()),
+                    snp_data.note.lower()) is not None
+        else:
+            note_test = True
+        if not note_test:
             return False
 
         #
