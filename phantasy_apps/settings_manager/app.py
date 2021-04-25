@@ -1727,29 +1727,41 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         #
         pwr_is_on = 'Unknown'
+        px = self._pwr_unknown_px
+        tt = "Power is UNKNOWN"
         elem = self._lat[o.ename]
         if elem.family != 'CAV':
             if 'PWRSTS' in elem.fields:
                 pwr_fld = elem.get_field('PWRSTS')
                 pwr_is_on = pwr_fld.value
+
+                if pwr_is_on == 1.0:
+                    px = self._pwr_on_px
+                    tt = "Power is ON"
+                elif pwr_is_on == 0.0:
+                    px = self._pwr_off_px
+                    tt = "Power is OFF"
+                else:
+                    tt = "Power is UNKNOWN"
         else: # CAV
             r = re.match(r".*([1-3]+).*", o.name)
             if r is not None: # D0987
-                _fname = 'ITLKSTS' + r.group(1)
+                _fname = 'LKSTS' + r.group(1)
             else:
-                _fname = 'ITLKSTS'
+                _fname = 'LKSTS'
             if _fname in elem.fields:
                 pwr_fld = elem.get_field(_fname)
                 pwr_is_on = pwr_fld.value
-        if pwr_is_on == 1.0:
-            px = self._pwr_on_px
-            tt = "Power is ON"
-        elif pwr_is_on == 0.0:
-            px = self._pwr_off_px
-            tt = "Power is OFF"
-        else:
-            px = self._pwr_unknown_px
-            tt = "Power is UNKNOWN"
+            if pwr_is_on == 1.0:
+                px = self._pwr_on_px
+                tt = "Device Locked"
+            elif pwr_is_on == 0.0:
+                px = self._pwr_off_px
+                tt = "Device Unlocked"
+            else:
+                px = self._pwr_unknown_px
+                tt = "UNKNOWN status"
+
         # emit signal to update power status
         worker.meta_signal1.emit((pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
         worker.meta_signal1.emit((pwr_idx, tt, Qt.ToolTipRole))
