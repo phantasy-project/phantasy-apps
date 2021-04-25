@@ -425,6 +425,7 @@ class ScanTask(object):
         Every time set alter element, set initial setting.
         """
         sppv = self.alter_element.setpoint_pv[0]
+        time.sleep(1.0)
         if sppv.connected:
             x0 = sppv.get()
         else:
