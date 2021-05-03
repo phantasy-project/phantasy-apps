@@ -806,6 +806,7 @@ class Ui_MainWindow(object):
         self.filter_date_chkbox.setObjectName("filter_date_chkbox")
         self.horizontalLayout_10.addWidget(self.filter_date_chkbox)
         self.dateEdit1 = QtWidgets.QDateEdit(self.dockWidgetContents)
+        self.dateEdit1.setEnabled(False)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(1)
@@ -813,13 +814,15 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.dateEdit1.sizePolicy().hasHeightForWidth())
         self.dateEdit1.setSizePolicy(sizePolicy)
-        self.dateEdit1.setCalendarPopup(True)
+        self.dateEdit1.setReadOnly(True)
+        self.dateEdit1.setCalendarPopup(False)
         self.dateEdit1.setObjectName("dateEdit1")
         self.horizontalLayout_10.addWidget(self.dateEdit1)
         self.label_7 = QtWidgets.QLabel(self.dockWidgetContents)
         self.label_7.setObjectName("label_7")
         self.horizontalLayout_10.addWidget(self.label_7)
         self.dateEdit2 = QtWidgets.QDateEdit(self.dockWidgetContents)
+        self.dateEdit2.setEnabled(False)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(1)
@@ -827,9 +830,13 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.dateEdit2.sizePolicy().hasHeightForWidth())
         self.dateEdit2.setSizePolicy(sizePolicy)
-        self.dateEdit2.setCalendarPopup(True)
+        self.dateEdit2.setReadOnly(True)
+        self.dateEdit2.setCalendarPopup(False)
         self.dateEdit2.setObjectName("dateEdit2")
         self.horizontalLayout_10.addWidget(self.dateEdit2)
+        self.toolButton_2 = QtWidgets.QToolButton(self.dockWidgetContents)
+        self.toolButton_2.setObjectName("toolButton_2")
+        self.horizontalLayout_10.addWidget(self.toolButton_2)
         spacerItem5 = QtWidgets.QSpacerItem(100, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
@@ -1111,6 +1118,7 @@ class Ui_MainWindow(object):
             MainWindow.on_toggle_snp_filter_note)
         self.snp_note_filter_lineEdit.editingFinished.connect(
             MainWindow.on_snp_filter_note_updated)
+        self.toolButton_2.clicked.connect(MainWindow.on_select_daterange)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
@@ -1293,10 +1301,11 @@ class Ui_MainWindow(object):
             _translate("MainWindow",
                        "<html><head/><body><p>0</p></body></html>"))
         self.filter_date_chkbox.setText(
-            _translate("MainWindow", "Filter between"))
+            _translate("MainWindow", "Filter  between"))
         self.dateEdit1.setDisplayFormat(_translate("MainWindow", "yyyy-MM-dd"))
         self.label_7.setText(_translate("MainWindow", "and"))
         self.dateEdit2.setDisplayFormat(_translate("MainWindow", "yyyy-MM-dd"))
+        self.toolButton_2.setText(_translate("MainWindow", "..."))
         self.filter_note_chkbox.setText(_translate("MainWindow",
                                                    "Filter Note"))
         self.snp_note_filter_lineEdit.setToolTip(
