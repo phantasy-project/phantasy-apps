@@ -59,6 +59,7 @@ from phantasy_ui.widgets import FlowLayout
 from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui.widgets import ProbeWidget
 
+from .app_date_range import DateRangeDialog
 from .app_loadfrom import LoadSettingsDialog
 from .app_pref import DEFAULT_PREF
 from .app_pref import DEFAULT_CONFIG_PATH
@@ -425,6 +426,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._elem_select_dlg = None
         self._lattice_load_window = None
         self._fixnames_dlg = None
+        self._date_range_dlg = None
 
         self._mp = None
         self._last_machine_name = None
@@ -2363,6 +2365,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             date1, date2 = date2, date1
         m.filter_date_tuple = (date1, date2)
         m.invalidate()
+
+    @pyqtSlot()
+    def on_select_daterange(self):
+        if self._date_range_dlg is None:
+            self._date_range_dlg = DateRangeDialog()
+            self._date_range_dlg.dateFromChanged.connect(self.dateEdit1.setDate)
+            self._date_range_dlg.dateToChanged.connect(self.dateEdit2.setDate)
+        self._date_range_dlg.show()
 
     def _apply_snp_note_filter(self, m):
         m.filter_note_string = f"*{self.snp_note_filter_lineEdit.text().strip()}*"
