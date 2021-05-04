@@ -46,13 +46,15 @@ def fetch(confpath=None, verbose=False):
     else:
         conf = get_meta_conf_dict(confpath)
 
-    daq_conf = conf.pop('DAQ')
+    daq_conf = conf.get('DAQ')
     daq_rate = daq_conf['rate']
     daq_nshot = daq_conf['nshot']
 
     pv_list = []
     grp_list = []
     for sect_name, sect_conf in conf.items():
+        if sect_name == 'DAQ':
+            continue
         names = sect_conf['names']
         pv_list.extend(names)
         grp_list.extend([sect_name] * len(names))
