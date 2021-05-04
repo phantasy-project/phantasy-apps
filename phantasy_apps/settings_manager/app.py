@@ -614,7 +614,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         settings_list = snpdata.data
         fname_set = set()
         dtype_set = set()
-        for _, fname, dtype, _, _, _, _, _, _ in settings_list:
+        for line in settings_list:
+            fname, dtype = line[1], line[2]
             fname_set.add(fname)
             dtype_set.add(dtype)
         self._build_filter_ctrls(self.filter_ctrls_hbox,
@@ -1743,8 +1744,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 elif pwr_is_on == 0.0:
                     px = self._pwr_off_px
                     tt = "Power is OFF"
-                else:
-                    tt = "Power is UNKNOWN"
         else: # CAV
             r = re.match(r".*([1-3]+).*", o.name)
             if r is not None: # D0987
@@ -1756,13 +1755,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 pwr_is_on = pwr_fld.value
             if pwr_is_on == 1.0:
                 px = self._pwr_on_px
-                tt = "Device Locked"
+                tt = "Device is Locked"
             elif pwr_is_on == 0.0:
                 px = self._pwr_off_px
-                tt = "Device Unlocked"
-            else:
-                px = self._pwr_unknown_px
-                tt = "UNKNOWN status"
+                tt = "Device is Unlocked"
 
         # emit signal to update power status
         worker.meta_signal1.emit((pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
@@ -2189,7 +2185,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         snp_data = SnapshotData(get_csv_settings(self._tv.model()),
                 ion_name=ion_name, ion_number=ion_number, ion_mass=ion_mass, ion_charge=ion_charge,
                 machine=self._last_machine_name, segment=self._last_lattice_name,
-                version=self._version, note=note)
+                version=self._version, note=note, table_version=10)
         #
         self._snp_dock_list.append(snp_data)
         n = len(self._snp_dock_list)

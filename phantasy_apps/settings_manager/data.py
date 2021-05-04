@@ -9,6 +9,8 @@ from datetime import datetime
 from getpass import getuser
 from io import StringIO
 
+from PyQt5.QtCore import Qt
+
 from phantasy import Settings
 from phantasy import get_random_name
 
@@ -17,6 +19,18 @@ CSV_HEADER = (
     'Setpoint', 'Readback', 'Last Setpoint',
     'Tolerance', 'Writable'
 )
+
+CSV_HEADER_9 = CSV_HEADER
+
+CSV_HEADER_10 = (
+    'Name', 'Field', 'Type', 'Pos',
+    'Setpoint', 'Readback', 'Last Setpoint',
+    'Tolerance', 'Writable', 'Last Power Status'
+)
+
+# For table_version of SnapshotData:
+# CSV_HEADER: 9
+# CSV_HEADER, LAST_POWER_STATUS: 10
 
 LIVE = os.environ.get('LIVE_MODE', True)
 if isinstance(LIVE, str):
@@ -39,6 +53,7 @@ ATTR_KEYS = [
     "timestamp", "datetime", "name", "note", "user",
     "ion_name", "ion_number", "ion_mass", "ion_charge",
     "machine", "segment", "tags", "app", "version",
+    "table_version",
 ]
 
 #
@@ -91,7 +106,8 @@ def make_physics_settings(csv_settings, lat):
         Physics settings.
     """
     s = Settings()  # physics settings
-    for name, field, _, _, sp, rd, last_sp, _, _ in csv_settings:
+    for line in csv_settings:
+        name, field, _, _, sp, rd, last_sp, _, _ = line[0:9]
         if name in ELEM_ALIAS_MAP:
             name = ELEM_ALIAS_MAP[name]
         elem = lat[name]
@@ -186,12 +202,13 @@ def get_csv_settings(proxy_model):
     # new_sp (x2): current sp to save
     # new_rd (x1): rb at sp
     # old_sp (x0): last_sp
+    # new_ps (ps): current power/lock(CAV) status
     m = proxy_model
     src_m = proxy_model.sourceModel()
     i_name, i_field, i_type, i_pos, i_new_sp, i_new_rd, i_old_sp, \
-    i_tol, i_writable = \
+    i_tol, i_writable, i_pwr = \
         src_m.i_name, src_m.i_field, src_m.i_type, src_m.i_pos, \
-        src_m.i_cset, src_m.i_rd, src_m.i_val0, src_m.i_tol, src_m.i_writable
+        src_m.i_cset, src_m.i_rd, src_m.i_val0, src_m.i_tol, src_m.i_writable, src_m.i_pwr
 
     data = TableSettings()
     for irow in range(m.rowCount()):
@@ -204,9 +221,10 @@ def get_csv_settings(proxy_model):
         f_new_rd = float(m.data(m.index(irow, i_new_rd)))
         f_tol = float(m.data(m.index(irow, i_tol)))
         f_writable = m.data(m.index(irow, i_writable))
+        f_pwr = m.data(m.index(irow, i_pwr), Qt.ToolTipRole)
         data.append((ename, fname, ftype, spos,
                      f_new_sp, f_new_rd, f_old_sp,
-                     f_tol, f_writable))
+                     f_tol, f_writable, f_pwr))
     return data
 
 
@@ -287,11 +305,19 @@ def _read_csv_data(data_source, delimiter=','):
                 break
         ss = csv.reader(fp, delimiter=delimiter, skipinitialspace=True)
         header = [i.strip() for i in line.split(delimiter)]
-        for ename, field, ftype, spos, sp, rd, last_sp, tol, writable in ss:
-            data_list.append(
-                (ename, field, ftype, spos,
-                 float(sp), float(rd), float(last_sp),
-                 float(tol), bool(writable)))
+        table_version = attr_dict.get('table_version')
+        if table_version is None:
+            table_version = 9
+        if table_version == 9:
+            for ename, field, ftype, spos, sp, rd, last_sp, tol, writable in ss:
+                row = (ename, field, ftype, spos, float(sp), float(rd), float(last_sp),
+                       float(tol), bool(writable))
+                data_list.append(row)
+        else: # table_version == 10:
+            for ename, field, ftype, spos, sp, rd, last_sp, tol, writable, last_pwr in ss:
+                row = (ename, field, ftype, spos, float(sp), float(rd), float(last_sp),
+                       float(tol), bool(writable), last_pwr)
+                data_list.append(row)
     return data_list, attr_dict
 
 
@@ -326,6 +352,7 @@ class SnapshotData:
         self._machine = None
         self._segment = None
         self._tags = None
+        self._table_version = None
         self.data_path = None
 
     def init_attr_dict(self, **kws):
@@ -339,6 +366,19 @@ class SnapshotData:
             elif k == 'version' and v is None: # app version
                 v = 'undefined'
             setattr(self, k, v)
+
+    @property
+    def table_version(self):
+        """int : version of table data
+        """
+        return self._table_version
+
+    @table_version.setter
+    def table_version(self, i):
+        if i is None:
+            self._table_version = 9 # back-compatible, 10 for new format
+        else:
+            self._table_version = i
 
     @property
     def tags(self):
@@ -533,8 +573,13 @@ class SnapshotData:
                     v = self.tags_as_str()
                 fp.write(f"# {k}: {v}\n")
             ss = csv.writer(fp, delimiter=delimiter)
-            ss.writerow(CSV_HEADER)
-            for ename, fname, ftype, spos, sp, rd, old_sp, tol, writable in self.data:
-                ss.writerow(
-                    (ename, fname, ftype, spos, sp, rd, old_sp, tol, writable))
+            if self.table_version == 9:
+                ss.writerow(CSV_HEADER_9)
+            else:
+                ss.writerow(CSV_HEADER_10)
+            for row in self.data:
+                ss.writerow(row)
+            #for ename, fname, ftype, spos, sp, rd, old_sp, tol, writable in self.data:
+            #    ss.writerow(
+            #        (ename, fname, ftype, spos, sp, rd, old_sp, tol, writable))
 
