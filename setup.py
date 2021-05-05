@@ -64,6 +64,7 @@ def set_entry_points():
         'achromat_tuning=phantasy_apps.achromat_tuning:run',
         'phy_calc=phantasy_apps.calculator_app:run',
         'synoptic_app=phantasy_apps.synoptic_app:run',
+        'msviz=phantasy_apps.msviz:run',
     ]
     return r
 
