@@ -72,6 +72,8 @@ from .data import SnapshotData
 from .data import get_csv_settings
 from .data import make_physics_settings
 from .data import read_data
+from .mach_state import get_meta_conf_dict
+from .mach_state import _build_dataframe
 from .ui.ui_app import Ui_MainWindow
 from .ui.ui_query_tips import Ui_Form as QueryTipsForm
 from .utils import FMT
@@ -550,6 +552,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # take snapshot tool
         self.actionTake_Snapshot.triggered.connect(lambda:self.take_snapshot())
+
+        # take machine state tool
+        self.actionCapture_machstate.triggered.connect(self.on_capture_machstate)
 
         # scaling factor hint
         self.snp_loaded.connect(self.on_hint_scaling_factor)
@@ -2609,6 +2614,46 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def preload_lattice(self, mach, segm):
         return self.__load_lattice(mach, segm, False)
+
+    def _meta_fetcher_started(self):
+        printlog("Start to fetch machine state...")
+    def _meta_fetcher_stopped(self):
+        printlog("Stopped fetching machine state.")
+    def _meta_fetcher_progressed(self, f, s):
+        printlog(f"Fetching machine state: {f * 100:>5.1f}%, {s}")
+    def _meta_fetcher_got_results(self, pv_list, grp_list, res):
+        df = _build_dataframe(res, pv_list, grp_list)
+        printlog("Fetched results:")
+        print(df)
+    def _meta_fetcher_daq_func(self, pv_list, dt, iiter):
+        t0 = time.time()
+        arr = [caget(i) for i in pv_list]
+        t_elapsed = time.time() - t0
+        if t_elapsed < dt:
+            time.sleep(dt - t_elapsed)
+        return arr
+    @pyqtSlot()
+    def on_capture_machstate(self):
+        # Capture machine state defined in config/metadata.toml.
+        conf = get_meta_conf_dict()
+        daq_conf = conf.pop('DAQ')
+        daq_rate = daq_conf['rate']
+        daq_nshot = daq_conf['nshot']
+
+        pv_list = []
+        grp_list = []
+        for sect_name, sect_conf in conf.items():
+            names = sect_conf['names']
+            pv_list.extend(names)
+            grp_list.extend([sect_name] * len(names))
+
+        self._meta_fetcher = DAQT(daq_func=partial(self._meta_fetcher_daq_func, pv_list, 1.0 / daq_rate),
+                                  daq_seq=range(daq_nshot))
+        self._meta_fetcher.daqStarted.connect(self._meta_fetcher_started)
+        self._meta_fetcher.progressUpdated.connect(self._meta_fetcher_progressed)
+        self._meta_fetcher.daqFinished.connect(self._meta_fetcher_stopped)
+        self._meta_fetcher.resultsReady.connect(partial(self._meta_fetcher_got_results, pv_list, grp_list))
+        self._meta_fetcher.start()
 
 
 def is_snp_data_exist(snpdata, snpdata_list):
