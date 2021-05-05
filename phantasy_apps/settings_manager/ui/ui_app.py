@@ -1298,7 +1298,9 @@ class Ui_MainWindow(object):
         self.snp_expand_btn.setText(_translate("MainWindow", "..."))
         self.label_5.setText(_translate("MainWindow", "Working Directory"))
         self.snp_new_lbl.setToolTip(
-            _translate("MainWindow", "Working directory has been updated."))
+            _translate(
+                "MainWindow",
+                "Snapshot files have been updated in the last 1 minute."))
         self.snp_new_lbl.setText(_translate("MainWindow", "snp_sts"))
         self.snp_refresh_btn.setToolTip(
             _translate("MainWindow", "Refresh snapshots."))

@@ -2606,6 +2606,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def on_wdir_new(self, path):
         self.snp_new_lbl.setVisible(True)
+        self.on_wdir_changed(True, self.wdir)
+        # show new snapshots icon for 1 min
+        delayed_exec(lambda:self.snp_new_lbl.setVisible(False), 60000)
 
     def on_refresh_snp(self):
         # refresh snp as wdir is updated.
