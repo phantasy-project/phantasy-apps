@@ -997,6 +997,12 @@ class Ui_MainWindow(object):
         self.actionSnapshots.setCheckable(True)
         self.actionSnapshots.setChecked(True)
         self.actionSnapshots.setObjectName("actionSnapshots")
+        self.actionCapture_machstate = QtWidgets.QAction(MainWindow)
+        icon31 = QtGui.QIcon()
+        icon31.addPixmap(QtGui.QPixmap(":/sm-icons/machstate.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionCapture_machstate.setIcon(icon31)
+        self.actionCapture_machstate.setObjectName("actionCapture_machstate")
         self.menu_File.addAction(self.actionLoad_From_Snapshot)
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
@@ -1014,6 +1020,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.action_Save)
         self.toolBar.addAction(self.actionLoad_Settings)
         self.toolBar.addAction(self.actionTake_Snapshot)
+        self.toolBar.addAction(self.actionCapture_machstate)
         self.toolBar.addAction(self.actionPhysics_Fields)
         self.toolBar.addAction(self.actionEngineering_Fields)
         self.toolBar.addSeparator()
@@ -1379,13 +1386,20 @@ class Ui_MainWindow(object):
         self.actionTake_Snapshot.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Record current device settings, make sure fetch all live settings prior to this action.</p></body></html>"
+                "<html><head/><body><p>Record current device settings, fetch all live settings prior to this action.</p></body></html>"
             ))
         self.actionFix_Corrector_Names.setText(
             _translate("MainWindow", "Fix Corrector Names"))
         self.actionShow_Device_Settings_Log.setText(
             _translate("MainWindow", "Settings Log"))
         self.actionSnapshots.setText(_translate("MainWindow", "Snapshots"))
+        self.actionCapture_machstate.setText(
+            _translate("MainWindow", "Capture Machine State"))
+        self.actionCapture_machstate.setIconText(
+            _translate("MainWindow", "Capture Machine State"))
+        self.actionCapture_machstate.setToolTip(
+            _translate("MainWindow",
+                       "Capture additional data as machine state."))
 
 
 from phantasy_apps.settings_manager.dockerwidget import DockWidget
