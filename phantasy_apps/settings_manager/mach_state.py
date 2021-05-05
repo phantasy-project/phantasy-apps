@@ -16,14 +16,26 @@ from phantasy_apps.utils import find_dconf
 from phantasy_ui import printlog
 
 
-def get_meta_conf_dict(filepath):
-    """Return a dict of config for metadata.
+DEFAULT_META_CONF_PATH = find_dconf("settings_manager", "metadata.toml")
+
+def get_meta_conf_dict(filepath=None):
+    """Return a dict of config for metadata, if *filepath* is not defined,
+    use the default one.
+
+    Parameters
+    ----------
+    filepath : str
+        Filepath for the toml config file.
+
+    Returns
+    -------
+    r : dict
+        Dict of configuration.
     """
+    if filepath is None:
+        filepath = DEFAULT_META_CONF_PATH
     conf = toml.load(filepath)
     return conf
-
-DEFAULT_META_CONF_PATH = find_dconf("settings_manager", "metadata.toml")
-DEFAULT_META_CONF_DICT = get_meta_conf_dict(DEFAULT_META_CONF_PATH)
 
 
 def fetch(confpath=None, verbose=False):
@@ -41,20 +53,15 @@ def fetch(confpath=None, verbose=False):
     r : DataFrame
         DataFrame of all PV reading with group and PV names as the index.
     """
-    if confpath is None:
-        conf = DEFAULT_META_CONF_DICT
-    else:
-        conf = get_meta_conf_dict(confpath)
+    conf = get_meta_conf_dict(confpath)
 
-    daq_conf = conf.get('DAQ')
+    daq_conf = conf.pop('DAQ')
     daq_rate = daq_conf['rate']
     daq_nshot = daq_conf['nshot']
 
     pv_list = []
     grp_list = []
     for sect_name, sect_conf in conf.items():
-        if sect_name == 'DAQ':
-            continue
         names = sect_conf['names']
         pv_list.extend(names)
         grp_list.extend([sect_name] * len(names))
@@ -75,6 +82,23 @@ def fetch(confpath=None, verbose=False):
     df['avg'] = df.iloc[:, 0:daq_nshot].mean(axis=1)
     df['std'] = df.iloc[:, 0:daq_nshot].std(axis=1)
 
+    return df
+
+def _build_dataframe(arr_list, pv_list, grp_list):
+    # build a dataframe from a list of pv readings:
+    # -------------------------------------------------
+    #             | shot-1 | shot-2 | ... | avg | std |
+    # -------------------------------------------------
+    # PV  | Group |
+    # PV1 | g1    | ...
+    # ...
+    arr = np.asarray(arr_list).transpose()
+    _, nshot = arr.shape
+    df = pd.DataFrame(arr, columns=[f'shot-{i}' for i in range(1, nshot + 1)])
+    df.set_index([pv_list, grp_list], inplace=True)
+    df.index.names = ['PV', 'Group']
+    df['avg'] = df.iloc[:, 0:nshot].mean(axis=1)
+    df['std'] = df.iloc[:, 0:nshot].std(axis=1)
     return df
 
 
