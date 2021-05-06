@@ -36,6 +36,41 @@ def get_meta_conf_dict(filepath=None):
     return conf
 
 
+def merge_mach_conf(conf, rate=None, nshot=None):
+    """Merge toml conf to a dict, override with valid arguments.
+
+    Parameters
+    ----------
+    conf : dict
+        Dict parsed from toml config file.
+    rate : float
+        DAQ rate in Hz, if defined, override the one in config file.
+    nshot : int
+        Total number of shots for DAQ, if defined, override the one in config file.
+
+    Returns
+    -------
+    r : dict
+        Dict for machine state config.
+    """
+    daq_conf = conf.pop('DAQ')
+    daq_rate = daq_conf['rate']
+    daq_nshot = daq_conf['nshot']
+    if rate is not None and isinstance(rate, (float, int)):
+        daq_rate = rate
+    if nshot is not None and isinstance(nshot, int):
+        daq_nshot = nshot
+    pv_list = []
+    grp_list = []
+    for sect_name, sect_conf in conf.items():
+        names = sect_conf['names']
+        pv_list.extend(names)
+        grp_list.extend([sect_name] * len(names))
+    mach_state_conf = {'pv_list': pv_list, 'grp_list': grp_list,
+                       'daq_rate': daq_rate, 'daq_nshot': daq_nshot}
+    return mach_state_conf
+
+
 def fetch(confpath=None, rate=None, nshot=None):
     """Get machine state by fetching all PV readings defined in *confpath*.
 
@@ -54,22 +89,15 @@ def fetch(confpath=None, rate=None, nshot=None):
         DataFrame of all PV reading with group and PV names as the index.
     """
     conf = get_meta_conf_dict(confpath)
+    mach_state_conf = merge_mach_conf(conf, rate, nshot)
+    return fetch_data(mach_state_conf)
 
-    daq_conf = conf.pop('DAQ')
-    daq_rate = daq_conf['rate']
-    daq_nshot = daq_conf['nshot']
 
-    if rate is not None and isinstance(rate, (float, int)):
-        daq_rate = rate
-    if nshot is not None and isinstance(nshot, int):
-        daq_nshot = nshot
-
-    pv_list = []
-    grp_list = []
-    for sect_name, sect_conf in conf.items():
-        names = sect_conf['names']
-        pv_list.extend(names)
-        grp_list.extend([sect_name] * len(names))
+def fetch_data(mach_state_conf):
+    daq_nshot = mach_state_conf['daq_nshot']
+    daq_rate = mach_state_conf['daq_rate']
+    pv_list = mach_state_conf['pv_list']
+    grp_list = mach_state_conf['grp_list']
 
     ts_list = [0] * daq_nshot
     arr = np.zeros([daq_nshot, len(pv_list)])
@@ -130,7 +158,6 @@ def _build_dataframe(arr_list, pv_list, grp_list):
     df['avg'] = df.iloc[:, 0:nshot].mean(axis=1)
     df['std'] = df.iloc[:, 0:nshot].std(axis=1)
     return df
-
 
 
 if __name__ == '__main__':
