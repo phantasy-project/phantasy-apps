@@ -9,11 +9,11 @@ import numpy as np
 import pandas as pd
 from collections import OrderedDict
 from datetime import datetime
-from epics import caget_many
+from epics import caget_many, caget
 from phantasy_apps.utils import find_dconf
 
 TS_FMT = "%Y-%m-%dT%H:%M:%S.%f"
-DEFAULT_META_CONF_PATH = find_dconf("settings_manager", "metadata.toml")
+DEFAULT_META_CONF_PATH = find_dconf("msviz", "metadata.toml")
 
 
 def get_meta_conf_dict(filepath=None):
@@ -92,6 +92,22 @@ def fetch(confpath=None, rate=None, nshot=None):
 
     return df
 
+
+def _daq_func(pv_list, delta_t):
+    # pv_list : a list of PVs
+    # delta_t : 1.0 / daq_rate in second
+    #
+    # work with DAQT (daq_func)
+    #
+    t0 = time.time()
+    arr = [caget(i) for i in pv_list]
+    t_elapsed = time.time() - t0
+    t_wait = delta_t - t_elapsed
+    if t_wait > 0:
+        time.sleep(t_wait)
+    return arr + [t0]
+
+
 def _build_dataframe(arr_list, pv_list, grp_list):
     # build a dataframe from a list of pv readings:
     # -------------------------------------------------
@@ -101,6 +117,9 @@ def _build_dataframe(arr_list, pv_list, grp_list):
     # PV1 | g1    | ...
     # ...
     # the last column of arr_list is timestamps
+    #
+    # work with DAQT (resultsReady) only.
+    #
     arr = np.asarray(arr_list).transpose()
     data = arr[:-1,:]
     ts_list = [datetime.fromtimestamp(i).strftime(TS_FMT)[:-3] for i in arr[-1]]
@@ -111,6 +130,7 @@ def _build_dataframe(arr_list, pv_list, grp_list):
     df['avg'] = df.iloc[:, 0:nshot].mean(axis=1)
     df['std'] = df.iloc[:, 0:nshot].std(axis=1)
     return df
+
 
 
 if __name__ == '__main__':
