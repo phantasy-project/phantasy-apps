@@ -61,6 +61,7 @@ from phantasy_ui.widgets import ProbeWidget
 
 from phantasy_apps.msviz.mach_state import get_meta_conf_dict
 from phantasy_apps.msviz.mach_state import _build_dataframe
+from phantasy_apps.msviz.mach_state import _daq_func
 
 from .app_date_range import DateRangeDialog
 from .app_loadfrom import LoadSettingsDialog
@@ -2647,12 +2648,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         printlog("Fetched results:")
         print(df)
     def _meta_fetcher_daq_func(self, pv_list, dt, iiter):
-        t0 = time.time()
-        arr = [caget(i) for i in pv_list]
-        t_elapsed = time.time() - t0
-        if t_elapsed < dt:
-            time.sleep(dt - t_elapsed)
-        return arr + [t0]
+        return _daq_func(pv_list, dt)
     @pyqtSlot()
     def on_capture_machstate(self):
         # Capture machine state defined in config/metadata.toml.
