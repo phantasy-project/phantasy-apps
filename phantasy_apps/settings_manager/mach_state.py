@@ -5,18 +5,16 @@
 """
 import time
 import toml
-
 import numpy as np
 import pandas as pd
-
 from collections import OrderedDict
+from datetime import datetime
 from epics import caget_many
-
 from phantasy_apps.utils import find_dconf
-from phantasy_ui import printlog
 
-
+TS_FMT = "%Y-%m-%dT%H:%M:%S.%f"
 DEFAULT_META_CONF_PATH = find_dconf("settings_manager", "metadata.toml")
+
 
 def get_meta_conf_dict(filepath=None):
     """Return a dict of config for metadata, if *filepath* is not defined,
@@ -38,15 +36,13 @@ def get_meta_conf_dict(filepath=None):
     return conf
 
 
-def fetch(confpath=None, verbose=False, rate=None, nshot=None):
+def fetch(confpath=None, rate=None, nshot=None):
     """Get machine state by fetching all PV readings defined in *confpath*.
 
     Parameters
     ----------
     confpath : str
         Filepath for the PV configuration file, .toml.
-    verbose : bool
-        Show log message if set.
     rate : float
         DAQ rate in Hz, if defined, override the one in config file.
     nshot : int
@@ -75,6 +71,7 @@ def fetch(confpath=None, verbose=False, rate=None, nshot=None):
         pv_list.extend(names)
         grp_list.extend([sect_name] * len(names))
 
+    ts_list = [0] * daq_nshot
     arr = np.zeros([daq_nshot, len(pv_list)])
     dt = 1.0 / daq_rate  # second
     for i in range(daq_nshot):
@@ -83,9 +80,12 @@ def fetch(confpath=None, verbose=False, rate=None, nshot=None):
         t_elapsed = time.time() - t0
         if t_elapsed < dt:
             time.sleep(dt - t_elapsed)
-        if verbose:
-            printlog(f"Fetched data: shot {i + 1}.")
-    df = pd.DataFrame(arr.transpose(), columns=[f'shot-{i}' for i in range(1, daq_nshot + 1)])
+        t0_str = datetime.fromtimestamp(t0).strftime(TS_FMT)[:-3]
+        print(f"[{t0_str}] Fetched data: shot {i + 1}.")
+        ts_list[i] = t0_str
+
+    df = pd.DataFrame(arr.transpose(),
+                      columns=[ts_list[i] for i in range(daq_nshot)])
     df.set_index([pv_list, grp_list], inplace=True)
     df.index.names = ['PV', 'Group']
     df['avg'] = df.iloc[:, 0:daq_nshot].mean(axis=1)
