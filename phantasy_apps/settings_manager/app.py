@@ -60,6 +60,7 @@ from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui.widgets import ProbeWidget
 
 from phantasy_apps.msviz.mach_state import get_meta_conf_dict
+from phantasy_apps.msviz.mach_state import merge_mach_conf
 from phantasy_apps.msviz.mach_state import _build_dataframe
 from phantasy_apps.msviz.mach_state import _daq_func
 
@@ -620,17 +621,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def init_mach_state_fetcher(self):
         conf = get_meta_conf_dict()
-        daq_conf = conf.pop('DAQ')
-        daq_rate = daq_conf['rate']
-        daq_nshot = daq_conf['nshot']
-        pv_list = []
-        grp_list = []
-        for sect_name, sect_conf in conf.items():
-            names = sect_conf['names']
-            pv_list.extend(names)
-            grp_list.extend([sect_name] * len(names))
-        self.mach_state_conf = {'pv_list': pv_list, 'grp_list': grp_list,
-                                'daq_rate': daq_rate, 'daq_nshot': daq_nshot}
+        self.mach_state_conf = merge_mach_conf(conf)
 
     def on_update_filter_controls(self, snpdata):
         """Update filter controls
