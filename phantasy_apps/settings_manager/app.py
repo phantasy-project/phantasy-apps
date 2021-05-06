@@ -613,6 +613,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # snp note filter
         self.snp_note_filter_enabled = False
 
+        # init mach state retriever
+        self.init_mach_state_fetcher()
+
+    def init_mach_state_fetcher(self):
+        conf = get_meta_conf_dict()
+        daq_conf = conf.pop('DAQ')
+        daq_rate = daq_conf['rate']
+        daq_nshot = daq_conf['nshot']
+        pv_list = []
+        grp_list = []
+        for sect_name, sect_conf in conf.items():
+            names = sect_conf['names']
+            pv_list.extend(names)
+            grp_list.extend([sect_name] * len(names))
+        self.mach_state_conf = {'pv_list': pv_list, 'grp_list': grp_list,
+                                'daq_rate': daq_rate, 'daq_nshot': daq_nshot}
+
     def on_update_filter_controls(self, snpdata):
         """Update filter controls
         """
@@ -2634,22 +2651,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         t_elapsed = time.time() - t0
         if t_elapsed < dt:
             time.sleep(dt - t_elapsed)
-        return arr
+        return arr + [t0]
     @pyqtSlot()
     def on_capture_machstate(self):
         # Capture machine state defined in config/metadata.toml.
-        conf = get_meta_conf_dict()
-        daq_conf = conf.pop('DAQ')
-        daq_rate = daq_conf['rate']
-        daq_nshot = daq_conf['nshot']
-
-        pv_list = []
-        grp_list = []
-        for sect_name, sect_conf in conf.items():
-            names = sect_conf['names']
-            pv_list.extend(names)
-            grp_list.extend([sect_name] * len(names))
-
+        pv_list = self.mach_state_conf['pv_list']
+        grp_list = self.mach_state_conf['grp_list']
+        daq_rate = self.mach_state_conf['daq_rate']
+        daq_nshot = self.mach_state_conf['daq_nshot']
         self._meta_fetcher = DAQT(daq_func=partial(self._meta_fetcher_daq_func, pv_list, 1.0 / daq_rate),
                                   daq_seq=range(daq_nshot))
         self._meta_fetcher.daqStarted.connect(self._meta_fetcher_started)

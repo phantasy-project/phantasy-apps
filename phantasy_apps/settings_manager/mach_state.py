@@ -84,8 +84,7 @@ def fetch(confpath=None, rate=None, nshot=None):
         print(f"[{t0_str}] Fetched data: shot {i + 1}.")
         ts_list[i] = t0_str
 
-    df = pd.DataFrame(arr.transpose(),
-                      columns=[ts_list[i] for i in range(daq_nshot)])
+    df = pd.DataFrame(arr.transpose(), columns=ts_list)
     df.set_index([pv_list, grp_list], inplace=True)
     df.index.names = ['PV', 'Group']
     df['avg'] = df.iloc[:, 0:daq_nshot].mean(axis=1)
@@ -96,14 +95,17 @@ def fetch(confpath=None, rate=None, nshot=None):
 def _build_dataframe(arr_list, pv_list, grp_list):
     # build a dataframe from a list of pv readings:
     # -------------------------------------------------
-    #             | shot-1 | shot-2 | ... | avg | std |
+    #             | ts-1 | ts-2 | ... | avg | std |
     # -------------------------------------------------
     # PV  | Group |
     # PV1 | g1    | ...
     # ...
+    # the last column of arr_list is timestamps
     arr = np.asarray(arr_list).transpose()
-    _, nshot = arr.shape
-    df = pd.DataFrame(arr, columns=[f'shot-{i}' for i in range(1, nshot + 1)])
+    data = arr[:-1,:]
+    ts_list = [datetime.fromtimestamp(i).strftime(TS_FMT)[:-3] for i in arr[-1]]
+    _, nshot = data.shape
+    df = pd.DataFrame(data, columns=ts_list)
     df.set_index([pv_list, grp_list], inplace=True)
     df.index.names = ['PV', 'Group']
     df['avg'] = df.iloc[:, 0:nshot].mean(axis=1)
