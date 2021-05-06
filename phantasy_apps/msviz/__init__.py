@@ -4,6 +4,7 @@ import sys
 from phantasy_ui import QApp as QApplication
 
 from .app import MyAppWindow
+from .mach_state import fetch as fetch_mach_state
 
 
 __authors__ = "Tong Zhang"

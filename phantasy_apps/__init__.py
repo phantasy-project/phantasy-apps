@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
+from .msviz import fetch_mach_state
 
 logging.getLogger(__name__).setLevel(logging.INFO)
 logging.basicConfig(

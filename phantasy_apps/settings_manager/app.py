@@ -59,6 +59,9 @@ from phantasy_ui.widgets import FlowLayout
 from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui.widgets import ProbeWidget
 
+from phantasy_apps.msviz.mach_state import get_meta_conf_dict
+from phantasy_apps.msviz.mach_state import _build_dataframe
+
 from .app_date_range import DateRangeDialog
 from .app_loadfrom import LoadSettingsDialog
 from .app_pref import DEFAULT_PREF
@@ -72,8 +75,6 @@ from .data import SnapshotData
 from .data import get_csv_settings
 from .data import make_physics_settings
 from .data import read_data
-from .mach_state import get_meta_conf_dict
-from .mach_state import _build_dataframe
 from .ui.ui_app import Ui_MainWindow
 from .ui.ui_query_tips import Ui_Form as QueryTipsForm
 from .utils import FMT
