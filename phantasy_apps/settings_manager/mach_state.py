@@ -38,7 +38,7 @@ def get_meta_conf_dict(filepath=None):
     return conf
 
 
-def fetch(confpath=None, verbose=False):
+def fetch(confpath=None, verbose=False, rate=None, nshot=None):
     """Get machine state by fetching all PV readings defined in *confpath*.
 
     Parameters
@@ -47,6 +47,10 @@ def fetch(confpath=None, verbose=False):
         Filepath for the PV configuration file, .toml.
     verbose : bool
         Show log message if set.
+    rate : float
+        DAQ rate in Hz, if defined, override the one in config file.
+    nshot : int
+        Total number of shots for DAQ, if defined, override the one in config file.
 
     Returns
     -------
@@ -58,6 +62,11 @@ def fetch(confpath=None, verbose=False):
     daq_conf = conf.pop('DAQ')
     daq_rate = daq_conf['rate']
     daq_nshot = daq_conf['nshot']
+
+    if rate is not None and isinstance(rate, (float, int)):
+        daq_rate = rate
+    if nshot is not None and isinstance(nshot, int):
+        daq_nshot = nshot
 
     pv_list = []
     grp_list = []
