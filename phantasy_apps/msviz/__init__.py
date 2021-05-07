@@ -1,5 +1,26 @@
 # -*- coding: utf-8 -*-
 
+try:
+    from IPython import get_ipython
+    if get_ipython().__class__.__name__ == 'ZMQInteractiveShell':
+        NB_SHELL = True
+    else:
+        NB_SHELL = False
+except ImportError:
+    NB_SHELL = False
+finally:
+    import pkg_resources
+    try:
+        pkg_resources.get_distribution('tqdm')
+    except pkg_resources.DistributionNotFound:
+        TQDM_INSTALLED = False
+    else:
+        TQDM_INSTALLED = True
+        if NB_SHELL:
+            from tqdm.notebook import tqdm
+        else:
+            from tqdm import tqdm
+
 import sys
 from phantasy_ui import QApp as QApplication
 

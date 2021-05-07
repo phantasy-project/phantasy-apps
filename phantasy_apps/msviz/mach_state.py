@@ -11,6 +11,7 @@ from collections import OrderedDict
 from datetime import datetime
 from epics import caget_many, caget
 from phantasy_apps.utils import find_dconf
+from phantasy_apps.msviz import TQDM_INSTALLED
 
 TS_FMT = "%Y-%m-%dT%H:%M:%S.%f"
 DEFAULT_META_CONF_PATH = find_dconf("msviz", "metadata.toml")
@@ -93,24 +94,53 @@ def fetch(confpath=None, rate=None, nshot=None):
     return fetch_data(mach_state_conf)
 
 
-def fetch_data(mach_state_conf):
+def fetch_data(mach_state_conf, verbose=0):
+    """Do data fetching based on configuration defined in *mach_state_conf*.
+
+    Parameters
+    ----------
+    mach_state_conf : dict
+        Dict configuration, key: 'pv_list', 'grp_list', 'daq_rate', 'daq_nshot'.
+    verbose : int
+        Verbosity level of the log output, default is 0, no output, 1, output progress, 2 output
+        progress with description.
+
+    Returns
+    -------
+    r : DataFrame
+        DataFrame of all PV reading with group and PV names as the index.
+    """
     daq_nshot = mach_state_conf['daq_nshot']
     daq_rate = mach_state_conf['daq_rate']
     pv_list = mach_state_conf['pv_list']
     grp_list = mach_state_conf['grp_list']
+    n_pv = len(pv_list)
+
+    if verbose != 0 and TQDM_INSTALLED:
+        from phantasy_apps.msviz import tqdm
+        pbar = tqdm(range(daq_nshot))
+    else:
+        pbar = range(daq_nshot)
 
     ts_list = [0] * daq_nshot
     arr = np.zeros([daq_nshot, len(pv_list)])
     dt = 1.0 / daq_rate  # second
-    for i in range(daq_nshot):
+    for i in pbar:
         t0 = time.time()
         arr[i, :] = caget_many(pv_list)
-        t_elapsed = time.time() - t0
-        if t_elapsed < dt:
-            time.sleep(dt - t_elapsed)
         t0_str = datetime.fromtimestamp(t0).strftime(TS_FMT)[:-3]
-        print(f"[{t0_str}] Fetched data: shot {i + 1}.")
+        desc = f"[{t0_str}] Fetched {n_pv} PVs data"
         ts_list[i] = t0_str
+        t_elapsed = time.time() - t0
+        t_sleep = dt - t_elapsed
+        if t_sleep > 0:
+            desc += f", waited {int(t_sleep * 1000)} ms"
+            time.sleep(t_sleep)
+        if verbose > 1:
+            if TQDM_INSTALLED:
+                pbar.set_description(desc)
+            else:
+                print(desc)
 
     df = pd.DataFrame(arr.transpose(), columns=ts_list)
     df.set_index([pv_list, grp_list], inplace=True)
