@@ -25,7 +25,7 @@ CSV_HEADER_9 = CSV_HEADER
 CSV_HEADER_10 = (
     'Name', 'Field', 'Type', 'Pos',
     'Setpoint', 'Readback', 'Last Setpoint',
-    'Tolerance', 'Writable', 'Last Power Status'
+    'Tolerance', 'Writable', 'Last Power State'
 )
 
 # For table_version of SnapshotData:
