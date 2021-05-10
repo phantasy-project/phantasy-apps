@@ -405,7 +405,7 @@ class Ui_MainWindow(object):
             self.waitsec_dSpinBox.sizePolicy().hasHeightForWidth())
         self.waitsec_dSpinBox.setSizePolicy(sizePolicy)
         self.waitsec_dSpinBox.setSingleStep(0.5)
-        self.waitsec_dSpinBox.setProperty("value", 10.0)
+        self.waitsec_dSpinBox.setProperty("value", 30.0)
         self.waitsec_dSpinBox.setObjectName("waitsec_dSpinBox")
         self.gridLayout.addWidget(self.waitsec_dSpinBox, 2, 1, 1, 1)
         self.label_5 = QtWidgets.QLabel(self.daq_groupBox)
