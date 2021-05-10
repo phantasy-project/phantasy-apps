@@ -72,7 +72,7 @@ def merge_mach_conf(conf, rate=None, nshot=None):
     return mach_state_conf
 
 
-def fetch(confpath=None, rate=None, nshot=None):
+def fetch(confpath=None, rate=None, nshot=None, verbose=1):
     """Get machine state by fetching all PV readings defined in *confpath*.
 
     Parameters
@@ -83,6 +83,9 @@ def fetch(confpath=None, rate=None, nshot=None):
         DAQ rate in Hz, if defined, override the one in config file.
     nshot : int
         Total number of shots for DAQ, if defined, override the one in config file.
+    verbose : int
+        Verbosity level of the log output, default is 0, no output, 1, output progress, 2 output
+        progress with description.
 
     Returns
     -------
@@ -91,7 +94,7 @@ def fetch(confpath=None, rate=None, nshot=None):
     """
     conf = get_meta_conf_dict(confpath)
     mach_state_conf = merge_mach_conf(conf, rate, nshot)
-    return fetch_data(mach_state_conf)
+    return fetch_data(mach_state_conf, verbose=verbose)
 
 
 def fetch_data(mach_state_conf, verbose=0):
