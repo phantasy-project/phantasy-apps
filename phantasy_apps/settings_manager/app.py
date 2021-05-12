@@ -4,6 +4,7 @@
 import fnmatch
 import json
 import os
+import pathlib
 import re
 import tempfile
 import time
@@ -41,6 +42,7 @@ from PyQt5.QtWidgets import QToolButton
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QShortcut
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QProgressBar
 from phantasy import CaField
 from phantasy import Settings
 from phantasy import build_element
@@ -70,11 +72,12 @@ from .app_pref import DEFAULT_PREF
 from .app_pref import DEFAULT_CONFIG_PATH
 from .app_pref import PreferencesDialog
 from .data import CSV_HEADER
+from .data import DEFAULT_DATA_FMT
 from .data import ElementPVConfig
 from .data import TableSettings
 from .data import ToleranceSettings
 from .data import SnapshotData
-from .data import get_csv_settings
+from .data import get_settings_data
 from .data import make_physics_settings
 from .data import read_data
 from .ui.ui_app import Ui_MainWindow
@@ -114,6 +117,14 @@ NOW_DT = datetime.now()
 NOW_YEAR = NOW_DT.year
 NOW_MONTH = NOW_DT.month
 NOW_DAY = NOW_DT.day
+
+# machstate
+from phantasy_apps.utils import find_dconf
+from .data import LIVE
+if LIVE:
+    MS_CONF_PATH = find_dconf("msviz", "metadata.toml")
+else:
+    MS_CONF_PATH = find_dconf("msviz", "metadata_va.toml")
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -452,6 +463,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lv = None
         self.lv_view_btn.clicked.connect(self.on_show_latinfo)
 
+        # machine state
+        self._machstate = None
+
         # snp dock
         self.snp_dock.closed.connect(lambda:self.actionSnapshots.setChecked(False))
         self.actionSnapshots.setChecked(True)
@@ -615,13 +629,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.dateEdit2.setDate(QDate(NOW_YEAR, NOW_MONTH, NOW_DAY))
         # snp note filter
         self.snp_note_filter_enabled = False
-
-        # init mach state retriever
-        self.init_mach_state_fetcher()
-
-    def init_mach_state_fetcher(self):
-        conf = get_meta_conf_dict()
-        self.mach_state_conf = merge_mach_conf(conf)
 
     def on_update_filter_controls(self, snpdata):
         """Update filter controls
@@ -1146,7 +1153,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             json.dump(data, f, indent=2)
 
     def _save_settings_as_csv(self, filename):
-        s = get_csv_settings(self._tv.model())
+        s = get_settings_data(self._tv.model())
         s.write(filename, header=CSV_HEADER)
 
     def _save_settings_as_h5(self, filename):
@@ -1608,14 +1615,21 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.wdir = d
         if purge:
             del self._snp_dock_list[:]
-        for root, dnames, fnames in os.walk(d):
-            for fname in fnmatch.filter(fnames, "*.csv"):
-                path = os.path.join(root, fname)
-                snp_data = read_data(path)
-                # skip snapshot that name conflicts
-                if is_snp_data_exist(snp_data, self._snp_dock_list):
-                    continue
-                self._snp_dock_list.append(snp_data)
+        for path in pathlib.Path(d).glob("**/*"):
+            if not os.access(path, os.R_OK):
+                printlog(f"Cannot access {path}!")
+                continue
+            if not path.is_file():
+                continue
+            # csv, xls
+            snp_data = read_data(path.resolve(), path.suffix.lower()[1:])
+            # debug
+            if snp_data is None:
+                continue
+            # skip snapshot that name conflicts
+            if is_snp_data_exist(snp_data, self._snp_dock_list):
+                continue
+            self._snp_dock_list.append(snp_data)
         self.update_snp_dock_view()
         self.wdir_lineEdit.setText(self.wdir)
         n = len(self._snp_dock_list)
@@ -2186,21 +2200,32 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._query_tips_form.show()
 
     def on_snapshots_changed(self, cast=True):
-        """Number of runtime snapshots is changed.
+        """Number of snapshots is changed.
         """
         # update snpdata to snp dock.
         if self._tv.model() is None:
             return
-        #
+        # capture current ion info
         ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species()
+
+        # capture settings view filter text if any
         if self.filter_lineEdit.text() == '':
             note = None
         else:
             note = f"Filter: {self.filter_lineEdit.text()}, "
-        snp_data = SnapshotData(get_csv_settings(self._tv.model()),
+        # create a new snapshotdata
+        snp_data = SnapshotData(get_settings_data(self._tv.model()),
                 ion_name=ion_name, ion_number=ion_number, ion_mass=ion_mass, ion_charge=ion_charge,
                 machine=self._last_machine_name, segment=self._last_lattice_name,
                 version=self._version, note=note, table_version=10)
+        # machstate
+        self.__config_meta_fetcher()
+        loop = QEventLoop()
+        self._meta_fetcher.finished.connect(loop.exit)
+        self._meta_fetcher.start()
+        loop.exec_()
+        #
+        snp_data.machstate = self._machstate
         #
         self._snp_dock_list.append(snp_data)
         n = len(self._snp_dock_list)
@@ -2224,8 +2249,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_copy_snp(self, data):
-        cb = QGuiApplication.clipboard()
-        cb.setText(str(data))
+        data.data.to_clipboard(excel=True, index=False)
         msg = '<html><head/><body><p><span style="color:#007BFF;">Copied snapshot data at: </span><span style="color:#DC3545;">{}</span></p></body></html>'.format(data.ts_as_str())
         self.statusInfoChanged.emit(msg)
         self._reset_status_info()
@@ -2450,7 +2474,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_save_settings(self, data):
         # in-place save data to data_path.
         if data.data_path is None or not os.path.exists(data.data_path):
-            data.data_path = data.get_default_data_path(self.wdir, 'csv')
+            data.data_path = data.get_default_data_path(self.wdir, DEFAULT_DATA_FMT)
             dirname = os.path.dirname(data.data_path)
             if not os.path.exists(dirname):
                 os.makedirs(dirname)
@@ -2464,27 +2488,29 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # !update name attr to be uniqe!
         # !add 'copy' into tag list!
         if data.data_path is None or not os.path.exists(data.data_path):
-            cdir = data.get_default_data_path(self.wdir, 'csv')
+            cdir = data.get_default_data_path(self.wdir, DEFAULT_DATA_FMT)
         else:
             cdir = data.data_path
         filename, ext = get_save_filename(self,
                                           caption="Save Settings to a File",
                                           cdir=cdir,
-                                          type_filter="CSV Files (*.csv);;JSON Files (*.json);;HDF5 Files (*.h5)")
+                                          type_filter="XLSX Files (*.xlsx);;HDF5 Files (*.h5);;CSV Files (*.csv)")
         if filename is None:
             return
         data.name = re.sub(r"(.*)_[0-9]+\.[0-9]+",r"\1_{}".format(time.time()), data.name)
         if 'copy' not in data.tags:
             data.tags.append('copy')
-        self._save_settings(data, filename)
+        # update timestamp, datetime, name
+        data.update_name()
+        self._save_settings(data, filename, ext)
 
-    def _save_settings(self, data, filename):
+    def _save_settings(self, data, filename, ftype='xlsx'):
         for k, v in zip(('app', 'version', 'user', 'machine', 'segment'),
                 ('Settings Manager', f'{self._version}', getuser(),
                     self._last_machine_name, self._last_lattice_name)):
-                 if not k in data.meta_keys and v is not None:
+                 if not k in data.info and v is not None:
                      setattr(data, k, v)
-        data.write(filename)
+        data.write(filename, ftype)
 
     def on_load_settings(self, data):
         # data: SnapshotData
@@ -2494,7 +2520,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self._last_lattice_name != data.segment:
             self.__load_lattice(data.machine, data.segment)
         lat = self._lat
-        s = make_physics_settings(data.data, lat)
+        s = make_physics_settings(data.data.to_numpy(), lat)
         lat.settings.update(s)
         self._elem_list = [lat[ename] for ename in s]
         self.element_list_changed.emit()
@@ -2630,30 +2656,66 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def _meta_fetcher_started(self):
         printlog("Start to fetch machine state...")
+        self._meta_fetcher_pb = QProgressBar()
+        self._meta_fetcher_pb.setWindowTitle("Capturing Machine State")
+        self._meta_fetcher_pb.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+        self._meta_fetcher_pb.setRange(0, 100)
+        self._meta_fetcher_pb.move(
+            self.geometry().x() + self.geometry().width() / 2 - self._meta_fetcher_pb.geometry().width() / 2,
+            self.geometry().y() + self.geometry().height() / 2 - self._meta_fetcher_pb.geometry().height() / 2)
+        self._meta_fetcher_pb.show()
+        self.setEnabled(False)
     def _meta_fetcher_stopped(self):
         printlog("Stopped fetching machine state.")
     def _meta_fetcher_progressed(self, f, s):
         printlog(f"Fetching machine state: {f * 100:>5.1f}%, {s}")
+        self._meta_fetcher_pb.setValue(100 * f)
+        self._meta_fetcher_pb.move(
+            self.geometry().x() + self.geometry().width() / 2 - self._meta_fetcher_pb.geometry().width() / 2,
+            self.geometry().y() + self.geometry().height() / 2 - self._meta_fetcher_pb.geometry().height() / 2)
     def _meta_fetcher_got_results(self, pv_list, grp_list, res):
-        df = _build_dataframe(res, pv_list, grp_list)
-        printlog("Fetched results:")
-        print(df)
+        self._machstate = _build_dataframe(res, pv_list, grp_list)
+        self._meta_fetcher_pb.reset()
+        self._meta_fetcher_pb.deleteLater()
+        self.setEnabled(True)
     def _meta_fetcher_daq_func(self, pv_list, dt, iiter):
         return _daq_func(pv_list, dt)
     @pyqtSlot()
     def on_capture_machstate(self):
         # Capture machine state defined in config/metadata.toml.
-        pv_list = self.mach_state_conf['pv_list']
-        grp_list = self.mach_state_conf['grp_list']
-        daq_rate = self.mach_state_conf['daq_rate']
-        daq_nshot = self.mach_state_conf['daq_nshot']
+        self.__config_meta_fetcher()
+        self._meta_fetcher.finished.connect(self.on_save_machine_state)
+        self._meta_fetcher.start()
+
+    def on_save_machine_state(self):
+        msg = QMessageBox.question(self, "Save Machine State",
+                "Would you like to save fetched machine state data into a file?",
+                QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+        if msg == QMessageBox.Yes:
+            filename, ext = get_save_filename(self,
+                                              caption="Save Machine State to a File",
+                                              cdir='.',
+                                              type_filter="XLSX Files (*.xlsx);;HDF5 Files (*.h5);;CSV Files (*.csv)")
+            r = SnapshotData.export_machine_state(self._machstate, filename, ext)
+            if r is not None:
+                QMessageBox.information(self, "Save Machine State",
+                       f"Saved machine state data to {os.path.abspath(filename)}.",
+                       QMessageBox.Ok, QMessageBox.Ok)
+
+    def __config_meta_fetcher(self):
+        # init mach state retriever
+        conf = get_meta_conf_dict(MS_CONF_PATH)
+        mach_state_conf = merge_mach_conf(conf, nshot=None, rate=None) # redefine nshot, rate here
+        pv_list = mach_state_conf['pv_list']
+        grp_list = mach_state_conf['grp_list']
+        daq_rate = mach_state_conf['daq_rate']
+        daq_nshot = mach_state_conf['daq_nshot']
         self._meta_fetcher = DAQT(daq_func=partial(self._meta_fetcher_daq_func, pv_list, 1.0 / daq_rate),
                                   daq_seq=range(daq_nshot))
         self._meta_fetcher.daqStarted.connect(self._meta_fetcher_started)
         self._meta_fetcher.progressUpdated.connect(self._meta_fetcher_progressed)
         self._meta_fetcher.daqFinished.connect(self._meta_fetcher_stopped)
         self._meta_fetcher.resultsReady.connect(partial(self._meta_fetcher_got_results, pv_list, grp_list))
-        self._meta_fetcher.start()
 
 
 def is_snp_data_exist(snpdata, snpdata_list):

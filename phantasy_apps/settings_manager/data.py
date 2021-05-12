@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import csv
+import hashlib
 import os
 import re
 import time
+import pandas as pd
 from collections import OrderedDict
 from datetime import datetime
 from getpass import getuser
@@ -12,7 +14,9 @@ from io import StringIO
 from PyQt5.QtCore import Qt
 
 from phantasy import Settings
-from phantasy import get_random_name
+
+# default data format to save
+DEFAULT_DATA_FMT = "xlsx"
 
 CSV_HEADER = (
     'Name', 'Field', 'Type', 'Pos',
@@ -56,6 +60,8 @@ ATTR_KEYS = [
     "table_version",
 ]
 
+ATTR_DICT = OrderedDict([(k, None) for k in ATTR_KEYS])
+
 #
 # key is old element name, value is the new name for loading.
 #
@@ -88,15 +94,15 @@ FIELD_ALIAS_MAP = {
 }
 
 
-def make_physics_settings(csv_settings, lat):
-    """Generate Settings (lattice settings) of *lat* from `TableSettings`
-    instance defined by *csv_settings*.
+def make_physics_settings(settings, lat):
+    """Generate Settings (lattice settings) of *lat* from a list of
+    field settings, defined by *settings*.
     For lattice settings, all settings are physics field settings.
 
     Parameters
     ----------
-    csv_settings : TableSettings
-        TableSettings instance from CSV settings file.
+    settings : sequence
+        An array of list settings, each list contains settings for one field.
     lat : Lattice
         High-level lattice object, or a list of CaElement(s).
 
@@ -106,7 +112,7 @@ def make_physics_settings(csv_settings, lat):
         Physics settings.
     """
     s = Settings()  # physics settings
-    for line in csv_settings:
+    for line in settings:
         name, field, _, _, sp, rd, last_sp, _, _ = line[0:9]
         if name in ELEM_ALIAS_MAP:
             name = ELEM_ALIAS_MAP[name]
@@ -196,8 +202,8 @@ class TableSettings(list):
                     (ename, field, ftype, spos, sp, rd, old_sp, tol, writable))
 
 
-def get_csv_settings(proxy_model):
-    """Get settings data from *proxy_model* as TableSettings.
+def get_settings_data(proxy_model):
+    """Get settings data from *proxy_model* as a DataFrame.
     """
     # new_sp (x2): current sp to save
     # new_rd (x1): rb at sp
@@ -210,7 +216,7 @@ def get_csv_settings(proxy_model):
         src_m.i_name, src_m.i_field, src_m.i_type, src_m.i_pos, \
         src_m.i_cset, src_m.i_rd, src_m.i_val0, src_m.i_tol, src_m.i_writable, src_m.i_pwr
 
-    data = TableSettings()
+    data = []
     for irow in range(m.rowCount()):
         ename = m.data(m.index(irow, i_name))
         fname = m.data(m.index(irow, i_field))
@@ -225,7 +231,7 @@ def get_csv_settings(proxy_model):
         data.append((ename, fname, ftype, spos,
                      f_new_sp, f_new_rd, f_old_sp,
                      f_tol, f_writable, f_pwr))
-    return data
+    return pd.DataFrame(data, columns=CSV_HEADER_10)
 
 
 class ToleranceSettings(Settings):
@@ -260,40 +266,96 @@ class ElementPVConfig(Settings):
 def read_data(data_source, data_type='csv'):
     """Read settings data with attribute values from data source.
 
-    Supported data source: .csv file.
-    To be supported data source: .sql file.
-    Each .csv file is one snapshot, while each .sql may contain multiple.
+    Supported data source: .csv, .xls, .h5 files.
 
     Parameters
     ----------
-    data_source : str
+    data_source : Path
         Path of the data source.
     data_type : str
-        Data type, currently only 'csv' is supported.
+        Data type.
 
     Returns
     -------
     (data, attr) : A tuple of settings list and attributes dict.
     """
-    if data_type == 'csv':
-        _path = os.path.abspath(os.path.expanduser(data_source))
-        data_list, attr_dict = _read_csv_data(_path)
-        # instantiate SnapshotData
-        snp_data = SnapshotData(data_list, **attr_dict)
-    else:
-        raise RuntimeError(f"Load data source of type '{data_type}' is not implemented.")
-    return snp_data
+    return SnapshotData.read(data_source, ftype=data_type)
 
 
-def _read_csv_data(data_source, delimiter=','):
-    """Load data from .csv file to SnapshotData instance, initial attribute key: 'data_path'.
+def read_hdf(filepath, **kws):
+    """Read data from an HDF5 data file (e.g. h5).
+
+    Parameters
+    ----------
+    filepath : str
+        File path.
+
+    Returns
+    -------
+    r : tuple
+        Tuple of (df_data, df_info, df_state), df_data: physics settings,
+        df_info: meta info for physics settings, df_state: machine state.
+    """
+    with pd.HDFStore(filepath, **kws) as store:
+        df_data = store.get(SnapshotData.SETTINGS_SHEET_NAME)
+        attr_dict = getattr(store.get_storer(SnapshotData.SETTINGS_SHEET_NAME).attrs,
+                            SnapshotData.INFO_SHEET_NAME)
+        # attr_dict['data_path'] = os.path.abspath(filepath)
+        # attr_dict.move_to_end('data_path', last=False)
+        df_info = pd.DataFrame.from_dict(attr_dict, orient='index', columns=["attribute"]).T
+        if f"/{SnapshotData.MACHSTATE_SHEET_NAME}" in store.keys():
+            df_machstate = store.get(SnapshotData.MACHSTATE_SHEET_NAME)
+        else:
+            df_machstate = None
+    return df_data, df_info, df_machstate
+
+
+def read_excel(filepath, **kws):
+    """Read data from an Excel data file (e.g. xlsx).
+
+    Parameters
+    ----------
+    filepath : str
+        File path
+
+    Returns
+    -------
+    r : tuple
+        Tuple of (df_data, df_info, df_state), df_data: physics settings,
+        df_info: meta info for physics settings, df_state: machine state.
+    """
+    with pd.ExcelFile(filepath, **kws) as fp:
+        _df = pd.read_excel(fp, sheet_name=SnapshotData.INFO_SHEET_NAME, header=None, index_col=0)
+        _df.rename(columns={1: 'attribute'}, inplace=True)
+        _df.index.name = None
+#        if _df.T.tags[0] == ['nan']:  # reset tags to []
+#            _df.loc['attribute', 'tags'] = []
+        #df_info = _df.T
+        #df_info.insert(0, "data_path", os.path.abspath(filepath))
+        df_data = pd.read_excel(fp, sheet_name=SnapshotData.SETTINGS_SHEET_NAME)
+        if SnapshotData.MACHSTATE_SHEET_NAME in fp.sheet_names:
+            df_machstate = pd.read_excel(fp, sheet_name=SnapshotData.MACHSTATE_SHEET_NAME, index_col=[0, 1])
+        else:
+            df_machstate = None
+    return df_data, _df.T, df_machstate
+
+
+def read_csv(filepath, delimiter=','):
+    """Load data from a csv file to SnapshotData instance, initial attribute key: 'data_path'.
 
     Read CSV file with the lines starting with '#' as dict of comments,
-    and the first line after comments section as header.
+    and the first line after comments section as header, the rest as settings data.
+
+    Returns
+    -------
+    r : tuple
+        A tuple of two dataframes, the first is physics settings table, the other is the metadata
+        describing the settings, the third is None (for machine state)
     """
-    attr_dict = {'data_path': data_source}
+    # attr_dict = OrderedDict({'data_path': os.path.abspath(filepath)})
+    attr_dict = OrderedDict()
     data_list = []
-    with open(data_source, 'r') as fp:
+    with open(filepath, 'r') as fp:
         for line in fp:
             if line.startswith('#'):
                 k, v = line.strip('# ,\n').split(':', 1)
@@ -303,127 +365,190 @@ def _read_csv_data(data_source, delimiter=','):
                     attr_dict[k] = v.strip()
             else:
                 break
-        ss = csv.reader(fp, delimiter=delimiter, skipinitialspace=True)
         header = [i.strip() for i in line.split(delimiter)]
-        table_version = attr_dict.get('table_version')
-        if table_version is None:
-            table_version = 9
-        if table_version == 9:
-            for ename, field, ftype, spos, sp, rd, last_sp, tol, writable in ss:
-                row = (ename, field, ftype, spos, float(sp), float(rd), float(last_sp),
-                       float(tol), bool(writable))
-                data_list.append(row)
-        else: # table_version == 10:
-            for ename, field, ftype, spos, sp, rd, last_sp, tol, writable, last_pwr in ss:
-                row = (ename, field, ftype, spos, float(sp), float(rd), float(last_sp),
-                       float(tol), bool(writable), last_pwr)
-                data_list.append(row)
-    return data_list, attr_dict
+        df_info = pd.DataFrame.from_dict(attr_dict, orient='index', columns=['attribute']).T
+        df_data = pd.read_csv(fp, names=header)
+    return df_data, df_info, None
 
 
 class SnapshotData:
-    """Snapshot data object, instantiated from settings data with attributes.
+    """Snapshot data object, instantiated from settings data with attributes passed by keyword
+    arguments.
 
     Parameters
     ----------
-    data_list : list
-        A list of settings tuple.
+    df_data : DataFrame
+        Physics settings.
+    df_info : DataFrame
+        Meta info for physics settings.
+
+    Keyword Arguments
+    -----------------
+    other meta info key-value pairs add/update to *df_info*, key should be in ATTR_KEYS.
     """
-    def __init__(self, data_list, **kws):
-        self.data = data_list
-        self.init_attr()
-        self.init_attr_dict(**kws)
-        self.meta_keys = ATTR_KEYS[:]
-        for k in kws:
-            if k == 'data_path' or k in self.meta_keys:
-                continue
-            self.meta_keys.append(k)
-
-    def init_attr(self):
-        self._ts = None
-        self._datetime = None
-        self._name = None
-        self._note = None
-        self._user = None
-        self._ion_name = None
-        self._ion_number = None
-        self._ion_mass = None
-        self._ion_charge = None
-        self._machine = None
-        self._segment = None
-        self._tags = None
-        self._table_version = None
+    INFO_SHEET_NAME = "info"
+    SETTINGS_SHEET_NAME = "settings"
+    MACHSTATE_SHEET_NAME = "machine_state"
+    _READER_MAP = {
+        'xlsx': read_excel,
+        'hdf': read_hdf,
+        'h5': read_hdf,
+        'csv': read_csv,
+    }
+    def __init__(self, df_data, df_info=None, **kws):
+        # setter dict: default/special values
+        from phantasy_apps.settings_manager import __version__
+        self.__setter_map = {
+            'name': lambda v: get_sha1()[0] if v is None else v,
+            'user': lambda v: getuser() if v is None else v,
+            'timestamp': lambda v: time.time() if v is None else v,
+            'note': lambda v: 'Input note ...' if v is None else v,
+            'machine': lambda v: DEFAULT_MACHINE if v is None else v,
+            'segment': lambda v: DEFAULT_SEGMENT if v is None else v,
+            'ion_name': lambda v: '' if v is None else str(v),
+            'ion_mass': lambda v: '' if v is None else str(v),
+            'ion_charge': lambda v: '' if v is None else str(v),
+            'ion_number': lambda v: '' if v is None else str(v),
+            'table_version': lambda v: 9 if v is None else v,
+            'version': lambda v: __version__ if v is None else v,
+            'app': lambda v: 'Settings Manager' if v is None else v,
+            'tags': self.__get_tags,
+        }
+        self.__writer_map = {
+             'xlsx': self.__write_to_excel,
+             'hdf': self.__write_to_hdf,
+             'h5': self.__write_to_hdf,
+             'csv': self.__write_to_csv,
+        }
+        #
+        self.data = df_data
+        self.info = df_info
+        self.__update_info(**kws)
+        # update tags : str -> list
+        self.__update_tags()
+        # by default data_path is None, only be updated when saving/loading to/from file.
         self.data_path = None
+        # machine state data
+        self.machstate = None
 
-    def init_attr_dict(self, **kws):
-        d = {k: None for k in ATTR_KEYS}
+    @property
+    def data_path(self):
+        return self._data_path
+
+    @data_path.setter
+    def data_path(self, s):
+        self._data_path = s
+
+    @property
+    def machstate(self):
+        return self._machstate
+
+    @machstate.setter
+    def machstate(self, df):
+        """Set machine state with a dataframe.
+        """
+        if df is None:
+            self._machstate = None
+        else:
+            self._machstate = df
+
+    @property
+    def info(self):
+        """DataFrame : Column-wised attributes table.
+        """
+        return self._df_info
+
+    @info.setter
+    def info(self, df=None):
+        if df is None:
+            self._df_info = pd.DataFrame.from_dict(ATTR_DICT, orient='index', columns=['attribute']).T
+        else:
+            self._df_info = df
+
+    def __setattr__(self, k, v):
+        if k in ATTR_KEYS:
+            if k == 'datetime':
+                # alias attribute for timestamp, cannot be set
+                raise AttributeError(f"Readonly attribute cannot be changed")
+            else:
+                v = self.__setter_map.get(k, lambda v:v)(v)
+            self._df_info.loc['attribute', k] = v
+            if k == 'timestamp':
+                self._df_info['datetime'] = self.ts_as_str()
+        else:
+            super(SnapshotData, self).__setattr__(k, v)
+
+    def __getattr__(self, k):
+        if k in self._df_info:
+            return self._df_info[k][0]
+        else:
+            raise AttributeError(f"Invalid attribute '{k}'")
+
+    def __update_tags(self):
+        tags = self.info['tags'][0]
+        # update tags to list from str (after read from data file)
+        self.info.loc['attribute', 'tags'] = self.__get_tags(tags)
+
+    def __update_info(self, **kws):
+        """Initial and update (with keyword arguments) info table.
+        """
+        d = self._df_info.T['attribute'].to_dict()
         d.update(kws)
         for k, v in d.items():
             if k == 'datetime':
                 continue  # present timestamp in another way
-            elif k == 'app' and v is None: # app name
-                v = 'Settings Manager'
-            elif k == 'version' and v is None: # app version
-                v = 'undefined'
             setattr(self, k, v)
 
-    @property
-    def table_version(self):
-        """int : version of table data
-        """
-        return self._table_version
+    def __dir__(self):
+        return dir(__class__) + list(self.__dict__.keys()) \
+                + self._df_info.keys().tolist()
 
-    @table_version.setter
-    def table_version(self, i):
-        if i is None:
-            self._table_version = 9 # back-compatible, 10 for new format
+    def __get_tags(self, v):
+        # get a list of tags from input *v* (str)  to set .tags attribute
+        if v is None:
+            v = []
         else:
-            self._table_version = i
-
-    @property
-    def tags(self):
-        """List of strings.
-        """
-        return self._tags
-
-    @tags.setter
-    def tags(self, tags):
-        # input: str separated by ',', delete whitespace if any, or list of strings.
-        # ignore empty str ''.
-        if tags is None:
-            self._tags = []
-        else:
-            if isinstance(tags, str):
-                _tags = tags.split(',')
-            elif isinstance(tags, (list, tuple)):
-                _tags = tags
-            self._tags = [i for i in [re.sub(r'\s+', '', s) for s in _tags] if i != '']
+            # input: str separated by ',', delete whitespace if any, or list of strings.
+            # ignore empty str ''.
+            if isinstance(v, str):
+                _tags = v.split(',')
+            elif isinstance(v, (list, tuple)):
+                _tags = v
+            else:
+                _tags = [str(v),]
+            v = [i for i in [re.sub(r'\s+', '', s) for s in _tags] if i not in ('', 'nan')]
+        return v
 
     def ts_as_str(self):
+        # string
         return datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%dT%H:%M:%S')
 
     def ts_as_fn(self):
+        # filename
         return datetime.fromtimestamp(self.timestamp).strftime('%Y%m%dT%H%M%S')
 
     def ts_as_date(self):
+        # datetime str
         return datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%d %A')
 
     def ts_as_datetime(self):
+        # datetime object
         s = datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%d')
         return datetime.strptime(s, "%Y-%m-%d")
 
     def ts_as_time(self):
+        # hour:min:sec str
         return datetime.fromtimestamp(self.timestamp).strftime('%H:%M:%S')
 
     def ion_as_str(self):
-        if self._ion_name is None:
+        if self.ion_name == '':
             return ""
-        return f"{self._ion_mass}{self._ion_name}{self._ion_number}(+{self._ion_charge})"
+        return f"{self.ion_mass}{self.ion_name}{self.ion_number}(+{self.ion_charge})"
 
     def tags_as_str(self):
-        return ",".join(self._tags)
+        return ",".join(self.tags)
 
-    def get_default_data_path(self, working_directory=None, data_type='csv'):
+    def get_default_data_path(self, working_directory=None, data_type=None):
         """Return full data path for saving by naming convention,
         the data directory by default is ., e.g. ./40Ar+9_20200929T104317.csv.
         """
@@ -431,128 +556,20 @@ class SnapshotData:
             wdir = '.'
         else:
             wdir = os.path.expanduser(working_directory)
-        fn = f"{self.ion_mass}{self.ion_name}+{self.ion_charge}_{self.ts_as_fn()}.csv"
+        ftype = DEFAULT_DATA_FMT if data_type is None else data_type
+        fn = f"{self.ion_mass}{self.ion_name}+{self.ion_charge}_{self.ts_as_fn()}.{ftype}"
         return os.path.abspath(os.path.join(wdir, fn))
 
-    @property
-    def ion_name(self):
-        return self._ion_name
-
-    @ion_name.setter
-    def ion_name(self, s):
-        if s is None:
-            self._ion_name = ''
-        else:
-            self._ion_name = s
-
-    @property
-    def ion_number(self):
-        return self._ion_number
-
-    @ion_number.setter
-    def ion_number(self, i):
-        if i is None:
-            self.ion_number = ''
-        else:
-            self._ion_number = str(i)
-
-    @property
-    def ion_mass(self):
-        return self._ion_mass
-
-    @ion_mass.setter
-    def ion_mass(self, i):
-        if i is None:
-            self._ion_mass = ''
-        else:
-            self._ion_mass = str(i)
-
-    @property
-    def ion_charge(self):
-        return self._ion_charge
-
-    @ion_charge.setter
-    def ion_charge(self, i):
-        if i is None:
-            self._ion_charge = ''
-        else:
-            self._ion_charge = str(i)
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, s):
-        if s is None:
-            self._name = get_random_name() + "_" + str(time.time_ns())
-        else:
-            self._name = s
-
-    @property
-    def machine(self):
-        return self._machine
-
-    @machine.setter
-    def machine(self, s):
-        if s is None:
-            self._machine = DEFAULT_MACHINE
-        else:
-            self._machine = s
-
-    @property
-    def segment(self):
-        return self._segment
-
-    @segment.setter
-    def segment(self, s):
-        if s is None:
-            self._segment = DEFAULT_SEGMENT
-        else:
-            self._segment = s
-
-    @property
-    def user(self):
-        return self._user
-
-    @user.setter
-    def user(self, s):
-        if s is None:
-            self._user = getuser()
-        else:
-            self._user = s
-
-    @property
-    def timestamp(self):
-        return self._ts
-
-    @timestamp.setter
-    def timestamp(self, x):
-        if x is None:
-            self._ts = time.time()
-        else:
-            self._ts = x
-        self._datetime = self.ts_as_str()
-
-    @property
-    def datetime(self):
-        return self._datetime
-
-    @property
-    def note(self):
-        return self._note
-
-    @note.setter
-    def note(self, s):
-        if s is None or s == '':
-            self._note = 'Input note ...'
-        else:
-            self._note = s
+    def update_name(self):
+        """Update timestamp with current time, update name and datetime as well.
+        """
+        self.name, self.timestamp = get_sha1()
 
     def is_golden(self):
         return 'golden' in self.tags
 
     def __str__(self):
+        # str(self.data)
         sio = StringIO()
         sio.write("\t".join(CSV_HEADER))
         sio.write("\n")
@@ -563,23 +580,92 @@ class SnapshotData:
         sio.close()
         return text
 
-    def write(self, filepath, delimiter=','):
-        """Write settings into *filepath*.
-        """
-        with open(filepath, 'w') as fp:
-            for k in self.meta_keys:
-                v = getattr(self, k)
-                if k == 'tags':
-                    v = self.tags_as_str()
-                fp.write(f"# {k}: {v}\n")
-            ss = csv.writer(fp, delimiter=delimiter)
-            if self.table_version == 9:
-                ss.writerow(CSV_HEADER_9)
-            else:
-                ss.writerow(CSV_HEADER_10)
-            for row in self.data:
-                ss.writerow(row)
-            #for ename, fname, ftype, spos, sp, rd, old_sp, tol, writable in self.data:
-            #    ss.writerow(
-            #        (ename, fname, ftype, spos, sp, rd, old_sp, tol, writable))
+    def __write_to_excel(self, filepath, **kws):
+        # xlsx
+        df_info = self.info.copy(deep=True)
+        df_info['tags'] = self.tags_as_str()
+        with pd.ExcelWriter(filepath) as fp:
+            # df_info.drop(columns=['data_path']).T.to_excel(fp,
+            #         sheet_name=SnapshotData.INFO_SHEET_NAME, header=False, **kws)
+            df_info.T.to_excel(fp,
+                    sheet_name=SnapshotData.INFO_SHEET_NAME, header=False, **kws)
+            self.data.to_excel(fp, sheet_name=SnapshotData.SETTINGS_SHEET_NAME, index=False, **kws)
+            if self.machstate is not None:
+                self.machstate.to_excel(fp, sheet_name=SnapshotData.MACHSTATE_SHEET_NAME, **kws)
 
+    def __write_to_hdf(self, filepath, **kws):
+        # hdf
+        df_info = self.info.copy(deep=True)
+        df_info['tags'] = self.tags_as_str()
+        complevel = kws.pop("complevel", 9)
+        complib = kws.pop("complib", "blosc")
+        format = kws.pop("format", "table")
+        with pd.HDFStore(filepath, "w") as store:
+            store.put(SnapshotData.SETTINGS_SHEET_NAME, self.data, index=False, format=format,
+                      complevel=complevel, complib=complib, **kws)
+            storer = store.get_storer(SnapshotData.SETTINGS_SHEET_NAME)
+            attr_dict = []
+            for k, v in df_info.items():
+                #if k == 'data_path':
+                #    continue
+                attr_dict.append((k, v[0]))
+            attr_dict = OrderedDict(attr_dict)
+            storer.attrs.info = str(attr_dict)
+            setattr(storer.attrs, SnapshotData.INFO_SHEET_NAME, attr_dict)
+            if self.machstate is not None:
+                store.put(SnapshotData.MACHSTATE_SHEET_NAME, self.machstate, format=format,
+                        complevel=complevel, complib=complib, **kws)
+
+    def __write_to_csv(self, filepath, **kws):
+        # csv: only save info and data,
+        # save machstate (if any) to another csv file, with filename-ms.csv as filepath.
+        df_info = self.info.copy(deep=True)
+        df_info['tags'] = self.tags_as_str()
+        with open(filepath, "w") as fp:
+            for k, v in df_info.items():
+                fp.writelines(f"# {k}: {v[0]}\n")
+            self.data.to_csv(fp, index=False)
+        if self.machstate is not None:
+            filename = os.path.basename(filepath).rsplit(".csv")[0] + "_ms.csv"
+            _filepath = os.path.join(os.path.dirname(filepath), filename)
+            self.machstate.to_csv(_filepath)
+
+    def write(self, filepath, ftype='xlsx', **kws):
+        """Write snapshot data into *filepath*.
+        """
+        self.__writer_map[ftype](filepath, **kws)
+
+    @classmethod
+    def read(cls, filepath, ftype='xlsx', **kws):
+        # filepath: full path of data file
+        if ftype not in cls._READER_MAP:
+            print(f"Data source of type '{ftype}' is not supported.")
+            return None
+        df_data, df_info, df_machstate = cls._READER_MAP[ftype](filepath, **kws)
+        o = cls(df_data, df_info)
+        o.machstate = df_machstate
+        o.data_path = str(filepath)
+        return o
+
+    @staticmethod
+    def export_machine_state(machstate, filepath, ftype="xlsx", **kws):
+        if machstate is None:
+            return None
+        if ftype == 'xlsx':
+            machstate.to_excel(filepath, sheet_name=SnapshotData.MACHSTATE_SHEET_NAME, **kws)
+        elif ftype == 'h5':
+            machstate.to_hdf(filepath, SnapshotData.MACHSTATE_SHEET_NAME, format="table", **kws)
+        elif ftype == 'csv':
+            machstate.to_csv(filepath, **kws)
+        return True
+
+
+    #def __eq__(self, other):
+    #    return all(self.info.drop(columns=["data_path"]) == other.info.drop(columns=["data_path"])) \
+    #            and all(self.data == other.data)
+
+
+def get_sha1():
+    t0 = time.time()
+    s = str(t0).encode('utf-8')
+    return hashlib.sha1(s).hexdigest(), t0
