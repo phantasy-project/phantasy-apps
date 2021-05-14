@@ -1017,8 +1017,6 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_Help.menuAction())
         self.toolBar.addAction(self.actionLoad_Lattice)
         self.toolBar.addAction(self.actionAdd_Devices)
-        self.toolBar.addAction(self.action_Save)
-        self.toolBar.addAction(self.actionLoad_Settings)
         self.toolBar.addAction(self.actionTake_Snapshot)
         self.toolBar.addAction(self.actionCapture_machstate)
         self.toolBar.addAction(self.actionPhysics_Fields)
@@ -1034,7 +1032,6 @@ class Ui_MainWindow(object):
         self.apply_btn.clicked.connect(MainWindow.on_apply_settings)
         self.actionLoad_From_Snapshot.triggered.connect(
             MainWindow.on_load_from_snp)
-        self.action_Save.triggered.connect(MainWindow.on_save)
         self.actionPhysics_Fields.toggled['bool'].connect(
             MainWindow.on_toggle_phyfields)
         self.actionEngineering_Fields.toggled['bool'].connect(
@@ -1042,7 +1039,6 @@ class Ui_MainWindow(object):
         self.actionLoad_Lattice.triggered.connect(MainWindow.on_load_lattice)
         self.filter_lineEdit.editingFinished.connect(
             MainWindow.on_filter_changed)
-        self.actionLoad_Settings.triggered.connect(MainWindow.on_load)
         self.actionPreferences.triggered.connect(
             MainWindow.on_launch_preferences)
         self.reload_lattice_btn.clicked.connect(MainWindow.on_reload_lattice)
