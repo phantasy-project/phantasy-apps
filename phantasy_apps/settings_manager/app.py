@@ -590,9 +590,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # hide findtext_lbl and findtext_lineEdit
         for o in (self.findtext_lbl, self.findtext_lineEdit):
             o.setVisible(False)
-        # hide save/load settings tools
-        for o in (self.actionLoad_Settings, self.action_Save):
-            o.setVisible(False)
 
         # snp wdir new?
         self.snp_new_lbl.setPixmap(QPixmap(":/sm-icons/new.png").scaled(PX_SIZE, PX_SIZE))
@@ -1125,43 +1122,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             tt = "Updating at {0:.1f} Hz.".format(rate)
         self.update_rate_cbb.setToolTip(tt)
 
-    def on_save(self):
-        """Save settings to file.
-        """
-        filename, ext = get_save_filename(self,
-                                          caption="Save Settings to a File",
-                                          type_filter="CSV Files (*.csv);;JSON Files (*.json);;HDF5 Files (*.h5)")
-        if filename is None:
-            return
-        ext = ext.upper()
-        if ext == 'CSV':
-            self._save_settings_as_csv(filename)
-        if ext == 'JSON':
-            self._save_settings_as_json(filename)
-        elif ext == 'H5':
-            self._save_settings_as_h5(filename)
-
-        QMessageBox.information(
-            self, "", "Saved data to {}".format(filename),
-            QMessageBox.Ok)
-        printlog("Saved settings to {}.".format(filename))
-
-    def _save_settings_as_json(self, filename):
-        # WIP
-        s = self.get_settings()
-        with open(filename, 'w') as f:
-            json.dump(data, f, indent=2)
-
-    def _save_settings_as_csv(self, filename):
-        s = get_settings_data(self._tv.model())
-        s.write(filename, header=CSV_HEADER)
-
-    def _save_settings_as_h5(self, filename):
-        pass
-
-    def _save_settings_as_h5(self, filename):
-        pass
-
     @pyqtSlot()
     def on_load_from_snp(self):
         """Load settings from .snp file.
@@ -1473,52 +1433,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.total_show_number_lbl.setText(str(m.rowCount()))
         self.update_filter_completer(full_str)
 
-    @pyqtSlot()
-    def on_load(self):
-        """Load settings from file."""
-        filepath, ext = get_open_filename(self,
-                                          caption="Load Settings from a File",
-                                          type_filter="CSV Files (*.csv);;JSON Files (*.json);;HDF5 Files (*.h5)")
-        if filepath is None:
-            return
-
-        self.load_file(filepath, ext)
-
-    def load_file(self, filepath, ext):
-        ext = ext.upper()
-        try:
-            if ext == 'CSV':
-                self._load_settings_from_csv(filepath)
-            elif ext == 'JSON':
-                self._load_settings_from_json(filepath)
-            elif ext == 'H5':
-                self._load_settings_from_h5(filepath)
-        except RuntimeError:
-            pass
-        else:
-            msg = "Loaded data from {}".format(filepath)
-            self.statusInfoChanged.emit(msg)
-            self._reset_status_info(5000)
-            QMessageBox.information(
-                self, "Load Settings File", msg)
-            printlog(msg)
-        finally:
-            self.clear_load_status()
-
-    def _load_settings_from_csv(self, filepath):
-        table_settings = TableSettings(filepath)
-
-        if self._lat is None:
-            mach = table_settings.meta.get('machine', DEFAULT_MACHINE)
-            segm = table_settings.meta.get('segment', DEFAULT_SEGMENT)
-            self.__load_lattice(mach, segm)
-
-        lat = self._lat
-        s = make_physics_settings(table_settings, lat)
-        lat.settings.update(s)
-        self._elem_list = [lat[ename] for ename in s]
-        self.element_list_changed.emit()
-
     def __load_lattice(self, mach, segm, post_info=True):
         self._post_info = post_info
         self.actionLoad_Lattice.triggered.emit()
@@ -1528,12 +1442,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lattice_load_window.latticeChanged.connect(loop.exit)
         self._lattice_load_window.load_btn.clicked.emit()
         loop.exec_()
-
-    def _load_settings_from_json(self, filepath):
-        pass
-
-    def _load_settings_from_h5(self, filepath):
-        pass
 
     @pyqtSlot()
     def on_config_updated(self):
@@ -2696,6 +2604,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                               caption="Save Machine State to a File",
                                               cdir='.',
                                               type_filter="XLSX Files (*.xlsx);;HDF5 Files (*.h5);;CSV Files (*.csv)")
+            if filename is None:
+                return
             r = SnapshotData.export_machine_state(self._machstate, filename, ext)
             if r is not None:
                 QMessageBox.information(self, "Save Machine State",
