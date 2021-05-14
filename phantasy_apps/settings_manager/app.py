@@ -74,7 +74,6 @@ from .app_pref import PreferencesDialog
 from .data import CSV_HEADER
 from .data import DEFAULT_DATA_FMT
 from .data import ElementPVConfig
-from .data import TableSettings
 from .data import ToleranceSettings
 from .data import SnapshotData
 from .data import get_settings_data
@@ -2391,7 +2390,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def on_saveas_settings(self, data):
         # data: SnapshotData
-        # settings(data.data): TableSettings
+        # settings(data.data): DataFrame
         # !won't update data_path attr!
         # !update name attr to be uniqe!
         # !add 'copy' into tag list!
@@ -2422,7 +2421,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def on_load_settings(self, data):
         # data: SnapshotData
-        # settings(data.data): TableSettings
+        # settings(data.data): DataFrame
         self.turn_off_updater_if_necessary()
         if self._lat is None or self._last_machine_name != data.machine or \
                 self._last_lattice_name != data.segment:
