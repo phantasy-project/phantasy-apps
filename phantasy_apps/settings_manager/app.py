@@ -98,6 +98,9 @@ from .utils import ELEM_WRITE_PERM
 from .utils import NUM_LENGTH
 from .utils import BG_COLOR_GOLDEN_NO
 
+#
+SUPPORT_FTYPES = ("xlsx", "csv", "h5")
+
 # sb pos of stripper
 STRIPPER_POS = 223.743568
 
@@ -1528,8 +1531,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 continue
             if not path.is_file():
                 continue
-            # csv, xls
-            snp_data = read_data(path.resolve(), path.suffix.lower()[1:])
+            # csv, xls, h5
+            suffix = path.suffix.lower()[1:]
+            if suffix not in SUPPORT_FTYPES:
+                continue
+            snp_data = read_data(path.resolve(), suffix)
             # debug
             if snp_data is None:
                 continue

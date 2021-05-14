@@ -215,7 +215,13 @@ def read_data(data_source, data_type='csv'):
     -------
     (data, attr) : A tuple of settings list and attributes dict.
     """
-    return SnapshotData.read(data_source, ftype=data_type)
+    try:
+        r = SnapshotData.read(data_source, ftype=data_type)
+    except:
+        r = None
+    finally:
+        return r
+
 
 
 def read_hdf(filepath, **kws):
