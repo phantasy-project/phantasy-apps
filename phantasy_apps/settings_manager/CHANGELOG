@@ -1,3 +1,16 @@
+Version 8.0: 2021-05-14
+=======================
+
+- Refactored SnapshotData class to support multi-sheet data
+  - Adopt pandas.DataFrame to manage the data
+  - Default data format: xlsx
+  - Read and save from/to xlsx, h5, csv, etc.
+  - Store settings data, metadata for settings data, and machine state data
+- Support capture and save machine state data when taking snapshot
+- Support save power on/off status data into snapshot
+- Support control device power switch via context menu
+- Support search snapshot files by note and datetime range
+
 Version 7.1: 2021-04-13
 =======================
 
