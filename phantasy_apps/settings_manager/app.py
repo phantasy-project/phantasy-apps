@@ -1531,13 +1531,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 continue
             if not path.is_file():
                 continue
-            # csv, xls, h5
-            suffix = path.suffix.lower()[1:]
-            if suffix not in SUPPORT_FTYPES:
-                continue
-            snp_data = read_data(path.resolve(), suffix)
-            # debug
+            snp_data = read_data(path)
             if snp_data is None:
+                printlog(f"Failed to load {path.resolve()}.")
                 continue
             # skip snapshot that name conflicts
             if is_snp_data_exist(snp_data, self._snp_dock_list):
@@ -2053,10 +2049,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         urls = e.mimeData().urls()
         for url in urls:
             path = url.toLocalFile()
-            ext = path.rsplit('.', 1)[-1]
-            if ext.upper() != 'CSV':
-                continue
-            snp_data = read_data(path)
+            snp_data = read_data(pathlib.Path(path))
+            if snp_data is None:
+                QMessageBox.warning(self, "Load Snapshot",
+                        "Cannot load the file.",
+                        QMessageBox.Ok, QMessageBox.Ok)
+                return
             if not is_snp_data_exist(snp_data, self._snp_dock_list):
                 self._snp_dock_list.append(snp_data)
         self.update_snp_dock_view()

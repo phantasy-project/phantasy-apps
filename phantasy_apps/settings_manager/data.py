@@ -18,6 +18,9 @@ from phantasy import Settings
 # default data format to save
 DEFAULT_DATA_FMT = "xlsx"
 
+# support file types
+SUPPORT_FTYPES = ("xlsx", "csv", "h5")
+
 CSV_HEADER = (
     'Name', 'Field', 'Type', 'Pos',
     'Setpoint', 'Readback', 'Last Setpoint',
@@ -199,24 +202,30 @@ class ElementPVConfig(Settings):
         self.update(DEFAULT_SETTINGS)
 
 
-def read_data(data_source, data_type='csv'):
+def read_data(data_path, file_type=None):
     """Read settings data with attribute values from data source.
 
     Supported data source: .csv, .xls, .h5 files.
 
     Parameters
     ----------
-    data_source : Path
+    data_path : Path
         Path of the data source.
-    data_type : str
-        Data type.
+    file_type : str
+        File type.
 
     Returns
     -------
-    (data, attr) : A tuple of settings list and attributes dict.
+    r : SnapshotData
     """
+    if file_type is None:
+        # csv, xls, h5
+        file_type = data_path.suffix.lower()[1:]
+        if file_type not in SUPPORT_FTYPES:
+            print(f"Non-support file type: {file_type}.")
+            return None
     try:
-        r = SnapshotData.read(data_source, ftype=data_type)
+        r = SnapshotData.read(data_path.resolve(), ftype=file_type)
     except:
         r = None
     finally:
