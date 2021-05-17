@@ -3,6 +3,7 @@
 import csv
 import hashlib
 import os
+import pathlib
 import re
 import time
 import pandas as pd
@@ -218,6 +219,8 @@ def read_data(data_path, file_type=None):
     -------
     r : SnapshotData
     """
+    if isinstance(data_path, str):
+        data_path = pathlib.Path(data_path)
     if file_type is None:
         # csv, xls, h5
         file_type = data_path.suffix.lower()[1:]
