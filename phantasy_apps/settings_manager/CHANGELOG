@@ -1,3 +1,37 @@
+Version 8.0: 2021-05-14
+=======================
+
+- Refactored SnapshotData class to support multi-sheet data
+  - Adopt pandas.DataFrame to manage the data
+  - Default data format: xlsx
+  - Read and save from/to xlsx, h5, csv, etc.
+  - Store settings data, metadata for settings data, and machine state data
+- Support capture and save machine state data when taking snapshot
+- Support save power on/off status data into snapshot
+- Support control device power switch via context menu
+- Support search snapshot files by note and datetime range
+
+Version 7.1: 2021-04-13
+=======================
+
+- Setting View
+  - Support to show devices readonly by maintaining hardcode name list
+  - Add field of interest for more diagnostic devices
+  - Support switch power status via context menu
+
+Version 7.0: 2021-02-22
+=======================
+
+- Setting View
+  - Support only showing field-of-interest, defined in config/field.toml
+  - Support show device power status in a new column
+  - Support running with LIVE_MODE environmental variable
+  - Do global data refreshing when any filter button is checked
+  - F5 (Ctrl+F5) for single data refresher (continuously)
+  - Manage all devices in phantasy-machines for ISRC1
+
+- other bug fixes
+
 Version 6.0: 2021-01-19
 =======================
 

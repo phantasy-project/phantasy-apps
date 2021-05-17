@@ -43,6 +43,7 @@ def set_entry_points():
     r['console_scripts'] = [
         'pm_dat2json=phantasy_apps.wire_scanner.converter:main',
         'as_out2json=phantasy_apps.allison_scanner.out2json:main',
+        'fetch_mach_state=phantasy_apps.msviz.tools:main',
     ]
 
     r['gui_scripts'] = [
@@ -64,6 +65,7 @@ def set_entry_points():
         'achromat_tuning=phantasy_apps.achromat_tuning:run',
         'phy_calc=phantasy_apps.calculator_app:run',
         'synoptic_app=phantasy_apps.synoptic_app:run',
+        'msviz=phantasy_apps.msviz:run',
     ]
     return r
 

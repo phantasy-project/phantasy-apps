@@ -38,7 +38,7 @@ from phantasy_ui.widgets import is_item_checked
 from phantasy_apps.utils import find_dconf
 from .data import SnapshotData
 
-AVAILABLE_IONS = ('Ne', 'Ar', 'Kr', 'Xe', 'U', 'Se', 'Ca')
+AVAILABLE_IONS = ('Ne', 'Ar', 'Kr', 'Xe', 'U', 'Se', 'Ca', 'Pb')
 
 FMT = "{0:.6g}"
 
@@ -73,8 +73,8 @@ VALID_FILTER_KEYS_NUM = ['x0', 'x1', 'x2', 'dx01', 'dx02', 'dx12',
 VALID_FILTER_KEYS = ['device', 'field', 'type',
                      'writable'] + VALID_FILTER_KEYS_NUM
 
-BG_COLOR_GOLDEN_YES = "#FFDE03"
-BG_COLOR_GOLDEN_NO = "#FFFFFF"
+BG_COLOR_GOLDEN_YES = (255, 222, 3, 200) # #FFDE03
+BG_COLOR_GOLDEN_NO = (255, 255, 255, 0) # #FFFFFF
 BG_COLOR_DEFAULT = "#FFFFFF"
 BG_COLOR_MAP = {
     # system: background
@@ -140,6 +140,16 @@ def get_foi_dict(filepath):
 DEFAULT_FOI_PATH = find_dconf("settings_manager", "fields.toml")
 DEFAULT_FOI_DICT = get_foi_dict(DEFAULT_FOI_PATH)
 
+# override write permission (for those does not have correct ACF)
+ELEM_WRITE_PERM = {
+ 'FE_ISRC1:BEAM': False,
+ 'FE_RFQ:CAV_D1005': False,
+ 'FE_ISRC1:DRV_D0686:POS': False,
+}
+
+# default length for number display
+NUM_LENGTH = 9
+
 
 class SettingsModel(QStandardItemModel):
     """Settings model from Settings instance.
@@ -175,7 +185,7 @@ class SettingsModel(QStandardItemModel):
         if self._auto_fmt:
             self.fmt = '{{0:{0}g}}'.format(self._ndigit)
         else:
-            self.fmt = '{{0:.{0}f}}'.format(self._ndigit)
+            self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self._ndigit)
 
         if self._font is None:
             self._font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
@@ -249,7 +259,7 @@ class SettingsModel(QStandardItemModel):
             row.append(item_tol)
 
             # writable
-            write_access = fld.write_access
+            write_access = ELEM_WRITE_PERM.get(fld.ename, fld.write_access)
             item_wa = QStandardItem(str(write_access))
             item_wa.setEditable(False)
             row.append(item_wa)
@@ -401,12 +411,24 @@ class _SortProxyModel(QSortFilterProxyModel):
             'tolerance': model.i_tol,
             'writable': model.i_writable,
             'x2/x0': model.i_ratio_x20,
+            'power': model.i_pwr,
         }
         self.filter_ftypes = ['ENG', 'PHY']
         # if True, filter checked items, otherwise show all items.
         self.filter_checked_enabled = False
         self.filter_dx12_warning_enabled = False
         self.filter_dx02_warning_enabled = False
+        # field filter
+        self.filter_field_enabled = False
+        self.filter_field_list = []
+        # dtype filter
+        self.filter_dtype_enabled = False
+        self.filter_dtype_list = []
+        # pos filter <->
+        self.filter_pos1_enabled = False
+        self.filter_pos2_enabled = False
+        self.filter_pos_value = None
+        #
         self._filter_tuples = None
 
     def lessThan(self, left, right):
@@ -419,13 +441,15 @@ class _SortProxyModel(QSortFilterProxyModel):
         try:
             r = float(left_data) < float(right_data)
         except ValueError:
-            if left.column() == 0:  # ename
+            if left.column() == self.filter_col_index['device']:  # ename
                 r_left = re.match(r'.*_(D[0-9]{4}).*', left_data)
                 r_right = re.match(r'.*_(D[0-9]{4}).*', right_data)
                 if r_left is not None and r_right is not None:
                     left_data = r_left.group(1)
                     right_data = r_right.group(1)
-
+            elif left.column() == self.filter_col_index['power']: # pwrsts
+                left_data = left.data(Qt.ToolTipRole)
+                right_data = right.data(Qt.ToolTipRole)
             r = left_data < right_data
         return r
 
@@ -527,7 +551,7 @@ class _SortProxyModel(QSortFilterProxyModel):
         if self.filter_dx12_warning_enabled:
             data = src_model.data(
                     src_model.index(src_row, self.filter_col_index['dx12']),
-                    Qt.DecorationRole)
+                    Qt.UserRole)
             dx12_warning_test = data is not None
         else:
             dx12_warning_test = True
@@ -539,12 +563,56 @@ class _SortProxyModel(QSortFilterProxyModel):
         if self.filter_dx02_warning_enabled:
             data = src_model.data(
                     src_model.index(src_row, self.filter_col_index['dx02']),
-                    Qt.DecorationRole)
+                    Qt.UserRole)
             dx02_warning_test = data is not None
         else:
             dx02_warning_test = True
         #
         if not dx02_warning_test:
+            return False
+
+        # field test
+        if self.filter_field_enabled:
+            data = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['field']),
+                    Qt.DisplayRole)
+            field_test = data in self.filter_field_list
+        else:
+            field_test = True
+        #
+        if not field_test:
+            return False
+
+        # dtype test
+        if self.filter_dtype_enabled:
+            data = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['type']),
+                    Qt.DisplayRole)
+            dtype_test = data in self.filter_dtype_list
+        else:
+            dtype_test = True
+        #
+        if not dtype_test:
+            return False
+
+        # pos test (sb <= pos or sb > pos)
+        if self.filter_pos1_enabled or self.filter_pos2_enabled:
+            data = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['pos']),
+                    Qt.DisplayRole)
+            v = float(data)
+            pos1_test = False
+            pos2_test = False
+            pos = self.filter_pos_value
+            if self.filter_pos1_enabled:
+                pos1_test = v <= pos
+            if self.filter_pos2_enabled:
+                pos2_test = v > pos
+            pos_test = pos1_test or pos2_test
+        else:
+            pos_test = True
+        #
+        if not pos_test:
             return False
 
         # string filters
@@ -1088,7 +1156,7 @@ class SnapshotDataModel(QStandardItemModel):
         else:
             bgc = BG_COLOR_GOLDEN_NO
             tt = TT_NOT_GOLDEN
-        px.fill(QColor(bgc))
+        px.fill(QColor(*bgc))
         it.setData(px, Qt.DecorationRole)
         it.setData(tt, Qt.UserRole)
         it.setToolTip(tt)
@@ -1236,6 +1304,12 @@ class _SnpProxyModel(QSortFilterProxyModel):
         self.setSourceModel(model)
         self.setRecursiveFilteringEnabled(True)
         self.reset_cache()
+        # date filer
+        self.filter_date_enabled = False
+        self.filter_date_tuple = None # (date1, date2)
+        # note filter
+        self.filter_note_enabled = False
+        self.filter_note_string = None
 
     def reset_cache(self):
         self._ion_hit_cache = {}
@@ -1264,6 +1338,8 @@ class _SnpProxyModel(QSortFilterProxyModel):
                 m._ion_filter_cnt[ion_name] += 1
                 self._ion_hit_cache[snp_data.name] = True
             ion_test = ion_name in ion_filter_list
+        if not ion_test:
+            return False
 
         if tag_filter_list is None:
             tag_test = True
@@ -1280,4 +1356,27 @@ class _SnpProxyModel(QSortFilterProxyModel):
                 if not is_cnted:
                     m._tag_filter_cnt[tag] += 1
                     self._tag_hit_cache[snp_data.name] = True
-        return ion_test and tag_test
+        if not tag_test:
+            return False
+
+        # date
+        if self.filter_date_enabled:
+            dt1, dt2 = self.filter_date_tuple
+            date_test = (dt1 <= snp_data.ts_as_datetime() <= dt2)
+        else:
+            date_test = True
+        if not date_test:
+            return False
+
+        # note
+        if self.filter_note_enabled:
+            # ignore case, loose wild card match
+            note_test = re.match(translate(self.filter_note_string.lower()),
+                    snp_data.note.lower()) is not None
+        else:
+            note_test = True
+        if not note_test:
+            return False
+
+        #
+        return True

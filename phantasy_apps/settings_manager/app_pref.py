@@ -24,6 +24,8 @@ from .utils import DEFAULT_TS_PATH, DEFAULT_MS_PATH, DEFAULT_ELEM_PATH
 from .utils import reset_config
 from .ui.ui_preferences import Ui_Dialog
 
+_curdir = os.path.abspath(os.path.dirname(__file__))
+
 DEFAULT_FIELD_INIT_MODE = 'model'
 DEFAULT_INIT_SETTINGS = False
 DEFAULT_T_WAIT = 0.05
@@ -32,7 +34,7 @@ DEFAULT_CONFIG_SYNC_TIME_INTERVAL = 10  # second
 DEFAULT_N_DIGITS = 3
 DEFAULT_CONFIG_PATH = "~/.phantasy-apps/settings-manager"
 DEFAULT_WDIR1 = "/files/shared/ap/settings_manager"
-DEFAULT_WDIR2 = "~/settings_manager"
+DEFAULT_WDIR2 = os.path.join(_curdir, "testdata", "settings_manager")
 if os.path.exists(DEFAULT_WDIR1):
     DEFAULT_WDIR = DEFAULT_WDIR1
 else:

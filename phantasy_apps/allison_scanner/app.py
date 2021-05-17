@@ -70,6 +70,8 @@ CNT_IS_INT_STY = """
     }
 """
 
+PX_SIZE = 24
+
 
 class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
@@ -137,21 +139,21 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                               self.reset_itlk_btn)
         self.on_auto_fill_beam_params(self._device_mode)
         # st
-        self._active_px = QPixmap(":/icons/active.png")
-        self._inactive_px = QPixmap(":/icons/inactive.png")
-        self._outlimit_px = QPixmap(":/icons/off.png")
-        self._enable_px = QPixmap(":/icons/on.png")
-        self._not_enable_px = QPixmap(":/icons/off.png")
-        self._itlk_px = QPixmap(":/icons/on.png")
-        self._not_itlk_px = QPixmap(":/icons/off.png")
-        self._ioc_ready_px = QPixmap(":/icons/on.png")
-        self._ioc_not_ready_px = QPixmap(":/icons/off.png")
+        self._active_px = QPixmap(":/icons/active.png").scaled(PX_SIZE, PX_SIZE)
+        self._inactive_px = QPixmap(":/icons/inactive.png").scaled(PX_SIZE, PX_SIZE)
+        self._outlimit_px = QPixmap(":/icons/off.png").scaled(PX_SIZE, PX_SIZE)
+        self._enable_px = QPixmap(":/icons/on.png").scaled(PX_SIZE, PX_SIZE)
+        self._not_enable_px = QPixmap(":/icons/off.png").scaled(PX_SIZE, PX_SIZE)
+        self._itlk_px = QPixmap(":/icons/on.png").scaled(PX_SIZE, PX_SIZE)
+        self._not_itlk_px = QPixmap(":/icons/off.png").scaled(PX_SIZE, PX_SIZE)
+        self._ioc_ready_px = QPixmap(":/icons/on.png").scaled(PX_SIZE, PX_SIZE)
+        self._ioc_not_ready_px = QPixmap(":/icons/off.png").scaled(PX_SIZE, PX_SIZE)
         #
-        self._fetch_red_px = QPixmap(":/icons/fetch_red.png")
-        self._fetch_px = QPixmap(":/icons/fetch.png")
+        self._fetch_red_px = QPixmap(":/icons/fetch_red.png").scaled(PX_SIZE, PX_SIZE)
+        self._fetch_px = QPixmap(":/icons/fetch.png").scaled(PX_SIZE, PX_SIZE)
         #
-        self.installed_px = QPixmap(":/icons/installed.png")
-        self.not_installed_px = QPixmap(":/icons/not-installed.png")
+        self.installed_px = QPixmap(":/icons/installed.png").scaled(PX_SIZE, PX_SIZE)
+        self.not_installed_px = QPixmap(":/icons/not-installed.png").scaled(PX_SIZE, PX_SIZE)
         # lbls
         [o.setPixmap(QPixmap(":/icons/rightarrow.png")) for o in
                 (self.slit_info_lbl, self.len_info_lbl, self.gap_info_lbl)]

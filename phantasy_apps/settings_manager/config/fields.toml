@@ -3,10 +3,21 @@
 # key name could be element type and element name (higher priority)
 
 [DEFAULT]
-fields = ['I', 'V']
+fields = ['I', 'V', 'TM', 'B', 'B2', 'B3', 'VOLT']
 
 [CAV]
-fields = ['PHA', 'AMP', 'PHASE', 'AMPLITUDE']
+fields = ['PHA', 'AMP', 'PHASE', 'AMPLITUDE',
+          'PHA_CREST', 'PHASE_CREST', 'AMP_COEF', 'AMPLITUDE_COEF',
+]
+
+["FE_LEBT:CAV_D0987"]
+fields = ['PHA1', 'AMP1', 'PHASE1', 'AMPLITUDE1',
+          'PHA2', 'AMP2', 'PHASE2', 'AMPLITUDE2',
+          'PHA3', 'AMP3', 'PHASE3', 'AMPLITUDE3',
+          'PHA1_CREST', 'PHASE1_CREST', 'AMP1_COEF', 'AMPLITUDE1_COEF',
+          'PHA2_CREST', 'PHASE2_CREST', 'AMP2_COEF', 'AMPLITUDE2_COEF',
+          'PHA3_CREST', 'PHASE3_CREST', 'AMP3_COEF', 'AMPLITUDE3_COEF',
+]
 
 [HCOR]
 fields = ['I', 'TM']
@@ -17,17 +28,50 @@ fields = ['I', 'TM']
 [SOL]
 fields = ['I', 'B']
 
+[PM]
+fields = ['BIAS_VOLT', 'BIAS_VOLTAGE']
+
+[EMS]
+fields = ['BIAS_VOLT', 'BIAS_VOLTAGE']
+
+[IC]
+fields = ['BIAS_VOLT', 'BIAS_VOLTAGE']
+
+[ND]
+fields = ['BIAS_VOLT', 'BIAS_VOLTAGE']
+
+[HMR]
+fields = ['BIAS_VOLT', 'BIAS_VOLTAGE']
+
+[FC]
+fields = ['BIAS_VOLT', 'BIAS_VOLTAGE']
+
 [BEND]
-fields = ['I', 'B']
+fields = ['I', 'B', 'I_TC', 'B_TC']
 
 [EBEND]
-fields = ['V']
+fields = ['V', 'VOLT']
 
 [EQUAD]
-fields = ['V']
+fields = ['V', 'VOLT']
 
 [QUAD]
 fields = ['I', 'B2']
 
 [SEXT]
 fields = ['I', 'B3']
+
+# ISRC1
+[HVP]
+fields = ['V', 'VOLT']
+[SEL]
+fields = ['V', 'VOLT']
+[SB]
+fields = ['V', 'VOLT']
+[SX]
+fields = ['V', 'VOLT']
+[SE]
+fields = ['V', 'VOLT']
+[ION]
+fields = ['A', 'ION_MASS', 'Q', 'ION_CHARGE', 'Z', 'ION_NUMBER']
+

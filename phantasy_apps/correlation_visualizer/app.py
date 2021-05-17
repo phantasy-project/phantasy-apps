@@ -1271,10 +1271,15 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         timeout = self.scan_task.t_wait
         extra_wait = self.scan_task.t_wait_extra
         print(f"--- reset element: value: {x0}, tol: {tol}, timeout: {timeout}, extra_wait: {extra_wait}")
-        self.scan_task.alter_action(x0, alter_elem=self.scan_task.alter_element,
-                                    tolerance=tol, timeout=timeout, extra_wait=extra_wait)
-        self.scanlogUpdated.emit(
-            "Alter element reaches {0:.3f}".format(x0))
+        # crash set None issue // debug
+        if x0 is not None:
+            self.scan_task.alter_action(x0, alter_elem=self.scan_task.alter_element,
+                                        tolerance=tol, timeout=timeout, extra_wait=extra_wait)
+            self.scanlogUpdated.emit(
+                "Alter element reaches {0:.3f}".format(x0))
+        else:
+            self.scanlogUpdated.emit(
+                "Skip reset alter element to None.")
         # in case it is 'resume' while scan is done
         self.pause_btn.setText('Pause')
 

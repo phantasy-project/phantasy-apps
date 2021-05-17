@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_app.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,10 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1024, 768)
+        MainWindow.resize(1440, 1080)
+        MainWindow.setStyleSheet("QLineEdit {\n"
+                                 "    padding: 2px 2px 2px 10px;\n"
+                                 "}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -37,7 +40,7 @@ class Ui_MainWindow(object):
         self.groupBox = QtWidgets.QGroupBox(self.splitter)
         self.groupBox.setObjectName("groupBox")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.groupBox)
-        self.gridLayout_2.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_2.setContentsMargins(4, 12, 4, 4)
         self.gridLayout_2.setSpacing(4)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.label_4 = QtWidgets.QLabel(self.groupBox)
@@ -91,10 +94,14 @@ class Ui_MainWindow(object):
         self.groupBox_2 = QtWidgets.QGroupBox(self.splitter)
         self.groupBox_2.setObjectName("groupBox_2")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.groupBox_2)
-        self.gridLayout_3.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_3.setContentsMargins(4, 12, 4, 4)
         self.gridLayout_3.setSpacing(4)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.beam_power_lineEdit = QtWidgets.QLineEdit(self.groupBox_2)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.beam_power_lineEdit.setFont(font)
         self.beam_power_lineEdit.setReadOnly(True)
         self.beam_power_lineEdit.setObjectName("beam_power_lineEdit")
         self.gridLayout_3.addWidget(self.beam_power_lineEdit, 1, 1, 1, 1)
@@ -108,7 +115,7 @@ class Ui_MainWindow(object):
         self.groupBox_3 = QtWidgets.QGroupBox(self.splitter_2)
         self.groupBox_3.setObjectName("groupBox_3")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.groupBox_3)
-        self.verticalLayout.setContentsMargins(4, 4, 4, 4)
+        self.verticalLayout.setContentsMargins(4, 12, 4, 4)
         self.verticalLayout.setSpacing(4)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -143,6 +150,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.draw_btn)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.matplotlibcurveWidget = MatplotlibCurveWidget(self.groupBox_3)
+        self.matplotlibcurveWidget.setFigureAutoScale(True)
         self.matplotlibcurveWidget.setProperty("figureTightLayout", False)
         font = QtGui.QFont()
         font.setFamily("Monospace")
@@ -159,8 +167,8 @@ class Ui_MainWindow(object):
         font.setWeight(50)
         self.matplotlibcurveWidget.setFigureTitleFont(font)
         self.matplotlibcurveWidget.setProperty("figureDPI", 100.0)
-        self.matplotlibcurveWidget.setFigureMTicksToggle(True)
         self.matplotlibcurveWidget.setFigureGridToggle(True)
+        self.matplotlibcurveWidget.setFigureMTicksToggle(True)
         font = QtGui.QFont()
         font.setFamily("sans-serif")
         font.setPointSize(14)
@@ -168,7 +176,6 @@ class Ui_MainWindow(object):
         font.setItalic(False)
         font.setWeight(50)
         self.matplotlibcurveWidget.setFigureXYticksFont(font)
-        self.matplotlibcurveWidget.setFigureAutoScale(True)
         self.matplotlibcurveWidget.setObjectName("matplotlibcurveWidget")
         self.verticalLayout.addWidget(self.matplotlibcurveWidget)
         self.gridLayout_4.addWidget(self.splitter_2, 0, 0, 1, 1)
@@ -179,7 +186,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.tabWidget, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1024, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1440, 30))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -207,6 +214,25 @@ class Ui_MainWindow(object):
         self.actionE_xit.triggered.connect(MainWindow.close)
         self.action_About.triggered.connect(MainWindow.onAbout)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        MainWindow.setTabOrder(self.tabWidget, self.pulse_length_lineEdit)
+        MainWindow.setTabOrder(self.pulse_length_lineEdit,
+                               self.rep_rate_lineEdit)
+        MainWindow.setTabOrder(self.rep_rate_lineEdit,
+                               self.duty_cycle_lineEdit)
+        MainWindow.setTabOrder(self.duty_cycle_lineEdit,
+                               self.peak_current_lineEdit)
+        MainWindow.setTabOrder(self.peak_current_lineEdit,
+                               self.ion_mass_lineEdit)
+        MainWindow.setTabOrder(self.ion_mass_lineEdit,
+                               self.ion_charge_lineEdit)
+        MainWindow.setTabOrder(self.ion_charge_lineEdit,
+                               self.beam_energy_lineEdit)
+        MainWindow.setTabOrder(self.beam_energy_lineEdit, self.param_cbb)
+        MainWindow.setTabOrder(self.param_cbb, self.from_lineEdit)
+        MainWindow.setTabOrder(self.from_lineEdit, self.to_lineEdit)
+        MainWindow.setTabOrder(self.to_lineEdit, self.step_lineEdit)
+        MainWindow.setTabOrder(self.step_lineEdit, self.draw_btn)
+        MainWindow.setTabOrder(self.draw_btn, self.beam_power_lineEdit)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
