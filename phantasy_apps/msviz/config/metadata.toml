@@ -1,3 +1,5 @@
+# Configuration to work with for machine state data fetching.
+#
 # Keep PV-of-interest for data retriever when taking snapshot
 # The values are the addtional metadata for the machine settings.
 #
@@ -5,6 +7,27 @@
 # Each other section keep a list of general PV names to fetch data via caget
 # the section name could be defined w.r.t. the purposes, with a list of PVs
 # under key 'names'.
+#
+# Inside the output data file (e.g. xlsx format), the first two columns
+# ('PV' and 'Group') are PV names and group names (section name except
+# 'DAQ', e.g. 'BPM-X'), followed by 'nshot' columns of values, with the
+# timestamps as the column names, lastly followed by column 'avg' and
+# 'std' for average and standard deviation of the 'nshot' values.
+#
+# The schematic data structure:
+# =========================================================
+# | PV | Group | ts0 | ts1 | ... | ts-nshot | avg | std   |
+# ---------------------------------------------------------
+# | pv1| grp1  | v0  | v1  | ... | v-nshot  | <v> | sigma |
+# | ...                                                   |
+# =========================================================
+#
+# This configuration file could be dumped to a file in the Terminal by:
+# $ fetch_mach_state --show-config > myconfig.toml
+# And fetch machine state by:
+# $ fetch_mach_state --config myconfig.toml -o machstate.csv
+# Override rate/nshot argument by --rate/--nshot, e.g.:
+# $ fetch_mach_state --config myconfig.toml -o machstate.csv --rate 1 --nshot 10
 #
 [DAQ]
 # rate (Hz), shot number
@@ -621,7 +644,7 @@ names = [
 'FS2_BTS:BCM_D3936:AVGPK_RD',
 'FS2_BBS:BCM_D4169:AVGPK_RD',
 'BDS_BTS:BCM_D5521:AVGPK_RD',
-] 
+]
 
 [FC-AVG]
 names = [
@@ -634,6 +657,7 @@ names = [
 'FS1_BMS:FC_D2634:AVG_RD',
 'FS2_BMS:FC_D4253:AVG_RD',
 ]
+
 [FC-PKAVG]
 names = [
 'FE_SCS1:FC_D0738:PKAVG_RD',
@@ -645,9 +669,10 @@ names = [
 'FS1_BMS:FC_D2634:PKAVG_RD',
 'FS2_BMS:FC_D4253:PKAVG_RD',
 ]
+
 [FC-STS-IN]
 names = [
-'FE_SCS1:FC_D0739:LMNEG_RSTS_DRV', 
+'FE_SCS1:FC_D0739:LMNEG_RSTS_DRV',
 'FE_LEBT:FC_D0814:LMNEG_RSTS_DRV',
 'FE_LEBT:FC_D0977:LMNEG_RSTS_DRV',
 'FE_LEBT:FC_D0998:LMIN_RSTS',
@@ -656,6 +681,7 @@ names = [
 'FS1_BMS:FC_D2634:LMIN_RSTS',
 'FS2_BMS:FC_D4253:LMIN_RSTS',
 ]
+
 [FC-STS-OUT]
 names = [
 'FE_SCS1:FC_D0739:LMPOS_RSTS_DRV',
@@ -666,4 +692,11 @@ names = [
 'LS1_WA03:FC_D1224:LMOUT_RSTS',
 'FS1_BMS:FC_D2634:LMOUT_RSTS',
 'FS2_BMS:FC_D4253:LMOUT_RSTS',
+]
+
+[Charge-State]
+names = [
+'FS1_BBS:CSEL_D2405:CTR_MTR.RBV', # Charge stripper center
+'FS1_BBS:CSEL_D2405:GAP_MTR.RBV', # Charge stripper gap
+'ACC_OPS:BEAM:Q_STRIP',           # Reference charge state after stripper
 ]
