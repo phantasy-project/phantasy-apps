@@ -15,12 +15,13 @@
 # 'std' for average and standard deviation of the 'nshot' values.
 #
 # The schematic data structure:
-# =========================================================
-# | PV | Group | ts0 | ts1 | ... | ts-nshot | avg | std   |
-# ---------------------------------------------------------
-# | pv1| grp1  | v0  | v1  | ... | v-nshot  | <v> | sigma |
-# | ...                                                   |
-# =========================================================
+# +=================================================+
+# | PV | Group | ts1 | ... | ts-nshot | avg | std   |
+# +-------------------------------------------------+
+# | pv1| grp1  | v1  | ... | v-nshot  | <v> | sigma |
+# +-------------------------------------------------+
+# | ...                                             |
+# +=================================================+
 #
 # This configuration file could be dumped to a file in the Terminal by:
 # $ fetch_mach_state --show-config > myconfig.toml
@@ -694,9 +695,51 @@ names = [
 'FS2_BMS:FC_D4253:LMOUT_RSTS',
 ]
 
+[Beam-Source]
+names = [
+# 'FE_ISRC1:BEAM:ELMT_BOOK',       # Ion name, string to be supported
+'FE_ISRC1:BEAM:Q_BOOK',          # Ion charge, Q
+'FE_ISRC1:BEAM:A_BOOK',          # Ion mass, A
+'FE_ISRC1:BEAM:Z_BOOK',          # Ion number, Z
+'FE_ISRC1:BEAM:MOVRQ_BOOK',      # A/Q
+'FE_ISRC1:BEAM:MASS_BOOK',       # Ion mass in float
+'FE_SCS1:BEAM:HV_BOOK',          # Ek0 = <- * Q / A [kV/u]
+'ACS_DIAG:BPM_ENGY1:KE_PEAK_RD', # Energy 1 [MeV/u]
+'ACS_DIAG:BPM_ENGY2:KE_PEAK_RD', # Energy 2 [MeV/u]
+'ACS_DIAG:BPM_ENGY4:POWER_RD',   # Power [W]
+]
+
+[Chopper-State]
+names = [
+'DIAG_MTCA01:EVR2:duty_factor',        # Duty factor [%]
+'GTS_FTS:MSTR_N0001:O8:FR_CSET_REP',   # Rep Rate, as_string (1:'1 Hz', 2:'2.5 Hz', 3:'5 Hz', 4:'10 Hz', 5:'25 Hz', 6:'100 Hz')
+'GTS_FTS:MSTR_N0001:O8:TIM_CSET_PULA', # Pulse width [us]
+'ACS_DIAG:CHP:STATE_RD',               # State, as_string (1:'Off', 2:'Blocking', 3:'Running')
+]
+
 [Charge-State]
 names = [
 'FS1_BBS:CSEL_D2405:CTR_MTR.RBV', # Charge stripper center
 'FS1_BBS:CSEL_D2405:GAP_MTR.RBV', # Charge stripper gap
 'ACC_OPS:BEAM:Q_STRIP',           # Reference charge state after stripper
+]
+
+[Operation-Mode]
+names = [
+'ACC_OPS:OPS_STS',                   # Operational state, (0:'No Shift', 1:'Maintenance', 2:'Operation')
+'GTS_FTS:MSTR_N0001:MODE_CSET_BEAM', # Beam mode
+'MPS_RPS:IOC_N0001:MODE_RCMD_MACH',  # Machine mode
+# Machine mode
+# M0_00: Maintenance
+# M1_01: Beam to SCS1
+# M1_02: Beam to ULEBT
+# M2_01: Beam to LLEBT
+# M2_02: Beam to MEBT
+# M2_03: Beam to LS1
+# M2_04: Beam to FS1a
+# M2_05: Beam to FS1b
+# M2_06: Beam to FS1c
+# M2_07: Beam to FS1a
+# M2_08: Beam to FS2b
+# M2_09: Beam to BDS
 ]
