@@ -2389,7 +2389,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             dirname = os.path.dirname(data.data_path)
             if not os.path.exists(dirname):
                 os.makedirs(dirname)
-        self._save_settings(data, data.data_path)
+        if isinstance(data.data_path, str):
+            data_path = pathlib.Path(data.data_path)
+        else:
+            data_path = data.data_path
+        ext = data_path.suffix.lower()[1:]
+        self._save_settings(data, data.data_path, ext)
         self.snp_saved.emit(data.name, data.data_path)
 
     def on_saveas_settings(self, data):
