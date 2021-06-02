@@ -632,13 +632,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_update_filter_controls(self, snpdata):
         """Update filter controls
         """
-        settings_list = snpdata.data
-        fname_set = set()
-        dtype_set = set()
-        for line in settings_list:
-            fname, dtype = line[1], line[2]
-            fname_set.add(fname)
-            dtype_set.add(dtype)
+        fname_set = set(snpdata.data.Field.to_list())
+        dtype_set = set(snpdata.data.Type.to_list())
         self._build_filter_ctrls(self.filter_ctrls_hbox,
                                  sorted(fname_set), sorted(dtype_set))
 
