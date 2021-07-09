@@ -108,6 +108,7 @@ class SettingsRow(object):
         if filename is None:
             filename = "{prefix}-{name}-{cid}-{ek:.3f}.csv".format(
                 prefix=prefix, name=self.name, cid=self.cid, ek=self.ek)
+        filename = filename.replace('#', '_')
         filepath = os.path.abspath(
                 os.path.expanduser(os.path.join(rootpath, filename)))
         if not os.path.exists(os.path.dirname(filepath)):
@@ -117,7 +118,7 @@ class SettingsRow(object):
         name = "{prefix}-{name}-{cid}-{ek:.3f}_{ts}".format(
                 prefix=prefix, name=self.name, cid=self.cid, ek=self.ek, ts=ts)
         ts_as_str = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        self.meta.update({'filepath': filepath, 'name': name,
+        self.meta.update({'name': name,
                           'timestamp': ts, 'datetime': ts_as_str, })
         if 'note' not in self.meta:
             note = "Row {prefix}, {ek:.3f} MeV, {name}-#{cid}".format(
