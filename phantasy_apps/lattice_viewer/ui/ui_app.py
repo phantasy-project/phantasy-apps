@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_app.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1300, 975)
+        MainWindow.resize(1645, 1150)
         MainWindow.setMinimumSize(QtCore.QSize(0, 0))
         MainWindow.setStyleSheet("QLineEdit {\n"
                                  "    border: 0.5px solid gray;\n"
@@ -21,10 +21,8 @@ class Ui_MainWindow(object):
                                  "}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
-        self.verticalLayout_2.setContentsMargins(6, 12, 6, 6)
-        self.verticalLayout_2.setSpacing(4)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.gridLayout_4 = QtWidgets.QGridLayout(self.centralwidget)
+        self.gridLayout_4.setObjectName("gridLayout_4")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setContentsMargins(-1, 0, -1, -1)
         self.verticalLayout.setSpacing(4)
@@ -64,30 +62,6 @@ class Ui_MainWindow(object):
         self.treeView.setMinimumSize(QtCore.QSize(0, 600))
         self.treeView.setObjectName("treeView")
         self.gridLayout.addWidget(self.treeView, 0, 0, 1, 1)
-        self.layout_view_gb = QtWidgets.QGroupBox(self.splitter)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.layout_view_gb.sizePolicy().hasHeightForWidth())
-        self.layout_view_gb.setSizePolicy(sizePolicy)
-        self.layout_view_gb.setObjectName("layout_view_gb")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.layout_view_gb)
-        self.gridLayout_2.setContentsMargins(2, 2, 2, 2)
-        self.gridLayout_2.setSpacing(4)
-        self.gridLayout_2.setObjectName("gridLayout_2")
-        self.layout_plot = MatplotlibBaseWidget(self.layout_view_gb)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.layout_plot.sizePolicy().hasHeightForWidth())
-        self.layout_plot.setSizePolicy(sizePolicy)
-        self.layout_plot.setProperty("figureTightLayout", True)
-        self.layout_plot.setObjectName("layout_plot")
-        self.gridLayout_2.addWidget(self.layout_plot, 0, 0, 1, 1)
         self.verticalLayout.addWidget(self.splitter)
         self.gridLayout_3 = QtWidgets.QGridLayout()
         self.gridLayout_3.setContentsMargins(2, 2, 2, 2)
@@ -156,10 +130,10 @@ class Ui_MainWindow(object):
         self.elem_sts_lineEdit.setObjectName("elem_sts_lineEdit")
         self.gridLayout_3.addWidget(self.elem_sts_lineEdit, 1, 1, 1, 3)
         self.verticalLayout.addLayout(self.gridLayout_3)
-        self.verticalLayout_2.addLayout(self.verticalLayout)
+        self.gridLayout_4.addLayout(self.verticalLayout, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1300, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1645, 30))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
@@ -168,6 +142,29 @@ class Ui_MainWindow(object):
         self.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
+        self.layout_dock = DockWidget(MainWindow)
+        self.layout_dock.setStyleSheet("QDockWidget {\n"
+                                       "    font-weight: bold;\n"
+                                       "}\n"
+                                       "\n"
+                                       "QDockWidget::title {\n"
+                                       "    text-align: left;\n"
+                                       "    background: lightgreen;\n"
+                                       "    padding-left: 16px;\n"
+                                       "}")
+        self.layout_dock.setFeatures(
+            QtWidgets.QDockWidget.AllDockWidgetFeatures)
+        self.layout_dock.setObjectName("layout_dock")
+        self.dockWidgetContents = QtWidgets.QWidget()
+        self.dockWidgetContents.setObjectName("dockWidgetContents")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.dockWidgetContents)
+        self.gridLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.layout_plot = MatplotlibBaseWidget(self.dockWidgetContents)
+        self.layout_plot.setObjectName("layout_plot")
+        self.gridLayout_2.addWidget(self.layout_plot, 0, 0, 1, 1)
+        self.layout_dock.setWidget(self.dockWidgetContents)
+        MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(8), self.layout_dock)
         self.actionAbout = QtWidgets.QAction(MainWindow)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
@@ -219,12 +216,13 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.lattice_list_gb.setTitle(_translate("MainWindow", "Lattice"))
-        self.layout_view_gb.setTitle(_translate("MainWindow", "Layout View"))
         self.label_2.setText(_translate("MainWindow", "Total Elements"))
         self.label_3.setText(_translate("MainWindow", "Device Types"))
         self.label.setText(_translate("MainWindow", "By Device Type"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
+        self.layout_dock.setWindowTitle(
+            _translate("MainWindow", "Schematic Layout"))
         self.actionAbout.setText(_translate("MainWindow", "About"))
         self.actionAbout.setShortcut(_translate("MainWindow", "Ctrl+A"))
         self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
@@ -243,6 +241,7 @@ class Ui_MainWindow(object):
 
 
 from mpl4qt.widgets.mplbasewidget import MatplotlibBaseWidget
+from phantasy_ui.widgets import DockWidget
 from . import resources_rc
 
 if __name__ == "__main__":
