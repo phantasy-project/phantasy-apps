@@ -1400,7 +1400,7 @@ class Ui_MainWindow(object):
                        "Capture additional data as machine state."))
 
 
-from phantasy_apps.settings_manager.dockerwidget import DockWidget
+from phantasy_ui.widgets import DockWidget
 from . import resources_rc
 
 if __name__ == "__main__":
