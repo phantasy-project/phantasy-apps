@@ -170,7 +170,8 @@ class LatticeViewerWindow(BaseAppForm, Ui_MainWindow):
         lat = self.__mp.work_lattice_conf
         layout = lat.layout
         ax = self.layout_plot.axes
-        layout.draw(ax=ax, span=(1.05, 1.1))
+        fig = self.layout_plot.figure
+        layout.draw(ax=ax, fig=fig, span=(1.05, 1.1))
         self.layout_plot.update_figure()
 
     def on_update_metainfo(self, o):
