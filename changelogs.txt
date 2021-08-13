@@ -1,3 +1,504 @@
+Version 5.0.0
+-------------
+2021-08-13
+
+- MNT: Bump version to 5.0.0.
+- FIX/LV: Update layout drawing.
+- UI/LV: Update UI.
+- UI/SM: Update UI.
+- MNT: Move to phantasy-ui project.
+- MNT/SM: Update the notebook for generating setting files.
+- MNT/SM: Add a sheet of data for 20MeV 86Kr17.
+- REF/SM: Add support to show Helium icon tag.
+- UI/SM: Update resources.
+- MNT/SM: Update pre-defined settings for beam study.
+- REF/SM: Remove filepath key, replace # to _ for filename.
+- MNT/SM: Add xlsx settings for beam study beginning 2021/07/11.
+- MNT/AL: Update devel config file.
+- MNT/SM: Update notebook for settings generation.
+- MNT/SM: Add a new xlsx setting sheet.
+- BUG: Fix Field and Type filter buttons.
+- MNT/SM: Update notebook for generate settings.
+- BUG/SM: Fix inplace saving for CSV file type.
+- MNT/SM: Add a new xlsx setting sheet.
+- REF/MV: Add beam mode and info for machine state data.
+- MNT/MV: Update machine state configuration.
+- REF/SM: Convert path str to pathlib.Path for read_data().
+- REF/SM: Auto-detect file extension for read_data().
+- FIX/SM: Handle exceptions for reading unsupported snapshot files.
+- MNT/SM: Bump up version to 8.0, update changelog.
+- MNT/SM: Clean up, retire deprecated functions.
+- UI/SM: Update UI.
+- REF/SM: Clean up.
+- ENH/SM: Adopt new data structure for SnapshotData, support recording machine state.
+- REF/MV: Print progress by default for fetch() function.
+- MNT/SM: Rename 'Last Power Status' to 'Last Power State'.
+- UI/CV: Change default set timeout to 30sec.
+- MNT/MV: Add notebook for generating machine state config.
+- WIP/MV: Update data processing notebook.
+- WIP/MV: Update machine state configuration file.
+- MNT/MV: Add support script/notebook for data processing.
+- MNT/MV: Initiate machine state config file for FRIB/LINAC.
+- MNT/MV: Rename metadata.toml to metadata_va.toml for local development.
+- ENH/MV: Add support to show progress bar with tqdm.
+- ENH/MV: Implement CLI tool fetch_mach_state.
+- MNT: Fix entry point of fetch_mach_state CLI tool.
+- REF/SM: Update regarding MV/mach_state updates.
+- REF/MV: Separate the logics of data fetching and config parsing.
+- MNT/SM: Use daq_func from MV app for machine state fetching.
+- REF/MV: Add daq_func function for DAQT when working with GUI.
+- MNT/MV: Add metadata.toml into package.
+- REF: Changes regarding mach_state model relocating.
+- MNT/MV: Move mach_state module from SM.
+- REF/SM: Update machine state fetcher with datetime as column names.
+- REF/SM: Use datetime as column names instead of shot-#.
+- ENH/SM: Add rate,nshot arguments to support override config if needed.
+- ENH/MV: Initial new app for machine state data visualization.
+- REF/SM: Auto-refresh snapshots when new creation/changes detected.
+- REF/SM: Set secondary default snapshots folder to testdata/settings_manager.
+- UI/SM: Update UI and resources.
+- ENH/SM: Implement machine state fetch feature.
+- ENH/SM: Add function to build dataframe from DAQT for machstate fetch.
+- BUG/SM: Do not pop 'DAQ' key, use only one copy of conf dict.
+- MNT/SM: Add fetch_mach_state function into phantasy_apps.settings_manager ns.
+- ENH/SM: Add function for machine state fetch based on PV config file.
+- ENH/SM: Save device power status when taking snapshot.
+- ENH/SM: Select date range with DateTimeRangePicker widget.
+- UI/SM: Update UI.
+- ENH/SM: Add dialog for date range selection.
+- REF/SM: Use LOCK_STATUS for CAV power on/off indication.
+- REF/CV: Handle exception when x0 is None when reset.
+- REF/CV: Wait 1.0 second then check alter element PV connection status.
+- MNT/WS: Initial config for PM_2444 and PM_2602
+- REF/SM: Generate settings for LS3 cavity tuning.
+- MNT/SM: Add settings xlsx data for LS3 cavity tuning.
+- ENH/SM: Implement filter snapshots by note string pattern.
+- UI/SM: Update UI, add filter snapshots by note controls.
+- ENH/SM: Implement filter snapshots by date range.
+- UI/SM: Update UI with snapshot date range filter controls.
+- REF/SM: Add method to return datetime object from SnapshotData.
+- UI/SM: Update UI.
+- ENH/SM: Implement filter by longitudinal position, apply OR logic.
+- ENH/SM: Update proxymodel to support filter button by pos.
+- UI/SM: Add pos filter controls.
+- ENH/SM: Implement filter by field, type through tool btns nad checkboxes.
+- ENH/SM: Update proxymodel to support filter button by field and type.
+- UI/SM: Add placeholder for more filter buttons.
+- MNT/SM: Optimize auto-calculating scaling factor.
+- UI/CL: Update UI and tab order.
+- MNT/SM: Update changelogs.
+- MNT/SM: Bump up version to 7.1.
+- REF/SM: Optimize trip event reset logic for PWRSTS switch.
+- REF/SM: Do update 2 secs later after PWRSTS is changed.
+- REF/SM: Refactor power switch action to be submenu with reset trip events action.
+- UI/SM: Update resources.
+- REF/SM: Do single data update after switching PWRSTS.
+- REF/SM: Add icons for PWRSTS switch context menu.
+- UI/SM: Update resources.
+- ENH/SM: Add function to reset trip events of ISEG PS of DIAG.
+- MNT/SM: Update field-of-interest for DIAG devices.
+- Merge branch 'master' of https://stash.frib.msu.edu/scm/phyapp/phantasy-apps
+- ENH/SM: Add context menu to switch PWRSTS of selected items.
+- REF: Add field-of-interest for FC,PM,IC,ND,HMR,EMS.
+- REF/SM: Add I_TC, and B_TC to field-of-interest of BEND.
+- FIX/SM: dx02 and dx12 warning filter buttons.
+- REF/SM: Make no-golden and no-warning pixmap transparent.
+- REF/SM: Align numbers by decimal point.
+- REF/SM: Create a dict for devices are readonly.
+- MNT/AS: Set pixmap to 24x24.
+- MNT/SM: Bump up version to 7.0.
+- MNT/SM: Update changelog.
+- MNT/SM: Update config files.
+- ENH/SM: Replace ion param info (A, Q, Z) with alias.
+- ENH/SM: Replace RFQ with alias.
+- BUG/SM: Quit eventloop to allow events pass forward.
+- UI/SM: Update resources.
+- ENH/SM: Add support to Pb icon.
+- ENH/SM: Replace ISRC1 elements with alias.
+- UI/SM: Update UI and resources.
+- ENH/SM: Auto adjust column width after loading snapshot.
+- ENH/SM: Support sort by power column.
+- ENH/SM: Support show power status for CAV.
+- ENH/SM: Update the field-of-interest for all devices.
+- REF/SM: Replace ISRC1 element names with defined alias.
+- Merge pull request #8 from archman/sm-pwrsts
+- UI/SM: Refresh data by F5, Ctrl+F5 (continuously).
+- FIX/SM: Layout of visibility control buttons.
+- UI/SM: Update resources.
+- ENH/SM: Create a new column for device power status.
+- REF/SM: Override preloaded lattice elements if loaded a different one.
+- Merge branch 'sm' into sm-pwrsts
+- ENH/SM: Do global data refresher when any status filter btn is on.
+- Merge branch 'sm' into sm-pwrsts
+- REF/SM: Add support of LIVE_MODE env for running app.
+- ENH/SM: Add default configuration file for field-of-interest.
+- ENH/SM: Add support to define field-of-interest when pulling data.
+- REF/SM: Reduce ion filter button size, updating context menu item style.
+- REF/AS: Enabled auto push results but for loading/syncing data by default.
+- UI/CV: Update UIs.
+- REF/CV: Only show job done message for 1D task, hide for 2D mode.
+- MNT/AS: Rename window title to 'Allison Scanner'.
+- MNT/AS: Bump up version to 3.5.
+- REF/AS: Support controls for pushing results to PVs.
+- UI/AS: Update UI, add option/control for push results to PVs.
+- REF/AS: Push processed results to PVs.
+- BUG/SM: Fix by re-define ATTR_KEYS as a list.
+- MNT/AL: Update default configuration files for App Launcher.
+- MNT/SM: Bump up version to 6.0.
+- MNT/SM: Update changelog.
+- FIX/SM: Exception when clicking Apply button for no settings shown.
+- REF/SM: Enable shortcuts of snp context menu actions.
+- REF/SM: Preload default machine and segment when starting up.
+- Merge pull request #6 from phantasy-project/sm-filter-btn
+- FIX/SM: Correct tag/ion filter button hit statistics.
+- UI/SM: Update resources.
+- ENH/SM: Add menu action to copy snapshot data as a table to clipboard.
+- FIX/SM: Metadata structure of saved datafile when taking snapshot.
+- Merge pull request #5 from phantasy-project/sm-filter-btn
+- FIX/SM: Filter untagged snp items with NOTAG tag.
+- MNT/AL: Update import path of FlowLayout.
+- MNT/AL: Migrate layout module to phantasy_ui.widgets.
+- MNT/SM: Update snp filter button when snp data is changed.
+- Merge pull request #3 from phantasy-project/sm-ref-data
+- FIX/SM: Refactor snp data model, fix dubplicated signal issues.
+- REF/SM: 'cast' --> 'load'.
+- TST/SM: Add unittests for snapshot data.
+- ENH/SM: Add script to rename by new naming convention.
+- REF/SM: Update snp filename to be compatible with Windows platform.
+- FIX/SM: UnboundLocalError when starting with non-existing default data dir.
+- FIX/SM: Create data dir if not exit for settings saving.
+- REF/SM: Add menu controls for visibility of snpshots window.
+- REF/SM: Save snapshot to a file after taking snapshot.
+- REF/SM: Delete 'Load' button from snapshot window.
+- REF/SM: Load snapshot by double clicking entry.
+- REF/SM: Move action buttons to context menu of snapshots window.
+- REF/SM: Sort by numbers for A,Q,Z in snapshots window.
+- ENH/SM: Add option to support both loose and strict filter matching.
+- UI/AL: Update resources.
+- REF/SM: Update tooltip for 'golden' indicator.
+- MNT/AL: Bump up version to 4.2.
+- REF/AL: Start app in terminal by default.
+- FIX/AL: Env vars inheriting issue for openning app in terminal.
+- ENH/AL: Add support to click an area to start up app.
+- UI/AL: Update app btn area style.
+- UI/AL: Adjust info form.
+- UI/AL: Wider clickable area of info button of AppCard.
+- UI/AL: Promote info action buttons to pushbuttons.
+- REF/SM: Add support to show ion 'Ca'.
+- UI/SM: Update resources.
+- MNT/SM: Bump up version to 5.2.
+- MNT/SM: Update changelog.
+- UI/SM: Update UI, put snp dock back on top.
+- REF/SM: Keep snp dock half sized.
+- UI/SM: Update UI, repos snp dock on right.
+- REF: Rename 'Cast' to 'Load' for snp treeview.
+- REF/SM: Add third status icon for bundle item selection.
+- UI/SM: Update resources.
+- REF/SM: Determine bundle check/uncheck based on the current pointed row.
+- UI/SM: Update resources.
+- FIX/SM: Add Selenium pixmap.
+- Merge branch 'sm' of ssh://stash.frib.msu.edu:7999/phyapp/phantasy-apps into sm
+- MNT/SM: Bump up version to 5.1.
+- MNT/SM: Update changelog.
+- UI/SM: Update UI and resources.
+- BUG/SM: Fix invert checked error for settings view.
+- ENH/SM: Support select/deselect with dblclicking on the 1st item of settings view.
+- REF/SM: Update style of snp treeview.
+- REF/SM: Not show parent node (datetime) for snp filter.
+- REF: Update style of snp treeview.
+- REF: Not show parent node (datetime) for snp filter.
+- MNT/SM: Update CHANGELOG.
+- MNT/SM: Bump up version to 5.0.
+- REF/SM: Clean up.
+- REF/SM: Remove the button for expand/collapse settings treeview.
+- REF/SM: Remove SP/RD PV rows from settings treeview.
+- REF/SM: Turn off data updater before Casting.
+- REF/SM: Change data refresher nproc to 4, disable progressbar.
+- ENH/SM: Use 8 processes for single time data refresher.
+- MNT/SM: Bump up version to 4.3.
+- MNT/SM: Update CHANGELOG.
+- UI/SM: Update UI.
+- REF/SM: Show progress bar when refreshing data for single update.
+- REF/SM: Add support to refresh data at 5 Hz.
+- UI/SM: Update UI.
+- MNT/SM: Clean up.
+- REF/SM: Speed up SettingsModel.set_model().
+- MNT/TV: Update the default figure styles.
+- UI/CV: Update UI.
+- REF/CV: Initialize figure with default configuration file.
+- MNT: Add config folder of CV app.
+- MNT/CV: Add default figure configuration file.
+- ENH/CV: Show stopped alter index and value after pushing STOP.
+- FIX/CV: Fixed timing after pushing STOP button, show message box after job is done.
+- REF/SM: Stop value updating before taking snapshot.
+- UI/SM: Update UI.
+- ENH/SM: Only do value updating for visible rows for continuous updating.
+- MNT/SM: Bump up version to 4.2.
+- MNT/SM: Update CHANGELOG.
+- UI/SM: Update UIs.
+- ENH/SM: Add support to 'in' test to Settings View filtering.
+- ENH/SM: Add support compound 'and' filter for settings view.
+- REF/SM: Compare x0 and x2 with precision number.
+- UI/SM: Update UI.
+- UI/SM: Update UI and resources.
+- ENH/SM: Implement buttons for filtering with dx12, dx02 warning signs.
+- MNT/TV: Add JSON file for trajectory from MEBT to end of LS2.
+- REF/CV: Wait 0.1s after loading lattice when loading task file.
+- Merge branch 'sm' of https://stash.frib.msu.edu/scm/phyapp/phantasy-apps into sm
+- REF/CV: Add tol,timeout,extra_wait to alter_action for reseting element.
+- Merge branch 'sm' of https://stash.frib.msu.edu/scm/phyapp/phantasy-apps into sm
+- Merge branch 'sm' of https://stash.frib.msu.edu/scm/phyapp/phantasy-apps into sm
+- UI/CV: Update UI.
+- WIP/CV: Sometimes reset element failed, when performing loaded task from file.
+- MNT/AL: Update configuration for development.
+- UI/SM: Update UI.
+- UI/SM: Update UI.
+- BUG/SM: Fix crash when do inverse selection on all checked items.
+- REF/SM: Set scaling factor format with '.5g'.
+- REF/SM: Fix delta x0, x2 updating retarding issue.
+- MNT/SM: Update default device sp/rd tolerance list.
+- MNT/AL: Update configuration file for development.
+- MNT/DV: Add docs.
+- UI/SM: Update UI and resources.
+- REF/SM: Hide settings statistics info by default.
+- UI/AL: Update UI.
+- UI/AL: Update UI.
+- UI/CV: Update UI.
+- REF/CV: Changed final scan time report on the figure title.
+- REF/DV: Disable position as xticks mode if spos has duplicated values.
+- MNT/TV: Update predefined mpl configurations.
+- MNT/DV: Bump up version to 3.0.
+- REF/TV: Add support to initial ElementListModel with argument 'elem_objs_list'.
+- UI/DV: Update UI and resources.
+- ENH/DV: Add support to input arbitrary PVs to build devices.
+- FIX/SM: Update symbol for dx02 and dx12.
+- MNT/ORM: Bump up version to 4.0.
+- UI/ORM: Update UI.
+- ENH/ORM: Ensure put adjustment, update ETA algorithm.
+- ENH/ORM: Add support to set tolerance for ensure put ORM measurement.
+- REF/SM: Update the command to evoke ipython console.
+- UI/SM: Update UI.
+- REF/SM: SettingsModel support 'auto_fmt' argument, '{0:{n}g}' as auto format.
+- REF/SM: Handle the widget control permission for data updaters.
+- UI/SM: Update UI.
+- ENH/SM: Add option to set .{n}g format for presenting data.
+- REF/SM: Add warning symbol if delt(x0,x2) > 1e-8.
+- REF/SM: Amend last comment, exec name for ipython is ipython3 on buster.
+- REF/SM: Use python3 to spawn console.
+- MNT/SM: Update settings data file for cavity tuning.
+- Merge branch 'sm' of ssh://stash.frib.msu.edu:7999/phyapp/phantasy-apps into sm
+- MNT/ORM: Bump up version to 3.6.
+- MNT/ORM: Handle exception when no loading lattice for expert console.
+- UI/ORM: Update UI.
+- ENH/ORM: Implement menu item to open ipython console with devices.
+- FIX/TV: ROI device selection: choose first two correctors when 1st BPM is selected.
+- MNT/SM: Add generated settings file for 129Xe50 cavity tuning.
+- Merge branch 'sm' of https://stash.frib.msu.edu/scm/phyapp/phantasy-apps into sm
+- MNT/SM: Add revised settings xlsx file for LS2 phasing.
+- FIX/SM: Typo.
+- UI/DV: Update UI.
+- UI/SM: Update UI.
+- ENH/SM: Add min/max-imize buttons to floating snapshots window.
+- UI/ORM: Update UIs.
+- UI/TV: Update UIs.
+- UI/CV: Update UIs.
+- UI/SM: Update UI.
+- REF/SM: Always keep set log file.
+- Merge branch 'sm' of ssh://stash.frib.msu.edu:7999/phyapp/phantasy-apps into sm
+- MNT/SM: Add slot for snp clicking debug.
+- MNT/SM: Add settings with reduced solenoid current, 2020-10-06.
+- REF/SM: Append timestamp to the generated filename.
+- MNT/SM: Add settings data.
+- UI/SM: Update UI.
+- REF/SM: Close device set log by default.
+- Merge branch 'sm' of https://stash.frib.msu.edu/scm/phyapp/phantasy-apps into sm
+- REF/SM: Load elements from config.
+- MNT/SM: Update elements.json.
+- MNT/AL: Disable single instance mode for the moment.
+- REF/SM: Skip setting device if current setting is close to the proposed.
+- MNT/SM: Add setting files for 129Xe27 to 50 from MEBT to FS1A,B, FS2.
+- MNT/SM: Update tag.
+- MNT/SM: Add xlsx file for 129Xe27 to 50 for MEBT to FS1A/B, FS2.
+- MNT/SM: Update notebook for generating settings files.
+- MNT/SM: Support add note meta in contrib notebook for generating settings.
+- MNT/SM: Update settings manager guide doc, pdf.
+- MNT/SM: Update settings files for LS1,2 cavity tuning.
+- MNT/SM: Add user guide .doc file.
+- MNT/SN: Change default SVG file to fs1-arc_w_AB.svg.
+- Merge branch 'sn' into sm
+- REF/SN: Fix device hover info issue.
+- MNT/SM: Add settings files for LS1,2 cavity tuning.
+- ENH/SM: Update the notebook to generate settings files for cavity tuning.
+- REF/SM: Do not use return from closeEvent.
+- MNT/SM: Update CHANGELOG.
+- MNT/SM: Bump up version to 4.1.
+- UI/SM: Update UI.
+- ENH/SM: Add support to select/deselect all snapshot filter buttons.
+- ENH/SM: Dynamic updating tags fitler buttons after changing tag column.
+- ENH/SM: Implement dynamic buttons for tag filtering.
+- REF/SM: Fix layout issue of ion button filter.
+- UI/SM: Update resources.
+- REF/SM: Set up icons for snapshot ion filter buttons.
+- ENH/SM: Add support to sort status/indicator columns of SnapshotDataModel.
+- FIX/SM: Fix index issue.
+- ENH/SM: Add number of items after filtering to ion filter buttons.
+- REF/SM: Sync snapshot filtering after taking snapshot.
+- UI/SM: Update UI.
+- ENH/SM: Support filtering with dynamic ion name buttons appearing on top of Snapshots window.
+- ENH/SM: Implement snapshot deletion and working directory updating.
+- UI/SM: Update UI and resources.
+- REF/SM: Enable sorting of SnapshotDataModel.
+- REF/SM: Append timestamp to SnapshotData name attr.
+- REF/SM: Set alternative default working directory.
+- UI/SM: Update resources.
+- REF/SM: Refactor SnapshotDataModel with delegate.
+- MNT/SM: Update CHANGELOG.
+- MNT/SM: Bump up version to 4.0.
+- REF/SM: Initialize snapshots from files in working directory.
+- REF/SM: Change text Save to Save As, fix auto column width fit.
+- UI/SM: Update UI.
+- ENH/SM: Add checkbox to control if auto monitoring working directory.
+- ENH/SM: Set icon for SnapshotDataModel Tags column.
+- UI/SM: Update resources.
+- Merge branch 'sm' of https://stash.frib.msu.edu/scm/phyapp/phantasy-apps into sm
+- ENH/SM: Color if SnapshotData is golden or not in SnapshotDataModel.
+- ENH/SM: Add method to return if SnapshotData is golden or not.
+- UI/SM: Update UI.
+- ENH/SM: Auto refresh snapshots when working directory is updated.
+- REF/SM: Rename Save to Save As, save snapshot metadata after editing.
+- REF/SM: Add tooltip to tags item.
+- ENH/SM: Add support to save/load/show Tags in snapshots window.
+- REF/SM: Reveal snp file in Nautilus.
+- REF/SM: Hide Save and Load Settings tools.
+- ENH/SM: Auto generate filename for saving.
+- ENH/SM: Add log sts, clear log, open log in system text editor.
+- UI/SM: Update UI.
+- REF/SM: Remove clear setdone status code.
+- REF/AL: Update AppCardInfoForm style.
+- FIX/SM: Keep snpdata to ts column, bypass none indexWidget.
+- MNT/AL: Bump up version to 4.1.
+- REF/AL: Re-enable single instance mode.
+- REF/AL: Update style of description text area.
+- ENH/SM: Add 'machine', 'segment' into SnapshotData, fix overwrite machine/segment issue when saving to file.
+- BUG/SM: Initialize config files if not exists.
+- UI/SM: Update UI.
+- ENH/SM: Rolling the settings list when applying is undergoing.
+- UI/SM: Update UI.
+- ENH/SM: Implement the show/close of log dock widget.
+- ENH/SM: Print device set log messages to a dock window.
+- ENH/SM: Update values after finishing 'Apply'.
+- REF/SM: Add 'Cancel' option in messagebox popping before 'Apply'.
+- UI/SM: Update UI.
+- UI/SM: Update UI.
+- MNT/SM: clean up.
+- REF/SM: Set x2/x0 column foreground color wrt write access.
+- ENH/SM: Update help tips for filter function.
+- ENH/SM: Add column x2/x0 to show the ratio between saved/current setpoints.
+- REF/SM: Hide dx01 and tolerance columns as well.
+- UI/SM: Update UI and resources.
+- ENH/SM: Add option to auto filling scaling factor.
+- UI/AS: Update UIs.
+- UI/SM: Update UI.
+- REF/SM: Refine the taking snapshot method, to support cast, post_current_sp arguments.
+- REF/SM: Fit the view after styling.
+- WIP/SM: Prompt message dialog for taking snapshot before apply.
+- MNT/AL: Show tooltip for app buttons, update app title.
+- REF/SM: Style treeview header.
+- UI/SM: Update UI.
+- REF/SM: Initial window size to 1920x1440.
+- ENH/SM: Fit column width for ion meta data.
+- REF/SM: Show datetime with day name.
+- ENH/SM: Add support to present/save ion name, Q, A, Z and user for snapshot.
+- BUG/SM: Initialize _user of SnapshotData class.
+- MNT/SM: Update pdf doc.
+- MNT/SM: Update qthelp docs.
+- MNT/SM: Update qthelp doc.
+- Merge branch 'sm' of https://stash.frib.msu.edu/scm/phyapp/phantasy-apps into sm
+- REF/SM: Selection action only applies to selectable ones.
+- REF/SM: Check/select only rows that are selectable.
+- REF/SM: Only show checkbox for writable items.
+- REF/SM: Remove fg/bg colors, update with stylesheet.
+- REF/SM: Change default working directory for development.
+- MNT/AL: Disable wmctrl until it's ready.
+- REF/AL: Update configuration for development.
+- BUG/SM: Fix the routine for corrector name fixing.
+- REF/SM: Get user metadata from file if not defined in settings file.
+- BUG/SM: Fix NameError exception from eval().
+- MNT/AL: Update configuration files.
+- MNT/SM: Add help docs.
+- MNT: Include Settings Manager doc files.
+- UI/SM: Update UI and resources.
+- MNT/SM: Clean up.
+- ENH/SM: Implement help contents menu action, F1.
+- ENH: Add module to launch Assistant with qhc file.
+- ENH/SM: Auto update snp treeview when working directory content is changed.
+- ENH/SM: Load snapshots files from working directory if available.
+- MNT/SM: Clean up.
+- REF/SM: Sync snp expand/collpase status.
+- UI/AS: Update UI and resources.
+- UI/SM: Update UI and resources.
+- UI/AL: Update UI and resources.
+- MNT/AL: Add icons for SM, AS.
+- MNT/SM: Bump up version to 3.0.
+- UI/SM: Update UI and resources.
+- REF/SM: Make only name and note column of snp dock editable.
+- ENH/SM: Add support to expand/collapse snp treeview.
+- ENH/SM: Add support to tooltips of SnapshotDataModel.
+- MNT/AL: Update devel configuration file.
+- MNT/SM: Add CHANGELOG.
+- REF/SM: Show loaded data status info for 5 seconds.
+- REF/SM: Sync snpshots count when taking snapshot and dnd.
+- UI/SM: Update UI and resources.
+- ENH/SM: Add menu action to fix corrector names of historical CSV files.
+- ENH/SM: Add script to fix LS1,2 corrector name issues.
+- FIX/SM: Strip comment lines '#, \n'.
+- UI/SM: Update UIs.
+- ENH/SM: Show working dir and snpshot count in snp dock.
+- ENH/SM: Reset snpdata with work dir from Preference dialog.
+- REF/SM: Add wdir as a new attr to SnapshotData.
+- REF/SM: Test snpdata existing with name, sync casted status after taking snapshot.
+- ENH/SM: Sync casted row, update snapshot treeview style.
+- BUG/SM: Fix filepath update issue when override saving.
+- UI/SM: Update UI and resources.
+- ENH/SM: Show progress bar for settings apply.
+- FIX/SM: Sync save path and status, fix item editing for SnapshotDataModel.
+- REF/SM: Only add new meta info into csv file for overwriting.
+- ENH/SM: Add methods for different timestamp strformat of SnapshotData.
+- ENH/SM: Present snapshots in two-level hierarchical view.
+- ENH/SM: Compose default note string for SnapshotData class.
+- ENH/SM: Update table before taking snapshot.
+- WIP/SM: Disable sort function of SnapshotDataModel.
+- UI/SM: Update UI and resources.
+- FIX/SM: Load lattice if not loaded before load/cast settings.
+- REF/SM: Skip adding snapshots if timestamp collides.
+- ENH/SM: Batch loading snapshots by dnd.
+- REF/SM: Handle exceptions when instatiating SnapshotData from csv file w/o meta info.
+- ENH/SM: Make SnapshotDataModel sortable.
+- UI/SM: Update UI and resources.
+- ENH/SM: Add browse and read columns to SnapshotDataModel.
+- ENH/SM: Synced save status with SnapshotData filepath attr.
+- ENH/SM: Add filepath attr into SnapshotData class.
+- ENH/SM: Clear cast bit after loading new csv file.
+- BUG/SM: Fix updating crashes when no lattice is loaded.
+- ENH/SM: Implement cast snp feature, mark status with icons.
+- REF/SM: Apply new way to generate random snp name.
+- UI/SM: Update UIs and resources.
+- ENH/SM: Mark snp row as saved after saved to file.
+- ENH/SM: Read lines startswith '#' as meta for csv TableSettings.
+- ENH/SM: Update snapshots in a dock widget when taking snapshot.
+- ENH/SM: Implement data model for snapshot data management.
+- ENH/SM: Add SnapshotData class for runtime snapshot data management.
+- FIX/SM: Always apply settings with values in Setpoint (x0) column.
+- REF/SM: Hide column 'Writable' by default.
+- UI/SM: Update UI and resources.
+- ENH/SM: Refined filter function, init settings from lattice, handle scaling exception.
+- UI/SM: Add UI for query tips.
+- UI/SM: Update UIs and resources.
+- ENH/SM: Add support of multi-selection via context menu.
+- ENH/SM: Add support to change precision digits on main window.
+- ENH/SM: Add support to set initial lattice settings from mainwindow.
+- ENH/SM: Add function to eval scaling factor input, a single number of valid math expression.
+
 Version 4.0.0
 -------------
 2020-08-14
