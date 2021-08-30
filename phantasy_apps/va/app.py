@@ -110,7 +110,7 @@ class VALauncherWindow(BaseAppForm, Ui_MainWindow):
         vbox = QVBoxLayout()
         vbox.setContentsMargins(0, 0, 0, 0)
         vbox.addWidget(VirtualAcceleratorWidget(w))
-        vbox.addStretch(1)
+        # vbox.addStretch(1)
         w.setLayout(vbox)
         return w
 
