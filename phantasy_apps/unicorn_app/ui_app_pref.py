@@ -2,16 +2,18 @@
 
 # Form implementation generated from reading ui file 'ui_app_pref.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(556, 271)
+        Dialog.resize(525, 258)
         self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
         self.verticalLayout.setContentsMargins(4, 8, 4, 4)
         self.verticalLayout.setSpacing(4)
@@ -78,6 +80,9 @@ class Ui_Dialog(object):
         self.srv_db_reset_btn.setSizePolicy(sizePolicy)
         self.srv_db_reset_btn.setObjectName("srv_db_reset_btn")
         self.horizontalLayout_3.addWidget(self.srv_db_reset_btn)
+        self.srv_db_empty_btn = QtWidgets.QPushButton(self.tab)
+        self.srv_db_empty_btn.setObjectName("srv_db_empty_btn")
+        self.horizontalLayout_3.addWidget(self.srv_db_empty_btn)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem1)
         self.formLayout.setLayout(3, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout_3)
@@ -188,8 +193,10 @@ class Ui_Dialog(object):
         self.label_4.setText(_translate("Dialog", "Service Status"))
         self.srv_ctrl_btn.setText(_translate("Dialog", "START"))
         self.label_5.setText(_translate("Dialog", "Database"))
-        self.srv_db_reset_btn.setToolTip(_translate("Dialog", "<html><head/><body><p>Only push it when database needs to be reset!</p></body></html>"))
-        self.srv_db_reset_btn.setText(_translate("Dialog", "Reset"))
+        self.srv_db_reset_btn.setToolTip(_translate("Dialog", "Reset with default database."))
+        self.srv_db_reset_btn.setText(_translate("Dialog", "Reset to Default"))
+        self.srv_db_empty_btn.setToolTip(_translate("Dialog", "Reset with an empty database."))
+        self.srv_db_empty_btn.setText(_translate("Dialog", "Empty"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Dialog", "Unicorn WebApp"))
         self.pageZoom_lbl.setText(_translate("Dialog", "100 %"))
         self.label_3.setText(_translate("Dialog", "Page Zoom"))
@@ -212,4 +219,3 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
-
