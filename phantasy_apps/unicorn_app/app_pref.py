@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from functools import partial
 from PyQt5.QtCore import QThread
 from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import pyqtSignal
@@ -33,7 +34,8 @@ class PrefDialog(QDialog, Ui_Dialog):
         self.btn_box.accepted.connect(self.on_accept_btn_box)
         self.btn_box.rejected.connect(self.on_reject_btn_box)
         self.srv_ctrl_btn.clicked.connect(self.srv_control)
-        self.srv_db_reset_btn.clicked.connect(self.init_database)
+        self.srv_db_reset_btn.clicked.connect(partial(self.init_database, "default"))
+        self.srv_db_empty_btn.clicked.connect(partial(self.init_database, "empty"))
         self.get_all_srv_status_btn.clicked.connect(self.get_all_srv_status)
         self.clean_all_srv_btn.clicked.connect(self.clean_all_srv)
         self.popup_browser_btn.clicked.connect(self.popup_browser)
@@ -89,9 +91,9 @@ class PrefDialog(QDialog, Ui_Dialog):
     def closeEvent(self, e):
         self.refresher.terminate()
 
-    def init_database(self, e):
+    def init_database(self, reset_type='default', e):
         # initialize database with default one from unicorn-webapp
-        init_unicorn_database()
+        init_unicorn_database(reset_type)
 
     def clean_all_srv(self, e):
         # clean up all alive services
