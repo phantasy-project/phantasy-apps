@@ -91,7 +91,7 @@ class PrefDialog(QDialog, Ui_Dialog):
     def closeEvent(self, e):
         self.refresher.terminate()
 
-    def init_database(self, reset_type='default', e):
+    def init_database(self, reset_type='default'):
         # initialize database with default one from unicorn-webapp
         init_unicorn_database(reset_type)
 
