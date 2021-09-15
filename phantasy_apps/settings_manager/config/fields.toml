@@ -3,7 +3,7 @@
 # key name could be element type and element name (higher priority)
 
 [DEFAULT]
-fields = ['I', 'V', 'TM', 'B', 'B2', 'B3', 'VOLT']
+fields = ['I', 'V', 'TM', 'B', 'B2', 'B3', 'B4', 'VOLT']
 
 [CAV]
 fields = ['PHA', 'AMP', 'PHASE', 'AMPLITUDE',
@@ -60,6 +60,9 @@ fields = ['I', 'B2']
 
 [SEXT]
 fields = ['I', 'B3']
+
+[OCT]
+fields = ['I', 'B4']
 
 # ISRC1
 [HVP]
