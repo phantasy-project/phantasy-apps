@@ -19,11 +19,19 @@ def run(cli=False):
         confdir = args[args.index('--config') + 1]
     else:
         confdir = None
+    if '--machine' in args:
+        mach = args[args.index('--machine') + 1]
+    else:
+        mach = None
+    if '--segment' in args:
+        segm = args[args.index('--segment') + 1]
+    else:
+        segm = None
 
     app = QApplication(sys.argv)
 
     #
-    w = SettingsManagerWindow(version=__version__, config_dir=confdir)
+    w = SettingsManagerWindow(version=__version__, config_dir=confdir, machine=mach, segment=segm)
     w.setWindowTitle(__title__)
 
     if cli:

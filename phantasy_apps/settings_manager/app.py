@@ -177,7 +177,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # snp filter (snp dock)
     snp_filters_updated = pyqtSignal()
 
-    def __init__(self, version, config_dir=None):
+    def __init__(self, version, config_dir=None, machine=None, segment=None):
         super(SettingsManagerWindow, self).__init__()
 
         # app version
@@ -216,7 +216,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         #
         self.show()
-        self.preload_lattice(DEFAULT_MACHINE, DEFAULT_SEGMENT)
+        if machine is not None and segment is not None:
+            self.preload_lattice(machine, segment)
 
     def init_config(self, confdir):
         # preferences
