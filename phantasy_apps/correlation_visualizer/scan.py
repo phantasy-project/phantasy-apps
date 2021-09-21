@@ -800,6 +800,7 @@ def read_element(task, etype, mp):
                 fld = PVElement(cset_pv, rdbk_pv)
             else:
                 fld = PVElementReadonly(rdbk_pv)
+            time.sleep(2.0)
             elem = fld
         flds.append(fld)
         elems.append(elem)
