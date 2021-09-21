@@ -532,7 +532,7 @@ def load_lattice(mach, segm, o):
     return mp
 
 
-def load_task(filepath, o):
+def load_task(filepath, o, mach="FRIB", segm="LINAC"):
     """Instantiate ScanTask from the saved JSON file from CV app.
     """
     task = JSONDataSheet(filepath)
@@ -567,8 +567,8 @@ def load_task(filepath, o):
     scan_task.scan_out_data = np.asarray(task['data']['array'])
 
     # mp
-    machine = task['task'].get('machine', 'FRIB')
-    segment = task['task'].get('segment', 'LINAC')
+    machine = task['task'].get('machine', mach)
+    segment = task['task'].get('segment', segm)
     printlog("Starting to load lattice for task '{}'.".format(scan_task.name))
     mp = load_lattice(machine, segment, o)
     if mp.last_load_success:
@@ -596,7 +596,6 @@ def load_task(filepath, o):
                 locate_nested_datafile(filepath, nested_task_filepath),
                 mp) # 1D and 2D widget only load the same lattice.
         scan_task.set_nested_task(nested_task)
-
 
     return scan_task
 

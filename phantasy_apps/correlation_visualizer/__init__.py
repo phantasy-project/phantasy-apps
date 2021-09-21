@@ -15,9 +15,20 @@ __version__ = '6.1'
 
 
 def run(cli=False):
+    args = sys.argv
     set_mplstyle(sys.argv)
+
+    if '--machine' in args:
+        mach = args[args.index('--machine') + 1]
+    else:
+        mach = None
+    if '--segment' in args:
+        segm = args[args.index('--segment') + 1]
+    else:
+        segm = None
+
     app = QApplication(sys.argv)
-    w = CorrelationVisualizerWindow(version=__version__)
+    w = CorrelationVisualizerWindow(version=__version__, machine=mach, segment=segm)
     w.show()
     w.setWindowTitle(__title__)
     if cli:

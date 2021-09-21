@@ -105,7 +105,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     # out data from scan task updated
     data_updated = pyqtSignal(QVariant)
 
-    def __init__(self, version):
+    def __init__(self, version, machine, segment):
         super(CorrelationVisualizerWindow, self).__init__()
 
         # app version
@@ -128,6 +128,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             <p>Copyright (C) 2018 Facility for Rare Isotope Beams and other contributors.</p>
             </html>
         """.format(self._version)
+
+        self._machine = "FRIB" if machine is None else machine
+        self._segment = "LINAC" if segment is None else segment
 
         # UI
         self.setupUi(self)
@@ -1421,7 +1424,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         if filepath is None:
             return
         printlog("Loading task from {}.".format(filepath))
-        scan_task = load_task(filepath, self._mp)
+        scan_task = load_task(filepath, self._mp, self._machine, self._segment)
         if hasattr(scan_task, '_lattice'):
             self._mp = scan_task._lattice
         printlog("Loading task is done.")
