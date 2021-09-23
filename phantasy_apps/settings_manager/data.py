@@ -235,7 +235,6 @@ def read_data(data_path, file_type=None):
         return r
 
 
-
 def read_hdf(filepath, **kws):
     """Read data from an HDF5 data file (e.g. h5).
 
@@ -294,6 +293,13 @@ def read_excel(filepath, **kws):
     return df_data, _df.T, df_machstate
 
 
+def read_sql(df):
+    """Read a row of data into SnapshotData. The row of data is originated from a DataFrame
+    from a sqlite database.
+    """
+    pass
+
+
 def read_csv(filepath, delimiter=','):
     """Load data from a csv file to SnapshotData instance, initial attribute key: 'data_path'.
 
@@ -306,22 +312,30 @@ def read_csv(filepath, delimiter=','):
         A tuple of two dataframes, the first is physics settings table, the other is the metadata
         describing the settings, the third is None (for machine state)
     """
-    # attr_dict = OrderedDict({'data_path': os.path.abspath(filepath)})
     attr_dict = OrderedDict()
-    data_list = []
-    with open(filepath, 'r') as fp:
-        for line in fp:
-            if line.startswith('#'):
-                k, v = line.strip('# ,\n').split(':', 1)
-                if k == 'timestamp':
-                    attr_dict[k] = float(v.strip())
-                else:
-                    attr_dict[k] = v.strip()
+    stream_type = None
+    if isinstance(filepath, str): # path
+        stream_type = 'file'
+        fp = open(filepath, 'r')
+    else:
+        stream_type = 'bytes'
+        fp = filepath # BytesIO
+    for line in fp:
+        if stream_type == 'bytes':
+            line = line.decode()
+        if line.startswith('#'):
+            k, v = line.strip('# ,\n').split(':', 1)
+            if k == 'timestamp':
+                attr_dict[k] = float(v.strip())
             else:
-                break
-        header = [i.strip() for i in line.split(delimiter)]
-        df_info = pd.DataFrame.from_dict(attr_dict, orient='index', columns=['attribute']).T
-        df_data = pd.read_csv(fp, names=header)
+                attr_dict[k] = v.strip()
+        else:
+            break
+    header = [i.strip() for i in line.split(delimiter)]
+    df_info = pd.DataFrame.from_dict(attr_dict, orient='index', columns=['attribute']).T
+    df_data = pd.read_csv(fp, names=header)
+    if stream_type == 'file':
+        fp.close()
     return df_data, df_info, None
 
 
@@ -348,6 +362,7 @@ class SnapshotData:
         'hdf': read_hdf,
         'h5': read_hdf,
         'csv': read_csv,
+        'sql': read_sql
     }
     def __init__(self, df_data, df_info=None, **kws):
         # setter dict: default/special values
