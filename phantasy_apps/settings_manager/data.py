@@ -2,15 +2,16 @@
 
 import csv
 import hashlib
+import io
 import os
 import pathlib
 import re
+import tempfile
 import time
 import pandas as pd
 from collections import OrderedDict
 from datetime import datetime
 from getpass import getuser
-from io import StringIO
 
 from PyQt5.QtCore import Qt
 
@@ -20,7 +21,7 @@ from phantasy import Settings
 DEFAULT_DATA_FMT = "xlsx"
 
 # support file types
-SUPPORT_FTYPES = ("xlsx", "csv", "h5")
+SUPPORT_FTYPES = ("xlsx", "csv", "h5", "sql")
 
 CSV_HEADER = (
     'Name', 'Field', 'Type', 'Pos',
@@ -211,7 +212,7 @@ def read_data(data_path, file_type=None):
     Parameters
     ----------
     data_path : Path
-        Path of the data source.
+        Path of the data source, or dataframe for 'sql' file_type.
     file_type : str
         File type.
 
@@ -219,16 +220,22 @@ def read_data(data_path, file_type=None):
     -------
     r : SnapshotData
     """
-    if isinstance(data_path, str):
+    if isinstance(data_path, (pathlib.Path, str)):
+        # filepath
         data_path = pathlib.Path(data_path)
-    if file_type is None:
-        # csv, xls, h5
-        file_type = data_path.suffix.lower()[1:]
+        if file_type is None:
+            file_type = data_path.suffix.lower()[1:]
         if file_type not in SUPPORT_FTYPES:
             print(f"Non-support file type: {file_type}.")
             return None
+        data_src = data_path.resolve()
+    else:
+        # df
+        file_type = 'sql'
+        data_src = data_path
+
     try:
-        r = SnapshotData.read(data_path.resolve(), ftype=file_type)
+        r = SnapshotData.read(data_src, ftype=file_type)
     except:
         r = None
     finally:
@@ -297,7 +304,18 @@ def read_sql(df):
     """Read a row of data into SnapshotData. The row of data is originated from a DataFrame
     from a sqlite database.
     """
-    pass
+    data_format = df.data_format
+    if data_format == 'xlsx':
+        return read_excel(io.BytesIO(df.data))
+    elif data_format == 'csv':
+        return read_csv(io.BytesIO(df.data))
+    elif data_format in ('h5', 'hdf5'):
+        _, mfile = tempfile.mkstemp(".h5")
+        with open(mfile, "wb") as fp:
+            fp.write(df.data)
+            r = read_hdf(mfile)
+        os.remove(mfile)
+        return r
 
 
 def read_csv(filepath, delimiter=','):
@@ -314,7 +332,7 @@ def read_csv(filepath, delimiter=','):
     """
     attr_dict = OrderedDict()
     stream_type = None
-    if isinstance(filepath, str): # path
+    if isinstance(filepath, (str, pathlib.Path)): # path
         stream_type = 'file'
         fp = open(filepath, 'r')
     else:
@@ -539,7 +557,7 @@ class SnapshotData:
 
     def __str__(self):
         # str(self.data)
-        sio = StringIO()
+        sio = io.StringIO()
         sio.write("\t".join(CSV_HEADER))
         sio.write("\n")
         for ename, fname, ftype, spos, sp, rd, old_sp, tol, writable in self.data:
@@ -607,13 +625,15 @@ class SnapshotData:
     @classmethod
     def read(cls, filepath, ftype='xlsx', **kws):
         # filepath: full path of data file
+        # for ftype 'sql', filepath argument should be dataframe.
         if ftype not in cls._READER_MAP:
             print(f"Data source of type '{ftype}' is not supported.")
             return None
         df_data, df_info, df_machstate = cls._READER_MAP[ftype](filepath, **kws)
         o = cls(df_data, df_info)
         o.machstate = df_machstate
-        o.data_path = str(filepath)
+        if isinstance(filepath, (pathlib.Path, str)):
+            o.data_path = str(filepath)
         return o
 
     @staticmethod
