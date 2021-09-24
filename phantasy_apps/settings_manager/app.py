@@ -6,6 +6,8 @@ import json
 import os
 import pathlib
 import re
+import sqlite3
+import pandas as pd
 import tempfile
 import time
 from collections import OrderedDict
@@ -127,6 +129,8 @@ if LIVE:
     MS_CONF_PATH = find_dconf("msviz", "metadata.toml")
 else:
     MS_CONF_PATH = find_dconf("msviz", "metadata_va.toml")
+
+DATA_SOURCE_MODE = os.environ.get('DSRC_MODE', 'DB') # FILE
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -1521,20 +1525,28 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.wdir = d
         if purge:
             del self._snp_dock_list[:]
-        for path in pathlib.Path(d).glob("**/*"):
-            if not os.access(path, os.R_OK):
-                printlog(f"Cannot access {path}!")
-                continue
-            if not path.is_file():
-                continue
-            snp_data = read_data(path)
-            if snp_data is None:
-                printlog(f"Failed to load {path.resolve()}.")
-                continue
-            # skip snapshot that name conflicts
-            if is_snp_data_exist(snp_data, self._snp_dock_list):
-                continue
-            self._snp_dock_list.append(snp_data)
+        if DATA_SOURCE_MODE == 'DB':
+            # DB
+            conn = sqlite3.connect(os.path.join(d, "sm.db"))
+            df_all = pd.read_sql("SELECT * FROM snapshot", conn)
+            for idx, irow in df_all.iterrows():
+                snp_data = read_data(irow, 'sql')
+        else: # FILE
+            for path in pathlib.Path(d).glob("**/*"):
+                if not os.access(path, os.R_OK):
+                    printlog(f"Cannot access {path}!")
+                    continue
+                if not path.is_file():
+                    continue
+                snp_data = read_data(path)
+                if snp_data is None:
+                    printlog(f"Failed to load {path.resolve()}.")
+                    continue
+                # skip snapshot that name conflicts
+                if is_snp_data_exist(snp_data, self._snp_dock_list):
+                    continue
+        self._snp_dock_list.append(snp_data)
+
         self.update_snp_dock_view()
         self.wdir_lineEdit.setText(self.wdir)
         n = len(self._snp_dock_list)
@@ -2107,8 +2119,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._query_tips_form.show()
 
     def on_snapshots_changed(self, cast=True):
-        """Number of snapshots is changed.
-        """
+        # New captured snapshot.
         # update snpdata to snp dock.
         if self._tv.model() is None:
             return
