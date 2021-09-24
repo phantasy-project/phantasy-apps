@@ -648,6 +648,11 @@ class SnapshotData:
             machstate.to_csv(filepath, **kws)
         return True
 
+    def to_blob(self):
+        # output self to a binary blob, see alo write()
+        s = io.BytesIO()
+        self.write(s)
+        return s.getvalue()
 
     #def __eq__(self, other):
     #    return all(self.info.drop(columns=["data_path"]) == other.info.drop(columns=["data_path"])) \
