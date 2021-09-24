@@ -81,6 +81,7 @@ from .data import SnapshotData
 from .data import get_settings_data
 from .data import make_physics_settings
 from .data import read_data
+from .db_utils import insert_data
 from .ui.ui_app import Ui_MainWindow
 from .ui.ui_query_tips import Ui_Form as QueryTipsForm
 from .utils import FMT
@@ -181,6 +182,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # snp filter (snp dock)
     snp_filters_updated = pyqtSignal()
 
+    # refresh db
+    db_refresh = pyqtSignal()
+
     def __init__(self, version, config_dir=None, machine=None, segment=None):
         super(SettingsManagerWindow, self).__init__()
 
@@ -214,6 +218,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # config
         self.init_config(config_dir)
+
+        self.__init_dsrc(self.wdir)
 
         # post init ui
         self.__post_init_ui()
@@ -1527,10 +1533,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             del self._snp_dock_list[:]
         if DATA_SOURCE_MODE == 'DB':
             # DB
-            conn = sqlite3.connect(os.path.join(d, "sm.db"))
-            df_all = pd.read_sql("SELECT * FROM snapshot", conn)
+            self._conn = sqlite3.connect(os.path.join(d, "sm.db"))
+            df_all = pd.read_sql("SELECT * FROM snapshot", self._conn)
             for idx, irow in df_all.iterrows():
                 snp_data = read_data(irow, 'sql')
+                self._snp_dock_list.append(snp_data)
         else: # FILE
             for path in pathlib.Path(d).glob("**/*"):
                 if not os.access(path, os.R_OK):
@@ -1545,7 +1552,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 # skip snapshot that name conflicts
                 if is_snp_data_exist(snp_data, self._snp_dock_list):
                     continue
-        self._snp_dock_list.append(snp_data)
+                self._snp_dock_list.append(snp_data)
 
         self.update_snp_dock_view()
         self.wdir_lineEdit.setText(self.wdir)
@@ -2391,18 +2398,24 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def on_save_settings(self, data):
         # in-place save data to data_path.
-        if data.data_path is None or not os.path.exists(data.data_path):
-            data.data_path = data.get_default_data_path(self.wdir, DEFAULT_DATA_FMT)
-            dirname = os.path.dirname(data.data_path)
-            if not os.path.exists(dirname):
-                os.makedirs(dirname)
-        if isinstance(data.data_path, str):
-            data_path = pathlib.Path(data.data_path)
+        if DATA_SOURCE_MODE == 'DB':
+            # add new entry to database
+            insert_data(self._conn, data)
+            self._conn.close()
+            self.db_refresh.emit()
         else:
-            data_path = data.data_path
-        ext = data_path.suffix.lower()[1:]
-        self._save_settings(data, data.data_path, ext)
-        self.snp_saved.emit(data.name, data.data_path)
+            if data.data_path is None or not os.path.exists(data.data_path):
+                data.data_path = data.get_default_data_path(self.wdir, DEFAULT_DATA_FMT)
+                dirname = os.path.dirname(data.data_path)
+                if not os.path.exists(dirname):
+                    os.makedirs(dirname)
+            if isinstance(data.data_path, str):
+                data_path = pathlib.Path(data.data_path)
+            else:
+                data_path = data.data_path
+            ext = data_path.suffix.lower()[1:]
+            self._save_settings(data, data.data_path, ext)
+            self.snp_saved.emit(data.name, data.data_path)
 
     def on_saveas_settings(self, data):
         # data: SnapshotData
@@ -2642,6 +2655,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._meta_fetcher.daqFinished.connect(self._meta_fetcher_stopped)
         self._meta_fetcher.resultsReady.connect(partial(self._meta_fetcher_got_results, pv_list, grp_list))
 
+    def __init_dsrc(self, wdir):
+        if DATA_SOURCE_MODE == 'DB':
+            # self._conn = sqlite3.connect(os.path.join(wdir, "sm.db"))
+            self.db_refresh.connect(partial(self.on_wdir_changed, True, self.wdir))
+        else:
+            pass
 
 def is_snp_data_exist(snpdata, snpdata_list):
     # if snpdata named 'name' exists.
