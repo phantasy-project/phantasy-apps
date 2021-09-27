@@ -2421,7 +2421,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             # add new entry to database
             insert_data(self._conn, data)
             self._conn.close()
-            delayed_exec(lambda:self.db_refresh.emit(), 3000)
+            # delayed_exec(lambda:self.db_refresh.emit(), 3000)
         else:
             if data.data_path is None or not os.path.exists(data.data_path):
                 data.data_path = data.get_default_data_path(self.wdir, DEFAULT_DATA_FMT)
