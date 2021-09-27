@@ -1326,8 +1326,10 @@ class _SnpProxyModel(QSortFilterProxyModel):
                     tag_test = True
                 is_cnted = self._tag_hit_cache.setdefault(snp_data.name, False)
                 if not is_cnted:
-                    m._tag_filter_cnt[tag] += 1
+                    for i in tags:
+                        m._tag_filter_cnt[i] += 1 # +1 for all tags of this snp
                     self._tag_hit_cache[snp_data.name] = True
+
         if not tag_test:
             return False
 
