@@ -82,6 +82,7 @@ from .data import get_settings_data
 from .data import make_physics_settings
 from .data import read_data
 from .db_utils import insert_data
+from .db_utils import delete_data
 from .ui.ui_app import Ui_MainWindow
 from .ui.ui_query_tips import Ui_Form as QueryTipsForm
 from .utils import FMT
@@ -881,7 +882,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.insertAction(copy_action, dcopy_action)
         menu.addSeparator()
         menu.addAction(read_action)
-        menu.addAction(reveal_action)
+        if DATA_SOURCE_MODE == 'FILE':
+            menu.addAction(reveal_action)
         menu.addSeparator()
         menu.addAction(saveas_action)
         menu.addAction(del_action)
@@ -2401,9 +2403,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 break
         m = self.snp_treeView.model().m_src
         m.remove_data(data_to_del)
-        filepath = data_to_del.data_path
-        if filepath is not None and os.path.isfile(filepath):
-            os.remove(filepath)
+        if DATA_SOURCE_MODE == 'FILE':
+            filepath = data_to_del.data_path
+            if filepath is not None and os.path.isfile(filepath):
+                os.remove(filepath)
+        else:
+            # delete from DB
+            self._conn = sqlite3.connect(os.path.join(self.wdir, DATABASE))
+            delete_data(self._conn, data)
+            self._conn.close()
         self.total_snp_lbl.setText(str(len(self._snp_dock_list)))
         del data_to_del
 

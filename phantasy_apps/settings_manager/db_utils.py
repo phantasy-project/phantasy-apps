@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from sqlite3 import Error
+
 
 def insert_data(conn, snp_data):
     data_tuple = snp_data.timestamp, snp_data.datetime, snp_data.name, \
@@ -17,5 +19,21 @@ def insert_data(conn, snp_data):
 
 def _insert_data(cursor, *data):
     cmd = ''' INSERT INTO snapshot (timestamp, datetime, name, note, user, ion_name, ion_number, ion_mass, ion_charge, machine, segment, tags, app, version, data_format, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); '''
-    cursor.execute(cmd, data)
-    cursor.close()
+    try:
+        cursor.execute(cmd, data)
+    except Error as err:
+        print(err)
+    else:
+        cursor.close()
+
+
+def delete_data(conn, snp_data):
+    cursor = conn.cursor()
+    name = snp_data.name
+    try:
+        cursor.execute(f''' DELETE FROM snapshot WHERE name = '{name}' ''')
+    except Error as err:
+        print(err)
+    else:
+        cursor.close()
+        conn.commit()
