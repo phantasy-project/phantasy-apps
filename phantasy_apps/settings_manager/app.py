@@ -133,6 +133,7 @@ else:
 
 DATA_SOURCE_MODE = os.environ.get('DSRC_MODE', 'DB') # FILE
 DATABASE = os.environ.get('DATABASE', 'sm.db')
+SNP_MS_ENABLED = os.environ.get('ENABLE_MS', True)
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -440,6 +441,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             o.setText(str(v))
 
     def __post_init_ui(self):
+        # enable machine state with take snapshot or not
+        self.snp_ms_chkbox.setChecked(SNP_MS_ENABLED)
         # hide sts info
         self.show_sts_btn.setChecked(False)
         # add beamSpeciesDisplayWidget
@@ -2146,11 +2149,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 machine=self._last_machine_name, segment=self._last_lattice_name,
                 version=self._version, note=note, table_version=10)
         # machstate
-        self.__config_meta_fetcher()
-        loop = QEventLoop()
-        self._meta_fetcher.finished.connect(loop.exit)
-        self._meta_fetcher.start()
-        loop.exec_()
+        if self.snp_ms_chkbox.isChecked():
+            self.__config_meta_fetcher()
+            loop = QEventLoop()
+            self._meta_fetcher.finished.connect(loop.exit)
+            self._meta_fetcher.start()
+            loop.exec_()
         #
         snp_data.machstate = self._machstate
         #
