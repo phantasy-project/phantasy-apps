@@ -1555,13 +1555,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     continue
                 self._snp_dock_list.append(snp_data)
 
+                self.wdir_lineEdit.setText(self.wdir)
+                n = len(self._snp_dock_list)
+                self.total_snp_lbl.setText(str(n))
+                #
+                self.fm.removePaths(self.fm.directories())
+                self.fm.addPath(self.wdir)
+
         self.update_snp_dock_view()
-        self.wdir_lineEdit.setText(self.wdir)
-        n = len(self._snp_dock_list)
-        self.total_snp_lbl.setText(str(n))
-        #
-        self.fm.removePaths(self.fm.directories())
-        self.fm.addPath(self.wdir)
         # current snp
         if self._current_snpdata is not None:
             self.snp_loaded.emit(self._current_snpdata)
@@ -2408,7 +2409,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             # add new entry to database
             insert_data(self._conn, data)
             self._conn.close()
-            self.db_refresh.emit()
+            delayed_exec(lambda:self.db_refresh.emit(), 3000)
         else:
             if data.data_path is None or not os.path.exists(data.data_path):
                 data.data_path = data.get_default_data_path(self.wdir, DEFAULT_DATA_FMT)
@@ -2663,7 +2664,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def __init_dsrc(self, wdir):
         if DATA_SOURCE_MODE == 'DB':
-            # self._conn = sqlite3.connect(os.path.join(wdir, "sm.db"))
             self.db_refresh.connect(partial(self.on_wdir_changed, True, self.wdir))
         else:
             pass
