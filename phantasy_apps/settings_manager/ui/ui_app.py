@@ -404,6 +404,14 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
+        self.snp_ms_chkbox = QtWidgets.QCheckBox(self.centralwidget)
+        self.snp_ms_chkbox.setObjectName("snp_ms_chkbox")
+        self.horizontalLayout_2.addWidget(self.snp_ms_chkbox)
+        self.line_4 = QtWidgets.QFrame(self.centralwidget)
+        self.line_4.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_4.setObjectName("line_4")
+        self.horizontalLayout_2.addWidget(self.line_4)
         self.auto_ndigit_chkbox = QtWidgets.QCheckBox(self.centralwidget)
         self.auto_ndigit_chkbox.setEnabled(True)
         self.auto_ndigit_chkbox.setObjectName("auto_ndigit_chkbox")
@@ -1222,6 +1230,8 @@ class Ui_MainWindow(object):
         self.total_field_number_title_lbl.setText(
             _translate("MainWindow", "Fields"))
         self.total_field_number_lbl.setText(_translate("MainWindow", "0"))
+        self.snp_ms_chkbox.setText(
+            _translate("MainWindow", "Take Snapshot with Machine State"))
         self.auto_ndigit_chkbox.setToolTip(
             _translate("MainWindow",
                        "Change data presenting format to \'{n}g\'."))
