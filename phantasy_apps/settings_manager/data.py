@@ -318,6 +318,20 @@ def read_sql(df):
         return r
 
 
+def _read_sql(df):
+    def _df_info_from_df(df):
+        # return df_info part for SnapshotData, df <-- irow
+        d = {'timestamp': df.timestamp, 'datetime': df.datetime,
+             'name': df['name'], 'note': df.note, 'user': df.user,
+             'ion_name': df.ion_name, 'ion_number': df.ion_number, 'ion_mass': df.ion_mass,
+             'ion_charge': df.ion_charge, 'machine': df.machine, 'segment': df.segment,
+             'app': df.app, 'version': df.version, 'tags': [i.strip() for i in df.tags.split()]}
+        r = pd.DataFrame.from_dict(d, orient='index')
+        r.rename(columns={0: 'attribute'}, inplace=True)
+        return r.T
+    return None, _df_info_from_df(df), None
+
+
 def read_csv(filepath, delimiter=','):
     """Load data from a csv file to SnapshotData instance, initial attribute key: 'data_path'.
 
@@ -380,7 +394,8 @@ class SnapshotData:
         'hdf': read_hdf,
         'h5': read_hdf,
         'csv': read_csv,
-        'sql': read_sql
+        'sql': _read_sql,
+        'sql_full': read_sql,
     }
     def __init__(self, df_data, df_info=None, **kws):
         # setter dict: default/special values

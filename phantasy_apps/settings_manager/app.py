@@ -136,6 +136,8 @@ DATA_SOURCE_MODE = os.environ.get('DSRC_MODE', 'DB') # FILE
 DATABASE = os.environ.get('DATABASE', 'sm.db')
 SNP_MS_ENABLED = os.environ.get('ENABLE_MS', True)
 
+NMAX = 20 # max number of pulling snapshots
+
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # settings view filter button group status (or) changed --> update
@@ -1539,7 +1541,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if DATA_SOURCE_MODE == 'DB':
             # DB
             self._conn = sqlite3.connect(os.path.join(d, DATABASE))
-            df_all = pd.read_sql("SELECT * FROM snapshot", self._conn)
+            df_all = pd.read_sql(f"SELECT * FROM snapshot ORDER BY id DESC LIMIT {NMAX}", self._conn)
             for idx, irow in df_all.iterrows():
                 snp_data = read_data(irow, 'sql')
                 self._snp_dock_list.append(snp_data)
@@ -2678,6 +2680,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.db_refresh.connect(partial(self.on_wdir_changed, True, self.wdir))
         else:
             pass
+
 
 def is_snp_data_exist(snpdata, snpdata_list):
     # if snpdata named 'name' exists.
