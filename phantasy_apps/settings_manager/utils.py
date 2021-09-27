@@ -860,20 +860,18 @@ class SnapshotDataModel(QStandardItemModel):
         self.load_px = QPixmap(":/sm-icons/cast.png").scaled(PX_SIZE, PX_SIZE)
         self.note_px = QPixmap(":/sm-icons/comment.png").scaled(PX_SIZE, PX_SIZE)
         self.tags_px = QPixmap(":/sm-icons/label.png").scaled(PX_SIZE, PX_SIZE)
-        self.save_px = QPixmap(":/sm-icons/save-snp.png").scaled(PX_SIZE, PX_SIZE)
-        self.saved_px = QPixmap(":/sm-icons/saved.png").scaled(PX_SIZE, PX_SIZE)
 
         self.header = self.h_ts, self.h_name, \
                       self.h_ion, self.h_ion_number, self.h_ion_mass, self.h_ion_charge, \
-                      self.h_load_status, self.h_save_status, self.h_user, \
+                      self.h_load_status, self.h_user, \
                       self.h_is_golden, self.h_tags, self.h_note \
                     = "Timestamp", "Name", \
                       "Ion", "Z", "A", "Q", \
-                      "", "", "User", \
+                      "", "User", \
                       "", "Tags", "Note"
         self.ids = self.i_ts, self.i_name, \
                    self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge, \
-                   self.i_load_status, self.i_save_status, self.i_user, \
+                   self.i_load_status, self.i_user, \
                    self.i_is_golden, self.i_tags, self.i_note \
                  = range(len(self.header))
 
@@ -969,20 +967,10 @@ class SnapshotDataModel(QStandardItemModel):
                 it_load_status.setData("not-loaded", Qt.UserRole)
                 it_load_status.setToolTip("Load snapshot by double-clicking")
 
-                # save status
-                it_save_status = QStandardItem()
-                if snp_data.data_path is None:
-                    it_save_status.setData(self.save_px, Qt.DecorationRole)
-                    it_save_status.setData('not-saved', Qt.UserRole)
-                else:
-                    it_save_status.setData(self.saved_px, Qt.DecorationRole)
-                    it_save_status.setData('saved', Qt.UserRole)
-                    it_save_status.setToolTip(snp_data.data_path)
-                #
                 row = (
                     it_ts, it_name,
                     it_ion_name, it_ion_number, it_ion_mass, it_ion_charge,
-                    it_load_status, it_save_status,
+                    it_load_status,
                     it_user, it_is_golden, it_tags, it_note
                 )
                 it_root.appendRow(row)
@@ -996,7 +984,7 @@ class SnapshotDataModel(QStandardItemModel):
             self.appendRow((it_root, *ph_list))
 
     def on_data_changed(self, idx1, idx2):
-        if idx1.column() in (self.i_load_status, self.i_is_golden, self.i_save_status):
+        if idx1.column() in (self.i_load_status, self.i_is_golden):
             return
         s = idx1.data(Qt.DisplayRole)
         i, j = idx1.row(), idx1.column()
@@ -1098,7 +1086,7 @@ class SnapshotDataModel(QStandardItemModel):
         v.expandAll()
         for i in (self.i_ts, self.i_name,
                   self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge,
-                  self.i_load_status, self.i_save_status, self.i_user, self.i_is_golden,
+                  self.i_load_status, self.i_user, self.i_is_golden,
                   self.i_tags):
             v.resizeColumnToContents(i)
         v.collapseAll()
@@ -1130,23 +1118,7 @@ class SnapshotDataModel(QStandardItemModel):
     @pyqtSlot('QString', 'QString')
     def on_snp_saved(self, snp_name, filepath):
         # snp data is saved/updated
-        found = False
-        for ii in range(self.rowCount()):
-            ridx = self.index(ii, 0)
-            if not self.hasChildren(ridx):
-                continue
-            for i in range(self.rowCount(ridx)):
-                it0 = self.itemFromIndex(self.index(i, self.i_ts, ridx))
-                it = self.itemFromIndex(self.index(i, self.i_name, ridx))
-                if it.text() == snp_name:
-                    found = True
-                    idx = self.index(i, self.i_save_status, ridx)
-                    self.setData(idx, self.saved_px, Qt.DecorationRole)
-                    self.setData(idx, "saved", Qt.UserRole)
-                    self.itemFromIndex(idx).setToolTip(filepath)
-                    break
-            if found:
-                break
+        pass
 
     def set_golden_status(self, is_golden: bool, it: QStandardItem) -> None:
         px = QPixmap(QSize(PX_SIZE, PX_SIZE))
