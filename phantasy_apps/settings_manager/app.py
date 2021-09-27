@@ -132,6 +132,7 @@ else:
     MS_CONF_PATH = find_dconf("msviz", "metadata_va.toml")
 
 DATA_SOURCE_MODE = os.environ.get('DSRC_MODE', 'DB') # FILE
+DATABASE = os.environ.get('DATABASE', 'sm.db')
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -1533,7 +1534,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             del self._snp_dock_list[:]
         if DATA_SOURCE_MODE == 'DB':
             # DB
-            self._conn = sqlite3.connect(os.path.join(d, "sm.db"))
+            self._conn = sqlite3.connect(os.path.join(d, DATABASE))
             df_all = pd.read_sql("SELECT * FROM snapshot", self._conn)
             for idx, irow in df_all.iterrows():
                 snp_data = read_data(irow, 'sql')
@@ -2181,7 +2182,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_read_snp(self, data):
-        QDesktopServices.openUrl(QUrl(data.data_path))
+        if DATA_SOURCE_MODE == 'DB':
+            _, filename = tempfile.mkstemp('.xlsx')
+            self._save_settings(data, filename, 'xlsx')
+            QDesktopServices.openUrl(QUrl(filename))
+        else:
+            QDesktopServices.openUrl(QUrl(data.data_path))
 
     def on_snp_filters_updated(self):
         # update btn filters
