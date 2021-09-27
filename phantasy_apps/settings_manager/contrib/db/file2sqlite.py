@@ -15,7 +15,7 @@ from phantasy_apps.settings_manager.data import read_data
 
 
 db_filepath = "sm.db"
-sm_path="/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager"
+sm_path="/files/shared/ap/settings_manager"
 
 conn = create_connection(db_filepath)
 cursor = conn.cursor()
