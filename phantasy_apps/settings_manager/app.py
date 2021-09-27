@@ -750,7 +750,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         _build_actions(fname_btn, 'field')
         _build_actions(dtype_btn, 'type')
 
-
     @pyqtSlot()
     def on_filter_btn_group_status_changed(self):
         # Do logic 'or', if True, do global refresh when data refresher is on.
@@ -2225,9 +2224,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         layout = FlowLayout()
         if 'NOTAG' in filters:
             filters.remove('NOTAG')
-            _filters = ['NOTAG'] + list(filters)
+            _filters = ['NOTAG'] + sorted(list(filters))
         else:
-            _filters = list(filters)
+            _filters = sorted(list(filters))
         for tag in _filters:
             o = QToolButton(self.snp_dock)
             o.setText(tag)
