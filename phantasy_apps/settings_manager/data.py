@@ -325,7 +325,7 @@ def _read_sql(df):
              'name': df['name'], 'note': df.note, 'user': df.user,
              'ion_name': df.ion_name, 'ion_number': df.ion_number, 'ion_mass': df.ion_mass,
              'ion_charge': df.ion_charge, 'machine': df.machine, 'segment': df.segment,
-             'app': df.app, 'version': df.version, 'tags': [i.strip() for i in df.tags.split()]}
+             'app': df.app, 'version': df.version, 'tags': df.tags}
         r = pd.DataFrame.from_dict(d, orient='index')
         r.rename(columns={0: 'attribute'}, inplace=True)
         return r.T
