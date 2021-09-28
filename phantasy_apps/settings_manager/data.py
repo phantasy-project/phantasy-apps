@@ -230,8 +230,8 @@ def read_data(data_path, file_type=None):
             return None
         data_src = data_path.resolve()
     else:
-        # df
-        file_type = 'sql'
+        # DATABASE, --> _sql, df
+        file_type = '_sql'
         data_src = data_path
 
     try:
@@ -329,7 +329,7 @@ def _read_sql(df):
         r = pd.DataFrame.from_dict(d, orient='index')
         r.rename(columns={0: 'attribute'}, inplace=True)
         return r.T
-    return None, _df_info_from_df(df), None
+    return None, _df_info_from_df(df), df
 
 
 def read_csv(filepath, delimiter=','):
@@ -394,8 +394,8 @@ class SnapshotData:
         'hdf': read_hdf,
         'h5': read_hdf,
         'csv': read_csv,
-        'sql': _read_sql,
-        'sql_full': read_sql,
+        'sql': read_sql,
+        '_sql': _read_sql,
     }
     def __init__(self, df_data, df_info=None, **kws):
         # setter dict: default/special values
@@ -432,6 +432,8 @@ class SnapshotData:
         self.data_path = None
         # machine state data
         self.machstate = None
+        # placeholder for df row (DB)
+        self._blob = None
 
     @property
     def data_path(self):
@@ -647,6 +649,8 @@ class SnapshotData:
         df_data, df_info, df_machstate = cls._READER_MAP[ftype](filepath, **kws)
         o = cls(df_data, df_info)
         o.machstate = df_machstate
+        if ftype == '_sql':
+            o._blob = df_machstate
         if isinstance(filepath, (pathlib.Path, str)):
             o.data_path = str(filepath)
         return o
@@ -662,6 +666,16 @@ class SnapshotData:
         elif ftype == 'csv':
             machstate.to_csv(filepath, **kws)
         return True
+
+    def extract_blob(self):
+        # update .data and .machstate with _blob if _blob is not None
+        # only needed when work with DB
+        if self._blob is None: # already extracted
+            return
+        _df_data, _df_info, _df_machstate = read_sql(self._blob)
+        self.data = _df_data
+        self.machstate = _df_machstate
+        self._blob = None
 
     def to_blob(self):
         # output self to a binary blob, see alo write()

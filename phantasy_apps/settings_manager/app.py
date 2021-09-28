@@ -2183,6 +2183,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_copy_snp(self, data):
+        if DATA_SOURCE_MODE == 'DB':
+            data.extract_blob()
         data.data.to_clipboard(excel=True, index=False)
         msg = '<html><head/><body><p><span style="color:#007BFF;">Copied snapshot data at: </span><span style="color:#DC3545;">{}</span></p></body></html>'.format(data.ts_as_str())
         self.statusInfoChanged.emit(msg)
@@ -2191,6 +2193,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_read_snp(self, data):
         if DATA_SOURCE_MODE == 'DB':
+            data.extract_blob()
             _, filename = tempfile.mkstemp('.xlsx')
             self._save_settings(data, filename, 'xlsx')
             QDesktopServices.openUrl(QUrl(filename))
@@ -2419,6 +2422,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_save_settings(self, data):
         # in-place save data to data_path.
         if DATA_SOURCE_MODE == 'DB':
+            data.extract_blob()
             # add new entry to database
             insert_update_data(self._conn, data)
             self._conn.close()
@@ -2476,6 +2480,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self._last_lattice_name != data.segment:
             self.__load_lattice(data.machine, data.segment)
         lat = self._lat
+        if DATA_SOURCE_MODE == 'DB':
+            data.extract_blob()
         s = make_physics_settings(data.data.to_numpy(), lat)
         lat.settings.update(s)
         self._elem_list = [lat[ename] for ename in s]
