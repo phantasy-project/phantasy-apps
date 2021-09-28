@@ -191,6 +191,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # refresh db
     db_refresh = pyqtSignal()
 
+    # pull data from db
+    db_pull = pyqtSignal()
+
     def __init__(self, version, config_dir=None, machine=None, segment=None):
         super(SettingsManagerWindow, self).__init__()
 
@@ -1547,9 +1550,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 df_all = pd.read_sql(f"SELECT * FROM snapshot", self._conn)
             else:
                 df_all = pd.read_sql(f"SELECT * FROM snapshot ORDER BY id DESC LIMIT {self._n_snp_max}", self._conn)
-            for idx, irow in df_all.iterrows():
-                snp_data = read_data(irow, 'sql')
-                self._snp_dock_list.append(snp_data)
+
+            #
+            self.df_all_row_tuple = list(df_all.iterrows())
+            self.db_pull.emit()
+
         else: # FILE
             for path in pathlib.Path(d).glob("**/*"):
                 if not os.access(path, os.R_OK):
@@ -1571,13 +1576,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self.fm.removePaths(self.fm.directories())
                 self.fm.addPath(self.wdir)
 
-        n = len(self._snp_dock_list)
-        self.total_snp_lbl.setText(str(n))
-        self.update_snp_dock_view()
-        # current snp
-        if self._current_snpdata is not None:
-            self.snp_loaded.emit(self._current_snpdata)
-        self.snp_filters_updated.emit()
+                n = len(self._snp_dock_list)
+                self.total_snp_lbl.setText(str(n))
+                self.update_snp_dock_view()
+                # current snp
+                if self._current_snpdata is not None:
+                    self.snp_loaded.emit(self._current_snpdata)
+                self.snp_filters_updated.emit()
 
     @pyqtSlot(int)
     def on_ndigit_changed(self, n):
@@ -1933,6 +1938,35 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             it_src = m_src.itemFromIndex(idx_src)
         #    print(f"-- Item in source model: {it_src.text()}, index: ({idx_src.row()}, {idx_src.column()})")
         # print("=" * 20)
+
+    @pyqtSlot()
+    def on_pull_data(self):
+        """Pull data from database.
+        """
+        self.db_puller = DAQT(daq_func=self.on_pull_data_one, daq_seq=self.df_all_row_tuple)
+        self.db_puller.daqStarted.connect(self._on_db_pull_started)
+        self.db_puller.progressUpdated.connect(self._on_db_pull_progressed)
+        self.db_puller.resultsReady.connect(self._on_db_pull_resultsReady)
+        self.db_puller.finished.connect(self._on_db_pull_finished)
+        self.db_puller.start()
+    def on_pull_data_one(self, iiter):
+        idx, irow = iiter
+        snp_data = read_data(irow, 'sql')
+        return snp_data
+    def _on_db_pull_progressed(self, f, s):
+        printlog(f"DB puller is updating... {f * 100:>5.1f}%, {s}")
+    def _on_db_pull_started(self):
+        printlog("DB puller is working...")
+    def _on_db_pull_resultsReady(self, res):
+        self._snp_dock_list = res
+    def _on_db_pull_finished(self):
+        n = len(self._snp_dock_list)
+        self.total_snp_lbl.setText(str(n))
+        self.update_snp_dock_view()
+        # current snp
+        if self._current_snpdata is not None:
+            self.snp_loaded.emit(self._current_snpdata)
+        self.snp_filters_updated.emit()
 
     @pyqtSlot(float, 'QString')
     def _on_data_refresh_progressed(self, per, str_idx):
@@ -2692,6 +2726,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.nsnp_btn.click()
             self.nsnp_btn.click() # n_snp_max -> 20
             self.db_refresh.connect(partial(self.on_wdir_changed, True, self.wdir))
+            self.db_pull.connect(self.on_pull_data)
         else:
             pass
 
