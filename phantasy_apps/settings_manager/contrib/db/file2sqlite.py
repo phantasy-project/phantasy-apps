@@ -9,6 +9,7 @@ Tong Zhang <zhangt@frib.msu.edu>
 """
 
 import sqlite3
+import os
 from db_utils import create_connection, insert_data, get_blob
 import pathlib
 from phantasy_apps.settings_manager.data import read_data
@@ -27,7 +28,7 @@ with open('init.sql', 'r') as fp:
 
 # add data
 cnt = 0
-for path in pathlib.Path(sm_path).glob("**/*"):
+for path in sorted(pathlib.Path(sm_path).glob("**/*"), key=os.path.getctime):
     if not path.is_file():
         continue
     snp_data = read_data(path)
