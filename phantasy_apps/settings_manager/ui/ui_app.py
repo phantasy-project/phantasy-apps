@@ -796,6 +796,9 @@ class Ui_MainWindow(object):
         self.snp_refresh_btn.setAutoRaise(True)
         self.snp_refresh_btn.setObjectName("snp_refresh_btn")
         self.horizontalLayout_4.addWidget(self.snp_refresh_btn)
+        self.nsnp_btn = QtWidgets.QPushButton(self.dockWidgetContents)
+        self.nsnp_btn.setObjectName("nsnp_btn")
+        self.horizontalLayout_4.addWidget(self.nsnp_btn)
         self.label_10 = QtWidgets.QLabel(self.dockWidgetContents)
         self.label_10.setObjectName("label_10")
         self.horizontalLayout_4.addWidget(self.label_10)
@@ -1130,6 +1133,7 @@ class Ui_MainWindow(object):
         self.snp_note_filter_lineEdit.editingFinished.connect(
             MainWindow.on_snp_filter_note_updated)
         self.toolButton_2.clicked.connect(MainWindow.on_select_daterange)
+        self.nsnp_btn.clicked.connect(MainWindow.on_update_nsnp)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
@@ -1311,6 +1315,12 @@ class Ui_MainWindow(object):
         self.snp_refresh_btn.setToolTip(
             _translate("MainWindow", "Refresh snapshots."))
         self.snp_refresh_btn.setText(_translate("MainWindow", "..."))
+        self.nsnp_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Click to update the total number of snapshots to display.</p></body></html>"
+            ))
+        self.nsnp_btn.setText(_translate("MainWindow", "N-SNP"))
         self.label_10.setText(_translate("MainWindow", "Total"))
         self.total_snp_lbl.setText(
             _translate("MainWindow",
