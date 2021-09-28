@@ -15,6 +15,7 @@ from datetime import datetime
 from epics import caget, caput
 from functools import partial
 from getpass import getuser
+from itertools import cycle
 
 from PyQt5.QtCore import QDate
 from PyQt5.QtCore import QEventLoop
@@ -136,7 +137,7 @@ DATA_SOURCE_MODE = os.environ.get('DSRC_MODE', 'DB') # FILE
 DATABASE = os.environ.get('DATABASE', 'sm.db')
 SNP_MS_ENABLED = os.environ.get('ENABLE_MS', True)
 
-NMAX = 20 # max number of pulling snapshots
+N_SNP_MAX = cycle([10, 20, 50, 100, 'All'])
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -224,6 +225,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # config
         self.init_config(config_dir)
 
+        self.nsnp_btn.setVisible(False)
         self.__init_dsrc(self.wdir)
 
         # post init ui
@@ -1541,7 +1543,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if DATA_SOURCE_MODE == 'DB':
             # DB
             self._conn = sqlite3.connect(os.path.join(d, DATABASE))
-            df_all = pd.read_sql(f"SELECT * FROM snapshot ORDER BY id DESC LIMIT {NMAX}", self._conn)
+            if self._n_snp_max == 'All':
+                df_all = pd.read_sql(f"SELECT * FROM snapshot", self._conn)
+            else:
+                df_all = pd.read_sql(f"SELECT * FROM snapshot ORDER BY id DESC LIMIT {self._n_snp_max}", self._conn)
             for idx, irow in df_all.iterrows():
                 snp_data = read_data(irow, 'sql')
                 self._snp_dock_list.append(snp_data)
@@ -1562,12 +1567,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self._snp_dock_list.append(snp_data)
 
                 self.wdir_lineEdit.setText(self.wdir)
-                n = len(self._snp_dock_list)
-                self.total_snp_lbl.setText(str(n))
                 #
                 self.fm.removePaths(self.fm.directories())
                 self.fm.addPath(self.wdir)
 
+        n = len(self._snp_dock_list)
+        self.total_snp_lbl.setText(str(n))
         self.update_snp_dock_view()
         # current snp
         if self._current_snpdata is not None:
@@ -2683,9 +2688,19 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def __init_dsrc(self, wdir):
         if DATA_SOURCE_MODE == 'DB':
+            self.nsnp_btn.setVisible(True)
+            self.nsnp_btn.click()
+            self.nsnp_btn.click() # n_snp_max -> 20
             self.db_refresh.connect(partial(self.on_wdir_changed, True, self.wdir))
         else:
             pass
+
+    @pyqtSlot()
+    def on_update_nsnp(self):
+        """Cycle the total number of snapshots to display.
+        """
+        self._n_snp_max = next(N_SNP_MAX)
+        self.sender().setText(str(self._n_snp_max))
 
 
 def is_snp_data_exist(snpdata, snpdata_list):
