@@ -1945,7 +1945,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         self.db_puller = DAQT(daq_func=self.on_pull_data_one, daq_seq=self.df_all_row_tuple)
         self.db_puller.daqStarted.connect(self._on_db_pull_started)
-        self.db_puller.progressUpdated.connect(self._on_db_pull_progressed)
+        # self.db_puller.progressUpdated.connect(self._on_db_pull_progressed)
         self.db_puller.resultsReady.connect(self._on_db_pull_resultsReady)
         self.db_puller.finished.connect(self._on_db_pull_finished)
         self.db_puller.start()
@@ -1967,6 +1967,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if self._current_snpdata is not None:
             self.snp_loaded.emit(self._current_snpdata)
         self.snp_filters_updated.emit()
+        printlog("DB puller is done...")
 
     @pyqtSlot(float, 'QString')
     def _on_data_refresh_progressed(self, per, str_idx):
