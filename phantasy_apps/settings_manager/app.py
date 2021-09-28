@@ -81,7 +81,7 @@ from .data import SnapshotData
 from .data import get_settings_data
 from .data import make_physics_settings
 from .data import read_data
-from .db_utils import insert_data
+from .db_utils import insert_update_data
 from .db_utils import delete_data
 from .ui.ui_app import Ui_MainWindow
 from .ui.ui_query_tips import Ui_Form as QueryTipsForm
@@ -2420,7 +2420,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # in-place save data to data_path.
         if DATA_SOURCE_MODE == 'DB':
             # add new entry to database
-            insert_data(self._conn, data)
+            insert_update_data(self._conn, data)
             self._conn.close()
             # delayed_exec(lambda:self.db_refresh.emit(), 3000)
         else:
