@@ -6,6 +6,8 @@ import json
 import os
 import pathlib
 import re
+import sqlite3
+import pandas as pd
 import tempfile
 import time
 from collections import OrderedDict
@@ -13,6 +15,7 @@ from datetime import datetime
 from epics import caget, caput
 from functools import partial
 from getpass import getuser
+from itertools import cycle
 
 from PyQt5.QtCore import QDate
 from PyQt5.QtCore import QEventLoop
@@ -79,6 +82,8 @@ from .data import SnapshotData
 from .data import get_settings_data
 from .data import make_physics_settings
 from .data import read_data
+from .db_utils import insert_update_data
+from .db_utils import delete_data
 from .ui.ui_app import Ui_MainWindow
 from .ui.ui_query_tips import Ui_Form as QueryTipsForm
 from .utils import FMT
@@ -127,6 +132,12 @@ if LIVE:
     MS_CONF_PATH = find_dconf("msviz", "metadata.toml")
 else:
     MS_CONF_PATH = find_dconf("msviz", "metadata_va.toml")
+
+DATA_SOURCE_MODE = os.environ.get('DSRC_MODE', 'DB') # FILE
+DATABASE = os.environ.get('DATABASE', 'sm.db')
+SNP_MS_ENABLED = os.environ.get('ENABLE_MS', True)
+
+N_SNP_MAX = cycle([10, 20, 50, 100, 'All'])
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -177,6 +188,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # snp filter (snp dock)
     snp_filters_updated = pyqtSignal()
 
+    # refresh db
+    db_refresh = pyqtSignal()
+
+    # pull data from db
+    db_pull = pyqtSignal()
+
     def __init__(self, version, config_dir=None, machine=None, segment=None):
         super(SettingsManagerWindow, self).__init__()
 
@@ -210,6 +227,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # config
         self.init_config(config_dir)
+
+        self.nsnp_btn.setVisible(False)
+        self.__init_dsrc(self.wdir)
 
         # post init ui
         self.__post_init_ui()
@@ -429,6 +449,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             o.setText(str(v))
 
     def __post_init_ui(self):
+        # enable machine state with take snapshot or not
+        self.snp_ms_chkbox.setChecked(SNP_MS_ENABLED)
         # hide sts info
         self.show_sts_btn.setChecked(False)
         # add beamSpeciesDisplayWidget
@@ -735,7 +757,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         _build_actions(fname_btn, 'field')
         _build_actions(dtype_btn, 'type')
 
-
     @pyqtSlot()
     def on_filter_btn_group_status_changed(self):
         # Do logic 'or', if True, do global refresh when data refresher is on.
@@ -867,7 +888,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.insertAction(copy_action, dcopy_action)
         menu.addSeparator()
         menu.addAction(read_action)
-        menu.addAction(reveal_action)
+        if DATA_SOURCE_MODE == 'FILE':
+            menu.addAction(reveal_action)
         menu.addSeparator()
         menu.addAction(saveas_action)
         menu.addAction(del_action)
@@ -1521,31 +1543,46 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.wdir = d
         if purge:
             del self._snp_dock_list[:]
-        for path in pathlib.Path(d).glob("**/*"):
-            if not os.access(path, os.R_OK):
-                printlog(f"Cannot access {path}!")
-                continue
-            if not path.is_file():
-                continue
-            snp_data = read_data(path)
-            if snp_data is None:
-                printlog(f"Failed to load {path.resolve()}.")
-                continue
-            # skip snapshot that name conflicts
-            if is_snp_data_exist(snp_data, self._snp_dock_list):
-                continue
-            self._snp_dock_list.append(snp_data)
-        self.update_snp_dock_view()
-        self.wdir_lineEdit.setText(self.wdir)
-        n = len(self._snp_dock_list)
-        self.total_snp_lbl.setText(str(n))
-        #
-        self.fm.removePaths(self.fm.directories())
-        self.fm.addPath(self.wdir)
-        # current snp
-        if self._current_snpdata is not None:
-            self.snp_loaded.emit(self._current_snpdata)
-        self.snp_filters_updated.emit()
+        if DATA_SOURCE_MODE == 'DB':
+            # DB
+            self._conn = sqlite3.connect(os.path.join(d, DATABASE))
+            if self._n_snp_max == 'All':
+                df_all = pd.read_sql(f"SELECT * FROM snapshot", self._conn)
+            else:
+                df_all = pd.read_sql(f"SELECT * FROM snapshot ORDER BY id DESC LIMIT {self._n_snp_max}", self._conn)
+
+            #
+            self.df_all_row_tuple = list(df_all.iterrows())
+            self.db_pull.emit()
+
+        else: # FILE
+            for path in pathlib.Path(d).glob("**/*"):
+                if not os.access(path, os.R_OK):
+                    printlog(f"Cannot access {path}!")
+                    continue
+                if not path.is_file():
+                    continue
+                snp_data = read_data(path)
+                if snp_data is None:
+                    printlog(f"Failed to load {path.resolve()}.")
+                    continue
+                # skip snapshot that name conflicts
+                if is_snp_data_exist(snp_data, self._snp_dock_list):
+                    continue
+                self._snp_dock_list.append(snp_data)
+
+                self.wdir_lineEdit.setText(self.wdir)
+                #
+                self.fm.removePaths(self.fm.directories())
+                self.fm.addPath(self.wdir)
+
+                n = len(self._snp_dock_list)
+                self.total_snp_lbl.setText(str(n))
+                self.update_snp_dock_view()
+                # current snp
+                if self._current_snpdata is not None:
+                    self.snp_loaded.emit(self._current_snpdata)
+                self.snp_filters_updated.emit()
 
     @pyqtSlot(int)
     def on_ndigit_changed(self, n):
@@ -1902,6 +1939,36 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #    print(f"-- Item in source model: {it_src.text()}, index: ({idx_src.row()}, {idx_src.column()})")
         # print("=" * 20)
 
+    @pyqtSlot()
+    def on_pull_data(self):
+        """Pull data from database.
+        """
+        self.db_puller = DAQT(daq_func=self.on_pull_data_one, daq_seq=self.df_all_row_tuple)
+        self.db_puller.daqStarted.connect(self._on_db_pull_started)
+        # self.db_puller.progressUpdated.connect(self._on_db_pull_progressed)
+        self.db_puller.resultsReady.connect(self._on_db_pull_resultsReady)
+        self.db_puller.finished.connect(self._on_db_pull_finished)
+        self.db_puller.start()
+    def on_pull_data_one(self, iiter):
+        idx, irow = iiter
+        snp_data = read_data(irow, 'sql')
+        return snp_data
+    def _on_db_pull_progressed(self, f, s):
+        printlog(f"DB puller is updating... {f * 100:>5.1f}%, {s}")
+    def _on_db_pull_started(self):
+        printlog("DB puller is working...")
+    def _on_db_pull_resultsReady(self, res):
+        self._snp_dock_list = res
+    def _on_db_pull_finished(self):
+        n = len(self._snp_dock_list)
+        self.total_snp_lbl.setText(str(n))
+        self.update_snp_dock_view()
+        # current snp
+        if self._current_snpdata is not None:
+            self.snp_loaded.emit(self._current_snpdata)
+        self.snp_filters_updated.emit()
+        printlog("DB puller is done...")
+
     @pyqtSlot(float, 'QString')
     def _on_data_refresh_progressed(self, per, str_idx):
         self.refresh_pb.setValue(per * 100)
@@ -2107,8 +2174,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._query_tips_form.show()
 
     def on_snapshots_changed(self, cast=True):
-        """Number of snapshots is changed.
-        """
+        # New captured snapshot.
         # update snpdata to snp dock.
         if self._tv.model() is None:
             return
@@ -2126,11 +2192,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 machine=self._last_machine_name, segment=self._last_lattice_name,
                 version=self._version, note=note, table_version=10)
         # machstate
-        self.__config_meta_fetcher()
-        loop = QEventLoop()
-        self._meta_fetcher.finished.connect(loop.exit)
-        self._meta_fetcher.start()
-        loop.exec_()
+        if self.snp_ms_chkbox.isChecked():
+            self.__config_meta_fetcher()
+            loop = QEventLoop()
+            self._meta_fetcher.finished.connect(loop.exit)
+            self._meta_fetcher.start()
+            loop.exec_()
         #
         snp_data.machstate = self._machstate
         #
@@ -2156,6 +2223,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_copy_snp(self, data):
+        if DATA_SOURCE_MODE == 'DB':
+            data.extract_blob()
         data.data.to_clipboard(excel=True, index=False)
         msg = '<html><head/><body><p><span style="color:#007BFF;">Copied snapshot data at: </span><span style="color:#DC3545;">{}</span></p></body></html>'.format(data.ts_as_str())
         self.statusInfoChanged.emit(msg)
@@ -2163,7 +2232,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_read_snp(self, data):
-        QDesktopServices.openUrl(QUrl(data.data_path))
+        if DATA_SOURCE_MODE == 'DB':
+            data.extract_blob()
+            _, filename = tempfile.mkstemp('.xlsx')
+            self._save_settings(data, filename, 'xlsx')
+            QDesktopServices.openUrl(QUrl(filename))
+        else:
+            QDesktopServices.openUrl(QUrl(data.data_path))
 
     def on_snp_filters_updated(self):
         # update btn filters
@@ -2194,9 +2269,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         layout = FlowLayout()
         if 'NOTAG' in filters:
             filters.remove('NOTAG')
-            _filters = ['NOTAG'] + list(filters)
+            _filters = ['NOTAG'] + sorted(list(filters))
         else:
-            _filters = list(filters)
+            _filters = sorted(list(filters))
         for tag in _filters:
             o = QToolButton(self.snp_dock)
             o.setText(tag)
@@ -2372,26 +2447,39 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 break
         m = self.snp_treeView.model().m_src
         m.remove_data(data_to_del)
-        filepath = data_to_del.data_path
-        if filepath is not None and os.path.isfile(filepath):
-            os.remove(filepath)
+        if DATA_SOURCE_MODE == 'FILE':
+            filepath = data_to_del.data_path
+            if filepath is not None and os.path.isfile(filepath):
+                os.remove(filepath)
+        else:
+            # delete from DB
+            self._conn = sqlite3.connect(os.path.join(self.wdir, DATABASE))
+            delete_data(self._conn, data)
+            self._conn.close()
         self.total_snp_lbl.setText(str(len(self._snp_dock_list)))
         del data_to_del
 
     def on_save_settings(self, data):
         # in-place save data to data_path.
-        if data.data_path is None or not os.path.exists(data.data_path):
-            data.data_path = data.get_default_data_path(self.wdir, DEFAULT_DATA_FMT)
-            dirname = os.path.dirname(data.data_path)
-            if not os.path.exists(dirname):
-                os.makedirs(dirname)
-        if isinstance(data.data_path, str):
-            data_path = pathlib.Path(data.data_path)
+        if DATA_SOURCE_MODE == 'DB':
+            data.extract_blob()
+            # add new entry to database
+            insert_update_data(self._conn, data)
+            self._conn.close()
+            # delayed_exec(lambda:self.db_refresh.emit(), 3000)
         else:
-            data_path = data.data_path
-        ext = data_path.suffix.lower()[1:]
-        self._save_settings(data, data.data_path, ext)
-        self.snp_saved.emit(data.name, data.data_path)
+            if data.data_path is None or not os.path.exists(data.data_path):
+                data.data_path = data.get_default_data_path(self.wdir, DEFAULT_DATA_FMT)
+                dirname = os.path.dirname(data.data_path)
+                if not os.path.exists(dirname):
+                    os.makedirs(dirname)
+            if isinstance(data.data_path, str):
+                data_path = pathlib.Path(data.data_path)
+            else:
+                data_path = data.data_path
+            ext = data_path.suffix.lower()[1:]
+            self._save_settings(data, data.data_path, ext)
+            self.snp_saved.emit(data.name, data.data_path)
 
     def on_saveas_settings(self, data):
         # data: SnapshotData
@@ -2432,6 +2520,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self._last_lattice_name != data.segment:
             self.__load_lattice(data.machine, data.segment)
         lat = self._lat
+        if DATA_SOURCE_MODE == 'DB':
+            data.extract_blob()
         s = make_physics_settings(data.data.to_numpy(), lat)
         lat.settings.update(s)
         self._elem_list = [lat[ename] for ename in s]
@@ -2630,6 +2720,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._meta_fetcher.progressUpdated.connect(self._meta_fetcher_progressed)
         self._meta_fetcher.daqFinished.connect(self._meta_fetcher_stopped)
         self._meta_fetcher.resultsReady.connect(partial(self._meta_fetcher_got_results, pv_list, grp_list))
+
+    def __init_dsrc(self, wdir):
+        if DATA_SOURCE_MODE == 'DB':
+            self.nsnp_btn.setVisible(True)
+            self.nsnp_btn.click()
+            self.nsnp_btn.click() # n_snp_max -> 20
+            self.db_refresh.connect(partial(self.on_wdir_changed, True, self.wdir))
+            self.db_pull.connect(self.on_pull_data)
+        else:
+            pass
+
+    @pyqtSlot()
+    def on_update_nsnp(self):
+        """Cycle the total number of snapshots to display.
+        """
+        self._n_snp_max = next(N_SNP_MAX)
+        self.sender().setText(str(self._n_snp_max))
 
 
 def is_snp_data_exist(snpdata, snpdata_list):

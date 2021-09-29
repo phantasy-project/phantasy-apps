@@ -404,6 +404,14 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
+        self.snp_ms_chkbox = QtWidgets.QCheckBox(self.centralwidget)
+        self.snp_ms_chkbox.setObjectName("snp_ms_chkbox")
+        self.horizontalLayout_2.addWidget(self.snp_ms_chkbox)
+        self.line_4 = QtWidgets.QFrame(self.centralwidget)
+        self.line_4.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_4.setObjectName("line_4")
+        self.horizontalLayout_2.addWidget(self.line_4)
         self.auto_ndigit_chkbox = QtWidgets.QCheckBox(self.centralwidget)
         self.auto_ndigit_chkbox.setEnabled(True)
         self.auto_ndigit_chkbox.setObjectName("auto_ndigit_chkbox")
@@ -788,6 +796,9 @@ class Ui_MainWindow(object):
         self.snp_refresh_btn.setAutoRaise(True)
         self.snp_refresh_btn.setObjectName("snp_refresh_btn")
         self.horizontalLayout_4.addWidget(self.snp_refresh_btn)
+        self.nsnp_btn = QtWidgets.QPushButton(self.dockWidgetContents)
+        self.nsnp_btn.setObjectName("nsnp_btn")
+        self.horizontalLayout_4.addWidget(self.nsnp_btn)
         self.label_10 = QtWidgets.QLabel(self.dockWidgetContents)
         self.label_10.setObjectName("label_10")
         self.horizontalLayout_4.addWidget(self.label_10)
@@ -1122,6 +1133,7 @@ class Ui_MainWindow(object):
         self.snp_note_filter_lineEdit.editingFinished.connect(
             MainWindow.on_snp_filter_note_updated)
         self.toolButton_2.clicked.connect(MainWindow.on_select_daterange)
+        self.nsnp_btn.clicked.connect(MainWindow.on_update_nsnp)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
@@ -1222,6 +1234,8 @@ class Ui_MainWindow(object):
         self.total_field_number_title_lbl.setText(
             _translate("MainWindow", "Fields"))
         self.total_field_number_lbl.setText(_translate("MainWindow", "0"))
+        self.snp_ms_chkbox.setText(
+            _translate("MainWindow", "Take Snapshot with Machine State"))
         self.auto_ndigit_chkbox.setToolTip(
             _translate("MainWindow",
                        "Change data presenting format to \'{n}g\'."))
@@ -1301,6 +1315,12 @@ class Ui_MainWindow(object):
         self.snp_refresh_btn.setToolTip(
             _translate("MainWindow", "Refresh snapshots."))
         self.snp_refresh_btn.setText(_translate("MainWindow", "..."))
+        self.nsnp_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Click to update the total number of snapshots to display.</p></body></html>"
+            ))
+        self.nsnp_btn.setText(_translate("MainWindow", "N-SNP"))
         self.label_10.setText(_translate("MainWindow", "Total"))
         self.total_snp_lbl.setText(
             _translate("MainWindow",

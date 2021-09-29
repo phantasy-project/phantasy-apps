@@ -2,15 +2,16 @@
 
 import csv
 import hashlib
+import io
 import os
 import pathlib
 import re
+import tempfile
 import time
 import pandas as pd
 from collections import OrderedDict
 from datetime import datetime
 from getpass import getuser
-from io import StringIO
 
 from PyQt5.QtCore import Qt
 
@@ -20,7 +21,7 @@ from phantasy import Settings
 DEFAULT_DATA_FMT = "xlsx"
 
 # support file types
-SUPPORT_FTYPES = ("xlsx", "csv", "h5")
+SUPPORT_FTYPES = ("xlsx", "csv", "h5", "sql")
 
 CSV_HEADER = (
     'Name', 'Field', 'Type', 'Pos',
@@ -211,7 +212,7 @@ def read_data(data_path, file_type=None):
     Parameters
     ----------
     data_path : Path
-        Path of the data source.
+        Path of the data source, or dataframe for 'sql' file_type.
     file_type : str
         File type.
 
@@ -219,21 +220,26 @@ def read_data(data_path, file_type=None):
     -------
     r : SnapshotData
     """
-    if isinstance(data_path, str):
+    if isinstance(data_path, (pathlib.Path, str)):
+        # filepath
         data_path = pathlib.Path(data_path)
-    if file_type is None:
-        # csv, xls, h5
-        file_type = data_path.suffix.lower()[1:]
+        if file_type is None:
+            file_type = data_path.suffix.lower()[1:]
         if file_type not in SUPPORT_FTYPES:
             print(f"Non-support file type: {file_type}.")
             return None
+        data_src = data_path.resolve()
+    else:
+        # DATABASE, --> _sql, df
+        file_type = '_sql'
+        data_src = data_path
+
     try:
-        r = SnapshotData.read(data_path.resolve(), ftype=file_type)
+        r = SnapshotData.read(data_src, ftype=file_type)
     except:
         r = None
     finally:
         return r
-
 
 
 def read_hdf(filepath, **kws):
@@ -294,6 +300,38 @@ def read_excel(filepath, **kws):
     return df_data, _df.T, df_machstate
 
 
+def read_sql(df):
+    """Read a row of data into SnapshotData. The row of data is originated from a DataFrame
+    from a sqlite database.
+    """
+    data_format = df.data_format
+    if data_format == 'xlsx':
+        return read_excel(io.BytesIO(df.data))
+    elif data_format == 'csv':
+        return read_csv(io.BytesIO(df.data))
+    elif data_format in ('h5', 'hdf5'):
+        _, mfile = tempfile.mkstemp(".h5")
+        with open(mfile, "wb") as fp:
+            fp.write(df.data)
+            r = read_hdf(mfile)
+        os.remove(mfile)
+        return r
+
+
+def _read_sql(df):
+    def _df_info_from_df(df):
+        # return df_info part for SnapshotData, df <-- irow
+        d = {'timestamp': df.timestamp, 'datetime': df.datetime,
+             'name': df['name'], 'note': df.note, 'user': df.user,
+             'ion_name': df.ion_name, 'ion_number': df.ion_number, 'ion_mass': df.ion_mass,
+             'ion_charge': df.ion_charge, 'machine': df.machine, 'segment': df.segment,
+             'app': df.app, 'version': df.version, 'tags': df.tags}
+        r = pd.DataFrame.from_dict(d, orient='index')
+        r.rename(columns={0: 'attribute'}, inplace=True)
+        return r.T
+    return None, _df_info_from_df(df), df
+
+
 def read_csv(filepath, delimiter=','):
     """Load data from a csv file to SnapshotData instance, initial attribute key: 'data_path'.
 
@@ -306,22 +344,30 @@ def read_csv(filepath, delimiter=','):
         A tuple of two dataframes, the first is physics settings table, the other is the metadata
         describing the settings, the third is None (for machine state)
     """
-    # attr_dict = OrderedDict({'data_path': os.path.abspath(filepath)})
     attr_dict = OrderedDict()
-    data_list = []
-    with open(filepath, 'r') as fp:
-        for line in fp:
-            if line.startswith('#'):
-                k, v = line.strip('# ,\n').split(':', 1)
-                if k == 'timestamp':
-                    attr_dict[k] = float(v.strip())
-                else:
-                    attr_dict[k] = v.strip()
+    stream_type = None
+    if isinstance(filepath, (str, pathlib.Path)): # path
+        stream_type = 'file'
+        fp = open(filepath, 'r')
+    else:
+        stream_type = 'bytes'
+        fp = filepath # BytesIO
+    for line in fp:
+        if stream_type == 'bytes':
+            line = line.decode()
+        if line.startswith('#'):
+            k, v = line.strip('# ,\n').split(':', 1)
+            if k == 'timestamp':
+                attr_dict[k] = float(v.strip())
             else:
-                break
-        header = [i.strip() for i in line.split(delimiter)]
-        df_info = pd.DataFrame.from_dict(attr_dict, orient='index', columns=['attribute']).T
-        df_data = pd.read_csv(fp, names=header)
+                attr_dict[k] = v.strip()
+        else:
+            break
+    header = [i.strip() for i in line.split(delimiter)]
+    df_info = pd.DataFrame.from_dict(attr_dict, orient='index', columns=['attribute']).T
+    df_data = pd.read_csv(fp, names=header)
+    if stream_type == 'file':
+        fp.close()
     return df_data, df_info, None
 
 
@@ -348,6 +394,8 @@ class SnapshotData:
         'hdf': read_hdf,
         'h5': read_hdf,
         'csv': read_csv,
+        'sql': read_sql,
+        '_sql': _read_sql,
     }
     def __init__(self, df_data, df_info=None, **kws):
         # setter dict: default/special values
@@ -384,6 +432,8 @@ class SnapshotData:
         self.data_path = None
         # machine state data
         self.machstate = None
+        # placeholder for df row (DB)
+        self._blob = None
 
     @property
     def data_path(self):
@@ -524,7 +574,7 @@ class SnapshotData:
 
     def __str__(self):
         # str(self.data)
-        sio = StringIO()
+        sio = io.StringIO()
         sio.write("\t".join(CSV_HEADER))
         sio.write("\n")
         for ename, fname, ftype, spos, sp, rd, old_sp, tol, writable in self.data:
@@ -592,13 +642,17 @@ class SnapshotData:
     @classmethod
     def read(cls, filepath, ftype='xlsx', **kws):
         # filepath: full path of data file
+        # for ftype 'sql', filepath argument should be dataframe.
         if ftype not in cls._READER_MAP:
             print(f"Data source of type '{ftype}' is not supported.")
             return None
         df_data, df_info, df_machstate = cls._READER_MAP[ftype](filepath, **kws)
         o = cls(df_data, df_info)
         o.machstate = df_machstate
-        o.data_path = str(filepath)
+        if ftype == '_sql':
+            o._blob = df_machstate
+        if isinstance(filepath, (pathlib.Path, str)):
+            o.data_path = str(filepath)
         return o
 
     @staticmethod
@@ -613,6 +667,21 @@ class SnapshotData:
             machstate.to_csv(filepath, **kws)
         return True
 
+    def extract_blob(self):
+        # update .data and .machstate with _blob if _blob is not None
+        # only needed when work with DB
+        if self._blob is None: # already extracted
+            return
+        _df_data, _df_info, _df_machstate = read_sql(self._blob)
+        self.data = _df_data
+        self.machstate = _df_machstate
+        self._blob = None
+
+    def to_blob(self):
+        # output self to a binary blob, see alo write()
+        s = io.BytesIO()
+        self.write(s)
+        return s.getvalue()
 
     #def __eq__(self, other):
     #    return all(self.info.drop(columns=["data_path"]) == other.info.drop(columns=["data_path"])) \
