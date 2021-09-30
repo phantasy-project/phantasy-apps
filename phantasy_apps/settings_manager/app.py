@@ -1541,6 +1541,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             #
             self.df_all_row_tuple = list(df_all.iterrows())
             self.db_pull.emit()
+            self.data_uri = d
             self.data_uri_lineEdit.setText(self.data_uri)
         else: # FILE
             self.data_uri = d
