@@ -5,10 +5,10 @@ TITLE = "Configurations for Settings Manager"
 [DATA_SOURCE]
   TYPE = 'DB' # FILE, DB
   DB_ENGINE = 'sqlite'
-  URI = '~/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm.db'
+  URI = '/files/shared/ap/settings_manager/sm.db'
 
   # TYPE = 'FILE'
-  # URI = '~/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager'  # where reside all snapshot files
+  # URI = '/files/shared/ap/settings_manager'  # where reside all snapshot files
 
 [SETTINGS]
   T_WAIT = 0.05  # Settling time between batch settings apply, second
@@ -27,5 +27,5 @@ TITLE = "Configurations for Settings Manager"
   NCORE = 4 # max CPU cores to use
 
 [LATTICE]
-  DEFAULT_MACHINE = 'FRIB_VA'
-  DEFAULT_SEGMENT = 'LS1FS1'
+  DEFAULT_MACHINE = 'FRIB'
+  DEFAULT_SEGMENT = 'LINAC'
