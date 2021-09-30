@@ -569,8 +569,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._current_btn_filter = dict()
         self._current_tag_filter = dict()
         self.snp_filters_updated.connect(self.on_snp_filters_updated)
-        # working directory
-        self.on_wdir_changed(True, self.wdir)
+        # URI for data source
+        self.on_data_uri_changed(True, self.data_uri)
 
         # take snapshot tool
         self.actionTake_Snapshot.triggered.connect(lambda:self.take_snapshot())
@@ -1503,7 +1503,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         pref_dlg.font_changed.connect(self.font_changed)
         pref_dlg.init_settings_changed.connect(self.init_settings_changed)
         pref_dlg.ndigit_sbox.valueChanged.connect(self.ndigit_sbox.setValue)
-        pref_dlg.wdir_changed.connect(partial(self.on_wdir_changed, True))
+        pref_dlg.data_uri_changed.connect(partial(self.on_data_uri_changed, True))
         r = pref_dlg.exec_()
 
     @pyqtSlot(dict)
@@ -1527,7 +1527,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.ndigit_changed.emit(ndigit)
 
     @pyqtSlot('QString')
-    def on_wdir_changed(self, purge, d):
+    def on_data_uri_changed(self, purge, d):
         # reset snp dock with files in d (recursively)
         if purge:
             del self._snp_dock_list[:]
@@ -1541,8 +1541,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             #
             self.df_all_row_tuple = list(df_all.iterrows())
             self.db_pull.emit()
+            self.data_uri_lineEdit.setText(self.data_uri)
         else: # FILE
-            self.wdir = d
+            self.data_uri = d
             for path in pathlib.Path(d).glob("**/*"):
                 if not os.access(path, os.R_OK):
                     printlog(f"Cannot access {path}!")
@@ -1558,10 +1559,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     continue
                 self._snp_dock_list.append(snp_data)
 
-                self.wdir_lineEdit.setText(self.wdir)
+                self.data_uri_lineEdit.setText(self.data_uri)
                 #
                 self.fm.removePaths(self.fm.directories())
-                self.fm.addPath(self.wdir)
+                self.fm.addPath(self.data_uri)
 
                 n = len(self._snp_dock_list)
                 self.total_snp_lbl.setText(str(n))
@@ -2190,7 +2191,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         self._snp_dock_list.append(snp_data)
         n = len(self._snp_dock_list)
-        self.wdir_lineEdit.setText(self.wdir)
+        self.data_uri_lineEdit.setText(self.data_uri)
         self.total_snp_lbl.setText(str(n))
         self.update_snp_dock_view()
         if cast:
@@ -2440,7 +2441,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 os.remove(filepath)
         else:
             # delete from DB
-            delete_data(self._db_conn_pool.get(self.wdir), data)
+            delete_data(self._db_conn_pool.get(self.data_uri), data)
         self.total_snp_lbl.setText(str(len(self._snp_dock_list)))
         del data_to_del
 
@@ -2449,11 +2450,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if self.dsrc_mode == 'DB':
             data.extract_blob()
             # add new entry to database
-            insert_update_data(self._db_conn_pool.get(self.wdir), data)
+            insert_update_data(self._db_conn_pool.get(self.data_uri), data)
             # delayed_exec(lambda:self.db_refresh.emit(), 3000)
         else:
             if data.data_path is None or not os.path.exists(data.data_path):
-                data.data_path = data.get_default_data_path(self.wdir, DEFAULT_DATA_FMT)
+                data.data_path = data.get_default_data_path(self.data_uri, DEFAULT_DATA_FMT)
                 dirname = os.path.dirname(data.data_path)
                 if not os.path.exists(dirname):
                     os.makedirs(dirname)
@@ -2472,7 +2473,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # !update name attr to be uniqe!
         # !add 'copy' into tag list!
         if data.data_path is None or not os.path.exists(data.data_path):
-            cdir = data.get_default_data_path(self.wdir, DEFAULT_DATA_FMT)
+            cdir = data.get_default_data_path(self.data_uri, DEFAULT_DATA_FMT)
         else:
             cdir = data.data_path
         filename, ext = get_save_filename(self,
@@ -2628,13 +2629,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def on_wdir_new(self, path):
         self.snp_new_lbl.setVisible(True)
-        self.on_wdir_changed(True, self.wdir)
+        self.on_data_uri_changed(True, self.data_uri)
         # show new snapshots icon for 1 min
         delayed_exec(lambda:self.snp_new_lbl.setVisible(False), 60000)
 
+    @pyqtSlot()
     def on_refresh_snp(self):
         # refresh snp as wdir is updated.
-        self.on_wdir_changed(True, self.wdir)
+        self.on_data_uri_changed(True, self.data_uri)
         self.snp_new_lbl.setVisible(False)
 
     def preload_lattice(self, mach, segm):
@@ -2708,17 +2710,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def __init_dsrc(self, dsrc_dict):
         if dsrc_dict['mode'] == 'DB':
             self._db_conn_pool = {}
-            self.wdir = os.path.abspath(os.path.expanduser(dsrc_dict['uri']))
-            self._db_conn_pool.setdefault(self.wdir, sqlite3.connect(self.wdir)) # other DB_ENGINEs to be supported
+            self.data_uri = os.path.abspath(os.path.expanduser(dsrc_dict['uri']))
+            self._db_conn_pool.setdefault(self.data_uri, sqlite3.connect(self.data_uri)) # other DB_ENGINEs to be supported
             self.nsnp_btn.setVisible(True)
             self.nsnp_btn.click()
             self.nsnp_btn.click() # n_snp_max -> 20
-            self.db_refresh.connect(partial(self.on_wdir_changed, True, self.wdir))
+            self.db_refresh.connect(partial(self.on_data_uri_changed, True, self.data_uri))
             self.db_pull.connect(self.on_pull_data)
         else:
-            self.wdir = os.path.abspath(os.path.expanduser(dsrc_dict['uri']))
+            self.data_uri = d = os.path.abspath(os.path.expanduser(dsrc_dict['uri']))
             #
-            self.fm = QFileSystemWatcher([self.wdir], self)
+            self.fm = QFileSystemWatcher([d], self)
             self.fm.directoryChanged.connect(self.on_wdir_new)
 
     @pyqtSlot()

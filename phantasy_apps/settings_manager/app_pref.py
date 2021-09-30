@@ -17,6 +17,7 @@ from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QSpacerItem
 
 from phantasy_ui import get_open_directory
+from phantasy_ui import get_open_filename
 from phantasy_ui import select_font
 
 from .utils import COLUMN_NAMES
@@ -26,7 +27,6 @@ from .ui.ui_preferences import Ui_Dialog
 from .conf import APP_CONF
 from .conf import N_SNP_MAX, NPROC, MS_CONF_PATH, MS_ENABLED
 from .conf import DATA_SOURCE_MODE, DB_ENGINE, DATA_URI
-from .conf import FIELD_INIT_MODE, T_WAIT, INIT_SETTINGS, TOLERANCE, N_DIGIT, SUPPORT_CONFIG_PATH
 
 
 class PreferencesDialog(QDialog, Ui_Dialog):
@@ -43,8 +43,8 @@ class PreferencesDialog(QDialog, Ui_Dialog):
     # bool
     init_settings_changed = pyqtSignal(bool)
 
-    # wdir
-    wdir_changed = pyqtSignal('QString')
+    # data uri changed
+    data_uri_changed = pyqtSignal('QString')
 
     def __init__(self, parent=None, preference_dict=None):
         super(self.__class__, self).__init__()
@@ -83,6 +83,16 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         ndigit = self.pref_dict['SETTINGS']['PRECISION']
         self.ndigit_sbox.setValue(ndigit)
 
+        # data source type
+        dsrc_mode = self.pref_dict['DATA_SOURCE']['TYPE']
+        self.dsrc_mode_cbb.setCurrentText(dsrc_mode)
+        self.dsrc_mode_cbb.currentTextChanged.connect(self.on_dsrc_mode_changed)
+        self.dsrc_mode_cbb.currentTextChanged.emit(self.dsrc_mode_cbb.currentText())
+
+        # data source uri
+        dsrc_uri = self.pref_dict['DATA_SOURCE']['URI']
+        self.set_uri(dsrc_uri, dsrc_mode)
+
         # colvis
         tv = self.parent._tv
         layout = self.col_visibility_gbox
@@ -110,15 +120,14 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         font = self.pref_dict['font']
         self.font_changed.emit(font)
 
-        # wdir
-        wdir = self.pref_dict['DATA_SOURCE']['URI']
-        self.set_wdir(wdir)
-
-    def set_wdir(self, d):
-        if not os.access(d, os.W_OK):
+    def set_uri(self, path, dsrc_mode):
+        if not os.access(os.path.abspath(os.path.expanduser(path)), os.W_OK):
             return
-        self.wdir_lineEdit.setText(d)
-        self.wdir_changed.emit(d)
+        if dsrc_mode == 'DB':
+            self.dbpath_lineEdit.setText(path)
+        else:
+            self.wdir_lineEdit.setText(path)
+        self.data_uri_changed.emit(path)
 
     @pyqtSlot()
     def on_reset_config(self):
@@ -237,9 +246,25 @@ class PreferencesDialog(QDialog, Ui_Dialog):
                                                     font.pointSize()))
         self.font_sample_lbl.setFont(font)
 
+    @pyqtSlot('QString')
+    def on_dsrc_mode_changed(self, s):
+        objs_file = (self.wdir_lbl, self.wdir_lineEdit, self.wdir_btn)
+        objs_db = (self.dbpath_lbl, self.dbpath_lineEdit, self.dbpath_btn)
+        [o.setVisible(s=='DB') for o in objs_db]
+        [o.setVisible(s!='DB') for o in objs_file]
+
     @pyqtSlot()
     def on_choose_wdir(self):
         """Select working directory.
         """
         d = get_open_directory(self)
-        self.set_wdir(d)
+        self.set_uri(d, 'FILE')
+
+    @pyqtSlot()
+    def on_choose_dbfile(self):
+        """Select the db file.
+        """
+        filepath, ext = get_open_filename(self, type_filter='SQLite File (*.db);;Other Files (*.*)')
+        if filepath is None:
+            return
+        self.set_uri(filepath, 'DB')
