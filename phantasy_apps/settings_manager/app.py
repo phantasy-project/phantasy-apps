@@ -10,12 +10,12 @@ import sqlite3
 import pandas as pd
 import tempfile
 import time
+import toml
 from collections import OrderedDict
 from datetime import datetime
 from epics import caget, caput
 from functools import partial
 from getpass import getuser
-from itertools import cycle
 
 from PyQt5.QtCore import QDate
 from PyQt5.QtCore import QEventLoop
@@ -63,7 +63,7 @@ from phantasy_ui.widgets import ElementSelectDialog
 from phantasy_ui.widgets import FlowLayout
 from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui.widgets import ProbeWidget
-
+from phantasy_apps.utils import find_dconf
 from phantasy_apps.msviz.mach_state import get_meta_conf_dict
 from phantasy_apps.msviz.mach_state import merge_mach_conf
 from phantasy_apps.msviz.mach_state import _build_dataframe
@@ -71,8 +71,6 @@ from phantasy_apps.msviz.mach_state import _daq_func
 
 from .app_date_range import DateRangeDialog
 from .app_loadfrom import LoadSettingsDialog
-from .app_pref import DEFAULT_PREF
-from .app_pref import DEFAULT_CONFIG_PATH
 from .app_pref import PreferencesDialog
 from .data import CSV_HEADER
 from .data import DEFAULT_DATA_FMT
@@ -109,7 +107,6 @@ SUPPORT_FTYPES = ("xlsx", "csv", "h5")
 # sb pos of stripper
 STRIPPER_POS = 223.743568
 
-NPROC = 4
 PX_SIZE = 24
 ION_ICON_SIZE = 48
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
@@ -125,19 +122,10 @@ NOW_YEAR = NOW_DT.year
 NOW_MONTH = NOW_DT.month
 NOW_DAY = NOW_DT.day
 
-# machstate
-from phantasy_apps.utils import find_dconf
-from .data import LIVE
-if LIVE:
-    MS_CONF_PATH = find_dconf("msviz", "metadata.toml")
-else:
-    MS_CONF_PATH = find_dconf("msviz", "metadata_va.toml")
-
-DATA_SOURCE_MODE = os.environ.get('DSRC_MODE', 'DB') # FILE
-DATABASE = os.environ.get('DATABASE', 'sm.db')
-SNP_MS_ENABLED = os.environ.get('ENABLE_MS', True)
-
-N_SNP_MAX = cycle([10, 20, 50, 100, 'All'])
+from .conf import APP_CONF
+from .conf import N_SNP_MAX, NPROC, MS_CONF_PATH, MS_ENABLED
+from .conf import DATA_SOURCE_MODE, DB_ENGINE, DATA_URI
+from .conf import FIELD_INIT_MODE, T_WAIT, INIT_SETTINGS, TOLERANCE, N_DIGIT, SUPPORT_CONFIG_PATH
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -229,7 +217,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.init_config(config_dir)
 
         self.nsnp_btn.setVisible(False)
-        self.__init_dsrc(self.wdir)
+        self.__init_dsrc(self.dsrc_dict)
 
         # post init ui
         self.__post_init_ui()
@@ -239,18 +227,21 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if machine is not None and segment is not None:
             self.preload_lattice(machine, segment)
 
-    def init_config(self, confdir):
+    def init_config(self, confdir=None):
         # preferences
         # see preference dialog class
-        self.pref_dict = DEFAULT_PREF
-        self.field_init_mode = self.pref_dict['field_init_mode']
-        self.t_wait = self.pref_dict['t_wait']
-        self.init_settings = self.pref_dict['init_settings']
-        self.tolerance = self.pref_dict['tolerance']
-        self.dt_confsync = self.pref_dict['dt_confsync']
-        self.ndigit = self.pref_dict['ndigit']
+        self.pref_dict = APP_CONF
+        self.field_init_mode = FIELD_INIT_MODE
+        self.t_wait = T_WAIT
+        self.init_settings = INIT_SETTINGS
+        self.tolerance = TOLERANCE
+        self.ndigit = N_DIGIT
         self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self.ndigit)
-        self.wdir = self.pref_dict['wdir']
+
+        self.dsrc_mode = DATA_SOURCE_MODE
+        self.db_engine = DB_ENGINE
+        self.data_uri = DATA_URI
+        self.dsrc_dict = {'mode': self.dsrc_mode, 'engine': self.db_engine, 'uri': self.data_uri}
 
         self.tolerance_changed[ToleranceSettings].connect(self.on_tolerance_dict_changed)
         self.tolerance_changed[float].connect(self.on_tolerance_float_changed)
@@ -259,8 +250,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.ndigit_changed.connect(self.on_ndigit_changed)
 
         # init dir
-        confdir = self.pref_dict['config_path'] if confdir is None else confdir
-        self.pref_dict['config_path'] = os.path.abspath(os.path.expanduser(confdir))
+        confdir = self.pref_dict['SETTINGS']['SUPPORT_CONFIG_PATH'] if confdir is None else confdir
+        self.pref_dict['SETTINGS']['SUPPORT_CONFIG_PATH'] = os.path.abspath(os.path.expanduser(confdir))
         _, ts_confpath, ms_confpath, elem_confpath = init_config_dir(confdir)
 
         # tolerance settings (ts)
@@ -276,14 +267,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # element sequence: initial lattice, maintain internal only
         self.__init_lat = self.build_lattice()
-
-        # config sync timer
-        self.config_timer = QTimer(self)
-        self.config_timer.timeout.connect(self.on_update_dump_config)
-        #
-        # disable this timer 2020-03-09
-        # self.config_timer.start(self.dt_confsync * 1000)
-        #
 
         # font
         self.font = self.get_font_config()
@@ -450,7 +433,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def __post_init_ui(self):
         # enable machine state with take snapshot or not
-        self.snp_ms_chkbox.setChecked(SNP_MS_ENABLED)
+        self.snp_ms_chkbox.setChecked(MS_ENABLED)
         # hide sts info
         self.show_sts_btn.setChecked(False)
         # add beamSpeciesDisplayWidget
@@ -586,9 +569,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._current_btn_filter = dict()
         self._current_tag_filter = dict()
         self.snp_filters_updated.connect(self.on_snp_filters_updated)
-        #
-        self.fm = QFileSystemWatcher([self.wdir], self)
-        self.fm.directoryChanged.connect(self.on_wdir_new)
         # working directory
         self.on_wdir_changed(True, self.wdir)
 
@@ -888,7 +868,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.insertAction(copy_action, dcopy_action)
         menu.addSeparator()
         menu.addAction(read_action)
-        if DATA_SOURCE_MODE == 'FILE':
+        if self.dsrc_mode == 'FILE':
             menu.addAction(reveal_action)
         menu.addSeparator()
         menu.addAction(saveas_action)
@@ -1253,8 +1233,22 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def closeEvent(self, e):
         self.on_update_dump_config()
-        # os.remove(LOG_FILE)
         BaseAppForm.closeEvent(self, e)
+
+    def clean_up(self):
+        try:
+            os.remove(LOG_FILE)
+        except:
+            pass
+        else:
+            printlog("Cleaned up settings log.")
+        try:
+            for p, conn in self._db_conn_pool.items():
+                conn.close()
+        except:
+            pass
+        else:
+            printlog(f"Closed connection to {p}.")
 
     def snapshot_tolerance_settings(self):
         """Iterate all the tolerance settings, update and save.
@@ -1468,7 +1462,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """config from Preferences is changed, model settings, tolerance
         settings, element PV config.
         """
-        confdir = self.pref_dict['config_path']
+        confdir = self.pref_dict['SETTINGS']['SUPPORT_CONFIG_PATH']
         _, ts_confpath, ms_confpath, elem_confpath = init_config_dir(confdir)
 
         # tolerance settings (ts)
@@ -1487,7 +1481,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """If checked, to initialize device settings with entire loaded lattice.
         """
         self.init_settings = enabled
-        self.pref_dict['init_settings'] = enabled
+        self.pref_dict['SETTINGS']['INIT_SETTINGS'] = enabled
         if enabled and self._mp is not None:
             self._elem_list = self._lat[:]
             self.element_list_changed.emit()
@@ -1517,10 +1511,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Update app preferences.
         """
         self.pref_dict.update(d)
-        self.field_init_mode = self.pref_dict['field_init_mode']
-        self.t_wait = self.pref_dict['t_wait']
-        self.init_settings = self.pref_dict['init_settings']
-        tol = self.pref_dict['tolerance']
+        self.field_init_mode = self.pref_dict['SETTINGS']['FIELD_INIT_MODE']
+        self.t_wait = self.pref_dict['SETTINGS']['T_WAIT']
+        self.init_settings = self.pref_dict['SETTINGS']['INIT_SETTINGS']
+        tol = self.pref_dict['SETTINGS']['TOLERANCE']
         if self.tolerance != tol:
             r = QMessageBox.question(self, "Change Tolerance",
                     "Are you sure to change all the discrepancy tolerance to {0:.2f}?".format(tol),
@@ -1528,34 +1522,27 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             if r == QMessageBox.Yes:
                 self.tolerance_changed[float].emit(tol)
                 self.tolerance = tol
-        dt_confsync = self.pref_dict['dt_confsync']
-        if dt_confsync != self.dt_confsync:
-            self.config_timer.stop()
-            self.dt_confsync = dt_confsync
-            # self.config_timer.start(self.dt_confsync * 1000)
-        ndigit = self.pref_dict['ndigit']
+        ndigit = self.pref_dict['SETTINGS']['PRECISION']
         if ndigit != self.ndigit:
             self.ndigit_changed.emit(ndigit)
 
     @pyqtSlot('QString')
     def on_wdir_changed(self, purge, d):
         # reset snp dock with files in d (recursively)
-        self.wdir = d
         if purge:
             del self._snp_dock_list[:]
-        if DATA_SOURCE_MODE == 'DB':
+        if self.dsrc_mode == 'DB':
             # DB
-            self._conn = sqlite3.connect(os.path.join(d, DATABASE))
+            self._db_conn = self._db_conn_pool.setdefault(d, sqlite3.connect(d))
             if self._n_snp_max == 'All':
-                df_all = pd.read_sql(f"SELECT * FROM snapshot", self._conn)
+                df_all = pd.read_sql(f"SELECT * FROM snapshot", self._db_conn)
             else:
-                df_all = pd.read_sql(f"SELECT * FROM snapshot ORDER BY id DESC LIMIT {self._n_snp_max}", self._conn)
-
+                df_all = pd.read_sql(f"SELECT * FROM snapshot ORDER BY id DESC LIMIT {self._n_snp_max}", self._db_conn)
             #
             self.df_all_row_tuple = list(df_all.iterrows())
             self.db_pull.emit()
-
         else: # FILE
+            self.wdir = d
             for path in pathlib.Path(d).glob("**/*"):
                 if not os.access(path, os.R_OK):
                     printlog(f"Cannot access {path}!")
@@ -2223,7 +2210,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_copy_snp(self, data):
-        if DATA_SOURCE_MODE == 'DB':
+        if self.dsrc_mode == 'DB':
             data.extract_blob()
         data.data.to_clipboard(excel=True, index=False)
         msg = '<html><head/><body><p><span style="color:#007BFF;">Copied snapshot data at: </span><span style="color:#DC3545;">{}</span></p></body></html>'.format(data.ts_as_str())
@@ -2232,7 +2219,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_read_snp(self, data):
-        if DATA_SOURCE_MODE == 'DB':
+        if self.dsrc_mode == 'DB':
             data.extract_blob()
             _, filename = tempfile.mkstemp('.xlsx')
             self._save_settings(data, filename, 'xlsx')
@@ -2447,25 +2434,22 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 break
         m = self.snp_treeView.model().m_src
         m.remove_data(data_to_del)
-        if DATA_SOURCE_MODE == 'FILE':
+        if self.dsrc_mode == 'FILE':
             filepath = data_to_del.data_path
             if filepath is not None and os.path.isfile(filepath):
                 os.remove(filepath)
         else:
             # delete from DB
-            self._conn = sqlite3.connect(os.path.join(self.wdir, DATABASE))
-            delete_data(self._conn, data)
-            self._conn.close()
+            delete_data(self._db_conn_pool.get(self.wdir), data)
         self.total_snp_lbl.setText(str(len(self._snp_dock_list)))
         del data_to_del
 
     def on_save_settings(self, data):
         # in-place save data to data_path.
-        if DATA_SOURCE_MODE == 'DB':
+        if self.dsrc_mode == 'DB':
             data.extract_blob()
             # add new entry to database
-            insert_update_data(self._conn, data)
-            self._conn.close()
+            insert_update_data(self._db_conn_pool.get(self.wdir), data)
             # delayed_exec(lambda:self.db_refresh.emit(), 3000)
         else:
             if data.data_path is None or not os.path.exists(data.data_path):
@@ -2520,7 +2504,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self._last_lattice_name != data.segment:
             self.__load_lattice(data.machine, data.segment)
         lat = self._lat
-        if DATA_SOURCE_MODE == 'DB':
+        if self.dsrc_mode == 'DB':
             data.extract_blob()
         s = make_physics_settings(data.data.to_numpy(), lat)
         lat.settings.update(s)
@@ -2721,15 +2705,21 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._meta_fetcher.daqFinished.connect(self._meta_fetcher_stopped)
         self._meta_fetcher.resultsReady.connect(partial(self._meta_fetcher_got_results, pv_list, grp_list))
 
-    def __init_dsrc(self, wdir):
-        if DATA_SOURCE_MODE == 'DB':
+    def __init_dsrc(self, dsrc_dict):
+        if dsrc_dict['mode'] == 'DB':
+            self._db_conn_pool = {}
+            self.wdir = os.path.abspath(os.path.expanduser(dsrc_dict['uri']))
+            self._db_conn_pool.setdefault(self.wdir, sqlite3.connect(self.wdir)) # other DB_ENGINEs to be supported
             self.nsnp_btn.setVisible(True)
             self.nsnp_btn.click()
             self.nsnp_btn.click() # n_snp_max -> 20
             self.db_refresh.connect(partial(self.on_wdir_changed, True, self.wdir))
             self.db_pull.connect(self.on_pull_data)
         else:
-            pass
+            self.wdir = os.path.abspath(os.path.expanduser(dsrc_dict['uri']))
+            #
+            self.fm = QFileSystemWatcher([self.wdir], self)
+            self.fm.directoryChanged.connect(self.on_wdir_new)
 
     @pyqtSlot()
     def on_update_nsnp(self):

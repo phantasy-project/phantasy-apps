@@ -20,36 +20,13 @@ from phantasy_ui import get_open_directory
 from phantasy_ui import select_font
 
 from .utils import COLUMN_NAMES
-from .utils import DEFAULT_TS_PATH, DEFAULT_MS_PATH, DEFAULT_ELEM_PATH
 from .utils import reset_config
 from .ui.ui_preferences import Ui_Dialog
 
-_curdir = os.path.abspath(os.path.dirname(__file__))
-
-DEFAULT_FIELD_INIT_MODE = 'model'
-DEFAULT_INIT_SETTINGS = False
-DEFAULT_T_WAIT = 0.05
-DEFAULT_TOLERANCE = 0.10
-DEFAULT_CONFIG_SYNC_TIME_INTERVAL = 10  # second
-DEFAULT_N_DIGITS = 3
-DEFAULT_CONFIG_PATH = "~/.phantasy-apps/settings-manager"
-DEFAULT_WDIR1 = "/files/shared/ap/settings_manager"
-DEFAULT_WDIR2 = os.path.join(_curdir, "testdata", "settings_manager")
-if os.path.exists(DEFAULT_WDIR1):
-    DEFAULT_WDIR = DEFAULT_WDIR1
-else:
-    DEFAULT_WDIR = DEFAULT_WDIR2
-
-DEFAULT_PREF = {
-    'field_init_mode': DEFAULT_FIELD_INIT_MODE,
-    'init_settings': DEFAULT_INIT_SETTINGS,
-    't_wait': DEFAULT_T_WAIT,
-    'tolerance': DEFAULT_TOLERANCE,
-    'dt_confsync': DEFAULT_CONFIG_SYNC_TIME_INTERVAL,
-    'ndigit': DEFAULT_N_DIGITS,
-    'config_path': os.path.abspath(os.path.expanduser(DEFAULT_CONFIG_PATH)),
-    'wdir': os.path.abspath(os.path.expanduser(DEFAULT_WDIR)),
-}
+from .conf import APP_CONF
+from .conf import N_SNP_MAX, NPROC, MS_CONF_PATH, MS_ENABLED
+from .conf import DATA_SOURCE_MODE, DB_ENGINE, DATA_URI
+from .conf import FIELD_INIT_MODE, T_WAIT, INIT_SETTINGS, TOLERANCE, N_DIGIT, SUPPORT_CONFIG_PATH
 
 
 class PreferencesDialog(QDialog, Ui_Dialog):
@@ -73,7 +50,7 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         super(self.__class__, self).__init__()
         self.parent = parent
 
-        self.pref_dict = DEFAULT_PREF if preference_dict is None else preference_dict
+        self.pref_dict = APP_CONF if preference_dict is None else preference_dict
 
         # UI
         self.setupUi(self)
@@ -84,30 +61,26 @@ class PreferencesDialog(QDialog, Ui_Dialog):
 
     def _post_init(self):
         # field init mode
-        mode = self.pref_dict['field_init_mode']
+        mode = self.pref_dict['SETTINGS']['FIELD_INIT_MODE']
         self.model_rbtn.setChecked(mode == 'model')
         self.live_rbtn.setChecked(mode == 'live')
         for o in (self.model_rbtn, self.live_rbtn):
             o.toggled.emit(o.isChecked())
 
         # t_wait in second
-        t_wait = self.pref_dict['t_wait']
+        t_wait = self.pref_dict['SETTINGS']['T_WAIT']
         self.apply_delt_dsbox.setValue(t_wait)
 
         # init_settings bool
-        init_settings = self.pref_dict['init_settings']
+        init_settings = self.pref_dict['SETTINGS']['INIT_SETTINGS']
         self.init_settings_chkbox.setChecked(init_settings)
 
         # tolerance
-        tol = self.pref_dict['tolerance']
+        tol = self.pref_dict['SETTINGS']['TOLERANCE']
         self.tol_dsbox.setValue(tol)
 
-        # confsync dt
-        dt_confsync = self.pref_dict['dt_confsync']
-        self.dt_confsync_dsbox.setValue(dt_confsync)
-
         # ndigits
-        ndigit = self.pref_dict['ndigit']
+        ndigit = self.pref_dict['SETTINGS']['PRECISION']
         self.ndigit_sbox.setValue(ndigit)
 
         # colvis
@@ -123,7 +96,7 @@ class PreferencesDialog(QDialog, Ui_Dialog):
             layout.addWidget(btn, i, j)
 
         # config path
-        config_path = self.pref_dict['config_path']
+        config_path = self.pref_dict['SETTINGS']['SUPPORT_CONFIG_PATH']
         self.update_config_paths(config_path)
         self.change_config_path_btn.clicked.connect(self.on_change_confpath)
 
@@ -138,7 +111,7 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         self.font_changed.emit(font)
 
         # wdir
-        wdir = self.pref_dict['wdir']
+        wdir = self.pref_dict['DATA_SOURCE']['URI']
         self.set_wdir(wdir)
 
     def set_wdir(self, d):
