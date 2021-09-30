@@ -125,7 +125,7 @@ NOW_DAY = NOW_DT.day
 from .conf import APP_CONF
 from .conf import N_SNP_MAX, NPROC, MS_CONF_PATH, MS_ENABLED
 from .conf import DATA_SOURCE_MODE, DB_ENGINE, DATA_URI
-from .conf import FIELD_INIT_MODE, T_WAIT, INIT_SETTINGS, TOLERANCE, N_DIGIT, SUPPORT_CONFIG_PATH
+from .conf import FIELD_INIT_MODE, T_WAIT, INIT_SETTINGS, TOLERANCE, N_DIGIT
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -1510,7 +1510,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_update_pref(self, d):
         """Update app preferences.
         """
-        self.pref_dict.update(d)
+        for k, v in d.items():
+            self.pref_dict[k].update(v)
         self.field_init_mode = self.pref_dict['SETTINGS']['FIELD_INIT_MODE']
         self.t_wait = self.pref_dict['SETTINGS']['T_WAIT']
         self.init_settings = self.pref_dict['SETTINGS']['INIT_SETTINGS']
