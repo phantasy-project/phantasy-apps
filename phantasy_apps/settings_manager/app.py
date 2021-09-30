@@ -182,7 +182,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # pull data from db
     db_pull = pyqtSignal()
 
-    def __init__(self, version, config_dir=None, machine=None, segment=None):
+    def __init__(self, version, config_dir=None):
         super(SettingsManagerWindow, self).__init__()
 
         # app version
@@ -224,8 +224,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         #
         self.show()
-        if machine is not None and segment is not None:
-            self.preload_lattice(machine, segment)
+        self.preload_lattice(self.pref_dict['LATTICE']['DEFAULT_MACHINE'],
+                             self.pref_dict['LATTICE']['DEFAULT_SEGMENT'])
 
     def init_config(self, confdir=None):
         # preferences
