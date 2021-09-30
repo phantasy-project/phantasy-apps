@@ -27,7 +27,7 @@ from .ui.ui_preferences import Ui_Dialog
 from .conf import APP_CONF, APP_CONF_PATH
 from .conf import N_SNP_MAX, NPROC, MS_CONF_PATH, MS_ENABLED
 from .conf import DATA_SOURCE_MODE, DB_ENGINE, DATA_URI
-from .conf import reset_app_config, init_user_config
+from .conf import reset_app_config
 
 
 class PreferencesDialog(QDialog, Ui_Dialog):
@@ -94,6 +94,15 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         dsrc_uri = self.pref_dict['DATA_SOURCE']['URI']
         self.set_uri(dsrc_uri, dsrc_mode)
 
+        # machstate
+        msconf_path = self.pref_dict['MACH_STATE']['CONFIG_PATH']
+        self.msconf_path_lineEdit.setText(msconf_path)
+        msconf_daq_rate = self.pref_dict['MACH_STATE']['DAQ_RATE']
+        self.msconf_rate_cbb.setCurrentText(str(msconf_daq_rate))
+        msconf_daq_nshot = self.pref_dict['MACH_STATE']['DAQ_NSHOT']
+        self.msconf_nshot_cbb.setCurrentText(str(msconf_daq_nshot))
+        self.msconf_open_btn.clicked.connect(partial(self.on_open_filepath, msconf_path))
+
         # colvis
         tv = self.parent._tv
         layout = self.col_visibility_gbox
@@ -150,13 +159,7 @@ class PreferencesDialog(QDialog, Ui_Dialog):
     def on_edit_app_config(self):
         """Edit app configurations if possible.
         """
-        r = QMessageBox.question(self, "Edit App Configuration File",
-                "Click Yes to open and edit the app configuration file, restart app to see the changes.",
-                QMessageBox.Yes | QMessageBox.No)
-        if r == QMessageBox.No:
-            return
-        user_config_path = init_user_config()
-        QDesktopServices.openUrl(QUrl(user_config_path))
+        QDesktopServices.openUrl(QUrl(APP_CONF_PATH))
 
     @pyqtSlot()
     def on_reset_config(self):
@@ -250,7 +253,12 @@ class PreferencesDialog(QDialog, Ui_Dialog):
                      'INIT_SETTINGS': self.init_settings_chkbox.isChecked(),
                      'TOLERANCE': self.tol_dsbox.value(),
                      'PRECISION': self.ndigit_sbox.value(),
-                     }
+                     },
+                'MACH_STATE':
+                    {
+                        'DAQ_RATE': int(self.msconf_rate_cbb.currentText()),
+                        'DAQ_NSHOT': int(self.msconf_nshot_cbb.currentText()),
+                    }
                 }
 
     @pyqtSlot(bool)

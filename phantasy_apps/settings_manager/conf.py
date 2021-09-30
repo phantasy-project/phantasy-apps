@@ -28,6 +28,8 @@ NPROC = APP_CONF['DATA_REFRESH']['NCORE']
 # machine state capture
 MS_CONF_PATH = APP_CONF['MACH_STATE']['CONFIG_PATH']
 MS_ENABLED = APP_CONF['MACH_STATE']['ENABLED']
+MS_DAQ_RATE = APP_CONF['MACH_STATE']['DAQ_RATE']
+MS_DAQ_NSHOT = APP_CONF['MACH_STATE']['DAQ_NSHOT']
 
 # data source and path
 DATA_SOURCE_MODE = APP_CONF['DATA_SOURCE']['TYPE']
@@ -49,6 +51,7 @@ DEFAULT_SEGMENT = APP_CONF['LATTICE']['DEFAULT_SEGMENT']
 
 # others not controlled with config file
 N_SNP_MAX = cycle([10, 20, 50, 100, 'All'])
+
 
 def init_user_config():
     """Test if user app configuration file exists, if not, reset.
