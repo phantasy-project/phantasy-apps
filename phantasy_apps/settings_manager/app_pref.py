@@ -24,9 +24,10 @@ from .utils import COLUMN_NAMES
 from .utils import reset_config
 from .ui.ui_preferences import Ui_Dialog
 
-from .conf import APP_CONF
+from .conf import APP_CONF, APP_CONF_PATH
 from .conf import N_SNP_MAX, NPROC, MS_CONF_PATH, MS_ENABLED
 from .conf import DATA_SOURCE_MODE, DB_ENGINE, DATA_URI
+from .conf import reset_app_config
 
 
 class PreferencesDialog(QDialog, Ui_Dialog):
@@ -110,10 +111,15 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         self.update_config_paths(config_path)
         self.change_config_path_btn.clicked.connect(self.on_change_confpath)
 
-        # reset config
+        # reset support config
         self.reset_config_btn.clicked.connect(self.on_reset_config)
-        # purge config
+        # purge support config
         self.purge_config_btn.clicked.connect(self.on_purge_config)
+
+        # reset app config
+        self.reset_app_config_btn.clicked.connect(self.on_reset_app_config)
+        # edit app config
+        self.edit_app_config_btn.clicked.connect(self.on_edit_app_config)
 
         # font
         self.font_changed.connect(self.on_font_changed)
@@ -130,8 +136,25 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         self.data_uri_changed.emit(path)
 
     @pyqtSlot()
+    def on_reset_app_config(self):
+        """Reset app config with package distributed one.
+        """
+        r = QMessageBox.question(self, "Reset App Configuration File",
+                "Are you sure to reset app configurations?",
+                QMessageBox.Yes | QMessageBox.No)
+        if r == QMessageBox.No:
+            return
+        reset_app_config()
+
+    @pyqtSlot()
+    def on_edit_app_config(self):
+        """Edit app configurations if possible.
+        """
+        QDesktopServices.openUrl(QUrl(APP_CONF_PATH))
+
+    @pyqtSlot()
     def on_reset_config(self):
-        """Reset config data with package distributed.
+        """Reset config data with package distributed ones.
         """
         r = QMessageBox.question(self, "Reset Configuration Files",
                 "Are you sure to reset all the configuration files?",
