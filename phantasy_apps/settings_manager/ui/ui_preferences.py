@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(883, 505)
+        Dialog.resize(872, 473)
         self.gridLayout_9 = QtWidgets.QGridLayout(Dialog)
         self.gridLayout_9.setContentsMargins(6, 12, 6, 6)
         self.gridLayout_9.setSpacing(6)
@@ -57,6 +57,22 @@ class Ui_Dialog(object):
         self.label_3 = QtWidgets.QLabel(self.data_tab)
         self.label_3.setObjectName("label_3")
         self.gridLayout.addWidget(self.label_3, 7, 0, 1, 1)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.wdir_lineEdit = QtWidgets.QLineEdit(self.data_tab)
+        self.wdir_lineEdit.setObjectName("wdir_lineEdit")
+        self.horizontalLayout_3.addWidget(self.wdir_lineEdit)
+        self.wdir_btn = QtWidgets.QPushButton(self.data_tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.wdir_btn.sizePolicy().hasHeightForWidth())
+        self.wdir_btn.setSizePolicy(sizePolicy)
+        self.wdir_btn.setObjectName("wdir_btn")
+        self.horizontalLayout_3.addWidget(self.wdir_btn)
+        self.gridLayout.addLayout(self.horizontalLayout_3, 10, 1, 1, 1)
         spacerItem = QtWidgets.QSpacerItem(20, 40,
                                            QtWidgets.QSizePolicy.Minimum,
                                            QtWidgets.QSizePolicy.Expanding)
@@ -139,23 +155,61 @@ class Ui_Dialog(object):
         self.label_2 = QtWidgets.QLabel(self.data_tab)
         self.label_2.setObjectName("label_2")
         self.gridLayout.addWidget(self.label_2, 5, 0, 1, 1)
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.wdir_lineEdit = QtWidgets.QLineEdit(self.data_tab)
-        self.wdir_lineEdit.setObjectName("wdir_lineEdit")
-        self.horizontalLayout_3.addWidget(self.wdir_lineEdit)
-        self.wdir_btn = QtWidgets.QPushButton(self.data_tab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.wdir_btn.sizePolicy().hasHeightForWidth())
-        self.wdir_btn.setSizePolicy(sizePolicy)
-        self.wdir_btn.setObjectName("wdir_btn")
-        self.horizontalLayout_3.addWidget(self.wdir_btn)
-        self.gridLayout.addLayout(self.horizontalLayout_3, 10, 1, 1, 1)
         self.tabWidget.addTab(self.data_tab, "")
+        self.ms_tab = QtWidgets.QWidget()
+        self.ms_tab.setObjectName("ms_tab")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.ms_tab)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.plainTextEdit = QtWidgets.QPlainTextEdit(self.ms_tab)
+        self.plainTextEdit.setObjectName("plainTextEdit")
+        self.verticalLayout.addWidget(self.plainTextEdit)
+        self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
+        self.msconf_path_lineEdit = QtWidgets.QLineEdit(self.ms_tab)
+        self.msconf_path_lineEdit.setReadOnly(True)
+        self.msconf_path_lineEdit.setObjectName("msconf_path_lineEdit")
+        self.horizontalLayout_6.addWidget(self.msconf_path_lineEdit)
+        self.msconf_open_btn = QtWidgets.QPushButton(self.ms_tab)
+        self.msconf_open_btn.setObjectName("msconf_open_btn")
+        self.horizontalLayout_6.addWidget(self.msconf_open_btn)
+        self.verticalLayout.addLayout(self.horizontalLayout_6)
+        self.groupBox = QtWidgets.QGroupBox(self.ms_tab)
+        self.groupBox.setObjectName("groupBox")
+        self.gridLayout_4 = QtWidgets.QGridLayout(self.groupBox)
+        self.gridLayout_4.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_4.setObjectName("gridLayout_4")
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.label_8 = QtWidgets.QLabel(self.groupBox)
+        self.label_8.setObjectName("label_8")
+        self.horizontalLayout_4.addWidget(self.label_8)
+        self.msconf_rate_cbb = QtWidgets.QComboBox(self.groupBox)
+        self.msconf_rate_cbb.setEditable(True)
+        self.msconf_rate_cbb.setObjectName("msconf_rate_cbb")
+        self.msconf_rate_cbb.addItem("")
+        self.msconf_rate_cbb.addItem("")
+        self.horizontalLayout_4.addWidget(self.msconf_rate_cbb)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem1)
+        self.label_10 = QtWidgets.QLabel(self.groupBox)
+        self.label_10.setObjectName("label_10")
+        self.horizontalLayout_4.addWidget(self.label_10)
+        self.msconf_nshot_cbb = QtWidgets.QComboBox(self.groupBox)
+        self.msconf_nshot_cbb.setEditable(True)
+        self.msconf_nshot_cbb.setObjectName("msconf_nshot_cbb")
+        self.msconf_nshot_cbb.addItem("")
+        self.msconf_nshot_cbb.addItem("")
+        self.msconf_nshot_cbb.addItem("")
+        self.horizontalLayout_4.addWidget(self.msconf_nshot_cbb)
+        self.gridLayout_4.addLayout(self.horizontalLayout_4, 0, 0, 1, 1)
+        self.verticalLayout.addWidget(self.groupBox)
+        spacerItem2 = QtWidgets.QSpacerItem(20, 40,
+                                            QtWidgets.QSizePolicy.Minimum,
+                                            QtWidgets.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem2)
+        self.tabWidget.addTab(self.ms_tab, "")
         self.view_tab = QtWidgets.QWidget()
         self.view_tab.setObjectName("view_tab")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.view_tab)
@@ -211,10 +265,10 @@ class Ui_Dialog(object):
         self.col_visibility_gbox.setSpacing(6)
         self.col_visibility_gbox.setObjectName("col_visibility_gbox")
         self.gridLayout_2.addLayout(self.col_visibility_gbox, 2, 0, 1, 2)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40,
+        spacerItem3 = QtWidgets.QSpacerItem(20, 40,
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_2.addItem(spacerItem1, 3, 0, 1, 1)
+        self.gridLayout_2.addItem(spacerItem3, 3, 0, 1, 1)
         self.tabWidget.addTab(self.view_tab, "")
         self.config_tab = QtWidgets.QWidget()
         self.config_tab.setObjectName("config_tab")
@@ -230,10 +284,10 @@ class Ui_Dialog(object):
         self.purge_config_btn = QtWidgets.QPushButton(self.config_tab)
         self.purge_config_btn.setObjectName("purge_config_btn")
         self.gridLayout_3.addWidget(self.purge_config_btn, 3, 3, 1, 1)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 40,
+        spacerItem4 = QtWidgets.QSpacerItem(20, 40,
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_3.addItem(spacerItem2, 5, 0, 1, 1)
+        self.gridLayout_3.addItem(spacerItem4, 5, 0, 1, 1)
         self.label_7 = QtWidgets.QLabel(self.config_tab)
         self.label_7.setObjectName("label_7")
         self.gridLayout_3.addWidget(self.label_7, 1, 0, 1, 1)
@@ -262,10 +316,10 @@ class Ui_Dialog(object):
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_12.setSpacing(4)
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem5 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_12.addItem(spacerItem3)
+        self.horizontalLayout_12.addItem(spacerItem5)
         self.cancel_btn = QtWidgets.QPushButton(Dialog)
         self.cancel_btn.setObjectName("cancel_btn")
         self.horizontalLayout_12.addWidget(self.cancel_btn)
@@ -275,7 +329,7 @@ class Ui_Dialog(object):
         self.gridLayout_9.addLayout(self.horizontalLayout_12, 1, 0, 1, 1)
 
         self.retranslateUi(Dialog)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         self.ok_btn.clicked.connect(Dialog.on_click_ok)
         self.cancel_btn.clicked.connect(Dialog.reject)
         self.live_rbtn.toggled['bool'].connect(Dialog.on_toggle_mode)
@@ -296,6 +350,7 @@ class Ui_Dialog(object):
         self.dsrc_mode_cbb.setItemText(0, _translate("Dialog", "DB"))
         self.dsrc_mode_cbb.setItemText(1, _translate("Dialog", "FILE"))
         self.label_3.setText(_translate("Dialog", "Data source type"))
+        self.wdir_btn.setText(_translate("Dialog", "Browse"))
         self.model_rbtn.setToolTip(
             _translate(
                 "Dialog",
@@ -333,9 +388,26 @@ class Ui_Dialog(object):
             ))
         self.label_2.setText(
             _translate("Dialog", "Allowed absolute discrepancy"))
-        self.wdir_btn.setText(_translate("Dialog", "Browse"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.data_tab),
                                   _translate("Dialog", "Data"))
+        self.plainTextEdit.setPlainText(
+            _translate(
+                "Dialog",
+                "The configuration file for machine state capturing is maintained at one single location, changing it will affect all machine state fetching thereafter.\n"
+                "\n"
+                "If you\'d like to use a customized version, just copy and modify this file, and edit it in your Settings Manager configuration file, which is located at ~/.phantasy/settings_manager.toml, if it does exist, push Reset button in Configurations -> App Configuration File."
+            ))
+        self.msconf_open_btn.setText(_translate("Dialog", "Read"))
+        self.groupBox.setTitle(_translate("Dialog", "DAQ"))
+        self.label_8.setText(_translate("Dialog", "Rate"))
+        self.msconf_rate_cbb.setItemText(0, _translate("Dialog", "1"))
+        self.msconf_rate_cbb.setItemText(1, _translate("Dialog", "5"))
+        self.label_10.setText(_translate("Dialog", "Total Shot"))
+        self.msconf_nshot_cbb.setItemText(0, _translate("Dialog", "5"))
+        self.msconf_nshot_cbb.setItemText(1, _translate("Dialog", "10"))
+        self.msconf_nshot_cbb.setItemText(2, _translate("Dialog", "20"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.ms_tab),
+                                  _translate("Dialog", "Machine State"))
         self.label_5.setText(
             _translate(
                 "Dialog",
