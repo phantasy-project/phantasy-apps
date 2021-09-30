@@ -22,6 +22,8 @@ TITLE = "Configurations for Settings Manager"
 [MACH_STATE]
   CONFIG_PATH = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/msviz/config/metadata_va.toml"
   ENABLED = true
+  DAQ_RATE = 5
+  DAQ_NSHOT = 20
 
 [DATA_REFRESH]
   NCORE = 4 # max CPU cores to use
