@@ -2697,7 +2697,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def __config_meta_fetcher(self):
         # init mach state retriever
         conf = get_meta_conf_dict(MS_CONF_PATH)
-        mach_state_conf = merge_mach_conf(conf, nshot=None, rate=None) # redefine nshot, rate here
+        _rate = self.pref_dict['MACH_STATE'].get('DAQ_RATE', None)
+        _nshot = self.pref_dict['MACH_STATE'].get('DAQ_NSHOT', None)
+        mach_state_conf = merge_mach_conf(conf, nshot=_nshot, rate=_rate) # redefine nshot, rate here
         pv_list = mach_state_conf['pv_list']
         grp_list = mach_state_conf['grp_list']
         daq_rate = mach_state_conf['daq_rate']
