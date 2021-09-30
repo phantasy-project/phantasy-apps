@@ -33,8 +33,9 @@ N_DIGIT = APP_CONF['SETTINGS']['PRECISION']
 # for elements,settings,tolerance.json files
 SUPPORT_CONFIG_PATH = APP_CONF['SETTINGS']['SUPPORT_CONFIG_PATH']
 
+# default machine/segment
+DEFAULT_MACHINE = APP_CONF['LATTICE']['DEFAULT_MACHINE']
+DEFAULT_SEGMENT = APP_CONF['LATTICE']['DEFAULT_SEGMENT']
+
 # others not controlled with config file
 N_SNP_MAX = cycle([10, 20, 50, 100, 'All'])
-
-
-
