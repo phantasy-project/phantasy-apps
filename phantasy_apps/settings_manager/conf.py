@@ -50,6 +50,15 @@ DEFAULT_SEGMENT = APP_CONF['LATTICE']['DEFAULT_SEGMENT']
 # others not controlled with config file
 N_SNP_MAX = cycle([10, 20, 50, 100, 'All'])
 
+def init_user_config():
+    """Test if user app configuration file exists, if not, reset.
+    """
+    user_config_dir = os.path.abspath(os.path.expanduser(USER_APP_CONF_DIR))
+    user_config_path = os.path.join(user_config_dir, 'settings_manager.toml')
+    if not os.path.isfile(user_config_path):
+        reset_app_config()
+    return user_config_path
+
 
 def reset_app_config():
     """Copy default app configuration file to *target_path*.

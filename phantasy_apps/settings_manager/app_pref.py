@@ -27,7 +27,7 @@ from .ui.ui_preferences import Ui_Dialog
 from .conf import APP_CONF, APP_CONF_PATH
 from .conf import N_SNP_MAX, NPROC, MS_CONF_PATH, MS_ENABLED
 from .conf import DATA_SOURCE_MODE, DB_ENGINE, DATA_URI
-from .conf import reset_app_config
+from .conf import reset_app_config, init_user_config
 
 
 class PreferencesDialog(QDialog, Ui_Dialog):
@@ -150,7 +150,13 @@ class PreferencesDialog(QDialog, Ui_Dialog):
     def on_edit_app_config(self):
         """Edit app configurations if possible.
         """
-        QDesktopServices.openUrl(QUrl(APP_CONF_PATH))
+        r = QMessageBox.question(self, "Edit App Configuration File",
+                "Click Yes to open and edit the app configuration file, restart app to see the changes.",
+                QMessageBox.Yes | QMessageBox.No)
+        if r == QMessageBox.No:
+            return
+        user_config_path = init_user_config()
+        QDesktopServices.openUrl(QUrl(user_config_path))
 
     @pyqtSlot()
     def on_reset_config(self):
