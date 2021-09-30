@@ -769,17 +769,17 @@ class Ui_MainWindow(object):
         self.label_5 = QtWidgets.QLabel(self.dockWidgetContents)
         self.label_5.setObjectName("label_5")
         self.horizontalLayout_4.addWidget(self.label_5)
-        self.wdir_lineEdit = QtWidgets.QLineEdit(self.dockWidgetContents)
+        self.data_uri_lineEdit = QtWidgets.QLineEdit(self.dockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.wdir_lineEdit.sizePolicy().hasHeightForWidth())
-        self.wdir_lineEdit.setSizePolicy(sizePolicy)
-        self.wdir_lineEdit.setReadOnly(True)
-        self.wdir_lineEdit.setObjectName("wdir_lineEdit")
-        self.horizontalLayout_4.addWidget(self.wdir_lineEdit)
+            self.data_uri_lineEdit.sizePolicy().hasHeightForWidth())
+        self.data_uri_lineEdit.setSizePolicy(sizePolicy)
+        self.data_uri_lineEdit.setReadOnly(True)
+        self.data_uri_lineEdit.setObjectName("data_uri_lineEdit")
+        self.horizontalLayout_4.addWidget(self.data_uri_lineEdit)
         self.snp_new_lbl = QtWidgets.QLabel(self.dockWidgetContents)
         self.snp_new_lbl.setObjectName("snp_new_lbl")
         self.horizontalLayout_4.addWidget(self.snp_new_lbl)
@@ -1318,7 +1318,7 @@ class Ui_MainWindow(object):
         self.nsnp_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Click to update the total number of snapshots to display.</p></body></html>"
+                "<html><head/><body><p>Click to update the total number of snapshots to display, press refresh button to update snapshot list.</p></body></html>"
             ))
         self.nsnp_btn.setText(_translate("MainWindow", "N-SNP"))
         self.label_10.setText(_translate("MainWindow", "Total"))

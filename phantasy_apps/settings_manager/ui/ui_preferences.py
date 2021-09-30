@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(640, 382)
+        Dialog.resize(883, 505)
         self.gridLayout_9 = QtWidgets.QGridLayout(Dialog)
         self.gridLayout_9.setContentsMargins(6, 12, 6, 6)
         self.gridLayout_9.setSpacing(6)
@@ -25,42 +25,42 @@ class Ui_Dialog(object):
         self.gridLayout.setContentsMargins(4, 10, 4, 4)
         self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
-        self.label_4 = QtWidgets.QLabel(self.data_tab)
-        self.label_4.setObjectName("label_4")
-        self.gridLayout.addWidget(self.label_4, 5, 0, 1, 1)
-        self.dt_confsync_dsbox = QtWidgets.QDoubleSpinBox(self.data_tab)
+        self.ndigit_sbox = QtWidgets.QSpinBox(self.data_tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.dt_confsync_dsbox.sizePolicy().hasHeightForWidth())
-        self.dt_confsync_dsbox.setSizePolicy(sizePolicy)
-        self.dt_confsync_dsbox.setDecimals(1)
-        self.dt_confsync_dsbox.setMinimum(1.0)
-        self.dt_confsync_dsbox.setMaximum(600.0)
-        self.dt_confsync_dsbox.setSingleStep(10.0)
-        self.dt_confsync_dsbox.setProperty("value", 10.0)
-        self.dt_confsync_dsbox.setObjectName("dt_confsync_dsbox")
-        self.gridLayout.addWidget(self.dt_confsync_dsbox, 4, 1, 1, 1)
-        self.label_2 = QtWidgets.QLabel(self.data_tab)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout.addWidget(self.label_2, 3, 0, 1, 1)
-        self.wdir_lineEdit = QtWidgets.QLineEdit(self.data_tab)
-        self.wdir_lineEdit.setObjectName("wdir_lineEdit")
-        self.gridLayout.addWidget(self.wdir_lineEdit, 6, 1, 1, 1)
+            self.ndigit_sbox.sizePolicy().hasHeightForWidth())
+        self.ndigit_sbox.setSizePolicy(sizePolicy)
+        self.ndigit_sbox.setMaximum(20)
+        self.ndigit_sbox.setProperty("value", 3)
+        self.ndigit_sbox.setObjectName("ndigit_sbox")
+        self.gridLayout.addWidget(self.ndigit_sbox, 6, 1, 1, 1)
+        self.dsrc_mode_cbb = QtWidgets.QComboBox(self.data_tab)
+        self.dsrc_mode_cbb.setObjectName("dsrc_mode_cbb")
+        self.dsrc_mode_cbb.addItem("")
+        self.dsrc_mode_cbb.addItem("")
+        self.gridLayout.addWidget(self.dsrc_mode_cbb, 7, 1, 1, 1)
+        self.tol_dsbox = QtWidgets.QDoubleSpinBox(self.data_tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.tol_dsbox.sizePolicy().hasHeightForWidth())
+        self.tol_dsbox.setSizePolicy(sizePolicy)
+        self.tol_dsbox.setSingleStep(0.1)
+        self.tol_dsbox.setProperty("value", 0.1)
+        self.tol_dsbox.setObjectName("tol_dsbox")
+        self.gridLayout.addWidget(self.tol_dsbox, 5, 1, 1, 1)
         self.label_3 = QtWidgets.QLabel(self.data_tab)
         self.label_3.setObjectName("label_3")
-        self.gridLayout.addWidget(self.label_3, 4, 0, 1, 1)
-        self.label = QtWidgets.QLabel(self.data_tab)
-        self.label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft
-                                | QtCore.Qt.AlignVCenter)
-        self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.label_3, 7, 0, 1, 1)
         spacerItem = QtWidgets.QSpacerItem(20, 40,
                                            QtWidgets.QSizePolicy.Minimum,
                                            QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 7, 0, 1, 1)
+        self.gridLayout.addItem(spacerItem, 11, 0, 1, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSpacing(4)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -76,19 +76,22 @@ class Ui_Dialog(object):
         self.live_rbtn.setObjectName("live_rbtn")
         self.field_init_mode.addButton(self.live_rbtn)
         self.horizontalLayout.addWidget(self.live_rbtn)
-        self.gridLayout.addLayout(self.horizontalLayout, 1, 1, 1, 1)
-        self.tol_dsbox = QtWidgets.QDoubleSpinBox(self.data_tab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.tol_dsbox.sizePolicy().hasHeightForWidth())
-        self.tol_dsbox.setSizePolicy(sizePolicy)
-        self.tol_dsbox.setSingleStep(0.1)
-        self.tol_dsbox.setProperty("value", 0.1)
-        self.tol_dsbox.setObjectName("tol_dsbox")
-        self.gridLayout.addWidget(self.tol_dsbox, 3, 1, 1, 1)
+        self.gridLayout.addLayout(self.horizontalLayout, 3, 1, 1, 1)
+        self.wdir_lbl = QtWidgets.QLabel(self.data_tab)
+        self.wdir_lbl.setObjectName("wdir_lbl")
+        self.gridLayout.addWidget(self.wdir_lbl, 10, 0, 1, 1)
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
+        self.dbpath_lineEdit = QtWidgets.QLineEdit(self.data_tab)
+        self.dbpath_lineEdit.setObjectName("dbpath_lineEdit")
+        self.horizontalLayout_5.addWidget(self.dbpath_lineEdit)
+        self.dbpath_btn = QtWidgets.QPushButton(self.data_tab)
+        self.dbpath_btn.setObjectName("dbpath_btn")
+        self.horizontalLayout_5.addWidget(self.dbpath_btn)
+        self.gridLayout.addLayout(self.horizontalLayout_5, 8, 1, 1, 1)
+        self.dbpath_lbl = QtWidgets.QLabel(self.data_tab)
+        self.dbpath_lbl.setObjectName("dbpath_lbl")
+        self.gridLayout.addWidget(self.dbpath_lbl, 8, 0, 1, 1)
         self.init_settings_chkbox = QtWidgets.QCheckBox(self.data_tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -110,19 +113,12 @@ class Ui_Dialog(object):
         self.label_72.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft
                                    | QtCore.Qt.AlignVCenter)
         self.label_72.setObjectName("label_72")
-        self.gridLayout.addWidget(self.label_72, 1, 0, 1, 1)
-        self.ndigit_sbox = QtWidgets.QSpinBox(self.data_tab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.ndigit_sbox.sizePolicy().hasHeightForWidth())
-        self.ndigit_sbox.setSizePolicy(sizePolicy)
-        self.ndigit_sbox.setMaximum(20)
-        self.ndigit_sbox.setProperty("value", 3)
-        self.ndigit_sbox.setObjectName("ndigit_sbox")
-        self.gridLayout.addWidget(self.ndigit_sbox, 5, 1, 1, 1)
+        self.gridLayout.addWidget(self.label_72, 3, 0, 1, 1)
+        self.label = QtWidgets.QLabel(self.data_tab)
+        self.label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft
+                                | QtCore.Qt.AlignVCenter)
+        self.label.setObjectName("label")
+        self.gridLayout.addWidget(self.label, 4, 0, 1, 1)
         self.apply_delt_dsbox = QtWidgets.QDoubleSpinBox(self.data_tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -136,23 +132,29 @@ class Ui_Dialog(object):
         self.apply_delt_dsbox.setSingleStep(0.05)
         self.apply_delt_dsbox.setProperty("value", 0.05)
         self.apply_delt_dsbox.setObjectName("apply_delt_dsbox")
-        self.gridLayout.addWidget(self.apply_delt_dsbox, 2, 1, 1, 1)
+        self.gridLayout.addWidget(self.apply_delt_dsbox, 4, 1, 1, 1)
+        self.label_4 = QtWidgets.QLabel(self.data_tab)
+        self.label_4.setObjectName("label_4")
+        self.gridLayout.addWidget(self.label_4, 6, 0, 1, 1)
+        self.label_2 = QtWidgets.QLabel(self.data_tab)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout.addWidget(self.label_2, 5, 0, 1, 1)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.label_7 = QtWidgets.QLabel(self.data_tab)
-        self.label_7.setObjectName("label_7")
-        self.horizontalLayout_3.addWidget(self.label_7)
-        self.pushButton = QtWidgets.QPushButton(self.data_tab)
+        self.wdir_lineEdit = QtWidgets.QLineEdit(self.data_tab)
+        self.wdir_lineEdit.setObjectName("wdir_lineEdit")
+        self.horizontalLayout_3.addWidget(self.wdir_lineEdit)
+        self.wdir_btn = QtWidgets.QPushButton(self.data_tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.pushButton.sizePolicy().hasHeightForWidth())
-        self.pushButton.setSizePolicy(sizePolicy)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout_3.addWidget(self.pushButton)
-        self.gridLayout.addLayout(self.horizontalLayout_3, 6, 0, 1, 1)
+            self.wdir_btn.sizePolicy().hasHeightForWidth())
+        self.wdir_btn.setSizePolicy(sizePolicy)
+        self.wdir_btn.setObjectName("wdir_btn")
+        self.horizontalLayout_3.addWidget(self.wdir_btn)
+        self.gridLayout.addLayout(self.horizontalLayout_3, 10, 1, 1, 1)
         self.tabWidget.addTab(self.data_tab, "")
         self.view_tab = QtWidgets.QWidget()
         self.view_tab.setObjectName("view_tab")
@@ -272,7 +274,8 @@ class Ui_Dialog(object):
         self.init_settings_chkbox.toggled['bool'].connect(
             Dialog.on_init_settings)
         self.select_font_btn.clicked.connect(Dialog.on_select_font)
-        self.pushButton.clicked.connect(Dialog.on_choose_wdir)
+        self.wdir_btn.clicked.connect(Dialog.on_choose_wdir)
+        self.dbpath_btn.clicked.connect(Dialog.on_choose_dbfile)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.ok_btn, self.cancel_btn)
         Dialog.setTabOrder(self.cancel_btn, self.model_rbtn)
@@ -281,14 +284,9 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.label_4.setText(_translate("Dialog", "Float number precision"))
-        self.dt_confsync_dsbox.setSuffix(_translate("Dialog", " second"))
-        self.label_2.setText(
-            _translate("Dialog", "Default absolute discrepancy tolerance"))
-        self.label_3.setText(
-            _translate("Dialog", "Sync config data every ? second "))
-        self.label.setText(
-            _translate("Dialog", "Settling time between batch settings apply"))
+        self.dsrc_mode_cbb.setItemText(0, _translate("Dialog", "DB"))
+        self.dsrc_mode_cbb.setItemText(1, _translate("Dialog", "FILE"))
+        self.label_3.setText(_translate("Dialog", "Data source type"))
         self.model_rbtn.setToolTip(
             _translate(
                 "Dialog",
@@ -301,6 +299,9 @@ class Ui_Dialog(object):
                 "<html><head/><body><p>Initialize field set value by pulling the live device settings from controls network.</p></body></html>"
             ))
         self.live_rbtn.setText(_translate("Dialog", "Live"))
+        self.wdir_lbl.setText(_translate("Dialog", "Working directory"))
+        self.dbpath_btn.setText(_translate("Dialog", "Browse"))
+        self.dbpath_lbl.setText(_translate("Dialog", "Database path"))
         self.init_settings_chkbox.setToolTip(
             _translate(
                 "Dialog",
@@ -312,9 +313,18 @@ class Ui_Dialog(object):
                 "Initialize device settings with the whole loaded lattice"))
         self.label_72.setText(
             _translate("Dialog", "Initial current field set value mode"))
+        self.label.setText(
+            _translate("Dialog", "Time wait for batch settings apply"))
         self.apply_delt_dsbox.setSuffix(_translate("Dialog", " second"))
-        self.label_7.setText(_translate("Dialog", "Working directory"))
-        self.pushButton.setText(_translate("Dialog", "Choose"))
+        self.label_4.setText(_translate("Dialog", "Float number precision"))
+        self.label_2.setToolTip(
+            _translate(
+                "Dialog",
+                "<html><head/><body><p>Discrepancy between set and read.</p></body></html>"
+            ))
+        self.label_2.setText(
+            _translate("Dialog", "Allowed absolute discrepancy"))
+        self.wdir_btn.setText(_translate("Dialog", "Browse"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.data_tab),
                                   _translate("Dialog", "Data"))
         self.label_5.setText(
