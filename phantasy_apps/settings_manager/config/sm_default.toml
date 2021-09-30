@@ -20,11 +20,11 @@ TITLE = "Configurations for Settings Manager"
   # HIDE_COLUMNS = ['dx01', 'tolerance', 'writable']
 
 [MACH_STATE]
-  CONFIG_PATH = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/msviz/config/metadata_va.toml"
+  CONFIG_PATH = "/files/shared/ap/HLA/.phyapps/phantasy-apps/phantasy_apps/msviz/config/metadata.toml"
   ENABLED = true
 
 [DATA_REFRESH]
-  NCORE = 4 # max CPU cores to use
+  NCORE = 4 # max number of CPU cores to use
 
 [LATTICE]
   DEFAULT_MACHINE = 'FRIB'
