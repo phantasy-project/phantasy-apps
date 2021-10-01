@@ -1014,12 +1014,19 @@ class Ui_MainWindow(object):
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionCapture_machstate.setIcon(icon31)
         self.actionCapture_machstate.setObjectName("actionCapture_machstate")
+        self.actionManage_Database = QtWidgets.QAction(MainWindow)
+        icon32 = QtGui.QIcon()
+        icon32.addPixmap(QtGui.QPixmap(":/sm-icons/db.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionManage_Database.setIcon(icon32)
+        self.actionManage_Database.setObjectName("actionManage_Database")
         self.menu_File.addAction(self.actionLoad_From_Snapshot)
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.action_About)
         self.menu_Help.addAction(self.actionAbout_Qt)
         self.menuTools.addAction(self.actionFix_Corrector_Names)
+        self.menuTools.addAction(self.actionManage_Database)
         self.menu_View.addAction(self.actionShow_Device_Settings_Log)
         self.menu_View.addAction(self.actionSnapshots)
         self.menubar.addAction(self.menu_File.menuAction())
@@ -1134,6 +1141,7 @@ class Ui_MainWindow(object):
             MainWindow.on_snp_filter_note_updated)
         self.toolButton_2.clicked.connect(MainWindow.on_select_daterange)
         self.nsnp_btn.clicked.connect(MainWindow.on_update_nsnp)
+        self.actionManage_Database.triggered.connect(MainWindow.onManageDB)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
@@ -1418,6 +1426,8 @@ class Ui_MainWindow(object):
         self.actionCapture_machstate.setToolTip(
             _translate("MainWindow",
                        "Capture additional data as machine state."))
+        self.actionManage_Database.setText(
+            _translate("MainWindow", "Manage Database"))
 
 
 from phantasy_ui.widgets import DockWidget

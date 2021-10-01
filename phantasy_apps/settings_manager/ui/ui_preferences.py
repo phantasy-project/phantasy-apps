@@ -161,6 +161,11 @@ class Ui_Dialog(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(self.ms_tab)
         self.verticalLayout.setObjectName("verticalLayout")
         self.plainTextEdit = QtWidgets.QPlainTextEdit(self.ms_tab)
+        self.plainTextEdit.setStyleSheet(
+            "QPlainTextEdit {\n"
+            "    border:none;\n"
+            "    background-color: rgb(239, 239, 239);\n"
+            "}")
         self.plainTextEdit.setObjectName("plainTextEdit")
         self.verticalLayout.addWidget(self.plainTextEdit)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
