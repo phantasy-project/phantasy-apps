@@ -17,39 +17,17 @@ from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QSpacerItem
 
 from phantasy_ui import get_open_directory
+from phantasy_ui import get_open_filename
 from phantasy_ui import select_font
 
 from .utils import COLUMN_NAMES
-from .utils import DEFAULT_TS_PATH, DEFAULT_MS_PATH, DEFAULT_ELEM_PATH
 from .utils import reset_config
 from .ui.ui_preferences import Ui_Dialog
 
-_curdir = os.path.abspath(os.path.dirname(__file__))
-
-DEFAULT_FIELD_INIT_MODE = 'model'
-DEFAULT_INIT_SETTINGS = False
-DEFAULT_T_WAIT = 0.05
-DEFAULT_TOLERANCE = 0.10
-DEFAULT_CONFIG_SYNC_TIME_INTERVAL = 10  # second
-DEFAULT_N_DIGITS = 3
-DEFAULT_CONFIG_PATH = "~/.phantasy-apps/settings-manager"
-DEFAULT_WDIR1 = "/files/shared/ap/settings_manager"
-DEFAULT_WDIR2 = os.path.join(_curdir, "testdata", "settings_manager")
-if os.path.exists(DEFAULT_WDIR1):
-    DEFAULT_WDIR = DEFAULT_WDIR1
-else:
-    DEFAULT_WDIR = DEFAULT_WDIR2
-
-DEFAULT_PREF = {
-    'field_init_mode': DEFAULT_FIELD_INIT_MODE,
-    'init_settings': DEFAULT_INIT_SETTINGS,
-    't_wait': DEFAULT_T_WAIT,
-    'tolerance': DEFAULT_TOLERANCE,
-    'dt_confsync': DEFAULT_CONFIG_SYNC_TIME_INTERVAL,
-    'ndigit': DEFAULT_N_DIGITS,
-    'config_path': os.path.abspath(os.path.expanduser(DEFAULT_CONFIG_PATH)),
-    'wdir': os.path.abspath(os.path.expanduser(DEFAULT_WDIR)),
-}
+from .conf import APP_CONF, APP_CONF_PATH
+from .conf import N_SNP_MAX, NPROC, MS_CONF_PATH, MS_ENABLED
+from .conf import DATA_SOURCE_MODE, DB_ENGINE, DATA_URI
+from .conf import reset_app_config, init_user_config
 
 
 class PreferencesDialog(QDialog, Ui_Dialog):
@@ -66,14 +44,14 @@ class PreferencesDialog(QDialog, Ui_Dialog):
     # bool
     init_settings_changed = pyqtSignal(bool)
 
-    # wdir
-    wdir_changed = pyqtSignal('QString')
+    # data uri changed
+    data_uri_changed = pyqtSignal('QString')
 
     def __init__(self, parent=None, preference_dict=None):
         super(self.__class__, self).__init__()
         self.parent = parent
 
-        self.pref_dict = DEFAULT_PREF if preference_dict is None else preference_dict
+        self.pref_dict = APP_CONF if preference_dict is None else preference_dict
 
         # UI
         self.setupUi(self)
@@ -84,31 +62,46 @@ class PreferencesDialog(QDialog, Ui_Dialog):
 
     def _post_init(self):
         # field init mode
-        mode = self.pref_dict['field_init_mode']
+        mode = self.pref_dict['SETTINGS']['FIELD_INIT_MODE']
         self.model_rbtn.setChecked(mode == 'model')
         self.live_rbtn.setChecked(mode == 'live')
         for o in (self.model_rbtn, self.live_rbtn):
             o.toggled.emit(o.isChecked())
 
         # t_wait in second
-        t_wait = self.pref_dict['t_wait']
+        t_wait = self.pref_dict['SETTINGS']['T_WAIT']
         self.apply_delt_dsbox.setValue(t_wait)
 
         # init_settings bool
-        init_settings = self.pref_dict['init_settings']
+        init_settings = self.pref_dict['SETTINGS']['INIT_SETTINGS']
         self.init_settings_chkbox.setChecked(init_settings)
 
         # tolerance
-        tol = self.pref_dict['tolerance']
+        tol = self.pref_dict['SETTINGS']['TOLERANCE']
         self.tol_dsbox.setValue(tol)
 
-        # confsync dt
-        dt_confsync = self.pref_dict['dt_confsync']
-        self.dt_confsync_dsbox.setValue(dt_confsync)
-
         # ndigits
-        ndigit = self.pref_dict['ndigit']
+        ndigit = self.pref_dict['SETTINGS']['PRECISION']
         self.ndigit_sbox.setValue(ndigit)
+
+        # data source type
+        dsrc_mode = self.pref_dict['DATA_SOURCE']['TYPE']
+        self.dsrc_mode_cbb.setCurrentText(dsrc_mode)
+        self.dsrc_mode_cbb.currentTextChanged.connect(self.on_dsrc_mode_changed)
+        self.dsrc_mode_cbb.currentTextChanged.emit(self.dsrc_mode_cbb.currentText())
+
+        # data source uri
+        dsrc_uri = self.pref_dict['DATA_SOURCE']['URI']
+        self.set_uri(dsrc_uri, dsrc_mode)
+
+        # machstate
+        msconf_path = self.pref_dict['MACH_STATE']['CONFIG_PATH']
+        self.msconf_path_lineEdit.setText(msconf_path)
+        msconf_daq_rate = self.pref_dict['MACH_STATE']['DAQ_RATE']
+        self.msconf_rate_cbb.setCurrentText(str(msconf_daq_rate))
+        msconf_daq_nshot = self.pref_dict['MACH_STATE']['DAQ_NSHOT']
+        self.msconf_nshot_cbb.setCurrentText(str(msconf_daq_nshot))
+        self.msconf_open_btn.clicked.connect(partial(self.on_open_filepath, msconf_path))
 
         # colvis
         tv = self.parent._tv
@@ -123,33 +116,60 @@ class PreferencesDialog(QDialog, Ui_Dialog):
             layout.addWidget(btn, i, j)
 
         # config path
-        config_path = self.pref_dict['config_path']
+        config_path = self.pref_dict['SETTINGS']['SUPPORT_CONFIG_PATH']
         self.update_config_paths(config_path)
         self.change_config_path_btn.clicked.connect(self.on_change_confpath)
 
-        # reset config
+        # reset support config
         self.reset_config_btn.clicked.connect(self.on_reset_config)
-        # purge config
+        # purge support config
         self.purge_config_btn.clicked.connect(self.on_purge_config)
+
+        # reset app config
+        self.reset_app_config_btn.clicked.connect(self.on_reset_app_config)
+        # edit app config
+        self.edit_app_config_btn.clicked.connect(self.on_edit_app_config)
 
         # font
         self.font_changed.connect(self.on_font_changed)
         font = self.pref_dict['font']
         self.font_changed.emit(font)
 
-        # wdir
-        wdir = self.pref_dict['wdir']
-        self.set_wdir(wdir)
-
-    def set_wdir(self, d):
-        if not os.access(d, os.W_OK):
+    def set_uri(self, path, dsrc_mode):
+        if not os.access(os.path.abspath(os.path.expanduser(path)), os.W_OK):
             return
-        self.wdir_lineEdit.setText(d)
-        self.wdir_changed.emit(d)
+        if dsrc_mode == 'DB':
+            self.dbpath_lineEdit.setText(path)
+        else:
+            self.wdir_lineEdit.setText(path)
+        self.data_uri_changed.emit(path)
+
+    @pyqtSlot()
+    def on_reset_app_config(self):
+        """Reset app config with package distributed one.
+        """
+        r = QMessageBox.question(self, "Reset App Configuration File",
+                "Are you sure to reset app configurations?",
+                QMessageBox.Yes | QMessageBox.No)
+        if r == QMessageBox.No:
+            return
+        reset_app_config()
+
+    @pyqtSlot()
+    def on_edit_app_config(self):
+        """Edit app configurations if possible.
+        """
+        r = QMessageBox.question(self, "Edit App Configuration File",
+                "Click Yes to open and edit the app configuration file, restart app to see the changes.",
+                QMessageBox.Yes | QMessageBox.No)
+        if r == QMessageBox.No:
+            return
+        user_config_path = init_user_config()
+        QDesktopServices.openUrl(QUrl(user_config_path))
 
     @pyqtSlot()
     def on_reset_config(self):
-        """Reset config data with package distributed.
+        """Reset config data with package distributed ones.
         """
         r = QMessageBox.question(self, "Reset Configuration Files",
                 "Are you sure to reset all the configuration files?",
@@ -232,13 +252,19 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         self.setResult(QDialog.Accepted)
 
     def get_config(self):
-        return {'field_init_mode': self.mode,
-                't_wait': self.apply_delt_dsbox.value(),
-                'init_settings': self.init_settings_chkbox.isChecked(),
-                'tolerance': self.tol_dsbox.value(),
-                'dt_confsync': self.dt_confsync_dsbox.value(),
-                'ndigit': self.ndigit_sbox.value(),
-                'wdir' : self.wdir_lineEdit.text(),
+        return {
+                'SETTINGS':
+                    {'FIELD_INIT_MODE': self.mode,
+                     'T_WAIT': self.apply_delt_dsbox.value(),
+                     'INIT_SETTINGS': self.init_settings_chkbox.isChecked(),
+                     'TOLERANCE': self.tol_dsbox.value(),
+                     'PRECISION': self.ndigit_sbox.value(),
+                     },
+                'MACH_STATE':
+                    {
+                        'DAQ_RATE': int(self.msconf_rate_cbb.currentText()),
+                        'DAQ_NSHOT': int(self.msconf_nshot_cbb.currentText()),
+                    }
                 }
 
     @pyqtSlot(bool)
@@ -264,9 +290,25 @@ class PreferencesDialog(QDialog, Ui_Dialog):
                                                     font.pointSize()))
         self.font_sample_lbl.setFont(font)
 
+    @pyqtSlot('QString')
+    def on_dsrc_mode_changed(self, s):
+        objs_file = (self.wdir_lbl, self.wdir_lineEdit, self.wdir_btn)
+        objs_db = (self.dbpath_lbl, self.dbpath_lineEdit, self.dbpath_btn)
+        [o.setVisible(s=='DB') for o in objs_db]
+        [o.setVisible(s!='DB') for o in objs_file]
+
     @pyqtSlot()
     def on_choose_wdir(self):
         """Select working directory.
         """
         d = get_open_directory(self)
-        self.set_wdir(d)
+        self.set_uri(d, 'FILE')
+
+    @pyqtSlot()
+    def on_choose_dbfile(self):
+        """Select the db file.
+        """
+        filepath, ext = get_open_filename(self, type_filter='SQLite File (*.db);;Other Files (*.*)')
+        if filepath is None:
+            return
+        self.set_uri(filepath, 'DB')

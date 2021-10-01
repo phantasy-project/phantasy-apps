@@ -1,3 +1,13 @@
+Version 9.2: 2021-10-01
+=======================
+
+- Implemented app configuration module
+  - use settings_manager.toml file to manage all the configurations
+  - Runtime change configuration from Preferences dialog
+- Add a tool for database management
+  - Initialize an empty database
+  - Update existing one with snapshot files (Settings Manager in FILE working mode)
+
 Version 9.1: 2021-09-29
 =======================
 

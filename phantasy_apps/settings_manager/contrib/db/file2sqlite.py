@@ -8,44 +8,14 @@ Tong Zhang <zhangt@frib.msu.edu>
 2021-09-23 13:26:42 EDT
 """
 
-import sqlite3
-import os
-from db_utils import create_connection, insert_data, get_blob
-import pathlib
-from phantasy_apps.settings_manager.data import read_data
+from db_utils import file2db, init_db
 
 
 db_filepath = "sm.db"
 sm_path="/files/shared/ap/settings_manager"
 
-conn = create_connection(db_filepath)
-cursor = conn.cursor()
-
 # init
-with open('init.sql', 'r') as fp:
-    cursor.executescript(fp.read())
-    conn.commit()
+init_db(db_filepath)
 
 # add data
-cnt = 0
-for path in sorted(pathlib.Path(sm_path).glob("**/*"), key=os.path.getctime):
-    if not path.is_file():
-        continue
-    snp_data = read_data(path)
-    if snp_data is None:
-        print(f"Failed to load {path.resolve()}")
-        continue
-    data_tuple = snp_data.timestamp, snp_data.datetime, snp_data.name, \
-                 snp_data.note, \
-                 snp_data.user, snp_data.ion_name, \
-                 int(snp_data.ion_number), int(snp_data.ion_mass), \
-                 int(snp_data.ion_charge), snp_data.machine, \
-                 snp_data.segment, snp_data.tags_as_str(), \
-                 snp_data.app, snp_data.version, path.suffix[1:], get_blob(path)
-    cnt += 1
-    print(f"{cnt:>02d} Insert with data from {path}...")
-    insert_data(cursor, *data_tuple)
-
-conn.commit()
-cursor.close()
-conn.close()
+file2db(db_filepath, sm_path)

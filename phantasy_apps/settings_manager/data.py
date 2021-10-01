@@ -17,6 +17,8 @@ from PyQt5.QtCore import Qt
 
 from phantasy import Settings
 
+from .conf import DEFAULT_MACHINE, DEFAULT_SEGMENT
+
 # default data format to save
 DEFAULT_DATA_FMT = "xlsx"
 
@@ -40,17 +42,6 @@ CSV_HEADER_10 = (
 # For table_version of SnapshotData:
 # CSV_HEADER: 9
 # CSV_HEADER, LAST_POWER_STATUS: 10
-
-LIVE = os.environ.get('LIVE_MODE', True)
-if isinstance(LIVE, str):
-    LIVE = LIVE.capitalize() == 'True'
-
-if not LIVE:
-    DEFAULT_MACHINE = "FRIB_VA"
-    DEFAULT_SEGMENT = "LS1FS1"
-else:
-    DEFAULT_MACHINE = "FRIB"
-    DEFAULT_SEGMENT = "LINAC"
 
 #
 ELEMT_PATH = os.path.join(os.path.dirname(__file__), 'config', 'elements.json')
