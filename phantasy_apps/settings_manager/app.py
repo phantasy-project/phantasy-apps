@@ -1562,18 +1562,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     continue
                 self._snp_dock_list.append(snp_data)
 
-                self.data_uri_lineEdit.setText(self.data_uri)
-                #
-                self.fm.removePaths(self.fm.directories())
-                self.fm.addPath(self.data_uri)
+            self.data_uri_lineEdit.setText(self.data_uri)
+            #
+            self.fm.removePaths(self.fm.directories())
+            self.fm.addPath(self.data_uri)
 
-                n = len(self._snp_dock_list)
-                self.total_snp_lbl.setText(str(n))
-                self.update_snp_dock_view()
-                # current snp
-                if self._current_snpdata is not None:
-                    self.snp_loaded.emit(self._current_snpdata)
-                self.snp_filters_updated.emit()
+            n = len(self._snp_dock_list)
+            self.total_snp_lbl.setText(str(n))
+            self.update_snp_dock_view()
+            # current snp
+            if self._current_snpdata is not None:
+                self.snp_loaded.emit(self._current_snpdata)
+            self.snp_filters_updated.emit()
 
     @pyqtSlot(int)
     def on_ndigit_changed(self, n):
