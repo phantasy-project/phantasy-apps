@@ -451,6 +451,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lattice_load_window = None
         self._fixnames_dlg = None
         self._date_range_dlg = None
+        self._db_mgmt_dlg = None
 
         self._mp = None
         self._last_machine_name = None
@@ -2733,6 +2734,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         self._n_snp_max = next(N_SNP_MAX)
         self.sender().setText(str(self._n_snp_max))
+
+    @pyqtSlot()
+    def onManageDB(self):
+        """Manage database
+        """
+        from .app_dbmgmt import DBManagerDialog
+        if self._db_mgmt_dlg is None:
+            self._db_mgmt_dlg = DBManagerDialog(self)
+        self._db_mgmt_dlg.show()
 
 
 def is_snp_data_exist(snpdata, snpdata_list):
