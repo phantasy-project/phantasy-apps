@@ -263,7 +263,7 @@ class SettingsModel(QStandardItemModel):
             item_wa = QStandardItem(str(write_access))
             item_wa.setEditable(False)
             row.append(item_wa)
-            item_ename.setEnabled(write_access)
+            # item_ename.setEnabled(write_access)
 
             # x2/x0
             item_ratio_x20 = QStandardItem('-')
