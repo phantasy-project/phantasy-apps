@@ -1640,13 +1640,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         irow = idx0.row()
         rd_val, sp_val = o.value, o.current_setting()
 
-        # !! only for devices that cannot be reached !!
-        if rd_val is None:
-            rd_val = 0
-            print(f"{o.ename} [{o.name}] RD cannot be reached.")
-        if sp_val is None:
-            sp_val = 0
-            print(f"{o.ename} [{o.name}] CSET cannot be reached.")
+        name_idx = m.index(irow, m.i_name)
+        if None in (rd_val, sp_val): # is not reachable
+            worker.meta_signal1.emit((name_idx, self.fail_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit((name_idx, "Device is not connected", Qt.ToolTipRole))
+            return cnt_fld
+        else:
+            # is reachable
+            worker.meta_signal1.emit((name_idx, QPixmap(), Qt.DecorationRole))
+            worker.meta_signal1.emit((name_idx, "Device is connected", Qt.ToolTipRole))
 
         x0_idx = m.index(irow, m.i_val0)
         x1_idx = m.index(irow, m.i_rd)
@@ -1658,11 +1660,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         pwr_idx = m.index(irow, m.i_pwr)
         ratio_x20_idx = m.index(irow, m.i_ratio_x20)
         wa_idx = m.index(irow, m.i_writable)
-        wa = ELEM_WRITE_PERM.get(o.ename, o.write_access)
+
         idx_tuple = (idx0, idx1)
         v_tuple = (rd_val, sp_val)
         for iidx, val in zip(idx_tuple, v_tuple):
             worker.meta_signal1.emit((iidx, self.fmt.format(val), Qt.DisplayRole))
+
+        wa = ELEM_WRITE_PERM.get(o.ename, o.write_access)
         worker.meta_signal1.emit((wa_idx, str(wa), Qt.DisplayRole))
 
         x0 = float(m.data(x0_idx))
