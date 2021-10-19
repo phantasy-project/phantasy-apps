@@ -2519,10 +2519,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         _elem_list = []
         _invalid_elem_list = []
         for ename, settings in s.items():
-            if settings is None:
-                _invalid_elem_list.append(ename)
+            _elem = lat[ename]
+            if _elem is None:
+                _invalid_elem_list.append((ename, settings))
             else:
-                _elem_list.append(lat[ename])
+                _elem_list.append(_elem)
         self._elem_list = _elem_list
         if _invalid_elem_list:
             print(f"Skip non-existing devices: {_invalid_elem_list}")

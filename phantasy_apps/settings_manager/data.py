@@ -133,7 +133,7 @@ def make_physics_settings(settings, lat):
             name = ELEM_ALIAS_MAP[name]
         elem = lat[name]
         if elem is None:
-            s[name] = None  # element is not existing any more
+            s[name] = {field: sp}  # element is not existing any more
             continue
         eng_fields = elem.get_eng_fields()
         phy_fields = elem.get_phy_fields()
