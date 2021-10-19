@@ -2516,7 +2516,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             data.extract_blob()
         s = make_physics_settings(data.data.to_numpy(), lat)
         lat.settings.update(s)
-        self._elem_list = [lat[ename] for ename in s]
+        _elem_list = []
+        _invalid_elem_list = []
+        for ename, settings in s.items():
+            if settings is None:
+                _invalid_elem_list.append(ename)
+            else:
+                _elem_list.append(lat[ename])
+        self._elem_list = _elem_list
+        if _invalid_elem_list:
+            print(f"Skip non-existing devices: {_invalid_elem_list}")
         self.element_list_changed.emit()
         self.snp_loaded.emit(data)
 
