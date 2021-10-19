@@ -64,6 +64,14 @@ fields = ['I', 'B3']
 [OCT]
 fields = ['I', 'B4']
 
+[SLT]
+fields = [
+    'LEFT', 'LEFT_POS',
+    'RIGHT', 'RIGHT_POS',
+    'TOP', 'TOP_POS',
+    'BOTTOM', 'BOTTOM_POS',
+]
+
 # ISRC1
 [HVP]
 fields = ['V', 'VOLT']
