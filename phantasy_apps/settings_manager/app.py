@@ -436,8 +436,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_ms_chkbox.setChecked(MS_ENABLED)
         # hide sts info
         self.show_sts_btn.setChecked(False)
-        # set skip none reachable option as True
-        self.skip_none_chkbox.setChecked(True)
+        # hide init settings hbox
+        self.show_init_settings_btn.setChecked(False)
         # hide Add Devices tool
         self.actionAdd_Devices.setVisible(False)
         # add beamSpeciesDisplayWidget
@@ -517,6 +517,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._power_switch_icon = QIcon(QPixmap(":/sm-icons/power_switch.png"))
         self._warning_amber_icon = QIcon(QPixmap(":/sm-icons/warning_amber.png"))
 
+        # set skip none reachable option as True
+        self.skip_none_chkbox.setChecked(True)
+
+        # uncheck init_settings_chkbox when init_settings_btn is unchecked
+        # other slots are set in designer.
+        self.show_init_settings_btn.toggled.connect(self.on_toggle_show_init_settings_btn)
+        #
         # selection
         self.select_all_btn.clicked.connect(partial(self.on_select, 'all'))
         self.invert_selection_btn.clicked.connect(partial(self.on_select, 'invert'))
@@ -636,6 +643,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.dateEdit2.setDate(QDate(NOW_YEAR, NOW_MONTH, NOW_DAY))
         # snp note filter
         self.snp_note_filter_enabled = False
+
+    @pyqtSlot(bool)
+    def on_toggle_show_init_settings_btn(self, toggled):
+        if not toggled:
+            # uncheck init_settings_chkbox when init_settings_btn is unchecked
+            self.init_settings_chkbox.setChecked(False)
 
     def on_update_filter_controls(self, snpdata):
         """Update filter controls
