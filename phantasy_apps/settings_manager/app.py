@@ -2526,6 +2526,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 _elem_list.append(_elem)
         self._elem_list = _elem_list
         if _invalid_elem_list:
+            self.on_show_invalid_elemlist(_invalid_elem_list)
             print(f"Skip non-existing devices: {_invalid_elem_list}")
         self.element_list_changed.emit()
         self.snp_loaded.emit(data)
@@ -2757,6 +2758,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if self._db_mgmt_dlg is None:
             self._db_mgmt_dlg = DBManagerDialog(self)
         self._db_mgmt_dlg.show()
+
+    def on_show_invalid_elemlist(self, elemlist: list):
+        """Show a table of invalid elements, with saved settings.
+        """
+        from .app_invalid_elemlist import InvalidElementListDialog
+        self._dlg = InvalidElementListDialog(elemlist, self)
+        self._dlg.show()
 
 
 def is_snp_data_exist(snpdata, snpdata_list):
