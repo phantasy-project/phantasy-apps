@@ -427,6 +427,9 @@ class Ui_MainWindow(object):
         self.init_settings_chkbox = QtWidgets.QCheckBox(self.centralwidget)
         self.init_settings_chkbox.setObjectName("init_settings_chkbox")
         self.horizontalLayout_2.addWidget(self.init_settings_chkbox)
+        self.skip_none_chkbox = QtWidgets.QCheckBox(self.centralwidget)
+        self.skip_none_chkbox.setObjectName("skip_none_chkbox")
+        self.horizontalLayout_2.addWidget(self.skip_none_chkbox)
         self.gridLayout.addLayout(self.horizontalLayout_2, 5, 0, 1, 16)
         self.settingsView = QtWidgets.QTreeView(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
@@ -1256,6 +1259,13 @@ class Ui_MainWindow(object):
             ))
         self.init_settings_chkbox.setText(
             _translate("MainWindow", "Initialize with loaded lattice"))
+        self.skip_none_chkbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Skip devices that are not reachable (when initializing with loaded lattice).</p></body></html>"
+            ))
+        self.skip_none_chkbox.setText(
+            _translate("MainWindow", "Skip Non-reachable Devices"))
         self.grow_fontsize_btn.setToolTip(
             _translate(
                 "MainWindow",
