@@ -16,7 +16,12 @@ class Ui_Dialog(object):
         self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.label = QtWidgets.QLabel(Dialog)
-        self.label.setStyleSheet("QLabel {\n" "    font-size: 20pt;\n" "}")
+        self.label.setStyleSheet("QLabel {\n"
+                                 "    font-size: 20pt;\n"
+                                 "    background-color: rgb(255, 170, 0);\n"
+                                 "    padding: 10 5 10 5;\n"
+                                 "    border-radius: 4px;\n"
+                                 "}")
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
