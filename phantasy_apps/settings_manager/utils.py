@@ -232,7 +232,10 @@ class SettingsModel(QStandardItemModel):
 
             #
             item_fname = QStandardItem(fname)
-            item_val0 = QStandardItem(self.fmt.format(fval0))
+            if fval0 is None:
+                item_val0 = QStandardItem('-')
+            else:
+                item_val0 = QStandardItem(self.fmt.format(fval0))
             item_rd = QStandardItem('-')
             item_cset = QStandardItem('-')
 

@@ -176,9 +176,20 @@ def get_settings_data(proxy_model):
         fname = m.data(m.index(irow, i_field))
         ftype = m.data(m.index(irow, i_type))
         spos = float(m.data(m.index(irow, i_pos)))
-        f_new_sp = float(m.data(m.index(irow, i_new_sp)))
-        f_old_sp = float(m.data(m.index(irow, i_old_sp)))
-        f_new_rd = float(m.data(m.index(irow, i_new_rd)))
+
+        try:
+            f_new_sp = float(m.data(m.index(irow, i_new_sp)))
+        except ValueError:
+            f_new_sp = None
+        try:
+            f_old_sp = float(m.data(m.index(irow, i_old_sp)))
+        except ValueError:
+            f_old_sp = None
+        try:
+            f_new_rd = float(m.data(m.index(irow, i_new_rd)))
+        except ValueError:
+            f_new_rd = None
+
         f_tol = float(m.data(m.index(irow, i_tol)))
         f_writable = m.data(m.index(irow, i_writable))
         f_pwr = m.data(m.index(irow, i_pwr), Qt.ToolTipRole)

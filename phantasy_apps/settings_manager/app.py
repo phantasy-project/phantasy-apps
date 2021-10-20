@@ -436,6 +436,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_ms_chkbox.setChecked(MS_ENABLED)
         # hide sts info
         self.show_sts_btn.setChecked(False)
+        # set skip none reachable option as True
+        self.skip_none_chkbox.setChecked(True)
         # hide Add Devices tool
         self.actionAdd_Devices.setVisible(False)
         # add beamSpeciesDisplayWidget
@@ -1053,7 +1055,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._elem_list, self._lat,
             settings=self._lat.settings,
             data_source=DATA_SRC_MAP[self.field_init_mode],
-            only_physics=False)
+            only_physics=False,
+            skip_none=self.skip_none_chkbox.isChecked())
         self.settingsLoaded.emit(flat_settings, settings)
         self.tolerance_changed[ToleranceSettings].emit(self._tolerance_settings)
         self.model_settings_changed.emit(settings)
