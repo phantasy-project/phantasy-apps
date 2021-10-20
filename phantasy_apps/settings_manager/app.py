@@ -436,6 +436,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_ms_chkbox.setChecked(MS_ENABLED)
         # hide sts info
         self.show_sts_btn.setChecked(False)
+        # hide Add Devices tool
+        self.actionAdd_Devices.setVisible(False)
         # add beamSpeciesDisplayWidget
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
