@@ -2193,6 +2193,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._meta_fetcher.finished.connect(loop.exit)
             self._meta_fetcher.start()
             loop.exec_()
+        else:
+            # reset machine state
+            self._machstate = None
         #
         snp_data.machstate = self._machstate
         #
