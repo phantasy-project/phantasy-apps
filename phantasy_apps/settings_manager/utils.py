@@ -273,15 +273,15 @@ class SettingsModel(QStandardItemModel):
             item_ratio_x20.setEditable(False)
             row.append(item_ratio_x20)
 
-            if not write_access:
-                for i in row:
-                    i.setSelectable(False)
-                    i.setData(QBrush(QColor(FG_NO_WRITE)), Qt.ForegroundRole)
-
             # pwrsts
             item_pwr = QStandardItem('')
             row.append(item_pwr)
             #
+
+            #if not write_access:
+            #    for i in row:
+            #        i.setSelectable(False)
+            #        i.setData(QBrush(QColor(FG_NO_WRITE)), Qt.ForegroundRole)
 
             self.appendRow(row)
             ename_set.add(elem.name)
