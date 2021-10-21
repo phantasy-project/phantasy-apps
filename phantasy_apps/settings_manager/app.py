@@ -2086,6 +2086,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.filter_lineEdit.editingFinished.emit()
 
     @pyqtSlot(bool)
+    def on_show_disconnected_items(self, is_checked):
+        # show all items that are not reachable
+        self.filter_btn_group_status_changed.emit()
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_disconnected_enabled = is_checked
+        self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
     def on_toggle_pos1_filter_btn(self, is_checked):
         # show all item sb <= pos
         #

@@ -421,6 +421,7 @@ class _SortProxyModel(QSortFilterProxyModel):
         self.filter_checked_enabled = False
         self.filter_dx12_warning_enabled = False
         self.filter_dx02_warning_enabled = False
+        self.filter_disconnected_enabled = False
         # field filter
         self.filter_field_enabled = False
         self.filter_field_list = []
@@ -572,6 +573,18 @@ class _SortProxyModel(QSortFilterProxyModel):
             dx02_warning_test = True
         #
         if not dx02_warning_test:
+            return False
+
+        # disconnected checked
+        if self.filter_disconnected_enabled:
+            data = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['device']),
+                    Qt.ToolTipRole)
+            disconnected_test = data == 'Device is not connected'
+        else:
+            disconnected_test = True
+        #
+        if not disconnected_test:
             return False
 
         # field test
