@@ -72,6 +72,12 @@ fields = [
     'BOTTOM', 'BOTTOM_POS',
 ]
 
+[STRIPPER]
+fields = [
+    'POS', 'POSITION',
+    'ANG', 'ANGLE',
+]
+
 # ISRC1
 [HVP]
 fields = ['V', 'VOLT']
