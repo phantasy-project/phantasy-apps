@@ -6,7 +6,6 @@ import json
 import os
 import pathlib
 import re
-import sqlite3
 import pandas as pd
 import tempfile
 import time
@@ -100,6 +99,7 @@ from .data import DEFAULT_MACHINE, DEFAULT_SEGMENT
 from .utils import ELEM_WRITE_PERM
 from .utils import NUM_LENGTH
 from .utils import BG_COLOR_GOLDEN_NO
+from .contrib.db.db_utils import ensure_connect_db
 
 #
 SUPPORT_FTYPES = ("xlsx", "csv", "h5")
@@ -1553,7 +1553,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             del self._snp_dock_list[:]
         if self.dsrc_mode == 'DB':
             # DB
-            self._db_conn = self._db_conn_pool.setdefault(d, sqlite3.connect(d))
+            self._db_conn = self._db_conn_pool.setdefault(d, ensure_connect_db(d))
             if self._n_snp_max == 'All':
                 df_all = pd.read_sql(f"SELECT * FROM snapshot", self._db_conn)
             else:
@@ -2765,7 +2765,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if dsrc_dict['mode'] == 'DB':
             self._db_conn_pool = {}
             self.data_uri = os.path.abspath(os.path.expanduser(dsrc_dict['uri']))
-            self._db_conn_pool.setdefault(self.data_uri, sqlite3.connect(self.data_uri)) # other DB_ENGINEs to be supported
+            self._db_conn_pool.setdefault(self.data_uri, ensure_connect_db(self.data_uri)) # other DB_ENGINEs to be supported
             self.nsnp_btn.setVisible(True)
             self.nsnp_btn.click()
             self.nsnp_btn.click() # n_snp_max -> 20
