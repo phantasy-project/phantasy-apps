@@ -438,8 +438,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.show_sts_btn.setChecked(False)
         # hide init settings hbox
         self.show_init_settings_btn.setChecked(False)
-        # hide Add Devices tool
-        self.actionAdd_Devices.setVisible(False)
+        # # hide Add Devices tool
+        # self.actionAdd_Devices.setVisible(False)
         # add beamSpeciesDisplayWidget
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -1850,6 +1850,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # Add devices, high-level fields or PV elements.
         if self._elem_select_dlg is None:
             self._elem_select_dlg = ElementSelectDialog(self, "multi", mp=self._mp)
+            self._elem_select_dlg.pv_mode_radiobtn.setEnabled(False)
+            self._elem_select_dlg.elem_mode_radiobtn.setChecked(True)
             self._elem_select_dlg.selection_changed.connect(self.on_device_selected)
             self._elem_select_dlg.pv_mode_toggled.connect(self.on_pv_mode_toggled)
             self.lattice_loaded.connect(self._elem_select_dlg.on_update_elem_tree)
