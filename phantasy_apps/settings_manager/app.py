@@ -1658,6 +1658,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         irow = idx0.row()
         rd_val, sp_val = o.value, o.current_setting()
 
+        # write access
+        wa_idx = m.index(irow, m.i_writable)
+        wa = ELEM_WRITE_PERM.get(o.ename, o.write_access)
+        worker.meta_signal1.emit((wa_idx, str(wa), Qt.DisplayRole))
+
         name_idx = m.index(irow, m.i_name)
         if None in (rd_val, sp_val): # is not reachable
             worker.meta_signal1.emit((name_idx, self.fail_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
@@ -1677,15 +1682,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         dx12_idx = m.index(irow, m.i_rd_cset)
         pwr_idx = m.index(irow, m.i_pwr)
         ratio_x20_idx = m.index(irow, m.i_ratio_x20)
-        wa_idx = m.index(irow, m.i_writable)
 
         idx_tuple = (idx0, idx1)
         v_tuple = (rd_val, sp_val)
         for iidx, val in zip(idx_tuple, v_tuple):
             worker.meta_signal1.emit((iidx, self.fmt.format(val), Qt.DisplayRole))
-
-        wa = ELEM_WRITE_PERM.get(o.ename, o.write_access)
-        worker.meta_signal1.emit((wa_idx, str(wa), Qt.DisplayRole))
 
         x0 = float(m.data(x0_idx))
         x1, x2 = rd_val, sp_val

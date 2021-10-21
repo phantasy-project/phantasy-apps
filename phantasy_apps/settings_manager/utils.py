@@ -217,6 +217,18 @@ class SettingsModel(QStandardItemModel):
     def update_data(self, p):
         self.setData(*p)
 
+        # write access column only
+        i, j = p[0].row(), p[0].column()
+        if j == self.i_writable:
+            if p[1] == 'None':
+                wa = False
+            else:
+                wa = bool(p[1])
+            for j in self.ids:
+                it = self.item(i, j)
+                it.setSelectable(wa)
+                it.setData(QBrush(QColor(FG_COLOR_MAP[wa])), Qt.ForegroundRole)
+
     def set_data(self):
         field_cnt = 0
         ename_set = set()
@@ -276,13 +288,8 @@ class SettingsModel(QStandardItemModel):
             # pwrsts
             item_pwr = QStandardItem('')
             row.append(item_pwr)
+
             #
-
-            #if not write_access:
-            #    for i in row:
-            #        i.setSelectable(False)
-            #        i.setData(QBrush(QColor(FG_NO_WRITE)), Qt.ForegroundRole)
-
             self.appendRow(row)
             ename_set.add(elem.name)
             field_cnt += 1
