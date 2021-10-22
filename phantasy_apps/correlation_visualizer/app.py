@@ -134,6 +134,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
         # UI
         self.setupUi(self)
+        self.postInitUi()
 
         # daq ctrl btns
         self.start_btn.clicked.connect(self.on_click_start_btn)
