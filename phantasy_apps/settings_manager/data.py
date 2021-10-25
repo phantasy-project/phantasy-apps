@@ -79,6 +79,16 @@ ELEM_ALIAS_MAP = {
  'FE_ISRC1:BEAM:A_BOOK': 'FE_ISRC1:BEAM',
  'FE_ISRC1:BEAM:Q_BOOK': 'FE_ISRC1:BEAM',
  'FE_ISRC1:BEAM:Z_BOOK': 'FE_ISRC1:BEAM',
+ 'FE_SCS1:STPC01_D0736:SLR.VAL': 'FE_SCS1:SLT_D0736',
+ 'FE_SCS1:STPC01_D0736:SLL.VAL': 'FE_SCS1:SLT_D0736',
+ 'FE_SCS1:STPC01_D0736:SLT.VAL': 'FE_SCS1:SLT_D0736',
+ 'FE_SCS1:STPC01_D0736:SLB.VAL': 'FE_SCS1:SLT_D0736',
+ 'FE_ISRC1:DRV_D0686:POS': 'FE_ISRC1:DRV_D0686',
+ 'FS1_BBS:CSEL_D2405:L': 'FS1_BBS:SLH_D2405',
+ 'FS1_BBS:CSEL_D2405:R': 'FS1_BBS:SLH_D2405',
+ 'FS1_BBS:CSEL_D2405:CTR_MTR.RBV': 'FS1_BBS:SLH_D2405',
+ 'FS1_STRS:STPC03_D2237:DRV1': 'FS1_CSS:STRIP_D2249',
+ 'FS1_STRS:STPC03_D2237:DRV2': 'FS1_CSS:STRIP_D2249',
 }
 
 # field alias (RFQ, ION)
@@ -86,7 +96,16 @@ FIELD_ALIAS_MAP = {
  'E': 'AMP',
  'A_BOOK': 'A',
  'Q_BOOK': 'Q',
- 'Z_BOOK': 'Z'
+ 'Z_BOOK': 'Z',
+ 'SLR.VAL': 'RIGHT',
+ 'SLL.VAL': 'LEFT',
+ 'SLT.VAL': 'TOP',
+ 'SLB.VAL': 'BOTTOM',
+ 'L': 'LEFT',
+ 'R': 'RIGHT',
+ 'CTR_MTR.RBV': 'CENTER',
+ 'DRV1': 'POS',
+ 'DRV2': 'ANGLE',
 }
 
 
@@ -113,6 +132,9 @@ def make_physics_settings(settings, lat):
         if name in ELEM_ALIAS_MAP:
             name = ELEM_ALIAS_MAP[name]
         elem = lat[name]
+        if elem is None:
+            s[name] = {field: sp}  # element is not existing any more
+            continue
         eng_fields = elem.get_eng_fields()
         phy_fields = elem.get_phy_fields()
         field = FIELD_ALIAS_MAP.get(field, field)
@@ -154,9 +176,20 @@ def get_settings_data(proxy_model):
         fname = m.data(m.index(irow, i_field))
         ftype = m.data(m.index(irow, i_type))
         spos = float(m.data(m.index(irow, i_pos)))
-        f_new_sp = float(m.data(m.index(irow, i_new_sp)))
-        f_old_sp = float(m.data(m.index(irow, i_old_sp)))
-        f_new_rd = float(m.data(m.index(irow, i_new_rd)))
+
+        try:
+            f_new_sp = float(m.data(m.index(irow, i_new_sp)))
+        except ValueError:
+            f_new_sp = None
+        try:
+            f_old_sp = float(m.data(m.index(irow, i_old_sp)))
+        except ValueError:
+            f_old_sp = None
+        try:
+            f_new_rd = float(m.data(m.index(irow, i_new_rd)))
+        except ValueError:
+            f_new_rd = None
+
         f_tol = float(m.data(m.index(irow, i_tol)))
         f_writable = m.data(m.index(irow, i_writable))
         f_pwr = m.data(m.index(irow, i_pwr), Qt.ToolTipRole)

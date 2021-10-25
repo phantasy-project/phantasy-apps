@@ -6,7 +6,6 @@ import json
 import os
 import pathlib
 import re
-import sqlite3
 import pandas as pd
 import tempfile
 import time
@@ -72,6 +71,7 @@ from phantasy_apps.msviz.mach_state import _daq_func
 from .app_date_range import DateRangeDialog
 from .app_loadfrom import LoadSettingsDialog
 from .app_pref import PreferencesDialog
+from .app_bpmviz import BPMVizWidget
 from .data import CSV_HEADER
 from .data import DEFAULT_DATA_FMT
 from .data import ElementPVConfig
@@ -100,6 +100,7 @@ from .data import DEFAULT_MACHINE, DEFAULT_SEGMENT
 from .utils import ELEM_WRITE_PERM
 from .utils import NUM_LENGTH
 from .utils import BG_COLOR_GOLDEN_NO
+from .contrib.db.db_utils import ensure_connect_db
 
 #
 SUPPORT_FTYPES = ("xlsx", "csv", "h5")
@@ -436,6 +437,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_ms_chkbox.setChecked(MS_ENABLED)
         # hide sts info
         self.show_sts_btn.setChecked(False)
+        # hide init settings hbox
+        self.show_init_settings_btn.setChecked(False)
+        # # hide Add Devices tool
+        # self.actionAdd_Devices.setVisible(False)
         # add beamSpeciesDisplayWidget
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -512,7 +517,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._turn_off_icon = QIcon(QPixmap(":/sm-icons/bolt_off.png"))
         self._power_switch_icon = QIcon(QPixmap(":/sm-icons/power_switch.png"))
         self._warning_amber_icon = QIcon(QPixmap(":/sm-icons/warning_amber.png"))
+        self._chart_icon = QIcon(QPixmap(":/sm-icons/chart.png"))
 
+        # set skip none reachable option as True
+        self.skip_none_chkbox.setChecked(True)
+
+        # uncheck init_settings_chkbox when init_settings_btn is unchecked
+        # other slots are set in designer.
+        self.show_init_settings_btn.toggled.connect(self.on_toggle_show_init_settings_btn)
+        #
         # selection
         self.select_all_btn.clicked.connect(partial(self.on_select, 'all'))
         self.invert_selection_btn.clicked.connect(partial(self.on_select, 'invert'))
@@ -632,6 +645,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.dateEdit2.setDate(QDate(NOW_YEAR, NOW_MONTH, NOW_DAY))
         # snp note filter
         self.snp_note_filter_enabled = False
+
+    @pyqtSlot(bool)
+    def on_toggle_show_init_settings_btn(self, toggled):
+        if not toggled:
+            # uncheck init_settings_chkbox when init_settings_btn is unchecked
+            self.init_settings_chkbox.setChecked(False)
 
     def on_update_filter_controls(self, snpdata):
         """Update filter controls
@@ -855,6 +874,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # read
         read_action = QAction(self._read_icon, "&Read", menu)
         read_action.triggered.connect(partial(self.on_read_snp, snpdata))
+        # viz machine state
+        mviz_action = QAction(self._chart_icon, "Machine State", menu)
+        mviz_action.triggered.connect(partial(self.on_mviz, snpdata))
         # reveal
         reveal_action = QAction(self._reveal_icon, "Show in &Files", menu)
         reveal_action.triggered.connect(partial(self.on_reveal_snp, snpdata))
@@ -869,6 +891,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.insertAction(copy_action, dcopy_action)
         menu.addSeparator()
         menu.addAction(read_action)
+        menu.addAction(mviz_action)
         if self.dsrc_mode == 'FILE':
             menu.addAction(reveal_action)
         menu.addSeparator()
@@ -1051,7 +1074,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._elem_list, self._lat,
             settings=self._lat.settings,
             data_source=DATA_SRC_MAP[self.field_init_mode],
-            only_physics=False)
+            only_physics=False,
+            skip_none=self.skip_none_chkbox.isChecked())
         self.settingsLoaded.emit(flat_settings, settings)
         self.tolerance_changed[ToleranceSettings].emit(self._tolerance_settings)
         self.model_settings_changed.emit(settings)
@@ -1535,7 +1559,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             del self._snp_dock_list[:]
         if self.dsrc_mode == 'DB':
             # DB
-            self._db_conn = self._db_conn_pool.setdefault(d, sqlite3.connect(d))
+            self._db_conn = self._db_conn_pool.setdefault(d, ensure_connect_db(d))
             if self._n_snp_max == 'All':
                 df_all = pd.read_sql(f"SELECT * FROM snapshot", self._db_conn)
             else:
@@ -1562,18 +1586,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     continue
                 self._snp_dock_list.append(snp_data)
 
-                self.data_uri_lineEdit.setText(self.data_uri)
-                #
-                self.fm.removePaths(self.fm.directories())
-                self.fm.addPath(self.data_uri)
+            self.data_uri_lineEdit.setText(self.data_uri)
+            #
+            self.fm.removePaths(self.fm.directories())
+            self.fm.addPath(self.data_uri)
 
-                n = len(self._snp_dock_list)
-                self.total_snp_lbl.setText(str(n))
-                self.update_snp_dock_view()
-                # current snp
-                if self._current_snpdata is not None:
-                    self.snp_loaded.emit(self._current_snpdata)
-                self.snp_filters_updated.emit()
+            n = len(self._snp_dock_list)
+            self.total_snp_lbl.setText(str(n))
+            self.update_snp_dock_view()
+            # current snp
+            if self._current_snpdata is not None:
+                self.snp_loaded.emit(self._current_snpdata)
+            self.snp_filters_updated.emit()
 
     @pyqtSlot(int)
     def on_ndigit_changed(self, n):
@@ -1640,13 +1664,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         irow = idx0.row()
         rd_val, sp_val = o.value, o.current_setting()
 
-        # !! only for devices that cannot be reached !!
-        if rd_val is None:
-            rd_val = 0
-            print(f"{o.ename} [{o.name}] RD cannot be reached.")
-        if sp_val is None:
-            sp_val = 0
-            print(f"{o.ename} [{o.name}] CSET cannot be reached.")
+        # write access
+        wa_idx = m.index(irow, m.i_writable)
+        wa = ELEM_WRITE_PERM.get(o.ename, o.write_access)
+        worker.meta_signal1.emit((wa_idx, str(wa), Qt.DisplayRole))
+
+        name_idx = m.index(irow, m.i_name)
+        if None in (rd_val, sp_val): # is not reachable
+            worker.meta_signal1.emit((name_idx, self.fail_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit((name_idx, "Device is not connected", Qt.ToolTipRole))
+            return cnt_fld
+        else:
+            # is reachable
+            worker.meta_signal1.emit((name_idx, QPixmap(), Qt.DecorationRole))
+            worker.meta_signal1.emit((name_idx, "Device is connected", Qt.ToolTipRole))
 
         x0_idx = m.index(irow, m.i_val0)
         x1_idx = m.index(irow, m.i_rd)
@@ -1657,13 +1688,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         dx12_idx = m.index(irow, m.i_rd_cset)
         pwr_idx = m.index(irow, m.i_pwr)
         ratio_x20_idx = m.index(irow, m.i_ratio_x20)
-        wa_idx = m.index(irow, m.i_writable)
-        wa = ELEM_WRITE_PERM.get(o.ename, o.write_access)
+
         idx_tuple = (idx0, idx1)
         v_tuple = (rd_val, sp_val)
         for iidx, val in zip(idx_tuple, v_tuple):
             worker.meta_signal1.emit((iidx, self.fmt.format(val), Qt.DisplayRole))
-        worker.meta_signal1.emit((wa_idx, str(wa), Qt.DisplayRole))
 
         x0 = float(m.data(x0_idx))
         x1, x2 = rd_val, sp_val
@@ -1827,6 +1856,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # Add devices, high-level fields or PV elements.
         if self._elem_select_dlg is None:
             self._elem_select_dlg = ElementSelectDialog(self, "multi", mp=self._mp)
+            self._elem_select_dlg.pv_mode_radiobtn.setEnabled(False)
+            self._elem_select_dlg.elem_mode_radiobtn.setChecked(True)
             self._elem_select_dlg.selection_changed.connect(self.on_device_selected)
             self._elem_select_dlg.pv_mode_toggled.connect(self.on_pv_mode_toggled)
             self.lattice_loaded.connect(self._elem_select_dlg.on_update_elem_tree)
@@ -2064,6 +2095,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.filter_lineEdit.editingFinished.emit()
 
     @pyqtSlot(bool)
+    def on_show_disconnected_items(self, is_checked):
+        # show all items that are not reachable
+        self.filter_btn_group_status_changed.emit()
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_disconnected_enabled = is_checked
+        self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
     def on_toggle_pos1_filter_btn(self, is_checked):
         # show all item sb <= pos
         #
@@ -2189,6 +2230,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._meta_fetcher.finished.connect(loop.exit)
             self._meta_fetcher.start()
             loop.exec_()
+        else:
+            # reset machine state
+            self._machstate = None
         #
         snp_data.machstate = self._machstate
         #
@@ -2230,6 +2274,22 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             QDesktopServices.openUrl(QUrl(filename))
         else:
             QDesktopServices.openUrl(QUrl(data.data_path))
+
+    @pyqtSlot()
+    def on_mviz(self, data):
+        """Visualize machine state data
+        """
+        if self.dsrc_mode == 'DB':
+            data.extract_blob()
+            if data.machstate is None:
+                QMessageBox.warning(self, "Machine State Data",
+                                    "No machine state data to show.", QMessageBox.Ok)
+                return
+            else:
+                groups = ('traj-x', 'traj-y', 'phase', 'energy')
+                # groups = ('BPM-X', 'BPM-Y', 'BPM-PHA', 'BPM_MAG')
+                self._bpmviz_w = BPMVizWidget(data.machstate, self._machstate, groups=groups)
+                self._bpmviz_w.show()
 
     def on_snp_filters_updated(self):
         # update btn filters
@@ -2512,7 +2572,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             data.extract_blob()
         s = make_physics_settings(data.data.to_numpy(), lat)
         lat.settings.update(s)
-        self._elem_list = [lat[ename] for ename in s]
+        _elem_list = []
+        _invalid_elem_list = []
+        for ename, settings in s.items():
+            _elem = lat[ename]
+            if _elem is None:
+                _invalid_elem_list.append((ename, settings))
+            else:
+                _elem_list.append(_elem)
+        self._elem_list = _elem_list
+        if _invalid_elem_list:
+            self.on_show_invalid_elemlist(_invalid_elem_list)
+            print(f"Skip non-existing devices: {_invalid_elem_list}")
         self.element_list_changed.emit()
         self.snp_loaded.emit(data)
 
@@ -2716,7 +2787,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if dsrc_dict['mode'] == 'DB':
             self._db_conn_pool = {}
             self.data_uri = os.path.abspath(os.path.expanduser(dsrc_dict['uri']))
-            self._db_conn_pool.setdefault(self.data_uri, sqlite3.connect(self.data_uri)) # other DB_ENGINEs to be supported
+            self._db_conn_pool.setdefault(self.data_uri, ensure_connect_db(self.data_uri)) # other DB_ENGINEs to be supported
             self.nsnp_btn.setVisible(True)
             self.nsnp_btn.click()
             self.nsnp_btn.click() # n_snp_max -> 20
@@ -2743,6 +2814,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if self._db_mgmt_dlg is None:
             self._db_mgmt_dlg = DBManagerDialog(self)
         self._db_mgmt_dlg.show()
+
+    def on_show_invalid_elemlist(self, elemlist: list):
+        """Show a table of invalid elements, with saved settings.
+        """
+        from .app_invalid_elemlist import InvalidElementListDialog
+        self._dlg = InvalidElementListDialog(elemlist, self)
+        self._dlg.show()
 
 
 def is_snp_data_exist(snpdata, snpdata_list):

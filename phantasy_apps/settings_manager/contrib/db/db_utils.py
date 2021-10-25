@@ -65,3 +65,10 @@ def file2db(db_file, sm_path):
     cursor.close()
     conn.close()
     return cnt
+
+
+def ensure_connect_db(db_file):
+    """Connect a db file, otherwise create a new one then connect.
+    """
+    init_db(db_file) # ensure db_file is ready to use.
+    return sqlite3.connect(db_file)

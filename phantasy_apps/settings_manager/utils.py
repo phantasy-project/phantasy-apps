@@ -217,6 +217,18 @@ class SettingsModel(QStandardItemModel):
     def update_data(self, p):
         self.setData(*p)
 
+        # write access column only
+        i, j = p[0].row(), p[0].column()
+        if j == self.i_writable:
+            if p[1] == 'None':
+                wa = False
+            else:
+                wa = bool(p[1])
+            for j in self.ids:
+                it = self.item(i, j)
+                it.setSelectable(wa)
+                it.setData(QBrush(QColor(FG_COLOR_MAP[wa])), Qt.ForegroundRole)
+
     def set_data(self):
         field_cnt = 0
         ename_set = set()
@@ -232,7 +244,10 @@ class SettingsModel(QStandardItemModel):
 
             #
             item_fname = QStandardItem(fname)
-            item_val0 = QStandardItem(self.fmt.format(fval0))
+            if fval0 is None:
+                item_val0 = QStandardItem('-')
+            else:
+                item_val0 = QStandardItem(self.fmt.format(fval0))
             item_rd = QStandardItem('-')
             item_cset = QStandardItem('-')
 
@@ -263,23 +278,18 @@ class SettingsModel(QStandardItemModel):
             item_wa = QStandardItem(str(write_access))
             item_wa.setEditable(False)
             row.append(item_wa)
-            item_ename.setEnabled(write_access)
+            # item_ename.setEnabled(write_access)
 
             # x2/x0
             item_ratio_x20 = QStandardItem('-')
             item_ratio_x20.setEditable(False)
             row.append(item_ratio_x20)
 
-            if not write_access:
-                for i in row:
-                    i.setSelectable(False)
-                    i.setData(QBrush(QColor(FG_NO_WRITE)), Qt.ForegroundRole)
-
             # pwrsts
             item_pwr = QStandardItem('')
             row.append(item_pwr)
-            #
 
+            #
             self.appendRow(row)
             ename_set.add(elem.name)
             field_cnt += 1
@@ -418,6 +428,7 @@ class _SortProxyModel(QSortFilterProxyModel):
         self.filter_checked_enabled = False
         self.filter_dx12_warning_enabled = False
         self.filter_dx02_warning_enabled = False
+        self.filter_disconnected_enabled = False
         # field filter
         self.filter_field_enabled = False
         self.filter_field_list = []
@@ -569,6 +580,18 @@ class _SortProxyModel(QSortFilterProxyModel):
             dx02_warning_test = True
         #
         if not dx02_warning_test:
+            return False
+
+        # disconnected checked
+        if self.filter_disconnected_enabled:
+            data = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['device']),
+                    Qt.ToolTipRole)
+            disconnected_test = data == 'Device is not connected'
+        else:
+            disconnected_test = True
+        #
+        if not disconnected_test:
             return False
 
         # field test

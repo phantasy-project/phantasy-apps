@@ -1,3 +1,22 @@
+Version 9.3: 2021-10-22
+=======================
+
+- Clean up elements.json configuration file, which was used to keep user-customized high-level
+  device configurations. Now all the device info should be from phantasy-machines.
+- Show disconnected status if the devices are not connected, but are still managed by MachinePortal
+  - It will cause caget timeout and freeze the GUI before this fix
+  - Show warning dialog if the snashot to load has non-existing devices (usually happened after
+    machine reconfiguration), inside the dialog, show the saved settings for reconfigured devices.
+- Add filter button for disconnected devices
+- Refined feature of settings initialization from loaded lattice
+  - Add support to initialize settings for those disconnected devices
+  - Add option to skip none settings or not, none is return for non-reachable devices, uncheck
+    this option to make settings table for offline devices
+- Now "Add Devices" tool only work with adding devices from pre-deployed machine configuartions
+  - The field of interest for the high-level element is updated with STRIPPER, SLT device type.
+- Ensure the database connection
+- Update the configuration file for machine state data fetching (some BPMs are relocated)
+
 Version 9.2: 2021-10-01
 =======================
 
