@@ -517,6 +517,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._turn_off_icon = QIcon(QPixmap(":/sm-icons/bolt_off.png"))
         self._power_switch_icon = QIcon(QPixmap(":/sm-icons/power_switch.png"))
         self._warning_amber_icon = QIcon(QPixmap(":/sm-icons/warning_amber.png"))
+        self._chart_icon = QIcon(QPixmap(":/sm-icons/chart.png"))
 
         # set skip none reachable option as True
         self.skip_none_chkbox.setChecked(True)
@@ -874,7 +875,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         read_action = QAction(self._read_icon, "&Read", menu)
         read_action.triggered.connect(partial(self.on_read_snp, snpdata))
         # viz machine state
-        mviz_action = QAction(self._read_icon, "Machine State", menu)
+        mviz_action = QAction(self._chart_icon, "Machine State", menu)
         mviz_action.triggered.connect(partial(self.on_mviz, snpdata))
         # reveal
         reveal_action = QAction(self._reveal_icon, "Show in &Files", menu)
