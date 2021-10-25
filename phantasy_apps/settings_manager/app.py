@@ -71,6 +71,7 @@ from phantasy_apps.msviz.mach_state import _daq_func
 from .app_date_range import DateRangeDialog
 from .app_loadfrom import LoadSettingsDialog
 from .app_pref import PreferencesDialog
+from .app_bpmviz import BPMVizWidget
 from .data import CSV_HEADER
 from .data import DEFAULT_DATA_FMT
 from .data import ElementPVConfig
@@ -872,6 +873,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # read
         read_action = QAction(self._read_icon, "&Read", menu)
         read_action.triggered.connect(partial(self.on_read_snp, snpdata))
+        # viz machine state
+        mviz_action = QAction(self._read_icon, "Machine State", menu)
+        mviz_action.triggered.connect(partial(self.on_mviz, snpdata))
         # reveal
         reveal_action = QAction(self._reveal_icon, "Show in &Files", menu)
         reveal_action.triggered.connect(partial(self.on_reveal_snp, snpdata))
@@ -886,6 +890,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.insertAction(copy_action, dcopy_action)
         menu.addSeparator()
         menu.addAction(read_action)
+        menu.addAction(mviz_action)
         if self.dsrc_mode == 'FILE':
             menu.addAction(reveal_action)
         menu.addSeparator()
@@ -2268,6 +2273,22 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             QDesktopServices.openUrl(QUrl(filename))
         else:
             QDesktopServices.openUrl(QUrl(data.data_path))
+
+    @pyqtSlot()
+    def on_mviz(self, data):
+        """Visualize machine state data
+        """
+        if self.dsrc_mode == 'DB':
+            data.extract_blob()
+            if data.machstate is None:
+                QMessageBox.warning(self, "Machine State Data",
+                                    "No machine state data to show.", QMessageBox.Ok)
+                return
+            else:
+                groups = ('traj-x', 'traj-y', 'phase', 'energy')
+                # groups = ('BPM-X', 'BPM-Y', 'BPM-PHA', 'BPM_MAG')
+                self._bpmviz_w = BPMVizWidget(data.machstate, self._machstate, groups=groups)
+                self._bpmviz_w.show()
 
     def on_snp_filters_updated(self):
         # update btn filters
