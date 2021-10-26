@@ -76,7 +76,7 @@ class BPMVizWidget(QMainWindow, Ui_MainWindow):
                   color_list=['b', 'r'],
                   label_list=['$\\langle x \\rangle$', '$\\langle y \\rangle$'],
                   y_column='avg', yerr_column='std',
-                  xlabel='BPMs', ylabel='Trajectory [m]')
+                  xlabel='BPMs', ylabel='Trajectory [mm]')
         self.tabWidget.setTabText(0, "Centroid Trajectory")
 
         #
@@ -121,7 +121,7 @@ class BPMVizWidget(QMainWindow, Ui_MainWindow):
                   color_list=['b',],
                   label_list=['$\Delta\\langle x \\rangle$'],
                   y_column='avg-delta',
-                  xlabel='BPMs', ylabel='Trajectory Difference [m]')
+                  xlabel='BPMs', ylabel='Trajectory Difference [mm]')
         self.tabWidget.setTabText(0, "Delta X")
 
         plot_data(self._ax12, df,
@@ -129,7 +129,7 @@ class BPMVizWidget(QMainWindow, Ui_MainWindow):
                   color_list=['r',],
                   label_list=['$\Delta\\langle y \\rangle$'],
                   y_column='avg-delta',
-                  xlabel='BPMs', ylabel='Trajectory Difference [m]')
+                  xlabel='BPMs', ylabel='Trajectory Difference [mm]')
         self.tabWidget.setTabText(1, "Delta Y")
 
         #
