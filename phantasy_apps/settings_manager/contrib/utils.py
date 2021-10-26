@@ -48,7 +48,14 @@ class SettingsRow(object):
                     0.1, fld.write_access)
             settings_table.append(settings_row)
         self.settings = settings_table
+        self.ion_info_idx = kws.pop('ion_info_idx', False)
         self.meta = kws
+        if self.ion_info_idx: # ion info is from column defined by index
+            for k in ('ion_name', 'ion_number', 'ion_charge', 'ion_mass'):
+                if k != 'ion_name':
+                    self.meta[k] = int(self._cell_to_float(row[self.meta[k]]))
+                else:
+                    self.meta[k] = self._cell_to_string(row[self.meta[k]])
 
     def __eq__(self, other):
         if other is None:
