@@ -1,3 +1,10 @@
+Version 9.4: 2021-10-26
+=======================
+
+- Support visualize BPM signal saved along with SnapshotData.
+- Support database backup, merge, etc.
+- Update UIs and resources.
+
 Version 9.3: 2021-10-22
 =======================
 

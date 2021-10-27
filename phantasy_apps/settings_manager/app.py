@@ -432,8 +432,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             o = getattr(self, 'total_{}_number_lbl'.format(s))
             o.setText(str(v))
 
+    @pyqtSlot(bool)
+    def on_toggled_ms(self, is_checked):
+        """Machine state capture option is checked or not.
+        """
+        if not is_checked:
+            self._machstate = None
+
     def __post_init_ui(self):
         # enable machine state with take snapshot or not
+        self.snp_ms_chkbox.toggled.connect(self.on_toggled_ms)
         self.snp_ms_chkbox.setChecked(MS_ENABLED)
         # hide sts info
         self.show_sts_btn.setChecked(False)
@@ -2286,8 +2294,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                     "No machine state data to show.", QMessageBox.Ok)
                 return
             else:
-                groups = ('traj-x', 'traj-y', 'phase', 'energy')
-                # groups = ('BPM-X', 'BPM-Y', 'BPM-PHA', 'BPM_MAG')
+                # groups = ('traj-x', 'traj-y', 'phase', 'energy')
+                groups = ('BPM-X', 'BPM-Y', 'BPM-PHA', 'BPM-MAG')
                 self._bpmviz_w = BPMVizWidget(data.machstate, self._machstate, groups=groups)
                 self._bpmviz_w.show()
 
