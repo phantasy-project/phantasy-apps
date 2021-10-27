@@ -701,6 +701,14 @@ class SnapshotData:
         self.machstate = _df_machstate
         self._blob = None
 
+    def clone(self):
+        """Return a deepcopy.
+        """
+        _cp = SnapshotData(self.data.copy(deep=True), self.info.copy(deep=True))
+        if self.machstate is not None:
+            _cp.machstate = self.machstate.copy(deep=True)
+        return _cp
+
     def to_blob(self):
         # output self to a binary blob, see alo write()
         s = io.BytesIO()
