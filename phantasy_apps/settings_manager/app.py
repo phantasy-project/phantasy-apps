@@ -2546,22 +2546,24 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if self.dsrc_mode == 'DB':
             data.extract_blob()
 
-        if data.data_path is None or not os.path.exists(data.data_path):
-            cdir = data.get_default_data_path(self.data_uri, DEFAULT_DATA_FMT)
+        data1 = data.clone()
+
+        if data1.data_path is None or not os.path.exists(data1.data_path):
+            cdir = data1.get_default_data_path(self.data_uri, DEFAULT_DATA_FMT)
         else:
-            cdir = data.data_path
+            cdir = data1.data_path
         filename, ext = get_save_filename(self,
                                           caption="Save Settings to a File",
                                           cdir=cdir,
                                           type_filter="XLSX Files (*.xlsx);;HDF5 Files (*.h5);;CSV Files (*.csv)")
         if filename is None:
             return
-        data.name = re.sub(r"(.*)_[0-9]+\.[0-9]+",r"\1_{}".format(time.time()), data.name)
+        # data1.name = re.sub(r"(.*)_[0-9]+\.[0-9]+",r"\1_{}".format(time.time()), data1.name)
         if 'copy' not in data.tags:
-            data.tags.append('copy')
+            data1.tags.append('copy')
         # update timestamp, datetime, name
-        data.update_name()
-        self._save_settings(data, filename, ext)
+        data1.update_name()
+        self._save_settings(data1, filename, ext)
 
     def _save_settings(self, data, filename, ftype='xlsx'):
         for k, v in zip(('app', 'version', 'user', 'machine', 'segment'),
