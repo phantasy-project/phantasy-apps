@@ -2164,6 +2164,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.on_load_settings(snp_data)
         n = len(self._snp_dock_list)
         self.total_snp_lbl.setText(str(n))
+        # save into db by default
+        self.on_save_settings(snp_data)
 
     @pyqtSlot(int, bool)
     def on_update_visibility(self, idx, f):
