@@ -2543,6 +2543,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # !won't update data_path attr!
         # !update name attr to be uniqe!
         # !add 'copy' into tag list!
+        if self.dsrc_mode == 'DB':
+            data.extract_blob()
+
         if data.data_path is None or not os.path.exists(data.data_path):
             cdir = data.get_default_data_path(self.data_uri, DEFAULT_DATA_FMT)
         else:
