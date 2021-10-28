@@ -38,7 +38,7 @@ from phantasy_ui.widgets import is_item_checked
 from phantasy_apps.utils import find_dconf
 from .data import SnapshotData
 
-AVAILABLE_IONS = ('He', 'Ne', 'Ar', 'Kr', 'Xe', 'U', 'Se', 'Ca', 'Pb')
+AVAILABLE_IONS = ('He', 'Ne', 'Ar', 'Kr', 'Xe', 'U', 'Se', 'Ca', 'Pb', 'O')
 
 FMT = "{0:.6g}"
 
