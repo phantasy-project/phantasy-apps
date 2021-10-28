@@ -85,7 +85,7 @@ class BPMVizWidget(QMainWindow, Ui_MainWindow):
                   color_list=['b'],
                   label_list=['$\phi$'],
                   y_column='avg', yerr_column='std',
-                  xlabel='BPMs', ylabel='Phase [rad]')
+                  xlabel='BPMs', ylabel='Phase [deg]')
         self.tabWidget.setTabText(1, "Phase Plot")
 
         #
@@ -138,7 +138,7 @@ class BPMVizWidget(QMainWindow, Ui_MainWindow):
                   color_list=['g',],
                   label_list=['$\Delta\phi$'],
                   y_column='avg-delta',
-                  xlabel='BPMs', ylabel='Phase Difference[rad]')
+                  xlabel='BPMs', ylabel='Phase Difference [deg]')
         self.tabWidget.setTabText(2, "Delta Phase")
 
         #
