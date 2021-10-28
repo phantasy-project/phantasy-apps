@@ -105,8 +105,8 @@ from .contrib.db.db_utils import ensure_connect_db
 #
 SUPPORT_FTYPES = ("xlsx", "csv", "h5")
 
-# sb pos of stripper
-STRIPPER_POS = 223.743568
+# sb pos of stripper (carbon) [m]
+STRIPPER_POS = 224.903684519998
 
 PX_SIZE = 24
 ION_ICON_SIZE = 48
@@ -637,6 +637,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # pos filter button, apply logic OR for pos1 and pos2 filter
         self.pos_filter_btn.clicked.connect(lambda:self.pos_dspin.setValue(STRIPPER_POS))
+        self.pos_filter_btn.clicked.emit()
         self.pos_filter_btn.clicked.connect(self.filter_lineEdit.editingFinished)
         self.pos1_filter_btn.toggled.connect(self.on_toggle_pos1_filter_btn)
         self.pos2_filter_btn.toggled.connect(self.on_toggle_pos2_filter_btn)
