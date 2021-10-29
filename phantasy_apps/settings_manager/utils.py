@@ -223,7 +223,7 @@ class SettingsModel(QStandardItemModel):
             if p[1] == 'None':
                 wa = False
             else:
-                wa = bool(p[1])
+                wa = p[1] == 'True'
             for j in self.ids:
                 it = self.item(i, j)
                 it.setSelectable(wa)
