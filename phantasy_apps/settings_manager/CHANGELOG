@@ -1,3 +1,13 @@
+Version 9.5: 2021-11-02
+=======================
+
+- Fix settings view style per write access
+- Update carbon stripper position (FRIB only)
+- Support Oxygen icon
+- Drag and drop XLSX snapshots will also trigger database update
+- Export snapshot only update cloned SnapshotData model
+- Update the routine for generating snapshots from xlsx files.
+
 Version 9.4: 2021-10-26
 =======================
 
