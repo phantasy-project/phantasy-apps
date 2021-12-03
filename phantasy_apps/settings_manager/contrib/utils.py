@@ -51,8 +51,8 @@ class SettingsRow(object):
         self.ion_info_idx = kws.pop('ion_info_idx', False)
         self.meta = kws
         if self.ion_info_idx: # ion info is from column defined by index
-            for k in ('ion_name', 'ion_number', 'ion_charge', 'ion_mass'):
-                if k != 'ion_name':
+            for k in ('ion_name', 'ion_number', 'ion_charge', 'ion_mass', 'note'):
+                if k not in ('ion_name', 'note'):
                     self.meta[k] = int(self._cell_to_float(row[self.meta[k]]))
                 else:
                     self.meta[k] = self._cell_to_string(row[self.meta[k]])
