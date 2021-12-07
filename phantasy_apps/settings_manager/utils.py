@@ -224,10 +224,14 @@ class SettingsModel(QStandardItemModel):
                 wa = False
             else:
                 wa = p[1] == 'True'
+            # disable/enable name item.
+            self.item(i, 0).setEnabled(wa)
+            #
             for j in self.ids:
                 it = self.item(i, j)
                 it.setSelectable(wa)
                 it.setData(QBrush(QColor(FG_COLOR_MAP[wa])), Qt.ForegroundRole)
+            #
 
     def set_data(self):
         field_cnt = 0
