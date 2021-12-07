@@ -145,6 +145,7 @@ ELEM_WRITE_PERM = {
  'FE_ISRC1:BEAM': False,
  'FE_RFQ:CAV_D1005': False,
  'FE_ISRC1:DRV_D0686:POS': False,
+ 'FS1_CSS:STRIP_D2249': False
 }
 
 # default length for number display
