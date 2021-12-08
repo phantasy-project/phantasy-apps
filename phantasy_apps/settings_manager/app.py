@@ -534,9 +534,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # other slots are set in designer.
         self.show_init_settings_btn.toggled.connect(self.on_toggle_show_init_settings_btn)
         #
-        # selection
-        self.select_all_btn.clicked.connect(partial(self.on_select, 'all'))
-        self.invert_selection_btn.clicked.connect(partial(self.on_select, 'invert'))
+        # selection, check/uncheck, for settings apply
+        self.select_all_btn.clicked.connect(partial(self.on_select, 'all', True))
+        self.invert_selection_btn.clicked.connect(partial(self.on_select, 'invert', None))
+        self.deselect_all_btn.clicked.connect(partial(self.on_select, 'all', False))
 
         # filter
         self.init_filter()
@@ -1834,10 +1835,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.sender().setToolTip(tt)
 
     @pyqtSlot()
-    def on_select(self, mode):
+    def on_select(self, mode, checked=None):
         if mode == 'all':
             # select all
-            self._tv.model().select_all()
+            self._tv.model().select_all(checked)
         else:
             # invert selection
             self._tv.model().invert_selection()
@@ -2077,9 +2078,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(bool)
     def on_toggle_all_selected(self, selected):
+        # disable 'Uncheck All' button: uncheck/check is applied one by one,
+        # which will trigger filter updating, to cause confused behavior, when this filter button
+        # is toggled, it is reasonable to disable the Uncheck All button.
         m = self._tv.model()
         if m is None:
             return
+        self.deselect_all_btn.setEnabled(not selected)
         m.filter_checked_enabled = selected
         self.filter_lineEdit.editingFinished.emit()
 

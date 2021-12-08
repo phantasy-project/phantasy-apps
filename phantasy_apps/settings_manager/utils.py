@@ -670,12 +670,16 @@ class _SortProxyModel(QSortFilterProxyModel):
                 settings_selected.append((idx_src, self.m_src._settings[idx_src.row()], new_fval0))
         return settings_selected
 
-    def select_one(self, row_idx):
+    def select_one(self, row_idx, checked):
         idx = self.index(row_idx, self.m_src.i_name)
         idx_src = self.mapToSource(idx)
         it_name_src = self.m_src.itemFromIndex(idx_src)
+        if checked:
+            check_state = Qt.Checked
+        else:
+            check_state = Qt.Unchecked
         if it_name_src.isEnabled():
-            it_name_src.setCheckState(Qt.Checked)
+            it_name_src.setCheckState(check_state)
 
     def toggle_selection_one(self, row_idx):
         idx = self.index(row_idx, self.m_src.i_name)
@@ -689,9 +693,9 @@ class _SortProxyModel(QSortFilterProxyModel):
             checked_status = Qt.Unchecked
         it_name_src.setCheckState(checked_status)
 
-    def select_all(self):
+    def select_all(self, checked=True):
         for i in range(self.rowCount()):
-            self.select_one(i)
+            self.select_one(i, checked)
 
     def invert_selection(self):
         check_status_list = []
