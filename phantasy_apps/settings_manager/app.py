@@ -1201,21 +1201,21 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if len(settings_selected) == 0:
             QMessageBox.warning(self, "Apply Settings",
                     '<html><head/><body><p>Not any items are checked, <span style=" '
-                    'font-style:italic;">Apply </span>only work with checked items<span style=" '
+                    'font-style:italic;">Apply </span>only works with checked items in current page<span style=" '
                     'font-style:italic;">.</span></p></body></html>',
                     QMessageBox.Ok)
             return
 
         # ask if want to take a snapshot of current settings of all checked devices
         r = QMessageBox.question(self, "Take Snapshot",
-                                 "Do you want to take a snapshot before changing devices?",
+                                 "Do you want to take a snapshot for current page before changing device settings?",
                                  QMessageBox.Yes | QMessageBox.No)
+        msg = ''
         if r == QMessageBox.Yes:
             # take a snapshot
             self.take_snapshot(cast=False, only_checked_items=False, post_current_sp=False)
-            msg = "Took snapshot, now start to set device settings."
-        else:
-            msg = "Now start to set device settings."
+            msg += "Snapshot saved!\n "
+        msg += f"Now start to set device with new settings in current page ({len(settings_selected)} checked)."
 
         r = QMessageBox.information(self, "Apply Settings", msg, QMessageBox.Ok | QMessageBox.Cancel)
         if r == QMessageBox.Cancel:

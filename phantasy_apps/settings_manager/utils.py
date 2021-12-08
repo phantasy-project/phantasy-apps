@@ -408,6 +408,19 @@ class SettingsModel(QStandardItemModel):
         self._tv.selectionModel().select(idx,
                 QItemSelectionModel.ClearAndSelect | QItemSelectionModel.Rows)
 
+    def get_checked_items_number(self):
+        """Get the total number of checked items.
+        """
+        # for double-check when applying device settings.
+        # not used, use len(_SortProxyModel.get_selection()) instead
+        n = 0
+        for i in range(self.rowCount()):
+            idx = self.index(i, self.i_name)
+            it = self.itemFromIndex(idx)
+            if is_item_checked(it):
+                n += 1
+        return n
+
 
 class _SortProxyModel(QSortFilterProxyModel):
 
