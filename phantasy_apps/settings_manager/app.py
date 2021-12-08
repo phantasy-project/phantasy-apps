@@ -183,6 +183,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # pull data from db
     db_pull = pyqtSignal()
 
+    # total number of checked items (not limited to current page) changed by amount of input int
+    total_number_checked_items_changed = pyqtSignal(int)
+
     def __init__(self, version, config_dir=None):
         super(SettingsManagerWindow, self).__init__()
 
@@ -409,6 +412,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                               auto_fmt=self.auto_ndigit_chkbox.isChecked())
         model.settings_sts.connect(self.on_settings_sts)
         model.item_deletion_updated[list].connect(self.on_delete_items)
+        model.checked_items_inc_dec_updated.connect(self.total_number_checked_items_changed)
         model.set_model()
         self._fld_obj = model._fld_obj
         self._fld_it = model._fld_it
@@ -440,6 +444,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._machstate = None
 
     def __post_init_ui(self):
+        # total number of checked items
+        self.total_number_checked_items_changed.connect(self.on_nchecked_changed)
         # enable machine state with take snapshot or not
         self.snp_ms_chkbox.toggled.connect(self.on_toggled_ms)
         self.snp_ms_chkbox.setChecked(MS_ENABLED)
@@ -953,10 +959,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             row_text = 'Rows'
         if is_checked:
-            new_check_state = Qt.Unchecked
+            new_check_state = False
             act_text = f"Uncheck All ({n_rows}) {row_text}"
         else:
-            new_check_state = Qt.Checked
+            new_check_state = True
             act_text = f"Check All ({n_rows}) {row_text}"
 
         if all(checked_status):
@@ -968,7 +974,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         sel_action = QAction(act_icon, act_text, menu)
         sel_action.triggered.connect(partial(self.on_toggle_selected_rows,
-                                     selected_rows, m, src_m, new_check_state))
+                                     selected_rows, m, new_check_state))
         menu.addAction(sel_action)
 
         # turn on/off PWRSTS field
@@ -1017,12 +1023,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         return menu
 
     @pyqtSlot()
-    def on_toggle_selected_rows(self, selected_rows, m, m_src, new_check_state):
+    def on_toggle_selected_rows(self, selected_rows, m, new_check_state):
         for i in selected_rows:
-            idx = m.mapToSource(m.index(i, 0))
-            it = m_src.itemFromIndex(idx)
-            if it.isEnabled():
-                it.setCheckState(new_check_state)
+            m.select_one(i, new_check_state)
 
     @pyqtSlot()
     def on_reset_trip_events(self, power_status):
@@ -1210,7 +1213,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if r == QMessageBox.Yes:
             # take a snapshot
             self.take_snapshot(cast=False, only_checked_items=False, post_current_sp=False)
-            msg = "Taked snapshot, now start to set device settings."
+            msg = "Took snapshot, now start to set device settings."
         else:
             msg = "Now start to set device settings."
 
@@ -2842,6 +2845,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         from .app_invalid_elemlist import InvalidElementListDialog
         self._dlg = InvalidElementListDialog(elemlist, self)
         self._dlg.show()
+
+    @pyqtSlot(int)
+    def on_nchecked_changed(self, i):
+        """Total number of checked items is changed by amount of *i*.
+        """
+        n = int(self.n_all_checked_items_lbl.text())
+        n_new = n + i
+        self.n_all_checked_items_lbl.setText(str(n_new))
 
 
 def is_snp_data_exist(snpdata, snpdata_list):

@@ -176,6 +176,9 @@ class SettingsModel(QStandardItemModel):
     # signal list of CaField objects.
     item_deletion_updated = pyqtSignal(list)
 
+    # number of checked items is changed
+    checked_items_inc_dec_updated = pyqtSignal(int)
+
     def __init__(self, parent, flat_settings, **kws):
         # kw: ndigit, font, auto_fmt
         super(self.__class__, self).__init__(parent)
@@ -446,6 +449,8 @@ class _SortProxyModel(QSortFilterProxyModel):
         self.filter_pos_value = None
         #
         self._filter_tuples = None
+        # sig inc/dec number of checked items
+        self.sig_inc_dec_updated = self.m_src.checked_items_inc_dec_updated
 
     def lessThan(self, left, right):
         left_data = left.data(Qt.DisplayRole)
@@ -674,31 +679,42 @@ class _SortProxyModel(QSortFilterProxyModel):
         idx = self.index(row_idx, self.m_src.i_name)
         idx_src = self.mapToSource(idx)
         it_name_src = self.m_src.itemFromIndex(idx_src)
+        if not it_name_src.isEnabled():
+            return
+        current_check_state = it_name_src.checkState()
         if checked:
             check_state = Qt.Checked
+            n_inc = 1
         else:
             check_state = Qt.Unchecked
-        if it_name_src.isEnabled():
-            it_name_src.setCheckState(check_state)
+            n_inc = -1
+        if current_check_state == check_state:
+            return
+        it_name_src.setCheckState(check_state)
+        self.sig_inc_dec_updated.emit(n_inc)
 
-    def toggle_selection_one(self, row_idx):
+    def toggle_selection_one(self, row_idx: int):
         idx = self.index(row_idx, self.m_src.i_name)
         idx_src = self.mapToSource(idx)
         it_name_src = self.m_src.itemFromIndex(idx_src)
         if not it_name_src.isEnabled():
             return
         if not is_item_checked(it_name_src):
-            checked_status = Qt.Checked
+            check_state = Qt.Checked
+            n_inc = 1
         else:
-            checked_status = Qt.Unchecked
-        it_name_src.setCheckState(checked_status)
+            check_state = Qt.Unchecked
+            n_inc = -1
+        it_name_src.setCheckState(check_state)
+        self.sig_inc_dec_updated.emit(n_inc)
 
     def select_all(self, checked=True):
         for i in range(self.rowCount()):
             self.select_one(i, checked)
 
     def invert_selection(self):
-        check_status_list = []
+        check_state_list = []
+        n_inc = 0
         for i in range(self.rowCount()):
             idx = self.index(i, self.m_src.i_name)
             idx_src = self.mapToSource(idx)
@@ -706,11 +722,14 @@ class _SortProxyModel(QSortFilterProxyModel):
             if not it_name_src.isEnabled():
                 continue
             if not is_item_checked(it_name_src):
-                checked_status = Qt.Checked
+                check_state = Qt.Checked
+                n_inc += 1
             else:
-                checked_status = Qt.Unchecked
-            check_status_list.append((it_name_src, checked_status))
-        [it.setCheckState(st) for it, st in check_status_list]
+                check_state = Qt.Unchecked
+                n_inc -= 1
+            check_state_list.append((it_name_src, check_state))
+        [it.setCheckState(st) for it, st in check_state_list]
+        self.sig_inc_dec_updated.emit(n_inc)
 
 
 class _Delegate(QStyledItemDelegate):
