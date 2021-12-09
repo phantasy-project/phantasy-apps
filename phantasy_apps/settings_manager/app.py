@@ -2034,6 +2034,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Set widgets status for updating.
         """
         w1 = [self.update_rate_cbb, self.apply_btn,
+              self.select_all_btn, self.deselect_all_btn, self.invert_selection_btn,
               self.single_update_btn, self.auto_ndigit_chkbox]
         if is_single:
             w1.append(self.update_ctrl_btn)
