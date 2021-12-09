@@ -1,3 +1,15 @@
+=======================
+Version 9.6: 2021-12-09
+=======================
+
+ - Update the routine for settings generation.
+ - Fix: no-write-access item could still be checked.
+ - Add STRIP_D2249 to read-only device list.
+ - New: support unchecked all items.
+ - New: add stat for globally checked items.
+ - Update UI.
+
+=======================
 Version 9.5: 2021-11-02
 =======================
 
