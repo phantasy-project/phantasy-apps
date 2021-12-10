@@ -31,3 +31,7 @@ TITLE = "Configurations for Settings Manager"
 [LATTICE]
   DEFAULT_MACHINE = 'FRIB'
   DEFAULT_SEGMENT = 'LINAC'
+
+[ARCHIVER_APPLIANCE]
+  [ARCHIVER_APPLIANCE.DATA_CLIENT]
+    URL = "http://epicsarchiver1.ftc:17668"
