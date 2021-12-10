@@ -419,6 +419,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         self.obj_it_tuple = tuple(zip(self._fld_obj, self._fld_it))
 
+        # reset checked #
+        self.n_all_checked_items_lbl.setText('0')
+
         #
         self.toggle_ftype()
         #
