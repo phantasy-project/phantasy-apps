@@ -763,6 +763,11 @@ class _Delegate(QStyledItemDelegate):
                 option.font.setFamily(self.font_family)
         QStyledItemDelegate.initStyleOption(self, option, index)
 
+    def sizeHint(self, option, index):
+        size = QStyledItemDelegate.sizeHint(self, option, index)
+        size.setHeight(size.height() * 1.2)
+        return size
+
 
 def convert_settings(settings_read, lat):
     """Convert hierarchical `Settings` to flat list of tuples as the return,
