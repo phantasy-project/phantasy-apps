@@ -67,6 +67,8 @@ from phantasy_apps.msviz.mach_state import get_meta_conf_dict
 from phantasy_apps.msviz.mach_state import merge_mach_conf
 from phantasy_apps.msviz.mach_state import _build_dataframe
 from phantasy_apps.msviz.mach_state import _daq_func
+from archappl.client import ArchiverDataClient
+from archappl.client import ArchiverMgmtClient
 
 from .app_date_range import DateRangeDialog
 from .app_loadfrom import LoadSettingsDialog
@@ -230,6 +232,25 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.show()
         self.preload_lattice(self.pref_dict['LATTICE']['DEFAULT_MACHINE'],
                              self.pref_dict['LATTICE']['DEFAULT_SEGMENT'])
+
+        # init AA
+        self.init_aa()
+
+    def init_aa(self):
+        self._aa_data_client = None
+        self._aa_mgmt_client = None
+        # Initialize archiver appliance client
+        aa_conf = self.pref_dict.get('ARCHIVER_APPLIANCE', None)
+        if aa_conf is None:
+            return
+        data_client_conf = aa_conf.get('DATA_CLIENT', None)
+        if data_client_conf is not None:
+            self._aa_data_client = ArchiverDataClient(data_client_conf.get('URL'))
+        mgmt_client_conf = aa_conf.get('MGMT_CLIENT', None)
+        if mgmt_client_conf is not None:
+            self._aa_mgmt_client = ArchiverMgmtClient(mgmt_client_conf.get('URL'))
+        print(self._aa_data_client)
+        print(self._aa_mgmt_client)
 
     def init_config(self, confdir=None):
         # preferences
