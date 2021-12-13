@@ -217,6 +217,23 @@ class SettingsModel(QStandardItemModel):
         #
         self.data_changed.connect(self.update_data)
         self.delete_selected_items.connect(self.on_delete_selected_items)
+        #
+        self.itemChanged.connect(self.on_item_changed)
+
+    def on_item_changed(self, item):
+        idx = item.index()
+        if not idx.column() == self.i_name:
+            return
+        it = self.itemFromIndex(idx)
+        last_checkstate = it.data(Qt.UserRole + 2)
+        current_checkstate = it.checkState()
+        if current_checkstate != last_checkstate:
+            if current_checkstate == Qt.Checked:
+                n_inc = 1
+            else:
+                n_inc = -1
+            it.setData(current_checkstate, Qt.UserRole + 2)
+            self.checked_items_inc_dec_updated.emit(n_inc)
 
     def update_data(self, p):
         self.setData(*p)
@@ -249,6 +266,7 @@ class SettingsModel(QStandardItemModel):
             item_ename.fobj = fld
             item_ename.ftype = fld.ftype
             item_ename.setCheckable(True)
+            item_ename.setData(Qt.Unchecked, Qt.UserRole + 2) # last checkstate
 
             #
             item_fname = QStandardItem(fname)
@@ -462,8 +480,6 @@ class _SortProxyModel(QSortFilterProxyModel):
         self.filter_pos_value = None
         #
         self._filter_tuples = None
-        # sig inc/dec number of checked items
-        self.sig_inc_dec_updated = self.m_src.checked_items_inc_dec_updated
 
     def lessThan(self, left, right):
         left_data = left.data(Qt.DisplayRole)
@@ -697,14 +713,11 @@ class _SortProxyModel(QSortFilterProxyModel):
         current_check_state = it_name_src.checkState()
         if checked:
             check_state = Qt.Checked
-            n_inc = 1
         else:
             check_state = Qt.Unchecked
-            n_inc = -1
         if current_check_state == check_state:
             return
         it_name_src.setCheckState(check_state)
-        self.sig_inc_dec_updated.emit(n_inc)
 
     def toggle_selection_one(self, row_idx: int):
         idx = self.index(row_idx, self.m_src.i_name)
@@ -714,12 +727,9 @@ class _SortProxyModel(QSortFilterProxyModel):
             return
         if not is_item_checked(it_name_src):
             check_state = Qt.Checked
-            n_inc = 1
         else:
             check_state = Qt.Unchecked
-            n_inc = -1
         it_name_src.setCheckState(check_state)
-        self.sig_inc_dec_updated.emit(n_inc)
 
     def select_all(self, checked=True):
         for i in range(self.rowCount()):
@@ -727,7 +737,6 @@ class _SortProxyModel(QSortFilterProxyModel):
 
     def invert_selection(self):
         check_state_list = []
-        n_inc = 0
         for i in range(self.rowCount()):
             idx = self.index(i, self.m_src.i_name)
             idx_src = self.mapToSource(idx)
@@ -736,13 +745,10 @@ class _SortProxyModel(QSortFilterProxyModel):
                 continue
             if not is_item_checked(it_name_src):
                 check_state = Qt.Checked
-                n_inc += 1
             else:
                 check_state = Qt.Unchecked
-                n_inc -= 1
             check_state_list.append((it_name_src, check_state))
         [it.setCheckState(st) for it, st in check_state_list]
-        self.sig_inc_dec_updated.emit(n_inc)
 
 
 class _Delegate(QStyledItemDelegate):

@@ -249,8 +249,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         mgmt_client_conf = aa_conf.get('MGMT_CLIENT', None)
         if mgmt_client_conf is not None:
             self._aa_mgmt_client = ArchiverMgmtClient(mgmt_client_conf.get('URL'))
-        print(self._aa_data_client)
-        print(self._aa_mgmt_client)
+        # print(self._aa_data_client)
+        # print(self._aa_mgmt_client)
 
     def init_config(self, confdir=None):
         # preferences
@@ -1431,15 +1431,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         src_m = m.sourceModel()
         src_idx = m.mapToSource(idx)
         src_r, src_c = src_idx.row(), src_idx.column()
-        printlog("Index of PxyModel ({}, {}), text: {}".format(
-            r, c, str(m.data(idx))))
-        printlog("Index of SrcModel ({}, {}), text: {}".format(
-            src_r, src_c, str(src_m.data(src_idx))))
+        # printlog("Index of PxyModel ({}, {}), text: {}".format(
+        #     r, c, str(m.data(idx))))
+        # printlog("Index of SrcModel ({}, {}), text: {}".format(
+        #     src_r, src_c, str(src_m.data(src_idx))))
 
         item = src_m.itemFromIndex(src_idx)
-        printlog("Clicked: ({}, {}), item is expanded? ({}), is checked? ({})".format(
-            idx.row(), idx.column(), self._tv.isExpanded(idx),
-            is_item_checked(item)))
+        # printlog("Clicked: ({}, {}), item is expanded? ({}), is checked now? ({}) last state {}".format(
+        #     idx.row(), idx.column(), self._tv.isExpanded(idx),
+        #     is_item_checked(item), last_checkstate))
 
         if idx.column() == src_m.i_name:
             ename_item = src_m.itemFromIndex(src_idx)
