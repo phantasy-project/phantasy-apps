@@ -62,6 +62,7 @@ from phantasy_ui.widgets import ElementSelectDialog
 from phantasy_ui.widgets import FlowLayout
 from phantasy_ui.widgets import LatticeWidget
 from phantasy_ui.widgets import ProbeWidget
+from phantasy_ui.widgets import DataTrendWidget
 from phantasy_apps.utils import find_dconf
 from phantasy_apps.msviz.mach_state import get_meta_conf_dict
 from phantasy_apps.msviz.mach_state import merge_mach_conf
@@ -540,6 +541,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._copy_text_icon = QIcon(QPixmap(":/sm-icons/copy_text.png"))
         self._copy_data_icon = QIcon(QPixmap(":/sm-icons/copy_data.png"))
         self._probe_icon = QIcon(QPixmap(":/sm-icons/probe.png"))
+        self._trend_icon = QIcon(QPixmap(":/sm-icons/data-trend.png"))
         self._unsel_icon = QIcon(QPixmap(":/sm-icons/uncheck.png"))
         self._sel_icon = QIcon(QPixmap(":/sm-icons/check.png"))
         self._sel3_icon = QIcon(QPixmap(":/sm-icons/check3.png"))
@@ -582,6 +584,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # context menu
         self.set_context_menu()
         self._probe_widgets_dict = {}
+        self._data_trend_widgets_dict = {}
 
         # dnd
         self.setAcceptDrops(True)
@@ -870,6 +873,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         w.show()
         w.set_field(fname)
 
+    @pyqtSlot()
+    def on_data_trend(self, elem, fname):
+        if elem.name not in self._data_trend_widgets_dict:
+            w = DataTrendWidget(elem, fname, client=self._aa_data_client)
+            self._data_trend_widgets_dict[elem.name] = w
+        w = self._data_trend_widgets_dict[elem.name]
+        w.show()
+
     @pyqtSlot(QPoint)
     def on_custom_context_menu(self, view, pos):
         m = view.model()
@@ -962,6 +973,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             probe_action.triggered.connect(
                     partial(self.on_probe_element, elem, fld.name))
             menu.addAction(probe_action)
+
+            # data log: set/read values
+            if self._aa_data_client is not None:
+                trend_action = QAction(self._trend_icon, "Data Trend", menu)
+                trend_action.triggered.connect(partial(self.on_data_trend, elem, fld.name))
+                menu.addAction(trend_action)
 
         # toggle items action
         # selected_rows = {idx.row() for idx in self._tv.selectedIndexes()}
