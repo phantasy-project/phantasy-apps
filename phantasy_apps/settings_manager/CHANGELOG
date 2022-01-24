@@ -1,4 +1,15 @@
 =======================
+Version 9.7: 2022-01-24
+=======================
+
+ - Fix packages by adding missing files.
+ - Add new context menu action for data trending
+   - Pull and visualize data from Archiver Appliance
+ - Add support for showing checked items stats.
+ - Add new button for unchecked all items.
+ - Update UI.
+
+=======================
 Version 9.6: 2021-12-09
 =======================
 
