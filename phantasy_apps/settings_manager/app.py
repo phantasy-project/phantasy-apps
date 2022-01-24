@@ -584,7 +584,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # context menu
         self.set_context_menu()
         self._probe_widgets_dict = {}
-        self._data_trend_widgets_dict = {}
+        self._data_trend_widgets_dict = {} # key: (ename, fname)
 
         # dnd
         self.setAcceptDrops(True)
@@ -875,10 +875,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_data_trend(self, elem, fname):
-        if elem.name not in self._data_trend_widgets_dict:
+        if (elem.name, fname) not in self._data_trend_widgets_dict:
             w = DataTrendWidget(elem, fname, client=self._aa_data_client)
-            self._data_trend_widgets_dict[elem.name] = w
-        w = self._data_trend_widgets_dict[elem.name]
+            self._data_trend_widgets_dict[(elem.name, fname)] = w
+        w = self._data_trend_widgets_dict[(elem.name, fname)]
         w.show()
 
     @pyqtSlot(QPoint)
