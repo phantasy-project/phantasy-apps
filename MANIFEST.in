@@ -17,5 +17,6 @@ recursive-include phantasy_apps/unicorn/launcher *
 recursive-include phantasy_apps/va/launcher *
 recursive-include phantasy_apps/wire_scanner/launcher *
 recursive-include phantasy_apps/settings_manager/config *
+recursive-include phantasy_apps/settings_manager/contrib/db *.sql
 recursive-include phantasy_apps/synoptic_app/config *
 recursive-include phantasy_apps/msviz/config *
