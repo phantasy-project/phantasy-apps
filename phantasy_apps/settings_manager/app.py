@@ -2853,6 +2853,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if dsrc_dict['mode'] == 'DB':
             self._db_conn_pool = {}
             self.data_uri = os.path.abspath(os.path.expanduser(dsrc_dict['uri']))
+            # ensure the parent directory is exsiting
+            pathlib.Path(self.data_uri).parent.mkdir(parents=True, exist_ok=True)
             self._db_conn_pool.setdefault(self.data_uri, ensure_connect_db(self.data_uri)) # other DB_ENGINEs to be supported
             self.nsnp_btn.setVisible(True)
             self.nsnp_btn.click()
