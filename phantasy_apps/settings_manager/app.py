@@ -18,7 +18,6 @@ from getpass import getuser
 
 from PyQt5.QtCore import QDate
 from PyQt5.QtCore import QEventLoop
-from PyQt5.QtCore import QFileSystemWatcher
 from PyQt5.QtCore import QPoint
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QTimer
@@ -928,9 +927,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # viz machine state
         mviz_action = QAction(self._chart_icon, "Machine State", menu)
         mviz_action.triggered.connect(partial(self.on_mviz, snpdata))
-        # reveal
-        reveal_action = QAction(self._reveal_icon, "Show in &Files", menu)
-        reveal_action.triggered.connect(partial(self.on_reveal_snp, snpdata))
         # del
         del_action = QAction(self._del_icon, "&Delete", menu)
         del_action.triggered.connect(partial(self.on_del_settings, snpdata))
@@ -943,8 +939,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.addSeparator()
         menu.addAction(read_action)
         menu.addAction(mviz_action)
-        if self.dsrc_mode == 'FILE':
-            menu.addAction(reveal_action)
         menu.addSeparator()
         menu.addAction(saveas_action)
         menu.addAction(del_action)
@@ -1611,47 +1605,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # reset snp dock with files in d (recursively)
         if purge:
             del self._snp_dock_list[:]
-        if self.dsrc_mode == 'DB':
-            # DB
-            self._db_conn = self._db_conn_pool.setdefault(d, ensure_connect_db(d))
-            if self._n_snp_max == 'All':
-                df_all = pd.read_sql(f"SELECT * FROM snapshot", self._db_conn)
-            else:
-                df_all = pd.read_sql(f"SELECT * FROM snapshot ORDER BY id DESC LIMIT {self._n_snp_max}", self._db_conn)
-            #
-            self.df_all_row_tuple = list(df_all.iterrows())
-            self.db_pull.emit()
-            self.data_uri = d
-            self.data_uri_lineEdit.setText(self.data_uri)
-        else: # FILE
-            self.data_uri = d
-            for path in pathlib.Path(d).glob("**/*"):
-                if not os.access(path, os.R_OK):
-                    printlog(f"Cannot access {path}!")
-                    continue
-                if not path.is_file():
-                    continue
-                snp_data = read_data(path)
-                if snp_data is None:
-                    printlog(f"Failed to load {path.resolve()}.")
-                    continue
-                # skip snapshot that name conflicts
-                if is_snp_data_exist(snp_data, self._snp_dock_list):
-                    continue
-                self._snp_dock_list.append(snp_data)
-
-            self.data_uri_lineEdit.setText(self.data_uri)
-            #
-            self.fm.removePaths(self.fm.directories())
-            self.fm.addPath(self.data_uri)
-
-            n = len(self._snp_dock_list)
-            self.total_snp_lbl.setText(str(n))
-            self.update_snp_dock_view()
-            # current snp
-            if self._current_snpdata is not None:
-                self.snp_loaded.emit(self._current_snpdata)
-            self.snp_filters_updated.emit()
+        # DB
+        self._db_conn = self._db_conn_pool.setdefault(d, ensure_connect_db(d))
+        if self._n_snp_max == 'All':
+            df_all = pd.read_sql(f"SELECT * FROM snapshot", self._db_conn)
+        else:
+            df_all = pd.read_sql(f"SELECT * FROM snapshot ORDER BY id DESC LIMIT {self._n_snp_max}", self._db_conn)
+        #
+        self.df_all_row_tuple = list(df_all.iterrows())
+        self.db_pull.emit()
+        self.data_uri = d
+        self.data_uri_lineEdit.setText(self.data_uri)
 
     @pyqtSlot(int)
     def on_ndigit_changed(self, n):
@@ -2309,18 +2273,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.on_save_settings(snp_data)
 
     @pyqtSlot()
-    def on_reveal_snp(self, data):
-        # !! requires nautilus !!
-        from PyQt5.QtCore import QProcess
-        p = QProcess(self)
-        p.setArguments(["-s", data.data_path])
-        p.setProgram("nautilus")
-        p.startDetached()
-
-    @pyqtSlot()
     def on_copy_snp(self, data):
-        if self.dsrc_mode == 'DB':
-            data.extract_blob()
+        data.extract_blob()
         data.data.to_clipboard(excel=True, index=False)
         msg = '<html><head/><body><p><span style="color:#007BFF;">Copied snapshot data at: </span><span style="color:#DC3545;">{}</span></p></body></html>'.format(data.ts_as_str())
         self.statusInfoChanged.emit(msg)
@@ -2328,29 +2282,25 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_read_snp(self, data):
-        if self.dsrc_mode == 'DB':
-            data.extract_blob()
-            _, filename = tempfile.mkstemp('.xlsx')
-            self._save_settings(data, filename, 'xlsx')
-            QDesktopServices.openUrl(QUrl(filename))
-        else:
-            QDesktopServices.openUrl(QUrl(data.data_path))
+        data.extract_blob()
+        _, filename = tempfile.mkstemp('.xlsx')
+        self._save_settings(data, filename, 'xlsx')
+        QDesktopServices.openUrl(QUrl(filename))
 
     @pyqtSlot()
     def on_mviz(self, data):
         """Visualize machine state data
         """
-        if self.dsrc_mode == 'DB':
-            data.extract_blob()
-            if data.machstate is None:
-                QMessageBox.warning(self, "Machine State Data",
-                                    "No machine state data to show.", QMessageBox.Ok)
-                return
-            else:
-                # groups = ('traj-x', 'traj-y', 'phase', 'energy')
-                groups = ('BPM-X', 'BPM-Y', 'BPM-PHA', 'BPM-MAG')
-                self._bpmviz_w = BPMVizWidget(data.machstate, self._machstate, groups=groups)
-                self._bpmviz_w.show()
+        data.extract_blob()
+        if data.machstate is None:
+            QMessageBox.warning(self, "Machine State Data",
+                                "No machine state data to show.", QMessageBox.Ok)
+            return
+        else:
+            # groups = ('traj-x', 'traj-y', 'phase', 'energy')
+            groups = ('BPM-X', 'BPM-Y', 'BPM-PHA', 'BPM-MAG')
+            self._bpmviz_w = BPMVizWidget(data.machstate, self._machstate, groups=groups)
+            self._bpmviz_w.show()
 
     def on_snp_filters_updated(self):
         # update btn filters
@@ -2559,36 +2509,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 break
         m = self.snp_treeView.model().m_src
         m.remove_data(data_to_del)
-        if self.dsrc_mode == 'FILE':
-            filepath = data_to_del.data_path
-            if filepath is not None and os.path.isfile(filepath):
-                os.remove(filepath)
-        else:
-            # delete from DB
-            delete_data(self._db_conn_pool.get(self.data_uri), data)
+        # delete from DB
+        delete_data(self._db_conn_pool.get(self.data_uri), data)
         self.total_snp_lbl.setText(str(len(self._snp_dock_list)))
         del data_to_del
 
     def on_save_settings(self, data):
         # in-place save data to data_path.
-        if self.dsrc_mode == 'DB':
-            data.extract_blob()
-            # add new entry to database
-            insert_update_data(self._db_conn_pool.get(self.data_uri), data)
-            # delayed_exec(lambda:self.db_refresh.emit(), 3000)
-        else:
-            if data.data_path is None or not os.path.exists(data.data_path):
-                data.data_path = data.get_default_data_path(self.data_uri, DEFAULT_DATA_FMT)
-                dirname = os.path.dirname(data.data_path)
-                if not os.path.exists(dirname):
-                    os.makedirs(dirname)
-            if isinstance(data.data_path, str):
-                data_path = pathlib.Path(data.data_path)
-            else:
-                data_path = data.data_path
-            ext = data_path.suffix.lower()[1:]
-            self._save_settings(data, data.data_path, ext)
-            self.snp_saved.emit(data.name, data.data_path)
+        data.extract_blob()
+        # add new entry to database
+        insert_update_data(self._db_conn_pool.get(self.data_uri), data)
+        # delayed_exec(lambda:self.db_refresh.emit(), 3000)
 
     def on_saveas_settings(self, data):
         # data: SnapshotData
@@ -2596,8 +2527,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # !won't update data_path attr!
         # !update name attr to be uniqe!
         # !add 'copy' into tag list!
-        if self.dsrc_mode == 'DB':
-            data.extract_blob()
+        data.extract_blob()
 
         data1 = data.clone()
 
@@ -2634,8 +2564,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self._last_lattice_name != data.segment:
             self.__load_lattice(data.machine, data.segment)
         lat = self._lat
-        if self.dsrc_mode == 'DB':
-            data.extract_blob()
+        data.extract_blob()
         s = make_physics_settings(data.data.to_numpy(), lat)
         lat.settings.update(s)
         _elem_list = []
@@ -2850,22 +2779,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._meta_fetcher.resultsReady.connect(partial(self._meta_fetcher_got_results, pv_list, grp_list))
 
     def __init_dsrc(self, dsrc_dict):
-        if dsrc_dict['mode'] == 'DB':
-            self._db_conn_pool = {}
-            self.data_uri = os.path.abspath(os.path.expanduser(dsrc_dict['uri']))
-            # ensure the parent directory is exsiting
-            pathlib.Path(self.data_uri).parent.mkdir(parents=True, exist_ok=True)
-            self._db_conn_pool.setdefault(self.data_uri, ensure_connect_db(self.data_uri)) # other DB_ENGINEs to be supported
-            self.nsnp_btn.setVisible(True)
-            self.nsnp_btn.click()
-            self.nsnp_btn.click() # n_snp_max -> 20
-            self.db_refresh.connect(partial(self.on_data_uri_changed, True, self.data_uri))
-            self.db_pull.connect(self.on_pull_data)
-        else:
-            self.data_uri = d = os.path.abspath(os.path.expanduser(dsrc_dict['uri']))
-            #
-            self.fm = QFileSystemWatcher([d], self)
-            self.fm.directoryChanged.connect(self.on_wdir_new)
+        self._db_conn_pool = {}
+        self.data_uri = os.path.abspath(os.path.expanduser(dsrc_dict['uri']))
+        # ensure the parent directory is exsiting
+        pathlib.Path(self.data_uri).parent.mkdir(parents=True, exist_ok=True)
+        self._db_conn_pool.setdefault(self.data_uri, ensure_connect_db(self.data_uri)) # other DB_ENGINEs to be supported
+        self.nsnp_btn.setVisible(True)
+        self.nsnp_btn.click()
+        self.nsnp_btn.click() # n_snp_max -> 20
+        self.db_refresh.connect(partial(self.on_data_uri_changed, True, self.data_uri))
+        self.db_pull.connect(self.on_pull_data)
 
     @pyqtSlot()
     def on_update_nsnp(self):
