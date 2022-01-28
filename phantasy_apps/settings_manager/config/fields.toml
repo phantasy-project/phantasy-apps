@@ -47,7 +47,7 @@ fields = ['BIAS_VOLT', 'BIAS_VOLTAGE']
 fields = ['BIAS_VOLT', 'BIAS_VOLTAGE']
 
 [BEND]
-fields = ['I', 'B', 'I_TC', 'B_TC']
+fields = ['I', 'B', 'I_TC', 'B_TC', 'NMR', 'NMR_phy']
 
 [EBEND]
 fields = ['V', 'VOLT']
