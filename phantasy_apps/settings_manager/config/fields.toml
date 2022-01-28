@@ -46,6 +46,10 @@ fields = ['BIAS_VOLT', 'BIAS_VOLTAGE']
 [FC]
 fields = ['BIAS_VOLT', 'BIAS_VOLTAGE']
 
+[VD]
+fields = ['XCEN', 'XCEN_phy', 'YCEN', 'YCEN_phy',
+          'XRMS', 'XRMS_phy', 'YRMS', 'YRMS_phy']
+
 [BEND]
 fields = ['I', 'B', 'I_TC', 'B_TC', 'NMR', 'NMR_phy']
 
