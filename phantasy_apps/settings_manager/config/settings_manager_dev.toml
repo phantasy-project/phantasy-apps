@@ -3,12 +3,10 @@
 TITLE = "Configurations for Settings Manager"
 
 [DATA_SOURCE]
-  TYPE = 'DB' # FILE, DB
+  TYPE = 'DB' # DB (database)
   DB_ENGINE = 'sqlite'
-  URI = '~/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm.db'
-
-  # TYPE = 'FILE'
-  # URI = '~/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager'  # where reside all snapshot files
+  URI = '~/settings_manager/sm.db'
+  # URI = '/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm.db'
 
 [SETTINGS]
   T_WAIT = 0.05  # Settling time between batch settings apply, second
@@ -21,7 +19,7 @@ TITLE = "Configurations for Settings Manager"
 
 [MACH_STATE]
   CONFIG_PATH = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/msviz/config/metadata_va.toml"
-  ENABLED = true
+  ENABLED = false
   DAQ_RATE = 5
   DAQ_NSHOT = 20
 
@@ -35,3 +33,12 @@ TITLE = "Configurations for Settings Manager"
 [ARCHIVER_APPLIANCE]
   [ARCHIVER_APPLIANCE.DATA_CLIENT]
     URL = "http://127.0.0.1:17665"
+
+# Apps that could be launched from the context menu of the first column
+# of settings view.
+# args: ename (element name) machine (machine name), segment (segment name)
+[EXTERNAL_APPS]
+  [EXTERNAL_APPS.APP1]
+    NAME = "Correlation Visualizer"
+    EXEC = "correlation_visualizer"
+    ARGS = "--config {ename}.json"
