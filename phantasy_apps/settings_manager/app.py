@@ -36,9 +36,11 @@ from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QCompleter
 from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QWidgetAction
 from PyQt5.QtWidgets import QToolButton
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QShortcut
@@ -951,7 +953,24 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         text = item.text()
         #
         menu = QMenu(self)
-        menu.setStyleSheet('QMenu {margin: 2px;}')
+        menu.setStyleSheet("""
+        QMenu {
+            margin: 2px;
+        }
+        """)
+
+        _title_w = QLabel(text)
+        _title_w.setStyleSheet(f"""
+            QLabel{{
+                background: #FFCC82;
+                font-weight: bold;
+                padding: 2px 2px 2px {PX_SIZE+2}px;
+            }}"""
+        )
+        _title_act = QWidgetAction(self)
+        _title_act.setDefaultWidget(_title_w)
+        #
+        menu.addAction(_title_act)
 
         #
         copy_action = QAction(self._copy_text_icon, "Copy Text", menu)
