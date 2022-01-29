@@ -15,6 +15,7 @@ from datetime import datetime
 from epics import caget, caput
 from functools import partial
 from getpass import getuser
+from subprocess import Popen
 
 from PyQt5.QtCore import QDate
 from PyQt5.QtCore import QEventLoop
@@ -559,6 +560,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._power_switch_icon = QIcon(QPixmap(":/sm-icons/power_switch.png"))
         self._warning_amber_icon = QIcon(QPixmap(":/sm-icons/warning_amber.png"))
         self._chart_icon = QIcon(QPixmap(":/sm-icons/chart.png"))
+        self._ext_app_icon = QIcon(QPixmap(":/sm-icons/rocket.png"))
 
         # set skip none reachable option as True
         self.skip_none_chkbox.setChecked(True)
@@ -1073,6 +1075,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             switch_menu.addAction(sm_reset_act)
             switch_menu.setIcon(self._power_switch_icon)
             switch_menu.setToolTipsVisible(True)
+
+        # External apps
+        apps_conf = self.pref_dict.get('EXTERNAL_APPS', None)
+        if apps_conf is None:
+            return menu
+        for _, _app_conf in apps_conf.items():
+            _app_name = _app_conf['NAME']
+            _app_exec = _app_conf['EXEC']
+            _app_args = _app_conf['ARGS'].format(element_name=text)
+            _app_act = QAction(self._ext_app_icon, "Start " + _app_name, menu)
+            _app_act.triggered.connect(lambda:Popen(f'{_app_exec} {_app_args}', shell=True))
+            menu.addAction(_app_act)
 
         return menu
 
