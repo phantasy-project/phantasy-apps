@@ -1083,7 +1083,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for _, _app_conf in apps_conf.items():
             _app_name = _app_conf['NAME']
             _app_exec = _app_conf['EXEC']
-            _app_args = _app_conf['ARGS'].format(element_name=text)
+            _app_args = _app_conf['ARGS'].format(ename=text)
             _app_act = QAction(self._ext_app_icon, "Start " + _app_name, menu)
             _app_act.triggered.connect(lambda:Popen(f'{_app_exec} {_app_args}', shell=True))
             menu.addAction(_app_act)
