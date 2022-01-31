@@ -1,6 +1,5 @@
 # phantasy-apps
 
-Applications built upon ``phantasy``.
+Applications built upon [phantasy](https://github.com/phantasy-project/phantasy).
 
-### See Also
-[phantasy](https://stash.frib.msu.edu/scm/phyapp/phantasy.git),
+See the changelog at [here](changelogs.txt).
