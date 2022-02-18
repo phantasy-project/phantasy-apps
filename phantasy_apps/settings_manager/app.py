@@ -1083,8 +1083,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for _, _app_conf in apps_conf.items():
             _app_name = _app_conf['NAME']
             _app_exec = _app_conf['EXEC']
-            _app_args = _app_conf['ARGS'].format(ename=text)
-            _app_cwd = _app_conf['CWD'] if _app_conf['CWD'] != '' else None
+            _app_args = _app_conf.get('ARGS', '').format(ename=text,
+                    machine=self._last_machine_name, segment=self._last_lattice_name)
+            _app_cwd = _app_conf.get('CWD', '')
+            if _app_cwd == '':
+                _app_cwd = None
             _app_act = QAction(self._ext_app_icon, "Start " + _app_name, menu)
             _app_act.triggered.connect(lambda:Popen(f'{_app_exec} {_app_args}',
                                                     cwd=_app_cwd, shell=True))
