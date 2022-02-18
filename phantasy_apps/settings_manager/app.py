@@ -1077,6 +1077,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             switch_menu.setToolTipsVisible(True)
 
         # External apps
+        def _launch_app(_exec, _args='', _cwd=None):
+            Popen(f'{_exec} {_args}', cwd=_cwd, shell=True)
         apps_conf = self.pref_dict.get('EXTERNAL_APPS', None)
         if apps_conf is None:
             return menu
@@ -1089,8 +1091,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             if _app_cwd == '':
                 _app_cwd = None
             _app_act = QAction(self._ext_app_icon, "Start " + _app_name, menu)
-            _app_act.triggered.connect(lambda:Popen(f'{_app_exec} {_app_args}',
-                                                    cwd=_app_cwd, shell=True))
+            _app_act.triggered.connect(partial(_launch_app, _app_exec, _app_args, _app_cwd))
             menu.addAction(_app_act)
 
         return menu
