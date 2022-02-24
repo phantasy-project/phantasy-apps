@@ -19,6 +19,18 @@ fields = ['PHA1', 'AMP1', 'PHASE1', 'AMPLITUDE1',
           'PHA3_CREST', 'PHASE3_CREST', 'AMP3_COEF', 'AMPLITUDE3_COEF',
 ]
 
+["REA_BTS19:CAV_D0983"]
+fields = [
+    'PHA1', 'PHA2', 'PHASE1', 'PHASE2',
+    'AMP1', 'AMP2', 'AMPLITUDE1', 'AMPLITUDE2'
+]
+
+["REA_BTS19:CAV_D0990"]
+fields = [
+    'PHA1', 'PHA2', 'PHASE1', 'PHASE2',
+    'AMP1', 'AMP2', 'AMPLITUDE1', 'AMPLITUDE2'
+]
+
 [HCOR]
 fields = ['I', 'TM']
 
