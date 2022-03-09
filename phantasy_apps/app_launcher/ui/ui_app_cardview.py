@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1200, 900)
+        MainWindow.resize(1211, 864)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/app.png"), QtGui.QIcon.Normal,
                        QtGui.QIcon.Off)
@@ -177,7 +177,7 @@ class Ui_MainWindow(object):
             "}")
         self.main_tab.setTabPosition(QtWidgets.QTabWidget.North)
         self.main_tab.setTabShape(QtWidgets.QTabWidget.Rounded)
-        self.main_tab.setIconSize(QtCore.QSize(64, 64))
+        self.main_tab.setIconSize(QtCore.QSize(48, 48))
         self.main_tab.setElideMode(QtCore.Qt.ElideNone)
         self.main_tab.setDocumentMode(False)
         self.main_tab.setObjectName("main_tab")
@@ -207,7 +207,7 @@ class Ui_MainWindow(object):
         self.fav_scrollArea.setObjectName("fav_scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(
-            0, 0, 1166, 534))
+            0, 0, 1175, 534))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.fav_scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_2.addWidget(self.fav_scrollArea, 2, 0, 1, 1)
@@ -267,7 +267,7 @@ class Ui_MainWindow(object):
         self.all_apps_scrollArea.setObjectName("all_apps_scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(
-            QtCore.QRect(0, 0, 1166, 525))
+            QtCore.QRect(0, 0, 1175, 526))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.all_apps_scrollArea.setWidget(self.scrollAreaWidgetContents_2)
@@ -282,8 +282,8 @@ class Ui_MainWindow(object):
         self.fav1_scrollArea.setWidgetResizable(True)
         self.fav1_scrollArea.setObjectName("fav1_scrollArea")
         self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(
-            0, 0, 100, 20))
+        self.scrollAreaWidgetContents_3.setGeometry(
+            QtCore.QRect(0, 0, 1175, 526))
         self.scrollAreaWidgetContents_3.setObjectName(
             "scrollAreaWidgetContents_3")
         self.fav1_scrollArea.setWidget(self.scrollAreaWidgetContents_3)
@@ -299,8 +299,8 @@ class Ui_MainWindow(object):
         self.grps_scrollArea.setWidgetResizable(True)
         self.grps_scrollArea.setObjectName("grps_scrollArea")
         self.scrollAreaWidgetContents_4 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(
-            0, 0, 100, 20))
+        self.scrollAreaWidgetContents_4.setGeometry(
+            QtCore.QRect(0, 0, 1175, 526))
         self.scrollAreaWidgetContents_4.setObjectName(
             "scrollAreaWidgetContents_4")
         self.grps_scrollArea.setWidget(self.scrollAreaWidgetContents_4)
@@ -313,10 +313,6 @@ class Ui_MainWindow(object):
         self.main_tab.addTab(self.apps_page, icon5, "")
         self.gridLayout.addWidget(self.main_tab, 1, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1200, 30))
-        self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
 
         self.retranslateUi(MainWindow)
         self.main_tab.setCurrentIndex(0)
