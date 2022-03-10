@@ -41,6 +41,8 @@ def run(cli=False):
                         dest="config",
                         help="Path of the configuration file")
     parser.add_argument("--log", dest="logfile", help="Path of the log file")
+    parser.add_argument("--dev-mode", action="store_true",
+            help="Run in development mode, brief for '--mode devel', override --mode")
     parser.add_argument("--mode",
                         dest="mode",
                         help="Working mode, regular(default), devel, ops")
@@ -53,11 +55,19 @@ def run(cli=False):
     #     return 0
 
     run_mode = args.mode
+
+    # override run_mode if --dev-mode is set
+    if args.dev_mode:
+        run_mode = "devel"
+
     if run_mode == "devel":  # FRIB FTC devel, AP only
+        print("run in devel mode")
         _run_in_dev_mode()
     elif run_mode == "ops":  # FRIB FTC operations
+        print("run in ops mode")
         _run_in_ops_mode()
     else:  # regular, system-deploy mode
+        print("run app launcher")
         app = QApplication(sys.argv)
         w = AppLauncherWindow(version=__version__,
                               logfile=args.logfile,
