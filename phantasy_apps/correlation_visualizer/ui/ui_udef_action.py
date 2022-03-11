@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(770, 594)
+        Dialog.resize(1134, 757)
         self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
         self.verticalLayout.setContentsMargins(4, 10, 4, 4)
         self.verticalLayout.setSpacing(4)
@@ -123,23 +123,25 @@ class Ui_Dialog(object):
                 "Dialog",
                 "\"\"\"User-defined operation to change the device(s) setting(s) before each DAQ.\n"
                 "\n"
-                "Here are some rules:\n"
+                "Scripting guideline of the action function:\n"
                 "1. The first argument is the new setting for selected alter element;\n"
                 "2. Available keyword arguments are:\n"
                 "   - \'alter_elem\': current selected element to change;\n"
                 "   - \'tolerance\': absolute discrenpancy between set and read;\n"
-                "   - \'timeout\': timeout in second for \'ensure put\';\n"
-                "   - \'extra_wait\': additional wait time in second after \'ensure put\'; \n"
+                "   - \'timeout\': timeout in seconds for \'ensure_put\';\n"
+                "   - \'extra_wait\': additional wait time in seconds after \'ensure_put\'; \n"
                 "\"\"\"\n"
+                "import time\n"
                 "from phantasy import ensure_put\n"
                 "from phantasy_ui import printlog\n"
                 "                                                                               \n"
+                "\n"
                 "def f(goal, **kws):                                                                                                                                                                                           \n"
                 "    # set alter element, apply ensure put                                         \n"
                 "    alter_elem = kws.get(\'alter_elem\', None)                                      \n"
-                "    tolerance = kws.get(\'tolerance\', 0.01)                                        \n"
-                "    timeout = kws.get(\'timeout\', 0.01)                                            \n"
-                "    extra_wait = kws.get(\'extra_wait\', 0.0)                                       \n"
+                "    tolerance = kws.get(\'tolerance\', 0.05)                                        \n"
+                "    timeout = kws.get(\'timeout\', 2)                                            \n"
+                "    extra_wait = kws.get(\'extra_wait\', 0.5)                                       \n"
                 "    if alter_elem is None:                                                        \n"
                 "        return                                                                    \n"
                 "    ensure_put(alter_elem, goal=goal, tol=tolerance, timeout=timeout)          \n"
