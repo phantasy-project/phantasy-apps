@@ -488,9 +488,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def save_data(self):
         """save data.
         """
-        if self.scan_worker is None:
-            return
-        if self.scan_worker.is_running():
+        if self.scan_plot_widget.get_all_data()[0].size == 0:
             return
 
         filename, ext = get_save_filename(self,
