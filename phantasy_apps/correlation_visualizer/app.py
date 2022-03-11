@@ -495,7 +495,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
         filename, ext = get_save_filename(self,
                 caption="Save data to file",
-                type_filter="JSON Files (*.json);;CSV Files (*.csv);;HDF5 Files (*.hdf5 *.h5)")
+                type_filter="JSON Files (*.json);;CSV Files (*.csv)")
 
         if filename is None:
             return
@@ -561,6 +561,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def _post_init_ui(self):
         """post init ui
         """
+        # hide File -> Save
+        self.actionSave.setVisible(False)
+
         # toolbtns
         # save data
         self.save_data_tbtn.setIconSize(BOTTOM_TBTN_ICON_QSIZE)
