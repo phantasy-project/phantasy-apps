@@ -583,6 +583,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.autoscale_tbtn.setToolTip("Auto X/Y Scale.")
         self.autoscale_tbtn.setChecked(self.scan_plot_widget.getFigureAutoScale())
 
+        #### deprecated moveto button
         menu = QMenu(self)
         # to peak
         peak_action = QAction('Peak', self)
@@ -602,6 +603,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         menu.addSeparator()
         menu.addAction(hide_action)
         self.moveto_tbtn.setMenu(menu)
+        # hide moveto btn
+        self.moveto_tbtn.setVisible(False)
+        ####
 
         # scan event log textedit
         # clear log btn
@@ -1219,14 +1223,17 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         """Move cross-ruler to the `xm` where y reaches max.
         *Pos*: 'peak' (default), 'valley', 'hide'.
         """
+
         if pos == 'hide':  # hide cross-ruler
             self.scan_plot_widget.set_visible_hvlines(False)
             self._moveto_flag = False
             return
 
-        if self.scan_worker is None or self.scan_worker.is_running():
-            # scan is not completed, do nothing
+        if self.scan_plot_widget.get_all_data()[0].size == 0:
             return
+        # if self.scan_worker is None or self.scan_worker.is_running():
+        #     # scan is not completed, do nothing
+        #     return
 
         sm = ScanDataModel(self.scan_task.scan_out_data)
         y = sm.get_yavg()
@@ -1241,7 +1248,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             ym = y_min
 
         # draw/update cross-ruler
-        self.scan_plot_widget.draw_hvlines(xm, ym)
+        # mc: mpl4qt.utils.COLOR_CYCLE[0]
+        self.scan_plot_widget.draw_hvlines(xm, ym, pos, mc="#1F77B4")
         self.scan_plot_widget.set_visible_hvlines(True)
         # set moveto_flag
         self._moveto_flag = True
@@ -1250,19 +1258,22 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def on_set(self):
         """Set alter_elem where cross-ruler pointing to
         """
-        if not self._moveto_flag:
+        mk_dict = self.scan_plot_widget._markers
+        if not mk_dict:
             QMessageBox.warning(self, "",
-                                "No value to set, click 'MoveTo' button or use " +
-                                "'Cross-ruler' tool to pick the coordinate to moveto",
+                                "No value to set, use 'CTRL + M' to " +
+                                "add a marker on the canvas, if multiple markers are added, " +
+                                "the most recent one will be used to set the device.",
                                 QMessageBox.Ok)
         else:
-            x0 = self.scan_plot_widget._cpoint.get_xdata()[0]
+            mk_name = list(mk_dict.keys())[-1]
+            _, _, _, _, (x0, y0) = mk_dict[mk_name]
             self.scanlogTextColor.emit(COLOR_INFO)
-            self.scanlogUpdated.emit("Setting alter element to {0:.3f}...".format(x0))
+            self.scanlogUpdated.emit(f"Setting alter element to {x0:.3f}...")
             self.scan_task.alter_element.value = x0
-            self.scanlogUpdated.emit("Alter element reaches {0:.3f}.".format(x0))
+            self.scanlogUpdated.emit(f"Alter element reaches {x0:.3f}.")
             QMessageBox.information(self, "",
-                                    "Set alter element to {0:.3f}".format(x0),
+                                    f"Set alter element to {x0:.3f} which is marked by {mk_name}.",
                                     QMessageBox.Ok)
 
     def reset_alter_element(self):
