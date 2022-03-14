@@ -690,6 +690,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
                 lambda: self.on_update_data_index('y', self.ydata_cbb.currentIndex()))
         # expanded udf expression
         self._xyaxis_fn_expanded_dict = {}
+        # hint button
+        self.xyaxis_fn_hint_btn.clicked.connect(self.on_xyaxis_fn_hint)
 
         #
         self.scan_pb.setVisible(False)
@@ -1059,6 +1061,22 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
                 self.scan_plot_widget.setFigureYlabel(ylbl)
         #
         self.curveUpdated.emit(x, y, xerr, yerr)
+
+    @pyqtSlot()
+    def on_xyaxis_fn_hint(self):
+        """Show the hint for udf of xyaxis.
+        """
+        text_list = ["<p>Available list of variable and its corresponding full name:</p>"]
+        for i in range(self.xdata_cbb.count()):
+            text_list.append(f'''<p><span style=" font-style:italic; color:#0055ff;">x{i+1}</span> : <span style=" color:#ff0000;">{self.xdata_cbb.itemText(i).split('-')[-1]}</span></p>''')
+        text_list.append('<hr>')
+        for i in range(self.ydata_cbb.count()):
+            text_list.append(f'''<p><span style=" font-style:italic; color:#0055ff;">y{i+1}</span> : <span style=" color:#ff0000;">{self.ydata_cbb.itemText(i).split('-')[-1]}</span></p>''')
+        text = ''.join(text_list)
+
+        from .app_udef_xyaxis import UDFXYAxisWindow
+        self._w_udf_xyaxis = UDFXYAxisWindow(self, text)
+        self._w_udf_xyaxis.show()
 
     @pyqtSlot()
     def onQuadScanAction(self):
