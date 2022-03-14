@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import re
 import time
 from functools import partial
 from getpass import getuser
@@ -678,6 +679,18 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.ydata_cbb.currentIndexChanged.connect(
             partial(self.on_update_data_index, 'y'))
 
+        # xyaxis data expression
+        self.xaxis_fn_chkbox.toggled.connect(
+                lambda: self.on_update_data_index('x', self.xdata_cbb.currentIndex()))
+        self.yaxis_fn_chkbox.toggled.connect(
+                lambda: self.on_update_data_index('y', self.ydata_cbb.currentIndex()))
+        self.xaxis_fn_lineEdit.textChanged.connect(
+                lambda: self.on_update_data_index('x', self.xdata_cbb.currentIndex()))
+        self.yaxis_fn_lineEdit.textChanged.connect(
+                lambda: self.on_update_data_index('y', self.ydata_cbb.currentIndex()))
+        # expanded udf expression
+        self._xyaxis_fn_expanded_dict = {}
+
         #
         self.scan_pb.setVisible(False)
 
@@ -1003,6 +1016,48 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         idx, idy = self._idx, self._idy
         x, xerr = sm.get_xavg(ind=idx), sm.get_xerr(ind=idx)
         y, yerr = sm.get_yavg(ind=idy), sm.get_yerr(ind=idy)
+
+        # check if xy arithmetic enabled
+        if self.xaxis_fn_chkbox.isChecked() or self.yaxis_fn_chkbox.isChecked():
+            xexp = self.xaxis_fn_lineEdit.text()
+            yexp = self.yaxis_fn_lineEdit.text()
+            _r = re.findall(r"([x,y])(\d+)", xexp + " " + yexp)
+            if _r: # not empty list, [('x', '1'), ('y', '2'), ...]
+                for xoy, i in _r:
+                    k = f"{xoy}{i}"
+                    idx = int(i) - 1
+                    if xoy == 'x':
+                        setattr(self, k, sm.get_xavg(ind=idx))
+                        self._xyaxis_fn_expanded_dict[k] = self.xdata_cbb.itemText(idx).split('-')[-1]
+                    else:
+                        setattr(self, k, sm.get_yavg(ind=idx))
+                        self._xyaxis_fn_expanded_dict[k] = self.ydata_cbb.itemText(idx).split('-')[-1]
+
+        if self.xaxis_fn_chkbox.isChecked():
+            sx = re.sub(r"([x,y])(\d+)", r"self.\1\2", self.xaxis_fn_lineEdit.text())
+            try:
+                _x = eval(sx)
+            except:
+                pass
+            else:
+                x = _x
+                xlbl = re.sub(r"([x,y])(\d+)",
+                        lambda m: self._xyaxis_fn_expanded_dict.get(m.group()),
+                        self.xaxis_fn_lineEdit.text())
+                self.scan_plot_widget.setFigureXlabel(xlbl)
+        if self.yaxis_fn_chkbox.isChecked():
+            sy = re.sub(r"([x,y])(\d+)", r"self.\1\2", self.yaxis_fn_lineEdit.text())
+            try:
+                _y = eval(sy)
+            except:
+                pass
+            else:
+                y = _y
+                ylbl = re.sub(r"([x,y])(\d+)",
+                        lambda m: self._xyaxis_fn_expanded_dict.get(m.group()),
+                        self.yaxis_fn_lineEdit.text())
+                self.scan_plot_widget.setFigureYlabel(ylbl)
+        #
         self.curveUpdated.emit(x, y, xerr, yerr)
 
     @pyqtSlot()
@@ -1391,13 +1446,13 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         monitors = [self.scan_task.alter_element,
                     self.scan_task.monitor_element, ] + \
                    self.scan_task.get_extra_monitors()
-        flds = []
-        for o in monitors:
+        flds = [] # each element is a tuple of (id, fname)
+        for _id, o in enumerate(monitors, 1):
             if isinstance(o, CaField):
                 fld = '{0} [{1}]'.format(o.ename, o.name)
             else:
                 fld = o.fname
-            flds.append(fld)
+            flds.append(f"{_id}-{fld}")
 
         for i, o in zip(('x', 'y'), (self.xdata_cbb, self.ydata_cbb)):
             o.currentIndexChanged.disconnect()
@@ -1413,7 +1468,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
     def get_auto_label(self, xoy):
         # Return labels for xdata/ydata.
-        return getattr(self, '{}data_cbb'.format(xoy)).currentText()
+        current_text = getattr(self, '{}data_cbb'.format(xoy)).currentText()
+        return current_text.split('-')[-1]
 
     @pyqtSlot()
     def on_save_task(self):
