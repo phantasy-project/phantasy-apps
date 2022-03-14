@@ -8,6 +8,7 @@ from getpass import getuser
 
 import epics
 import numpy as np
+import pathlib
 from PyQt5.QtCore import QEventLoop
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QThread
@@ -26,6 +27,9 @@ from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QToolButton
+from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtWidgets import QWidget
 from phantasy import CaField
 from phantasy_ui import BaseAppForm
 from phantasy_ui import random_string
@@ -54,6 +58,7 @@ from .scan import ScanWorker
 from .scan import load_task
 from .ui.ui_app import Ui_MainWindow
 from .utils import COLOR_DANGER, COLOR_INFO, COLOR_WARNING, COLOR_PRIMARY
+from .utils import get_config
 
 BOTTOM_TBTN_ICON_SIZE = 32
 SMALL_TBTN_ICON_SIZE = 20
@@ -106,7 +111,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     # out data from scan task updated
     data_updated = pyqtSignal(QVariant)
 
-    def __init__(self, version, machine, segment):
+    def __init__(self, version: str, machine: str, segment: str, config: str):
         super(CorrelationVisualizerWindow, self).__init__()
 
         # app version
@@ -136,6 +141,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         # UI
         self.setupUi(self)
         self.postInitUi()
+
+        # update task buttons/groups from configuration file.
+        self.init_task_pool(get_config(config))
 
         # daq ctrl btns
         self.start_btn.clicked.connect(self.on_click_start_btn)
@@ -1801,3 +1809,36 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         print("-" * 20)
         print("\n")
         print("thread is running?", self.thread.isRunning())
+
+    def init_task_pool(self, conf):
+        # init ui controls for task pool from toml config obj.
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.toolBar.addWidget(spacer)
+        for _, v in conf['TASK_BUTTONS'].items():
+            btn_name = v['NAME']
+            btn_tt = v.get('DESC', btn_name)
+            btn = QToolButton()
+            btn.setIcon(QIcon(QPixmap(":/icons/work.png")))
+            btn.setText(btn_name)
+            btn.setToolTip(btn_tt)
+            btn.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+            btn.clicked.connect(partial(self.load_task_from_file, v['FILEPATH']))
+            self.toolBar.addWidget(btn)
+        for _, v in conf['TASK_GROUPS'].items():
+            grp_name = v['NAME']
+            grp_tt = v.get('DESC', grp_name)
+            grp_dir = v.get('DIRPATH')
+            btn = QToolButton()
+            menu = QMenu()
+            for f in pathlib.Path(grp_dir).glob("**/*.json"):
+                act = QAction(f.stem, menu)
+                act.triggered.connect(partial(self.load_task_from_file, f.as_posix()))
+                menu.addAction(act)
+            btn.setMenu(menu)
+            btn.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+            btn.setToolTip(grp_tt)
+            btn.setText(grp_name)
+            btn.setPopupMode(QToolButton.MenuButtonPopup)
+            btn.setIcon(QIcon(QPixmap(":/icons/work.png")))
+            self.toolBar.addWidget(btn)
