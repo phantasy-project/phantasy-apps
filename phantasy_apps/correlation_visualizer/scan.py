@@ -656,7 +656,7 @@ class ScanWorker(QObject):
 
         index_array = range(self.starting_index, alter_array.size)
 
-        # override index_array if arbitary index array is defined
+        # override index_array if arbitrary index array is defined
         # could be activated by RETAKE
         if self.index_array is not None:
             index_array = self.index_array
