@@ -910,12 +910,12 @@ class Ui_MainWindow(object):
         self.actionMPS_guardian = QtWidgets.QAction(MainWindow)
         self.actionMPS_guardian.setCheckable(True)
         self.actionMPS_guardian.setObjectName("actionMPS_guardian")
-        self.actionSave_Task = QtWidgets.QAction(MainWindow)
+        self.actionSaveAs_Task = QtWidgets.QAction(MainWindow)
         icon23 = QtGui.QIcon()
         icon23.addPixmap(QtGui.QPixmap(":/icons/save2.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionSave_Task.setIcon(icon23)
-        self.actionSave_Task.setObjectName("actionSave_Task")
+        self.actionSaveAs_Task.setIcon(icon23)
+        self.actionSaveAs_Task.setObjectName("actionSaveAs_Task")
         self.actionSave = QtWidgets.QAction(MainWindow)
         self.actionSave.setIcon(icon13)
         self.actionSave.setObjectName("actionSave")
@@ -954,7 +954,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuTools.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
         self.toolBar.addAction(self.actionLoad_Lattice)
-        self.toolBar.addAction(self.actionSave_Task)
+        self.toolBar.addAction(self.actionSaveAs_Task)
         self.toolBar.addAction(self.actionLoad_Task)
         self.toolBar.addAction(self.actionEnable_2D_Scan)
         self.toolBar.addAction(self.actionE_xit)
@@ -975,7 +975,7 @@ class Ui_MainWindow(object):
         self.scan_plot_widget.autoScaleOnUpdated['bool'].connect(
             self.autoscale_tbtn.setChecked)
         self.actionSave.triggered.connect(MainWindow.on_save_data)
-        self.actionSave_Task.triggered.connect(MainWindow.on_save_task)
+        self.actionSaveAs_Task.triggered.connect(MainWindow.on_save_task)
         self.actionLoad_Task.triggered.connect(MainWindow.on_load_task)
         self.actionVirtual_diag.toggled['bool'].connect(
             MainWindow.onEnableVirtualDiag)
@@ -1223,12 +1223,12 @@ class Ui_MainWindow(object):
             ))
         self.actionMPS_guardian.setShortcut(
             _translate("MainWindow", "Ctrl+Shift+M"))
-        self.actionSave_Task.setText(_translate("MainWindow", "Save Task"))
-        self.actionSave_Task.setIconText(_translate("MainWindow", "Save"))
-        self.actionSave_Task.setToolTip(
+        self.actionSaveAs_Task.setText(_translate("MainWindow", "Save Task"))
+        self.actionSaveAs_Task.setIconText(_translate("MainWindow", "Save As"))
+        self.actionSaveAs_Task.setToolTip(
             _translate("MainWindow",
                        "Save data with scan task configurations."))
-        self.actionSave_Task.setShortcut(
+        self.actionSaveAs_Task.setShortcut(
             _translate("MainWindow", "Alt+Shift+S"))
         self.actionSave.setText(_translate("MainWindow", "Save"))
         self.actionSave.setShortcut(_translate("MainWindow", "Ctrl+S"))
