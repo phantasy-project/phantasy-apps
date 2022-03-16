@@ -1819,7 +1819,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             btn_name = v['NAME']
             btn_tt = v.get('DESC', btn_name)
             btn = QToolButton()
-            btn.setIcon(QIcon(QPixmap(":/icons/work.png")))
+            btn.setIcon(QIcon(QPixmap(":/icons/task-btn.png")))
             btn.setText(btn_name)
             btn.setToolTip(btn_tt)
             btn.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -1832,7 +1832,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             btn = QToolButton()
             menu = QMenu()
             for f in pathlib.Path(grp_dir).glob("**/*.json"):
-                act = QAction(f.stem, menu)
+                act = QAction(QIcon(QPixmap(":/icons/task-btn.png")), f.stem, menu)
                 act.triggered.connect(partial(self.load_task_from_file, f.as_posix()))
                 menu.addAction(act)
             btn.setMenu(menu)
@@ -1840,5 +1840,5 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             btn.setToolTip(grp_tt)
             btn.setText(grp_name)
             btn.setPopupMode(QToolButton.MenuButtonPopup)
-            btn.setIcon(QIcon(QPixmap(":/icons/work.png")))
+            btn.setIcon(QIcon(QPixmap(":/icons/task-group.png")))
             self.toolBar.addWidget(btn)
