@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 """Template Python module generated based on 'app_template', 'phantasy-ui'
 is required to make it executable as a PyQt5 app.
 
@@ -15,12 +14,14 @@ Show the available templates:
 >>> makeBasePyQtApp -l
 """
 
+import epics
 import numpy as np
 from functools import partial
 
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMessageBox
 
 from phantasy_ui import BaseAppForm
 
@@ -32,7 +33,6 @@ FMT = "{0:.6g}"
 
 
 class MyAppWindow(BaseAppForm, Ui_MainWindow):
-
     def __init__(self, version, **kws):
         super(self.__class__, self).__init__()
 
@@ -59,9 +59,8 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
     def _post_init(self):
         #
-        self.params = (
-                'pulse_length', 'rep_rate', 'peak_current',
-                'ion_mass', 'ion_charge', 'beam_energy')
+        self.params = ('pulse_length', 'rep_rate', 'peak_current', 'ion_mass',
+                       'ion_charge', 'beam_energy')
         for p in self.params:
             o = getattr(self, p + '_lineEdit')
             o.setValidator(QDoubleValidator(0, 1e10, 6))
@@ -73,6 +72,39 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.param_cbb.currentTextChanged.connect(self.on_param_changed)
         self.draw_btn.clicked.connect(self.on_draw)
         self.param_cbb.currentTextChanged.emit(self.param_cbb.currentText())
+
+        # FSEE Flux
+        # fc_pv_name = "FS1_SEE:FC_D2569:AVG_RD"
+        fc_pv_name = "VA:SVR:NOISE"
+        self.fc_pv = epics.PV(fc_pv_name)
+        for p in ('fc_intensity', 'charge_state', 'k', 'area_w', 'area_h'):
+            o = getattr(self, f"{p}_lineEdit")
+            o.setValidator(QDoubleValidator(0, 1e6, 6))
+            o.textChanged.connect(partial(self.on_update_flux, p))
+            o.textChanged.emit(o.text())
+
+    @pyqtSlot('QString')
+    def on_update_flux(self, param, s):
+        try:
+            float(s)
+        except ValueError:
+            pass
+        else:
+            setattr(self, '_' + param, float(s))
+        finally:
+            self.update_flux()
+
+    def update_flux(self):
+        try:
+            area, rate, flux = f_fsee_flux(self._fc_intensity,
+                                           self._charge_state, self._k,
+                                           self._area_w, self._area_h)
+        except AttributeError:
+            pass
+        else:
+            self.area_lineEdit.setText(FMT.format(area))
+            self.beam_rate_lineEdit.setText(FMT.format(rate))
+            self.beam_flux_lineEdit.setText(FMT.format(flux))
 
     @pyqtSlot('QString')
     def on_param_changed(self, s):
@@ -93,8 +125,8 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         x = np.arange(x1, x2 + dx, dx)
         nsize = x.size
         param_dict = {
-                p: np.ones(nsize) * getattr(self, "_" + p)
-                for p in self.params
+            p: np.ones(nsize) * getattr(self, "_" + p)
+            for p in self.params
         }
         param_dict[self.current_param] = x
         eta, w = f_beam_power(**param_dict)
@@ -117,24 +149,45 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
 
     def update_results(self):
         try:
-            eta, w = f_beam_power(
-                             self._beam_energy, self._peak_current,
-                             self._ion_mass, self._ion_charge,
-                             self._pulse_length, self._rep_rate)
+            eta, w = f_beam_power(self._beam_energy, self._peak_current,
+                                  self._ion_mass, self._ion_charge,
+                                  self._pulse_length, self._rep_rate)
         except AttributeError:
             pass
         else:
             self.beam_power_lineEdit.setText(FMT.format(w))
             self.duty_cycle_lineEdit.setText(FMT.format(eta))
 
+    @pyqtSlot()
+    def on_pull_fc2569(self):
+        """Pull FC2569 reading and fill out the input box.
+        """
+        if not self.fc_pv.connected:
+            QMessageBox.warning(self, "Fetch FC Intensity Reading",
+                                f"Cannot reach '{self.fc_pv.pvname}'.", QMessageBox.Ok,
+                                QMessageBox.Ok)
+        else:
+            v = self.fc_pv.value
+            if v is not None:
+                self.fc_intensity_lineEdit.setText(FMT.format(v))
 
-def f_beam_power(beam_energy, peak_current,
-                 ion_mass, ion_charge,
-                 pulse_length, rep_rate, **kws):
+
+def f_beam_power(beam_energy, peak_current, ion_mass, ion_charge, pulse_length,
+                 rep_rate, **kws):
     duty_cycle = rep_rate * pulse_length * 1e-4
     beam_power = beam_energy * peak_current / ion_charge * ion_mass * duty_cycle * 0.01
     return duty_cycle, beam_power
 
+
+def f_fsee_flux(fc_intensity, charge_state, k, area_w, area_h):
+    # pA, 1, 1, mm, mm
+    # area: cm^2
+    # rate: pps
+    # flux: pps/cm^2
+    rate = fc_intensity * 1e-12 / charge_state / 1.6e-19 / k
+    area = area_w * area_h / 100
+    flux = rate / area
+    return area, rate, flux
 
 
 if __name__ == "__main__":

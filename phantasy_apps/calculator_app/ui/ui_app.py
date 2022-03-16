@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1440, 1080)
+        MainWindow.resize(1474, 1086)
         MainWindow.setStyleSheet("QLineEdit {\n"
                                  "    padding: 2px 2px 2px 10px;\n"
                                  "}")
@@ -183,10 +183,136 @@ class Ui_MainWindow(object):
         icon.addPixmap(QtGui.QPixmap(":/calc-app/flash_on.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.tabWidget.addTab(self.beam_power_tab, icon, "")
+        self.fsee_flux_tab = QtWidgets.QWidget()
+        self.fsee_flux_tab.setObjectName("fsee_flux_tab")
+        self.gridLayout_7 = QtWidgets.QGridLayout(self.fsee_flux_tab)
+        self.gridLayout_7.setObjectName("gridLayout_7")
+        self.textBrowser = QtWidgets.QTextBrowser(self.fsee_flux_tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.textBrowser.sizePolicy().hasHeightForWidth())
+        self.textBrowser.setSizePolicy(sizePolicy)
+        self.textBrowser.setStyleSheet(
+            "QTextBrowser {\n"
+            "    background-color: rgb(239, 239, 239);\n"
+            "}")
+        self.textBrowser.setObjectName("textBrowser")
+        self.gridLayout_7.addWidget(self.textBrowser, 0, 0, 1, 1)
+        self.groupBox_4 = QtWidgets.QGroupBox(self.fsee_flux_tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(
+            self.groupBox_4.sizePolicy().hasHeightForWidth())
+        self.groupBox_4.setSizePolicy(sizePolicy)
+        self.groupBox_4.setObjectName("groupBox_4")
+        self.gridLayout_5 = QtWidgets.QGridLayout(self.groupBox_4)
+        self.gridLayout_5.setContentsMargins(4, 12, 4, 4)
+        self.gridLayout_5.setSpacing(4)
+        self.gridLayout_5.setObjectName("gridLayout_5")
+        self.area_w_lineEdit = QtWidgets.QLineEdit(self.groupBox_4)
+        self.area_w_lineEdit.setObjectName("area_w_lineEdit")
+        self.gridLayout_5.addWidget(self.area_w_lineEdit, 4, 1, 1, 1)
+        self.area_lineEdit = QtWidgets.QLineEdit(self.groupBox_4)
+        self.area_lineEdit.setReadOnly(True)
+        self.area_lineEdit.setObjectName("area_lineEdit")
+        self.gridLayout_5.addWidget(self.area_lineEdit, 4, 0, 1, 1)
+        spacerItem2 = QtWidgets.QSpacerItem(20, 40,
+                                            QtWidgets.QSizePolicy.Minimum,
+                                            QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_5.addItem(spacerItem2, 5, 0, 1, 1)
+        self.label_26 = QtWidgets.QLabel(self.groupBox_4)
+        self.label_26.setObjectName("label_26")
+        self.gridLayout_5.addWidget(self.label_26, 3, 2, 1, 1)
+        self.label_19 = QtWidgets.QLabel(self.groupBox_4)
+        self.label_19.setObjectName("label_19")
+        self.gridLayout_5.addWidget(self.label_19, 2, 0, 1, 1)
+        self.label_16 = QtWidgets.QLabel(self.groupBox_4)
+        self.label_16.setObjectName("label_16")
+        self.gridLayout_5.addWidget(self.label_16, 3, 0, 1, 1)
+        self.label_15 = QtWidgets.QLabel(self.groupBox_4)
+        self.label_15.setObjectName("label_15")
+        self.gridLayout_5.addWidget(self.label_15, 1, 0, 1, 1)
+        self.label_17 = QtWidgets.QLabel(self.groupBox_4)
+        self.label_17.setObjectName("label_17")
+        self.gridLayout_5.addWidget(self.label_17, 3, 1, 1, 1)
+        self.label_18 = QtWidgets.QLabel(self.groupBox_4)
+        self.label_18.setObjectName("label_18")
+        self.gridLayout_5.addWidget(self.label_18, 0, 0, 1, 1)
+        self.charge_state_lineEdit = QtWidgets.QLineEdit(self.groupBox_4)
+        self.charge_state_lineEdit.setObjectName("charge_state_lineEdit")
+        self.gridLayout_5.addWidget(self.charge_state_lineEdit, 1, 2, 1, 1)
+        self.area_h_lineEdit = QtWidgets.QLineEdit(self.groupBox_4)
+        self.area_h_lineEdit.setObjectName("area_h_lineEdit")
+        self.gridLayout_5.addWidget(self.area_h_lineEdit, 4, 2, 1, 1)
+        self.k_lineEdit = QtWidgets.QLineEdit(self.groupBox_4)
+        self.k_lineEdit.setObjectName("k_lineEdit")
+        self.gridLayout_5.addWidget(self.k_lineEdit, 2, 2, 1, 1)
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setSpacing(2)
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.fc_intensity_lineEdit = QtWidgets.QLineEdit(self.groupBox_4)
+        self.fc_intensity_lineEdit.setObjectName("fc_intensity_lineEdit")
+        self.horizontalLayout_4.addWidget(self.fc_intensity_lineEdit)
+        self.toolButton = QtWidgets.QToolButton(self.groupBox_4)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/calc-app/refresh.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.toolButton.setIcon(icon1)
+        self.toolButton.setIconSize(QtCore.QSize(30, 30))
+        self.toolButton.setObjectName("toolButton")
+        self.horizontalLayout_4.addWidget(self.toolButton)
+        self.gridLayout_5.addLayout(self.horizontalLayout_4, 0, 2, 1, 1)
+        self.gridLayout_7.addWidget(self.groupBox_4, 1, 0, 1, 1)
+        self.groupBox_5 = QtWidgets.QGroupBox(self.fsee_flux_tab)
+        self.groupBox_5.setObjectName("groupBox_5")
+        self.gridLayout_6 = QtWidgets.QGridLayout(self.groupBox_5)
+        self.gridLayout_6.setContentsMargins(4, 12, 4, 4)
+        self.gridLayout_6.setSpacing(4)
+        self.gridLayout_6.setObjectName("gridLayout_6")
+        self.beam_rate_lineEdit = QtWidgets.QLineEdit(self.groupBox_5)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.beam_rate_lineEdit.setFont(font)
+        self.beam_rate_lineEdit.setText("")
+        self.beam_rate_lineEdit.setReadOnly(True)
+        self.beam_rate_lineEdit.setObjectName("beam_rate_lineEdit")
+        self.gridLayout_6.addWidget(self.beam_rate_lineEdit, 0, 1, 1, 1)
+        spacerItem3 = QtWidgets.QSpacerItem(20, 40,
+                                            QtWidgets.QSizePolicy.Minimum,
+                                            QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_6.addItem(spacerItem3, 4, 0, 1, 1)
+        self.label_9 = QtWidgets.QLabel(self.groupBox_5)
+        self.label_9.setObjectName("label_9")
+        self.gridLayout_6.addWidget(self.label_9, 0, 0, 1, 1)
+        self.label_14 = QtWidgets.QLabel(self.groupBox_5)
+        self.label_14.setObjectName("label_14")
+        self.gridLayout_6.addWidget(self.label_14, 1, 0, 1, 1)
+        self.label_20 = QtWidgets.QLabel(self.groupBox_5)
+        self.label_20.setObjectName("label_20")
+        self.gridLayout_6.addWidget(self.label_20, 1, 2, 1, 1)
+        self.label_21 = QtWidgets.QLabel(self.groupBox_5)
+        self.label_21.setObjectName("label_21")
+        self.gridLayout_6.addWidget(self.label_21, 0, 2, 1, 1)
+        self.beam_flux_lineEdit = QtWidgets.QLineEdit(self.groupBox_5)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.beam_flux_lineEdit.setFont(font)
+        self.beam_flux_lineEdit.setReadOnly(True)
+        self.beam_flux_lineEdit.setObjectName("beam_flux_lineEdit")
+        self.gridLayout_6.addWidget(self.beam_flux_lineEdit, 1, 1, 1, 1)
+        self.gridLayout_7.addWidget(self.groupBox_5, 2, 0, 1, 1)
+        self.tabWidget.addTab(self.fsee_flux_tab, "")
         self.gridLayout.addWidget(self.tabWidget, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1440, 30))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1474, 32))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -210,9 +336,11 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_Help.menuAction())
 
         self.retranslateUi(MainWindow)
+        self.tabWidget.setCurrentIndex(1)
         self.actionAbout_Qt.triggered.connect(MainWindow.onAboutQt)
         self.actionE_xit.triggered.connect(MainWindow.close)
         self.action_About.triggered.connect(MainWindow.onAbout)
+        self.toolButton.clicked.connect(MainWindow.on_pull_fc2569)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.tabWidget, self.pulse_length_lineEdit)
         MainWindow.setTabOrder(self.pulse_length_lineEdit,
@@ -290,6 +418,66 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabToolTip(
             self.tabWidget.indexOf(self.beam_power_tab),
             _translate("MainWindow", "Beam power."))
+        self.textBrowser.setHtml(
+            _translate(
+                "MainWindow",
+                "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+                "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+                "p, li { white-space: pre-wrap; }\n"
+                "</style></head><body style=\" font-family:\'Cantarell\'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
+                "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Calculate the beam flux to the FSEE user experiment station from the reading of Faraday cup (FS1_SEE:FC_D2569) intensity and estimated the beam charge state after passing through the spoil foil.</p>\n"
+                "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+                "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">See Also other apps:</p>\n"
+                "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">- ETACHA4: Charge state estimation</p>\n"
+                "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">- Viola: Beam spot size estimation</p></body></html>"
+            ))
+        self.groupBox_4.setTitle(_translate("MainWindow", "Parameters"))
+        self.area_w_lineEdit.setText(_translate("MainWindow", "7"))
+        self.area_lineEdit.setText(_translate("MainWindow", "0.7"))
+        self.label_26.setText(_translate("MainWindow", "height [mm]"))
+        self.label_19.setText(
+            _translate("MainWindow",
+                       "<html><head/><body><p>K</p></body></html>"))
+        self.label_16.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Beam Area [cm<span style=\" vertical-align:super;\">2</span>]</p></body></html>"
+            ))
+        self.label_15.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Charge State (Q)</p></body></html>"))
+        self.label_17.setText(_translate("MainWindow", "width [mm]"))
+        self.label_18.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Faraday Cup D2569 [pA]</p></body></html>"
+            ))
+        self.charge_state_lineEdit.setText(_translate("MainWindow", "49"))
+        self.area_h_lineEdit.setText(_translate("MainWindow", "10"))
+        self.k_lineEdit.setText(_translate("MainWindow", "1.18"))
+        self.fc_intensity_lineEdit.setText(_translate("MainWindow", "2.65"))
+        self.toolButton.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Pull the FC reading from FS1_SEE:FC_D2569:AVG_RD.</p></body></html>"
+            ))
+        self.toolButton.setText(_translate("MainWindow", "..."))
+        self.groupBox_5.setTitle(_translate("MainWindow", "Results"))
+        self.label_9.setText(
+            _translate("MainWindow",
+                       "<html><head/><body><p>Beam Rate</p></body></html>"))
+        self.label_14.setText(
+            _translate("MainWindow",
+                       "<html><head/><body><p>Beam Flux</p></body></html>"))
+        self.label_20.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>pps/cm<span style=\" vertical-align:super;\">2</span></p></body></html>"
+            ))
+        self.label_21.setText(_translate("MainWindow", "pps"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.fsee_flux_tab),
+                                  _translate("MainWindow", "FSEE Flux"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.action_About.setText(_translate("MainWindow", "&About"))
