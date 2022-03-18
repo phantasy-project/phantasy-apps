@@ -436,8 +436,10 @@ class Ui_MainWindow(object):
         self.area_lineEdit.setText(_translate("MainWindow", "0.7"))
         self.label_26.setText(_translate("MainWindow", "height [mm]"))
         self.label_19.setText(
-            _translate("MainWindow",
-                       "<html><head/><body><p>K</p></body></html>"))
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Coefficient for FC reading fix (K), <span style=\" font-style:italic;\">I = I</span><span style=\" font-style:italic; vertical-align:sub;\">0</span><span style=\" font-style:italic;\">K</span></p></body></html>"
+            ))
         self.label_16.setText(
             _translate(
                 "MainWindow",
@@ -446,12 +448,13 @@ class Ui_MainWindow(object):
         self.label_15.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Charge State (Q)</p></body></html>"))
+                "<html><head/><body><p>Charge State (<span style=\" font-style:italic;\">Q</span>)</p></body></html>"
+            ))
         self.label_17.setText(_translate("MainWindow", "width [mm]"))
         self.label_18.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Faraday Cup D2569 [pA]</p></body></html>"
+                "<html><head/><body><p>Faraday Cup D2569 [pA], <span style=\" font-style:italic;\">I</span></p></body></html>"
             ))
         self.charge_state_lineEdit.setText(_translate("MainWindow", "49"))
         self.area_h_lineEdit.setText(_translate("MainWindow", "10"))
