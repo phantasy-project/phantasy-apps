@@ -74,8 +74,8 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
         self.param_cbb.currentTextChanged.emit(self.param_cbb.currentText())
 
         # FSEE Flux
-        # fc_pv_name = "FS1_SEE:FC_D2569:AVG_RD"
-        fc_pv_name = "VA:SVR:NOISE"
+        fc_pv_name = "FS1_SEE:FC_D2569:AVG_RD"
+        # fc_pv_name = "VA:SVR:NOISE"
         self.fc_pv = epics.PV(fc_pv_name)
         for p in ('fc_intensity', 'charge_state', 'k', 'area_w', 'area_h'):
             o = getattr(self, f"{p}_lineEdit")
@@ -167,7 +167,7 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
                                 f"Cannot reach '{self.fc_pv.pvname}'.", QMessageBox.Ok,
                                 QMessageBox.Ok)
         else:
-            v = self.fc_pv.value
+            v = self.fc_pv.value * 1e12 # [A] --> [pA]
             if v is not None:
                 self.fc_intensity_lineEdit.setText(FMT.format(v))
 
