@@ -1816,7 +1816,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.toolBar.addWidget(spacer)
         for _, v in conf['TASK_BUTTONS'].items():
-            btn_name = v['NAME']
+            btn_name = v.get('NAME', None)
+            if btn_name is None:
+                continue
             btn_tt = v.get('DESC', btn_name)
             btn = QToolButton()
             btn.setIcon(QIcon(QPixmap(":/icons/task-btn.png")))
@@ -1826,7 +1828,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             btn.clicked.connect(partial(self.load_task_from_file, v['FILEPATH']))
             self.toolBar.addWidget(btn)
         for _, v in conf['TASK_GROUPS'].items():
-            grp_name = v['NAME']
+            grp_name = v.get('NAME', None)
+            if grp_name is None:
+                continue
             grp_tt = v.get('DESC', grp_name)
             grp_dir = v.get('DIRPATH')
             btn = QToolButton()
