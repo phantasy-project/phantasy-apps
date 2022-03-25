@@ -14,19 +14,19 @@ from phantasy_apps.settings_manager.contrib import SettingsRow
 disable_warnings()
 ion_info_idx = False
 
-# input parameters for beam study (ARR07) (2022-01-17)
-machine = "ARIS"
-segments = ["ARIS"]
+# input parameters for beam study
+machine = "FRIB"
+segments = ["LINAC"]
 
-xlsx_filepath = "ARR07_settings.xlsx"  # file path of the xlsx file
-sheet_name = "ARR07"  # sheet name of the data
+xlsx_filepath = "ARR07_commissioning_setting_ver20220121.xlsx"  # file path of the xlsx file
+sheet_name = "magnet setting"  # sheet name of the data
 row_start = 3  # the row number (counts from 1) where the settings data begins, put one settings each row after
 column_start = 10  # the column number (counts from 1) where the device settings data begins
-settings_rootpath = "ARR07_20220119-1"  # the directory name to put the generated snapshot files, each row will be generated as one file
+settings_rootpath = "ARR07-20220121"  # the directory name to put the generated snapshot files, each row will be generated as one file
 
-snp_tags = "GENERATED,ARIS,ARR07"  # Tag the generated file,the cell values in Tag columns are not used
-snp_machine = "ARIS"  # the machine to load
-snp_segment = "ARIS"  # the segment to load
+snp_tags = "GENERATED,ARR07"  # Tag the generated file,the cell values in Tag columns are not used
+snp_machine = "FRIB"  # the machine to load
+snp_segment = "LINAC"  # the segment to load
 snp_ion_name = 4  # column id, indicated in row 2, will be used as ion name
 snp_ion_mass = 6  # column id, indicated in row 2, will be used as ion mass
 snp_ion_charge = 7  # column id, indicated in row 2, will be used as ion charge
