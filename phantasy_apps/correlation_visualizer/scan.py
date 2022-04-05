@@ -11,6 +11,7 @@ from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import pyqtSignal
 from phantasy import CaField
 from phantasy import MachinePortal
+from phantasy import ensure_get
 from phantasy import ensure_put
 from phantasy import PVElement
 from phantasy import PVElementReadonly
@@ -425,12 +426,7 @@ class ScanTask(object):
         Every time set alter element, set initial setting.
         """
         sppv = self.alter_element.setpoint_pv[0]
-        time.sleep(1.0)
-        if sppv.connected:
-            x0 = sppv.get()
-        else:
-            x0 = None
-        self._val0 = x0
+        self._val0 = ensure_get(sppv.pvname)
 
     def get_initial_setting(self):
         """Return the initial setting of alter element.
