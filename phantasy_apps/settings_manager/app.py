@@ -1269,6 +1269,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # scaling factor
         scaling_factor = float(self.scaling_factor_lineEdit.text())
+        # scale operator, default is 'x'
+        scale_op = self.scale_op_cbb.currentText()
         #
         self.idx_px_list = []  # list to apply icon [(idx_src, px, log_msg)]
         settings_selected = m.get_selection()
@@ -1295,7 +1297,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if r == QMessageBox.Cancel:
             return
 
-        self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor),
+        self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor, scale_op),
                             daq_seq=settings_selected)
         self.applyer.daqStarted.connect(lambda:self.apply_pb.setVisible(True))
         self.applyer.daqStarted.connect(partial(
@@ -1309,12 +1311,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.applyer.daqFinished.connect(lambda:self.single_update_btn.clicked.emit())
         self.applyer.start()
 
-    def apply_single(self, sf, tuple_idx_settings):
+    def apply_single(self, sf, sop, tuple_idx_settings):
+        # sop: scale operator
         idx_src, settings, new_fval0 = tuple_idx_settings
         elem, fname, fld, fval0 = settings
         ename = elem.name
         # print("New fval: {}, fval0: {}".format(new_fval0, fval0))
-        fval_to_set = new_fval0 * sf
+        if sop == 'x':
+            fval_to_set = new_fval0 * sf
+        elif sop == '+':
+            fval_to_set = new_fval0 + sf
         try:
             t0 = time.time()
             fval_current_settings = fld.current_setting()

@@ -200,9 +200,18 @@ class Ui_MainWindow(object):
         self.apply_btn.setFlat(False)
         self.apply_btn.setObjectName("apply_btn")
         self.horizontalLayout_3.addWidget(self.apply_btn)
-        self.label_8 = QtWidgets.QLabel(self.centralwidget)
-        self.label_8.setObjectName("label_8")
-        self.horizontalLayout_3.addWidget(self.label_8)
+        self.scale_op_cbb = QtWidgets.QComboBox(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.scale_op_cbb.sizePolicy().hasHeightForWidth())
+        self.scale_op_cbb.setSizePolicy(sizePolicy)
+        self.scale_op_cbb.setObjectName("scale_op_cbb")
+        self.scale_op_cbb.addItem("")
+        self.scale_op_cbb.addItem("")
+        self.horizontalLayout_3.addWidget(self.scale_op_cbb)
         self.scaling_factor_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -1298,9 +1307,8 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Only apply the settings of checked items after scaling by the defined scaling factor.</p></body></html>"
             ))
         self.apply_btn.setText(_translate("MainWindow", "Apply"))
-        self.label_8.setText(
-            _translate("MainWindow",
-                       "<html><head/><body><p>×</p></body></html>"))
+        self.scale_op_cbb.setItemText(0, _translate("MainWindow", "x"))
+        self.scale_op_cbb.setItemText(1, _translate("MainWindow", "+"))
         self.scaling_factor_lineEdit.setToolTip(
             _translate(
                 "MainWindow",
