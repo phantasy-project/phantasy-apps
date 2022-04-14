@@ -1601,7 +1601,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.init_settings = enabled
         self.pref_dict['SETTINGS']['INIT_SETTINGS'] = enabled
         if enabled and self._mp is not None:
-            self._elem_list = self._lat[:]
+            self._elem_list[:] = self._lat[:]
             self.element_list_changed.emit()
 
     @pyqtSlot(int)
@@ -2232,6 +2232,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._tv.setColumnHidden(idx, f)
 
     def turn_off_updater_if_necessary(self):
+        # This is not safe, to be improved!!!
         if self.update_ctrl_btn.isChecked():
             self.update_ctrl_btn.setChecked(False)
             milli_sleep(100)
@@ -2620,7 +2621,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 _invalid_elem_list.append((ename, settings))
             else:
                 _elem_list.append(_elem)
-        self._elem_list = _elem_list
+        self._elem_list[:] = _elem_list
         if _invalid_elem_list:
             self.on_show_invalid_elemlist(_invalid_elem_list)
             print(f"Skip non-existing devices: {_invalid_elem_list}")
