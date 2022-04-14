@@ -1515,9 +1515,22 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
                 type_filter="JSON Files (*.json)")
         self.load_task_from_file(filepath)
 
+
+    def _clear_containers(self):
+        #
+        # Clear the mem space for different kinds of objs.
+        #
+        for d in (self.elem_widgets_dict, self._set_alter_array_dialogs, self._sel_elem_dialogs, ):
+            d.clear()
+        for l in (self._extra_monitors, self._indices_for_retake_points, self._indices_for_retake, ):
+            l.clear()
+
     def load_task_from_file(self, filepath):
         if filepath is None:
             return
+        # clear vars
+        self._clear_containers()
+        #
         printlog("Loading task from {}.".format(filepath))
         scan_task = load_task(filepath, self._mp, self._machine, self._segment)
         if hasattr(scan_task, '_lattice'):
