@@ -47,3 +47,14 @@ TITLE = "Configurations for Settings Manager"
     EXEC = "correlation_visualizer"
   #   ARGS = ""
   #   CWD = ""
+
+[FILTER_BUTTONS]
+[FILTER_BUTTONS.BTN1]
+# FILEPATH = "/files/shared/ap/settings_manager/filters/01_scaling.txt"
+FILEPATH = "/user/zhangt/development/phantasy-apps/phantasy_apps/settings_manager/config/filters/01_scaling.txt"
+
+[FILTER_GROUPS]
+[FILTER_GROUPS.GRP1]
+NAME = "GRP1"
+DESC = "Filters"
+DIRPATH = "/user/zhangt/development/phantasy-apps/phantasy_apps/settings_manager/config/filters"
