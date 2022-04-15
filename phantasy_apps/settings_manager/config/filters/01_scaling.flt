@@ -1,5 +1,7 @@
 [filter_config]
+name = "To Scale"
+description = "Filter out the devices for setting scaling"
 string = "field=in ('I','V','AMP','AMP1','AMP2','AMP3','I_TC')"
 strict_wildcard = true
-description = "Filter out the devices for setting scaling"
-name = "To Scale"
+check_all_items = true
+
