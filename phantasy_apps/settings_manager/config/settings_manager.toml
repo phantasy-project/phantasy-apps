@@ -55,6 +55,6 @@ FILEPATH = "/user/zhangt/development/phantasy-apps/phantasy_apps/settings_manage
 
 [FILTER_GROUPS]
 [FILTER_GROUPS.GRP1]
-NAME = "GRP1"
-DESC = "Filters"
+NAME = "Filters"
+DESC = "Choose predefined filters..."
 DIRPATH = "/user/zhangt/development/phantasy-apps/phantasy_apps/settings_manager/config/filters"
