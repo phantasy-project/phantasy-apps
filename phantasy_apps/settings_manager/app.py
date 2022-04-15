@@ -246,22 +246,25 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Create convenient buttons for load filter strings.
         """
         conf = self.pref_dict
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.toolBar.addWidget(spacer)
+        for _, v in conf['FILTER_BUTTONS'].items():
+            filepath = v.get('FILEPATH', None)
+            if filepath is None:
+                continue
+            if not os.path.isfile(filepath):
+                continue
+            _conf = toml.load(filepath)
+            btn_tt = _conf['filter_config'].get('description')
+            btn_name = _conf['filter_config'].get('name')
+            btn = QToolButton()
+            btn.setIcon(QIcon(QPixmap(":/sm-icons/filter.png")))
+            btn.setIconSize(QSize(30, 30))
+            btn.setText(btn_name)
+            btn.setToolTip(btn_tt)
+            btn.setAutoRaise(True)
+            btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            btn.clicked.connect(partial(self.load_filter_from_file, filepath))
+            self.filters_hbox.addWidget(btn)
 
-#        for _, v in conf['FILTER_BUTTONS'].items():
-#            btn_name = v.get('NAME', None)
-#            if btn_name is None:
-#                continue
-#            btn_tt = v.get('DESC', btn_name)
-#            btn = QToolButton()
-#            btn.setIcon(QIcon(QPixmap(":/icons/task-btn.png")))
-#            btn.setText(btn_name)
-#            btn.setToolTip(btn_tt)
-#            btn.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
-#            btn.clicked.connect(partial(self.load_task_from_file, v['FILEPATH']))
-#            self.toolBar.addWidget(btn)
         for _, v in conf['FILTER_GROUPS'].items():
             grp_name = v.get('NAME', None)
             if grp_name is None:
@@ -271,17 +274,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             btn = QToolButton()
             menu = QMenu()
             for f in pathlib.Path(grp_dir).glob("**/*.flt"):
-                # act = QAction(QIcon(QPixmap(":/icons/task-btn.png")), f.stem, menu)
-                act = QAction(f.stem, menu)
+                act = QAction(QIcon(QPixmap(":/sm-icons/filter.png")), f.stem, menu)
                 act.triggered.connect(partial(self.load_filter_from_file, f.as_posix()))
                 menu.addAction(act)
             btn.setMenu(menu)
-            btn.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+            # btn.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
             btn.setToolTip(grp_tt)
             btn.setText(grp_name)
             btn.setPopupMode(QToolButton.MenuButtonPopup)
-            # btn.setIcon(QIcon(QPixmap(":/icons/task-group.png")))
-            self.toolBar.addWidget(btn)
+            btn.setIcon(QIcon(QPixmap(":/sm-icons/rocket.png")))
+            btn.setIconSize(QSize(30, 30))
+            btn.setAutoRaise(True)
+            self.filters_hbox.addWidget(btn)
 
     def load_filter_from_file(self, path):
         """Set settings filter with the .flt config from *path*.
@@ -289,10 +293,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         conf = toml.load(path)
         text = conf['filter_config'].get('string', '')
         wildcard_flag = conf['filter_config'].get('strict_wildcard', False)
+        check_all_flag = conf['filter_config'].get('check_all_items', False)
         #
         self.filter_btn.setChecked(True)
         self.filter_lineEdit.setText(text)
         self.strict_wildcard_chkbox.setChecked(wildcard_flag)
+        #
+        self.filter_lineEdit.editingFinished.emit()
+        if check_all_flag:
+            delayed_exec(lambda:self.select_all_btn.clicked.emit(), 1000)
 
     def init_aa(self):
         self._aa_data_client = None
