@@ -304,6 +304,9 @@ class Ui_MainWindow(object):
         self.filter_lineEdit.setText("")
         self.filter_lineEdit.setObjectName("filter_lineEdit")
         self.horizontalLayout_9.addWidget(self.filter_lineEdit)
+        self.filters_hbox = QtWidgets.QHBoxLayout()
+        self.filters_hbox.setObjectName("filters_hbox")
+        self.horizontalLayout_9.addLayout(self.filters_hbox)
         self.filter_btn = QtWidgets.QToolButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
