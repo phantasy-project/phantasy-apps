@@ -300,7 +300,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.strict_wildcard_chkbox.setChecked(wildcard_flag)
         #
         self.filter_lineEdit.editingFinished.emit()
-        if check_all_flag:
+        if check_all_flag and self._tv.model() is not None:
             delayed_exec(lambda:self.select_all_btn.clicked.emit(), 1000)
 
     def init_aa(self):
