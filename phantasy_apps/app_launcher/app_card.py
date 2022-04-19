@@ -120,7 +120,7 @@ class AppCard(QWidget, Ui_AppForm):
 
     def setCommand(self, cmd):
         self._cmd = cmd
-        self.app_btn.clicked.connect(lambda:self.on_launch_app(True))
+        self.app_btn.clicked.connect(lambda:self.on_launch_app(False))
 
     def name(self):
         """str : App name.

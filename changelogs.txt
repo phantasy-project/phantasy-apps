@@ -1,3 +1,44 @@
+Version 5.3.1
+-------------
+2022-03-18
+
+- CL: Fix FC PV and unit for FSEE flux calculation page.
+- CV: Handle the exception for task button/group building.
+
+Version 5.3.0
+-------------
+2022-03-18
+
+- CL: Add a new tab for flux calculation for FSEE beamline.
+- CV: Add support for user-customized task buttons/groups in toolBar.
+- CV: Add support for starting with a configuration file.
+- CV: Add support for correlation visualization of user-customized variables.
+- AL: Change --dev-mode to --mode for starting up script.
+- SM: Add support for starting up external apps from device column context menu.
+- SM: Drop support for working with data source mode of 'FILE'.
+
+Version 5.2.0
+-------------
+2022-01-24
+
+- SM: Add new icons for new ion species (Bismuth).
+- SM: Fix the data display style based on write access.
+- SM: Add support to track the number of checked items.
+- SM: Update the default settings view display style (make rows 20% taller).
+- SM: Add support for data trend context menu to interface the archived data.
+
+Version 5.1.0
+-------------
+2021-11-02
+
+- SM: Improved the script for snapshot generations.
+- SM: Add a new icon for Oxygen ion species.
+- SM: Improved drag and drop (xlsx, csv, etc.) for adding new snapshots.
+- SM: Optimize the database blob operations.
+- SM: Add functions/dialogs for database maintainence.
+- SM: Fully support working with SQLite database.
+- SM: Improved the performance of the app.
+
 Version 5.0.2
 -------------
 2021-09-10

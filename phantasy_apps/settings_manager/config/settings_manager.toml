@@ -35,3 +35,25 @@ TITLE = "Configurations for Settings Manager"
 [ARCHIVER_APPLIANCE]
   [ARCHIVER_APPLIANCE.DATA_CLIENT]
     URL = "http://epicsarchiver1.ftc:17668"
+
+[EXTERNAL_APPS]
+  [EXTERNAL_APPS.APP1]
+    NAME = "Viola"
+    EXEC = "python3 /files/shared/ap/OnlineViewerApp/viola.py"
+    ARGS = "--setting {ename}.json"
+    CWD = "/files/shared/ap/OnlineViewerApp/devices"
+  [EXTERNAL_APPS.APP2]
+    NAME = "Correlation Visualizer"
+    EXEC = "correlation_visualizer"
+  #   ARGS = ""
+  #   CWD = ""
+
+[FILTER_BUTTONS]
+[FILTER_BUTTONS.BTN1]
+FILEPATH = "/files/shared/ap/settings_manager/filters/01_scaling.flt"
+
+[FILTER_GROUPS]
+[FILTER_GROUPS.GRP1]
+NAME = "Filters"
+DESC = "Choose predefined filters..."
+DIRPATH = "/files/shared/ap/settings_manager/filters"

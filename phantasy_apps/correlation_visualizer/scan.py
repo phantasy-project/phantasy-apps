@@ -11,6 +11,7 @@ from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import pyqtSignal
 from phantasy import CaField
 from phantasy import MachinePortal
+from phantasy import ensure_get
 from phantasy import ensure_put
 from phantasy import PVElement
 from phantasy import PVElementReadonly
@@ -425,12 +426,7 @@ class ScanTask(object):
         Every time set alter element, set initial setting.
         """
         sppv = self.alter_element.setpoint_pv[0]
-        time.sleep(1.0)
-        if sppv.connected:
-            x0 = sppv.get()
-        else:
-            x0 = None
-        self._val0 = x0
+        self._val0 = ensure_get(sppv.pvname)
 
     def get_initial_setting(self):
         """Return the initial setting of alter element.
@@ -656,7 +652,7 @@ class ScanWorker(QObject):
 
         index_array = range(self.starting_index, alter_array.size)
 
-        # override index_array if arbitary index array is defined
+        # override index_array if arbitrary index array is defined
         # could be activated by RETAKE
         if self.index_array is not None:
             index_array = self.index_array
@@ -799,7 +795,7 @@ def read_element(task, etype, mp):
                 fld = PVElement(cset_pv, rdbk_pv)
             else:
                 fld = PVElementReadonly(rdbk_pv)
-            time.sleep(2.0)
+            # time.sleep(2.0)
             elem = fld
         flds.append(fld)
         elems.append(elem)

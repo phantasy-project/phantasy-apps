@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import re
 import time
 from functools import partial
 from getpass import getuser
 
 import epics
 import numpy as np
+import pathlib
 from PyQt5.QtCore import QEventLoop
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QThread
@@ -25,6 +27,9 @@ from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QToolButton
+from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtWidgets import QWidget
 from phantasy import CaField
 from phantasy_ui import BaseAppForm
 from phantasy_ui import random_string
@@ -47,12 +52,14 @@ from .app_points_view import PointsViewWidget
 from .app_save import SaveDataDialog
 from .app_udef_action import UserDefinedActionDialog
 from .app_2d import TwoParamsScanWindow
+from .app_plot_all import PlotAllWidget
 from .data import ScanDataModel
 from .scan import ScanTask
 from .scan import ScanWorker
 from .scan import load_task
 from .ui.ui_app import Ui_MainWindow
 from .utils import COLOR_DANGER, COLOR_INFO, COLOR_WARNING, COLOR_PRIMARY
+from .utils import get_config
 
 BOTTOM_TBTN_ICON_SIZE = 32
 SMALL_TBTN_ICON_SIZE = 20
@@ -105,7 +112,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     # out data from scan task updated
     data_updated = pyqtSignal(QVariant)
 
-    def __init__(self, version, machine, segment):
+    def __init__(self, version: str, machine: str, segment: str, config: str):
         super(CorrelationVisualizerWindow, self).__init__()
 
         # app version
@@ -135,6 +142,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         # UI
         self.setupUi(self)
         self.postInitUi()
+
+        # update task buttons/groups from configuration file.
+        self.init_task_pool(get_config(config))
 
         # daq ctrl btns
         self.start_btn.clicked.connect(self.on_click_start_btn)
@@ -258,6 +268,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
         # points selected viewer
         self.init_attached_widget('pts_viewer')
+
+        # plot all widget
+        self.init_attached_widget('plot_all_widget')
 
         # mps config widget
         self.mps_config_widget = None
@@ -488,14 +501,12 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def save_data(self):
         """save data.
         """
-        if self.scan_worker is None:
-            return
-        if self.scan_worker.is_running():
+        if self.scan_plot_widget.get_all_data()[0].size == 0:
             return
 
         filename, ext = get_save_filename(self,
                 caption="Save data to file",
-                type_filter="JSON Files (*.json);;CSV Files (*.csv);;HDF5 Files (*.hdf5 *.h5)")
+                type_filter="JSON Files (*.json);;CSV Files (*.csv)")
 
         if filename is None:
             return
@@ -561,6 +572,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def _post_init_ui(self):
         """post init ui
         """
+        # hide File -> Save
+        self.actionSave.setVisible(False)
+
         # toolbtns
         # save data
         self.save_data_tbtn.setIconSize(BOTTOM_TBTN_ICON_QSIZE)
@@ -580,6 +594,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         self.autoscale_tbtn.setToolTip("Auto X/Y Scale.")
         self.autoscale_tbtn.setChecked(self.scan_plot_widget.getFigureAutoScale())
 
+        #### deprecated moveto button
         menu = QMenu(self)
         # to peak
         peak_action = QAction('Peak', self)
@@ -599,6 +614,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         menu.addSeparator()
         menu.addAction(hide_action)
         self.moveto_tbtn.setMenu(menu)
+        # hide moveto btn
+        self.moveto_tbtn.setVisible(False)
+        ####
 
         # scan event log textedit
         # clear log btn
@@ -672,6 +690,20 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             partial(self.on_update_data_index, 'x'))
         self.ydata_cbb.currentIndexChanged.connect(
             partial(self.on_update_data_index, 'y'))
+
+        # xyaxis data expression
+        self.xaxis_fn_chkbox.toggled.connect(
+                lambda: self.on_update_data_index('x', self.xdata_cbb.currentIndex()))
+        self.yaxis_fn_chkbox.toggled.connect(
+                lambda: self.on_update_data_index('y', self.ydata_cbb.currentIndex()))
+        self.xaxis_fn_lineEdit.textChanged.connect(
+                lambda: self.on_update_data_index('x', self.xdata_cbb.currentIndex()))
+        self.yaxis_fn_lineEdit.textChanged.connect(
+                lambda: self.on_update_data_index('y', self.ydata_cbb.currentIndex()))
+        # expanded udf expression
+        self._xyaxis_fn_expanded_dict = {}
+        # hint button
+        self.xyaxis_fn_hint_btn.clicked.connect(self.on_xyaxis_fn_hint)
 
         #
         self.scan_pb.setVisible(False)
@@ -998,7 +1030,69 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         idx, idy = self._idx, self._idy
         x, xerr = sm.get_xavg(ind=idx), sm.get_xerr(ind=idx)
         y, yerr = sm.get_yavg(ind=idy), sm.get_yerr(ind=idy)
+
+        # check if xy arithmetic enabled
+        if self.xaxis_fn_chkbox.isChecked() or self.yaxis_fn_chkbox.isChecked():
+            xexp = self.xaxis_fn_lineEdit.text()
+            yexp = self.yaxis_fn_lineEdit.text()
+            _r = re.findall(r"([x,y])(\d+)", xexp + " " + yexp)
+            if _r: # not empty list, [('x', '1'), ('y', '2'), ...]
+                for xoy, i in _r:
+                    k = f"{xoy}{i}"
+                    idx = int(i) - 1
+                    if xoy == 'x':
+                        setattr(self, k, sm.get_xavg(ind=idx))
+                        self._xyaxis_fn_expanded_dict[k] = self.xdata_cbb.itemText(idx).split('-')[-1]
+                    else:
+                        setattr(self, k, sm.get_yavg(ind=idx))
+                        self._xyaxis_fn_expanded_dict[k] = self.ydata_cbb.itemText(idx).split('-')[-1]
+
+        if self.xaxis_fn_chkbox.isChecked():
+            sx = re.sub(r"([x,y])(\d+)", r"self.\1\2", self.xaxis_fn_lineEdit.text())
+            try:
+                _x = eval(sx)
+            except:
+                pass
+            else:
+                x = _x
+                xlbl = re.sub(r"([x,y])(\d+)",
+                        lambda m: self._xyaxis_fn_expanded_dict.get(m.group()),
+                        self.xaxis_fn_lineEdit.text())
+                self.scan_plot_widget.setFigureXlabel(xlbl)
+        if self.yaxis_fn_chkbox.isChecked():
+            sy = re.sub(r"([x,y])(\d+)", r"self.\1\2", self.yaxis_fn_lineEdit.text())
+            try:
+                _y = eval(sy)
+            except:
+                pass
+            else:
+                y = _y
+                ylbl = re.sub(r"([x,y])(\d+)",
+                        lambda m: self._xyaxis_fn_expanded_dict.get(m.group()),
+                        self.yaxis_fn_lineEdit.text())
+                self.scan_plot_widget.setFigureYlabel(ylbl)
+        #
         self.curveUpdated.emit(x, y, xerr, yerr)
+
+        # update all if plot_all button is checked
+        if self.plot_all_widget is not None and self.plot_all_widget.is_show():
+            self.plot_all_widget.update_curve(self._get_all_data())
+
+    @pyqtSlot()
+    def on_xyaxis_fn_hint(self):
+        """Show the hint for udf of xyaxis.
+        """
+        text_list = ["<p>Available list of variable and its corresponding full name:</p>"]
+        for i in range(self.xdata_cbb.count()):
+            text_list.append(f'''<p><span style=" font-style:italic; color:#0055ff;">x{i+1}</span> : <span style=" color:#ff0000;">{self.xdata_cbb.itemText(i).split('-')[-1]}</span></p>''')
+        text_list.append('<hr>')
+        for i in range(self.ydata_cbb.count()):
+            text_list.append(f'''<p><span style=" font-style:italic; color:#0055ff;">y{i+1}</span> : <span style=" color:#ff0000;">{self.ydata_cbb.itemText(i).split('-')[-1]}</span></p>''')
+        text = ''.join(text_list)
+
+        from .app_udef_xyaxis import UDFXYAxisWindow
+        self._w_udf_xyaxis = UDFXYAxisWindow(self, text)
+        self._w_udf_xyaxis.show()
 
     @pyqtSlot()
     def onQuadScanAction(self):
@@ -1216,14 +1310,17 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         """Move cross-ruler to the `xm` where y reaches max.
         *Pos*: 'peak' (default), 'valley', 'hide'.
         """
+
         if pos == 'hide':  # hide cross-ruler
             self.scan_plot_widget.set_visible_hvlines(False)
             self._moveto_flag = False
             return
 
-        if self.scan_worker is None or self.scan_worker.is_running():
-            # scan is not completed, do nothing
+        if self.scan_plot_widget.get_all_data()[0].size == 0:
             return
+        # if self.scan_worker is None or self.scan_worker.is_running():
+        #     # scan is not completed, do nothing
+        #     return
 
         sm = ScanDataModel(self.scan_task.scan_out_data)
         y = sm.get_yavg()
@@ -1238,7 +1335,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             ym = y_min
 
         # draw/update cross-ruler
-        self.scan_plot_widget.draw_hvlines(xm, ym)
+        # mc: mpl4qt.utils.COLOR_CYCLE[0]
+        self.scan_plot_widget.draw_hvlines(xm, ym, pos, mc="#1F77B4")
         self.scan_plot_widget.set_visible_hvlines(True)
         # set moveto_flag
         self._moveto_flag = True
@@ -1247,19 +1345,22 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
     def on_set(self):
         """Set alter_elem where cross-ruler pointing to
         """
-        if not self._moveto_flag:
+        mk_dict = self.scan_plot_widget._markers
+        if not mk_dict:
             QMessageBox.warning(self, "",
-                                "No value to set, click 'MoveTo' button or use " +
-                                "'Cross-ruler' tool to pick the coordinate to moveto",
+                                "No value to set, use 'CTRL + M' to " +
+                                "add a marker on the canvas, if multiple markers are added, " +
+                                "the most recent one will be used to set the device.",
                                 QMessageBox.Ok)
         else:
-            x0 = self.scan_plot_widget._cpoint.get_xdata()[0]
+            mk_name = list(mk_dict.keys())[-1]
+            _, _, _, _, (x0, y0) = mk_dict[mk_name]
             self.scanlogTextColor.emit(COLOR_INFO)
-            self.scanlogUpdated.emit("Setting alter element to {0:.3f}...".format(x0))
+            self.scanlogUpdated.emit(f"Setting alter element to {x0:.3f}...")
             self.scan_task.alter_element.value = x0
-            self.scanlogUpdated.emit("Alter element reaches {0:.3f}.".format(x0))
+            self.scanlogUpdated.emit(f"Alter element reaches {x0:.3f}.")
             QMessageBox.information(self, "",
-                                    "Set alter element to {0:.3f}".format(x0),
+                                    f"Set alter element to {x0:.3f} which is marked by {mk_name}.",
                                     QMessageBox.Ok)
 
     def reset_alter_element(self):
@@ -1379,13 +1480,13 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         monitors = [self.scan_task.alter_element,
                     self.scan_task.monitor_element, ] + \
                    self.scan_task.get_extra_monitors()
-        flds = []
-        for o in monitors:
+        flds = [] # each element is a tuple of (id, fname)
+        for _id, o in enumerate(monitors, 1):
             if isinstance(o, CaField):
                 fld = '{0} [{1}]'.format(o.ename, o.name)
             else:
                 fld = o.fname
-            flds.append(fld)
+            flds.append(f"{_id}-{fld}")
 
         for i, o in zip(('x', 'y'), (self.xdata_cbb, self.ydata_cbb)):
             o.currentIndexChanged.disconnect()
@@ -1401,7 +1502,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
     def get_auto_label(self, xoy):
         # Return labels for xdata/ydata.
-        return getattr(self, '{}data_cbb'.format(xoy)).currentText()
+        current_text = getattr(self, '{}data_cbb'.format(xoy)).currentText()
+        return current_text.split('-')[-1]
 
     @pyqtSlot()
     def on_save_task(self):
@@ -1421,9 +1523,22 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
                 type_filter="JSON Files (*.json)")
         self.load_task_from_file(filepath)
 
+    def _clear_containers(self):
+        #
+        # Clear the mem space for different kinds of objs.
+        #
+        for d in (self.elem_widgets_dict, self._set_alter_array_dialogs, self._sel_elem_dialogs, ):
+            d.clear()
+        for l in (self._extra_monitors, self._indices_for_retake_points, self._indices_for_retake, ):
+            l.clear()
+
     def load_task_from_file(self, filepath):
         if filepath is None:
             return
+        # clear vars
+        self._clear_containers()
+        #
+        #
         printlog("Loading task from {}.".format(filepath))
         scan_task = load_task(filepath, self._mp, self._machine, self._segment)
         if hasattr(scan_task, '_lattice'):
@@ -1437,6 +1552,10 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         else:
             # initial UI widgets with loaded scan_task
             self.init_ui_with_scan_task(scan_task)
+
+        # reset plot_all widget
+        if self.plot_all_widget is not None:
+            self.plot_all_widget.reset()
 
     def init_ui_with_scan_task(self, scan_task):
         # initial UI widgets with *scan_task*.
@@ -1715,3 +1834,73 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         print("-" * 20)
         print("\n")
         print("thread is running?", self.thread.isRunning())
+
+    def init_task_pool(self, conf):
+        # init ui controls for task pool from toml config obj.
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.toolBar.addWidget(spacer)
+        for _, v in conf['TASK_BUTTONS'].items():
+            btn_name = v.get('NAME', None)
+            if btn_name is None:
+                continue
+            btn_tt = v.get('DESC', btn_name)
+            btn = QToolButton()
+            btn.setIcon(QIcon(QPixmap(":/icons/task-btn.png")))
+            btn.setText(btn_name)
+            btn.setToolTip(btn_tt)
+            btn.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+            btn.clicked.connect(partial(self.load_task_from_file, v['FILEPATH']))
+            self.toolBar.addWidget(btn)
+        for _, v in conf['TASK_GROUPS'].items():
+            grp_name = v.get('NAME', None)
+            if grp_name is None:
+                continue
+            grp_tt = v.get('DESC', grp_name)
+            grp_dir = v.get('DIRPATH')
+            btn = QToolButton()
+            menu = QMenu()
+            for f in pathlib.Path(grp_dir).glob("**/*.json"):
+                act = QAction(QIcon(QPixmap(":/icons/task-btn.png")), f.stem, menu)
+                act.triggered.connect(partial(self.load_task_from_file, f.as_posix()))
+                menu.addAction(act)
+            btn.setMenu(menu)
+            btn.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+            btn.setToolTip(grp_tt)
+            btn.setText(grp_name)
+            btn.setPopupMode(QToolButton.MenuButtonPopup)
+            btn.setIcon(QIcon(QPixmap(":/icons/task-group.png")))
+            self.toolBar.addWidget(btn)
+
+    @pyqtSlot()
+    def on_plot_all(self):
+        """Plot and update all curves in one figure if *is_checked*.
+        """
+        data = self._get_all_data()
+        if data is None:
+            return
+        if self.plot_all_widget is None:
+            self.plot_all_widget = PlotAllWidget(self, data)
+        else:
+            self.plot_all_widget.update_curve(data)
+        self.plot_all_widget.show()
+        self.plot_all_widget._show_flag = True
+
+    def _get_all_data(self):
+        # prepare data array
+        if self._current_arr is None:
+            QMessageBox.warning(self, "Get All Data Array",
+                    "Failed to get any data, load or start a task.",
+                    QMessageBox.Ok)
+            return None
+        sm = ScanDataModel(self._current_arr)
+        xlbl = self.xdata_cbb.itemText(self._idx)
+        x, xerr = sm.get_xavg(ind=self._idx), sm.get_xerr(ind=self._idx)
+        ynlines = [(xlbl, x, xerr)]
+        # [(lbl, yi, yi_err), ...], y0:x, y1:y
+        for i in range(0, sm.shape[-1]):
+            lbl = self.xdata_cbb.itemText(i)
+            if lbl == xlbl:
+                continue
+            ynlines.append((lbl, sm.get_avg()[:, i], sm.get_err()[:, i]))
+        return ynlines

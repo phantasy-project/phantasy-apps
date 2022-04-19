@@ -239,6 +239,70 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # init AA
         self.init_aa()
 
+        # init filter string buttons
+        self.init_filter_str_ctls()
+
+    def init_filter_str_ctls(self):
+        """Create convenient buttons for load filter strings.
+        """
+        conf = self.pref_dict
+        for _, v in conf['FILTER_BUTTONS'].items():
+            filepath = v.get('FILEPATH', None)
+            if filepath is None:
+                continue
+            if not os.path.isfile(filepath):
+                continue
+            _conf = toml.load(filepath)
+            btn_tt = _conf['filter_config'].get('description')
+            btn_name = _conf['filter_config'].get('name')
+            btn = QToolButton()
+            btn.setIcon(QIcon(QPixmap(":/sm-icons/filter.png")))
+            btn.setIconSize(QSize(30, 30))
+            btn.setText(btn_name)
+            btn.setToolTip(btn_tt)
+            btn.setAutoRaise(True)
+            btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            btn.clicked.connect(partial(self.load_filter_from_file, filepath))
+            self.filters_hbox.addWidget(btn)
+
+        for _, v in conf['FILTER_GROUPS'].items():
+            grp_name = v.get('NAME', None)
+            if grp_name is None:
+                continue
+            grp_tt = v.get('DESC', grp_name)
+            grp_dir = v.get('DIRPATH')
+            btn = QToolButton()
+            menu = QMenu()
+            for f in pathlib.Path(grp_dir).glob("**/*.flt"):
+                act = QAction(QIcon(QPixmap(":/sm-icons/filter.png")), f.stem, menu)
+                act.triggered.connect(partial(self.load_filter_from_file, f.as_posix()))
+                menu.addAction(act)
+            btn.setMenu(menu)
+            # btn.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+            btn.setToolTip(grp_tt)
+            btn.setText(grp_name)
+            btn.setPopupMode(QToolButton.MenuButtonPopup)
+            btn.setIcon(QIcon(QPixmap(":/sm-icons/rocket.png")))
+            btn.setIconSize(QSize(30, 30))
+            btn.setAutoRaise(True)
+            self.filters_hbox.addWidget(btn)
+
+    def load_filter_from_file(self, path):
+        """Set settings filter with the .flt config from *path*.
+        """
+        conf = toml.load(path)
+        text = conf['filter_config'].get('string', '')
+        wildcard_flag = conf['filter_config'].get('strict_wildcard', False)
+        check_all_flag = conf['filter_config'].get('check_all_items', False)
+        #
+        self.filter_btn.setChecked(True)
+        self.filter_lineEdit.setText(text)
+        self.strict_wildcard_chkbox.setChecked(wildcard_flag)
+        #
+        self.filter_lineEdit.editingFinished.emit()
+        if check_all_flag and self._tv.model() is not None:
+            delayed_exec(lambda:self.select_all_btn.clicked.emit(), 1000)
+
     def init_aa(self):
         self._aa_data_client = None
         self._aa_mgmt_client = None
@@ -1077,15 +1141,21 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             switch_menu.setToolTipsVisible(True)
 
         # External apps
+        def _launch_app(_exec, _args='', _cwd=None):
+            Popen(f'{_exec} {_args}', cwd=_cwd, shell=True)
         apps_conf = self.pref_dict.get('EXTERNAL_APPS', None)
         if apps_conf is None:
             return menu
         for _, _app_conf in apps_conf.items():
             _app_name = _app_conf['NAME']
             _app_exec = _app_conf['EXEC']
-            _app_args = _app_conf['ARGS'].format(element_name=text)
+            _app_args = _app_conf.get('ARGS', '').format(ename=text,
+                    machine=self._last_machine_name, segment=self._last_lattice_name)
+            _app_cwd = _app_conf.get('CWD', '')
+            if _app_cwd == '':
+                _app_cwd = None
             _app_act = QAction(self._ext_app_icon, "Start " + _app_name, menu)
-            _app_act.triggered.connect(lambda:Popen(f'{_app_exec} {_app_args}', shell=True))
+            _app_act.triggered.connect(partial(_launch_app, _app_exec, _app_args, _app_cwd))
             menu.addAction(_app_act)
 
         return menu
@@ -1263,6 +1333,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # scaling factor
         scaling_factor = float(self.scaling_factor_lineEdit.text())
+        # scale operator, default is 'x'
+        scale_op = self.scale_op_cbb.currentText()
         #
         self.idx_px_list = []  # list to apply icon [(idx_src, px, log_msg)]
         settings_selected = m.get_selection()
@@ -1289,7 +1361,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if r == QMessageBox.Cancel:
             return
 
-        self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor),
+        self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor, scale_op),
                             daq_seq=settings_selected)
         self.applyer.daqStarted.connect(lambda:self.apply_pb.setVisible(True))
         self.applyer.daqStarted.connect(partial(
@@ -1303,12 +1375,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.applyer.daqFinished.connect(lambda:self.single_update_btn.clicked.emit())
         self.applyer.start()
 
-    def apply_single(self, sf, tuple_idx_settings):
+    def apply_single(self, sf, sop, tuple_idx_settings):
+        # sop: scale operator
         idx_src, settings, new_fval0 = tuple_idx_settings
         elem, fname, fld, fval0 = settings
         ename = elem.name
         # print("New fval: {}, fval0: {}".format(new_fval0, fval0))
-        fval_to_set = new_fval0 * sf
+        if sop == 'x':
+            fval_to_set = new_fval0 * sf
+        elif sop == '+':
+            fval_to_set = new_fval0 + sf
         try:
             t0 = time.time()
             fval_current_settings = fld.current_setting()
@@ -1589,7 +1665,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.init_settings = enabled
         self.pref_dict['SETTINGS']['INIT_SETTINGS'] = enabled
         if enabled and self._mp is not None:
-            self._elem_list = self._lat[:]
+            self._elem_list[:] = self._lat[:]
             self.element_list_changed.emit()
 
     @pyqtSlot(int)
@@ -2220,6 +2296,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._tv.setColumnHidden(idx, f)
 
     def turn_off_updater_if_necessary(self):
+        # This is not safe, to be improved!!!
         if self.update_ctrl_btn.isChecked():
             self.update_ctrl_btn.setChecked(False)
             milli_sleep(100)
@@ -2608,7 +2685,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 _invalid_elem_list.append((ename, settings))
             else:
                 _elem_list.append(_elem)
-        self._elem_list = _elem_list
+        self._elem_list[:] = _elem_list
         if _invalid_elem_list:
             self.on_show_invalid_elemlist(_invalid_elem_list)
             print(f"Skip non-existing devices: {_invalid_elem_list}")
