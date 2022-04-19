@@ -1877,6 +1877,8 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         """Plot and update all curves in one figure if *is_checked*.
         """
         data = self._get_all_data()
+        if data is None:
+            return
         if self.plot_all_widget is None:
             self.plot_all_widget = PlotAllWidget(self, data)
         else:
@@ -1886,6 +1888,11 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
     def _get_all_data(self):
         # prepare data array
+        if self._current_arr is None:
+            QMessageBox.warning(self, "Get All Data Array",
+                    "Failed to get any data, load or start a task.",
+                    QMessageBox.Ok)
+            return None
         sm = ScanDataModel(self._current_arr)
         xlbl = self.xdata_cbb.itemText(self._idx)
         x, xerr = sm.get_xavg(ind=self._idx), sm.get_xerr(ind=self._idx)
