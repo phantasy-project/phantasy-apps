@@ -793,19 +793,6 @@ class Ui_MainWindow(object):
         self.label_14 = QtWidgets.QLabel(self.plot_groupBox)
         self.label_14.setObjectName("label_14")
         self.gridLayout_3.addWidget(self.label_14, 1, 3, 1, 1)
-        self.xdata_cbb = QtWidgets.QComboBox(self.plot_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.xdata_cbb.sizePolicy().hasHeightForWidth())
-        self.xdata_cbb.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.xdata_cbb.setFont(font)
-        self.xdata_cbb.setObjectName("xdata_cbb")
-        self.gridLayout_3.addWidget(self.xdata_cbb, 1, 2, 1, 1)
         self.yaxis_fn_lineEdit = QtWidgets.QLineEdit(self.plot_groupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -841,16 +828,6 @@ class Ui_MainWindow(object):
         self.xaxis_fn_lineEdit.setText("")
         self.xaxis_fn_lineEdit.setObjectName("xaxis_fn_lineEdit")
         self.gridLayout_3.addWidget(self.xaxis_fn_lineEdit, 0, 2, 1, 1)
-        self.xaxis_fn_chkbox = QtWidgets.QCheckBox(self.plot_groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.xaxis_fn_chkbox.sizePolicy().hasHeightForWidth())
-        self.xaxis_fn_chkbox.setSizePolicy(sizePolicy)
-        self.xaxis_fn_chkbox.setObjectName("xaxis_fn_chkbox")
-        self.gridLayout_3.addWidget(self.xaxis_fn_chkbox, 0, 0, 1, 1)
         self.yaxis_fn_chkbox = QtWidgets.QCheckBox(self.plot_groupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -861,6 +838,33 @@ class Ui_MainWindow(object):
         self.yaxis_fn_chkbox.setSizePolicy(sizePolicy)
         self.yaxis_fn_chkbox.setObjectName("yaxis_fn_chkbox")
         self.gridLayout_3.addWidget(self.yaxis_fn_chkbox, 0, 3, 1, 1)
+        self.xdata_cbb = QtWidgets.QComboBox(self.plot_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.xdata_cbb.sizePolicy().hasHeightForWidth())
+        self.xdata_cbb.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.xdata_cbb.setFont(font)
+        self.xdata_cbb.setObjectName("xdata_cbb")
+        self.gridLayout_3.addWidget(self.xdata_cbb, 1, 2, 1, 1)
+        self.xaxis_fn_chkbox = QtWidgets.QCheckBox(self.plot_groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.xaxis_fn_chkbox.sizePolicy().hasHeightForWidth())
+        self.xaxis_fn_chkbox.setSizePolicy(sizePolicy)
+        self.xaxis_fn_chkbox.setObjectName("xaxis_fn_chkbox")
+        self.gridLayout_3.addWidget(self.xaxis_fn_chkbox, 0, 0, 1, 1)
+        self.plot_all_btn = QtWidgets.QToolButton(self.plot_groupBox)
+        self.plot_all_btn.setCheckable(False)
+        self.plot_all_btn.setObjectName("plot_all_btn")
+        self.gridLayout_3.addWidget(self.plot_all_btn, 1, 5, 1, 1)
         self.gridLayout_4.addLayout(self.gridLayout_3, 1, 1, 1, 1)
         self.horizontalLayout_4.addWidget(self.h_splitter)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -990,6 +994,7 @@ class Ui_MainWindow(object):
             self.xaxis_fn_lineEdit.setEnabled)
         self.yaxis_fn_chkbox.toggled['bool'].connect(
             self.yaxis_fn_lineEdit.setEnabled)
+        self.plot_all_btn.clicked.connect(MainWindow.on_plot_all)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.alter_elem_lineEdit,
                                self.select_alter_elem_btn)
@@ -1183,18 +1188,21 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "y2"))
         self.xaxis_fn_lineEdit.setPlaceholderText(
             _translate("MainWindow", "x1"))
-        self.xaxis_fn_chkbox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Check to enable user-defined functions.</p></body></html>"
-            ))
-        self.xaxis_fn_chkbox.setText(_translate("MainWindow", "X="))
         self.yaxis_fn_chkbox.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Check to enable user-defined functions.</p></body></html>"
             ))
         self.yaxis_fn_chkbox.setText(_translate("MainWindow", "Y="))
+        self.xaxis_fn_chkbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Check to enable user-defined functions.</p></body></html>"
+            ))
+        self.xaxis_fn_chkbox.setText(_translate("MainWindow", "X="))
+        self.plot_all_btn.setToolTip(
+            _translate("MainWindow", "Plot all curves in one figure."))
+        self.plot_all_btn.setText(_translate("MainWindow", "Plot All"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menuTools.setTitle(_translate("MainWindow", "&Tools"))
