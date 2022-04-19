@@ -52,6 +52,7 @@ from .app_points_view import PointsViewWidget
 from .app_save import SaveDataDialog
 from .app_udef_action import UserDefinedActionDialog
 from .app_2d import TwoParamsScanWindow
+from .app_plot_all import PlotAllWidget
 from .data import ScanDataModel
 from .scan import ScanTask
 from .scan import ScanWorker
@@ -267,6 +268,9 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
         # points selected viewer
         self.init_attached_widget('pts_viewer')
+
+        # plot all widget
+        self.init_attached_widget('plot_all_widget')
 
         # mps config widget
         self.mps_config_widget = None
@@ -1070,6 +1074,10 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.curveUpdated.emit(x, y, xerr, yerr)
 
+        # update all if plot_all button is checked
+        if self.plot_all_widget is not None and self.plot_all_widget.is_show():
+            self.plot_all_widget.update_curve(self._get_all_data())
+
     @pyqtSlot()
     def on_xyaxis_fn_hint(self):
         """Show the hint for udf of xyaxis.
@@ -1515,7 +1523,6 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
                 type_filter="JSON Files (*.json)")
         self.load_task_from_file(filepath)
 
-
     def _clear_containers(self):
         #
         # Clear the mem space for different kinds of objs.
@@ -1531,6 +1538,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         # clear vars
         self._clear_containers()
         #
+        #
         printlog("Loading task from {}.".format(filepath))
         scan_task = load_task(filepath, self._mp, self._machine, self._segment)
         if hasattr(scan_task, '_lattice'):
@@ -1544,6 +1552,10 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
         else:
             # initial UI widgets with loaded scan_task
             self.init_ui_with_scan_task(scan_task)
+
+        # reset plot_all widget
+        if self.plot_all_widget is not None:
+            self.plot_all_widget.reset()
 
     def init_ui_with_scan_task(self, scan_task):
         # initial UI widgets with *scan_task*.
@@ -1859,3 +1871,29 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
             btn.setPopupMode(QToolButton.MenuButtonPopup)
             btn.setIcon(QIcon(QPixmap(":/icons/task-group.png")))
             self.toolBar.addWidget(btn)
+
+    @pyqtSlot()
+    def on_plot_all(self):
+        """Plot and update all curves in one figure if *is_checked*.
+        """
+        data = self._get_all_data()
+        if self.plot_all_widget is None:
+            self.plot_all_widget = PlotAllWidget(self, data)
+        else:
+            self.plot_all_widget.update_curve(data)
+        self.plot_all_widget.show()
+        self.plot_all_widget._show_flag = True
+
+    def _get_all_data(self):
+        # prepare data array
+        sm = ScanDataModel(self._current_arr)
+        xlbl = self.xdata_cbb.itemText(self._idx)
+        x, xerr = sm.get_xavg(ind=self._idx), sm.get_xerr(ind=self._idx)
+        ynlines = [(xlbl, x, xerr)]
+        # [(lbl, yi, yi_err), ...], y0:x, y1:y
+        for i in range(0, sm.shape[-1]):
+            lbl = self.xdata_cbb.itemText(i)
+            if lbl == xlbl:
+                continue
+            ynlines.append((lbl, sm.get_avg()[:, i], sm.get_err()[:, i]))
+        return ynlines
