@@ -678,7 +678,7 @@ class ScanWorker(QObject):
                 break
 
             alter_action(x, alter_elem=alter_elem, tolerance=tol,
-                         timeout=wait_sec, extra_wait=extra_wait_sec)
+                         timeout=wait_sec, extra_wait=extra_wait_sec, alter_idx=idx)
 
             # DAQ
             for i in range(nshot):
