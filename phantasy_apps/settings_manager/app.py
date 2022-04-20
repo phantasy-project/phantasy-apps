@@ -1851,18 +1851,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         px = self._pwr_unknown_px
         tt = "Power is UNKNOWN"
         elem = self._lat[o.ename]
-        if elem.family != 'CAV':
-            if 'PWRSTS' in elem.fields:
-                pwr_fld = elem.get_field('PWRSTS')
-                pwr_is_on = pwr_fld.value
-
-                if pwr_is_on == 1.0:
-                    px = self._pwr_on_px
-                    tt = "Power is ON"
-                elif pwr_is_on == 0.0:
-                    px = self._pwr_off_px
-                    tt = "Power is OFF"
-        else: # CAV
+        if elem.family == 'CAV':
             r = re.match(r".*([1-3]+).*", o.name)
             if r is not None: # D0987
                 _fname = 'LKSTS' + r.group(1)
@@ -1878,9 +1867,29 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 px = self._pwr_off_px
                 tt = "Device is Unlocked"
 
-        # emit signal to update power status
-        worker.meta_signal1.emit((pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
-        worker.meta_signal1.emit((pwr_idx, tt, Qt.ToolTipRole))
+            # emit signal to update power status
+            worker.meta_signal1.emit((pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit((pwr_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "CHP":
+            reprate = caget(elem.pv('REP_RATE')[0], as_string=True)
+            worker.meta_signal1.emit((pwr_idx, reprate, Qt.DisplayRole))
+            worker.meta_signal1.emit((pwr_idx, f"Chopper rep-rate is {reprate}, mode '{elem.REP_RATE}'", Qt.ToolTipRole))
+        else: # others
+            if 'PWRSTS' in elem.fields:
+                pwr_fld = elem.get_field('PWRSTS')
+                pwr_is_on = pwr_fld.value
+
+                if pwr_is_on == 1.0:
+                    px = self._pwr_on_px
+                    tt = "Power is ON"
+                elif pwr_is_on == 0.0:
+                    px = self._pwr_off_px
+                    tt = "Power is OFF"
+
+            # emit signal to update power status
+            worker.meta_signal1.emit((pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit((pwr_idx, tt, Qt.ToolTipRole))
         #
         cnt_fld += 1
         return cnt_fld
