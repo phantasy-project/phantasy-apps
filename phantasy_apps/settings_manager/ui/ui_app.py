@@ -51,6 +51,7 @@ class Ui_MainWindow(object):
         self.settingsView.setSizePolicy(sizePolicy)
         self.settingsView.setSelectionMode(
             QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.settingsView.setUniformRowHeights(True)
         self.settingsView.setObjectName("settingsView")
         self.gridLayout.addWidget(self.settingsView, 3, 1, 1, 16)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -444,6 +445,9 @@ class Ui_MainWindow(object):
         self.snp_ms_chkbox = QtWidgets.QCheckBox(self.centralwidget)
         self.snp_ms_chkbox.setObjectName("snp_ms_chkbox")
         self.horizontalLayout_2.addWidget(self.snp_ms_chkbox)
+        self.wysiwyc_chkbox = QtWidgets.QCheckBox(self.centralwidget)
+        self.wysiwyc_chkbox.setObjectName("wysiwyc_chkbox")
+        self.horizontalLayout_2.addWidget(self.wysiwyc_chkbox)
         self.line_4 = QtWidgets.QFrame(self.centralwidget)
         self.line_4.setFrameShape(QtWidgets.QFrame.VLine)
         self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -819,6 +823,7 @@ class Ui_MainWindow(object):
             QtWidgets.QAbstractItemView.NoDragDrop)
         self.snp_treeView.setIndentation(10)
         self.snp_treeView.setRootIsDecorated(True)
+        self.snp_treeView.setUniformRowHeights(True)
         self.snp_treeView.setSortingEnabled(False)
         self.snp_treeView.setAnimated(True)
         self.snp_treeView.setObjectName("snp_treeView")
@@ -1263,6 +1268,8 @@ class Ui_MainWindow(object):
             self.init_settings_lbl.setVisible)
         self.show_disconnected_btn.toggled['bool'].connect(
             MainWindow.on_show_disconnected_items)
+        self.wysiwyc_chkbox.toggled['bool'].connect(
+            MainWindow.on_toggle_wysiwyc)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
@@ -1363,6 +1370,12 @@ class Ui_MainWindow(object):
         self.total_field_number_lbl.setText(_translate("MainWindow", "0"))
         self.snp_ms_chkbox.setText(
             _translate("MainWindow", "Take Snapshot with Machine State"))
+        self.wysiwyc_chkbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>If checked, take the snapshot in the way of \'What You See Is What You Capture\'.</p></body></html>"
+            ))
+        self.wysiwyc_chkbox.setText(_translate("MainWindow", "WYSIWYC"))
         self.auto_ndigit_chkbox.setToolTip(
             _translate("MainWindow",
                        "Change data presenting format to \'{n}g\'."))
