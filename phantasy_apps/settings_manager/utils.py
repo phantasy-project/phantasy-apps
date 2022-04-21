@@ -58,7 +58,8 @@ COLUMN_NAMES2 = [
     f'{DELTA}({X2},{X0})',
     f'{DELTA}({X1},{X2})',
     'Tolerance', 'Writable', f'{X2}/{X0}',
-    'Power',
+    # 'Power',
+    'State',
 ]
 COLUMN_SFIELD_MAP = OrderedDict((
     ('Type', 'family'),
