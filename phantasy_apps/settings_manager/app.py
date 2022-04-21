@@ -121,7 +121,8 @@ FILTER_TT = """\
 Filter strings 'keyword=pattern', multiple conditions could be linked with 'and', support 'in'
 test. More details please click the right help button."""
 TS_FMT = "%Y-%m-%dT%H:%M:%S.%f"
-_, LOG_FILE = tempfile.mkstemp(datetime.now().strftime(TS_FMT), "settings_manager_setlog_", "/tmp")
+_, LOG_FILE = tempfile.mkstemp(datetime.now().strftime(TS_FMT),
+                               "settings_manager_setlog_", "/tmp")
 
 NOW_DT = datetime.now()
 NOW_YEAR = NOW_DT.year
@@ -274,8 +275,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             btn = QToolButton()
             menu = QMenu()
             for f in pathlib.Path(grp_dir).glob("**/*.flt"):
-                act = QAction(QIcon(QPixmap(":/sm-icons/filter.png")), f.stem, menu)
-                act.triggered.connect(partial(self.load_filter_from_file, f.as_posix()))
+                act = QAction(QIcon(QPixmap(":/sm-icons/filter.png")), f.stem,
+                              menu)
+                act.triggered.connect(
+                    partial(self.load_filter_from_file, f.as_posix()))
                 menu.addAction(act)
             btn.setMenu(menu)
             # btn.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
@@ -301,7 +304,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.filter_lineEdit.editingFinished.emit()
         if check_all_flag and self._tv.model() is not None:
-            delayed_exec(lambda:self.select_all_btn.clicked.emit(), 1000)
+            delayed_exec(lambda: self.select_all_btn.clicked.emit(), 1000)
 
     def init_aa(self):
         self._aa_data_client = None
@@ -312,10 +315,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         data_client_conf = aa_conf.get('DATA_CLIENT', None)
         if data_client_conf is not None:
-            self._aa_data_client = ArchiverDataClient(data_client_conf.get('URL'))
+            self._aa_data_client = ArchiverDataClient(
+                data_client_conf.get('URL'))
         mgmt_client_conf = aa_conf.get('MGMT_CLIENT', None)
         if mgmt_client_conf is not None:
-            self._aa_mgmt_client = ArchiverMgmtClient(mgmt_client_conf.get('URL'))
+            self._aa_mgmt_client = ArchiverMgmtClient(
+                mgmt_client_conf.get('URL'))
         # print(self._aa_data_client)
         # print(self._aa_mgmt_client)
 
@@ -333,17 +338,24 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.dsrc_mode = DATA_SOURCE_MODE
         self.db_engine = DB_ENGINE
         self.data_uri = DATA_URI
-        self.dsrc_dict = {'mode': self.dsrc_mode, 'engine': self.db_engine, 'uri': self.data_uri}
+        self.dsrc_dict = {
+            'mode': self.dsrc_mode,
+            'engine': self.db_engine,
+            'uri': self.data_uri
+        }
 
-        self.tolerance_changed[ToleranceSettings].connect(self.on_tolerance_dict_changed)
+        self.tolerance_changed[ToleranceSettings].connect(
+            self.on_tolerance_dict_changed)
         self.tolerance_changed[float].connect(self.on_tolerance_float_changed)
         self.model_settings_changed.connect(self.on_model_settings_changed)
         self.element_from_pv_added.connect(self.on_element_from_pv_added)
         self.ndigit_changed.connect(self.on_ndigit_changed)
 
         # init dir
-        confdir = self.pref_dict['SETTINGS']['SUPPORT_CONFIG_PATH'] if confdir is None else confdir
-        self.pref_dict['SETTINGS']['SUPPORT_CONFIG_PATH'] = os.path.abspath(os.path.expanduser(confdir))
+        confdir = self.pref_dict['SETTINGS'][
+            'SUPPORT_CONFIG_PATH'] if confdir is None else confdir
+        self.pref_dict['SETTINGS']['SUPPORT_CONFIG_PATH'] = os.path.abspath(
+            os.path.expanduser(confdir))
         _, ts_confpath, ms_confpath, elem_confpath = init_config_dir(confdir)
 
         # tolerance settings (ts)
@@ -366,7 +378,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.font_changed.connect(self.on_font_changed)
 
         # init settings boolean
-        self.init_settings_changed.connect(self.init_settings_chkbox.setChecked)
+        self.init_settings_changed.connect(
+            self.init_settings_chkbox.setChecked)
 
     @pyqtSlot()
     def on_auto_column_width(self):
@@ -456,19 +469,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if not self._post_info:
             return
         if not self.init_settings:
-            QMessageBox.information(self, "Loaded Lattice",
-                                    '<html><head/><body><p>Lattice is loaded, add device settings '
-                                    'via <span style=" font-style:italic;">Add Devices</span> or '
-                                    '<span style=" font-style:italic;">Load Settings </span>tools,'
-                                    ' or check <span style=" font-style:italic;">Initialize with '
-                                    'loaded lattice</span> in the right bottom window area to '
-                                    'list all the devices.</p></body></html>',
-                                    QMessageBox.Ok)
+            QMessageBox.information(
+                self, "Loaded Lattice",
+                '<html><head/><body><p>Lattice is loaded, add device settings '
+                'via <span style=" font-style:italic;">Add Devices</span> or '
+                '<span style=" font-style:italic;">Load Settings </span>tools,'
+                ' or check <span style=" font-style:italic;">Initialize with '
+                'loaded lattice</span> in the right bottom window area to '
+                'list all the devices.</p></body></html>', QMessageBox.Ok)
 
     def _enable_widgets(self, enabled):
         for w in (self.lv_lbl, self.lv_mach_lbl, self.lv_segm_lbl,
-                  self.lv_view_btn,
-                  self.reload_lattice_btn):
+                  self.lv_view_btn, self.reload_lattice_btn):
             w.setEnabled(enabled)
 
     def update_lattice_info_lbls(self, mach, segm):
@@ -495,12 +507,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def __on_show_settings(self):
         # visualize settings
         printlog("Setting data model...")
-        model = SettingsModel(self._tv, self.__flat_settings,
-                              ndigit=self.ndigit, font=self.font,
+        model = SettingsModel(self._tv,
+                              self.__flat_settings,
+                              ndigit=self.ndigit,
+                              font=self.font,
                               auto_fmt=self.auto_ndigit_chkbox.isChecked())
         model.settings_sts.connect(self.on_settings_sts)
         model.item_deletion_updated[list].connect(self.on_delete_items)
-        model.checked_items_inc_dec_updated.connect(self.total_number_checked_items_changed)
+        model.checked_items_inc_dec_updated.connect(
+            self.total_number_checked_items_changed)
         model.set_model()
         self._fld_obj = model._fld_obj
         self._fld_it = model._fld_it
@@ -535,8 +550,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._machstate = None
 
     def __post_init_ui(self):
+        # WYSIWYC flag:
+        self._wysiwyc_enabled = False
+        #
         # total number of checked items
-        self.total_number_checked_items_changed.connect(self.on_nchecked_changed)
+        self.total_number_checked_items_changed.connect(
+            self.on_nchecked_changed)
         # enable machine state with take snapshot or not
         self.snp_ms_chkbox.toggled.connect(self.on_toggled_ms)
         self.snp_ms_chkbox.setChecked(MS_ENABLED)
@@ -566,13 +585,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._mp = None
         self._last_machine_name = None
         self._last_lattice_name = None
-        self._lat = None # loaded from latticeWidget
+        self._lat = None  # loaded from latticeWidget
         self._elem_list = []  # element list for SettingsModel
 
         self.__settings = Settings()
         self.__flat_settings = None
 
-        self._eval_scaling_factor = False # not eval sf (hit enter)
+        self._eval_scaling_factor = False  # not eval sf (hit enter)
 
         self._eng_phy_toggle = {'ENG': True, 'PHY': False}
         self.on_lattice_changed(self._mp)
@@ -586,7 +605,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._machstate = None
 
         # snp dock
-        self.snp_dock.closed.connect(lambda:self.actionSnapshots.setChecked(False))
+        self.snp_dock.closed.connect(
+            lambda: self.actionSnapshots.setChecked(False))
         self.actionSnapshots.setChecked(True)
 
         # show lattice settings
@@ -600,7 +620,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # icon
         self.done_px = QPixmap(":/sm-icons/done.png")
         self.fail_px = QPixmap(":/sm-icons/fail.png")
-        self._warning_px = QPixmap(":/sm-icons/warning.png").scaled(PX_SIZE, PX_SIZE)
+        self._warning_px = QPixmap(":/sm-icons/warning.png").scaled(
+            PX_SIZE, PX_SIZE)
         self._no_warning_px = QPixmap(QSize(PX_SIZE, PX_SIZE))
         self._no_warning_px.fill(QColor(*BG_COLOR_GOLDEN_NO))
         self._ok_px = QPixmap(":/sm-icons/ok.png")
@@ -622,7 +643,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._turn_on_icon = QIcon(QPixmap(":/sm-icons/bolt_on.png"))
         self._turn_off_icon = QIcon(QPixmap(":/sm-icons/bolt_off.png"))
         self._power_switch_icon = QIcon(QPixmap(":/sm-icons/power_switch.png"))
-        self._warning_amber_icon = QIcon(QPixmap(":/sm-icons/warning_amber.png"))
+        self._warning_amber_icon = QIcon(
+            QPixmap(":/sm-icons/warning_amber.png"))
         self._chart_icon = QIcon(QPixmap(":/sm-icons/chart.png"))
         self._ext_app_icon = QIcon(QPixmap(":/sm-icons/rocket.png"))
 
@@ -631,12 +653,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # uncheck init_settings_chkbox when init_settings_btn is unchecked
         # other slots are set in designer.
-        self.show_init_settings_btn.toggled.connect(self.on_toggle_show_init_settings_btn)
+        self.show_init_settings_btn.toggled.connect(
+            self.on_toggle_show_init_settings_btn)
         #
         # selection, check/uncheck, for settings apply
-        self.select_all_btn.clicked.connect(partial(self.on_select, 'all', True))
-        self.invert_selection_btn.clicked.connect(partial(self.on_select, 'invert', None))
-        self.deselect_all_btn.clicked.connect(partial(self.on_select, 'all', False))
+        self.select_all_btn.clicked.connect(
+            partial(self.on_select, 'all', True))
+        self.invert_selection_btn.clicked.connect(
+            partial(self.on_select, 'invert', None))
+        self.deselect_all_btn.clicked.connect(
+            partial(self.on_select, 'all', False))
 
         # filter
         self.init_filter()
@@ -651,7 +677,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # context menu
         self.set_context_menu()
         self._probe_widgets_dict = {}
-        self._data_trend_widgets_dict = {} # key: (ename, fname)
+        self._data_trend_widgets_dict = {}  # key: (ename, fname)
 
         # dnd
         self.setAcceptDrops(True)
@@ -663,10 +689,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         zoom0.activated.connect(partial(self.on_change_font_size, 0))
         zoom_in.activated.connect(partial(self.on_change_font_size, 1))
         zoom_out.activated.connect(partial(self.on_change_font_size, -1))
-        self.grow_fontsize_btn.clicked.connect(partial(
-            self.on_change_font_size, 1))
-        self.shrink_fontsize_btn.clicked.connect(partial(
-            self.on_change_font_size, -1))
+        self.grow_fontsize_btn.clicked.connect(
+            partial(self.on_change_font_size, 1))
+        self.shrink_fontsize_btn.clicked.connect(
+            partial(self.on_change_font_size, -1))
 
         # query tips
         self._query_tips_form = None
@@ -675,7 +701,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # snapshot dock
         self._snp_dock_list = []  # for snp_treeView
-        self.snapshots_changed.connect(lambda:self.on_snapshots_changed())
+        self.snapshots_changed.connect(lambda: self.on_snapshots_changed())
         self.snapshots_changed.emit()
 
         # apply pb
@@ -696,10 +722,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.on_data_uri_changed(True, self.data_uri)
 
         # take snapshot tool
-        self.actionTake_Snapshot.triggered.connect(lambda:self.take_snapshot())
+        self.actionTake_Snapshot.triggered.connect(
+            lambda: self.take_snapshot())
 
         # take machine state tool
-        self.actionCapture_machstate.triggered.connect(self.on_capture_machstate)
+        self.actionCapture_machstate.triggered.connect(
+            self.on_capture_machstate)
 
         # scaling factor hint
         self.snp_loaded.connect(self.on_hint_scaling_factor)
@@ -712,7 +740,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_saved.connect(self.on_snp_saved)
 
         # log dock
-        self.log_dock.closed.connect(lambda:self.actionShow_Device_Settings_Log.setChecked(False))
+        self.log_dock.closed.connect(
+            lambda: self.actionShow_Device_Settings_Log.setChecked(False))
         self.actionShow_Device_Settings_Log.setChecked(False)
 
         # hide findtext_lbl and findtext_lineEdit
@@ -720,34 +749,46 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             o.setVisible(False)
 
         # snp wdir new?
-        self.snp_new_lbl.setPixmap(QPixmap(":/sm-icons/new.png").scaled(PX_SIZE, PX_SIZE))
+        self.snp_new_lbl.setPixmap(
+            QPixmap(":/sm-icons/new.png").scaled(PX_SIZE, PX_SIZE))
         self.snp_new_lbl.setVisible(False)
 
         # expand all snps
         self.snp_expand_btn.setChecked(True)
 
         # tag,ions filters, radiobtn
-        self.select_all_ions_btn.clicked.connect(partial(self.on_snp_filters_select_all_ions, True))
-        self.select_none_ions_btn.clicked.connect(partial(self.on_snp_filters_select_all_ions, False))
-        self.select_all_tags_btn.clicked.connect(partial(self.on_snp_filters_select_all_tags, True))
-        self.select_none_tags_btn.clicked.connect(partial(self.on_snp_filters_select_all_tags, False))
+        self.select_all_ions_btn.clicked.connect(
+            partial(self.on_snp_filters_select_all_ions, True))
+        self.select_none_ions_btn.clicked.connect(
+            partial(self.on_snp_filters_select_all_ions, False))
+        self.select_all_tags_btn.clicked.connect(
+            partial(self.on_snp_filters_select_all_tags, True))
+        self.select_none_tags_btn.clicked.connect(
+            partial(self.on_snp_filters_select_all_tags, False))
 
         # settings view filter btn status
-        self.filter_btn_group_status_changed.connect(self.on_filter_btn_group_status_changed)
+        self.filter_btn_group_status_changed.connect(
+            self.on_filter_btn_group_status_changed)
         self.filter_btn_group_status_changed.emit()
 
         # pos filter button, apply logic OR for pos1 and pos2 filter
-        self.pos_filter_btn.clicked.connect(lambda:self.pos_dspin.setValue(STRIPPER_POS))
+        self.pos_filter_btn.clicked.connect(
+            lambda: self.pos_dspin.setValue(STRIPPER_POS))
         self.pos_filter_btn.clicked.emit()
-        self.pos_filter_btn.clicked.connect(self.filter_lineEdit.editingFinished)
+        self.pos_filter_btn.clicked.connect(
+            self.filter_lineEdit.editingFinished)
         self.pos1_filter_btn.toggled.connect(self.on_toggle_pos1_filter_btn)
         self.pos2_filter_btn.toggled.connect(self.on_toggle_pos2_filter_btn)
         self.pos_dspin.valueChanged.connect(self.update_pos_dspin_tooltip)
-        self.pos_dspin.valueChanged.connect(lambda:self.pos1_filter_btn.toggled.emit(self.pos1_filter_btn.isChecked()))
-        self.pos_dspin.valueChanged.connect(lambda:self.pos2_filter_btn.toggled.emit(self.pos2_filter_btn.isChecked()))
+        self.pos_dspin.valueChanged.connect(
+            lambda: self.pos1_filter_btn.toggled.emit(self.pos1_filter_btn.
+                                                      isChecked()))
+        self.pos_dspin.valueChanged.connect(
+            lambda: self.pos2_filter_btn.toggled.emit(self.pos2_filter_btn.
+                                                      isChecked()))
         self.pos_dspin.valueChanged.emit(self.pos_dspin.value())
         # do when snp_loaded as well
-        self.on_update_pos_filter(None) # pass fake (None) param as snpdata
+        self.on_update_pos_filter(None)  # pass fake (None) param as snpdata
 
         # snp date range filter
         self.snp_date_range_filter_enabled = False
@@ -767,16 +808,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         fname_set = set(snpdata.data.Field.to_list())
         dtype_set = set(snpdata.data.Type.to_list())
-        self._build_filter_ctrls(self.filter_ctrls_hbox,
-                                 sorted(fname_set), sorted(dtype_set))
+        self._build_filter_ctrls(self.filter_ctrls_hbox, sorted(fname_set),
+                                 sorted(dtype_set))
 
     def _build_filter_ctrls(self, container, fnames, dtypes):
         #
         # reset field filter check states
         #
         _act_name_dict = {'field': fnames, 'type': dtypes}
-        self._check_state_dict = {'field': {i: True for i in fnames},
-                                  'type': {i: True for i in dtypes}}
+        self._check_state_dict = {
+            'field': {i: True
+                      for i in fnames},
+            'type': {i: True
+                     for i in dtypes}
+        }
 
         #
         # reset and build filter controls.
@@ -793,23 +838,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         def on_update_filter_string(k, category, btn, is_toggled):
             # field filter button actions is triggered.
             _d = self._check_state_dict[category]
-            if k == 'All': # update checkstates for other actions
+            if k == 'All':  # update checkstates for other actions
                 btn.toggled.disconnect()
                 for obj in self.sender().parent().findChildren(QAction):
                     obj.setChecked(is_toggled)
-                btn.toggled.connect(partial(on_toggle_filter_btn, category, btn))
+                btn.toggled.connect(
+                    partial(on_toggle_filter_btn, category, btn))
             else:
                 _d[k] = is_toggled
                 obj = self.sender().parent().findChild(QAction, "sel_act")
                 obj.toggled.disconnect()
                 obj.setChecked(all(_d.values()))
-                obj.toggled.connect(partial(on_update_filter_string, 'All', category, btn))
+                obj.toggled.connect(
+                    partial(on_update_filter_string, 'All', category, btn))
 
-            btn.setToolTip(
-                    "Filter by {}\nChecked: {}".format(
-                        category.capitalize(),
-                        ','.join(
-                            [k for k, v in _d.items() if v])))
+            btn.setToolTip("Filter by {}\nChecked: {}".format(
+                category.capitalize(),
+                ','.join([k for k, v in _d.items() if v])))
             btn.toggled.emit(btn.isChecked())
 
         #
@@ -833,14 +878,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 iact = QAction(i, menu)
                 iact.setCheckable(True)
                 iact.setChecked(True)
-                iact.toggled.connect(partial(on_update_filter_string, i, category, btn))
+                iact.toggled.connect(
+                    partial(on_update_filter_string, i, category, btn))
                 menu.addAction(iact)
             menu.addSeparator()
             sel_act = QAction("All", menu)
             sel_act.setObjectName("sel_act")
             sel_act.setCheckable(True)
             sel_act.setChecked(True)
-            sel_act.toggled.connect(partial(on_update_filter_string, 'All', category, btn))
+            sel_act.toggled.connect(
+                partial(on_update_filter_string, 'All', category, btn))
             menu.addAction(sel_act)
             btn.setMenu(menu)
 
@@ -854,13 +901,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         fname_btn.setCheckable(True)
         fname_btn.setToolTip("Filter by Field")
         fname_btn.setPopupMode(QToolButton.MenuButtonPopup)
-        fname_btn.toggled.connect(partial(on_toggle_filter_btn, 'field', fname_btn))
+        fname_btn.toggled.connect(
+            partial(on_toggle_filter_btn, 'field', fname_btn))
 
         dtype_btn.setText("Type")
         dtype_btn.setCheckable(True)
         dtype_btn.setToolTip("Filter by Type")
         dtype_btn.setPopupMode(QToolButton.MenuButtonPopup)
-        dtype_btn.toggled.connect(partial(on_toggle_filter_btn, 'type', dtype_btn))
+        dtype_btn.toggled.connect(
+            partial(on_toggle_filter_btn, 'type', dtype_btn))
 
         container.addWidget(fname_btn)
         container.addWidget(dtype_btn)
@@ -874,8 +923,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 or self.show_warning_dx12_btn.isChecked()
 
     def resizeEvent(self, e):
-        self.resizeDocks([self.snp_dock], [self.width() * 0.5],
-                          Qt.Horizontal)
+        self.resizeDocks([self.snp_dock], [self.width() * 0.5], Qt.Horizontal)
         BaseAppForm.resizeEvent(self, e)
 
     def on_snp_filters_select_all_tags(self, is_checked):
@@ -918,7 +966,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def set_context_menu(self):
         for o in (self._tv, self.snp_treeView):
             o.setContextMenuPolicy(Qt.CustomContextMenu)
-            o.customContextMenuRequested.connect(partial(self.on_custom_context_menu, o))
+            o.customContextMenuRequested.connect(
+                partial(self.on_custom_context_menu, o))
 
     @pyqtSlot()
     def on_copy_text(self, m, idx):
@@ -926,7 +975,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         cb = QGuiApplication.clipboard()
         cb.setText(text)
         printlog('copied text: {}'.format(text))
-        msg = '<html><head/><body><p><span style="color:#007BFF;">Copied text: </span><span style="color:#DC3545;">{}</span></p></body></html>'.format(text)
+        msg = '<html><head/><body><p><span style="color:#007BFF;">Copied text: </span><span style="color:#DC3545;">{}</span></p></body></html>'.format(
+            text)
         self.statusInfoChanged.emit(msg)
         self._reset_status_info()
 
@@ -978,7 +1028,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
         menu.addAction(copy_action)
         #
-        item0 = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_ts, pindex))
+        item0 = src_m.itemFromIndex(
+            src_m.index(src_idx.row(), src_m.i_ts, pindex))
         #
         if not hasattr(item0, 'snp_data'):
             return menu
@@ -988,7 +1039,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         dcopy_action.triggered.connect(partial(self.on_copy_snp, snpdata))
         # save-as
         saveas_action = QAction(self._saveas_icon, "E&xport", menu)
-        saveas_action.triggered.connect(partial(self.on_saveas_settings, snpdata))
+        saveas_action.triggered.connect(
+            partial(self.on_saveas_settings, snpdata))
         # read
         read_action = QAction(self._read_icon, "&Read", menu)
         read_action.triggered.connect(partial(self.on_read_snp, snpdata))
@@ -1031,8 +1083,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 background: #FFCC82;
                 font-weight: bold;
                 padding: 2px 2px 2px {PX_SIZE+2}px;
-            }}"""
-        )
+            }}""")
         _title_act = QWidgetAction(self)
         _title_act.setDefaultWidget(_title_w)
         #
@@ -1050,13 +1101,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             fld = item.fobj
             probe_action = QAction(self._probe_icon, "Probe Element", menu)
             probe_action.triggered.connect(
-                    partial(self.on_probe_element, elem, fld.name))
+                partial(self.on_probe_element, elem, fld.name))
             menu.addAction(probe_action)
 
             # data log: set/read values
             if self._aa_data_client is not None:
                 trend_action = QAction(self._trend_icon, "Data Trend", menu)
-                trend_action.triggered.connect(partial(self.on_data_trend, elem, fld.name))
+                trend_action.triggered.connect(
+                    partial(self.on_data_trend, elem, fld.name))
                 menu.addAction(trend_action)
 
         # toggle items action
@@ -1064,12 +1116,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         selected_rows = []
         checked_status = []
-        power_status = [] # list of (CaElement, PWRSTS)
+        power_status = []  # list of (CaElement, PWRSTS)
         for _idx in self._tv.selectedIndexes():
             if _idx.column() == src_m.i_name:
                 selected_rows.append(_idx.row())
                 power_status.append(self._get_pwrsts(src_m, m, _idx))
-                checked_status.append(is_item_checked(src_m.itemFromIndex(m.mapToSource(_idx))))
+                checked_status.append(
+                    is_item_checked(src_m.itemFromIndex(m.mapToSource(_idx))))
 
         n_rows = len(selected_rows)
         _item0 = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_name))
@@ -1093,14 +1146,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             act_icon = self._sel3_icon
 
         sel_action = QAction(act_icon, act_text, menu)
-        sel_action.triggered.connect(partial(self.on_toggle_selected_rows,
-                                     selected_rows, m, new_check_state))
+        sel_action.triggered.connect(
+            partial(self.on_toggle_selected_rows, selected_rows, m,
+                    new_check_state))
         menu.addAction(sel_action)
 
         # turn on/off PWRSTS field
         _add_switch_menu = False
         if n_rows == 1:
-            if power_status[0][1] != None: # show switch action
+            if power_status[0][1] != None:  # show switch action
                 new_power_status = not power_status[0][1]
                 if new_power_status:
                     act_text = "Turn on"
@@ -1110,13 +1164,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     act_icon = self._turn_off_icon
                 switch_menu = menu.addMenu("Power Switch")
                 sm_action = QAction(act_icon, act_text, switch_menu)
-                sm_action.triggered.connect(partial(self.on_toggle_pwrsts,
-                                            selected_rows, m, src_m, new_power_status,
-                                            power_status))
+                sm_action.triggered.connect(
+                    partial(self.on_toggle_pwrsts, selected_rows, m, src_m,
+                            new_power_status, power_status))
                 switch_menu.addAction(sm_action)
                 _add_switch_menu = True
         else:
-            if not all(i is None for _,i in power_status): # show switch action
+            if not all(i is None
+                       for _, i in power_status):  # show switch action
                 new_power_status = not self._get_pwrsts(src_m, m, idx)[1]
                 if new_power_status:
                     act_text = "Turn All on"
@@ -1126,16 +1181,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     act_icon = self._turn_off_icon
                 switch_menu = menu.addMenu("Power Switch")
                 sm_action = QAction(act_icon, act_text, switch_menu)
-                sm_action.triggered.connect(partial(self.on_toggle_pwrsts,
-                                            selected_rows, m, src_m, new_power_status,
-                                            power_status))
+                sm_action.triggered.connect(
+                    partial(self.on_toggle_pwrsts, selected_rows, m, src_m,
+                            new_power_status, power_status))
                 switch_menu.addAction(sm_action)
                 _add_switch_menu = True
 
         if _add_switch_menu:
-            sm_reset_act = QAction(self._warning_amber_icon, "Reset Trip Events", switch_menu)
+            sm_reset_act = QAction(self._warning_amber_icon,
+                                   "Reset Trip Events", switch_menu)
             sm_reset_act.setToolTip("Only for turn on bias voltages.")
-            sm_reset_act.triggered.connect(partial(self.on_reset_trip_events, power_status))
+            sm_reset_act.triggered.connect(
+                partial(self.on_reset_trip_events, power_status))
             switch_menu.addAction(sm_reset_act)
             switch_menu.setIcon(self._power_switch_icon)
             switch_menu.setToolTipsVisible(True)
@@ -1143,19 +1200,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # External apps
         def _launch_app(_exec, _args='', _cwd=None):
             Popen(f'{_exec} {_args}', cwd=_cwd, shell=True)
+
         apps_conf = self.pref_dict.get('EXTERNAL_APPS', None)
         if apps_conf is None:
             return menu
         for _, _app_conf in apps_conf.items():
             _app_name = _app_conf['NAME']
             _app_exec = _app_conf['EXEC']
-            _app_args = _app_conf.get('ARGS', '').format(ename=text,
-                    machine=self._last_machine_name, segment=self._last_lattice_name)
+            _app_args = _app_conf.get('ARGS', '').format(
+                ename=text,
+                machine=self._last_machine_name,
+                segment=self._last_lattice_name)
             _app_cwd = _app_conf.get('CWD', '')
             if _app_cwd == '':
                 _app_cwd = None
             _app_act = QAction(self._ext_app_icon, "Start " + _app_name, menu)
-            _app_act.triggered.connect(partial(_launch_app, _app_exec, _app_args, _app_cwd))
+            _app_act.triggered.connect(
+                partial(_launch_app, _app_exec, _app_args, _app_cwd))
             menu.addAction(_app_act)
 
         return menu
@@ -1176,14 +1237,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 continue
             caput(iseg_pv, 1)
             msg = "[{0}] Reset {1}.".format(
-                    datetime.fromtimestamp(time.time()).strftime(TS_FMT),
-                    iseg_pv)
+                datetime.fromtimestamp(time.time()).strftime(TS_FMT), iseg_pv)
             self.log_textEdit.append(msg)
             put_iseg_pvs.append(iseg_pv)
 
     def _get_pwrsts(self, m_src, m, idx):
         # power status from selected index, return tuple of CaElement, PWRSTS (None if not defined).
-        it = m_src.itemFromIndex(m.mapToSource(m.index(idx.row(), idx.column())))
+        it = m_src.itemFromIndex(
+            m.mapToSource(m.index(idx.row(), idx.column())))
         elem = self._lat[it.text()]
         try:
             r = elem.PWRSTS
@@ -1193,22 +1254,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return elem, r
 
     @pyqtSlot()
-    def on_toggle_pwrsts(self, selected_rows, m, m_src, new_power_status, current_power_status):
+    def on_toggle_pwrsts(self, selected_rows, m, m_src, new_power_status,
+                         current_power_status):
         # current_power_status: list of (CaElement, PWRSTS)
-        for elem, _  in current_power_status:
+        for elem, _ in current_power_status:
             if 'PWRSTS' in elem.fields:
                 elem.PWRSTS = int(new_power_status)
                 sts = 'ON' if new_power_status else 'OFF'
                 msg = "[{0}] Turn power {2} for {1:<20s}".format(
-                        datetime.fromtimestamp(time.time()).strftime(TS_FMT),
-                        elem.name + '.', sts)
+                    datetime.fromtimestamp(time.time()).strftime(TS_FMT),
+                    elem.name + '.', sts)
             else:
                 msg = "[{0}] [Skip] Set power status for {1:<20s}".format(
-                        datetime.fromtimestamp(time.time()).strftime(TS_FMT),
-                        elem.name + '.')
+                    datetime.fromtimestamp(time.time()).strftime(TS_FMT),
+                    elem.name + '.')
             self.log_textEdit.append(msg)
         # refresh
-        delayed_exec(lambda:self.single_update_btn.clicked.emit(), 2000)
+        delayed_exec(lambda: self.single_update_btn.clicked.emit(), 2000)
 
     @pyqtSlot(QVariant)
     def on_update_widgets_status(self, o):
@@ -1222,13 +1284,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # update flat_settings and settings
         # update settings view
         flat_settings, settings = pack_settings(
-            self._elem_list, self._lat,
+            self._elem_list,
+            self._lat,
             settings=self._lat.settings,
             data_source=DATA_SRC_MAP[self.field_init_mode],
             only_physics=False,
             skip_none=self.skip_none_chkbox.isChecked())
         self.settingsLoaded.emit(flat_settings, settings)
-        self.tolerance_changed[ToleranceSettings].emit(self._tolerance_settings)
+        self.tolerance_changed[ToleranceSettings].emit(
+            self._tolerance_settings)
         self.model_settings_changed.emit(settings)
 
     @pyqtSlot(float)
@@ -1267,9 +1331,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 continue
             else:
                 tol = tol_settings[ename][fname]
-                src_m.setData(
-                    src_m.index(i, src_m.i_tol), self.fmt.format(tol),
-                    Qt.DisplayRole)
+                src_m.setData(src_m.index(i, src_m.i_tol),
+                              self.fmt.format(tol), Qt.DisplayRole)
 
     def init_filter(self):
         """Initial filter.
@@ -1339,40 +1402,48 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.idx_px_list = []  # list to apply icon [(idx_src, px, log_msg)]
         settings_selected = m.get_selection()
         if len(settings_selected) == 0:
-            QMessageBox.warning(self, "Apply Settings",
-                    '<html><head/><body><p>Not any items are checked, <span style=" '
-                    'font-style:italic;">Apply </span>only works with checked items in current page<span style=" '
-                    'font-style:italic;">.</span></p></body></html>',
-                    QMessageBox.Ok)
+            QMessageBox.warning(
+                self, "Apply Settings",
+                '<html><head/><body><p>Not any items are checked, <span style=" '
+                'font-style:italic;">Apply </span>only works with checked items in current page<span style=" '
+                'font-style:italic;">.</span></p></body></html>',
+                QMessageBox.Ok)
             return
 
         # ask if want to take a snapshot of current settings of all checked devices
-        r = QMessageBox.question(self, "Take Snapshot",
-                                 "Do you want to take a snapshot for current page before changing device settings?",
-                                 QMessageBox.Yes | QMessageBox.No)
+        r = QMessageBox.question(
+            self, "Take Snapshot",
+            "Do you want to take a snapshot for current page before changing device settings?",
+            QMessageBox.Yes | QMessageBox.No)
         msg = ''
         if r == QMessageBox.Yes:
             # take a snapshot
-            self.take_snapshot(cast=False, only_checked_items=False, post_current_sp=False)
+            self.take_snapshot(cast=False,
+                               only_checked_items=False,
+                               post_current_sp=False)
             msg += "Snapshot saved!\n "
         msg += f"Now start to set device with new settings in current page ({len(settings_selected)} checked)."
 
-        r = QMessageBox.information(self, "Apply Settings", msg, QMessageBox.Ok | QMessageBox.Cancel)
+        r = QMessageBox.information(self, "Apply Settings", msg,
+                                    QMessageBox.Ok | QMessageBox.Cancel)
         if r == QMessageBox.Cancel:
             return
 
-        self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor, scale_op),
+        self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor,
+                                             scale_op),
                             daq_seq=settings_selected)
-        self.applyer.daqStarted.connect(lambda:self.apply_pb.setVisible(True))
-        self.applyer.daqStarted.connect(partial(
-            self.set_widgets_status_for_applying, 'START'))
+        self.applyer.daqStarted.connect(lambda: self.apply_pb.setVisible(True))
+        self.applyer.daqStarted.connect(
+            partial(self.set_widgets_status_for_applying, 'START'))
         self.applyer.progressUpdated.connect(
-            partial(self.on_apply_settings_progress,
-                    self.idx_px_list, m.sourceModel()))
-        self.applyer.daqFinished.connect(partial(
-            self.set_widgets_status_for_applying, 'STOP'))
-        self.applyer.daqFinished.connect(lambda:self.apply_pb.setVisible(False))
-        self.applyer.daqFinished.connect(lambda:self.single_update_btn.clicked.emit())
+            partial(self.on_apply_settings_progress, self.idx_px_list,
+                    m.sourceModel()))
+        self.applyer.daqFinished.connect(
+            partial(self.set_widgets_status_for_applying, 'STOP'))
+        self.applyer.daqFinished.connect(
+            lambda: self.apply_pb.setVisible(False))
+        self.applyer.daqFinished.connect(
+            lambda: self.single_update_btn.clicked.emit())
         self.applyer.start()
 
     def apply_single(self, sf, sop, tuple_idx_settings):
@@ -1390,13 +1461,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             fval_current_settings = fld.current_setting()
             if is_close(fval_current_settings, fval_to_set, self.ndigit):
                 msg = "[{0}] [Skip] Set {1:<20s} [{2}] from {3} to {4} (raw set value: {5}).".format(
-                        datetime.fromtimestamp(time.time()).strftime(TS_FMT),
-                        ename, fname, fval_current_settings, fval_to_set, new_fval0)
+                    datetime.fromtimestamp(time.time()).strftime(TS_FMT),
+                    ename, fname, fval_current_settings, fval_to_set,
+                    new_fval0)
             else:
                 fld.value = fval_to_set
                 msg = "[{0}] Set {1:<20s} [{2}] from {3} to {4} (raw set value: {5}).".format(
-                        datetime.fromtimestamp(time.time()).strftime(TS_FMT),
-                        ename, fname, fval_current_settings, fval_to_set, new_fval0)
+                    datetime.fromtimestamp(time.time()).strftime(TS_FMT),
+                    ename, fname, fval_current_settings, fval_to_set,
+                    new_fval0)
         except:
             px = self.fail_px
         else:
@@ -1454,7 +1527,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     is_changed = True
                 self._tolerance_settings[ename].update([(fname, v_tol)])
         if is_changed:
-            self._tolerance_settings.write(self._tolerance_settings.settings_path)
+            self._tolerance_settings.write(
+                self._tolerance_settings.settings_path)
             printlog("Update tolerance settings snapshot.")
 
     @pyqtSlot(bool)
@@ -1471,7 +1545,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m = self._tv.model()
         if m is None:
             return
-        m.filter_ftypes = [k for k, v in self._eng_phy_toggle.items() if v is True]
+        m.filter_ftypes = [
+            k for k, v in self._eng_phy_toggle.items() if v is True
+        ]
         self.filter_lineEdit.editingFinished.emit()
 
     @pyqtSlot()
@@ -1482,8 +1558,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._lattice_load_window = LatticeWidget()
             self._lattice_load_window.latticeChanged.connect(
                 self.on_lattice_changed)
-            self._lattice_load_window.latticeChanged.connect(self._lattice_load_window.close)
-            self._lattice_load_window.latticeChanged.connect(self.show_init_settings_info)
+            self._lattice_load_window.latticeChanged.connect(
+                self._lattice_load_window.close)
+            self._lattice_load_window.latticeChanged.connect(
+                self.show_init_settings_info)
         self._lattice_load_window.show()
 
     @pyqtSlot()
@@ -1499,7 +1577,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         if self._lv is None:
             self._lv = LatticeViewerWindow(__version__)
-            self._lv.setWindowTitle("{} ({})".format(__title__, self.getAppTitle()))
+            self._lv.setWindowTitle("{} ({})".format(__title__,
+                                                     self.getAppTitle()))
             self._lv._initialize_lattice_widget()
         lw = self._lv._lattice_load_window
         lw.mach_cbb.setCurrentText(machine)
@@ -1516,14 +1595,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             if cb.supportsSelection():
                 text = m.data(idx)
                 cb.setText(text, cb.Selection)
-                msg = '<html><head/><body><p><span style=" color:#007bff;">Selected text: </span><span style=" color:#dc3545;">{}</span><span style=" color:#007bff;">, paste with middle button.</span></p></body></html>'.format(text)
+                msg = '<html><head/><body><p><span style=" color:#007bff;">Selected text: </span><span style=" color:#dc3545;">{}</span><span style=" color:#007bff;">, paste with middle button.</span></p></body></html>'.format(
+                    text)
                 self.statusInfoChanged.emit(msg)
                 self._reset_status_info()
 
     def on_snpdock_top_level_changed(self, is_floating):
         if is_floating:
-            self.sender().setWindowFlags(Qt.CustomizeWindowHint | Qt.Window |
-                    Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint)
+            self.sender().setWindowFlags(Qt.CustomizeWindowHint | Qt.Window
+                                         | Qt.WindowMinimizeButtonHint
+                                         | Qt.WindowMaximizeButtonHint)
             self.sender().show()
 
     def on_click_snpview(self, idx):
@@ -1540,9 +1621,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             src_r, src_c, str(src_m.data(src_idx))))
 
         item = src_m.itemFromIndex(src_idx)
-        printlog("SNP, Clicked: ({}, {}), item is expanded? ({}), is checked? ({})".format(
-            idx.row(), idx.column(), self.snp_treeView.isExpanded(idx),
-            is_item_checked(item)))
+        printlog(
+            "SNP, Clicked: ({}, {}), item is expanded? ({}), is checked? ({})".
+            format(idx.row(), idx.column(), self.snp_treeView.isExpanded(idx),
+                   is_item_checked(item)))
 
     def on_click_view(self, idx):
         return
@@ -1582,7 +1664,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         if src_idx.column() in (src_m.i_tags, src_m.i_note):
             return
-        item0 = src_m.itemFromIndex(src_m.index(src_idx.row(), 0, item.parent().index()))
+        item0 = src_m.itemFromIndex(
+            src_m.index(src_idx.row(), 0,
+                        item.parent().index()))
         self.on_load_settings(item0.snp_data)
 
     @pyqtSlot()
@@ -1591,7 +1675,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if m is None:
             return
         full_str = self.filter_lineEdit.text().strip()
-        filter_key_value_tuples = [] # list of tuples of k, is_number_key, v
+        filter_key_value_tuples = []  # list of tuples of k, is_number_key, v
         for s in full_str.split('and'):
             s = s.strip()
             k = None
@@ -1685,7 +1769,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         pref_dlg.font_changed.connect(self.font_changed)
         pref_dlg.init_settings_changed.connect(self.init_settings_changed)
         pref_dlg.ndigit_sbox.valueChanged.connect(self.ndigit_sbox.setValue)
-        pref_dlg.data_uri_changed.connect(partial(self.on_data_uri_changed, True))
+        pref_dlg.data_uri_changed.connect(
+            partial(self.on_data_uri_changed, True))
         r = pref_dlg.exec_()
 
     @pyqtSlot(dict)
@@ -1699,9 +1784,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.init_settings = self.pref_dict['SETTINGS']['INIT_SETTINGS']
         tol = self.pref_dict['SETTINGS']['TOLERANCE']
         if self.tolerance != tol:
-            r = QMessageBox.question(self, "Change Tolerance",
-                    "Are you sure to change all the discrepancy tolerance to {0:.2f}?".format(tol),
-                    QMessageBox.Yes | QMessageBox.No)
+            r = QMessageBox.question(
+                self, "Change Tolerance",
+                "Are you sure to change all the discrepancy tolerance to {0:.2f}?"
+                .format(tol), QMessageBox.Yes | QMessageBox.No)
             if r == QMessageBox.Yes:
                 self.tolerance_changed[float].emit(tol)
                 self.tolerance = tol
@@ -1719,7 +1805,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if self._n_snp_max == 'All':
             df_all = pd.read_sql(f"SELECT * FROM snapshot", self._db_conn)
         else:
-            df_all = pd.read_sql(f"SELECT * FROM snapshot ORDER BY id DESC LIMIT {self._n_snp_max}", self._db_conn)
+            df_all = pd.read_sql(
+                f"SELECT * FROM snapshot ORDER BY id DESC LIMIT {self._n_snp_max}",
+                self._db_conn)
         #
         self.df_all_row_tuple = list(df_all.iterrows())
         self.db_pull.emit()
@@ -1768,14 +1856,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         delt = self._update_delt
         m0 = self._tv.model()
         m = m0.sourceModel()
-        self.updater = DAQT(daq_func=partial(self.update_value_single, m, m0, delt, True),
+        self.updater = DAQT(daq_func=partial(self.update_value_single, m, m0,
+                                             delt, True),
                             daq_seq=range(1))
-        self.updater.meta_signal1.connect(partial(
-            self.on_update_display, m))
-        self.updater.daqStarted.connect(partial(
-            self.set_widgets_status_for_updating, 'START', False))
-        self.updater.finished.connect(partial(
-            self.set_widgets_status_for_updating, 'STOP', False))
+        self.updater.meta_signal1.connect(partial(self.on_update_display, m))
+        self.updater.daqStarted.connect(
+            partial(self.set_widgets_status_for_updating, 'START', False))
+        self.updater.finished.connect(
+            partial(self.set_widgets_status_for_updating, 'STOP', False))
         self.updater.finished.connect(self.start_thread_update)
         self.updater.start()
 
@@ -1784,10 +1872,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         worker = kws.get('worker', self.one_updater)
         o, it = iter_param
         cnt_fld = 0
-        idx0 = m.indexFromItem(it[0]) # rd
+        idx0 = m.indexFromItem(it[0])  # rd
         if viewport_only and not self.is_idx_visible(m0.mapFromSource(idx0)):
             return cnt_fld
-        idx1 = m.indexFromItem(it[1]) # cset
+        idx1 = m.indexFromItem(it[1])  # cset
         irow = idx0.row()
         rd_val, sp_val = o.value, o.current_setting()
 
@@ -1797,14 +1885,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         worker.meta_signal1.emit((wa_idx, str(wa), Qt.DisplayRole))
 
         name_idx = m.index(irow, m.i_name)
-        if None in (rd_val, sp_val): # is not reachable
-            worker.meta_signal1.emit((name_idx, self.fail_px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
-            worker.meta_signal1.emit((name_idx, "Device is not connected", Qt.ToolTipRole))
+        if None in (rd_val, sp_val):  # is not reachable
+            worker.meta_signal1.emit(
+                (name_idx, self.fail_px.scaled(PX_SIZE,
+                                               PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (name_idx, "Device is not connected", Qt.ToolTipRole))
             return cnt_fld
         else:
             # is reachable
             worker.meta_signal1.emit((name_idx, QPixmap(), Qt.DecorationRole))
-            worker.meta_signal1.emit((name_idx, "Device is connected", Qt.ToolTipRole))
+            worker.meta_signal1.emit(
+                (name_idx, "Device is connected", Qt.ToolTipRole))
 
         x0_idx = m.index(irow, m.i_val0)
         x1_idx = m.index(irow, m.i_rd)
@@ -1819,7 +1911,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         idx_tuple = (idx0, idx1)
         v_tuple = (rd_val, sp_val)
         for iidx, val in zip(idx_tuple, v_tuple):
-            worker.meta_signal1.emit((iidx, self.fmt.format(val), Qt.DisplayRole))
+            worker.meta_signal1.emit(
+                (iidx, self.fmt.format(val), Qt.DisplayRole))
 
         x0 = float(m.data(x0_idx))
         x1, x2 = rd_val, sp_val
@@ -1829,22 +1922,28 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         idx_tuple = (dx01_idx, dx02_idx, dx12_idx)
         v_tuple = (dx01, dx02, dx12)
         for iidx, val in zip(idx_tuple, v_tuple):
-            worker.meta_signal1.emit((iidx, self.fmt.format(val), Qt.DisplayRole))
-        worker.meta_signal1.emit((ratio_x20_idx, get_ratio_as_string(x2, x0, self.fmt),
-                                  Qt.DisplayRole))
+            worker.meta_signal1.emit(
+                (iidx, self.fmt.format(val), Qt.DisplayRole))
+        worker.meta_signal1.emit(
+            (ratio_x20_idx, get_ratio_as_string(x2, x0,
+                                                self.fmt), Qt.DisplayRole))
 
         tol = float(m.data(tol_idx))
         if abs(dx12) > tol:
-            worker.meta_signal1.emit((dx12_idx, self._warning_px, Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (dx12_idx, self._warning_px, Qt.DecorationRole))
             worker.meta_signal1.emit((dx12_idx, 'warning', Qt.UserRole))
         else:
-            worker.meta_signal1.emit((dx12_idx, self._no_warning_px, Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (dx12_idx, self._no_warning_px, Qt.DecorationRole))
 
         if not is_close(x0, x2, self.ndigit):
-            worker.meta_signal1.emit((dx02_idx, self._warning_px, Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (dx02_idx, self._warning_px, Qt.DecorationRole))
             worker.meta_signal1.emit((dx02_idx, 'warning', Qt.UserRole))
         else:
-            worker.meta_signal1.emit((dx02_idx, self._no_warning_px, Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (dx02_idx, self._no_warning_px, Qt.DecorationRole))
 
         #
         pwr_is_on = 'Unknown'
@@ -1853,7 +1952,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         elem = self._lat[o.ename]
         if elem.family == 'CAV':
             r = re.match(r".*([1-3]+).*", o.name)
-            if r is not None: # D0987
+            if r is not None:  # D0987
                 _fname = 'LKSTS' + r.group(1)
             else:
                 _fname = 'LKSTS'
@@ -1868,14 +1967,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 tt = "Device is Unlocked"
 
             # emit signal to update power status
-            worker.meta_signal1.emit((pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit((pwr_idx, tt, Qt.ToolTipRole))
 
         elif elem.family == "CHP":
             reprate = caget(elem.pv('REP_RATE')[0], as_string=True)
             worker.meta_signal1.emit((pwr_idx, reprate, Qt.DisplayRole))
-            worker.meta_signal1.emit((pwr_idx, f"Chopper rep-rate is {reprate}, mode '{elem.REP_RATE}'", Qt.ToolTipRole))
-        else: # others
+            worker.meta_signal1.emit(
+                (pwr_idx,
+                 f"Chopper rep-rate is {reprate}, mode '{elem.REP_RATE}'",
+                 Qt.ToolTipRole))
+        else:  # others
             if 'PWRSTS' in elem.fields:
                 pwr_fld = elem.get_field('PWRSTS')
                 pwr_is_on = pwr_fld.value
@@ -1888,7 +1991,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     tt = "Power is OFF"
 
             # emit signal to update power status
-            worker.meta_signal1.emit((pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit((pwr_idx, tt, Qt.ToolTipRole))
         #
         cnt_fld += 1
@@ -1902,24 +2006,28 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             worker = self.updater
         t0 = time.time()
         cnt_fld = 0
-        if self._filter_btn_enabled: # force iterate all if any (2) filter btn is on
+        if self._filter_btn_enabled:  # force iterate all if any (2) filter btn is on
             viewport_only = False
         for o, it in self.obj_it_tuple:
-            _cnt_fld = self._refresh_single(m, m0, viewport_only, (o, it), worker=worker)
+            _cnt_fld = self._refresh_single(m,
+                                            m0,
+                                            viewport_only, (o, it),
+                                            worker=worker)
             cnt_fld += _cnt_fld
 
         dt = time.time() - t0
         dt_residual = delt - dt
         if delt == 0:
-            printlog("Single update in {0:.1f} msec, no wait.".format(dt * 1000))
+            printlog("Single update in {0:.1f} msec, no wait.".format(dt *
+                                                                      1000))
         else:
             if dt_residual > 0:
                 time.sleep(dt_residual)
-                printlog("Waited {0:.0f} msec (Field: {1}).".format(dt_residual * 1000,
-                         cnt_fld))
+                printlog("Waited {0:.0f} msec (Field: {1}).".format(
+                    dt_residual * 1000, cnt_fld))
             else:
-                printlog("Rate is {0:.1f} Hz (Field: {1}).".format(1.0 / dt,
-                         cnt_fld))
+                printlog("Rate is {0:.1f} Hz (Field: {1}).".format(
+                    1.0 / dt, cnt_fld))
 
     @pyqtSlot(bool)
     def on_toggle_update_btn(self, f):
@@ -1991,12 +2099,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_add_devices(self):
         # Add devices, high-level fields or PV elements.
         if self._elem_select_dlg is None:
-            self._elem_select_dlg = ElementSelectDialog(self, "multi", mp=self._mp)
+            self._elem_select_dlg = ElementSelectDialog(self,
+                                                        "multi",
+                                                        mp=self._mp)
             self._elem_select_dlg.pv_mode_radiobtn.setEnabled(False)
             self._elem_select_dlg.elem_mode_radiobtn.setChecked(True)
-            self._elem_select_dlg.selection_changed.connect(self.on_device_selected)
-            self._elem_select_dlg.pv_mode_toggled.connect(self.on_pv_mode_toggled)
-            self.lattice_loaded.connect(self._elem_select_dlg.on_update_elem_tree)
+            self._elem_select_dlg.selection_changed.connect(
+                self.on_device_selected)
+            self._elem_select_dlg.pv_mode_toggled.connect(
+                self.on_pv_mode_toggled)
+            self.lattice_loaded.connect(
+                self._elem_select_dlg.on_update_elem_tree)
 
         r = self._elem_select_dlg.exec_()
         if r == QDialog.Accepted:
@@ -2042,9 +2155,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             length = conf['length']
             family = conf['family']
             sb = conf['sb']
-            elem = build_element(sp_pv, rd_pv, ename=ename, fname=field_eng,
-                                 field_phy=field_phy, index=index,
-                                 length=length, sb=sb, family=family)
+            elem = build_element(sp_pv,
+                                 rd_pv,
+                                 ename=ename,
+                                 fname=field_eng,
+                                 field_phy=field_phy,
+                                 index=index,
+                                 length=length,
+                                 sb=sb,
+                                 family=family)
             lat.append(elem)
             if ename in ms:
                 lat.settings[ename] = ms[ename]
@@ -2101,22 +2220,28 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_pull_data(self):
         """Pull data from database.
         """
-        self.db_puller = DAQT(daq_func=self.on_pull_data_one, daq_seq=self.df_all_row_tuple)
+        self.db_puller = DAQT(daq_func=self.on_pull_data_one,
+                              daq_seq=self.df_all_row_tuple)
         self.db_puller.daqStarted.connect(self._on_db_pull_started)
         # self.db_puller.progressUpdated.connect(self._on_db_pull_progressed)
         self.db_puller.resultsReady.connect(self._on_db_pull_resultsReady)
         self.db_puller.finished.connect(self._on_db_pull_finished)
         self.db_puller.start()
+
     def on_pull_data_one(self, iiter):
         idx, irow = iiter
         snp_data = read_data(irow, 'sql')
         return snp_data
+
     def _on_db_pull_progressed(self, f, s):
         printlog(f"DB puller is updating... {f * 100:>5.1f}%, {s}")
+
     def _on_db_pull_started(self):
         printlog("DB puller is working...")
+
     def _on_db_pull_resultsReady(self, res):
         self._snp_dock_list = res
+
     def _on_db_pull_finished(self):
         n = len(self._snp_dock_list)
         self.total_snp_lbl.setText(str(n))
@@ -2138,40 +2263,47 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         m0 = self._tv.model()
         m = m0.sourceModel()
-        self.one_updater = DAQT(daq_func=partial(self._refresh_single, m, m0, False),
-                                daq_seq=self.obj_it_tuple, nproc=NPROC)
-        self.one_updater.meta_signal1.connect(partial(
-            self.on_update_display, m))
+        self.one_updater = DAQT(daq_func=partial(self._refresh_single, m, m0,
+                                                 False),
+                                daq_seq=self.obj_it_tuple,
+                                nproc=NPROC)
+        self.one_updater.meta_signal1.connect(
+            partial(self.on_update_display, m))
         #self.one_updater.daqStarted.connect(lambda:self.refresh_pb.setVisible(True))
-        self.one_updater.daqStarted.connect(lambda:printlog("Data refreshing..."))
-        self.one_updater.daqStarted.connect(partial(
-            self.set_widgets_status_for_updating, 'START'))
+        self.one_updater.daqStarted.connect(
+            lambda: printlog("Data refreshing..."))
+        self.one_updater.daqStarted.connect(
+            partial(self.set_widgets_status_for_updating, 'START'))
         #self.one_updater.progressUpdated.connect(self._on_data_refresh_progressed)
-        self.one_updater.finished.connect(partial(
-            self.set_widgets_status_for_updating, 'STOP'))
+        self.one_updater.finished.connect(
+            partial(self.set_widgets_status_for_updating, 'STOP'))
         #self.one_updater.daqFinished.connect(lambda:self.refresh_pb.setVisible(False))
-        self.one_updater.daqFinished.connect(lambda:printlog("Data refreshing...done."))
+        self.one_updater.daqFinished.connect(
+            lambda: printlog("Data refreshing...done."))
         self.one_updater.start()
 
     def set_widgets_status_for_updating(self, status, is_single=True):
         """Set widgets status for updating.
         """
-        w1 = [self.update_rate_cbb, self.apply_btn,
-              self.select_all_btn, self.deselect_all_btn, self.invert_selection_btn,
-              self.single_update_btn, self.auto_ndigit_chkbox]
+        w1 = [
+            self.update_rate_cbb, self.apply_btn, self.select_all_btn,
+            self.deselect_all_btn, self.invert_selection_btn,
+            self.single_update_btn, self.auto_ndigit_chkbox
+        ]
         if is_single:
             w1.append(self.update_ctrl_btn)
             w1.append(self.snp_dock)
-        [i.setDisabled(status=='START') for i in w1]
+        [i.setDisabled(status == 'START') for i in w1]
         # auto ndigit
         for o in (self.ndigit_sbox, self.ndigit_lbl):
-            o.setDisabled(status=='START' or self.auto_ndigit_chkbox.isChecked())
+            o.setDisabled(status == 'START'
+                          or self.auto_ndigit_chkbox.isChecked())
 
     def set_widgets_status_for_applying(self, status):
         """Set widgets status for applying.
         """
-        w1 = (self.apply_btn,)
-        [i.setDisabled(status=='START') for i in w1]
+        w1 = (self.apply_btn, )
+        [i.setDisabled(status == 'START') for i in w1]
 
     def sizeHint(self):
         return QSize(1920, 1440)
@@ -2268,8 +2400,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.filter_lineEdit.editingFinished.emit()
 
     def update_pos_dspin_tooltip(self, v):
-        self.pos1_filter_btn.setToolTip(f"Filter devices locating before (<=) {v} m.")
-        self.pos2_filter_btn.setToolTip(f"Filter devices locating after (>) {v} m.")
+        self.pos1_filter_btn.setToolTip(
+            f"Filter devices locating before (<=) {v} m.")
+        self.pos2_filter_btn.setToolTip(
+            f"Filter devices locating after (>) {v} m.")
 
     def on_update_pos_filter(self, snpdata):
         self.pos_filter_btn.toggled.emit(self.pos_filter_btn.isChecked())
@@ -2288,8 +2422,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             snp_data = read_data(pathlib.Path(path))
             if snp_data is None:
                 QMessageBox.warning(self, "Load Snapshot",
-                        "Cannot load the file.",
-                        QMessageBox.Ok, QMessageBox.Ok)
+                                    "Cannot load the file.", QMessageBox.Ok,
+                                    QMessageBox.Ok)
                 return
             if not is_snp_data_exist(snp_data, self._snp_dock_list):
                 self._snp_dock_list.append(snp_data)
@@ -2310,22 +2444,29 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.update_ctrl_btn.setChecked(False)
             milli_sleep(100)
 
-    def take_snapshot(self, cast=True, only_checked_items=False, post_current_sp=True):
+    def take_snapshot(self,
+                      cast=True,
+                      only_checked_items=False,
+                      post_current_sp=True):
         # take but not cast (show in the settings view) for only checked items or not.
         # cast: if cast snapshot or not
         # only_checked_items: if take snapshot of checked items or not
         # post_current_sp: if update x0 with x2 column or not
         m = self._tv.model()
         if m is None:
-             return
+            return
         self.turn_off_updater_if_necessary()
         src_m = m.sourceModel()
         # single update
-        self._updater = DAQT(daq_func=partial(self.update_value_single, src_m, m, -1, False),
+        self._updater = DAQT(daq_func=partial(self.update_value_single, src_m,
+                                              m, -1, False),
                              daq_seq=range(1))
-        self._updater.meta_signal1.connect(partial(self.on_update_display, src_m))
-        self._updater.daqStarted.connect(partial(self.set_widgets_status_for_updating, 'START'))
-        self._updater.finished.connect(partial(self.set_widgets_status_for_updating, 'STOP'))
+        self._updater.meta_signal1.connect(
+            partial(self.on_update_display, src_m))
+        self._updater.daqStarted.connect(
+            partial(self.set_widgets_status_for_updating, 'START'))
+        self._updater.finished.connect(
+            partial(self.set_widgets_status_for_updating, 'STOP'))
         loop = QEventLoop()
         self._updater.finished.connect(loop.exit)
         self._updater.start()
@@ -2355,7 +2496,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if self._tv.model() is None:
             return
         # capture current ion info
-        ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species()
+        ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species(
+        )
 
         # capture settings view filter text if any
         if self.filter_lineEdit.text() == '':
@@ -2364,9 +2506,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             note = f"Filter: {self.filter_lineEdit.text()}, "
         # create a new snapshotdata
         snp_data = SnapshotData(get_settings_data(self._tv.model()),
-                ion_name=ion_name, ion_number=ion_number, ion_mass=ion_mass, ion_charge=ion_charge,
-                machine=self._last_machine_name, segment=self._last_lattice_name,
-                version=self._version, note=note, table_version=10)
+                                ion_name=ion_name,
+                                ion_number=ion_number,
+                                ion_mass=ion_mass,
+                                ion_charge=ion_charge,
+                                machine=self._last_machine_name,
+                                segment=self._last_lattice_name,
+                                version=self._version,
+                                note=note,
+                                table_version=10)
         # machstate
         if self.snp_ms_chkbox.isChecked():
             self.__config_meta_fetcher()
@@ -2395,7 +2543,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_copy_snp(self, data):
         data.extract_blob()
         data.data.to_clipboard(excel=True, index=False)
-        msg = '<html><head/><body><p><span style="color:#007BFF;">Copied snapshot data at: </span><span style="color:#DC3545;">{}</span></p></body></html>'.format(data.ts_as_str())
+        msg = '<html><head/><body><p><span style="color:#007BFF;">Copied snapshot data at: </span><span style="color:#DC3545;">{}</span></p></body></html>'.format(
+            data.ts_as_str())
         self.statusInfoChanged.emit(msg)
         self._reset_status_info()
 
@@ -2413,12 +2562,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         data.extract_blob()
         if data.machstate is None:
             QMessageBox.warning(self, "Machine State Data",
-                                "No machine state data to show.", QMessageBox.Ok)
+                                "No machine state data to show.",
+                                QMessageBox.Ok)
             return
         else:
             # groups = ('traj-x', 'traj-y', 'phase', 'energy')
             groups = ('BPM-X', 'BPM-Y', 'BPM-PHA', 'BPM-MAG')
-            self._bpmviz_w = BPMVizWidget(data.machstate, self._machstate, groups=groups)
+            self._bpmviz_w = BPMVizWidget(data.machstate,
+                                          self._machstate,
+                                          groups=groups)
             self._bpmviz_w.show()
 
     def on_snp_filters_updated(self):
@@ -2541,7 +2693,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.set_model()
         self.snp_expand_btn.toggled.emit(self.snp_expand_btn.isChecked())
         m.save_settings.connect(self.on_save_settings)
-        m.save_settings.connect(self.snp_filters_updated) # update dynamic filter buttons (tag)
+        m.save_settings.connect(
+            self.snp_filters_updated)  # update dynamic filter buttons (tag)
 
     def on_snp_filter_date_range_updated(self):
         """Filter snapshots by data range
@@ -2568,7 +2721,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_select_daterange(self):
         if self._date_range_dlg is None:
             self._date_range_dlg = DateRangeDialog()
-            self._date_range_dlg.dateFromChanged.connect(self.dateEdit1.setDate)
+            self._date_range_dlg.dateFromChanged.connect(
+                self.dateEdit1.setDate)
             self._date_range_dlg.dateToChanged.connect(self.dateEdit2.setDate)
         self._date_range_dlg.show()
 
@@ -2618,8 +2772,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_del_settings(self, data):
         # delete from MEM (done), and model, and datafile (if exists)
         r = QMessageBox.warning(None, "Delete Snapshot",
-                "Are you sure to delete this snapshot?",
-                QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+                                "Are you sure to delete this snapshot?",
+                                QMessageBox.Yes | QMessageBox.No,
+                                QMessageBox.No)
         if r == QMessageBox.No:
             return
         for i, d in enumerate(self._snp_dock_list):
@@ -2654,10 +2809,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             cdir = data1.get_default_data_path(self.data_uri, DEFAULT_DATA_FMT)
         else:
             cdir = data1.data_path
-        filename, ext = get_save_filename(self,
-                                          caption="Save Settings to a File",
-                                          cdir=cdir,
-                                          type_filter="XLSX Files (*.xlsx);;HDF5 Files (*.h5);;CSV Files (*.csv)")
+        filename, ext = get_save_filename(
+            self,
+            caption="Save Settings to a File",
+            cdir=cdir,
+            type_filter=
+            "XLSX Files (*.xlsx);;HDF5 Files (*.h5);;CSV Files (*.csv)")
         if filename is None:
             return
         # data1.name = re.sub(r"(.*)_[0-9]+\.[0-9]+",r"\1_{}".format(time.time()), data1.name)
@@ -2669,10 +2826,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def _save_settings(self, data, filename, ftype='xlsx'):
         for k, v in zip(('app', 'version', 'user', 'machine', 'segment'),
-                ('Settings Manager', f'{self._version}', getuser(),
-                    self._last_machine_name, self._last_lattice_name)):
-                 if not k in data.info and v is not None:
-                     setattr(data, k, v)
+                        ('Settings Manager', f'{self._version}', getuser(),
+                         self._last_machine_name, self._last_lattice_name)):
+            if not k in data.info and v is not None:
+                setattr(data, k, v)
         data.write(filename, ftype)
 
     def on_load_settings(self, data):
@@ -2731,7 +2888,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_help(self):
         from phantasy_apps.utils import launch_assistant
-        path = os.path.join(os.path.dirname(__file__), "docs", "settings_manager.qhc")
+        path = os.path.join(os.path.dirname(__file__), "docs",
+                            "settings_manager.qhc")
         if os.path.isfile(path):
             launch_assistant(path)
 
@@ -2819,7 +2977,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_new_lbl.setVisible(True)
         self.on_data_uri_changed(True, self.data_uri)
         # show new snapshots icon for 1 min
-        delayed_exec(lambda:self.snp_new_lbl.setVisible(False), 60000)
+        delayed_exec(lambda: self.snp_new_lbl.setVisible(False), 60000)
 
     @pyqtSlot()
     def on_refresh_snp(self):
@@ -2834,28 +2992,38 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         printlog("Start to fetch machine state...")
         self._meta_fetcher_pb = QProgressBar()
         self._meta_fetcher_pb.setWindowTitle("Capturing Machine State")
-        self._meta_fetcher_pb.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+        self._meta_fetcher_pb.setWindowFlags(Qt.CustomizeWindowHint
+                                             | Qt.WindowTitleHint)
         self._meta_fetcher_pb.setRange(0, 100)
         self._meta_fetcher_pb.move(
-            self.geometry().x() + self.geometry().width() / 2 - self._meta_fetcher_pb.geometry().width() / 2,
-            self.geometry().y() + self.geometry().height() / 2 - self._meta_fetcher_pb.geometry().height() / 2)
+            self.geometry().x() + self.geometry().width() / 2 -
+            self._meta_fetcher_pb.geometry().width() / 2,
+            self.geometry().y() + self.geometry().height() / 2 -
+            self._meta_fetcher_pb.geometry().height() / 2)
         self._meta_fetcher_pb.show()
         self.setEnabled(False)
+
     def _meta_fetcher_stopped(self):
         printlog("Stopped fetching machine state.")
+
     def _meta_fetcher_progressed(self, f, s):
         printlog(f"Fetching machine state: {f * 100:>5.1f}%, {s}")
         self._meta_fetcher_pb.setValue(100 * f)
         self._meta_fetcher_pb.move(
-            self.geometry().x() + self.geometry().width() / 2 - self._meta_fetcher_pb.geometry().width() / 2,
-            self.geometry().y() + self.geometry().height() / 2 - self._meta_fetcher_pb.geometry().height() / 2)
+            self.geometry().x() + self.geometry().width() / 2 -
+            self._meta_fetcher_pb.geometry().width() / 2,
+            self.geometry().y() + self.geometry().height() / 2 -
+            self._meta_fetcher_pb.geometry().height() / 2)
+
     def _meta_fetcher_got_results(self, pv_list, grp_list, res):
         self._machstate = _build_dataframe(res, pv_list, grp_list)
         self._meta_fetcher_pb.reset()
         self._meta_fetcher_pb.deleteLater()
         self.setEnabled(True)
+
     def _meta_fetcher_daq_func(self, pv_list, dt, iiter):
         return _daq_func(pv_list, dt)
+
     @pyqtSlot()
     def on_capture_machstate(self):
         # Capture machine state defined in config/metadata.toml.
@@ -2864,49 +3032,61 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._meta_fetcher.start()
 
     def on_save_machine_state(self):
-        msg = QMessageBox.question(self, "Save Machine State",
-                "Would you like to save fetched machine state data into a file?",
-                QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+        msg = QMessageBox.question(
+            self, "Save Machine State",
+            "Would you like to save fetched machine state data into a file?",
+            QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
         if msg == QMessageBox.Yes:
-            filename, ext = get_save_filename(self,
-                                              caption="Save Machine State to a File",
-                                              cdir='.',
-                                              type_filter="XLSX Files (*.xlsx);;HDF5 Files (*.h5);;CSV Files (*.csv)")
+            filename, ext = get_save_filename(
+                self,
+                caption="Save Machine State to a File",
+                cdir='.',
+                type_filter=
+                "XLSX Files (*.xlsx);;HDF5 Files (*.h5);;CSV Files (*.csv)")
             if filename is None:
                 return
-            r = SnapshotData.export_machine_state(self._machstate, filename, ext)
+            r = SnapshotData.export_machine_state(self._machstate, filename,
+                                                  ext)
             if r is not None:
-                QMessageBox.information(self, "Save Machine State",
-                       f"Saved machine state data to {os.path.abspath(filename)}.",
-                       QMessageBox.Ok, QMessageBox.Ok)
+                QMessageBox.information(
+                    self, "Save Machine State",
+                    f"Saved machine state data to {os.path.abspath(filename)}.",
+                    QMessageBox.Ok, QMessageBox.Ok)
 
     def __config_meta_fetcher(self):
         # init mach state retriever
         conf = get_meta_conf_dict(MS_CONF_PATH)
         _rate = self.pref_dict['MACH_STATE'].get('DAQ_RATE', None)
         _nshot = self.pref_dict['MACH_STATE'].get('DAQ_NSHOT', None)
-        mach_state_conf = merge_mach_conf(conf, nshot=_nshot, rate=_rate) # redefine nshot, rate here
+        mach_state_conf = merge_mach_conf(
+            conf, nshot=_nshot, rate=_rate)  # redefine nshot, rate here
         pv_list = mach_state_conf['pv_list']
         grp_list = mach_state_conf['grp_list']
         daq_rate = mach_state_conf['daq_rate']
         daq_nshot = mach_state_conf['daq_nshot']
-        self._meta_fetcher = DAQT(daq_func=partial(self._meta_fetcher_daq_func, pv_list, 1.0 / daq_rate),
+        self._meta_fetcher = DAQT(daq_func=partial(self._meta_fetcher_daq_func,
+                                                   pv_list, 1.0 / daq_rate),
                                   daq_seq=range(daq_nshot))
         self._meta_fetcher.daqStarted.connect(self._meta_fetcher_started)
-        self._meta_fetcher.progressUpdated.connect(self._meta_fetcher_progressed)
+        self._meta_fetcher.progressUpdated.connect(
+            self._meta_fetcher_progressed)
         self._meta_fetcher.daqFinished.connect(self._meta_fetcher_stopped)
-        self._meta_fetcher.resultsReady.connect(partial(self._meta_fetcher_got_results, pv_list, grp_list))
+        self._meta_fetcher.resultsReady.connect(
+            partial(self._meta_fetcher_got_results, pv_list, grp_list))
 
     def __init_dsrc(self, dsrc_dict):
         self._db_conn_pool = {}
         self.data_uri = os.path.abspath(os.path.expanduser(dsrc_dict['uri']))
         # ensure the parent directory is exsiting
         pathlib.Path(self.data_uri).parent.mkdir(parents=True, exist_ok=True)
-        self._db_conn_pool.setdefault(self.data_uri, ensure_connect_db(self.data_uri)) # other DB_ENGINEs to be supported
+        self._db_conn_pool.setdefault(
+            self.data_uri, ensure_connect_db(
+                self.data_uri))  # other DB_ENGINEs to be supported
         self.nsnp_btn.setVisible(True)
         self.nsnp_btn.click()
-        self.nsnp_btn.click() # n_snp_max -> 20
-        self.db_refresh.connect(partial(self.on_data_uri_changed, True, self.data_uri))
+        self.nsnp_btn.click()  # n_snp_max -> 20
+        self.db_refresh.connect(
+            partial(self.on_data_uri_changed, True, self.data_uri))
         self.db_pull.connect(self.on_pull_data)
 
     @pyqtSlot()
@@ -2940,6 +3120,27 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         n_new = n + i
         self.n_all_checked_items_lbl.setText(str(n_new))
 
+    @pyqtSlot(bool)
+    def on_toggle_wysiwyc(self, is_checked):
+        """If checked, change take snapshot mode to 'What You See Is What You Capture', otherwise
+        take the full settings always.
+        """
+        msg = '''<html><head><meta name="qrichtext" content="1" /><style type="text/css">
+p, li { white-space: pre-wrap; }
+</style></head><body style=" font-family:'Cantarell'; font-size:12pt; font-weight:400; font-style:normal;">
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">The mode of &quot;Take Snapshot&quot; is switched to &quot;<span style=" font-weight:600;">WYSIWYC</span>&quot; (<span style=" font-weight:600;">W</span>hat <span style=" font-weight:600;">Y</span>ou <span style=" font-weight:600;">S</span>ee <span style=" font-weight:600;">I</span>s <span style=" font-weight:600;">W</span>hat <span style=" font-weight:600;">Y</span>ou <span style=" font-weight:600;">C</span>apture), only the device settings listed on the current view will be saved when taking a snapshot by pressing the &quot;Take Snapshot&quot; button in the toolbar.</p>
+<p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><br /></p>
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Are you sure to switch the mode?</p></body></html>'''
+        self._wysiwyc_enabled = is_checked
+        if is_checked:
+            r = QMessageBox.warning(self, "Switch Take Snapshot Mode", msg,
+                                    QMessageBox.Yes | QMessageBox.No,
+                                    QMessageBox.No)
+            if r == QMessageBox.Yes:
+                pass
+            else:
+                self.wysiwyc_chkbox.setChecked(False)
+
 
 def is_snp_data_exist(snpdata, snpdata_list):
     # if snpdata named 'name' exists.
@@ -2963,62 +3164,63 @@ def make_tolerance_dict_from_table_settings(table_settings):
 
 
 def is_close(x, y, decimal=6):
-    if abs(x - y) < 1.5 * 10 ** (-decimal):
+    if abs(x - y) < 1.5 * 10**(-decimal):
         return True
     return False
 
 
 _ISEG_PVS = (
-     # N0106
+    # N0106
     'ISEG:5230096:0:0:Control:doClear',
     'ISEG:5230096:0:1:Control:doClear',
     'ISEG:5230096:0:2:Control:doClear',
     'ISEG:5230096:0:3:Control:doClear',
 
-     # N0306
+    # N0306
     'ISEG:5230103:0:0:Control:doClear',
     'ISEG:5230103:0:1:Control:doClear',
 
-     # LS1_N0604
+    # LS1_N0604
     'ISEG:5230127:0:0:Control:doClear',
     'ISEG:5230127:0:1:Control:doClear',
 
-     # LS1_N1501
+    # LS1_N1501
     'ISEG:5230126:0:0:Control:doClear',
 
-     # LS1_N1902
+    # LS1_N1902
     'ISEG:5230100:0:0:Control:doClear',
 
-     # FS1_N0302
+    # FS1_N0302
     'ISEG:5230093:0:0:Control:doClear',
     'ISEG:5230093:0:1:Control:doClear',
 
-     # FS1_N0506
+    # FS1_N0506
     'ISEG:5230104:0:0:Control:doClear',
 
-     # LS2_N0808
+    # LS2_N0808
     'ISEG:5230097:0:0:Control:doClear',
     'ISEG:5230097:0:1:Control:doClear',
 
-     # LS2_N1708
+    # LS2_N1708
     'ISEG:5230098:0:0:Control:doClear',
     'ISEG:5230098:0:1:Control:doClear',
 
-     # LS2_N4202
+    # LS2_N4202
     'ISEG:5230095:0:0:Control:doClear',
     'ISEG:5230095:0:1:Control:doClear',
 
-     # FS2_N0108
+    # FS2_N0108
     'ISEG:5230094:0:0:Control:doClear',
     'ISEG:5230094:0:1:Control:doClear',
 
-     # LS3_N1108
-     # 'ISEG:5230099:0:0:Control:doClear',
+    # LS3_N1108
+    # 'ISEG:5230099:0:0:Control:doClear',
 
-     # LS3_N2101
+    # LS3_N2101
     'ISEG:5230101:0:0:Control:doClear',
     'ISEG:5230101:0:1:Control:doClear',
 )
+
 
 def _reset_trip_events():
     # reset trip events only for BIAS_VOLTAGE controls of PM, FC, EMS
