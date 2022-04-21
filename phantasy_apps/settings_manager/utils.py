@@ -160,6 +160,10 @@ ELEM_WRITE_PERM = {
 NUM_LENGTH = 9
 
 
+# Chopper state map
+CHP_STS_TUPLE = ("Invalid Input", "Off", "Blocking", "Running")
+
+
 class SettingsModel(QStandardItemModel):
     """Settings model from Settings instance.
 

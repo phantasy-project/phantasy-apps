@@ -105,6 +105,7 @@ from .data import DEFAULT_MACHINE, DEFAULT_SEGMENT
 from .utils import ELEM_WRITE_PERM
 from .utils import NUM_LENGTH
 from .utils import BG_COLOR_GOLDEN_NO
+from .utils import CHP_STS_TUPLE
 from .contrib.db.db_utils import ensure_connect_db
 
 #
@@ -640,6 +641,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._pwr_on_px = QPixmap(":/sm-icons/on.png")
         self._pwr_off_px = QPixmap(":/sm-icons/off.png")
         self._pwr_unknown_px = QPixmap(":/sm-icons/unknown.png")
+
+        # chopper
+        self._chp_invalud_px = QPixmap(":/sm-icons/chp_invalid.png")
+        self._chp_off_px = QPixmap(":/sm-icons/chp_off.png")
+        self._chp_blocking_px = QPixmap(":/sm-icons/chp_blocking.png")
+        self._chp_running_px = QPixmap(":/sm-icons/chp_running.png")
+        self._chp_px_tuple = (self._chp_invalud_px, self._chp_off_px,
+                              self._chp_blocking_px, self._chp_running_px)
+        #
         self._turn_on_icon = QIcon(QPixmap(":/sm-icons/bolt_on.png"))
         self._turn_off_icon = QIcon(QPixmap(":/sm-icons/bolt_off.png"))
         self._power_switch_icon = QIcon(QPixmap(":/sm-icons/power_switch.png"))
@@ -1973,12 +1983,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             worker.meta_signal1.emit((pwr_idx, tt, Qt.ToolTipRole))
 
         elif elem.family == "CHP":
-            reprate = caget(elem.pv('REP_RATE')[0], as_string=True)
-            worker.meta_signal1.emit((pwr_idx, reprate, Qt.DisplayRole))
+            sts = elem.get_field('STATE')
+            sts_val_int = sts.value
+            sts_val_str = CHP_STS_TUPLE[sts_val_int]
+            tt = f"Chopper state: {sts_val_str}"
+            px = self._chp_px_tuple[sts_val_int]
             worker.meta_signal1.emit(
-                (pwr_idx,
-                 f"Chopper rep-rate is {reprate}, mode '{elem.REP_RATE}'",
-                 Qt.ToolTipRole))
+                (pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (pwr_idx, tt, Qt.ToolTipRole))
         else:  # others
             if 'PWRSTS' in elem.fields:
                 pwr_fld = elem.get_field('PWRSTS')
