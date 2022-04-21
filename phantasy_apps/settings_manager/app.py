@@ -1917,7 +1917,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         x0 = float(m.data(x0_idx))
         x1, x2 = rd_val, sp_val
         dx01 = x0 - x1
-        dx02 = x0 - x2
+        # dx02 = x0 - x2
+        dx02 = x2 - x0
         dx12 = x1 - x2
         idx_tuple = (dx01_idx, dx02_idx, dx12_idx)
         v_tuple = (dx01, dx02, dx12)
