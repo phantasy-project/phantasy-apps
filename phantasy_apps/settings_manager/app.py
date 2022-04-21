@@ -2014,13 +2014,22 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 (pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit(
                 (pwr_idx, tt, Qt.ToolTipRole))
-        elif elem.family == "ATT" and 'OUT_STS' in elem.fields:
-            out_sts = elem.OUT_STS
-            px = self._att_out_px_tuple[out_sts]
-            if out_sts == 0:
-                tt = "Attenuator device is IN"
-            else:
-                tt = "Attenuator device is OUT"
+        elif elem.family == "ATT":
+            if 'OUT_STS' in elem.fields:
+                out_sts = elem.OUT_STS
+                px = self._att_out_px_tuple[out_sts]
+                if out_sts == 0:
+                    tt = "Attenuator device is IN"
+                else:
+                    tt = "Attenuator device is OUT"
+            elif 'ATT_TOTAL' in elem.fields:
+                att_val = elem.ATT_TOTAL
+                if att_val > 1:
+                    px = self._att_out_px_tuple[0]
+                    tt = "Attenuator(s) IN"
+                else:
+                    px = self._att_out_px_tuple[1]
+                    tt = "Attenuator(s) OUT"
             worker.meta_signal1.emit(
                 (pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit(
