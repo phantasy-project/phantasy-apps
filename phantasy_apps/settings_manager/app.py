@@ -2505,7 +2505,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             note = f"Filter: {self.filter_lineEdit.text()}, "
         # create a new snapshotdata
-        snp_data = SnapshotData(get_settings_data(self._tv.model()),
+        snp_data = SnapshotData(get_settings_data(*self.get_data_models()),
                                 ion_name=ion_name,
                                 ion_number=ion_number,
                                 ion_mass=ion_mass,
@@ -3119,6 +3119,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         n = int(self.n_all_checked_items_lbl.text())
         n_new = n + i
         self.n_all_checked_items_lbl.setText(str(n_new))
+
+    def get_data_models(self):
+        """Get the model for settings data retrieval.
+        """
+        _p_m = self._tv.model()
+        m_src = _p_m.sourceModel()
+        if self._wysiwyc_enabled:
+            return _p_m, m_src
+        else:
+            return m_src, m_src
 
     @pyqtSlot(bool)
     def on_toggle_wysiwyc(self, is_checked):

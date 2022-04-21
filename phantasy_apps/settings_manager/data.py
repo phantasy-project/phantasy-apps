@@ -156,15 +156,14 @@ def make_physics_settings(settings, lat):
     return s
 
 
-def get_settings_data(proxy_model):
-    """Get settings data from *proxy_model* as a DataFrame.
+def get_settings_data(m, src_m):
+    """Get settings data from *m* as a DataFrame.
     """
     # new_sp (x2): current sp to save
     # new_rd (x1): rb at sp
     # old_sp (x0): last_sp
     # new_ps (ps): current power/lock(CAV) status
-    m = proxy_model
-    src_m = proxy_model.sourceModel()
+    # WYIWYC?: proxy model, source model
     i_name, i_field, i_type, i_pos, i_new_sp, i_new_rd, i_old_sp, \
     i_tol, i_writable, i_pwr = \
         src_m.i_name, src_m.i_field, src_m.i_type, src_m.i_pos, \
