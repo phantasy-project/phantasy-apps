@@ -641,6 +641,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._pwr_on_px = QPixmap(":/sm-icons/on.png")
         self._pwr_off_px = QPixmap(":/sm-icons/off.png")
         self._pwr_unknown_px = QPixmap(":/sm-icons/unknown.png")
+        # blocking beam or not
+        _blocking_px = QPixmap(":/sm-icons/off.png")
+        _non_blocking_px = QPixmap(":/sm-icons/on.png")
+
+        # aperture
+        _ap_in_px, _ap_out_px = _blocking_px, _non_blocking_px
+        self._ap_in_px_tuple = (_ap_out_px, _ap_in_px)
+
+        # attenuator
+        _att_in_px, _att_out_px = _blocking_px, _non_blocking_px
+        self._att_out_px_tuple = (_att_in_px, _att_out_px)
 
         # chopper
         self._chp_invalud_px = QPixmap(":/sm-icons/chp_invalid.png")
@@ -1959,7 +1970,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         pwr_is_on = 'Unknown'
         px = self._pwr_unknown_px
-        tt = "Power is UNKNOWN"
+        tt = "Not a powered device, SRF cavity, nor other blocking devices."
         elem = self._lat[o.ename]
         if elem.family == 'CAV':
             r = re.match(r".*([1-3]+).*", o.name)
@@ -1972,10 +1983,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 pwr_is_on = pwr_fld.value
             if pwr_is_on == 1.0:
                 px = self._pwr_on_px
-                tt = "Device is Locked"
+                tt = "Cavity phase is LOCKED"
             elif pwr_is_on == 0.0:
                 px = self._pwr_off_px
-                tt = "Device is Unlocked"
+                tt = "Cavity phase is UNLOCKED"
 
             # emit signal to update power status
             worker.meta_signal1.emit(
@@ -1988,6 +1999,28 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             sts_val_str = CHP_STS_TUPLE[sts_val_int]
             tt = f"Chopper state: {sts_val_str}"
             px = self._chp_px_tuple[sts_val_int]
+            worker.meta_signal1.emit(
+                (pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (pwr_idx, tt, Qt.ToolTipRole))
+        elif elem.family == "AP":
+            in_sts = elem.IN_STS
+            px = self._ap_in_px_tuple[in_sts]
+            if in_sts == 0:
+                tt = "Aperture device is OUT"
+            else:
+                tt = "Aperture device is IN"
+            worker.meta_signal1.emit(
+                (pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (pwr_idx, tt, Qt.ToolTipRole))
+        elif elem.family == "ATT" and 'OUT_STS' in elem.fields:
+            out_sts = elem.OUT_STS
+            px = self._att_out_px_tuple[out_sts]
+            if out_sts == 0:
+                tt = "Attenuator device is IN"
+            else:
+                tt = "Attenuator device is OUT"
             worker.meta_signal1.emit(
                 (pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit(
