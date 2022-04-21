@@ -51,6 +51,7 @@ class Ui_MainWindow(object):
         self.settingsView.setSizePolicy(sizePolicy)
         self.settingsView.setSelectionMode(
             QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.settingsView.setUniformRowHeights(True)
         self.settingsView.setObjectName("settingsView")
         self.gridLayout.addWidget(self.settingsView, 3, 1, 1, 16)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -819,6 +820,7 @@ class Ui_MainWindow(object):
             QtWidgets.QAbstractItemView.NoDragDrop)
         self.snp_treeView.setIndentation(10)
         self.snp_treeView.setRootIsDecorated(True)
+        self.snp_treeView.setUniformRowHeights(True)
         self.snp_treeView.setSortingEnabled(False)
         self.snp_treeView.setAnimated(True)
         self.snp_treeView.setObjectName("snp_treeView")
