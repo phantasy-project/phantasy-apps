@@ -26,7 +26,7 @@ TITLE = "Configurations for Settings Manager"
   DAQ_NSHOT = 20
 
 [DATA_REFRESH]
-  NCORE = 4 # max number of CPU cores to use
+  NCORE = 6 # max number of CPU cores to use
 
 [LATTICE]
   DEFAULT_MACHINE = 'FRIB'
