@@ -123,18 +123,22 @@ def make_physics_settings(settings, lat):
 
     Returns
     -------
-    r : Settings
-        Physics settings.
+    r : tuple
+        A tuple of ("Physics settings": Settings, "last device states" : dict),
+        the keys of "last device states" are device names, and the states are strings,
+        which should be correctly interpreted.
     """
     s = Settings()  # physics settings
+    last_sts_dict = {}  # last device states dict
     for line in settings:
-        name, field, _, _, sp, rd, last_sp, _, _ = line[0:9]
+        name, field, _, _, sp, rd, last_sp, _, _, last_sts = line[0:10]
         if name in ELEM_ALIAS_MAP:
             name = ELEM_ALIAS_MAP[name]
         elem = lat[name]
         if elem is None:
             s[name] = {field: sp}  # element is not existing any more
             continue
+        last_sts_dict.setdefault(name, last_sts)
         eng_fields = elem.get_eng_fields()
         phy_fields = elem.get_phy_fields()
         field = FIELD_ALIAS_MAP.get(field, field)
@@ -153,7 +157,7 @@ def make_physics_settings(settings, lat):
             phy_rd = rd
             phy_last_sp = last_sp
         s[name].update([(phy_field, phy_sp)])
-    return s
+    return s, last_sts_dict
 
 
 def get_settings_data(m, src_m):

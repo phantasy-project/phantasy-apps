@@ -60,6 +60,7 @@ COLUMN_NAMES2 = [
     'Tolerance', 'Writable', f'{X2}/{X0}',
     # 'Power',
     'State',
+    'Last State',
 ]
 COLUMN_SFIELD_MAP = OrderedDict((
     ('Type', 'family'),
@@ -193,11 +194,12 @@ class SettingsModel(QStandardItemModel):
     checked_items_inc_dec_updated = pyqtSignal(int)
 
     def __init__(self, parent, flat_settings, **kws):
-        # kw: ndigit, font, auto_fmt
+        # kw: ndigit, font, auto_fmt, device_states
         super(self.__class__, self).__init__(parent)
         self._ndigit = kws.get('ndigit', 6)
         self._font = kws.get('font', None)
         self._auto_fmt = kws.get('auto_fmt', False)
+        self._last_sts_dict = kws.get('device_states', {})
 
         if self._auto_fmt:
             self.fmt = '{{0:{0}g}}'.format(self._ndigit)
@@ -218,13 +220,13 @@ class SettingsModel(QStandardItemModel):
                       self.h_val0, self.h_rd, self.h_cset, \
                       self.h_val0_rd, self.h_val0_cset, self.h_rd_cset, \
                       self.h_tol, self.h_writable, self.h_ratio_x20, \
-                      self.h_pwr \
+                      self.h_pwr, self.h_last_sts \
             = COLUMN_NAMES
         self.ids = self.i_name, self.i_field, self.i_type, self.i_pos, \
                    self.i_val0, self.i_rd, self.i_cset, \
                    self.i_val0_rd, self.i_val0_cset, self.i_rd_cset, \
                    self.i_tol, self.i_writable, self.i_ratio_x20, \
-                   self.i_pwr \
+                   self.i_pwr, self.i_last_sts \
             = range(len(self.header))
 
         #
@@ -327,6 +329,10 @@ class SettingsModel(QStandardItemModel):
             # pwrsts
             item_pwr = QStandardItem('')
             row.append(item_pwr)
+
+            # last device state
+            item_last_sts = QStandardItem(self._last_sts_dict[elem.name])
+            row.append(item_last_sts)
 
             #
             self.appendRow(row)

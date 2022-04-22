@@ -510,6 +510,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         printlog("Setting data model...")
         model = SettingsModel(self._tv,
                               self.__flat_settings,
+                              device_states=self._last_sts_dict,
                               ndigit=self.ndigit,
                               font=self.font,
                               auto_fmt=self.auto_ndigit_chkbox.isChecked())
@@ -588,6 +589,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._last_lattice_name = None
         self._lat = None  # loaded from latticeWidget
         self._elem_list = []  # element list for SettingsModel
+        self._last_sts_dict = {} # last device state dict
 
         self.__settings = Settings()
         self.__flat_settings = None
@@ -2897,7 +2899,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.__load_lattice(data.machine, data.segment)
         lat = self._lat
         data.extract_blob()
-        s = make_physics_settings(data.data.to_numpy(), lat)
+        s, self._last_sts_dict = make_physics_settings(data.data.to_numpy(), lat)
         lat.settings.update(s)
         _elem_list = []
         _invalid_elem_list = []
