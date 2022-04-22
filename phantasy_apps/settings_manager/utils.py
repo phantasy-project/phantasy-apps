@@ -331,7 +331,7 @@ class SettingsModel(QStandardItemModel):
             row.append(item_pwr)
 
             # last device state
-            item_last_sts = QStandardItem(self._last_sts_dict[elem.name])
+            item_last_sts = set_device_state_item(self._last_sts_dict[elem.name])
             row.append(item_last_sts)
 
             #
@@ -1448,3 +1448,40 @@ class _SnpProxyModel(QSortFilterProxyModel):
 
         #
         return True
+
+
+STS_PX_MAP = {
+"Not a powered device, SRF cavity, nor other blocking devices.": ":/sm-icons/unknown.png",
+"Power is UNKNOWN": ":/sm-icons/unknown.png",
+
+"Attenuator(s) IN": ":/sm-icons/off.png",
+"Attenuator(s) OUT": ":/sm-icons/on.png",
+"Attenuator device is IN": ":/sm-icons/off.png",
+"Attenuator device is OUT": ":/sm-icons/on.png",
+
+"Aperture device is OUT": ":/sm-icons/on.png",
+"Aperture device is IN": ":/sm-icons/off.png",
+
+"Cavity phase is LOCKED": ":/sm-icons/on.png",
+"Device is Locked": ":/sm-icons/on.png",
+"Cavity phase is UNLOCKED": ":/sm-icons/off.png",
+"Device is Unlocked": ":/sm-icons/off.png",
+
+"Power is ON": ":/sm-icons/on.png",
+"Power is OFF": ":/sm-icons/off.png",
+
+"Chopper state: Invalid Input": ":/sm-icons/chp_invalid.png",
+"Chopper state: Off": ":/sm-icons/chp_off.png",
+"Chopper state: Blocking": ":/sm-icons/chp_blocking.png",
+"Chopper state: Running": ":/sm-icons/chp_running.png",
+}
+STS_PX_DEFAULT = ":/sm-icons/unknown.png"
+def set_device_state_item(sts_str):
+    """Return QStandardItem object based on the input device state string (*sts_str*).
+    """
+    item = QStandardItem('')
+    px = QPixmap(STS_PX_MAP.get(sts_str, STS_PX_DEFAULT)).scaled(PX_SIZE, PX_SIZE)
+    item.setData(px, Qt.DecorationRole)
+    item.setData(sts_str, Qt.ToolTipRole)
+    return item
+
