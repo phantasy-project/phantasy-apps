@@ -520,7 +520,6 @@ class _SortProxyModel(QSortFilterProxyModel):
                                    self.filter_col_index['last_state']): # state and last state
                 left_data = left.data(Qt.ToolTipRole)
                 right_data = right.data(Qt.ToolTipRole)
-                print(left_data, right_data)
             r = left_data < right_data
         return r
 
