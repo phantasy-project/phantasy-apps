@@ -58,7 +58,6 @@ COLUMN_NAMES2 = [
     f'{DELTA}({X2},{X0})',
     f'{DELTA}({X1},{X2})',
     'Tolerance', 'Writable', f'{X2}/{X0}',
-    # 'Power',
     'State',
     'Last State',
 ]
@@ -220,13 +219,13 @@ class SettingsModel(QStandardItemModel):
                       self.h_val0, self.h_rd, self.h_cset, \
                       self.h_val0_rd, self.h_val0_cset, self.h_rd_cset, \
                       self.h_tol, self.h_writable, self.h_ratio_x20, \
-                      self.h_pwr, self.h_last_sts \
+                      self.h_sts, self.h_last_sts \
             = COLUMN_NAMES
         self.ids = self.i_name, self.i_field, self.i_type, self.i_pos, \
                    self.i_val0, self.i_rd, self.i_cset, \
                    self.i_val0_rd, self.i_val0_cset, self.i_rd_cset, \
                    self.i_tol, self.i_writable, self.i_ratio_x20, \
-                   self.i_pwr, self.i_last_sts \
+                   self.i_sts, self.i_last_sts \
             = range(len(self.header))
 
         #
@@ -326,9 +325,9 @@ class SettingsModel(QStandardItemModel):
             item_ratio_x20.setEditable(False)
             row.append(item_ratio_x20)
 
-            # pwrsts
-            item_pwr = QStandardItem('')
-            row.append(item_pwr)
+            # current device state
+            item_sts = QStandardItem('')
+            row.append(item_sts)
 
             # last device state
             item_last_sts = set_device_state_item(self._last_sts_dict[elem.name])
@@ -479,7 +478,8 @@ class _SortProxyModel(QSortFilterProxyModel):
             'tolerance': model.i_tol,
             'writable': model.i_writable,
             'x2/x0': model.i_ratio_x20,
-            'power': model.i_pwr,
+            'state': model.i_sts,
+            'last_state': model.i_last_sts,
         }
         self.filter_ftypes = ['ENG', 'PHY']
         # if True, filter checked items, otherwise show all items.
@@ -516,7 +516,7 @@ class _SortProxyModel(QSortFilterProxyModel):
                 if r_left is not None and r_right is not None:
                     left_data = r_left.group(1)
                     right_data = r_right.group(1)
-            elif left.column() == self.filter_col_index['power']: # pwrsts
+            elif left.column() == self.filter_col_index['state']: # state
                 left_data = left.data(Qt.ToolTipRole)
                 right_data = right.data(Qt.ToolTipRole)
             r = left_data < right_data

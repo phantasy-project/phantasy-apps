@@ -1928,7 +1928,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         dx01_idx = m.index(irow, m.i_val0_rd)
         dx02_idx = m.index(irow, m.i_val0_cset)
         dx12_idx = m.index(irow, m.i_rd_cset)
-        pwr_idx = m.index(irow, m.i_pwr)
+        sts_idx = m.index(irow, m.i_sts)
         ratio_x20_idx = m.index(irow, m.i_ratio_x20)
 
         idx_tuple = (idx0, idx1)
@@ -1992,8 +1992,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
             # emit signal to update power status
             worker.meta_signal1.emit(
-                (pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
-            worker.meta_signal1.emit((pwr_idx, tt, Qt.ToolTipRole))
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
 
         elif elem.family == "CHP":
             sts = elem.get_field('STATE')
@@ -2002,9 +2002,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             tt = f"Chopper state: {sts_val_str}"
             px = self._chp_px_tuple[sts_val_int]
             worker.meta_signal1.emit(
-                (pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit(
-                (pwr_idx, tt, Qt.ToolTipRole))
+                (sts_idx, tt, Qt.ToolTipRole))
         elif elem.family == "AP":
             in_sts = elem.IN_STS
             px = self._ap_in_px_tuple[in_sts]
@@ -2013,9 +2013,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             else:
                 tt = "Aperture device is IN"
             worker.meta_signal1.emit(
-                (pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit(
-                (pwr_idx, tt, Qt.ToolTipRole))
+                (sts_idx, tt, Qt.ToolTipRole))
         elif elem.family == "ATT":
             if 'OUT_STS' in elem.fields:
                 out_sts = elem.OUT_STS
@@ -2033,9 +2033,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     px = self._att_out_px_tuple[1]
                     tt = "Attenuator(s) OUT"
             worker.meta_signal1.emit(
-                (pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit(
-                (pwr_idx, tt, Qt.ToolTipRole))
+                (sts_idx, tt, Qt.ToolTipRole))
         else:  # others
             if 'PWRSTS' in elem.fields:
                 pwr_fld = elem.get_field('PWRSTS')
@@ -2050,8 +2050,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
             # emit signal to update power status
             worker.meta_signal1.emit(
-                (pwr_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
-            worker.meta_signal1.emit((pwr_idx, tt, Qt.ToolTipRole))
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
         #
         cnt_fld += 1
         return cnt_fld

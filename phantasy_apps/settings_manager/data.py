@@ -36,12 +36,12 @@ CSV_HEADER_9 = CSV_HEADER
 CSV_HEADER_10 = (
     'Name', 'Field', 'Type', 'Pos',
     'Setpoint', 'Readback', 'Last Setpoint',
-    'Tolerance', 'Writable', 'Last Power State'
+    'Tolerance', 'Writable', 'Last Device State'
 )
 
 # For table_version of SnapshotData:
 # CSV_HEADER: 9
-# CSV_HEADER, LAST_POWER_STATUS: 10
+# CSV_HEADER, LAST_DEVICE_STATUS: 10
 
 #
 ELEMT_PATH = os.path.join(os.path.dirname(__file__), 'config', 'elements.json')
@@ -166,12 +166,12 @@ def get_settings_data(m, src_m):
     # new_sp (x2): current sp to save
     # new_rd (x1): rb at sp
     # old_sp (x0): last_sp
-    # new_ps (ps): current power/lock(CAV) status
+    # new_sts (sts): current device state 
     # WYIWYC?: proxy model, source model
     i_name, i_field, i_type, i_pos, i_new_sp, i_new_rd, i_old_sp, \
-    i_tol, i_writable, i_pwr = \
+    i_tol, i_writable, i_sts = \
         src_m.i_name, src_m.i_field, src_m.i_type, src_m.i_pos, \
-        src_m.i_cset, src_m.i_rd, src_m.i_val0, src_m.i_tol, src_m.i_writable, src_m.i_pwr
+        src_m.i_cset, src_m.i_rd, src_m.i_val0, src_m.i_tol, src_m.i_writable, src_m.i_sts
 
     data = []
     for irow in range(m.rowCount()):
@@ -195,10 +195,10 @@ def get_settings_data(m, src_m):
 
         f_tol = float(m.data(m.index(irow, i_tol)))
         f_writable = m.data(m.index(irow, i_writable))
-        f_pwr = m.data(m.index(irow, i_pwr), Qt.ToolTipRole)
+        f_sts = m.data(m.index(irow, i_sts), Qt.ToolTipRole)
         data.append((ename, fname, ftype, spos,
                      f_new_sp, f_new_rd, f_old_sp,
-                     f_tol, f_writable, f_pwr))
+                     f_tol, f_writable, f_sts))
     return pd.DataFrame(data, columns=CSV_HEADER_10)
 
 
