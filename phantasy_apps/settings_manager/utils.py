@@ -73,7 +73,7 @@ COLUMN_NAMES = COLUMN_NAMES1 + COLUMN_NAMES_ATTR + COLUMN_NAMES2
 VALID_FILTER_KEYS_NUM = ['x0', 'x1', 'x2', 'dx01', 'dx02', 'dx12',
                          'pos', 'tolerance', 'x2/x0']
 VALID_FILTER_KEYS = ['device', 'field', 'type',
-                     'writable'] + VALID_FILTER_KEYS_NUM
+                     'writable', 'state', 'last_state'] + VALID_FILTER_KEYS_NUM
 
 BG_COLOR_GOLDEN_YES = (255, 222, 3, 200) # #FFDE03
 BG_COLOR_GOLDEN_NO = (255, 255, 255, 0) # #FFFFFF
@@ -520,6 +520,7 @@ class _SortProxyModel(QSortFilterProxyModel):
                                    self.filter_col_index['last_state']): # state and last state
                 left_data = left.data(Qt.ToolTipRole)
                 right_data = right.data(Qt.ToolTipRole)
+                print(left_data, right_data)
             r = left_data < right_data
         return r
 
@@ -538,7 +539,10 @@ class _SortProxyModel(QSortFilterProxyModel):
         #
         idx = self.filter_col_index[key]
         src_index = m_src.index(src_row, idx)
-        var = src_index.data(Qt.DisplayRole)
+        if key in ('state', 'last_state'):
+            var = src_index.data(Qt.ToolTipRole)
+        else:
+            var = src_index.data(Qt.DisplayRole)
 
         if not isinstance(var, str):
             var = self.fmt.format(var)
