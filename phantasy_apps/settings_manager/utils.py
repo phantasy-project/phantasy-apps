@@ -516,7 +516,8 @@ class _SortProxyModel(QSortFilterProxyModel):
                 if r_left is not None and r_right is not None:
                     left_data = r_left.group(1)
                     right_data = r_right.group(1)
-            elif left.column() == self.filter_col_index['state']: # state
+            elif left.column() in (self.filter_col_index['state'],
+                                   self.filter_col_index['last_state']): # state and last state
                 left_data = left.data(Qt.ToolTipRole)
                 right_data = right.data(Qt.ToolTipRole)
             r = left_data < right_data
