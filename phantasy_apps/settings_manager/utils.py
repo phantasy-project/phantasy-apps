@@ -544,7 +544,7 @@ class _SortProxyModel(QSortFilterProxyModel):
             var = src_index.data(Qt.DisplayRole)
 
         if not isinstance(var, str):
-            var = self.fmt.format(var)
+            var = str(var)
 
         # number keys
         if is_number_key:
