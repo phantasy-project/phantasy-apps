@@ -497,6 +497,10 @@ class _SortProxyModel(QSortFilterProxyModel):
         self.filter_pos1_enabled = False
         self.filter_pos2_enabled = False
         self.filter_pos_value = None
+
+        # state diff
+        self.filter_state_diff_enabled = False
+
         #
         self._filter_tuples = None
 
@@ -656,6 +660,21 @@ class _SortProxyModel(QSortFilterProxyModel):
             disconnected_test = True
         #
         if not disconnected_test:
+            return False
+
+        # state diff checked
+        if self.filter_state_diff_enabled:
+            sts = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['state']),
+                    Qt.ToolTipRole)
+            last_sts = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['last_state']),
+                    Qt.ToolTipRole)
+            state_diff_test = sts != last_sts
+        else:
+            state_diff_test = True
+        #
+        if not state_diff_test:
             return False
 
         # field test

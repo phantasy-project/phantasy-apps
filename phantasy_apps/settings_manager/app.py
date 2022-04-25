@@ -2436,6 +2436,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.filter_lineEdit.editingFinished.emit()
 
     @pyqtSlot(bool)
+    def on_show_state_diff_items(self, is_checked):
+        # show all items that have different state and last_state values
+        self.filter_btn_group_status_changed.emit()
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_state_diff_enabled = is_checked
+        self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
     def on_toggle_pos1_filter_btn(self, is_checked):
         # show all item sb <= pos
         #
