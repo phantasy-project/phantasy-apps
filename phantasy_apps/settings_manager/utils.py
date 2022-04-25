@@ -274,6 +274,7 @@ class SettingsModel(QStandardItemModel):
 
         for elem, fname, fld, fval0 in self._settings:
             item_ename = QStandardItem(elem.name)
+            item_ename.setData(elem.sb, Qt.UserRole + 1)
 
             if fld is None:
                 continue
@@ -347,8 +348,8 @@ class SettingsModel(QStandardItemModel):
         proxy_model = _SortProxyModel(self)
         self._tv.setModel(proxy_model)
         #
-        # hide columns: dx01, writable
-        for i in (self.i_val0_rd, self.i_tol, self.i_writable,):
+        # hide columns: pos, dx01, tolerance, writable
+        for i in (self.i_pos, self.i_val0_rd, self.i_tol, self.i_writable,):
             self._tv.setColumnHidden(i, True)
         #
         self.__post_init_ui()
@@ -511,17 +512,15 @@ class _SortProxyModel(QSortFilterProxyModel):
         if left_data is None or right_data is None:
             return True
 
+        if left.column() == self.filter_col_index['device']: # ename
+           left_data = left.data(Qt.UserRole + 1)
+           right_data = right.data(Qt.UserRole + 1)
+
         try:
             r = float(left_data) < float(right_data)
         except ValueError:
-            if left.column() == self.filter_col_index['device']:  # ename
-                r_left = re.match(r'.*_(D[0-9]{4}).*', left_data)
-                r_right = re.match(r'.*_(D[0-9]{4}).*', right_data)
-                if r_left is not None and r_right is not None:
-                    left_data = r_left.group(1)
-                    right_data = r_right.group(1)
-            elif left.column() in (self.filter_col_index['state'],
-                                   self.filter_col_index['last_state']): # state and last state
+            if left.column() in (self.filter_col_index['state'],
+                                 self.filter_col_index['last_state']): # state and last state
                 left_data = left.data(Qt.ToolTipRole)
                 right_data = right.data(Qt.ToolTipRole)
                 if left_data is None or right_data is None:
