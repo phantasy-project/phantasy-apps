@@ -43,54 +43,97 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setContentsMargins(4, 12, 4, 4)
         self.gridLayout_2.setSpacing(4)
         self.gridLayout_2.setObjectName("gridLayout_2")
+        self.label_7 = QtWidgets.QLabel(self.groupBox)
+        self.label_7.setObjectName("label_7")
+        self.gridLayout_2.addWidget(self.label_7, 6, 0, 1, 1)
+        self.label_6 = QtWidgets.QLabel(self.groupBox)
+        self.label_6.setObjectName("label_6")
+        self.gridLayout_2.addWidget(self.label_6, 5, 0, 1, 1)
+        self.label_22 = QtWidgets.QLabel(self.groupBox)
+        self.label_22.setObjectName("label_22")
+        self.gridLayout_2.addWidget(self.label_22, 7, 0, 1, 1)
+        self.rep_rate_lineEdit = QtWidgets.QLineEdit(self.groupBox)
+        self.rep_rate_lineEdit.setObjectName("rep_rate_lineEdit")
+        self.gridLayout_2.addWidget(self.rep_rate_lineEdit, 1, 1, 1, 1)
+        self.pulse_length_lineEdit = QtWidgets.QLineEdit(self.groupBox)
+        self.pulse_length_lineEdit.setObjectName("pulse_length_lineEdit")
+        self.gridLayout_2.addWidget(self.pulse_length_lineEdit, 0, 1, 1, 1)
+        self.label = QtWidgets.QLabel(self.groupBox)
+        self.label.setObjectName("label")
+        self.gridLayout_2.addWidget(self.label, 0, 0, 1, 1)
         self.label_4 = QtWidgets.QLabel(self.groupBox)
         self.label_4.setObjectName("label_4")
         self.gridLayout_2.addWidget(self.label_4, 3, 0, 1, 1)
         self.peak_current_lineEdit = QtWidgets.QLineEdit(self.groupBox)
         self.peak_current_lineEdit.setObjectName("peak_current_lineEdit")
         self.gridLayout_2.addWidget(self.peak_current_lineEdit, 3, 1, 1, 1)
-        self.label_7 = QtWidgets.QLabel(self.groupBox)
-        self.label_7.setObjectName("label_7")
-        self.gridLayout_2.addWidget(self.label_7, 6, 0, 1, 1)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        spacerItem = QtWidgets.QSpacerItem(40, 20,
+                                           QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
+        self.sync_btn = QtWidgets.QPushButton(self.groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.sync_btn.sizePolicy().hasHeightForWidth())
+        self.sync_btn.setSizePolicy(sizePolicy)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/calc-app/refresh.png"),
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.sync_btn.setIcon(icon)
+        self.sync_btn.setObjectName("sync_btn")
+        self.horizontalLayout_2.addWidget(self.sync_btn)
+        self.gridLayout_2.addLayout(self.horizontalLayout_2, 8, 0, 1, 1)
         self.ion_mass_lineEdit = QtWidgets.QLineEdit(self.groupBox)
         self.ion_mass_lineEdit.setObjectName("ion_mass_lineEdit")
         self.gridLayout_2.addWidget(self.ion_mass_lineEdit, 4, 1, 1, 1)
-        self.label_2 = QtWidgets.QLabel(self.groupBox)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout_2.addWidget(self.label_2, 1, 0, 1, 1)
-        self.pulse_length_lineEdit = QtWidgets.QLineEdit(self.groupBox)
-        self.pulse_length_lineEdit.setObjectName("pulse_length_lineEdit")
-        self.gridLayout_2.addWidget(self.pulse_length_lineEdit, 0, 1, 1, 1)
-        self.beam_energy_lineEdit = QtWidgets.QLineEdit(self.groupBox)
-        self.beam_energy_lineEdit.setObjectName("beam_energy_lineEdit")
-        self.gridLayout_2.addWidget(self.beam_energy_lineEdit, 6, 1, 1, 1)
-        self.label_5 = QtWidgets.QLabel(self.groupBox)
-        self.label_5.setObjectName("label_5")
-        self.gridLayout_2.addWidget(self.label_5, 4, 0, 1, 1)
-        self.rep_rate_lineEdit = QtWidgets.QLineEdit(self.groupBox)
-        self.rep_rate_lineEdit.setObjectName("rep_rate_lineEdit")
-        self.gridLayout_2.addWidget(self.rep_rate_lineEdit, 1, 1, 1, 1)
-        self.label_6 = QtWidgets.QLabel(self.groupBox)
-        self.label_6.setObjectName("label_6")
-        self.gridLayout_2.addWidget(self.label_6, 5, 0, 1, 1)
-        self.ion_charge_lineEdit = QtWidgets.QLineEdit(self.groupBox)
-        self.ion_charge_lineEdit.setObjectName("ion_charge_lineEdit")
-        self.gridLayout_2.addWidget(self.ion_charge_lineEdit, 5, 1, 1, 1)
-        self.label = QtWidgets.QLabel(self.groupBox)
-        self.label.setObjectName("label")
-        self.gridLayout_2.addWidget(self.label, 0, 0, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(20, 40,
-                                           QtWidgets.QSizePolicy.Minimum,
-                                           QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_2.addItem(spacerItem, 7, 0, 1, 1)
         self.label_3 = QtWidgets.QLabel(self.groupBox)
         self.label_3.setObjectName("label_3")
         self.gridLayout_2.addWidget(self.label_3, 2, 0, 1, 1)
+        self.ion_charge_lineEdit = QtWidgets.QLineEdit(self.groupBox)
+        self.ion_charge_lineEdit.setObjectName("ion_charge_lineEdit")
+        self.gridLayout_2.addWidget(self.ion_charge_lineEdit, 5, 1, 1, 1)
         self.duty_cycle_lineEdit = QtWidgets.QLineEdit(self.groupBox)
         self.duty_cycle_lineEdit.setEnabled(False)
         self.duty_cycle_lineEdit.setReadOnly(True)
         self.duty_cycle_lineEdit.setObjectName("duty_cycle_lineEdit")
         self.gridLayout_2.addWidget(self.duty_cycle_lineEdit, 2, 1, 1, 1)
+        self.label_5 = QtWidgets.QLabel(self.groupBox)
+        self.label_5.setObjectName("label_5")
+        self.gridLayout_2.addWidget(self.label_5, 4, 0, 1, 1)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 40,
+                                            QtWidgets.QSizePolicy.Minimum,
+                                            QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_2.addItem(spacerItem1, 11, 1, 1, 1)
+        self.label_2 = QtWidgets.QLabel(self.groupBox)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout_2.addWidget(self.label_2, 1, 0, 1, 1)
+        self.beam_energy_lineEdit = QtWidgets.QLineEdit(self.groupBox)
+        self.beam_energy_lineEdit.setObjectName("beam_energy_lineEdit")
+        self.gridLayout_2.addWidget(self.beam_energy_lineEdit, 6, 1, 1, 1)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem2)
+        self.beamSpeciesDisplayWidget = BeamSpeciesDisplayWidget(self.groupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.beamSpeciesDisplayWidget.sizePolicy().hasHeightForWidth())
+        self.beamSpeciesDisplayWidget.setSizePolicy(sizePolicy)
+        self.beamSpeciesDisplayWidget.setObjectName("beamSpeciesDisplayWidget")
+        self.horizontalLayout_3.addWidget(self.beamSpeciesDisplayWidget)
+        self.gridLayout_2.addLayout(self.horizontalLayout_3, 7, 1, 2, 1)
         self.groupBox_2 = QtWidgets.QGroupBox(self.splitter)
         self.groupBox_2.setObjectName("groupBox_2")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.groupBox_2)
@@ -105,10 +148,10 @@ class Ui_MainWindow(object):
         self.beam_power_lineEdit.setReadOnly(True)
         self.beam_power_lineEdit.setObjectName("beam_power_lineEdit")
         self.gridLayout_3.addWidget(self.beam_power_lineEdit, 1, 1, 1, 1)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40,
+        spacerItem3 = QtWidgets.QSpacerItem(20, 40,
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_3.addItem(spacerItem1, 4, 0, 1, 1)
+        self.gridLayout_3.addItem(spacerItem3, 4, 0, 1, 1)
         self.label_8 = QtWidgets.QLabel(self.groupBox_2)
         self.label_8.setObjectName("label_8")
         self.gridLayout_3.addWidget(self.label_8, 1, 0, 1, 1)
@@ -179,10 +222,10 @@ class Ui_MainWindow(object):
         self.matplotlibcurveWidget.setObjectName("matplotlibcurveWidget")
         self.verticalLayout.addWidget(self.matplotlibcurveWidget)
         self.gridLayout_4.addWidget(self.splitter_2, 0, 0, 1, 1)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/calc-app/flash_on.png"),
-                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.tabWidget.addTab(self.beam_power_tab, icon, "")
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/calc-app/flash_on.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.tabWidget.addTab(self.beam_power_tab, icon1, "")
         self.fsee_flux_tab = QtWidgets.QWidget()
         self.fsee_flux_tab.setObjectName("fsee_flux_tab")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.fsee_flux_tab)
@@ -221,10 +264,10 @@ class Ui_MainWindow(object):
         self.area_lineEdit.setReadOnly(True)
         self.area_lineEdit.setObjectName("area_lineEdit")
         self.gridLayout_5.addWidget(self.area_lineEdit, 4, 0, 1, 1)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 40,
+        spacerItem4 = QtWidgets.QSpacerItem(20, 40,
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_5.addItem(spacerItem2, 5, 0, 1, 1)
+        self.gridLayout_5.addItem(spacerItem4, 5, 0, 1, 1)
         self.label_26 = QtWidgets.QLabel(self.groupBox_4)
         self.label_26.setObjectName("label_26")
         self.gridLayout_5.addWidget(self.label_26, 3, 2, 1, 1)
@@ -259,10 +302,7 @@ class Ui_MainWindow(object):
         self.fc_intensity_lineEdit.setObjectName("fc_intensity_lineEdit")
         self.horizontalLayout_4.addWidget(self.fc_intensity_lineEdit)
         self.toolButton = QtWidgets.QToolButton(self.groupBox_4)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/calc-app/refresh.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.toolButton.setIcon(icon1)
+        self.toolButton.setIcon(icon)
         self.toolButton.setIconSize(QtCore.QSize(30, 30))
         self.toolButton.setObjectName("toolButton")
         self.horizontalLayout_4.addWidget(self.toolButton)
@@ -283,10 +323,10 @@ class Ui_MainWindow(object):
         self.beam_rate_lineEdit.setReadOnly(True)
         self.beam_rate_lineEdit.setObjectName("beam_rate_lineEdit")
         self.gridLayout_6.addWidget(self.beam_rate_lineEdit, 0, 1, 1, 1)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 40,
+        spacerItem5 = QtWidgets.QSpacerItem(20, 40,
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_6.addItem(spacerItem3, 4, 0, 1, 1)
+        self.gridLayout_6.addItem(spacerItem5, 4, 0, 1, 1)
         self.label_9 = QtWidgets.QLabel(self.groupBox_5)
         self.label_9.setObjectName("label_9")
         self.gridLayout_6.addWidget(self.label_9, 0, 0, 1, 1)
@@ -336,11 +376,12 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_Help.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         self.actionAbout_Qt.triggered.connect(MainWindow.onAboutQt)
         self.actionE_xit.triggered.connect(MainWindow.close)
         self.action_About.triggered.connect(MainWindow.onAbout)
         self.toolButton.clicked.connect(MainWindow.on_pull_fc2569)
+        self.sync_btn.clicked.connect(MainWindow.on_sync_beam_state)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.tabWidget, self.pulse_length_lineEdit)
         MainWindow.setTabOrder(self.pulse_length_lineEdit,
@@ -366,44 +407,47 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.groupBox.setTitle(_translate("MainWindow", "Parameters"))
+        self.label_7.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Beam Energy (W) [MeV/u]</p></body></html>"
+            ))
+        self.label_6.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Ion Charge (initial) (Q)</p></body></html>"
+            ))
+        self.label_22.setText(_translate("MainWindow", "Current Beam State"))
+        self.rep_rate_lineEdit.setText(_translate("MainWindow", "5"))
+        self.pulse_length_lineEdit.setText(_translate("MainWindow", "26"))
+        self.label.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Pulse Length (&tau;) [μs]</p></body></html>"
+            ))
         self.label_4.setText(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Peak Current (I<span style=\" vertical-align:sub;\">p</span>) [eμA]</p></body></html>"
             ))
         self.peak_current_lineEdit.setText(_translate("MainWindow", "22"))
-        self.label_7.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Beam Energy (W) [MeV/u]</p></body></html>"
-            ))
+        self.sync_btn.setText(_translate("MainWindow", "Sync"))
         self.ion_mass_lineEdit.setText(_translate("MainWindow", "36"))
-        self.label_2.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Rep Rate (f) [Hz]</p></body></html>"))
-        self.pulse_length_lineEdit.setText(_translate("MainWindow", "26"))
-        self.beam_energy_lineEdit.setText(_translate("MainWindow", "20.3"))
-        self.label_5.setText(
-            _translate("MainWindow",
-                       "<html><head/><body><p>Ion Mass (A)</p></body></html>"))
-        self.rep_rate_lineEdit.setText(_translate("MainWindow", "5"))
-        self.label_6.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Ion Charge (Q)</p></body></html>"))
-        self.ion_charge_lineEdit.setText(_translate("MainWindow", "10"))
-        self.label.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Pulse Length (&tau;) [μs]</p></body></html>"
-            ))
         self.label_3.setText(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Duty Cycle (&eta;) [%]</p></body></html>"
             ))
+        self.ion_charge_lineEdit.setText(_translate("MainWindow", "10"))
         self.duty_cycle_lineEdit.setText(_translate("MainWindow", "0.013"))
+        self.label_5.setText(
+            _translate("MainWindow",
+                       "<html><head/><body><p>Ion Mass (A)</p></body></html>"))
+        self.label_2.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Rep Rate (f) [Hz]</p></body></html>"))
+        self.beam_energy_lineEdit.setText(_translate("MainWindow", "20.3"))
         self.groupBox_2.setTitle(_translate("MainWindow", "Results"))
         self.beam_power_lineEdit.setText(_translate("MainWindow", "0.209009"))
         self.label_8.setText(_translate("MainWindow", "Beam Power (P) [Watt]"))
@@ -493,6 +537,7 @@ class Ui_MainWindow(object):
 
 
 from mpl4qt.widgets.mplcurvewidget import MatplotlibCurveWidget
+from phantasy_ui.widgets.beam_species_displayWidget import BeamSpeciesDisplayWidget
 from . import resources_rc
 
 if __name__ == "__main__":
