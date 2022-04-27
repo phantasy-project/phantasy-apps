@@ -83,6 +83,9 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
             o.textChanged.connect(partial(self.on_update_flux, p))
             o.textChanged.emit(o.text())
 
+        # refresh power calculation based on current beam state
+        self.sync_btn.clicked.emit()
+
     @pyqtSlot('QString')
     def on_update_flux(self, param, s):
         try:
@@ -170,6 +173,14 @@ class MyAppWindow(BaseAppForm, Ui_MainWindow):
             v = self.fc_pv.value * 1e12 # [A] --> [pA]
             if v is not None:
                 self.fc_intensity_lineEdit.setText(FMT.format(v))
+
+    @pyqtSlot()
+    def on_sync_beam_state(self):
+        """Pull the live Q and A and fill out the input boxes.
+        """
+        _, a, _, q = self.beamSpeciesDisplayWidget.get_species()
+        self.ion_mass_lineEdit.setText(str(a))
+        self.ion_charge_lineEdit.setText(str(q))
 
 
 def f_beam_power(beam_energy, peak_current, ion_mass, ion_charge, pulse_length,
