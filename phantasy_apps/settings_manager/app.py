@@ -943,7 +943,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_filter_btn_group_status_changed(self):
         # Do logic 'or', if True, do global refresh when data refresher is on.
         self._filter_btn_enabled = self.show_warning_dx02_btn.isChecked() \
-                or self.show_warning_dx12_btn.isChecked()
+                or self.show_warning_dx12_btn.isChecked() or self.show_state_diff_btn.isChecked()
 
     def resizeEvent(self, e):
         self.resizeDocks([self.snp_dock], [self.width() * 0.5], Qt.Horizontal)
@@ -2918,7 +2918,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_load_settings(self, data):
         # data: SnapshotData
         # settings(data.data): DataFrame
-        # self.turn_off_updater_if_necessary()
+        self.turn_off_updater_if_necessary()
         if self._lat is None or self._last_machine_name != data.machine or \
                 self._last_lattice_name != data.segment:
             self.__load_lattice(data.machine, data.segment)
