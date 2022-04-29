@@ -552,6 +552,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._machstate = None
 
     def __post_init_ui(self):
+        # disable the ndigit sbox on the main UI
+        self.ndigit_sbox.setEnabled(False)
+        self.ndigit_sbox.setToolTip("Go to 'Preferences -> Float number precision' to change the value.")
         # WYSIWYC flag:
         self._wysiwyc_enabled = False
         #
