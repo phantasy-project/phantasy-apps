@@ -1972,10 +1972,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             worker.meta_signal1.emit(
                 (dx02_idx, self._warning_px, Qt.DecorationRole))
             worker.meta_signal1.emit((dx02_idx, 'warning', Qt.UserRole))
-            worker.meta_signal1.emit((dx02_idx, None, Qt.UserRole))
         else:
             worker.meta_signal1.emit(
                 (dx02_idx, self._no_warning_px, Qt.DecorationRole))
+            worker.meta_signal1.emit((dx02_idx, None, Qt.UserRole))
 
         #
         pwr_is_on = 'Unknown'
