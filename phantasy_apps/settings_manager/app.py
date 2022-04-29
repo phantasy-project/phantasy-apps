@@ -1879,14 +1879,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         delt = self._update_delt
         m0 = self._tv.model()
         m = m0.sourceModel()
+        try:
+            is_finished = self.updater.isFinished()
+        except:
+            is_finished = True
+        if not is_finished:
+            return
         self.updater = DAQT(daq_func=partial(self.update_value_single, m, m0,
                                              delt, True),
                             daq_seq=range(1))
         self.updater.meta_signal1.connect(partial(self.on_update_display, m))
-        self.updater.daqStarted.connect(
-            partial(self.set_widgets_status_for_updating, 'START', False))
-        self.updater.finished.connect(
-            partial(self.set_widgets_status_for_updating, 'STOP', False))
+        # self.updater.daqStarted.connect(
+        #     partial(self.set_widgets_status_for_updating, 'START', False))
+        # self.updater.finished.connect(
+        #     partial(self.set_widgets_status_for_updating, 'STOP', False))
         self.updater.finished.connect(self.start_thread_update)
         self.updater.start()
 
@@ -2323,6 +2329,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         m0 = self._tv.model()
         m = m0.sourceModel()
+        try:
+            is_finished = self.one_updater.isFinished()
+        except:
+            is_finished = True
+        if not is_finished:
+            return
         self.one_updater = DAQT(daq_func=partial(self._refresh_single, m, m0,
                                                  False),
                                 daq_seq=self.obj_it_tuple,
@@ -2332,11 +2344,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #self.one_updater.daqStarted.connect(lambda:self.refresh_pb.setVisible(True))
         self.one_updater.daqStarted.connect(
             lambda: printlog("Data refreshing..."))
-        self.one_updater.daqStarted.connect(
-            partial(self.set_widgets_status_for_updating, 'START'))
+        # self.one_updater.daqStarted.connect(
+        #     partial(self.set_widgets_status_for_updating, 'START'))
         #self.one_updater.progressUpdated.connect(self._on_data_refresh_progressed)
-        self.one_updater.finished.connect(
-            partial(self.set_widgets_status_for_updating, 'STOP'))
+        # self.one_updater.finished.connect(
+        #     partial(self.set_widgets_status_for_updating, 'STOP'))
         #self.one_updater.daqFinished.connect(lambda:self.refresh_pb.setVisible(False))
         self.one_updater.daqFinished.connect(
             lambda: printlog("Data refreshing...done."))
@@ -2509,6 +2521,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._tv.setColumnHidden(idx, f)
 
     def turn_off_updater_if_necessary(self):
+        # obsoleted.
         # This is not safe, to be improved!!!
         if self.update_ctrl_btn.isChecked():
             self.update_ctrl_btn.setChecked(False)
@@ -2525,7 +2538,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m = self._tv.model()
         if m is None:
             return
-        self.turn_off_updater_if_necessary()
+        # self.turn_off_updater_if_necessary()
         src_m = m.sourceModel()
         # single update
         self._updater = DAQT(daq_func=partial(self.update_value_single, src_m,
@@ -2533,10 +2546,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                              daq_seq=range(1))
         self._updater.meta_signal1.connect(
             partial(self.on_update_display, src_m))
-        self._updater.daqStarted.connect(
-            partial(self.set_widgets_status_for_updating, 'START'))
-        self._updater.finished.connect(
-            partial(self.set_widgets_status_for_updating, 'STOP'))
+        # self._updater.daqStarted.connect(
+        #     partial(self.set_widgets_status_for_updating, 'START'))
+        # self._updater.finished.connect(
+        #     partial(self.set_widgets_status_for_updating, 'STOP'))
         loop = QEventLoop()
         self._updater.finished.connect(loop.exit)
         self._updater.start()
@@ -2905,7 +2918,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_load_settings(self, data):
         # data: SnapshotData
         # settings(data.data): DataFrame
-        self.turn_off_updater_if_necessary()
+        # self.turn_off_updater_if_necessary()
         if self._lat is None or self._last_machine_name != data.machine or \
                 self._last_lattice_name != data.segment:
             self.__load_lattice(data.machine, data.segment)
