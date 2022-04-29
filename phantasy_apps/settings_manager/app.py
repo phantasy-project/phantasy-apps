@@ -6,6 +6,7 @@ import json
 import os
 import pathlib
 import re
+import numpy as np
 import pandas as pd
 import tempfile
 import time
@@ -1878,8 +1879,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if self._tv.model() is None:
             return
 
-        if self._stop_update_thread:
-            return
+
+        # if self._stop_update_thread:
+        #    return
 
         delt = self._update_delt
         m0 = self._tv.model()
@@ -1892,13 +1894,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         self.updater = DAQT(daq_func=partial(self.update_value_single, m, m0,
                                              delt, True),
-                            daq_seq=range(1))
+                            daq_seq=np.inf)
         self.updater.meta_signal1.connect(partial(self.on_update_display, m))
         # self.updater.daqStarted.connect(
         #     partial(self.set_widgets_status_for_updating, 'START', False))
         # self.updater.finished.connect(
         #     partial(self.set_widgets_status_for_updating, 'STOP', False))
-        self.updater.finished.connect(self.start_thread_update)
+        # self.updater.finished.connect(self.start_thread_update)
         self.updater.start()
 
     def _refresh_single(self, m, m0, viewport_only, iter_param, **kws):
@@ -2124,6 +2126,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             # so stop it.
             self.stop_auto_update()
             self._stop_update_thread = True
+            try:
+                self.updater.requestInterruption()
+            except:
+                pass
             printlog("Stop thread updating.")
         else:
             self.stop_auto_update()
