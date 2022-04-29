@@ -1091,6 +1091,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         src_m = m.sourceModel()
         src_idx = m.mapToSource(idx)
         item = src_m.itemFromIndex(src_idx)
+        if item is None:
+            return
         text = item.text()
         #
         menu = QMenu(self)
