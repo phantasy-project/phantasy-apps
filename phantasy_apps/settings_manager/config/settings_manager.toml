@@ -16,7 +16,7 @@ TITLE = "Configurations for Settings Manager"
   PRECISION = 3 # float number precision
   FIELD_INIT_MODE = 'model' # initial settings with model or live data
   INIT_SETTINGS = false     # initialize settings table or not
-  SUPPORT_CONFIG_PATH = "~/.phantasy-apps/settings-manager" # elements,settings,tolerance.json
+  SUPPORT_CONFIG_PATH = "/files/shared/ap/settings_manager/.config/" # elements,settings,tolerance.json
   # HIDE_COLUMNS = ['dx01', 'tolerance', 'writable']
 
 [MACH_STATE]
