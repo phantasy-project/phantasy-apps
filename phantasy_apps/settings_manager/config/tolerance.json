@@ -277,7 +277,7 @@
     "PHASE2": 0.15,
     "PHA2": 0.15,
     "PHASE3": 0.15,
-    "PHA3": 0.15,
+    "PHA3": 0.3,
     "AMPLITUDE1": 0.15,
     "AMP1": 0.15,
     "AMPLITUDE2": 0.15,
@@ -657,7 +657,7 @@
     "PHASE": 0.2,
     "PHA": 0.2,
     "AMPLITUDE_COEF": 0.2,
-    "AMP": 0.2
+    "AMP": 1.0
   },
   "FS1_BMS:DCV_D2640": {
     "ANG": 0.15,
