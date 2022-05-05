@@ -2874,7 +2874,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_del_settings(self, data):
         # delete from MEM (done), and model, and datafile (if exists)
         r = QMessageBox.warning(None, "Delete Snapshot",
-                                "Are you sure to delete this snapshot?",
+                                f"Are you sure to delete the snapshot created at {data.ts_as_str()}?",
                                 QMessageBox.Yes | QMessageBox.No,
                                 QMessageBox.No)
         if r == QMessageBox.No:
