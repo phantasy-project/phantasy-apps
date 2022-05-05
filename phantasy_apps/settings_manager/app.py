@@ -556,6 +556,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # disable the ndigit sbox on the main UI
         self.ndigit_sbox.setEnabled(False)
         self.ndigit_sbox.setToolTip("Go to 'Preferences -> Float number precision' to change the value.")
+        # hide update_rate_cbb,
+        self.update_rate_cbb.setVisible(False)
+        # reword "Update Rate" label
+        self.label_6.setText("Settings Data")
+        self.label_6.setToolTip("Press button to refresh data")
+        self.update_ctrl_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.update_ctrl_btn.setText("Keep Refreshing")
+        self.single_update_btn.setText("Refresh Once")
+
         # WYSIWYC flag:
         self._wysiwyc_enabled = False
         #
