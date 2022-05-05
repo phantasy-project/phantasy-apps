@@ -762,6 +762,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_loaded.connect(self.on_update_filter_controls)
         # update pos filter area
         self.snp_loaded.connect(self.on_update_pos_filter)
+        # re-enable filter buttons if any
+        self.snp_loaded.connect(self.refresh_filter_btns)
         #
         self.snp_loaded.connect(self.on_snp_loaded)
         self.snp_saved.connect(self.on_snp_saved)
@@ -2497,6 +2499,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             f"Filter devices locating before (<=) {v} m.")
         self.pos2_filter_btn.setToolTip(
             f"Filter devices locating after (>) {v} m.")
+
+    def refresh_filter_btns(self, snpdata):
+        for btn in (self.show_warning_dx02_btn,
+                    self.show_warning_dx12_btn,
+                    self.show_state_diff_btn,):
+            btn.toggled.emit(btn.isChecked())
 
     def on_update_pos_filter(self, snpdata):
         self.pos_filter_btn.toggled.emit(self.pos_filter_btn.isChecked())
