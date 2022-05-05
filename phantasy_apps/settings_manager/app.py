@@ -756,6 +756,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.actionCapture_machstate.triggered.connect(
             self.on_capture_machstate)
 
+        self.snp_loaded.connect(self.on_snp_loaded)
         # scaling factor hint
         self.snp_loaded.connect(self.on_hint_scaling_factor)
         # update filter button area (by field, type, ...)
@@ -765,7 +766,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # re-enable filter buttons if any
         self.snp_loaded.connect(self.refresh_filter_btns)
         #
-        self.snp_loaded.connect(self.on_snp_loaded)
         self.snp_saved.connect(self.on_snp_saved)
 
         # log dock
@@ -1895,7 +1895,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if not is_finished:
             return
         self.updater = DAQT(daq_func=partial(self.update_value_single, m, m0,
-                                             delt, True),
+                                             delt, False),
                             daq_seq=np.inf)
         self.updater.meta_signal1.connect(partial(self.on_update_display, m))
         # self.updater.daqStarted.connect(
@@ -2081,8 +2081,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             worker = self.updater
         t0 = time.time()
         cnt_fld = 0
-        if self._filter_btn_enabled:  # force iterate all if any (2) filter btn is on
-            viewport_only = False
+        # if self._filter_btn_enabled:  # force iterate all if any (3) filter btn is on
+        #    viewport_only = False
         for o, it in self.obj_it_tuple:
             _cnt_fld = self._refresh_single(m,
                                             m0,
