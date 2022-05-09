@@ -107,6 +107,7 @@ from .utils import ELEM_WRITE_PERM
 from .utils import NUM_LENGTH
 from .utils import BG_COLOR_GOLDEN_NO
 from .utils import CHP_STS_TUPLE
+from .utils import TGT_STS_TUPLE
 from .contrib.db.db_utils import ensure_connect_db
 
 #
@@ -2060,6 +2061,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     tt = "Attenuator(s) OUT"
             worker.meta_signal1.emit(
                 (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+        elif elem.family == "PTA":
+            sts = elem.get_field('TGT')
+            sts_val_int = sts.value
+            sts_val_str = TGT_STS_TUPLE[sts_val_int]
+            tt = f"Target state: {sts_val_str}"
+            worker.meta_signal1.emit(
+                (sts_idx, sts_val_str, Qt.DisplayRole))
             worker.meta_signal1.emit(
                 (sts_idx, tt, Qt.ToolTipRole))
         else:  # others

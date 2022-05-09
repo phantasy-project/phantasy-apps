@@ -162,7 +162,15 @@ NUM_LENGTH = 9
 
 
 # Chopper state map
+# CHP_STS_TUPLE = PV("ACS_DIAG:CHP:STATE_RD").enum_strs
 CHP_STS_TUPLE = ("Invalid Input", "Off", "Blocking", "Running")
+
+# Target state map
+# TGT_STS_TUPLE = PV("FS_PTG:BEAM:TARGET").enum_strs
+TGT_STS_TUPLE = ('Invalid', 'Home/Be 3.811 mm', 'Viewer', 'Be 4064 mm',
+                 'Pattern-11 holes', 'Be 8.892 mm', 'Be 3.811 mm',
+                 'Empty hole', 'Be 4.189 mm', 'Pattern- 1 center hole',
+                 'Be 8.892 mm')
 
 
 class SettingsModel(QStandardItemModel):
@@ -331,7 +339,7 @@ class SettingsModel(QStandardItemModel):
             row.append(item_sts)
 
             # last device state
-            item_last_sts = set_device_state_item(self._last_sts_dict[elem.name])
+            item_last_sts = set_device_state_item(self._last_sts_dict.get(elem.name, 'nan'))
             row.append(item_last_sts)
 
             #
@@ -1475,6 +1483,8 @@ class _SnpProxyModel(QSortFilterProxyModel):
 
 
 STS_PX_MAP = {
+"nan": ":/sm-icons/unknown.png", # when first added into the list
+
 "Not a powered device, SRF cavity, nor other blocking devices.": ":/sm-icons/unknown.png",
 "Power is UNKNOWN": ":/sm-icons/unknown.png",
 
@@ -1499,13 +1509,16 @@ STS_PX_MAP = {
 "Chopper state: Blocking": ":/sm-icons/chp_blocking.png",
 "Chopper state: Running": ":/sm-icons/chp_running.png",
 }
-STS_PX_DEFAULT = ":/sm-icons/unknown.png"
 def set_device_state_item(sts_str):
     """Return QStandardItem object based on the input device state string (*sts_str*).
     """
     item = QStandardItem('')
-    px = QPixmap(STS_PX_MAP.get(sts_str, STS_PX_DEFAULT)).scaled(PX_SIZE, PX_SIZE)
-    item.setData(px, Qt.DecorationRole)
+    sts_px_path = STS_PX_MAP.get(sts_str)
+    if sts_px_path is not None:
+        px = QPixmap(sts_px_path).scaled(PX_SIZE, PX_SIZE)
+        item.setData(px, Qt.DecorationRole)
+    else:
+        item.setData(sts_str, Qt.DisplayRole)
     item.setData(sts_str, Qt.ToolTipRole)
     return item
 
