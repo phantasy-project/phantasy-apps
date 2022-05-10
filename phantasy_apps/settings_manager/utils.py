@@ -1496,6 +1496,24 @@ STS_PX_MAP = {
 "Aperture device is OUT": ":/sm-icons/on.png",
 "Aperture device is IN": ":/sm-icons/off.png",
 
+"PPAC is OUT": ":/sm-icons/on.png",
+"PPAC is IN": ":/sm-icons/off.png",
+
+"Beam dump is OUT": ":/sm-icons/on.png",
+"Beam dump is IN": ":/sm-icons/off.png",
+
+"Energy loss detector is OUT": ":/sm-icons/on.png",
+"Energy loss detector is IN": ":/sm-icons/off.png",
+
+"Timing detector is OUT": ":/sm-icons/on.png",
+"Timing detector is IN": ":/sm-icons/off.png",
+
+"Slit is OUT": ":/sm-icons/on.png",
+"Slit is IN": ":/sm-icons/off.png",
+
+"DB2 viewer/degrader is OUT": ":/sm-icons/on.png",
+"DB3 viewer/wedge is OUT": ":/sm-icons/on.png",
+
 "Cavity phase is LOCKED": ":/sm-icons/on.png",
 "Device is Locked": ":/sm-icons/on.png",
 "Cavity phase is UNLOCKED": ":/sm-icons/off.png",

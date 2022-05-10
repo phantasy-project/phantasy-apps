@@ -669,6 +669,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         _att_in_px, _att_out_px = _blocking_px, _non_blocking_px
         self._att_out_px_tuple = (_att_in_px, _att_out_px)
 
+        # position monitor (PPAC)
+        self._pm_in_px_tuple = (_non_blocking_px, _blocking_px)
+
         # chopper
         self._chp_invalud_px = QPixmap(":/sm-icons/chp_invalid.png")
         self._chp_off_px = QPixmap(":/sm-icons/chp_off.png")
@@ -2043,6 +2046,94 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit(
                 (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "PM":
+            if 'IN_STS' in elem.fields:
+                in_sts = int(elem.IN_STS)
+                px = self._pm_in_px_tuple[in_sts]
+                if in_sts == 0:
+                    tt = "PPAC is OUT"
+                else:
+                    tt = "PPAC is IN"
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "BD":
+            if 'IN_STS' in elem.fields:
+                in_sts = int(elem.IN_STS)
+                px = self._pm_in_px_tuple[in_sts]
+                if in_sts == 0:
+                    tt = "Beam dump is OUT"
+                else:
+                    tt = "Beam dump is IN"
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "ELD":
+            if 'IN_STS' in elem.fields:
+                in_sts = int(elem.IN_STS)
+                px = self._pm_in_px_tuple[in_sts]
+                if in_sts == 0:
+                    tt = "Energy loss detector is OUT"
+                else:
+                    tt = "Energy loss detector is IN"
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "TID":
+            if 'IN_STS' in elem.fields:
+                in_sts = int(elem.IN_STS)
+                px = self._pm_in_px_tuple[in_sts]
+                if in_sts == 0:
+                    tt = "Timing detector is OUT"
+                else:
+                    tt = "Timing detector is IN"
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "PPOT":
+            pos = elem.get_field('POS').value
+            if elem.name == "FS_F2S1:PPOT_D1563":
+                if pos == 0:
+                    tt = "DB2 viewer/degrader is OUT"
+                    px = self._pwr_on_px  # green
+                elif pos == 2:
+                    tt = "DB2 Viewer is IN"
+                    px = self._pwr_off_px # red
+                elif pos == 3:
+                    tt = "DB2 Degrader is IN"
+                    px = self._pwr_off_px # red
+
+            elif elem.name == "FS_F2S2:PPOT_D1660":
+                if pos == 0:
+                    tt = "DB3 viewer/wedge is OUT"
+                    px = self._pwr_on_px  # green
+                elif pos == 2:
+                    tt = "DB3 Viewer is IN"
+                    px = self._pwr_off_px # red
+                elif pos == 3:
+                    tt = "DB3 Wedge#1 is IN"
+                    px = self._pwr_off_px # red
+                elif pos == 4:
+                    tt = "DB3 Wedge#2 is IN"
+                    px = self._pwr_off_px # red
+                elif pos == 5:
+                    tt = "DB3 Wedge#3 is IN"
+                    px = self._pwr_off_px # red
+
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
         elif elem.family == "ATT":
             if 'OUT_STS' in elem.fields:
                 out_sts = elem.OUT_STS
@@ -2072,6 +2163,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 (sts_idx, sts_val_str, Qt.DisplayRole))
             worker.meta_signal1.emit(
                 (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "SLT":
+            if 'IN_STS' in elem.fields:
+                in_sts = elem.IN_STS
+                px = self._pm_in_px_tuple[in_sts]
+                if in_sts == 0:
+                    tt = "Slit is OUT"
+                else:
+                    tt = "Slit is IN"
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
         else:  # others
             if 'PWRSTS' in elem.fields:
                 pwr_fld = elem.get_field('PWRSTS')

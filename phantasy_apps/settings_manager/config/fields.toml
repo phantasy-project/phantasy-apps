@@ -25,10 +25,56 @@ fields = [
     'AMP1', 'AMP2', 'AMPLITUDE1', 'AMPLITUDE2'
 ]
 
+["FS_F2S2:SLH_D1657"]
+fields = [
+    'IN_STS', 'IN_STATUS'
+]
+
+["FS_F2S2:SLH_D1662"]
+fields = [
+    'IN_STS', 'IN_STATUS'
+]
+
 ["REA_BTS19:CAV_D0990"]
 fields = [
     'PHA1', 'PHA2', 'PHASE1', 'PHASE2',
     'AMP1', 'AMP2', 'AMPLITUDE1', 'AMPLITUDE2'
+]
+
+["FS_F1S2:PM_D1460"]
+fields = [
+    'IN_STS', 'IN_STATUS'
+]
+
+["FS_F1S2:PM_D1464"]
+fields = [
+    'IN_STS', 'IN_STATUS'
+]
+
+["FS_F2S2:PM_D1658"]
+fields = [
+    'IN_STS', 'IN_STATUS'
+]
+
+["FS_F2S2:PM_D1663"]
+fields = [
+    'IN_STS', 'IN_STATUS'
+]
+
+["FS_F3S1:PM_D1758"]
+fields = [
+    'IN_STS', 'IN_STATUS'
+]
+
+
+["FS_F3S2:PM_D1849"]
+fields = [
+    'IN_STS', 'IN_STATUS'
+]
+
+["FS_F3S2:PM_D1853"]
+fields = [
+    'IN_STS', 'IN_STATUS'
 ]
 
 [HCOR]
@@ -90,6 +136,8 @@ fields = [
     'RIGHT', 'RIGHT_POS',
     'TOP', 'TOP_POS',
     'BOTTOM', 'BOTTOM_POS',
+    'CPOS', 'CENTER_POS',
+    'GAP', 'GAP_phy',
 ]
 
 [STRIPPER]
