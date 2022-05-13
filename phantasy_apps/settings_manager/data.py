@@ -131,7 +131,11 @@ def make_physics_settings(settings, lat):
     s = Settings()  # physics settings
     last_sts_dict = {}  # last device states dict
     for line in settings:
-        name, field, _, _, sp, rd, last_sp, _, _, last_sts = line[0:10]
+        name, field, _, _, sp, rd, last_sp, _, _, = line[0:9]
+        try:
+            last_sts = line[9]
+        except IndexError:
+            last_sts = "Non-existing"
         if name in ELEM_ALIAS_MAP:
             name = ELEM_ALIAS_MAP[name]
         elem = lat[name]
@@ -166,7 +170,7 @@ def get_settings_data(m, src_m):
     # new_sp (x2): current sp to save
     # new_rd (x1): rb at sp
     # old_sp (x0): last_sp
-    # new_sts (sts): current device state 
+    # new_sts (sts): current device state
     # WYIWYC?: proxy model, source model
     i_name, i_field, i_type, i_pos, i_new_sp, i_new_rd, i_old_sp, \
     i_tol, i_writable, i_sts = \

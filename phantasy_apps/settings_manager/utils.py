@@ -1487,6 +1487,7 @@ STS_PX_MAP = {
 
 "Not a powered device, SRF cavity, nor other blocking devices.": ":/sm-icons/unknown.png",
 "Power is UNKNOWN": ":/sm-icons/unknown.png",
+"Non-existing": ":/sm-icons/unknown.png", # the snapshot that does not saved last device state data (initial version of the data structure)
 
 "Attenuator(s) IN": ":/sm-icons/off.png",
 "Attenuator(s) OUT": ":/sm-icons/on.png",
