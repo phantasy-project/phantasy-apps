@@ -2051,7 +2051,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         elif elem.family == "PM":
             if 'IN_STS' in elem.fields:
-                in_sts = int(elem.IN_STS)
+                in_sts = elem.IN_STS
                 px = self._pm_in_px_tuple[in_sts]
                 if in_sts == 0:
                     tt = "PPAC is OUT"
@@ -2064,7 +2064,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         elif elem.family == "BD":
             if 'IN_STS' in elem.fields:
-                in_sts = int(elem.IN_STS)
+                in_sts = elem.IN_STS
                 px = self._pm_in_px_tuple[in_sts]
                 if in_sts == 0:
                     tt = "Beam dump is OUT"
@@ -2077,7 +2077,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         elif elem.family == "ELD":
             if 'IN_STS' in elem.fields:
-                in_sts = int(elem.IN_STS)
+                in_sts = elem.IN_STS
                 px = self._pm_in_px_tuple[in_sts]
                 if in_sts == 0:
                     tt = "Energy loss detector is OUT"
@@ -2090,7 +2090,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         elif elem.family == "TID":
             if 'IN_STS' in elem.fields:
-                in_sts = int(elem.IN_STS)
+                in_sts = elem.IN_STS
                 px = self._pm_in_px_tuple[in_sts]
                 if in_sts == 0:
                     tt = "Timing detector is OUT"
