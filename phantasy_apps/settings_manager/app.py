@@ -110,6 +110,8 @@ from .utils import CHP_STS_TUPLE
 from .utils import TGT_STS_TUPLE
 from .contrib.db.db_utils import ensure_connect_db
 
+# scaling op
+SCALE_OP_MAP = ('x', '+') # simple form for {0: 'x', 1: '+'}
 #
 SUPPORT_FTYPES = ("xlsx", "csv", "h5")
 
@@ -1440,8 +1442,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # scaling factor
         scaling_factor = float(self.scaling_factor_lineEdit.text())
-        # scale operator, default is 'x'
-        scale_op = self.scale_op_cbb.currentText()
+        # scale operator, default is 0: 'x', (1: '+')
+        scale_op = SCALE_OP_MAP[self.scale_op_cbb.currentIndex()]
         #
         self.idx_px_list = []  # list to apply icon [(idx_src, px, log_msg)]
         settings_selected = m.get_selection()
