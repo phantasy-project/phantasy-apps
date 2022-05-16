@@ -1938,6 +1938,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         worker.meta_signal1.emit((wa_idx, str(wa), Qt.DisplayRole))
 
         name_idx = m.index(irow, m.i_name)
+        fname = m.data(m.index(irow, m.i_field))
         if None in (rd_val, sp_val):  # is not reachable
             worker.meta_signal1.emit(
                 (name_idx, self.fail_px.scaled(PX_SIZE,
@@ -2181,7 +2182,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         else:  # others
             if 'PWRSTS' in elem.fields:
-                pwr_fld = elem.get_field('PWRSTS')
+                if fname == 'I_TC':
+                    pwr_fname = 'PWRSTS_TC'
+                else:
+                    pwr_fname = 'PWRSTS'
+
+                pwr_fld = elem.get_field(pwr_fname)
                 pwr_is_on = pwr_fld.value
 
                 if pwr_is_on == 1.0:
