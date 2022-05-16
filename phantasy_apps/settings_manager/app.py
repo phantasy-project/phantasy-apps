@@ -1162,7 +1162,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         selected_rows = []
         checked_status = []
-        power_status = []  # list of (CaElement, PWRSTS)
+        power_status = []  # list of (CaElement, PWRSTS, pwr_fname)
         for _idx in self._tv.selectedIndexes():
             if _idx.column() == src_m.i_name:
                 selected_rows.append(_idx.row())
@@ -1217,7 +1217,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 _add_switch_menu = True
         else:
             if not all(i is None
-                       for _, i in power_status):  # show switch action
+                       for _, i, _ in power_status):  # show switch action
                 new_power_status = not self._get_pwrsts(src_m, m, idx)[1]
                 if new_power_status:
                     act_text = "Turn All on"
@@ -1277,7 +1277,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # reset trip events, for ISEG PSs
         # _reset_trip_events()
         put_iseg_pvs = []
-        for elem, _ in power_status:
+        for elem, _, _ in power_status:
             iseg_pv = caget(f"{elem.name}:VBS:doClear.NAME")
             if iseg_pv in put_iseg_pvs:
                 continue
@@ -1288,24 +1288,29 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             put_iseg_pvs.append(iseg_pv)
 
     def _get_pwrsts(self, m_src, m, idx):
-        # power status from selected index, return tuple of CaElement, PWRSTS (None if not defined).
-        it = m_src.itemFromIndex(
-            m.mapToSource(m.index(idx.row(), idx.column())))
+        # power status from selected index, return tuple of CaElement, PWRSTS, pwr_fname (None if not defined).
+        idx_src = m.mapToSource(m.index(idx.row(), idx.column()))
+        it = m_src.itemFromIndex(idx_src)
         elem = self._lat[it.text()]
+        fname = m_src.data(m_src.index(idx_src.row(), m_src.i_field))
+        if fname == 'I_TC':
+            pwr_fname = 'PWRSTS_TC'
+        else:
+            pwr_fname = 'PWRSTS'
         try:
-            r = elem.PWRSTS
+            r = getattr(elem, pwr_fname)
         except AttributeError:
             r = None
         finally:
-            return elem, r
+            return elem, r, pwr_fname
 
     @pyqtSlot()
     def on_toggle_pwrsts(self, selected_rows, m, m_src, new_power_status,
                          current_power_status):
-        # current_power_status: list of (CaElement, PWRSTS)
-        for elem, _ in current_power_status:
-            if 'PWRSTS' in elem.fields:
-                elem.PWRSTS = int(new_power_status)
+        # current_power_status: list of (CaElement, PWRSTS, pwr_fname)
+        for elem, _, pwr_fname in current_power_status:
+            if pwr_fname in elem.fields:
+                setattr(elem, pwr_fname, int(new_power_status))
                 sts = 'ON' if new_power_status else 'OFF'
                 msg = "[{0}] Turn power {2} for {1:<20s}".format(
                     datetime.fromtimestamp(time.time()).strftime(TS_FMT),
