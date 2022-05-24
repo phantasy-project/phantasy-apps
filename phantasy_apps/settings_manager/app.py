@@ -2516,6 +2516,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         w1 = (self.apply_btn, )
         [i.setDisabled(status == 'START') for i in w1]
 
+    def set_widgets_status_for_ref_set(self, status):
+        """Set widgets status for ref set.
+        """
+        w1 = (self.update_ref_btn, )
+        [i.setDisabled(status == 'START') for i in w1]
+
     def sizeHint(self):
         return QSize(1920, 1440)
 
@@ -3389,79 +3395,57 @@ p, li { white-space: pre-wrap; }
         if m is None:
             return
         src_m = m.sourceModel()
-        # single update
-        self._updater = DAQT(daq_func=partial(self.update_value_single, src_m,
-                                              m, -1, False),
-                             daq_seq=range(1))
-        self._updater.meta_signal1.connect(
-            partial(self.on_update_display, src_m))
-        loop = QEventLoop()
-        self._updater.finished.connect(loop.exit)
-        self._updater.start()
-        loop.exec_()
+        # # single update
+        # self._updater = DAQT(daq_func=partial(self.update_value_single, src_m,
+        #                                       m, -1, False),
+        #                      daq_seq=range(1))
+        # self._updater.meta_signal1.connect(
+        #     partial(self.on_update_display, src_m))
+        # loop = QEventLoop()
+        # self._updater.finished.connect(loop.exit)
+        # self._updater.start()
+        # loop.exec_()
         self._write_ref(src_m)
 
-    def _write_ref(src_m):
+    def _write_ref(self, src_m):
         self._setter = DAQT(daq_func=partial(self.set_ref, src_m),
                             daq_seq=range(1))
         # self._setter.daqStarted.connect(lambda: self.apply_pb.setVisible(True))
-        # self._setter.daqStarted.connect(
-        #     partial(self.set_widgets_status_for_applying, 'START'))
+        self._setter.daqStarted.connect(
+             partial(self.set_widgets_status_for_ref_set, 'START'))
         # self._setter.progressUpdated.connect(
         #     partial(self.on_apply_settings_progress, self.idx_px_list,
         #             m.sourceModel()))
-        # self._setter.daqFinished.connect(
-        #     partial(self.set_widgets_status_for_applying, 'STOP'))
+        self._setter.daqFinished.connect(
+             partial(self.set_widgets_status_for_ref_set, 'STOP'))
         # self._setter.daqFinished.connect(
         #     lambda: self.apply_pb.setVisible(False))
         # self._setter.daqFinished.connect(
         #     lambda: self.single_update_btn.clicked.emit())
         self._setter.start()
 
-    def set_ref(self, src_m):
-        idx_src, settings, new_fval0 = tuple_idx_settings
-        elem, fname, fld, fval0 = settings
-        ename = elem.name
-        # print("New fval: {}, fval0: {}".format(new_fval0, fval0))
-        if sop == 'x':
-            fval_to_set = new_fval0 * sf
-        elif sop == '+':
-            fval_to_set = new_fval0 + sf
-        try:
-            t0 = time.time()
-            fval_current_settings = fld.current_setting()
-            if is_close(fval_current_settings, fval_to_set, self.ndigit):
-                msg = "[{0}] [Skip] Set {1:<20s} [{2}] from {3} to {4} (raw set value: {5}).".format(
-                    datetime.fromtimestamp(time.time()).strftime(TS_FMT),
-                    ename, fname, fval_current_settings, fval_to_set,
-                    new_fval0)
-            else:
-                fld.value = fval_to_set
-                msg = "[{0}] Set {1:<20s} [{2}] from {3} to {4} (raw set value: {5}).".format(
-                    datetime.fromtimestamp(time.time()).strftime(TS_FMT),
-                    ename, fname, fval_current_settings, fval_to_set,
-                    new_fval0)
-        except:
-            px = self.fail_px
-        else:
-            px = self.done_px
-            dt = self.t_wait - (time.time() - t0)
-            if dt > 0:
-                time.sleep(dt)
-        self.idx_px_list.append((idx_src, px, msg))
-
-    @pyqtSlot(float, 'QString')
-    def on_apply_settings_progress(self, idx_px_list, m, per, str_idx):
-        idx_src, _, msg = idx_px_list[-1]
-        m.hlrow(idx_src)
-        self.log_textEdit.append(msg)
-        self.apply_pb.setValue(per * 100)
-
-
-
-
-
-
+    def set_ref(self, src_m, idx):
+        for i in range(src_m.rowCount()):
+            ename = src_m.data(src_m.index(i, src_m.i_name))
+            dtype = src_m.data(src_m.index(i, src_m.i_type))
+            fname = src_m.data(src_m.index(i, src_m.i_field))
+            if dtype in ('CAV', 'QUAD', 'BEND', 'EQUAD', 'EBEND', 'HCOR', 'VCOR', 'SOL', 'SEXT',
+                         "AP", "ATT", "SLT"):
+                if fname not in ["PHA", "PHA1", "PHA2", "PHA3", "AMP", "AMP1", "AMP2", "AMP3",
+                                 "I", "I_TC", "V",
+                                 "LEFT", "RIGHT", "TOP", "BOTTOM", "CENTER",
+                                 "ATT_TOTAL", "IN_STS", "OUT_STS",
+                                 "ATT_2X", "ATT_5X", "ATT_10X", "ATT_20X", "ATT_100X",]:
+                    continue
+                else:
+                    ref_pv = f"PHY:{ename}:{fname}_REFST"
+                    ref_v = float(src_m.data(src_m.index(i, src_m.i_val0)))
+                    msg = "[{0}] Set {1:<20s} [{2}] ({3}) reference value of {4}.".format(
+                        datetime.fromtimestamp(time.time()).strftime(TS_FMT),
+                        ename, fname, ref_pv, ref_v)
+                    print(msg)
+                    # self.log_textEdit.append(msg)
+                    caput(ref_pv, ref_v, wait=False)
 
 
 def is_snp_data_exist(snpdata, snpdata_list):
