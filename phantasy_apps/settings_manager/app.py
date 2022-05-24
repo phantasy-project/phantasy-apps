@@ -3381,6 +3381,88 @@ p, li { white-space: pre-wrap; }
             else:
                 self.wysiwyc_chkbox.setChecked(False)
 
+    @pyqtSlot()
+    def on_update_ref_values(self):
+        """Update reference settings with live settings.
+        """
+        m = self._tv.model()
+        if m is None:
+            return
+        src_m = m.sourceModel()
+        # single update
+        self._updater = DAQT(daq_func=partial(self.update_value_single, src_m,
+                                              m, -1, False),
+                             daq_seq=range(1))
+        self._updater.meta_signal1.connect(
+            partial(self.on_update_display, src_m))
+        loop = QEventLoop()
+        self._updater.finished.connect(loop.exit)
+        self._updater.start()
+        loop.exec_()
+        self._write_ref(src_m)
+
+    def _write_ref(src_m):
+        self._setter = DAQT(daq_func=partial(self.set_ref, src_m),
+                            daq_seq=range(1))
+        # self._setter.daqStarted.connect(lambda: self.apply_pb.setVisible(True))
+        # self._setter.daqStarted.connect(
+        #     partial(self.set_widgets_status_for_applying, 'START'))
+        # self._setter.progressUpdated.connect(
+        #     partial(self.on_apply_settings_progress, self.idx_px_list,
+        #             m.sourceModel()))
+        # self._setter.daqFinished.connect(
+        #     partial(self.set_widgets_status_for_applying, 'STOP'))
+        # self._setter.daqFinished.connect(
+        #     lambda: self.apply_pb.setVisible(False))
+        # self._setter.daqFinished.connect(
+        #     lambda: self.single_update_btn.clicked.emit())
+        self._setter.start()
+
+    def set_ref(self, src_m):
+        idx_src, settings, new_fval0 = tuple_idx_settings
+        elem, fname, fld, fval0 = settings
+        ename = elem.name
+        # print("New fval: {}, fval0: {}".format(new_fval0, fval0))
+        if sop == 'x':
+            fval_to_set = new_fval0 * sf
+        elif sop == '+':
+            fval_to_set = new_fval0 + sf
+        try:
+            t0 = time.time()
+            fval_current_settings = fld.current_setting()
+            if is_close(fval_current_settings, fval_to_set, self.ndigit):
+                msg = "[{0}] [Skip] Set {1:<20s} [{2}] from {3} to {4} (raw set value: {5}).".format(
+                    datetime.fromtimestamp(time.time()).strftime(TS_FMT),
+                    ename, fname, fval_current_settings, fval_to_set,
+                    new_fval0)
+            else:
+                fld.value = fval_to_set
+                msg = "[{0}] Set {1:<20s} [{2}] from {3} to {4} (raw set value: {5}).".format(
+                    datetime.fromtimestamp(time.time()).strftime(TS_FMT),
+                    ename, fname, fval_current_settings, fval_to_set,
+                    new_fval0)
+        except:
+            px = self.fail_px
+        else:
+            px = self.done_px
+            dt = self.t_wait - (time.time() - t0)
+            if dt > 0:
+                time.sleep(dt)
+        self.idx_px_list.append((idx_src, px, msg))
+
+    @pyqtSlot(float, 'QString')
+    def on_apply_settings_progress(self, idx_px_list, m, per, str_idx):
+        idx_src, _, msg = idx_px_list[-1]
+        m.hlrow(idx_src)
+        self.log_textEdit.append(msg)
+        self.apply_pb.setValue(per * 100)
+
+
+
+
+
+
+
 
 def is_snp_data_exist(snpdata, snpdata_list):
     # if snpdata named 'name' exists.

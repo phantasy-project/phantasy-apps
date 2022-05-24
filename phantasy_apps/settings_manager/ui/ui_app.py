@@ -454,6 +454,9 @@ class Ui_MainWindow(object):
             "}")
         self.total_field_number_lbl.setObjectName("total_field_number_lbl")
         self.horizontalLayout_2.addWidget(self.total_field_number_lbl)
+        self.update_ref_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.update_ref_btn.setObjectName("update_ref_btn")
+        self.horizontalLayout_2.addWidget(self.update_ref_btn)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
@@ -1304,6 +1307,7 @@ class Ui_MainWindow(object):
             MainWindow.on_toggle_wysiwyc)
         self.show_state_diff_btn.toggled['bool'].connect(
             MainWindow.on_show_state_diff_items)
+        self.update_ref_btn.clicked.connect(MainWindow.on_update_ref_values)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
@@ -1403,6 +1407,7 @@ class Ui_MainWindow(object):
         self.total_field_number_title_lbl.setText(
             _translate("MainWindow", "Fields"))
         self.total_field_number_lbl.setText(_translate("MainWindow", "0"))
+        self.update_ref_btn.setText(_translate("MainWindow", "Write REF"))
         self.snp_ms_chkbox.setText(
             _translate("MainWindow", "Take Snapshot with Machine State"))
         self.wysiwyc_chkbox.setToolTip(
