@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import json
 import toml
 import os
 import re
@@ -60,6 +61,7 @@ COLUMN_NAMES2 = [
     'Tolerance', 'Writable', f'{X2}/{X0}',
     'State',
     'Last State',
+    'Reference Set'
 ]
 COLUMN_SFIELD_MAP = OrderedDict((
     ('Type', 'family'),
@@ -173,6 +175,11 @@ TGT_STS_TUPLE = ('Invalid', 'Home/Be 3.811 mm', 'Viewer', 'Be 4064 mm',
                  'Be 8.892 mm')
 
 
+# REF ST PV MAP
+with open(find_dconf("settings_manager", "refstpv.json")) as fp:
+    REF_ST_PV_MAP = json.load(fp)
+
+
 class SettingsModel(QStandardItemModel):
     """Settings model from Settings instance.
 
@@ -227,13 +234,13 @@ class SettingsModel(QStandardItemModel):
                       self.h_val0, self.h_rd, self.h_cset, \
                       self.h_val0_rd, self.h_val0_cset, self.h_rd_cset, \
                       self.h_tol, self.h_writable, self.h_ratio_x20, \
-                      self.h_sts, self.h_last_sts \
+                      self.h_sts, self.h_last_sts, self.h_ref_st \
             = COLUMN_NAMES
         self.ids = self.i_name, self.i_field, self.i_type, self.i_pos, \
                    self.i_val0, self.i_rd, self.i_cset, \
                    self.i_val0_rd, self.i_val0_cset, self.i_rd_cset, \
                    self.i_tol, self.i_writable, self.i_ratio_x20, \
-                   self.i_sts, self.i_last_sts \
+                   self.i_sts, self.i_last_sts, self.i_ref_st \
             = range(len(self.header))
 
         #
@@ -341,6 +348,12 @@ class SettingsModel(QStandardItemModel):
             # last device state
             item_last_sts = set_device_state_item(self._last_sts_dict.get(elem.name, 'nan'))
             row.append(item_last_sts)
+            
+            #
+            # reference value
+            item_ref_st = QStandardItem('-')
+            item_ref_st.setData(ref_pv(fld.ename, fld.name), Qt.UserRole + 1) # None if not available
+            row.append(item_ref_st)
 
             #
             self.appendRow(row)
@@ -1541,3 +1554,6 @@ def set_device_state_item(sts_str):
     item.setData(sts_str, Qt.ToolTipRole)
     return item
 
+
+def ref_pv(ename, fname):
+    return REF_ST_PV_MAP.get(f"{ename}-{fname}", None)
