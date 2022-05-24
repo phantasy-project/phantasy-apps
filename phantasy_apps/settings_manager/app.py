@@ -1960,6 +1960,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         dx12_idx = m.index(irow, m.i_rd_cset)
         sts_idx = m.index(irow, m.i_sts)
         ratio_x20_idx = m.index(irow, m.i_ratio_x20)
+        ref_st_idx = m.index(irow, m.i_ref_st)
 
         idx_tuple = (idx0, idx1)
         v_tuple = (rd_val, sp_val)
@@ -2000,6 +2001,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             worker.meta_signal1.emit(
                 (dx02_idx, self._no_warning_px, Qt.DecorationRole))
             worker.meta_signal1.emit((dx02_idx, None, Qt.UserRole))
+        
+        # ref set value
+        ref_st_pv = m.data(ref_st_idx, Qt.UserRole + 1)
+        # print(o.ename, o.name, ref_st_pv)
+        if ref_st_pv is not None:
+            worker.meta_signal1.emit((ref_st_idx, self.fmt.format(caget(ref_st_pv)), Qt.DisplayRole))
 
         #
         pwr_is_on = 'Unknown'
