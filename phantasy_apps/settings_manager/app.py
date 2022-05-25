@@ -1132,6 +1132,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 # print(f"Set {pv} with {val}")
                 delayed_exec(lambda: self.single_update_btn.clicked.emit(), 500)
 
+    @pyqtSlot()
+    def on_fill_ref_with_x2(self, fld):
+        """Fill ref_val_lineEdit with the current live setpoint.
+        """
+        x2 = fld.current_setting()
+        self.ref_val_lineEdit.setText(str(x2))
+
     def _build_settings_context_menu(self, idx, m):
         src_m = m.sourceModel()
         src_idx = m.mapToSource(idx)
@@ -1173,12 +1180,27 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             ref_set_btn = QToolButton(self)
             ref_set_btn.setText("Set")
             ref_set_btn.clicked.connect(partial(self.on_set_ref_val, ref_pv))
+            # fetch and fill saved setpoint (x0)
+            ref_set_fetch_x0_btn = QToolButton(self)
+            ref_set_fetch_x0_btn.setText("x0")
+            ref_set_fetch_x0_btn.setToolTip("Fill out with saved setpoint (x0)")
+            x0 = src_m.data(src_m.index(src_idx.row(), src_m.i_val0))
+            ref_set_fetch_x0_btn.clicked.connect(lambda:self.ref_val_lineEdit.setText(x0))
+            # fetch and fill live setpoint (x2)
+            ref_set_fetch_x2_btn = QToolButton(self)
+            ref_set_fetch_x2_btn.setText("x2")
+            ref_set_fetch_x2_btn.setToolTip("Fill out with live setpoint (x2)")
+            fld = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_name)).fld
+            ref_set_fetch_x2_btn.clicked.connect(partial(sefl.on_fill_ref_with_x2, fld))
             #
             ref_set_w = QWidget(self)
             ref_set_hbox = QHBoxLayout()
             ref_set_hbox.setContentsMargins(6, 4, 4, 4)
+            ref_set_hbox.setSpacing(2)
             ref_set_hbox.addWidget(ref_set_lbl)
             ref_set_hbox.addWidget(self.ref_val_lineEdit, 1)
+            ref_set_hbox.addWidget(ref_set_fetch_x0_btn)
+            ref_set_hbox.addWidget(ref_set_fetch_x2_btn)
             ref_set_hbox.addWidget(ref_set_btn)
             ref_set_w.setLayout(ref_set_hbox)
             #
