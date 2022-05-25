@@ -354,6 +354,7 @@ class SettingsModel(QStandardItemModel):
             # reference value
             item_ref_st = QStandardItem('-')
             item_ref_st.setData(ref_pv(fld.ename, fld.name), Qt.UserRole + 1) # None if not available
+            item_ref_st.setEditable(False)
             row.append(item_ref_st)
 
             #
