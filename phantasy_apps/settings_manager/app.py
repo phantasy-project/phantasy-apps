@@ -584,6 +584,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_ms_chkbox.setChecked(MS_ENABLED)
         # hide sts info
         self.show_sts_btn.setChecked(False)
+
+        # reference set controls
+        self.show_refset_ctrls_btn.toggled.connect(self.on_toggle_refset_ctrls)
+        self.show_refset_ctrls_btn.setChecked(False)
+
         # hide init settings hbox
         self.show_init_settings_btn.setChecked(False)
         # # hide Add Devices tool
@@ -2003,6 +2008,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         sts_idx = m.index(irow, m.i_sts)
         ratio_x20_idx = m.index(irow, m.i_ratio_x20)
         ref_st_idx = m.index(irow, m.i_ref_st)
+        dx2ref_idx = m.index(irow, m.i_dstref)
+        dx0ref_idx = m.index(irow, m.i_dval0ref)
 
         idx_tuple = (idx0, idx1)
         v_tuple = (rd_val, sp_val)
@@ -2046,21 +2053,25 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # ref set value
         ref_st_pv = m.data(ref_st_idx, Qt.UserRole + 1)
-        # print(o.ename, o.name, ref_st_pv)
         if ref_st_pv is not None:
             ref_v = caget(ref_st_pv)
-            worker.meta_signal1.emit((ref_st_idx, self.fmt.format(ref_v), Qt.DisplayRole))
-            # ref_st == x0?
-            if not is_close(x0, ref_v, self.ndigit):
-                worker.meta_signal1.emit(
-                    (ref_st_idx, self._warning_px, Qt.DecorationRole))
-                worker.meta_signal1.emit(
-                    (ref_st_idx, "warning", Qt.UserRole))
-            else:
-                worker.meta_signal1.emit(
-                    (ref_st_idx, self._no_warning_px, Qt.DecorationRole))
-                worker.meta_signal1.emit(
-                    (ref_st_idx, None, Qt.UserRole))
+            dx2ref = x2 - ref_v
+            dx0ref = x0 - ref_v
+            for iidx, iv in zip((ref_st_idx, dx2ref_idx, dx0ref_idx), (ref_v, dx2ref, dx0ref)):
+                worker.meta_signal1.emit((iidx, self.fmt.format(iv), Qt.DisplayRole))
+
+            # warnings?
+            for iidx, iv in zip((dx2ref_idx, dx0ref_idx), (x2, x0)):
+                if not is_close(iv, ref_v, self.ndigit):
+                    worker.meta_signal1.emit(
+                        (iidx, self._warning_px, Qt.DecorationRole))
+                    worker.meta_signal1.emit(
+                        (iidx, "warning", Qt.UserRole))
+                else:
+                    worker.meta_signal1.emit(
+                        (iidx, self._no_warning_px, Qt.DecorationRole))
+                    worker.meta_signal1.emit(
+                        (iidx, None, Qt.UserRole))
 
         #
         pwr_is_on = 'Unknown'
@@ -2653,6 +2664,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if m is None:
             return
         m.filter_dx0ref_warning_enabled = is_checked
+        self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
+    def on_show_warning_dx2ref(self, is_checked):
+        # show all items with ref_st != x2
+        self.filter_btn_group_status_changed.emit()
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_dx2ref_warning_enabled = is_checked
         self.filter_lineEdit.editingFinished.emit()
 
     @pyqtSlot(bool)
@@ -3510,6 +3531,13 @@ p, li { white-space: pre-wrap; }
         m.hlrow(idx_src)
         self.log_textEdit.append(msg)
         self.refset_pb.setValue(per * 100)
+
+    @pyqtSlot(bool)
+    def on_toggle_refset_ctrls(self, is_checked):
+        """If checked, show the controls for reference set.
+        """
+        for w in (self.update_ref_btn, self.show_diff_x0ref_btn, self.show_diff_x2ref_btn):
+            w.setVisible(is_checked)
 
 
 def is_snp_data_exist(snpdata, snpdata_list):

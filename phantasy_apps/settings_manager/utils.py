@@ -46,6 +46,7 @@ FMT = "{0:.6g}"
 X0 = 'x\N{SUBSCRIPT ZERO}'
 X1 = 'x\N{SUBSCRIPT ONE}'
 X2 = 'x\N{SUBSCRIPT TWO}'
+XREF = 'xref'
 DELTA = '\N{GREEK CAPITAL LETTER DELTA}'
 
 COLUMN_NAMES1 = ['Device', 'Field']
@@ -61,7 +62,9 @@ COLUMN_NAMES2 = [
     'Tolerance', 'Writable', f'{X2}/{X0}',
     'State',
     'Last State',
-    'Reference Set (Xref)'
+    'Reference Set ({XREF})',
+    f'{DELTA}({X2},{XREF})',
+    f'{DELTA}({X0},{XREF})',
 ]
 COLUMN_SFIELD_MAP = OrderedDict((
     ('Type', 'family'),
@@ -235,13 +238,15 @@ class SettingsModel(QStandardItemModel):
                       self.h_val0, self.h_rd, self.h_cset, \
                       self.h_val0_rd, self.h_val0_cset, self.h_rd_cset, \
                       self.h_tol, self.h_writable, self.h_ratio_x20, \
-                      self.h_sts, self.h_last_sts, self.h_ref_st \
+                      self.h_sts, self.h_last_sts, \
+                      self.h_ref_st, self.h_dsetref, self.h_dval0ref \
             = COLUMN_NAMES
         self.ids = self.i_name, self.i_field, self.i_type, self.i_pos, \
                    self.i_val0, self.i_rd, self.i_cset, \
                    self.i_val0_rd, self.i_val0_cset, self.i_rd_cset, \
                    self.i_tol, self.i_writable, self.i_ratio_x20, \
-                   self.i_sts, self.i_last_sts, self.i_ref_st \
+                   self.i_sts, self.i_last_sts, \
+                   self.i_ref_st, self.i_dstref, self.dval0ref \
             = range(len(self.header))
 
         #
@@ -351,11 +356,12 @@ class SettingsModel(QStandardItemModel):
             row.append(item_last_sts)
 
             #
-            # reference value
+            # reference value, xref
             item_ref_st = QStandardItem('-')
             item_ref_st.setData(ref_pv(fld.ename, fld.name), Qt.UserRole + 1) # None if not available
             item_ref_st.setEditable(False)
-            row.append(item_ref_st)
+            # extend with x2 - xref, x0 - xref
+            row.extend([item_ref_st, QStandardItem('-'), QStandardItem('-')])
 
             #
             self.appendRow(row)
@@ -505,6 +511,8 @@ class _SortProxyModel(QSortFilterProxyModel):
             'state': model.i_sts,
             'last_state': model.i_last_sts,
             'ref_st': model.i_ref_st,
+            'dx2ref': model.i_dstref,
+            'dx0ref': model.i_dval0ref,
         }
         self.filter_ftypes = ['ENG', 'PHY']
         # if True, filter checked items, otherwise show all items.
@@ -513,6 +521,7 @@ class _SortProxyModel(QSortFilterProxyModel):
         self.filter_dx02_warning_enabled = False
         self.filter_disconnected_enabled = False
         self.filter_dx0ref_warning_enabled = False
+        self.filter_dx2ref_warning_enabled = False
         # field filter
         self.filter_field_enabled = False
         self.filter_field_list = []
@@ -675,16 +684,27 @@ class _SortProxyModel(QSortFilterProxyModel):
             return False
 
         # diff(x0, ref_st) checked
-        # ref_st column keeps the diff info if not equal to x0
         if self.filter_dx0ref_warning_enabled:
             data = src_model.data(
-                    src_model.index(src_row, self.filter_col_index['ref_st']),
+                    src_model.index(src_row, self.filter_col_index['dx0ref']),
                     Qt.UserRole)
             dx0ref_warning_test = data is not None
         else:
             dx0ref_warning_test = True
         #
         if not dx0ref_warning_test:
+            return False
+
+        # diff(x2, ref_st) checked
+        if self.filter_dx2ref_warning_enabled:
+            data = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['dx2ref']),
+                    Qt.UserRole)
+            dx2ref_warning_test = data is not None
+        else:
+            dx2ref_warning_test = True
+        #
+        if not dx2ref_warning_test:
             return False
 
         # disconnected checked
