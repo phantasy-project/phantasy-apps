@@ -1583,7 +1583,7 @@ class Ui_MainWindow(object):
         self.update_ref_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Update reference set with x<span style=\" vertical-align:sub;\">0</span>, works for checked rows.</p></body></html>"
+                "<html><head/><body><p>Update reference settings with the selected data source (x0 or x2), only works for the checked rows.</p></body></html>"
             ))
         self.update_ref_btn.setText(
             _translate("MainWindow", "Update Reference"))
