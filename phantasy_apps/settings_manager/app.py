@@ -1190,8 +1190,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             ref_set_fetch_x2_btn = QToolButton(self)
             ref_set_fetch_x2_btn.setText("x2")
             ref_set_fetch_x2_btn.setToolTip("Fill out with live setpoint (x2)")
-            fld = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_name)).fld
-            ref_set_fetch_x2_btn.clicked.connect(partial(sefl.on_fill_ref_with_x2, fld))
+            fld = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_name)).fobj
+            ref_set_fetch_x2_btn.clicked.connect(partial(self.on_fill_ref_with_x2, fld))
             #
             ref_set_w = QWidget(self)
             ref_set_hbox = QHBoxLayout()
