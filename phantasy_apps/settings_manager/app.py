@@ -748,6 +748,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # apply pb
         self.apply_pb.setVisible(False)
+        # refset pb
+        self.refset_pb.setVisible(False)
         # refresh pb
         self.refresh_pb.setVisible(False)
 
@@ -3423,19 +3425,22 @@ p, li { white-space: pre-wrap; }
         self._setter.daqFinished.connect(
                 partial(self.set_widgets_status_for_ref_set, 'STOP'))
         self._setter.daqFinished.connect(lambda: self.refset_pb.setVisible(False))
-        #self._setter.daqFinished.connect(
-        #     lambda: self.single_update_btn.clicked.emit())
+        self._setter.daqFinished.connect(
+             lambda: self.single_update_btn.clicked.emit())
         self._setter.start()
 
     def set_ref_single(self, tuple_idx_settings):
         # ref_v: new_fval0
-        ref_st_idx, ref_st_pv, ref_v = tuple_idx_settings
+        ref_st_idx, ref_st_pv, ref_v0, ref_v = tuple_idx_settings
         if ref_st_pv is not None:
-            msg = "[{0}] Set {1:<40s} reference value of {2}.".format(
+            msg = "[{0}] Set {1:<35s} reference value from {2:.3f} to {3:.3f}.".format(
                 datetime.fromtimestamp(time.time()).strftime(TS_FMT),
-                ref_pv, ref_v)
-            caput(ref_pv, ref_v, wait=False)
+                ref_st_pv, float(ref_v0), ref_v)
+            caput(ref_st_pv, ref_v, wait=False)
             self._refset_pb_list.append((ref_st_idx, msg))
+            time.sleep(0.001)
+        else:
+            self._refset_pb_list.append((ref_st_idx, "No Reference"))
 
     @pyqtSlot(float, 'QString')
     def on_refset_progress(self, refset_pb_list, m, per, str_idx):

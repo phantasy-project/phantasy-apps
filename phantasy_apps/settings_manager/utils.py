@@ -769,7 +769,7 @@ class _SortProxyModel(QSortFilterProxyModel):
         return settings_selected
 
     def get_selection_refset(self):
-        # Return a list of selected items, [(ref_st_idx(src), ref_st_pv, new_fval0)].
+        # Return a list of selected items, [(ref_st_idx(src), ref_st_pv, ref_v0, new_fval0)].
         settings_selected = []
         for i in range(self.rowCount()):
             idx = self.index(i, self.m_src.i_name)
@@ -780,7 +780,8 @@ class _SortProxyModel(QSortFilterProxyModel):
                                   self.m_src.index(idx_src.row(), self.m_src.i_val0)))
                 ref_st_idx = self.m_src.index(idx_src.row(), self.m_src.i_ref_st)
                 ref_st_pv = self.m_src.data(ref_st_idx, Qt.UserRole + 1)
-                settings_selected.append((ref_st_idx, ref_st_pv, new_fval0))
+                ref_v0 = self.m_src.data(ref_st_idx, Qt.DisplayRole) # current refset, maybe -
+                settings_selected.append((ref_st_idx, ref_st_pv, ref_v0, new_fval0))
         return settings_selected
 
     def select_one(self, row_idx, checked):
