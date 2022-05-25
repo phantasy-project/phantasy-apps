@@ -2008,7 +2008,19 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         ref_st_pv = m.data(ref_st_idx, Qt.UserRole + 1)
         # print(o.ename, o.name, ref_st_pv)
         if ref_st_pv is not None:
-            worker.meta_signal1.emit((ref_st_idx, self.fmt.format(caget(ref_st_pv)), Qt.DisplayRole))
+            ref_v = caget(ref_st_pv)
+            worker.meta_signal1.emit((ref_st_idx, self.fmt.format(ref_v), Qt.DisplayRole))
+            # ref_st == x0?
+            if not is_close(x0, ref_v, self.ndigit):
+                worker.meta_signal1.emit(
+                    (ref_st_idx, self._warning_px, Qt.DecorationRole))
+                worker.meta_signal1.emit(
+                    (ref_st_idx, "warning", Qt.UserRole))
+            else:
+                worker.meta_signal1.emit(
+                    (ref_st_idx, self._no_warning_px, Qt.DecorationRole))
+                worker.meta_signal1.emit(
+                    (ref_st_idx, None, Qt.UserRole))
 
         #
         pwr_is_on = 'Unknown'
@@ -2591,6 +2603,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if m is None:
             return
         m.filter_dx02_warning_enabled = is_checked
+        self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
+    def on_show_warning_dx0ref(self, is_checked):
+        # show all items with ref_st != x0
+        self.filter_btn_group_status_changed.emit()
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_dx0ref_warning_enabled = is_checked
         self.filter_lineEdit.editingFinished.emit()
 
     @pyqtSlot(bool)

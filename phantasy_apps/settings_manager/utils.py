@@ -502,6 +502,7 @@ class _SortProxyModel(QSortFilterProxyModel):
             'x2/x0': model.i_ratio_x20,
             'state': model.i_sts,
             'last_state': model.i_last_sts,
+            'ref_st': model.i_ref_st,
         }
         self.filter_ftypes = ['ENG', 'PHY']
         # if True, filter checked items, otherwise show all items.
@@ -509,6 +510,7 @@ class _SortProxyModel(QSortFilterProxyModel):
         self.filter_dx12_warning_enabled = False
         self.filter_dx02_warning_enabled = False
         self.filter_disconnected_enabled = False
+        self.filter_dx0ref_warning_enabled = False
         # field filter
         self.filter_field_enabled = False
         self.filter_field_list = []
@@ -668,6 +670,19 @@ class _SortProxyModel(QSortFilterProxyModel):
             dx02_warning_test = True
         #
         if not dx02_warning_test:
+            return False
+
+        # diff(x0, ref_st) checked
+        # ref_st column keeps the diff info if not equal to x0
+        if self.filter_dx0ref_warning_enabled:
+            data = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['ref_st']),
+                    Qt.UserRole)
+            dx0ref_warning_test = data is not None
+        else:
+            dx0ref_warning_test = True
+        #
+        if not dx0ref_warning_test:
             return False
 
         # disconnected checked
