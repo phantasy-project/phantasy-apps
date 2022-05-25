@@ -62,7 +62,7 @@ COLUMN_NAMES2 = [
     'Tolerance', 'Writable', f'{X2}/{X0}',
     'State',
     'Last State',
-    'Reference Set ({XREF})',
+    f'Reference Set ({XREF})',
     f'{DELTA}({X2},{XREF})',
     f'{DELTA}({X0},{XREF})',
 ]
@@ -246,7 +246,7 @@ class SettingsModel(QStandardItemModel):
                    self.i_val0_rd, self.i_val0_cset, self.i_rd_cset, \
                    self.i_tol, self.i_writable, self.i_ratio_x20, \
                    self.i_sts, self.i_last_sts, \
-                   self.i_ref_st, self.i_dstref, self.dval0ref \
+                   self.i_ref_st, self.i_dstref, self.i_dval0ref \
             = range(len(self.header))
 
         #
@@ -361,7 +361,9 @@ class SettingsModel(QStandardItemModel):
             item_ref_st.setData(ref_pv(fld.ename, fld.name), Qt.UserRole + 1) # None if not available
             item_ref_st.setEditable(False)
             # extend with x2 - xref, x0 - xref
-            row.extend([item_ref_st, QStandardItem('-'), QStandardItem('-')])
+            ref_row = [item_ref_st, QStandardItem('-'), QStandardItem('-')]
+            [i.setEditable(False) for i in ref_row]
+            row.extend(ref_row)
 
             #
             self.appendRow(row)
