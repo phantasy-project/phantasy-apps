@@ -380,7 +380,7 @@ class SettingsModel(QStandardItemModel):
         self._tv.setModel(proxy_model)
         #
         # hide columns: pos, dx01, tolerance, writable
-        for i in (self.i_pos, self.i_val0_rd, self.i_tol, self.i_writable,):
+        for i in (self.i_pos, self.i_val0_rd, self.i_tol, self.i_writable, self.i_dval0ref):
             self._tv.setColumnHidden(i, True)
         #
         self.__post_init_ui()
@@ -815,12 +815,13 @@ class _SortProxyModel(QSortFilterProxyModel):
             idx_src = self.mapToSource(idx)
             it_name_src = self.m_src.itemFromIndex(idx_src)
             if is_item_checked(it_name_src):
-                new_fval0 = float(self.m_src.data(
-                                  self.m_src.index(idx_src.row(), self.m_src.i_val0)))
+                # new_fval0 = float(self.m_src.data(
+                #                   self.m_src.index(idx_src.row(), self.m_src.i_val0)))
+                _, _, fld, new_fval0 = self.m_src._settings[idx_src.row()] # elem, fname, fld, fval0
                 ref_st_idx = self.m_src.index(idx_src.row(), self.m_src.i_ref_st)
                 ref_st_pv = self.m_src.data(ref_st_idx, Qt.UserRole + 1)
                 ref_v0 = self.m_src.data(ref_st_idx, Qt.DisplayRole) # current refset, maybe -
-                settings_selected.append((ref_st_idx, ref_st_pv, ref_v0, new_fval0))
+                settings_selected.append((ref_st_idx, ref_st_pv, ref_v0, new_fval0, fld))
         return settings_selected
 
     def select_one(self, row_idx, checked):

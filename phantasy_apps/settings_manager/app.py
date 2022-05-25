@@ -2591,7 +2591,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def set_widgets_status_for_ref_set(self, status):
         """Set widgets status for ref set.
         """
-        w1 = (self.update_ref_btn, )
+        w1 = (self.update_ref_btn, self.ref_datasrc_cbb,)
         [i.setDisabled(status == 'START') for i in w1]
 
     def sizeHint(self):
@@ -3486,7 +3486,6 @@ p, li { white-space: pre-wrap; }
         m = self._tv.model()
         if m is None:
             return
-        # src_m = m.sourceModel()
         settings_selected = m.get_selection_refset()
         if len(settings_selected) == 0:
             QMessageBox.warning(
@@ -3498,7 +3497,7 @@ p, li { white-space: pre-wrap; }
             return
         #
         self._refset_pb_list = []
-        self._setter = DAQT(daq_func=self.set_ref_single,
+        self._setter = DAQT(daq_func=partial(self.set_ref_single, self.ref_datasrc_cbb.currentIndex()),
                             daq_seq=settings_selected)
         self._setter.daqStarted.connect(lambda: self.refset_pb.setVisible(True))
         self._setter.daqStarted.connect(
@@ -3512,9 +3511,18 @@ p, li { white-space: pre-wrap; }
              lambda: self.single_update_btn.clicked.emit())
         self._setter.start()
 
-    def set_ref_single(self, tuple_idx_settings):
-        # ref_v: new_fval0
-        ref_st_idx, ref_st_pv, ref_v0, ref_v = tuple_idx_settings
+    def set_ref_single(self, datasrc_idx, tuple_idx_settings):
+        # datasrc_idx:
+        # 0: use saved setpoint, x0
+        # 1: use live setpoint, x2
+        # ref_v0: current ref set
+        # ref_val0: x0
+        # live set: fld.value
+        ref_st_idx, ref_st_pv, ref_v0, ref_val0, fld = tuple_idx_settings
+        if datasrc_idx == 0:
+            ref_v = ref_val0
+        else: # 1
+            ref_v = fld.value
         if ref_st_pv is not None:
             msg = "[{0}] Set {1:<35s} reference value from {2:.3f} to {3:.3f}.".format(
                 datetime.fromtimestamp(time.time()).strftime(TS_FMT),
