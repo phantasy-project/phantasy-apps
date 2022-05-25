@@ -348,7 +348,7 @@ class SettingsModel(QStandardItemModel):
             # last device state
             item_last_sts = set_device_state_item(self._last_sts_dict.get(elem.name, 'nan'))
             row.append(item_last_sts)
-            
+
             #
             # reference value
             item_ref_st = QStandardItem('-')
@@ -755,7 +755,7 @@ class _SortProxyModel(QSortFilterProxyModel):
         return self._filter_tuples
 
     def get_selection(self):
-        # Return a list of selected items, [(idx_src, settings)].
+        # Return a list of selected items, [(idx_src, settings, new_fval0)].
         settings_selected = []
         for i in range(self.rowCount()):
             idx = self.index(i, self.m_src.i_name)
@@ -766,6 +766,21 @@ class _SortProxyModel(QSortFilterProxyModel):
                 new_fval0 = float(self.m_src.data(
                                   self.m_src.index(idx_src.row(), self.m_src.i_val0)))
                 settings_selected.append((idx_src, self.m_src._settings[idx_src.row()], new_fval0))
+        return settings_selected
+
+    def get_selection_refset(self):
+        # Return a list of selected items, [(ref_st_idx(src), ref_st_pv, new_fval0)].
+        settings_selected = []
+        for i in range(self.rowCount()):
+            idx = self.index(i, self.m_src.i_name)
+            idx_src = self.mapToSource(idx)
+            it_name_src = self.m_src.itemFromIndex(idx_src)
+            if is_item_checked(it_name_src):
+                new_fval0 = float(self.m_src.data(
+                                  self.m_src.index(idx_src.row(), self.m_src.i_val0)))
+                ref_st_idx = self.m_src.index(idx_src.row(), self.m_src.i_ref_st)
+                ref_st_pv = self.m_src.data(ref_st_idx, Qt.UserRole + 1)
+                settings_selected.append((ref_st_idx, ref_st_pv, new_fval0))
         return settings_selected
 
     def select_one(self, row_idx, checked):
