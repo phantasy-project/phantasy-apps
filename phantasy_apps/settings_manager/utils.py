@@ -61,7 +61,7 @@ COLUMN_NAMES2 = [
     'Tolerance', 'Writable', f'{X2}/{X0}',
     'State',
     'Last State',
-    'Reference Set'
+    'Reference Set (Xref)'
 ]
 COLUMN_SFIELD_MAP = OrderedDict((
     ('Type', 'family'),
