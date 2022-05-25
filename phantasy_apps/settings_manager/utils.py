@@ -380,7 +380,8 @@ class SettingsModel(QStandardItemModel):
         self._tv.setModel(proxy_model)
         #
         # hide columns: pos, dx01, tolerance, writable
-        for i in (self.i_pos, self.i_val0_rd, self.i_tol, self.i_writable, self.i_dval0ref):
+        for i in (self.i_pos, self.i_val0_rd, self.i_tol, self.i_writable,
+                  self.i_dstref, self.i_dval0ref):
             self._tv.setColumnHidden(i, True)
         #
         self.__post_init_ui()
