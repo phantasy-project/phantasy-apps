@@ -3522,7 +3522,7 @@ p, li { white-space: pre-wrap; }
         if datasrc_idx == 0:
             ref_v = ref_val0
         else: # 1
-            ref_v = fld.value
+            ref_v = fld.current_setting()
         if ref_st_pv is not None:
             msg = "[{0}] Set {1:<35s} reference value from {2:.3f} to {3:.3f}.".format(
                 datetime.fromtimestamp(time.time()).strftime(TS_FMT),
@@ -3544,8 +3544,15 @@ p, li { white-space: pre-wrap; }
     def on_toggle_refset_ctrls(self, is_checked):
         """If checked, show the controls for reference set.
         """
-        for w in (self.update_ref_btn, self.show_diff_x0ref_btn, self.show_diff_x2ref_btn):
+        for w in (self.update_ref_btn, self.ref_datasrc_cbb,
+                  self.show_diff_x0ref_btn, self.show_diff_x2ref_btn):
             w.setVisible(is_checked)
+        m = self.settingsView.model()
+        if m is None:
+            return
+        src_m = m.sourceModel()
+        for i in (src_m.i_dstref, src_m.i_dval0ref,):
+            self._tv.setColumnHidden(i, not is_checked)
 
 
 def is_snp_data_exist(snpdata, snpdata_list):
