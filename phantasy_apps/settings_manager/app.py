@@ -36,6 +36,7 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtGui import QDesktopServices
+from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import QCompleter
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QLabel
@@ -48,6 +49,10 @@ from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QShortcut
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QProgressBar
+from PyQt5.QtWidgets import QHBoxLayout
+from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtWidgets import QLabel
+
 from phantasy import CaField
 from phantasy import Settings
 from phantasy import build_element
@@ -1110,6 +1115,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.addAction(del_action)
         return menu
 
+    @pyqtSlot()
+    def on_set_ref_val(self, pv):
+        if pv is not None:
+            try:
+                val = float(self.ref_val_lineEdit.text())
+            except:
+                pass
+            else:
+                caput(pv, val, wait=False)
+                # print(f"Set {pv} with {val}")
+                delayed_exec(lambda: self.single_update_btn.clicked.emit(), 500)
+
     def _build_settings_context_menu(self, idx, m):
         src_m = m.sourceModel()
         src_idx = m.mapToSource(idx)
@@ -1141,6 +1158,29 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         copy_action = QAction(self._copy_text_icon, "Copy Text", menu)
         copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
         menu.addAction(copy_action)
+
+        # refset column? add action for new value setting.
+        if src_idx.column() == src_m.i_ref_st:
+            ref_pv = src_m.data(src_idx, Qt.UserRole + 1)
+            ref_set_lbl = QLabel("New Reference:", self)
+            self.ref_val_lineEdit = QLineEdit(self.fmt.format(caget(ref_pv)), self)
+            self.ref_val_lineEdit.setValidator(QDoubleValidator())
+            ref_set_btn = QToolButton(self)
+            ref_set_btn.setText("Set")
+            ref_set_btn.clicked.connect(partial(self.on_set_ref_val, ref_pv))
+            #
+            ref_set_w = QWidget(self)
+            ref_set_hbox = QHBoxLayout()
+            ref_set_hbox.setContentsMargins(6, 4, 4, 4)
+            ref_set_hbox.addWidget(ref_set_lbl)
+            ref_set_hbox.addWidget(self.ref_val_lineEdit, 1)
+            ref_set_hbox.addWidget(ref_set_btn)
+            ref_set_w.setLayout(ref_set_hbox)
+            #
+            ref_set_act = QWidgetAction(self)
+            ref_set_act.setDefaultWidget(ref_set_w)
+            #
+            menu.addAction(ref_set_act)
 
         #
         if hasattr(item, 'fobj'):
