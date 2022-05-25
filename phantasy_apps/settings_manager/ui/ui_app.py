@@ -474,6 +474,31 @@ class Ui_MainWindow(object):
         self.show_warning_dx12_btn.setCheckable(True)
         self.show_warning_dx12_btn.setObjectName("show_warning_dx12_btn")
         self.filter_hbox.addWidget(self.show_warning_dx12_btn)
+        self.show_diff_x0ref_btn = QtWidgets.QToolButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.show_diff_x0ref_btn.sizePolicy().hasHeightForWidth())
+        self.show_diff_x0ref_btn.setSizePolicy(sizePolicy)
+        icon16 = QtGui.QIcon()
+        icon16.addPixmap(QtGui.QPixmap(":/sm-icons/dx0ref_warning.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.show_diff_x0ref_btn.setIcon(icon16)
+        self.show_diff_x0ref_btn.setIconSize(QtCore.QSize(80, 30))
+        self.show_diff_x0ref_btn.setCheckable(True)
+        self.show_diff_x0ref_btn.setObjectName("show_diff_x0ref_btn")
+        self.filter_hbox.addWidget(self.show_diff_x0ref_btn)
+        self.show_diff_x2ref_btn = QtWidgets.QToolButton(self.centralwidget)
+        icon17 = QtGui.QIcon()
+        icon17.addPixmap(QtGui.QPixmap(":/sm-icons/dx2ref_warning.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.show_diff_x2ref_btn.setIcon(icon17)
+        self.show_diff_x2ref_btn.setIconSize(QtCore.QSize(80, 30))
+        self.show_diff_x2ref_btn.setCheckable(True)
+        self.show_diff_x2ref_btn.setObjectName("show_diff_x2ref_btn")
+        self.filter_hbox.addWidget(self.show_diff_x2ref_btn)
         self.show_state_diff_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -482,10 +507,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.show_state_diff_btn.sizePolicy().hasHeightForWidth())
         self.show_state_diff_btn.setSizePolicy(sizePolicy)
-        icon16 = QtGui.QIcon()
-        icon16.addPixmap(QtGui.QPixmap(":/sm-icons/red-green.png"),
+        icon18 = QtGui.QIcon()
+        icon18.addPixmap(QtGui.QPixmap(":/sm-icons/red-green.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_state_diff_btn.setIcon(icon16)
+        self.show_state_diff_btn.setIcon(icon18)
         self.show_state_diff_btn.setIconSize(QtCore.QSize(30, 30))
         self.show_state_diff_btn.setCheckable(True)
         self.show_state_diff_btn.setObjectName("show_state_diff_btn")
@@ -498,10 +523,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.show_all_selected_btn.sizePolicy().hasHeightForWidth())
         self.show_all_selected_btn.setSizePolicy(sizePolicy)
-        icon17 = QtGui.QIcon()
-        icon17.addPixmap(QtGui.QPixmap(":/sm-icons/checked.png"),
+        icon19 = QtGui.QIcon()
+        icon19.addPixmap(QtGui.QPixmap(":/sm-icons/checked.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_all_selected_btn.setIcon(icon17)
+        self.show_all_selected_btn.setIcon(icon19)
         self.show_all_selected_btn.setIconSize(QtCore.QSize(24, 30))
         self.show_all_selected_btn.setCheckable(True)
         self.show_all_selected_btn.setObjectName("show_all_selected_btn")
@@ -543,10 +568,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setSpacing(4)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.reload_lattice_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon18 = QtGui.QIcon()
-        icon18.addPixmap(QtGui.QPixmap(":/sm-icons/reload.png"),
+        icon20 = QtGui.QIcon()
+        icon20.addPixmap(QtGui.QPixmap(":/sm-icons/reload.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.reload_lattice_btn.setIcon(icon18)
+        self.reload_lattice_btn.setIcon(icon20)
         self.reload_lattice_btn.setIconSize(QtCore.QSize(24, 24))
         self.reload_lattice_btn.setAutoRaise(True)
         self.reload_lattice_btn.setObjectName("reload_lattice_btn")
@@ -562,10 +587,10 @@ class Ui_MainWindow(object):
         self.lv_lbl.setObjectName("lv_lbl")
         self.horizontalLayout.addWidget(self.lv_lbl)
         self.lv_view_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon19 = QtGui.QIcon()
-        icon19.addPixmap(QtGui.QPixmap(":/sm-icons/view-details.png"),
+        icon21 = QtGui.QIcon()
+        icon21.addPixmap(QtGui.QPixmap(":/sm-icons/view-details.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.lv_view_btn.setIcon(icon19)
+        self.lv_view_btn.setIcon(icon21)
         self.lv_view_btn.setAutoRaise(True)
         self.lv_view_btn.setObjectName("lv_view_btn")
         self.horizontalLayout.addWidget(self.lv_view_btn)
@@ -610,31 +635,20 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.show_refset_ctrls_btn)
         self.refset_ctrl_hbox = QtWidgets.QHBoxLayout()
         self.refset_ctrl_hbox.setContentsMargins(0, 0, -1, 0)
+        self.refset_ctrl_hbox.setSpacing(2)
         self.refset_ctrl_hbox.setObjectName("refset_ctrl_hbox")
-        self.show_diff_x0ref_btn = QtWidgets.QToolButton(self.centralwidget)
+        self.ref_datasrc_cbb = QtWidgets.QComboBox(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.show_diff_x0ref_btn.sizePolicy().hasHeightForWidth())
-        self.show_diff_x0ref_btn.setSizePolicy(sizePolicy)
-        icon20 = QtGui.QIcon()
-        icon20.addPixmap(QtGui.QPixmap(":/sm-icons/dx0ref_warning.png"),
-                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_diff_x0ref_btn.setIcon(icon20)
-        self.show_diff_x0ref_btn.setIconSize(QtCore.QSize(80, 30))
-        self.show_diff_x0ref_btn.setCheckable(True)
-        self.show_diff_x0ref_btn.setObjectName("show_diff_x0ref_btn")
-        self.refset_ctrl_hbox.addWidget(self.show_diff_x0ref_btn)
-        self.show_diff_x2ref_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon21 = QtGui.QIcon()
-        icon21.addPixmap(QtGui.QPixmap(":/sm-icons/dx2ref_warning.png"),
-                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_diff_x2ref_btn.setIcon(icon21)
-        self.show_diff_x2ref_btn.setIconSize(QtCore.QSize(80, 30))
-        self.show_diff_x2ref_btn.setObjectName("show_diff_x2ref_btn")
-        self.refset_ctrl_hbox.addWidget(self.show_diff_x2ref_btn)
+            self.ref_datasrc_cbb.sizePolicy().hasHeightForWidth())
+        self.ref_datasrc_cbb.setSizePolicy(sizePolicy)
+        self.ref_datasrc_cbb.setObjectName("ref_datasrc_cbb")
+        self.ref_datasrc_cbb.addItem("")
+        self.ref_datasrc_cbb.addItem("")
+        self.refset_ctrl_hbox.addWidget(self.ref_datasrc_cbb)
         self.refset_ctrl_vbox = QtWidgets.QVBoxLayout()
         self.refset_ctrl_vbox.setContentsMargins(0, 0, -1, -1)
         self.refset_ctrl_vbox.setSpacing(1)
@@ -1492,6 +1506,18 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Show Δ(x<span style=\" vertical-align:sub;\">1</span>, x<span style=\" vertical-align:sub;\">2</span>) &gt; tolerance.</p></body></html>"
             ))
         self.show_warning_dx12_btn.setText(_translate("MainWindow", "dx12"))
+        self.show_diff_x0ref_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Show x<span style=\" vertical-align:sub;\">0 </span>!= x<span style=\" vertical-align:sub;\">ref</span>, up to number of precision.</p></body></html>"
+            ))
+        self.show_diff_x0ref_btn.setText(_translate("MainWindow", "dx0ref"))
+        self.show_diff_x2ref_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Show x<span style=\" vertical-align:sub;\">2 </span>!= x<span style=\" vertical-align:sub;\">ref</span>, up to number of precision.</p></body></html>"
+            ))
+        self.show_diff_x2ref_btn.setText(_translate("MainWindow", "dx2ref"))
         self.show_state_diff_btn.setToolTip(
             _translate(
                 "MainWindow",
@@ -1540,18 +1566,10 @@ class Ui_MainWindow(object):
         self.lv_segm_lbl.setToolTip(_translate("MainWindow", "Segment name."))
         self.lv_segm_lbl.setText(_translate("MainWindow", "segment"))
         self.show_refset_ctrls_btn.setText(_translate("MainWindow", "..."))
-        self.show_diff_x0ref_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Show x<span style=\" vertical-align:sub;\">0 </span>!= x<span style=\" vertical-align:sub;\">ref</span>, up to number of precision.</p></body></html>"
-            ))
-        self.show_diff_x0ref_btn.setText(_translate("MainWindow", "dx0ref"))
-        self.show_diff_x2ref_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Show x<span style=\" vertical-align:sub;\">2 </span>!= x<span style=\" vertical-align:sub;\">ref</span>, up to number of precision.</p></body></html>"
-            ))
-        self.show_diff_x2ref_btn.setText(_translate("MainWindow", "dx2ref"))
+        self.ref_datasrc_cbb.setItemText(
+            0, _translate("MainWindow", "Use Saved Setpoint (x0)"))
+        self.ref_datasrc_cbb.setItemText(
+            1, _translate("MainWindow", "Use Live Setpoint (x2)"))
         self.update_ref_btn.setToolTip(
             _translate(
                 "MainWindow",
