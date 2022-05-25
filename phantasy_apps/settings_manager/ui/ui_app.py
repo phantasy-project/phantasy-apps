@@ -59,6 +59,35 @@ class Ui_MainWindow(object):
             QtWidgets.QLayout.SetDefaultConstraint)
         self.horizontalLayout.setSpacing(4)
         self.horizontalLayout.setObjectName("horizontalLayout")
+        self.verticalLayout_4 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_4.setContentsMargins(0, 0, -1, -1)
+        self.verticalLayout_4.setSpacing(1)
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.update_ref_btn = QtWidgets.QPushButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.update_ref_btn.sizePolicy().hasHeightForWidth())
+        self.update_ref_btn.setSizePolicy(sizePolicy)
+        self.update_ref_btn.setObjectName("update_ref_btn")
+        self.verticalLayout_4.addWidget(self.update_ref_btn)
+        self.refset_pb = QtWidgets.QProgressBar(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.refset_pb.sizePolicy().hasHeightForWidth())
+        self.refset_pb.setSizePolicy(sizePolicy)
+        self.refset_pb.setMinimumSize(QtCore.QSize(0, 10))
+        self.refset_pb.setMaximumSize(QtCore.QSize(16777215, 10))
+        self.refset_pb.setProperty("value", 0)
+        self.refset_pb.setFormat("")
+        self.refset_pb.setObjectName("refset_pb")
+        self.verticalLayout_4.addWidget(self.refset_pb)
+        self.horizontalLayout.addLayout(self.verticalLayout_4)
         self.reload_lattice_btn = QtWidgets.QToolButton(self.centralwidget)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(":/sm-icons/reload.png"),
@@ -454,9 +483,6 @@ class Ui_MainWindow(object):
             "}")
         self.total_field_number_lbl.setObjectName("total_field_number_lbl")
         self.horizontalLayout_2.addWidget(self.total_field_number_lbl)
-        self.update_ref_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.update_ref_btn.setObjectName("update_ref_btn")
-        self.horizontalLayout_2.addWidget(self.update_ref_btn)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
@@ -1317,6 +1343,13 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.update_ref_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Update reference set with x<span style=\" vertical-align:sub;\">0</span>, works for checked rows.</p></body></html>"
+            ))
+        self.update_ref_btn.setText(
+            _translate("MainWindow", "Update Reference"))
         self.reload_lattice_btn.setToolTip(
             _translate("MainWindow", "Reload Lattice."))
         self.reload_lattice_btn.setText(_translate("MainWindow", "..."))
@@ -1407,7 +1440,6 @@ class Ui_MainWindow(object):
         self.total_field_number_title_lbl.setText(
             _translate("MainWindow", "Fields"))
         self.total_field_number_lbl.setText(_translate("MainWindow", "0"))
-        self.update_ref_btn.setText(_translate("MainWindow", "Write REF"))
         self.snp_ms_chkbox.setText(
             _translate("MainWindow", "Take Snapshot with Machine State"))
         self.wysiwyc_chkbox.setToolTip(
