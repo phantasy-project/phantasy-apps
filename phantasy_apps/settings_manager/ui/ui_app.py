@@ -653,22 +653,6 @@ class Ui_MainWindow(object):
         self.show_warning_dx12_btn.setCheckable(True)
         self.show_warning_dx12_btn.setObjectName("show_warning_dx12_btn")
         self.filter_hbox.addWidget(self.show_warning_dx12_btn)
-        self.show_state_diff_btn = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.show_state_diff_btn.sizePolicy().hasHeightForWidth())
-        self.show_state_diff_btn.setSizePolicy(sizePolicy)
-        icon20 = QtGui.QIcon()
-        icon20.addPixmap(QtGui.QPixmap(":/sm-icons/red-green.png"),
-                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_state_diff_btn.setIcon(icon20)
-        self.show_state_diff_btn.setIconSize(QtCore.QSize(30, 30))
-        self.show_state_diff_btn.setCheckable(True)
-        self.show_state_diff_btn.setObjectName("show_state_diff_btn")
-        self.filter_hbox.addWidget(self.show_state_diff_btn)
         self.show_diff_x0ref_btn = QtWidgets.QToolButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -677,15 +661,30 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.show_diff_x0ref_btn.sizePolicy().hasHeightForWidth())
         self.show_diff_x0ref_btn.setSizePolicy(sizePolicy)
-        self.show_diff_x0ref_btn.setText("")
-        icon21 = QtGui.QIcon()
-        icon21.addPixmap(QtGui.QPixmap(":/sm-icons/dx0ref_warning.png"),
+        icon20 = QtGui.QIcon()
+        icon20.addPixmap(QtGui.QPixmap(":/sm-icons/dx0ref_warning.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_diff_x0ref_btn.setIcon(icon21)
-        self.show_diff_x0ref_btn.setIconSize(QtCore.QSize(90, 30))
+        self.show_diff_x0ref_btn.setIcon(icon20)
+        self.show_diff_x0ref_btn.setIconSize(QtCore.QSize(80, 30))
         self.show_diff_x0ref_btn.setCheckable(True)
         self.show_diff_x0ref_btn.setObjectName("show_diff_x0ref_btn")
         self.filter_hbox.addWidget(self.show_diff_x0ref_btn)
+        self.show_state_diff_btn = QtWidgets.QPushButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.show_state_diff_btn.sizePolicy().hasHeightForWidth())
+        self.show_state_diff_btn.setSizePolicy(sizePolicy)
+        icon21 = QtGui.QIcon()
+        icon21.addPixmap(QtGui.QPixmap(":/sm-icons/red-green.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.show_state_diff_btn.setIcon(icon21)
+        self.show_state_diff_btn.setIconSize(QtCore.QSize(30, 30))
+        self.show_state_diff_btn.setCheckable(True)
+        self.show_state_diff_btn.setObjectName("show_state_diff_btn")
+        self.filter_hbox.addWidget(self.show_state_diff_btn)
         self.show_all_selected_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -1117,6 +1116,7 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setFamily("Monospace")
         self.log_textEdit.setFont(font)
+        self.log_textEdit.setUndoRedoEnabled(False)
         self.log_textEdit.setReadOnly(True)
         self.log_textEdit.setObjectName("log_textEdit")
         self.verticalLayout_2.addWidget(self.log_textEdit)
@@ -1505,13 +1505,19 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p>Show x<span style=\" vertical-align:sub;\">0 </span>!= x<span style=\" vertical-align:sub;\">2</span>, up to number of precision.</p></body></html>"
             ))
-        self.show_warning_dx02_btn.setText(_translate("MainWindow", "0,2"))
+        self.show_warning_dx02_btn.setText(_translate("MainWindow", "dx02"))
         self.show_warning_dx12_btn.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Show Δ(x<span style=\" vertical-align:sub;\">1</span>, x<span style=\" vertical-align:sub;\">2</span>) &gt; tolerance.</p></body></html>"
             ))
-        self.show_warning_dx12_btn.setText(_translate("MainWindow", "x1,2"))
+        self.show_warning_dx12_btn.setText(_translate("MainWindow", "dx12"))
+        self.show_diff_x0ref_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Show x<span style=\" vertical-align:sub;\">0 </span>!= x<span style=\" vertical-align:sub;\">ref</span>, up to number of precision.</p></body></html>"
+            ))
+        self.show_diff_x0ref_btn.setText(_translate("MainWindow", "dx0ref"))
         self.show_state_diff_btn.setToolTip(
             _translate(
                 "MainWindow",
