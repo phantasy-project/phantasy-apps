@@ -1121,7 +1121,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         return menu
 
     @pyqtSlot()
-    def on_set_ref_val(self, pv):
+    def on_set_ref_val(self, src_m, fld, src_idx, pv):
         if pv is not None:
             try:
                 val = float(self.ref_val_lineEdit.text())
@@ -1130,7 +1130,64 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             else:
                 caput(pv, val, wait=False)
                 # print(f"Set {pv} with {val}")
-                delayed_exec(lambda: self.single_update_btn.clicked.emit(), 500)
+                delayed_exec(partial(self._refresh_ref_values, src_m, fld, src_idx, pv), 500)
+
+    def _refresh_ref_values(self, m, fld, src_idx, pv):
+        # TODO: refactor to a standard function for single row data refreshing
+        # refresh xref, dx2ref and dx0ref columns
+        # after the xref being changed thru context menu.
+        print("Refresh ref values.")
+        xref = caget(pv, timeout=0.5)
+        irow = src_idx.row()
+        x0_idx = m.index(irow, m.i_val0)
+        x0 = float(m.data(x0_idx))
+        x1 = fld.value
+        x2 = fld.current_setting()
+        dx01 = x0 - x1
+        dx02 = x2 - x0
+        dx12 = x1 - x2
+        dx2ref = x2 - xref
+        dx0ref = x0 - xref
+
+        x1_idx = m.index(irow, m.i_rd)
+        x2_idx = m.index(irow, m.i_cset)
+        dx01_idx = m.index(irow, m.i_val0_rd)
+        dx02_idx = m.index(irow, m.i_val0_cset)
+        dx12_idx = m.index(irow, m.i_rd_cset)
+        ref_st_idx = m.index(irow, m.i_ref_st)
+        dx2ref_idx = m.index(irow, m.i_dstref)
+        dx0ref_idx = m.index(irow, m.i_dval0ref)
+        ratio_x20_idx = m.index(irow, m.i_ratio_x20)
+
+        for iidx, iv in zip(
+            (ref_st_idx, dx2ref_idx, dx0ref_idx, x1_idx, x2_idx, dx01_idx, dx02_idx, dx12_idx),
+            (xref, dx2ref, dx0ref, x1, x2, dx01, dx02, dx12)):
+                m.setData(iidx, self.fmt.format(iv), Qt.DisplayRole)
+        m.setData(ratio_x20_idx, get_ratio_as_string(x2, x0, self.fmt), Qt.DisplayRole)
+
+        tol_idx = m.index(irow, m.i_tol)
+        tol = float(m.data(tol_idx))
+        if abs(dx12) > tol:
+            m.setData(dx12_idx, self._warning_px, Qt.DecorationRole)
+            m.setData(dx12_idx, 'warning', Qt.UserRole)
+        else:
+            m.setData(dx12_idx, self._no_warning_px, Qt.DecorationRole)
+            m.setData(dx12_idx, None, Qt.UserRole)
+
+        if not is_close(x0, x2, self.ndigit):
+            m.setData(dx02_idx, self._warning_px, Qt.DecorationRole)
+            m.setData(dx02_idx, 'warning', Qt.UserRole)
+        else:
+            m.setData(dx02_idx, self._no_warning_px, Qt.DecorationRole)
+            m.setData(dx02_idx, None, Qt.UserRole)
+
+        for iidx, iv in zip((dx2ref_idx, dx0ref_idx), (x2, x0)):
+                if not is_close(iv, xref, self.ndigit):
+                    m.setData(iidx, self._warning_px, Qt.DecorationRole)
+                    m.setData(iidx, "warning", Qt.UserRole)
+                else:
+                    m.setData(iidx, self._no_warning_px, Qt.DecorationRole)
+                    m.setData(iidx, None, Qt.UserRole)
 
     @pyqtSlot()
     def on_fill_ref_with_x2(self, fld):
@@ -1174,12 +1231,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # refset column? add action for new value setting.
         if src_idx.column() == src_m.i_ref_st:
             ref_pv = src_m.data(src_idx, Qt.UserRole + 1)
+            fld = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_name)).fobj
             ref_set_lbl = QLabel("New Reference:", self)
             self.ref_val_lineEdit = QLineEdit(self.fmt.format(caget(ref_pv)), self)
-            self.ref_val_lineEdit.setValidator(QDoubleValidator())
+            # self.ref_val_lineEdit.setValidator(QDoubleValidator())
             ref_set_btn = QToolButton(self)
             ref_set_btn.setText("Set")
-            ref_set_btn.clicked.connect(partial(self.on_set_ref_val, ref_pv))
+            ref_set_btn.clicked.connect(partial(self.on_set_ref_val, src_m, fld, src_idx, ref_pv))
             # fetch and fill saved setpoint (x0)
             ref_set_fetch_x0_btn = QToolButton(self)
             ref_set_fetch_x0_btn.setText("x0")
@@ -1190,7 +1248,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             ref_set_fetch_x2_btn = QToolButton(self)
             ref_set_fetch_x2_btn.setText("x2")
             ref_set_fetch_x2_btn.setToolTip("Fill out with live setpoint (x2)")
-            fld = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_name)).fobj
             ref_set_fetch_x2_btn.clicked.connect(partial(self.on_fill_ref_with_x2, fld))
             #
             ref_set_w = QWidget(self)
