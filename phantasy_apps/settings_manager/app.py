@@ -1136,7 +1136,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # TODO: refactor to a standard function for single row data refreshing
         # refresh xref, dx2ref and dx0ref columns
         # after the xref being changed thru context menu.
-        print("Refresh ref values.")
         xref = caget(pv, timeout=0.5)
         irow = src_idx.row()
         x0_idx = m.index(irow, m.i_val0)
