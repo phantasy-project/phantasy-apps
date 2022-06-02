@@ -1128,9 +1128,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             except:
                 pass
             else:
-                caput(pv, val, wait=False)
-                # print(f"Set {pv} with {val}")
-                delayed_exec(partial(self._refresh_ref_values, src_m, fld, src_idx, pv), 500)
+                r = caput(pv, val, timeout=1)
+                if r is None: # failed
+                    QMessageBox.warning(self, "Set Reference", f"Failed to set {pv} with {val}.", QMessageBox.Ok)
+                else:
+                    delayed_exec(partial(self._refresh_ref_values, src_m, fld, src_idx, pv), 500)
 
     def _refresh_ref_values(self, m, fld, src_idx, pv):
         # TODO: refactor to a standard function for single row data refreshing
@@ -1232,7 +1234,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             ref_pv = src_m.data(src_idx, Qt.UserRole + 1)
             fld = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_name)).fobj
             ref_set_lbl = QLabel("New Reference:", self)
-            self.ref_val_lineEdit = QLineEdit(self.fmt.format(caget(ref_pv)), self)
+            
+            # _ref_v_now = caget(ref_pv, timeout=1)
+            # if _ref_v_now is None:
+            #     _ref_v_now_str = 'disconnected'
+            # else:
+            #     _ref_v_now_str = self.fmt.format(_ref_v_now)
+            _ref_v_now_str = src_m.data(src_idx, Qt.DisplayRole)
+            self.ref_val_lineEdit = QLineEdit(_ref_v_now_str, self)
             # self.ref_val_lineEdit.setValidator(QDoubleValidator())
             ref_set_btn = QToolButton(self)
             ref_set_btn.setText("Set")
@@ -2133,23 +2142,24 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         ref_st_pv = m.data(ref_st_idx, Qt.UserRole + 1)
         if ref_st_pv is not None:
             ref_v = caget(ref_st_pv)
-            dx2ref = x2 - ref_v
-            dx0ref = x0 - ref_v
-            for iidx, iv in zip((ref_st_idx, dx2ref_idx, dx0ref_idx), (ref_v, dx2ref, dx0ref)):
-                worker.meta_signal1.emit((iidx, self.fmt.format(iv), Qt.DisplayRole))
+            if ref_v is not None:
+                dx2ref = x2 - ref_v
+                dx0ref = x0 - ref_v
+                for iidx, iv in zip((ref_st_idx, dx2ref_idx, dx0ref_idx), (ref_v, dx2ref, dx0ref)):
+                    worker.meta_signal1.emit((iidx, self.fmt.format(iv), Qt.DisplayRole))
 
-            # warnings?
-            for iidx, iv in zip((dx2ref_idx, dx0ref_idx), (x2, x0)):
-                if not is_close(iv, ref_v, self.ndigit):
-                    worker.meta_signal1.emit(
-                        (iidx, self._warning_px, Qt.DecorationRole))
-                    worker.meta_signal1.emit(
-                        (iidx, "warning", Qt.UserRole))
-                else:
-                    worker.meta_signal1.emit(
-                        (iidx, self._no_warning_px, Qt.DecorationRole))
-                    worker.meta_signal1.emit(
-                        (iidx, None, Qt.UserRole))
+                # warnings?
+                for iidx, iv in zip((dx2ref_idx, dx0ref_idx), (x2, x0)):
+                    if not is_close(iv, ref_v, self.ndigit):
+                        worker.meta_signal1.emit(
+                            (iidx, self._warning_px, Qt.DecorationRole))
+                        worker.meta_signal1.emit(
+                            (iidx, "warning", Qt.UserRole))
+                    else:
+                        worker.meta_signal1.emit(
+                            (iidx, self._no_warning_px, Qt.DecorationRole))
+                        worker.meta_signal1.emit(
+                            (iidx, None, Qt.UserRole))
 
         #
         pwr_is_on = 'Unknown'
