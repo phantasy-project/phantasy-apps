@@ -601,10 +601,19 @@ class Ui_MainWindow(object):
         self.line_6.setObjectName("line_6")
         self.horizontalLayout.addWidget(self.line_6)
         self.show_refset_ctrls_btn = QtWidgets.QToolButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.show_refset_ctrls_btn.sizePolicy().hasHeightForWidth())
+        self.show_refset_ctrls_btn.setSizePolicy(sizePolicy)
         self.show_refset_ctrls_btn.setIcon(icon6)
         self.show_refset_ctrls_btn.setIconSize(QtCore.QSize(24, 24))
         self.show_refset_ctrls_btn.setCheckable(True)
         self.show_refset_ctrls_btn.setChecked(True)
+        self.show_refset_ctrls_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
         self.show_refset_ctrls_btn.setAutoRaise(True)
         self.show_refset_ctrls_btn.setObjectName("show_refset_ctrls_btn")
         self.horizontalLayout.addWidget(self.show_refset_ctrls_btn)
@@ -614,7 +623,7 @@ class Ui_MainWindow(object):
         self.refset_ctrl_hbox.setObjectName("refset_ctrl_hbox")
         self.show_diff_x0ref_btn = QtWidgets.QToolButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
+                                           QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
@@ -629,6 +638,13 @@ class Ui_MainWindow(object):
         self.show_diff_x0ref_btn.setObjectName("show_diff_x0ref_btn")
         self.refset_ctrl_hbox.addWidget(self.show_diff_x0ref_btn)
         self.show_diff_x2ref_btn = QtWidgets.QToolButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.show_diff_x2ref_btn.sizePolicy().hasHeightForWidth())
+        self.show_diff_x2ref_btn.setSizePolicy(sizePolicy)
         icon21 = QtGui.QIcon()
         icon21.addPixmap(QtGui.QPixmap(":/sm-icons/dx2ref_warning.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -637,25 +653,13 @@ class Ui_MainWindow(object):
         self.show_diff_x2ref_btn.setCheckable(True)
         self.show_diff_x2ref_btn.setObjectName("show_diff_x2ref_btn")
         self.refset_ctrl_hbox.addWidget(self.show_diff_x2ref_btn)
-        self.ref_datasrc_cbb = QtWidgets.QComboBox(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.ref_datasrc_cbb.sizePolicy().hasHeightForWidth())
-        self.ref_datasrc_cbb.setSizePolicy(sizePolicy)
-        self.ref_datasrc_cbb.setObjectName("ref_datasrc_cbb")
-        self.ref_datasrc_cbb.addItem("")
-        self.ref_datasrc_cbb.addItem("")
-        self.refset_ctrl_hbox.addWidget(self.ref_datasrc_cbb)
         self.refset_ctrl_vbox = QtWidgets.QVBoxLayout()
         self.refset_ctrl_vbox.setContentsMargins(0, 0, -1, -1)
         self.refset_ctrl_vbox.setSpacing(1)
         self.refset_ctrl_vbox.setObjectName("refset_ctrl_vbox")
         self.update_ref_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
+                                           QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
@@ -1558,7 +1562,8 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p>Show/hide controls for reference settings.</p></body></html>"
             ))
-        self.show_refset_ctrls_btn.setText(_translate("MainWindow", "..."))
+        self.show_refset_ctrls_btn.setText(
+            _translate("MainWindow", "Reference Set"))
         self.show_diff_x0ref_btn.setToolTip(
             _translate(
                 "MainWindow",
@@ -1571,15 +1576,6 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Show x<span style=\" vertical-align:sub;\">2 </span>!= x<span style=\" vertical-align:sub;\">ref</span>, up to number of precision.</p></body></html>"
             ))
         self.show_diff_x2ref_btn.setText(_translate("MainWindow", "dx2ref"))
-        self.ref_datasrc_cbb.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Choose the data source for applying reference settings.</p></body></html>"
-            ))
-        self.ref_datasrc_cbb.setItemText(
-            0, _translate("MainWindow", "Use Saved Setpoint (x0)"))
-        self.ref_datasrc_cbb.setItemText(
-            1, _translate("MainWindow", "Use Live Setpoint (x2)"))
         self.update_ref_btn.setToolTip(
             _translate(
                 "MainWindow",
