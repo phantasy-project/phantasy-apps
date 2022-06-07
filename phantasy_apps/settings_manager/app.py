@@ -2679,7 +2679,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def set_widgets_status_for_ref_set(self, status):
         """Set widgets status for ref set.
         """
-        w1 = (self.update_ref_btn, self.ref_datasrc_cbb,)
+        w1 = (self.update_ref_btn,)
         [i.setDisabled(status == 'START') for i in w1]
 
     def sizeHint(self):
@@ -3585,7 +3585,7 @@ p, li { white-space: pre-wrap; }
             return
         #
         self._refset_pb_list = []
-        self._setter = DAQT(daq_func=partial(self.set_ref_single, self.ref_datasrc_cbb.currentIndex()),
+        self._setter = DAQT(daq_func=self.set_ref_single,
                             daq_seq=settings_selected)
         self._setter.daqStarted.connect(lambda: self.refset_pb.setVisible(True))
         self._setter.daqStarted.connect(
@@ -3599,25 +3599,20 @@ p, li { white-space: pre-wrap; }
              lambda: self.single_update_btn.clicked.emit())
         self._setter.start()
 
-    def set_ref_single(self, datasrc_idx, tuple_idx_settings):
-        # datasrc_idx:
-        # 0: use saved setpoint, x0
-        # 1: use live setpoint, x2
-        # ref_v0: current ref set
-        # ref_val0: x0
+    def set_ref_single(self, tuple_idx_settings):
+        # ref_v_now: current ref set
+        # ref_val0: x0 # -> (ref_v)
         # live set: fld.value
-        ref_st_idx, ref_st_pv, ref_v0, ref_val0, fld = tuple_idx_settings
-        if datasrc_idx == 0:
-            ref_v = ref_val0
-        else: # 1
-            ref_v = fld.current_setting()
+        ref_st_idx, ref_st_pv, ref_v = tuple_idx_settings
         if ref_st_pv is not None:
-            msg = "[{0}] Set {1:<35s} reference value from {2:.3f} to {3:.3f}.".format(
-                datetime.fromtimestamp(time.time()).strftime(TS_FMT),
-                ref_st_pv, float(ref_v0), ref_v)
-            caput(ref_st_pv, ref_v, wait=False)
-            self._refset_pb_list.append((ref_st_idx, msg))
-            time.sleep(0.001)
+            ref_v_now = caget(ref_st_pv)
+            if not is_close(ref_v_now, ref_v, self.ndigit):
+                msg = "[{0}] Set {1:<35s} reference value from {2:.3f} to {3:.3f}.".format(
+                    datetime.fromtimestamp(time.time()).strftime(TS_FMT),
+                    ref_st_pv, float(ref_v_now), ref_v)
+                caput(ref_st_pv, ref_v, wait=False)
+                self._refset_pb_list.append((ref_st_idx, msg))
+                time.sleep(0.001)
         else:
             self._refset_pb_list.append((ref_st_idx, "No Reference"))
 
@@ -3632,7 +3627,7 @@ p, li { white-space: pre-wrap; }
     def on_toggle_refset_ctrls(self, is_checked):
         """If checked, show the controls for reference set.
         """
-        for w in (self.update_ref_btn, self.ref_datasrc_cbb,
+        for w in (self.update_ref_btn,
                   self.show_diff_x0ref_btn, self.show_diff_x2ref_btn):
             w.setVisible(is_checked)
         m = self.settingsView.model()
