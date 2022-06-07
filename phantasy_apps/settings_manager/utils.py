@@ -65,6 +65,8 @@ COLUMN_NAMES2 = [
     f'Reference Set ({XREF})',
     f'{DELTA}({X2},{XREF})',
     f'{DELTA}({X0},{XREF})',
+    f'Read ALM?',  # if read alarm is activated?
+    f'Tune ALM?',  # if tune alarm is activated?
 ]
 COLUMN_SFIELD_MAP = OrderedDict((
     ('Type', 'family'),
@@ -183,6 +185,10 @@ TGT_STS_TUPLE = ('Invalid', 'Home/Be 3.811 mm', 'Viewer', 'Be 4064 mm',
 with open(find_dconf("settings_manager", "refstpv.json")) as fp:
     REF_ST_PV_MAP = json.load(fp)
 
+# Device alarm switch PV MAP
+with open(find_dconf("settings_manager", "almactpv.json")) as fp:
+    ALM_ACT_PV_MAP = json.load(fp)
+
 
 class SettingsModel(QStandardItemModel):
     """Settings model from Settings instance.
@@ -239,14 +245,16 @@ class SettingsModel(QStandardItemModel):
                       self.h_val0_rd, self.h_val0_cset, self.h_rd_cset, \
                       self.h_tol, self.h_writable, self.h_ratio_x20, \
                       self.h_sts, self.h_last_sts, \
-                      self.h_ref_st, self.h_dsetref, self.h_dval0ref \
+                      self.h_ref_st, self.h_dsetref, self.h_dval0ref, \
+                      self.h_read_alm, self.h_tune_alm \
             = COLUMN_NAMES
         self.ids = self.i_name, self.i_field, self.i_type, self.i_pos, \
                    self.i_val0, self.i_rd, self.i_cset, \
                    self.i_val0_rd, self.i_val0_cset, self.i_rd_cset, \
                    self.i_tol, self.i_writable, self.i_ratio_x20, \
                    self.i_sts, self.i_last_sts, \
-                   self.i_ref_st, self.i_dstref, self.i_dval0ref \
+                   self.i_ref_st, self.i_dstref, self.i_dval0ref, \
+                   self.i_read_alm, self.i_tune_alm \
             = range(len(self.header))
 
         #
@@ -365,6 +373,16 @@ class SettingsModel(QStandardItemModel):
             [i.setEditable(False) for i in ref_row]
             row.extend(ref_row)
 
+            # alarm switches, read and tune alms
+            tune_alm_pv, read_alm_pv = alm_pv(fld.ename, fld.name)
+            item_read_alm = QStandardItem('-')
+            item_read_alm.setData(read_alm_pv, Qt.UserRole + 1) # None if not availble
+            item_read_alm.setEditable(False)
+            item_tune_alm = QStandardItem('-')
+            item_tune_alm.setData(tune_alm_pv, Qt.UserRole + 1) # None if not availble
+            item_tune_alm.setEditable(False)
+            row.extend([item_read_alm, item_tune_alm])
+
             #
             self.appendRow(row)
             ename_set.add(elem.name)
@@ -381,7 +399,8 @@ class SettingsModel(QStandardItemModel):
         #
         # hide columns: pos, dx01, tolerance, writable
         for i in (self.i_pos, self.i_val0_rd, self.i_tol, self.i_writable,
-                  self.i_ref_st, self.i_dstref, self.i_dval0ref):
+                  self.i_ref_st, self.i_dstref, self.i_dval0ref,
+                  self.i_read_alm, self.i_tune_alm):
             self._tv.setColumnHidden(i, True)
         #
         self.__post_init_ui()
@@ -516,6 +535,8 @@ class _SortProxyModel(QSortFilterProxyModel):
             'ref_st': model.i_ref_st,
             'dx2ref': model.i_dstref,
             'dx0ref': model.i_dval0ref,
+            'read_alm': model.i_read_alm,
+            'tune_alm': model.i_tune_alm,
         }
         self.filter_ftypes = ['ENG', 'PHY']
         # if True, filter checked items, otherwise show all items.
@@ -525,6 +546,8 @@ class _SortProxyModel(QSortFilterProxyModel):
         self.filter_disconnected_enabled = False
         self.filter_dx0ref_warning_enabled = False
         self.filter_dx2ref_warning_enabled = False
+        self.filter_disabled_read_alm_enabled = False
+        self.filter_disabled_tune_alm_enabled = False
         # field filter
         self.filter_field_enabled = False
         self.filter_field_list = []
@@ -720,6 +743,30 @@ class _SortProxyModel(QSortFilterProxyModel):
             disconnected_test = True
         #
         if not disconnected_test:
+            return False
+
+        # disabled read alam checked
+        if self.filter_disabled_read_alm_enabled:
+            data = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['read_alm']),
+                    Qt.UserRole)
+            disabled_read_alm_test = data == "disabled"
+        else:
+            disabled_read_alm_test = True
+        #
+        if not disabled_read_alm_test:
+            return False
+
+        # disabled tune alam checked
+        if self.filter_disabled_tune_alm_enabled:
+            data = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['tune_alm']),
+                    Qt.UserRole)
+            disabled_tune_alm_test = data == "disabled"
+        else:
+            disabled_tune_alm_test = True
+        #
+        if not disabled_tune_alm_test:
             return False
 
         # state diff checked
@@ -1613,4 +1660,10 @@ def set_device_state_item(sts_str):
 
 
 def ref_pv(ename, fname):
+    # Return the PV name for reference set.
     return REF_ST_PV_MAP.get(f"{ename}-{fname}", None)
+
+
+def alm_pv(ename, fname):
+    # Return the PV names for alarm switches, (tune, read)
+    return ALM_ACT_PV_MAP.get(f"{ename}-{fname}", (None, None))

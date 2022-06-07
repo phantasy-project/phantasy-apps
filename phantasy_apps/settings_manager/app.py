@@ -589,6 +589,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.show_refset_ctrls_btn.toggled.connect(self.on_toggle_refset_ctrls)
         self.show_refset_ctrls_btn.setChecked(False)
 
+        # device alarm switch controls
+        self.show_alm_ctrls_btn.toggled.connect(self.on_toggle_alm_ctrls)
+        self.show_alm_ctrls_btn.setChecked(False)
+
         # hide init settings hbox
         self.show_init_settings_btn.setChecked(False)
         # # hide Add Devices tool
@@ -2097,6 +2101,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         ref_st_idx = m.index(irow, m.i_ref_st)
         dx2ref_idx = m.index(irow, m.i_dstref)
         dx0ref_idx = m.index(irow, m.i_dval0ref)
+        read_alm_idx = m.index(irow, m.i_read_alm)
+        tune_alm_idx = m.index(irow, m.i_tune_alm)
 
         idx_tuple = (idx0, idx1)
         v_tuple = (rd_val, sp_val)
@@ -2160,6 +2166,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                             (iidx, self._no_warning_px, Qt.DecorationRole))
                         worker.meta_signal1.emit(
                             (iidx, None, Qt.UserRole))
+
+        # device read alarm switch status
+        read_alm_act_pv = m.data(read_alm_idx, Qt.UserRole + 1)
+        if read_alm_act_pv is not None:
+            read_alm_v = caget(read_alm_act_pv)
+            worker.meta_signal1.emit((read_alm_idx, str(read_alm_v), Qt.DisplayRole))
+            worker.meta_signal1.emit((read_alm_idx, read_alm_v, Qt.UserRole))
+
+        # device tune alarm switch status
+        tune_alm_act_pv = m.data(tune_alm_idx, Qt.UserRole + 1)
+        if tune_alm_act_pv is not None:
+            tune_alm_v = caget(tune_alm_act_pv)
+            worker.meta_signal1.emit((tune_alm_idx, str(tune_alm_v), Qt.DisplayRole))
+            worker.meta_signal1.emit((tune_alm_idx, tune_alm_v, Qt.UserRole))
 
         #
         pwr_is_on = 'Unknown'
@@ -2772,6 +2792,26 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if m is None:
             return
         m.filter_disconnected_enabled = is_checked
+        self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
+    def on_show_disabled_read_alms(self, is_checked):
+        # show all items that read alarm is disabled
+        self.filter_btn_group_status_changed.emit()
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_disabled_read_alm_enabled = is_checked
+        self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
+    def on_show_disabled_tune_alms(self, is_checked):
+        # show all items that tune alarm is disabled
+        self.filter_btn_group_status_changed.emit()
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_disabled_tune_alm_enabled = is_checked
         self.filter_lineEdit.editingFinished.emit()
 
     @pyqtSlot(bool)
@@ -3636,6 +3676,32 @@ p, li { white-space: pre-wrap; }
         src_m = m.sourceModel()
         for i in (src_m.i_ref_st, src_m.i_dstref, src_m.i_dval0ref,):
             self._tv.setColumnHidden(i, not is_checked)
+
+    @pyqtSlot(bool)
+    def on_toggle_alm_ctrls(self, is_checked):
+        """If checked, show the controls for device alarms.
+        """
+        for w in (self.enable_alms_btn, self.disable_alms_btn,
+                  self.show_disabled_read_alms_btn, self.show_disabled_tune_alms_btn):
+            w.setVisible(is_checked)
+        m = self.settingsView.model()
+        if m is None:
+            return
+        src_m = m.sourceModel()
+        for i in (src_m.i_read_alm, src_m.i_tune_alm):
+            self._tv.setColumnHidden(i, not is_checked)
+
+    @pyqtSlot()
+    def on_click_enable_alms_btn(self):
+        """Enable alarms for all checked rows.
+        """
+        print("Enable Alarms...")
+
+    @pyqtSlot()
+    def on_click_disable_alms_btn(self):
+        """Disable alarms for all checked rows.
+        """
+        print("Disable Alarms...")
 
 
 def is_snp_data_exist(snpdata, snpdata_list):
