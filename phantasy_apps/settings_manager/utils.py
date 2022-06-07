@@ -750,7 +750,7 @@ class _SortProxyModel(QSortFilterProxyModel):
             data = src_model.data(
                     src_model.index(src_row, self.filter_col_index['read_alm']),
                     Qt.UserRole)
-            disabled_read_alm_test = data == "disabled"
+            disabled_read_alm_test = data == 0.0
         else:
             disabled_read_alm_test = True
         #
@@ -762,7 +762,7 @@ class _SortProxyModel(QSortFilterProxyModel):
             data = src_model.data(
                     src_model.index(src_row, self.filter_col_index['tune_alm']),
                     Qt.UserRole)
-            disabled_tune_alm_test = data == "disabled"
+            disabled_tune_alm_test = data == 0.0
         else:
             disabled_tune_alm_test = True
         #
