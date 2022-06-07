@@ -191,11 +191,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_14.setObjectName("horizontalLayout_14")
         self.show_disabled_read_alms_btn = QtWidgets.QToolButton(
             self.centralwidget)
+        self.show_disabled_read_alms_btn.setCheckable(True)
         self.show_disabled_read_alms_btn.setObjectName(
             "show_disabled_read_alms_btn")
         self.horizontalLayout_14.addWidget(self.show_disabled_read_alms_btn)
         self.show_disabled_tune_alms_btn = QtWidgets.QToolButton(
             self.centralwidget)
+        self.show_disabled_tune_alms_btn.setCheckable(True)
         self.show_disabled_tune_alms_btn.setObjectName(
             "show_disabled_tune_alms_btn")
         self.horizontalLayout_14.addWidget(self.show_disabled_tune_alms_btn)
