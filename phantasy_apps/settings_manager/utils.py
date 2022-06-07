@@ -381,7 +381,7 @@ class SettingsModel(QStandardItemModel):
         #
         # hide columns: pos, dx01, tolerance, writable
         for i in (self.i_pos, self.i_val0_rd, self.i_tol, self.i_writable,
-                  self.i_dstref, self.i_dval0ref):
+                  self.i_ref_st, self.i_dstref, self.i_dval0ref):
             self._tv.setColumnHidden(i, True)
         #
         self.__post_init_ui()

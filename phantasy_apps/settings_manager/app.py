@@ -1234,7 +1234,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             ref_pv = src_m.data(src_idx, Qt.UserRole + 1)
             fld = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_name)).fobj
             ref_set_lbl = QLabel("New Reference:", self)
-            
+
             # _ref_v_now = caget(ref_pv, timeout=1)
             # if _ref_v_now is None:
             #     _ref_v_now_str = 'disconnected'
@@ -3639,7 +3639,7 @@ p, li { white-space: pre-wrap; }
         if m is None:
             return
         src_m = m.sourceModel()
-        for i in (src_m.i_dstref, src_m.i_dval0ref,):
+        for i in (src_m.i_ref_st, src_m.i_dstref, src_m.i_dval0ref,):
             self._tv.setColumnHidden(i, not is_checked)
 
 
