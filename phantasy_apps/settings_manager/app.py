@@ -144,6 +144,13 @@ from .conf import N_SNP_MAX, NPROC, MS_CONF_PATH, MS_ENABLED
 from .conf import DATA_SOURCE_MODE, DB_ENGINE, DATA_URI
 from .conf import FIELD_INIT_MODE, T_WAIT, INIT_SETTINGS, TOLERANCE, N_DIGIT
 
+# Alarm types to control, disable/enable.
+ALM_TYPE_MAP = { # [read, tune]
+    'All': [True, True],
+    'Read': [True, False],
+    'Tune': [False, True],
+}
+
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # settings view filter button group status (or) changed --> update
@@ -592,6 +599,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # device alarm switch controls
         self.show_alm_ctrls_btn.toggled.connect(self.on_toggle_alm_ctrls)
         self.show_alm_ctrls_btn.setChecked(False)
+
+        # alarm type for disable/enable actions
+        self._alm_type_idx_list = ALM_TYPE_MAP["All"]
 
         # hide init settings hbox
         self.show_init_settings_btn.setChecked(False)
@@ -3695,81 +3705,90 @@ p, li { white-space: pre-wrap; }
     def on_click_enable_alms_btn(self):
         """Enable alarms for all checked rows.
         """
-        print("Enable Alarms...")
-
+        self._alm_set(False)
 
     @pyqtSlot()
     def on_click_disable_alms_btn(self):
         """Disable alarms for all checked rows.
         """
+        self._alm_set(True)
+
+    def _alm_set(self, to_disable=False):
+        if to_disable:
+            new_val = 0
+            msg_title = "Disable Device Alarms"
+        else:
+            new_val = 1
+            msg_title = "Enable Device Alarms"
+
         m = self._tv.model()
         if m is None:
             return
-        settings_selected = m.get_selection_refset()
+        settings_selected = m.get_selection_almset()
         if len(settings_selected) == 0:
             QMessageBox.warning(
-                self, "Disable Device Alarms",
-                '<html><head/><body><p>Not any items are checked, <span style=" '
-                'font-style:italic;">Disable Device Alarms </span>only works with checked items in current page<span style=" '
+                self, f"{msg_title}",
+                f'<html><head/><body><p>Not any items are checked, <span style=" '
+                'font-style:italic;">{msg_title} </span>only works with checked items in current page<span style=" '
                 'font-style:italic;">.</span></p></body></html>',
                 QMessageBox.Ok)
             return
         #
-        self._disalm_pb_list = []
-        self._disalm_worker = DAQT(daq_func=partial(self.set_alm_single, 0),
-                                   daq_seq=settings_selected)
-        self._disalm_worker.daqStarted.connect(lambda: self.disalms_pb.setVisible(True))
-        # self._disalm_worker.daqStarted.connect(
-        #         partial(self.set_widgets_status_for_ref_set, 'START'))
-        self._disalm_worker.progressUpdated.connect(
-                partial(self.on_set_alm_progress, self._disalm_pb_list, m.sourceModel()))
-        self._disalm_worker.daqFinished.connect(
-                partial(self.set_widgets_status_for_ref_set, 'STOP'))
-        self._disalm_worker.daqFinished.connect(lambda: self.refset_pb.setVisible(False))
-        self._disalm_worker.daqFinished.connect(
+        self._alm_set_pb_list = []
+        self._alm_worker = DAQT(daq_func=partial(self.set_alm_single, new_val, self._alm_type_idx_list),
+                                daq_seq=settings_selected)
+        self._alm_worker.daqStarted.connect(lambda: self.alm_set_pb.setVisible(True))
+        self._alm_worker.daqStarted.connect(
+                 partial(self.set_widgets_status_for_alm_set, 'START'))
+        self._alm_worker.progressUpdated.connect(
+                partial(self.on_alm_set_progress, self._alm_set_pb_list, m.sourceModel()))
+        self._alm_worker.daqFinished.connect(
+                partial(self.set_widgets_status_for_alm_set, 'STOP'))
+        self._alm_worker.daqFinished.connect(lambda: self.alm_set_pb.setVisible(False))
+        self._alm_worker.daqFinished.connect(
              lambda: self.single_update_btn.clicked.emit())
-        self._disalm_worker.start()
+        self._alm_worker.start()
 
-    def set_ref_single(self, tuple_idx_settings):
-        # ref_v_now: current ref set
-        # ref_val0: x0 # -> (ref_v)
-        # live set: fld.value
-        ref_st_idx, ref_st_pv, ref_v = tuple_idx_settings
-        if ref_st_pv is not None:
-            ref_v_now = caget(ref_st_pv)
-            if not is_close(ref_v_now, ref_v, self.ndigit):
-                msg = "[{0}] Set {1:<35s} reference value from {2:.3f} to {3:.3f}.".format(
+    def set_alm_single(self, value, alarm_type_idx_list, tuple_idx_settings):
+        # value: new alarm switch value to set
+        read_alm_idx, read_alm_pv, tune_alm_idx, tune_alm_pv = tuple_idx_settings
+        _idx_pv_list = np.array([(read_alm_idx, read_alm_pv),
+                                 (tune_alm_idx, tune_alm_pv)])[alarm_type_idx_list]
+
+        for _idx, _pv in _idx_pv_list:
+            if _pv is not None:
+                msg = "[{0}] Set {1:<35s} to {2}.".format(
                     datetime.fromtimestamp(time.time()).strftime(TS_FMT),
-                    ref_st_pv, float(ref_v_now), ref_v)
-                caput(ref_st_pv, ref_v, wait=False)
-                self._refset_pb_list.append((ref_st_idx, msg))
+                    _pv, value)
+                caput(_pv, value, wait=False)
+                self._alm_set_pb_list.append((_idx, msg))
                 time.sleep(0.001)
-        else:
-            self._refset_pb_list.append((ref_st_idx, "No Reference"))
+            else:
+                self._alm_set_pb_list.append((_idx, "No alarm to set"))
 
     @pyqtSlot(float, 'QString')
-    def on_refset_progress(self, refset_pb_list, m, per, str_idx):
+    def on_alm_set_progress(self, alm_set_pb_list, m, per, str_idx):
         idx_src, msg = refset_pb_list[-1]
         m.hlrow(idx_src)
         self.log_textEdit.append(msg)
         self.refset_pb.setValue(per * 100)
 
-    def set_widgets_status_for_disalm_set(self, status):
-        """Set widgets status for disalm set.
+    def set_widgets_status_for_alm_set(self, status):
+        """Set widgets status for alm set.
         """
-        w1 = (self.disable_alm_btn,)
+        w1 = (self.enable_alms_btn, self.disable_alms_btn)
         [i.setDisabled(status == 'START') for i in w1]
 
 
-
-
-
-
-
-
-
-
-
+    @pyqtSlot('QString')
+    def on_alm_type_changed(self, s):
+        """Alarm type to enable/disable is changed.
+        """
+        tt1 = "Disable {0} alarms for checked items."
+        tt2 = "Enable {0} alarms for checked items."
+        self.disable_alms_btn.setToolTip(tt1.format(s))
+        self.enable_alms_btn.setToolTip(tt2.format(s))
+        self._alm_type_idx_list = ALM_TYPE_MAP[s]
 
 
 def is_snp_data_exist(snpdata, snpdata_list):

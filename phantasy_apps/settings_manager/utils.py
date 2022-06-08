@@ -872,6 +872,22 @@ class _SortProxyModel(QSortFilterProxyModel):
                 settings_selected.append((ref_st_idx, ref_st_pv, new_fval0))
         return settings_selected
 
+    def get_selection_almset(self):
+        # Return a list of selected items
+        # [(read_alm_idx(src), read_alm_pv, tune_alm_idx(src), tune_alm_pv)].
+        settings_selected = []
+        for i in range(self.rowCount()):
+            idx = self.index(i, self.m_src.i_name)
+            idx_src = self.mapToSource(idx)
+            it_name_src = self.m_src.itemFromIndex(idx_src)
+            if is_item_checked(it_name_src):
+                read_alm_idx = self.m_src.index(idx_src.row(), self.m_src.i_read_alm)
+                read_alm_pv = self.m_src.data(read_alm_idx, Qt.UserRole + 1)
+                tune_alm_idx = self.m_src.index(idx_src.row(), self.m_src.i_tune_alm)
+                tune_alm_pv = self.m_src.data(tune_alm_idx, Qt.UserRole + 1)
+                settings_selected.append((read_alm_idx, read_alm_pv, tune_alm_idx, tune_alm_pv))
+        return settings_selected
+
     def select_one(self, row_idx, checked):
         idx = self.index(row_idx, self.m_src.i_name)
         idx_src = self.mapToSource(idx)
