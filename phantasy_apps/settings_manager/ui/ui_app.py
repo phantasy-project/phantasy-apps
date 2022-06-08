@@ -83,7 +83,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.show_refset_ctrls_btn = QtWidgets.QToolButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
+                                           QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
@@ -173,7 +173,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addLayout(self.refset_ctrl_hbox)
         self.show_alm_ctrls_btn = QtWidgets.QToolButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
+                                           QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
@@ -189,63 +189,60 @@ class Ui_MainWindow(object):
         self.show_alm_ctrls_btn.setObjectName("show_alm_ctrls_btn")
         self.horizontalLayout_2.addWidget(self.show_alm_ctrls_btn)
         self.horizontalLayout_14 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_14.setContentsMargins(-1, -1, 0, -1)
+        self.horizontalLayout_14.setContentsMargins(0, -1, 0, -1)
+        self.horizontalLayout_14.setSpacing(2)
         self.horizontalLayout_14.setObjectName("horizontalLayout_14")
-        self.gridLayout_2 = QtWidgets.QGridLayout()
-        self.gridLayout_2.setContentsMargins(0, 0, -1, -1)
-        self.gridLayout_2.setSpacing(2)
-        self.gridLayout_2.setObjectName("gridLayout_2")
-        self.show_disabled_tune_alms_btn = QtWidgets.QToolButton(
-            self.centralwidget)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/alarm_off_red.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_disabled_tune_alms_btn.setIcon(icon4)
-        self.show_disabled_tune_alms_btn.setIconSize(QtCore.QSize(24, 24))
-        self.show_disabled_tune_alms_btn.setCheckable(True)
-        self.show_disabled_tune_alms_btn.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon)
-        self.show_disabled_tune_alms_btn.setObjectName(
-            "show_disabled_tune_alms_btn")
-        self.gridLayout_2.addWidget(self.show_disabled_tune_alms_btn, 0, 1, 1,
-                                    1)
-        self.show_disabled_read_alms_btn = QtWidgets.QToolButton(
-            self.centralwidget)
-        self.show_disabled_read_alms_btn.setIcon(icon4)
-        self.show_disabled_read_alms_btn.setIconSize(QtCore.QSize(24, 24))
-        self.show_disabled_read_alms_btn.setCheckable(True)
-        self.show_disabled_read_alms_btn.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon)
-        self.show_disabled_read_alms_btn.setObjectName(
-            "show_disabled_read_alms_btn")
-        self.gridLayout_2.addWidget(self.show_disabled_read_alms_btn, 0, 0, 1,
-                                    1)
         self.show_enabled_read_alms_btn = QtWidgets.QToolButton(
             self.centralwidget)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/alarm_on_green.png"),
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/alarm_on_green.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_enabled_read_alms_btn.setIcon(icon5)
+        self.show_enabled_read_alms_btn.setIcon(icon4)
         self.show_enabled_read_alms_btn.setIconSize(QtCore.QSize(24, 24))
         self.show_enabled_read_alms_btn.setCheckable(True)
         self.show_enabled_read_alms_btn.setToolButtonStyle(
             QtCore.Qt.ToolButtonTextBesideIcon)
         self.show_enabled_read_alms_btn.setObjectName(
             "show_enabled_read_alms_btn")
-        self.gridLayout_2.addWidget(self.show_enabled_read_alms_btn, 1, 0, 1,
-                                    1)
+        self.horizontalLayout_14.addWidget(self.show_enabled_read_alms_btn)
+        self.show_disabled_read_alms_btn = QtWidgets.QToolButton(
+            self.centralwidget)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/alarm_off_red.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.show_disabled_read_alms_btn.setIcon(icon5)
+        self.show_disabled_read_alms_btn.setIconSize(QtCore.QSize(24, 24))
+        self.show_disabled_read_alms_btn.setCheckable(True)
+        self.show_disabled_read_alms_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.show_disabled_read_alms_btn.setObjectName(
+            "show_disabled_read_alms_btn")
+        self.horizontalLayout_14.addWidget(self.show_disabled_read_alms_btn)
         self.show_enabled_tune_alms_btn = QtWidgets.QToolButton(
             self.centralwidget)
-        self.show_enabled_tune_alms_btn.setIcon(icon5)
+        self.show_enabled_tune_alms_btn.setIcon(icon4)
         self.show_enabled_tune_alms_btn.setIconSize(QtCore.QSize(24, 24))
         self.show_enabled_tune_alms_btn.setCheckable(True)
         self.show_enabled_tune_alms_btn.setToolButtonStyle(
             QtCore.Qt.ToolButtonTextBesideIcon)
         self.show_enabled_tune_alms_btn.setObjectName(
             "show_enabled_tune_alms_btn")
-        self.gridLayout_2.addWidget(self.show_enabled_tune_alms_btn, 1, 1, 1,
-                                    1)
-        self.horizontalLayout_14.addLayout(self.gridLayout_2)
+        self.horizontalLayout_14.addWidget(self.show_enabled_tune_alms_btn)
+        self.show_disabled_tune_alms_btn = QtWidgets.QToolButton(
+            self.centralwidget)
+        self.show_disabled_tune_alms_btn.setIcon(icon5)
+        self.show_disabled_tune_alms_btn.setIconSize(QtCore.QSize(24, 24))
+        self.show_disabled_tune_alms_btn.setCheckable(True)
+        self.show_disabled_tune_alms_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.show_disabled_tune_alms_btn.setObjectName(
+            "show_disabled_tune_alms_btn")
+        self.horizontalLayout_14.addWidget(self.show_disabled_tune_alms_btn)
+        self.alm_dec_line = QtWidgets.QFrame(self.centralwidget)
+        self.alm_dec_line.setFrameShape(QtWidgets.QFrame.VLine)
+        self.alm_dec_line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.alm_dec_line.setObjectName("alm_dec_line")
+        self.horizontalLayout_14.addWidget(self.alm_dec_line)
         self.verticalLayout_4 = QtWidgets.QVBoxLayout()
         self.verticalLayout_4.setSizeConstraint(
             QtWidgets.QLayout.SetMinimumSize)
@@ -257,6 +254,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_15.setSpacing(2)
         self.horizontalLayout_15.setObjectName("horizontalLayout_15")
         self.disable_alms_btn = QtWidgets.QToolButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.disable_alms_btn.sizePolicy().hasHeightForWidth())
+        self.disable_alms_btn.setSizePolicy(sizePolicy)
         icon6 = QtGui.QIcon()
         icon6.addPixmap(QtGui.QPixmap(":/sm-icons/alarm_off.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -267,6 +271,13 @@ class Ui_MainWindow(object):
         self.disable_alms_btn.setObjectName("disable_alms_btn")
         self.horizontalLayout_15.addWidget(self.disable_alms_btn)
         self.enable_alms_btn = QtWidgets.QToolButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.enable_alms_btn.sizePolicy().hasHeightForWidth())
+        self.enable_alms_btn.setSizePolicy(sizePolicy)
         icon7 = QtGui.QIcon()
         icon7.addPixmap(QtGui.QPixmap(":/sm-icons/alarm_on.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -1536,7 +1547,7 @@ class Ui_MainWindow(object):
         self.show_enabled_read_alms_btn.toggled['bool'].connect(
             MainWindow.on_show_enabled_read_alms)
         self.show_enabled_tune_alms_btn.toggled['bool'].connect(
-            MainWindow.on_show_disabled_tune_alms)
+            MainWindow.on_show_enabled_tune_alms)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
@@ -1596,20 +1607,6 @@ class Ui_MainWindow(object):
             ))
         self.show_alm_ctrls_btn.setText(
             _translate("MainWindow", "Alarm Config"))
-        self.show_disabled_tune_alms_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Show disabled tune alarms.</p></body></html>"
-            ))
-        self.show_disabled_tune_alms_btn.setText(
-            _translate("MainWindow", "Tune"))
-        self.show_disabled_read_alms_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Show disabled read alarms.</p></body></html>"
-            ))
-        self.show_disabled_read_alms_btn.setText(
-            _translate("MainWindow", "Read"))
         self.show_enabled_read_alms_btn.setToolTip(
             _translate(
                 "MainWindow",
@@ -1617,12 +1614,26 @@ class Ui_MainWindow(object):
             ))
         self.show_enabled_read_alms_btn.setText(
             _translate("MainWindow", "Read"))
+        self.show_disabled_read_alms_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Show disabled read alarms.</p></body></html>"
+            ))
+        self.show_disabled_read_alms_btn.setText(
+            _translate("MainWindow", "Read"))
         self.show_enabled_tune_alms_btn.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Show enabled tune alarms.</p></body></html>"
             ))
         self.show_enabled_tune_alms_btn.setText(
+            _translate("MainWindow", "Tune"))
+        self.show_disabled_tune_alms_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Show disabled tune alarms.</p></body></html>"
+            ))
+        self.show_disabled_tune_alms_btn.setText(
             _translate("MainWindow", "Tune"))
         self.disable_alms_btn.setToolTip(
             _translate(

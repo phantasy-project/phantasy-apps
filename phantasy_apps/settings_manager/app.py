@@ -3723,7 +3723,7 @@ p, li { white-space: pre-wrap; }
     def on_toggle_alm_ctrls(self, is_checked):
         """If checked, show the controls for device alarms.
         """
-        for w in (self.enable_alms_btn, self.disable_alms_btn,
+        for w in (self.enable_alms_btn, self.disable_alms_btn, self.alm_dec_line,
                   self.show_disabled_read_alms_btn, self.show_disabled_tune_alms_btn,
                   self.show_enabled_read_alms_btn, self.show_enabled_tune_alms_btn,
                   self.alm_type_cbb):
