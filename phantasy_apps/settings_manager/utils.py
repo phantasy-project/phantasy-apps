@@ -375,10 +375,10 @@ class SettingsModel(QStandardItemModel):
 
             # alarm switches, read and tune alms
             tune_alm_pv, read_alm_pv = alm_pv(fld.ename, fld.name)
-            item_read_alm = QStandardItem('-')
+            item_read_alm = QStandardItem('')
             item_read_alm.setData(read_alm_pv, Qt.UserRole + 1) # None if not availble
             item_read_alm.setEditable(False)
-            item_tune_alm = QStandardItem('-')
+            item_tune_alm = QStandardItem('')
             item_tune_alm.setData(tune_alm_pv, Qt.UserRole + 1) # None if not availble
             item_tune_alm.setEditable(False)
             row.extend([item_read_alm, item_tune_alm])
