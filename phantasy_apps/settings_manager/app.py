@@ -2828,6 +2828,26 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.filter_lineEdit.editingFinished.emit()
 
     @pyqtSlot(bool)
+    def on_show_enabled_read_alms(self, is_checked):
+        # show all items that read alarm is enabled
+        self.filter_btn_group_status_changed.emit()
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_enabled_read_alm_enabled = is_checked
+        self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
+    def on_show_enabled_tune_alms(self, is_checked):
+        # show all items that tune alarm is enabled
+        self.filter_btn_group_status_changed.emit()
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_enabled_tune_alm_enabled = is_checked
+        self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
     def on_show_state_diff_items(self, is_checked):
         # show all items that have different state and last_state values
         self.filter_btn_group_status_changed.emit()

@@ -548,6 +548,8 @@ class _SortProxyModel(QSortFilterProxyModel):
         self.filter_dx2ref_warning_enabled = False
         self.filter_disabled_read_alm_enabled = False
         self.filter_disabled_tune_alm_enabled = False
+        self.filter_enabled_read_alm_enabled = False
+        self.filter_enabled_tune_alm_enabled = False
         # field filter
         self.filter_field_enabled = False
         self.filter_field_list = []
@@ -767,6 +769,30 @@ class _SortProxyModel(QSortFilterProxyModel):
             disabled_tune_alm_test = True
         #
         if not disabled_tune_alm_test:
+            return False
+
+        # enabled read alam checked
+        if self.filter_enabled_read_alm_enabled:
+            data = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['read_alm']),
+                    Qt.UserRole)
+            enabled_read_alm_test = data == 1.0
+        else:
+            enabled_read_alm_test = True
+        #
+        if not enabled_read_alm_test:
+            return False
+
+        # enabled tune alam checked
+        if self.filter_enabled_tune_alm_enabled:
+            data = src_model.data(
+                    src_model.index(src_row, self.filter_col_index['tune_alm']),
+                    Qt.UserRole)
+            enabled_tune_alm_test = data == 1.0
+        else:
+            enabled_tune_alm_test = True
+        #
+        if not enabled_tune_alm_test:
             return False
 
         # state diff checked
