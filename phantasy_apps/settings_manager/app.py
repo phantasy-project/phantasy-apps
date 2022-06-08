@@ -776,6 +776,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.refset_pb.setVisible(False)
         # refresh pb
         self.refresh_pb.setVisible(False)
+        # almset pb
+        self.alm_set_pb.setVisible(False)
 
         # current snp lbl/le
         self._current_snpdata = None
@@ -3692,7 +3694,8 @@ p, li { white-space: pre-wrap; }
         """If checked, show the controls for device alarms.
         """
         for w in (self.enable_alms_btn, self.disable_alms_btn,
-                  self.show_disabled_read_alms_btn, self.show_disabled_tune_alms_btn):
+                  self.show_disabled_read_alms_btn, self.show_disabled_tune_alms_btn,
+                  self.alm_type_cbb):
             w.setVisible(is_checked)
         m = self.settingsView.model()
         if m is None:
@@ -3768,7 +3771,7 @@ p, li { white-space: pre-wrap; }
 
     @pyqtSlot(float, 'QString')
     def on_alm_set_progress(self, alm_set_pb_list, m, per, str_idx):
-        idx_src, msg = refset_pb_list[-1]
+        idx_src, msg = alm_set_pb_list[-1]
         m.hlrow(idx_src)
         self.log_textEdit.append(msg)
         self.refset_pb.setValue(per * 100)
@@ -3776,7 +3779,7 @@ p, li { white-space: pre-wrap; }
     def set_widgets_status_for_alm_set(self, status):
         """Set widgets status for alm set.
         """
-        w1 = (self.enable_alms_btn, self.disable_alms_btn)
+        w1 = (self.enable_alms_btn, self.disable_alms_btn, self.alm_type_cbb)
         [i.setDisabled(status == 'START') for i in w1]
 
 
