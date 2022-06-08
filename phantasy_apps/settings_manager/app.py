@@ -685,7 +685,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._pwr_unknown_px = QPixmap(":/sm-icons/unknown.png")
         # enabled/disabled alarms
         self._alm_enabled_px = QPixmap(":/sm-icons/alarm_on_green.png").scaled(PX_SIZE, PX_SIZE)
-        self._alm_disabled_px = QPixmap(":/sm-icons/alarm_on_red.png").scaled(PX_SIZE, PX_SIZE)
+        self._alm_disabled_px = QPixmap(":/sm-icons/alarm_off_red.png").scaled(PX_SIZE, PX_SIZE)
         # blocking beam or not
         _blocking_px = QPixmap(":/sm-icons/off.png")
         _non_blocking_px = QPixmap(":/sm-icons/on.png")
@@ -3725,6 +3725,7 @@ p, li { white-space: pre-wrap; }
         """
         for w in (self.enable_alms_btn, self.disable_alms_btn,
                   self.show_disabled_read_alms_btn, self.show_disabled_tune_alms_btn,
+                  self.show_enabled_read_alms_btn, self.show_enabled_tune_alms_btn,
                   self.alm_type_cbb):
             w.setVisible(is_checked)
         m = self.settingsView.model()
