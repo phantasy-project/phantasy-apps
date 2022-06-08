@@ -683,6 +683,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._pwr_on_px = QPixmap(":/sm-icons/on.png")
         self._pwr_off_px = QPixmap(":/sm-icons/off.png")
         self._pwr_unknown_px = QPixmap(":/sm-icons/unknown.png")
+        # enabled/disabled alarms
+        self._alm_enabled_px = QPixmap(":/sm-icons/alarm_on_green.png").scaled(PX_SIZE, PX_SIZE)
+        self._alm_disabled_px = QPixmap(":/sm-icons/alarm_on_red.png").scaled(PX_SIZE, PX_SIZE)
         # blocking beam or not
         _blocking_px = QPixmap(":/sm-icons/off.png")
         _non_blocking_px = QPixmap(":/sm-icons/on.png")
@@ -2184,14 +2187,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         read_alm_act_pv = m.data(read_alm_idx, Qt.UserRole + 1)
         if read_alm_act_pv is not None:
             read_alm_v = caget(read_alm_act_pv)
-            worker.meta_signal1.emit((read_alm_idx, str(read_alm_v), Qt.DisplayRole))
+            if read_alm_v == 1.0:
+                worker.meta_signal1.emit((read_alm_idx, self._alm_enabled_px, Qt.DecorationRole))
+            else:
+                worker.meta_signal1.emit((read_alm_idx, self._alm_disabled_px, Qt.DecorationRole))
             worker.meta_signal1.emit((read_alm_idx, read_alm_v, Qt.UserRole))
 
         # device tune alarm switch status
         tune_alm_act_pv = m.data(tune_alm_idx, Qt.UserRole + 1)
         if tune_alm_act_pv is not None:
             tune_alm_v = caget(tune_alm_act_pv)
-            worker.meta_signal1.emit((tune_alm_idx, str(tune_alm_v), Qt.DisplayRole))
+            if tune_alm_v == 1.0:
+                worker.meta_signal1.emit((tune_alm_idx, self._alm_enabled_px, Qt.DecorationRole))
+            else:
+                worker.meta_signal1.emit((tune_alm_idx, self._alm_disabled_px, Qt.DecorationRole))
             worker.meta_signal1.emit((tune_alm_idx, tune_alm_v, Qt.UserRole))
 
         #
