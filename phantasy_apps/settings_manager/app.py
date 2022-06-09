@@ -113,6 +113,7 @@ from .utils import NUM_LENGTH
 from .utils import BG_COLOR_GOLDEN_NO
 from .utils import CHP_STS_TUPLE
 from .utils import TGT_STS_TUPLE
+from .utils import ref_pv as get_ref_set_pv
 from .contrib.db.db_utils import ensure_connect_db
 
 # scaling op
@@ -680,6 +681,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._reveal_icon = QIcon(QPixmap(":/sm-icons/openfolder.png"))
         self._del_icon = QIcon(QPixmap(":/sm-icons/delete.png"))
         self._load_icon = QIcon(QPixmap(":/sm-icons/cast.png"))
+        self._recommand_icon = QIcon(QPixmap(":/sm-icons/recommend.png"))
         self._pwr_on_px = QPixmap(":/sm-icons/on.png")
         self._pwr_off_px = QPixmap(":/sm-icons/off.png")
         self._pwr_unknown_px = QPixmap(":/sm-icons/unknown.png")
@@ -1101,7 +1103,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         copy_action = QAction(self._copy_text_icon, "Copy Text", menu)
         copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
-        menu.addAction(copy_action)
         #
         item0 = src_m.itemFromIndex(
             src_m.index(src_idx.row(), src_m.i_ts, pindex))
@@ -1129,8 +1130,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         load_action = QAction(self._load_icon, "&Load", menu)
         load_action.triggered.connect(partial(self.on_load_settings, snpdata))
         #
-        menu.insertAction(copy_action, load_action)
-        menu.insertAction(copy_action, dcopy_action)
+        # Set the snapshot as reference
+        refpush_action = QAction(self._recommand_icon, "&Set As Reference", menu)
+        refpush_action.triggered.connect(partial(self.on_push_ref_settings, snpdata))
+        #
+        menu.addAction(load_action)
+        menu.addAction(refpush_action)
+        menu.addSeparator()
+        menu.addAction(copy_action)
+        menu.addAction(dcopy_action)
         menu.addSeparator()
         menu.addAction(read_action)
         menu.addAction(mviz_action)
@@ -3353,6 +3361,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             print(f"Skip non-existing devices: {_invalid_elem_list}")
         self.element_list_changed.emit()
         self.snp_loaded.emit(data)
+
+    def on_push_ref_settings(self, data):
+        # data: SnapshotData
+        # settings(data.data): DataFrame
+        print("Push snpdata as reference settings.")
+        data.extract_blob()
+        for i, irow in data.data.iterrows():
+            ename, fname, val0 = irow.Name, irow.Field, irow.Setpoint
+            ref_st_pv = get_ref_set_pv(ename, fname)
+            if ref_st_pv is not None:
+                msg = f"{ename}[{fname}]: Set {ref_st_pv} to {val0}."
+                self.log_textEdit.append(msg)
+                print(msg)
+                caput(ref_st_pv, val0, wait=False)
 
     def on_snp_loaded(self, data):
         m = self.snp_treeView.model()
