@@ -152,6 +152,10 @@ ALM_TYPE_MAP = { # [read, tune]
     'Tune': [False, True],
 }
 
+# SNP PVs
+SNP_NAME_PV = "PHY:SM_SNP_LAST_NAME"
+SNP_NOTE_PV = "PHY:SM_SNP_LAST_NOTE"
+
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # settings view filter button group status (or) changed --> update
@@ -3375,6 +3379,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self.log_textEdit.append(msg)
                 print(msg)
                 caput(ref_st_pv, val0, wait=False)
+        # update metadata onto OPI
+        snp_name = data.ts_as_str() + ", " + data.ion_as_str()
+        snp_note = '' if data.note == "Input note ..." else data.note
+        if snp_name != caget(SNP_NAME_PV):
+            caput(SNP_NAME_PV, snp_name, wait=False)
+            caput(SNP_NOTE_PV, snp_note, wait=False)
 
     def on_snp_loaded(self, data):
         m = self.snp_treeView.model()
