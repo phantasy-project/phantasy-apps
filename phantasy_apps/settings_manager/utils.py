@@ -65,8 +65,8 @@ COLUMN_NAMES2 = [
     f'Reference Set ({XREF})',
     f'{DELTA}({X2},{XREF})',
     f'{DELTA}({X0},{XREF})',
-    f'Read ALM?',  # if read alarm is activated?
     f'Tune ALM?',  # if tune alarm is activated?
+    f'Read ALM?',  # if read alarm is activated?
 ]
 COLUMN_SFIELD_MAP = OrderedDict((
     ('Type', 'family'),
@@ -246,7 +246,7 @@ class SettingsModel(QStandardItemModel):
                       self.h_tol, self.h_writable, self.h_ratio_x20, \
                       self.h_sts, self.h_last_sts, \
                       self.h_ref_st, self.h_dsetref, self.h_dval0ref, \
-                      self.h_read_alm, self.h_tune_alm \
+                      self.h_tune_alm, self.h_read_alm \
             = COLUMN_NAMES
         self.ids = self.i_name, self.i_field, self.i_type, self.i_pos, \
                    self.i_val0, self.i_rd, self.i_cset, \
@@ -254,7 +254,7 @@ class SettingsModel(QStandardItemModel):
                    self.i_tol, self.i_writable, self.i_ratio_x20, \
                    self.i_sts, self.i_last_sts, \
                    self.i_ref_st, self.i_dstref, self.i_dval0ref, \
-                   self.i_read_alm, self.i_tune_alm \
+                   self.i_tune_alm, self.i_read_alm \
             = range(len(self.header))
 
         #
@@ -381,7 +381,7 @@ class SettingsModel(QStandardItemModel):
             item_tune_alm = QStandardItem('')
             item_tune_alm.setData(tune_alm_pv, Qt.UserRole + 1) # None if not availble
             item_tune_alm.setEditable(False)
-            row.extend([item_read_alm, item_tune_alm])
+            row.extend([item_tune_alm, item_read_alm])
 
             #
             self.appendRow(row)
