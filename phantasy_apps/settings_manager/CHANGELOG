@@ -1,3 +1,35 @@
+========================
+Version 10.0: 2022-06-22
+========================
+
+ - As of this release, Settings Manager supports to work together with the dedicated
+   - Phoebus Display
+   - Phoebus Alarm system, which is maintained as separated projects.
+ - Fixed the backcompatiblity of reading old snapshots that does not have device state info.
+ - Add support for Reference Setpoint set and visualization.
+ - Add support for device alarm controls.
+ - Add support for filtering reference set, alarm controls.
+ - Manage tolerance of live read and set with PVs.
+ - Add support to set tolerance/referece_set through context menus.
+ - Add support to publish snapshot as the one in operation.
+
+=======================
+Version 9.8: 2022-04-28
+=======================
+
+ - Hide Position column, sort Device column by position.
+ - Support filter diff device state with a new filter button.
+ - Support show device state, and last saved device state.
+ - Support more blocking device types, e.g. AP, ATT, CHP etc.
+ - Improved data refresh speed.
+ - Swap the sign of dx02.
+ - Chanve the default policy for 'Take Snapshot':
+   - Always save the full list of device settings, unless,
+   - Enable WYSIWYC option (What You See Is What You Capture)
+ - Support '+' operation for batch apply settings, i.e. shift setpoint by some value.
+ - Add scripts for snapshot generation.
+ - Other bugfixes.
+
 =======================
 Version 9.7: 2022-01-24
 =======================
