@@ -185,6 +185,10 @@ TGT_STS_TUPLE = ('Invalid', 'Home/Be 3.811 mm', 'Viewer', 'Be 4064 mm',
 with open(find_dconf("settings_manager", "refstpv.json")) as fp:
     REF_ST_PV_MAP = json.load(fp)
 
+# TOL PV MAP
+with open(find_dconf("settings_manager", "tolpv.json")) as fp:
+    TOL_PV_MAP = json.load(fp)
+
 # Device alarm switch PV MAP
 with open(find_dconf("settings_manager", "almactpv.json")) as fp:
     ALM_ACT_PV_MAP = json.load(fp)
@@ -338,8 +342,11 @@ class SettingsModel(QStandardItemModel):
             [i.setEditable(False) for i in row]
 
             # tolerance for dx12
-            # tol = fld.tolerance
-            item_tol = QStandardItem(DEFAULT_X12_TOL_AS_STR)
+            # tol is read from _TOL PV
+            # item_tol = QStandardItem(DEFAULT_X12_TOL_AS_STR)
+            tol_pv = tol_pv(fld.ename, fld.name)
+            item_tol = QStandardItem('-')
+            item_tol.setData(tol_pv, Qt.UserRole + 1)
             item_tol.setEditable(True)
             row.append(item_tol)
 
@@ -1704,6 +1711,11 @@ def set_device_state_item(sts_str):
 def ref_pv(ename, fname):
     # Return the PV name for reference set.
     return REF_ST_PV_MAP.get(f"{ename}-{fname}", None)
+
+
+def tol_pv(ename, fname):
+    # Return the PV name for live rd-st tolerance.
+    return TOL_PV_MAP.get(f"{ename}-{fname}", None)
 
 
 def alm_pv(ename, fname):

@@ -1698,7 +1698,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.apply_pb.setValue(per * 100)
 
     def closeEvent(self, e):
-        self.on_update_dump_config()
+        # self.on_update_dump_config()
         BaseAppForm.closeEvent(self, e)
 
     def clean_up(self):
@@ -2131,6 +2131,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         dx0ref_idx = m.index(irow, m.i_dval0ref)
         read_alm_idx = m.index(irow, m.i_read_alm)
         tune_alm_idx = m.index(irow, m.i_tune_alm)
+        tol_idx = m.index(irow, m.i_tol)
 
         idx_tuple = (idx0, idx1)
         v_tuple = (rd_val, sp_val)
@@ -2194,6 +2195,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                             (iidx, self._no_warning_px, Qt.DecorationRole))
                         worker.meta_signal1.emit(
                             (iidx, None, Qt.UserRole))
+
+        # tolerance
+        tol_pv = m.data(tol_idx, Qt.UserRole + 1)
+        tol_v0_str = m.data(tol_idx, Qt.DisplayRole)
+        if tol_pv is not None:
+            tol_v = caget(tol_pv)
+            if tol_v is not None:
+                tol_v_str = self.fmt.format(tol_v)
+                if tol_v_str != tol_v0_str:
+                    worker.meta_signal1.emit((tol_idx, tol_v_str, Qt.DisplayRole))
 
         # device read alarm switch status
         read_alm_act_pv = m.data(read_alm_idx, Qt.UserRole + 1)
