@@ -61,6 +61,9 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         self._post_init()
 
     def _post_init(self):
+        # disable tolerance setting
+        self.tol_dsbox.setEnabled(False)
+        self.tol_dsbox.setToolTip("Change tolerance from the Tolerance column, tolerance values are managed with PVs now.")
         # field init mode
         mode = self.pref_dict['SETTINGS']['FIELD_INIT_MODE']
         self.model_rbtn.setChecked(mode == 'model')

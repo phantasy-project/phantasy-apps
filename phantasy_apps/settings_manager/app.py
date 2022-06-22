@@ -86,7 +86,6 @@ from .app_bpmviz import BPMVizWidget
 from .data import CSV_HEADER
 from .data import DEFAULT_DATA_FMT
 from .data import ElementPVConfig
-from .data import ToleranceSettings
 from .data import SnapshotData
 from .data import get_settings_data
 from .data import make_physics_settings
@@ -143,7 +142,7 @@ NOW_DAY = NOW_DT.day
 from .conf import APP_CONF
 from .conf import N_SNP_MAX, NPROC, MS_CONF_PATH, MS_ENABLED
 from .conf import DATA_SOURCE_MODE, DB_ENGINE, DATA_URI
-from .conf import FIELD_INIT_MODE, T_WAIT, INIT_SETTINGS, TOLERANCE, N_DIGIT
+from .conf import FIELD_INIT_MODE, T_WAIT, INIT_SETTINGS, N_DIGIT
 
 # Alarm types to control, disable/enable.
 ALM_TYPE_MAP = { # [read, tune]
@@ -169,11 +168,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     # lattice is loaded
     lattice_loaded = pyqtSignal(QVariant)
-
-    # discrenpancy tolerance
-    # float: tolerance value
-    # ToleranceSettings: {ename: {fname: tolerance value}}
-    tolerance_changed = pyqtSignal([float], [ToleranceSettings])
 
     # the list of element list is changed --> update settings model
     element_list_changed = pyqtSignal()
@@ -353,7 +347,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.field_init_mode = FIELD_INIT_MODE
         self.t_wait = T_WAIT
         self.init_settings = INIT_SETTINGS
-        self.tolerance = TOLERANCE
         self.ndigit = N_DIGIT
         self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self.ndigit)
 
@@ -366,9 +359,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             'uri': self.data_uri
         }
 
-        self.tolerance_changed[ToleranceSettings].connect(
-            self.on_tolerance_dict_changed)
-        self.tolerance_changed[float].connect(self.on_tolerance_float_changed)
         self.model_settings_changed.connect(self.on_model_settings_changed)
         self.element_from_pv_added.connect(self.on_element_from_pv_added)
         self.ndigit_changed.connect(self.on_ndigit_changed)
@@ -378,10 +368,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             'SUPPORT_CONFIG_PATH'] if confdir is None else confdir
         self.pref_dict['SETTINGS']['SUPPORT_CONFIG_PATH'] = os.path.abspath(
             os.path.expanduser(confdir))
-        _, ts_confpath, ms_confpath, elem_confpath = init_config_dir(confdir)
-
-        # tolerance settings (ts)
-        self._tolerance_settings = ToleranceSettings(ts_confpath)
+        _, _, ms_confpath, elem_confpath = init_config_dir(confdir)
 
         # predefined model settings (ms)
         self.ms_confpath = ms_confpath
@@ -1152,6 +1139,44 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         return menu
 
     @pyqtSlot()
+    def on_set_tol_val(self, src_m, fld, src_idx, pv):
+        if pv is not None:
+            try:
+                val = float(self.tol_val_lineEdit.text())
+            except:
+                pass
+            else:
+                r = caput(pv, val, timeout=1)
+                if r is None: # failed
+                    QMessageBox.warning(self, "Set Tolerance", f"Failed to set {pv} with {val}.", QMessageBox.Ok)
+                else:
+                    delayed_exec(partial(self._refresh_tol_values, src_m, fld, src_idx, pv), 500)
+
+    def _refresh_tol_values(self, m, fld, src_idx, pv):
+        # TODO: refactor to a standard function for single row data refreshing
+        # refresh tol and dx12 columns
+        # after the tol being changed thru context menu.
+        tol = caget(pv, timeout=0.5)
+        irow = src_idx.row()
+        x1 = fld.value
+        x2 = fld.current_setting()
+        dx12 = x1 - x2
+        x1_idx = m.index(irow, m.i_rd)
+        x2_idx = m.index(irow, m.i_cset)
+        dx12_idx = m.index(irow, m.i_rd_cset)
+        tol_idx = m.index(irow, m.i_tol)
+        for iidx, iv in zip(
+            (x1_idx, x2_idx, dx12_idx, tol_idx),
+            (x1, x2, dx12, tol)):
+                m.setData(iidx, self.fmt.format(iv), Qt.DisplayRole)
+        if abs(dx12) > tol:
+            m.setData(dx12_idx, self._warning_px, Qt.DecorationRole)
+            m.setData(dx12_idx, 'warning', Qt.UserRole)
+        else:
+            m.setData(dx12_idx, self._no_warning_px, Qt.DecorationRole)
+            m.setData(dx12_idx, None, Qt.UserRole)
+
+    @pyqtSlot()
     def on_set_ref_val(self, src_m, fld, src_idx, pv):
         if pv is not None:
             try:
@@ -1259,6 +1284,30 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         copy_action = QAction(self._copy_text_icon, "Copy Text", menu)
         copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
         menu.addAction(copy_action)
+
+        # tolerance column? add action for new value setting.
+        if src_idx.column() == src_m.i_tol:
+            tol_pv = src_m.data(src_idx, Qt.UserRole + 1)
+            fld = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_name)).fobj
+            tol_set_lbl = QLabel("New Tolerance:", self)
+            _tol_v_now_str = src_m.data(src_idx, Qt.DisplayRole)
+            self.tol_val_lineEdit = QLineEdit(_tol_v_now_str, self)
+            tol_set_btn = QToolButton(self)
+            tol_set_btn.setText("Set")
+            tol_set_btn.clicked.connect(partial(self.on_set_tol_val, src_m, fld, src_idx, tol_pv))
+            tol_set_w = QWidget(self)
+            tol_set_hbox = QHBoxLayout()
+            tol_set_hbox.setContentsMargins(6, 4, 4, 4)
+            tol_set_hbox.setSpacing(2)
+            tol_set_hbox.addWidget(tol_set_lbl)
+            tol_set_hbox.addWidget(self.tol_val_lineEdit, 1)
+            tol_set_hbox.addWidget(tol_set_btn)
+            tol_set_w.setLayout(tol_set_hbox)
+            #
+            tol_set_act = QWidgetAction(self)
+            tol_set_act.setDefaultWidget(tol_set_w)
+            #
+            menu.addAction(tol_set_act)
 
         # refset column? add action for new value setting.
         if src_idx.column() == src_m.i_ref_st:
@@ -1502,48 +1551,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             only_physics=False,
             skip_none=self.skip_none_chkbox.isChecked())
         self.settingsLoaded.emit(flat_settings, settings)
-        self.tolerance_changed[ToleranceSettings].emit(
-            self._tolerance_settings)
         self.model_settings_changed.emit(settings)
-
-    @pyqtSlot(float)
-    def on_tolerance_float_changed(self, tol):
-        # set tolerance with the same value.
-        # update _tolerance_settings
-        m = self._tv.model()
-        if m is None:
-            return
-        src_m = m.sourceModel()
-        for i in range(src_m.rowCount()):
-            src_m.setData(src_m.index(i, src_m.i_tol), self.fmt.format(tol),
-                          Qt.DisplayRole)
-            # update tolerance settings
-            ename = src_m.data(src_m.index(i, src_m.i_name))
-            fname = src_m.data(src_m.index(i, src_m.i_field))
-            if ename not in self._tolerance_settings:
-                self._tolerance_settings[ename] = OrderedDict([(fname, tol)])
-            else:
-                self._tolerance_settings[ename].update([(fname, tol)])
-        self._tolerance_settings.write(self._tolerance_settings.settings_path)
-
-    @pyqtSlot(ToleranceSettings)
-    def on_tolerance_dict_changed(self, tol_settings):
-        # set tolerance with a tolerance settings
-        m = self._tv.model()
-        if m is None:
-            return
-        src_m = m.sourceModel()
-        for i in range(src_m.rowCount()):
-            ename = src_m.data(src_m.index(i, src_m.i_name))
-            fname = src_m.data(src_m.index(i, src_m.i_field))
-            if ename not in tol_settings:
-                continue
-            elif fname not in tol_settings[ename]:
-                continue
-            else:
-                tol = tol_settings[ename][fname]
-                src_m.setData(src_m.index(i, src_m.i_tol),
-                              self.fmt.format(tol), Qt.DisplayRole)
 
     def init_filter(self):
         """Initial filter.
@@ -1698,7 +1706,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.apply_pb.setValue(per * 100)
 
     def closeEvent(self, e):
-        # self.on_update_dump_config()
         BaseAppForm.closeEvent(self, e)
 
     def clean_up(self):
@@ -1715,32 +1722,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             pass
         else:
             printlog(f"Closed connection to {p}.")
-
-    def snapshot_tolerance_settings(self):
-        """Iterate all the tolerance settings, update and save.
-        """
-        m = self._tv.model()
-        if m is None:
-            return
-        src_m = m.sourceModel()
-        is_changed = False
-        for i in range(src_m.rowCount()):
-            ename = src_m.data(src_m.index(i, src_m.i_name))
-            fname = src_m.data(src_m.index(i, src_m.i_field))
-            v_tol = float(src_m.data(src_m.index(i, src_m.i_tol)))
-            if ename not in self._tolerance_settings:
-                self._tolerance_settings[ename] = OrderedDict([(fname, v_tol)])
-                is_changed = True
-            else:
-                if fname not in self._tolerance_settings[ename]:
-                    is_changed = True
-                elif self._tolerance_settings[ename][fname] != v_tol:
-                    is_changed = True
-                self._tolerance_settings[ename].update([(fname, v_tol)])
-        if is_changed:
-            self._tolerance_settings.write(
-                self._tolerance_settings.settings_path)
-            printlog("Update tolerance settings snapshot.")
 
     @pyqtSlot(bool)
     def on_toggle_phyfields(self, f):
@@ -1941,10 +1922,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         settings, element PV config.
         """
         confdir = self.pref_dict['SETTINGS']['SUPPORT_CONFIG_PATH']
-        _, ts_confpath, ms_confpath, elem_confpath = init_config_dir(confdir)
-
-        # tolerance settings (ts)
-        self._tolerance_settings = ToleranceSettings(ts_confpath)
+        _, _, ms_confpath, elem_confpath = init_config_dir(confdir)
 
         # predefined model settings (ms)
         self._model_settings = Settings(self.ms_confpath)
@@ -1994,15 +1972,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.field_init_mode = self.pref_dict['SETTINGS']['FIELD_INIT_MODE']
         self.t_wait = self.pref_dict['SETTINGS']['T_WAIT']
         self.init_settings = self.pref_dict['SETTINGS']['INIT_SETTINGS']
-        tol = self.pref_dict['SETTINGS']['TOLERANCE']
-        if self.tolerance != tol:
-            r = QMessageBox.question(
-                self, "Change Tolerance",
-                "Are you sure to change all the discrepancy tolerance to {0:.2f}?"
-                .format(tol), QMessageBox.Yes | QMessageBox.No)
-            if r == QMessageBox.Yes:
-                self.tolerance_changed[float].emit(tol)
-                self.tolerance = tol
         ndigit = self.pref_dict['SETTINGS']['PRECISION']
         if ndigit != self.ndigit:
             self.ndigit_changed.emit(ndigit)
@@ -2154,6 +2123,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             (ratio_x20_idx, get_ratio_as_string(x2, x0,
                                                 self.fmt), Qt.DisplayRole))
 
+        # tolerance
+        tol_pv = m.data(tol_idx, Qt.UserRole + 1)
+        tol_v0_str = m.data(tol_idx, Qt.DisplayRole)
+        if tol_pv is not None:
+            tol_v = caget(tol_pv)
+            if tol_v is not None:
+                tol_v_str = self.fmt.format(tol_v)
+                if tol_v_str != tol_v0_str:
+                    worker.meta_signal1.emit((tol_idx, tol_v_str, Qt.DisplayRole))
+
         tol = float(m.data(tol_idx))
         if abs(dx12) > tol:
             worker.meta_signal1.emit(
@@ -2195,16 +2174,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                             (iidx, self._no_warning_px, Qt.DecorationRole))
                         worker.meta_signal1.emit(
                             (iidx, None, Qt.UserRole))
-
-        # tolerance
-        tol_pv = m.data(tol_idx, Qt.UserRole + 1)
-        tol_v0_str = m.data(tol_idx, Qt.DisplayRole)
-        if tol_pv is not None:
-            tol_v = caget(tol_pv)
-            if tol_v is not None:
-                tol_v_str = self.fmt.format(tol_v)
-                if tol_v_str != tol_v0_str:
-                    worker.meta_signal1.emit((tol_idx, tol_v_str, Qt.DisplayRole))
 
         # device read alarm switch status
         read_alm_act_pv = m.data(read_alm_idx, Qt.UserRole + 1)
@@ -2760,13 +2729,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             if elem in self._elem_list:
                 self._elem_list.remove(elem)
         self.element_list_changed.emit()
-
-    @pyqtSlot()
-    def on_update_dump_config(self):
-        """Update and dump configurations.
-        """
-        # printlog("Update and dump configurations...")
-        self.snapshot_tolerance_settings()
 
     @pyqtSlot(Settings)
     def on_model_settings_changed(self, settings):

@@ -138,7 +138,7 @@ TBTN_STY_GOLDEN = TBTN_STY_BASE.format(c=TBTN_STY_COLOR_TUPLE_GOLDEN)
 TBTN_STY_REGULAR = TBTN_STY_BASE.format(c=TBTN_STY_COLOR_TUPLE)
 
 DEFAULT_X12_TOL = 0.15
-DEFAULT_X12_TOL_AS_STR = '0.15'
+
 
 def get_foi_dict(filepath):
     """Return a dict of field of interest per element type.
@@ -343,11 +343,9 @@ class SettingsModel(QStandardItemModel):
 
             # tolerance for dx12
             # tol is read from _TOL PV
-            # item_tol = QStandardItem(DEFAULT_X12_TOL_AS_STR)
-            tol_pv = tol_pv(fld.ename, fld.name)
-            item_tol = QStandardItem('-')
-            item_tol.setData(tol_pv, Qt.UserRole + 1)
-            item_tol.setEditable(True)
+            item_tol = QStandardItem(self.fmt.format(DEFAULT_X12_TOL))
+            item_tol.setData(tol_pv(fld.ename, fld.name), Qt.UserRole + 1) # None if not support
+            item_tol.setEditable(False)
             row.append(item_tol)
 
             # writable
