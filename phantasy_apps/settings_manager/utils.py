@@ -306,7 +306,8 @@ class SettingsModel(QStandardItemModel):
         ename_set = set()
 
         for elem, fname, fld, fval0 in self._settings:
-            item_ename = QStandardItem(elem.name)
+            ename = elem.name
+            item_ename = QStandardItem(ename)
             item_ename.setData(elem.sb, Qt.UserRole + 1)
 
             if fld is None:
@@ -365,7 +366,7 @@ class SettingsModel(QStandardItemModel):
             row.append(item_sts)
 
             # last device state
-            item_last_sts = set_device_state_item(self._last_sts_dict.get(elem.name, 'nan'))
+            item_last_sts = set_device_state_item(self._last_sts_dict.get(f"{ename}-{fname}", 'nan'))
             row.append(item_last_sts)
 
             #
