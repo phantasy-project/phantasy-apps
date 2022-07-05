@@ -1135,7 +1135,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.addAction(mviz_action)
         menu.addSeparator()
         menu.addAction(saveas_action)
-        menu.addAction(del_action)
+        if getuser() == 'zhangt':
+            menu.addAction(del_action)
         return menu
 
     @pyqtSlot()
