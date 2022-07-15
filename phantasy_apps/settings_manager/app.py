@@ -564,6 +564,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.ndigit_sbox.setEnabled(False)
         self.ndigit_sbox.setToolTip("Go to 'Preferences -> Float number precision' to change the value.")
         # hide update_rate_cbb,
+        self.update_rate_cbb.setCurrentText("0.5 Hz")
         self.update_rate_cbb.setVisible(False)
         # reword "Update Rate" label
         self.label_6.setText("Settings Data")
@@ -1148,9 +1149,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             except:
                 pass
             else:
-                r = caput(pv, val, timeout=1)
+                r = pv.put(val, timeout=0.5)
                 if r is None: # failed
-                    QMessageBox.warning(self, "Set Tolerance", f"Failed to set {pv} with {val}.", QMessageBox.Ok)
+                    QMessageBox.warning(self, "Set Tolerance", f"Failed to set {pv.pvname} with {val}.", QMessageBox.Ok)
                 else:
                     delayed_exec(partial(self._refresh_tol_values, src_m, fld, src_idx, pv), 500)
 
@@ -1158,7 +1159,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # TODO: refactor to a standard function for single row data refreshing
         # refresh tol and dx12 columns
         # after the tol being changed thru context menu.
-        tol = caget(pv, timeout=0.5)
+        tol = pv.value
         irow = src_idx.row()
         x1 = fld.value
         x2 = fld.current_setting()
@@ -1186,9 +1187,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             except:
                 pass
             else:
-                r = caput(pv, val, timeout=1)
+                r = pv.put(val, timeout=0.1)
                 if r is None: # failed
-                    QMessageBox.warning(self, "Set Reference", f"Failed to set {pv} with {val}.", QMessageBox.Ok)
+                    QMessageBox.warning(self, "Set Reference", f"Failed to set {pv.pvname} with {val}.", QMessageBox.Ok)
                 else:
                     delayed_exec(partial(self._refresh_ref_values, src_m, fld, src_idx, pv), 500)
 
@@ -1196,7 +1197,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # TODO: refactor to a standard function for single row data refreshing
         # refresh xref, dx2ref and dx0ref columns
         # after the xref being changed thru context menu.
-        xref = caget(pv, timeout=0.5)
+        xref = pv.value
         irow = src_idx.row()
         x0_idx = m.index(irow, m.i_val0)
         x0 = float(m.data(x0_idx))
@@ -2135,7 +2136,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         tol_pv = m.data(tol_idx, Qt.UserRole + 1)
         tol_v0_str = m.data(tol_idx, Qt.DisplayRole)
         if tol_pv is not None:
-            tol_v = caget(tol_pv)
+            tol_v = tol_pv.value
             if tol_v is not None:
                 tol_v_str = self.fmt.format(tol_v)
                 if tol_v_str != tol_v0_str:
@@ -2164,7 +2165,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             # ref set value
             ref_st_pv = m.data(ref_st_idx, Qt.UserRole + 1)
             if ref_st_pv is not None:
-                ref_v = caget(ref_st_pv)
+                ref_v = ref_st_pv.value
                 if ref_v is not None:
                     dx2ref = x2 - ref_v
                     dx0ref = x0 - ref_v
@@ -2188,7 +2189,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             # device read alarm switch status
             read_alm_act_pv = m.data(read_alm_idx, Qt.UserRole + 1)
             if read_alm_act_pv is not None:
-                read_alm_v = caget(read_alm_act_pv)
+                read_alm_v = read_alm_act_pv.value
                 if read_alm_v == 1.0:
                     worker.meta_signal1.emit((read_alm_idx, self._alm_enabled_px, Qt.DecorationRole))
                 else:
@@ -2198,7 +2199,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             # device tune alarm switch status
             tune_alm_act_pv = m.data(tune_alm_idx, Qt.UserRole + 1)
             if tune_alm_act_pv is not None:
-                tune_alm_v = caget(tune_alm_act_pv)
+                tune_alm_v = tune_alm_act_pv.value
                 if tune_alm_v == 1.0:
                     worker.meta_signal1.emit((tune_alm_idx, self._alm_enabled_px, Qt.DecorationRole))
                 else:
@@ -3363,10 +3364,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             ename, fname, val0 = irow.Name, irow.Field, irow.Setpoint
             ref_st_pv = get_ref_set_pv(ename, fname)
             if ref_st_pv is not None:
-                msg = f"{ename}[{fname}]: Set {ref_st_pv} to {val0}."
+                msg = "[{0}] {1}[{2}]: Set {3} to {4}.".format(
+                    datetime.fromtimestamp(time.time()).strftime(TS_FMT),
+                    ename, fname, ref_st_pv.pvname, val0
+                )
                 self.log_textEdit.append(msg)
                 print(msg)
-                caput(ref_st_pv, val0, wait=False)
+                ref_st_pv.value = val0
         # update metadata onto OPI
         snp_name = data.ts_as_str() + ", " + data.ion_as_str()
         snp_note = '' if data.note == "Input note ..." else data.note
@@ -3707,12 +3711,12 @@ p, li { white-space: pre-wrap; }
         # live set: fld.value
         ref_st_idx, ref_st_pv, ref_v = tuple_idx_settings
         if ref_st_pv is not None:
-            ref_v_now = caget(ref_st_pv)
+            ref_v_now = ref_st_pv.value
             if not is_close(ref_v_now, ref_v, self.ndigit):
                 msg = "[{0}] Set {1:<35s} reference value from {2:.3f} to {3:.3f}.".format(
                     datetime.fromtimestamp(time.time()).strftime(TS_FMT),
-                    ref_st_pv, float(ref_v_now), ref_v)
-                caput(ref_st_pv, ref_v, wait=False)
+                    ref_st_pv.pvname, float(ref_v_now), ref_v)
+                ref_st_pv.value = ref_v
                 self._refset_pb_list.append((ref_st_idx, msg))
                 time.sleep(0.001)
         else:
@@ -3813,8 +3817,8 @@ p, li { white-space: pre-wrap; }
             if _pv is not None:
                 msg = "[{0}] Set {1:<35s} to {2}.".format(
                     datetime.fromtimestamp(time.time()).strftime(TS_FMT),
-                    _pv, value)
-                caput(_pv, value, wait=False)
+                    _pv.pvname, value)
+                _pv.value = value
                 self._alm_set_pb_list.append((_idx, msg))
                 time.sleep(0.001)
             else:

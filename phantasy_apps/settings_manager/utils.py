@@ -9,6 +9,7 @@ import time
 import shutil
 from collections import Counter
 from collections import OrderedDict
+from epics import get_pv
 from fnmatch import translate
 from functools import partial
 from numpy.testing import assert_almost_equal
@@ -183,15 +184,15 @@ TGT_STS_TUPLE = ('Invalid', 'Home/Be 3.811 mm', 'Viewer', 'Be 4064 mm',
 
 # REF ST PV MAP
 with open(find_dconf("settings_manager", "refstpv.json")) as fp:
-    REF_ST_PV_MAP = json.load(fp)
+    REF_ST_PV_MAP = {k:get_pv(v) for k,v in json.load(fp).items()}
 
 # TOL PV MAP
 with open(find_dconf("settings_manager", "tolpv.json")) as fp:
-    TOL_PV_MAP = json.load(fp)
+    TOL_PV_MAP = {k:get_pv(v) for k,v in json.load(fp).items()}
 
 # Device alarm switch PV MAP
 with open(find_dconf("settings_manager", "almactpv.json")) as fp:
-    ALM_ACT_PV_MAP = json.load(fp)
+    ALM_ACT_PV_MAP = {k:(get_pv(v[0]), get_pv(v[1])) for k,v in json.load(fp).items()}
 
 
 class SettingsModel(QStandardItemModel):
@@ -1708,15 +1709,15 @@ def set_device_state_item(sts_str):
 
 
 def ref_pv(ename, fname):
-    # Return the PV name for reference set.
+    # Return the PV obj for reference set.
     return REF_ST_PV_MAP.get(f"{ename}-{fname}", None)
 
 
 def tol_pv(ename, fname):
-    # Return the PV name for live rd-st tolerance.
+    # Return the PV obj for live rd-st tolerance.
     return TOL_PV_MAP.get(f"{ename}-{fname}", None)
 
 
 def alm_pv(ename, fname):
-    # Return the PV names for alarm switches, (tune, read)
+    # Return the PV objs for alarm switches, (tune, read)
     return ALM_ACT_PV_MAP.get(f"{ename}-{fname}", (None, None))
