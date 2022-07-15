@@ -2,11 +2,12 @@
 Version 10.1: 2022-07-15
 ========================
 
- - Fix a bug regarding the multi-field device state display.
+ - Live data updating at 0.5 Hz is working fine by enabling 'Keep Refreshing' button.
  - Limit the access of snapshot deletion function through the menu.
  - Fix the performance regression for data refreshing:
    - Refresh tolerance, reference, alarm switches status when needed.
  - Rename column names: State --> Live State, Last State --> State.
+ - Fix a bug regarding the multi-field device state display.
 
 ========================
 Version 10.0: 2022-06-22
