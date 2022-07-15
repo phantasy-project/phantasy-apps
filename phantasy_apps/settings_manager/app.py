@@ -772,6 +772,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.refset_pb.setVisible(False)
         # refresh pb
         self.refresh_pb.setVisible(False)
+        self.refresh_pb.setRange(0, 0)
         # almset pb
         self.alm_set_pb.setVisible(False)
 
@@ -2688,7 +2689,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                 nproc=NPROC)
         self.one_updater.meta_signal1.connect(
             partial(self.on_update_display, m))
-        #self.one_updater.daqStarted.connect(lambda:self.refresh_pb.setVisible(True))
+        self.one_updater.daqStarted.connect(lambda:self.refresh_pb.setVisible(True))
         self.one_updater.daqStarted.connect(
             lambda: printlog("Data refreshing..."))
         # self.one_updater.daqStarted.connect(
@@ -2696,7 +2697,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #self.one_updater.progressUpdated.connect(self._on_data_refresh_progressed)
         # self.one_updater.finished.connect(
         #     partial(self.set_widgets_status_for_updating, 'STOP'))
-        #self.one_updater.daqFinished.connect(lambda:self.refresh_pb.setVisible(False))
+        self.one_updater.daqFinished.connect(lambda:self.refresh_pb.setVisible(False))
         self.one_updater.daqFinished.connect(
             lambda: printlog("Data refreshing...done."))
         self.one_updater.start()
