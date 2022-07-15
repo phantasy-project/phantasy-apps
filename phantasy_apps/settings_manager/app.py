@@ -2159,48 +2159,50 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 (dx02_idx, self._no_warning_px, Qt.DecorationRole))
             worker.meta_signal1.emit((dx02_idx, None, Qt.UserRole))
 
-        # ref set value
-        ref_st_pv = m.data(ref_st_idx, Qt.UserRole + 1)
-        if ref_st_pv is not None:
-            ref_v = caget(ref_st_pv)
-            if ref_v is not None:
-                dx2ref = x2 - ref_v
-                dx0ref = x0 - ref_v
-                for iidx, iv in zip((ref_st_idx, dx2ref_idx, dx0ref_idx), (ref_v, dx2ref, dx0ref)):
-                    worker.meta_signal1.emit((iidx, self.fmt.format(iv), Qt.DisplayRole))
+        if self.show_refset_ctrls_btn.isChecked():
+            # ref set value
+            ref_st_pv = m.data(ref_st_idx, Qt.UserRole + 1)
+            if ref_st_pv is not None:
+                ref_v = caget(ref_st_pv)
+                if ref_v is not None:
+                    dx2ref = x2 - ref_v
+                    dx0ref = x0 - ref_v
+                    for iidx, iv in zip((ref_st_idx, dx2ref_idx, dx0ref_idx), (ref_v, dx2ref, dx0ref)):
+                        worker.meta_signal1.emit((iidx, self.fmt.format(iv), Qt.DisplayRole))
 
-                # warnings?
-                for iidx, iv in zip((dx2ref_idx, dx0ref_idx), (x2, x0)):
-                    if not is_close(iv, ref_v, self.ndigit):
-                        worker.meta_signal1.emit(
-                            (iidx, self._warning_px, Qt.DecorationRole))
-                        worker.meta_signal1.emit(
-                            (iidx, "warning", Qt.UserRole))
-                    else:
-                        worker.meta_signal1.emit(
-                            (iidx, self._no_warning_px, Qt.DecorationRole))
-                        worker.meta_signal1.emit(
-                            (iidx, None, Qt.UserRole))
+                    # warnings?
+                    for iidx, iv in zip((dx2ref_idx, dx0ref_idx), (x2, x0)):
+                        if not is_close(iv, ref_v, self.ndigit):
+                            worker.meta_signal1.emit(
+                                (iidx, self._warning_px, Qt.DecorationRole))
+                            worker.meta_signal1.emit(
+                                (iidx, "warning", Qt.UserRole))
+                        else:
+                            worker.meta_signal1.emit(
+                                (iidx, self._no_warning_px, Qt.DecorationRole))
+                            worker.meta_signal1.emit(
+                                (iidx, None, Qt.UserRole))
 
-        # device read alarm switch status
-        read_alm_act_pv = m.data(read_alm_idx, Qt.UserRole + 1)
-        if read_alm_act_pv is not None:
-            read_alm_v = caget(read_alm_act_pv)
-            if read_alm_v == 1.0:
-                worker.meta_signal1.emit((read_alm_idx, self._alm_enabled_px, Qt.DecorationRole))
-            else:
-                worker.meta_signal1.emit((read_alm_idx, self._alm_disabled_px, Qt.DecorationRole))
-            worker.meta_signal1.emit((read_alm_idx, read_alm_v, Qt.UserRole))
+        if self.show_alm_ctrls_btn.isChecked():
+            # device read alarm switch status
+            read_alm_act_pv = m.data(read_alm_idx, Qt.UserRole + 1)
+            if read_alm_act_pv is not None:
+                read_alm_v = caget(read_alm_act_pv)
+                if read_alm_v == 1.0:
+                    worker.meta_signal1.emit((read_alm_idx, self._alm_enabled_px, Qt.DecorationRole))
+                else:
+                    worker.meta_signal1.emit((read_alm_idx, self._alm_disabled_px, Qt.DecorationRole))
+                worker.meta_signal1.emit((read_alm_idx, read_alm_v, Qt.UserRole))
 
-        # device tune alarm switch status
-        tune_alm_act_pv = m.data(tune_alm_idx, Qt.UserRole + 1)
-        if tune_alm_act_pv is not None:
-            tune_alm_v = caget(tune_alm_act_pv)
-            if tune_alm_v == 1.0:
-                worker.meta_signal1.emit((tune_alm_idx, self._alm_enabled_px, Qt.DecorationRole))
-            else:
-                worker.meta_signal1.emit((tune_alm_idx, self._alm_disabled_px, Qt.DecorationRole))
-            worker.meta_signal1.emit((tune_alm_idx, tune_alm_v, Qt.UserRole))
+            # device tune alarm switch status
+            tune_alm_act_pv = m.data(tune_alm_idx, Qt.UserRole + 1)
+            if tune_alm_act_pv is not None:
+                tune_alm_v = caget(tune_alm_act_pv)
+                if tune_alm_v == 1.0:
+                    worker.meta_signal1.emit((tune_alm_idx, self._alm_enabled_px, Qt.DecorationRole))
+                else:
+                    worker.meta_signal1.emit((tune_alm_idx, self._alm_disabled_px, Qt.DecorationRole))
+                worker.meta_signal1.emit((tune_alm_idx, tune_alm_v, Qt.UserRole))
 
         #
         pwr_is_on = 'Unknown'
