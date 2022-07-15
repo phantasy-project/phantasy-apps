@@ -29,7 +29,8 @@ class AppCard(QWidget, Ui_AppForm):
     infoFormChanged = pyqtSignal(dict, bool)
 
     def __init__(self, name, groups, cmd=None, fav_on=False, desc=None,
-                 version=None, helpdoc=None, contact=None, parent=None, **kws):
+                 version=None, helpdoc=None, contact=None, changelog=None,
+                 parent=None, **kws):
         super(AppCard, self).__init__(parent)
 
         #
@@ -50,11 +51,13 @@ class AppCard(QWidget, Ui_AppForm):
         self.setVersion(version)
         self.setHelpdoc(helpdoc)
         self.setContact(contact)
+        self.setChangelog(changelog)
 
     def get_meta_info(self):
         return {'name': self.name(), 'groups': self.groups(),
                 'fav': self.favorite(), 'desc': self.description(),
                 'helpdoc': self.helpdoc(), 'contact': self.contact(),
+                'changelog': self.changelog(),
                 'ver': self.version(),}
 
     @pyqtSlot()
@@ -104,6 +107,14 @@ class AppCard(QWidget, Ui_AppForm):
 
     def setHelpdoc(self, s):
         self._helpdoc = s
+
+    def changelog(self):
+        """str : Url/path for changelog.
+        """
+        return self._changelog
+
+    def setChangelog(self, s):
+        self._changelog = s
 
     def contact(self):
         """People : People to contact.
@@ -216,7 +227,8 @@ class AppCardInfoForm(QWidget, Ui_InfoForm):
     runAppInTerminal = pyqtSignal(bool)
     sig_close = pyqtSignal()
 
-    def __init__(self, name, group, fav_on=False, desc=None, ver=None, helpdoc=None, contact=None,
+    def __init__(self, name, group, fav_on=False, desc=None, ver=None,
+                 helpdoc=None, contact=None, changelog=None,
                  parent=None, **kws):
         super(AppCardInfoForm, self).__init__(parent)
 
@@ -228,6 +240,7 @@ class AppCardInfoForm(QWidget, Ui_InfoForm):
         self.on_fav_changed(fav_on)
         self.config_helpdoc(helpdoc)
         self.config_contact(contact)
+        self.config_changelog(changelog)
 
     @pyqtSlot(bool)
     def on_fav_changed(self, on):
@@ -274,6 +287,17 @@ class AppCardInfoForm(QWidget, Ui_InfoForm):
                 self.helpdoc_btn.setVisible(False)
         else: # url?
             self.helpdoc_btn.setVisible(False)
+
+    def config_changelog(self, doc):
+        url = QUrl.fromUserInput(doc)
+        if url.isLocalFile():
+            if QFile(url.path()).exists():
+                self.changelog_btn.setVisible(True)
+                self.changelog_btn.clicked.connect(lambda:QDesktopServices.openUrl(url))
+            else:
+                self.changelog_btn.setVisible(False)
+        else: # url?
+            self.changelog_btn.setVisible(False)
 
     def config_contact(self, contact):
         if contact.name == '':

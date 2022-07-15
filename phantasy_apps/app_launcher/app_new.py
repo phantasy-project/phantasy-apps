@@ -183,9 +183,11 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             fav_on = 'favorite' in groups
             helpdoc = app_item.helpdoc
             contact = app_item.contact
+            changelog = app_item.changelog
             if page in ['fav', 'fav1'] and not fav_on:
                 continue
-            card = AppCard(name, groups, cmd, fav_on, desc, ver, helpdoc, contact, self, width=self._width)
+            card = AppCard(name, groups, cmd, fav_on, desc, ver, helpdoc, contact, changelog,
+                           self, width=self._width)
             card.setIcon(app_item.icon_path)
             card.infoFormChanged.connect(partial(self.on_info_form_changed, page))
             card.favChanged.connect(self.on_fav_changed)
@@ -231,7 +233,8 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             ver = meta_info['ver']
             helpdoc = meta_info['helpdoc']
             contact = meta_info['contact']
-            info_form = AppCardInfoForm(name, group, fav_on, desc, ver, helpdoc, contact)
+            changelog = meta_info['changelog']
+            info_form = AppCardInfoForm(name, group, fav_on, desc, ver, helpdoc, contact, changelog)
             card = self._app_card_dict[page][name]
             info_form.favChanged.connect(card.on_fav_changed)
             info_form.sig_close.connect(card.on_close_info)
@@ -454,7 +457,9 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             name = app_item.name
             helpdoc = app_item.helpdoc
             contact = app_item.contact
-            card = AppCard(name, groups, cmd, True, desc, ver, helpdoc, contact, self, width=self._width)
+            changelog = app_item.changelog
+            card = AppCard(name, groups, cmd, True, desc, ver, helpdoc, contact, changelog,
+                           self, width=self._width)
             card.setIcon(app_item.icon_path)
             card.infoFormChanged.connect(partial(self.on_info_form_changed, 'search_fav'))
             card.favChanged.connect(self.on_fav_changed)
@@ -480,7 +485,9 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             name = app_item.name
             helpdoc = app_item.helpdoc
             contact = app_item.contact
-            card = AppCard(name, groups, cmd, False, desc, ver, helpdoc, contact, self, width=self._width)
+            changelog = app_item.changelog
+            card = AppCard(name, groups, cmd, False, desc, ver, helpdoc, contact, changelog,
+                           self, width=self._width)
             card.setIcon(app_item.icon_path)
             card.infoFormChanged.connect(partial(self.on_info_form_changed, 'search_apps'))
             card.favChanged.connect(self.on_fav_changed)

@@ -95,20 +95,29 @@ class Ui_InfoForm(object):
                                           "}")
         self.app_main_group.setObjectName("app_main_group")
         self.horizontalLayout.addWidget(self.app_main_group)
-        self.helpdoc_btn = QtWidgets.QToolButton(self.headline_widget)
+        self.changelog_btn = QtWidgets.QToolButton(self.headline_widget)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/icons/helpdoc.png"),
+        icon.addPixmap(QtGui.QPixmap(":/icons/changelog.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.helpdoc_btn.setIcon(icon)
+        self.changelog_btn.setIcon(icon)
+        self.changelog_btn.setIconSize(QtCore.QSize(32, 32))
+        self.changelog_btn.setAutoRaise(True)
+        self.changelog_btn.setObjectName("changelog_btn")
+        self.horizontalLayout.addWidget(self.changelog_btn)
+        self.helpdoc_btn = QtWidgets.QToolButton(self.headline_widget)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/icons/helpdoc.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.helpdoc_btn.setIcon(icon1)
         self.helpdoc_btn.setIconSize(QtCore.QSize(32, 32))
         self.helpdoc_btn.setAutoRaise(True)
         self.helpdoc_btn.setObjectName("helpdoc_btn")
         self.horizontalLayout.addWidget(self.helpdoc_btn)
         self.close_btn = QtWidgets.QToolButton(self.headline_widget)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/icons/close.png"), QtGui.QIcon.Normal,
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/icons/close.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.close_btn.setIcon(icon1)
+        self.close_btn.setIcon(icon2)
         self.close_btn.setIconSize(QtCore.QSize(32, 32))
         self.close_btn.setAutoRaise(True)
         self.close_btn.setObjectName("close_btn")
@@ -179,10 +188,10 @@ class Ui_InfoForm(object):
             self.open_btn.sizePolicy().hasHeightForWidth())
         self.open_btn.setSizePolicy(sizePolicy)
         self.open_btn.setStyleSheet("")
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/icons/run.png"), QtGui.QIcon.Normal,
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/icons/run.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.open_btn.setIcon(icon2)
+        self.open_btn.setIcon(icon3)
         self.open_btn.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
         self.open_btn.setAutoRaise(True)
         self.open_btn.setObjectName("open_btn")
@@ -196,10 +205,10 @@ class Ui_InfoForm(object):
             self.open_in_terminal_btn.sizePolicy().hasHeightForWidth())
         self.open_in_terminal_btn.setSizePolicy(sizePolicy)
         self.open_in_terminal_btn.setStyleSheet("")
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/app-icons/app-icons/console.png"),
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/app-icons/app-icons/console.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.open_in_terminal_btn.setIcon(icon3)
+        self.open_in_terminal_btn.setIcon(icon4)
         self.open_in_terminal_btn.setCheckable(False)
         self.open_in_terminal_btn.setToolButtonStyle(
             QtCore.Qt.ToolButtonTextBesideIcon)
@@ -215,12 +224,12 @@ class Ui_InfoForm(object):
             self.fav_btn.sizePolicy().hasHeightForWidth())
         self.fav_btn.setSizePolicy(sizePolicy)
         self.fav_btn.setStyleSheet("")
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/icons/fav-off-action.svg"),
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/icons/fav-off-action.svg"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon4.addPixmap(QtGui.QPixmap(":/icons/fav-on-action.svg"),
+        icon5.addPixmap(QtGui.QPixmap(":/icons/fav-on-action.svg"),
                         QtGui.QIcon.Active, QtGui.QIcon.On)
-        self.fav_btn.setIcon(icon4)
+        self.fav_btn.setIcon(icon5)
         self.fav_btn.setCheckable(True)
         self.fav_btn.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
         self.fav_btn.setAutoRaise(True)
@@ -256,6 +265,7 @@ class Ui_InfoForm(object):
                 "InfoForm",
                 "<html><head/><body><p><span style=\" font-size:16pt; color:#ffffff;\">App Main Group Name</span></p></body></html>"
             ))
+        self.changelog_btn.setText(_translate("InfoForm", "..."))
         self.helpdoc_btn.setText(_translate("InfoForm", "help"))
         self.close_btn.setText(_translate("InfoForm", "..."))
         self.label_3.setText(

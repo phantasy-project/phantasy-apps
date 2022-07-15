@@ -110,7 +110,7 @@ class AppDataModel(QStandardItemModel):
 
 
 class AppItem(object):
-    def __init__(self, name, desc, cmd, icon_path, groups, version, helpdoc, contact):
+    def __init__(self, name, desc, cmd, icon_path, groups, version, helpdoc, contact, changelog):
         # name : app name
         # desc : app descriptiono
         # cmd : command to start up app (exec)
@@ -118,6 +118,7 @@ class AppItem(object):
         # groups : a list of affiliated groups
         # helpdoc : path for help doc
         # contact : People to contact
+        # changelog: app changelog doc
         super(self.__class__, self).__init__()
         self.name = name
         self.desc = desc
@@ -127,6 +128,7 @@ class AppItem(object):
         self.ver = version
         self.helpdoc = helpdoc
         self.contact = contact
+        self.changelog = changelog
 
     def __contains__(self, item):
         item = item.lower()
@@ -188,10 +190,11 @@ def get_app_data(path=None, filename='app_launcher.ini'):
         groups = v.get('groups', default_groups[:])
         version = v.get('version', get_app_version(imp_path_conf.get(k, 'undefined')))
         helpdoc = v.get('helpdoc', '')
+        changelog = v.get('changelog', '')
         contact_list = v.get('contact', default_contact[:])
         contact = People(*contact_list)
         app_item = AppItem(v.get('name'), v.get('desc'), v.get('exec'), icon_path,
-                           groups, version, helpdoc, contact)
+                           groups, version, helpdoc, contact, changelog)
         data.update([(app_item.name, app_item)])
 
     return data
