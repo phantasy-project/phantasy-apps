@@ -3786,8 +3786,8 @@ p, li { white-space: pre-wrap; }
         if len(settings_selected) == 0:
             QMessageBox.warning(
                 self, f"{msg_title}",
-                f'<html><head/><body><p>Not any items are checked, <span style=" '
-                'font-style:italic;">{msg_title} </span>only works with checked items in current page<span style=" '
+                '<html><head/><body><p>Not any items are checked, <span style=" '
+                f'font-style:italic;">{msg_title} </span>only works with checked items in current page<span style=" '
                 'font-style:italic;">.</span></p></body></html>',
                 QMessageBox.Ok)
             return
@@ -3836,7 +3836,6 @@ p, li { white-space: pre-wrap; }
         """
         w1 = (self.enable_alms_btn, self.disable_alms_btn, self.alm_type_cbb)
         [i.setDisabled(status == 'START') for i in w1]
-
 
     @pyqtSlot('QString')
     def on_alm_type_changed(self, s):
