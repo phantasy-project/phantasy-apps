@@ -208,6 +208,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # total number of checked items (not limited to current page) changed by amount of input int
     total_number_checked_items_changed = pyqtSignal(int)
 
+    # last refresh: data is refreshed
+    last_refreshed = pyqtSignal()
+
     def __init__(self, version, config_dir=None):
         super(SettingsManagerWindow, self).__init__()
 
@@ -560,6 +563,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._machstate = None
 
     def __post_init_ui(self):
+        # data is refreshed
+        self.last_refreshed.connect(self.on_data_refresh_done)
+
         # disable the ndigit sbox on the main UI
         self.ndigit_sbox.setEnabled(False)
         self.ndigit_sbox.setToolTip("Go to 'Preferences -> Float number precision' to change the value.")
@@ -2428,10 +2434,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         dt = time.time() - t0
         dt_residual = delt - dt
+        # data is refreshed
+        self.last_refreshed.emit()
         if delt == 0:
             printlog("Single update in {0:.1f} msec, no wait.".format(dt *
                                                                       1000))
         else:
+            printlog("Refreshed data.")
             if dt_residual > 0:
                 time.sleep(dt_residual)
                 printlog("Waited {0:.0f} msec (Field: {1}).".format(
@@ -2701,7 +2710,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.one_updater.daqFinished.connect(lambda:self.refresh_pb.setVisible(False))
         self.one_updater.daqFinished.connect(
             lambda: printlog("Data refreshing...done."))
+        self.one_updater.daqFinished.connect(self.last_refreshed)
         self.one_updater.start()
+
+    def on_data_refresh_done(self):
+        # Data refreshing is done (before any waiting): update the last updated timestamp.
+        ts = datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %T")
+        self.last_refreshed_lbl.setText(f"Last data refreshed at {ts}")
 
     def set_widgets_status_for_updating(self, status, is_single=True):
         """Set widgets status for updating.
