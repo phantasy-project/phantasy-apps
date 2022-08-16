@@ -2723,7 +2723,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_data_refresh_done(self):
         # Data refreshing is done (before any waiting): update the last updated timestamp.
         ts = datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %T")
-        self.last_refreshed_lbl.setText(f"Last data refreshed at {ts}")
+        self.last_refreshed_lbl.setText(ts)
 
     def set_widgets_status_for_updating(self, status, is_single=True):
         """Set widgets status for updating.
