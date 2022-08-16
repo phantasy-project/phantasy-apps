@@ -1918,7 +1918,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.actionLoad_Lattice.triggered.emit()
         self._lattice_load_window.mach_cbb.setCurrentText(mach)
         self._lattice_load_window.seg_cbb.setCurrentText(segm)
-        self._lattice_load_window.auto_monitor_chkbox.setChecked(True)
+        self._lattice_load_window.auto_monitor_chkbox.setChecked(False)
         loop = QEventLoop()
         self._lattice_load_window.latticeChanged.connect(loop.exit)
         self._lattice_load_window.load_btn.clicked.emit()
@@ -3820,7 +3820,7 @@ p, li { white-space: pre-wrap; }
                     _pv.pvname, value)
                 _pv.value = value
                 self._alm_set_pb_list.append((_idx, msg))
-                time.sleep(0.001)
+                time.sleep(0.02)
             else:
                 self._alm_set_pb_list.append((_idx, "No alarm to set"))
 
