@@ -592,7 +592,16 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem3)
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setObjectName("label_2")
+        self.horizontalLayout.addWidget(self.label_2)
         self.last_refreshed_lbl = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.last_refreshed_lbl.setFont(font)
+        self.last_refreshed_lbl.setStyleSheet("QLabel {\n"
+                                              "    color: #2E3436;\n"
+                                              "}")
         self.last_refreshed_lbl.setText("")
         self.last_refreshed_lbl.setObjectName("last_refreshed_lbl")
         self.horizontalLayout.addWidget(self.last_refreshed_lbl)
@@ -606,10 +615,14 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.label_6)
         self.update_rate_cbb = QtWidgets.QComboBox(self.centralwidget)
         self.update_rate_cbb.setEnabled(True)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.update_rate_cbb.sizePolicy().hasHeightForWidth())
+        self.update_rate_cbb.setSizePolicy(sizePolicy)
         self.update_rate_cbb.setObjectName("update_rate_cbb")
-        self.update_rate_cbb.addItem("")
-        self.update_rate_cbb.addItem("")
-        self.update_rate_cbb.addItem("")
         self.update_rate_cbb.addItem("")
         self.update_rate_cbb.addItem("")
         self.update_rate_cbb.addItem("")
@@ -1719,24 +1732,19 @@ class Ui_MainWindow(object):
         self.total_field_number_title_lbl.setText(
             _translate("MainWindow", "Fields"))
         self.total_field_number_lbl.setText(_translate("MainWindow", "0"))
+        self.label_2.setText(_translate("MainWindow", "Last refreshed at: "))
         self.label_6.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Auto : Realtime update</p><p>1-5 : Update every 0.2 to 1 second</p></body></html>"
             ))
         self.label_6.setText(_translate("MainWindow", "Update Rate"))
-        self.update_rate_cbb.setItemText(0, _translate("MainWindow", "1.0 Hz"))
-        self.update_rate_cbb.setItemText(1, _translate("MainWindow", "2.0 Hz"))
-        self.update_rate_cbb.setItemText(2, _translate("MainWindow", "5.0 Hz"))
-        self.update_rate_cbb.setItemText(3, _translate("MainWindow", "0.5 Hz"))
-        self.update_rate_cbb.setItemText(4, _translate("MainWindow", "0.2 Hz"))
-        self.update_rate_cbb.setItemText(5, _translate("MainWindow", "0.1 Hz"))
-        self.update_rate_cbb.setItemText(6, _translate("MainWindow",
-                                                       "0.05 Hz"))
-        self.update_rate_cbb.setItemText(7, _translate("MainWindow",
-                                                       "0.025 Hz"))
-        self.update_rate_cbb.setItemText(8,
-                                         _translate("MainWindow", "0.0125 Hz"))
+        self.update_rate_cbb.setItemText(0, _translate("MainWindow", "1 s"))
+        self.update_rate_cbb.setItemText(1, _translate("MainWindow", "2 s"))
+        self.update_rate_cbb.setItemText(2, _translate("MainWindow", "5 s"))
+        self.update_rate_cbb.setItemText(3, _translate("MainWindow", "10 s"))
+        self.update_rate_cbb.setItemText(4, _translate("MainWindow", "20 s"))
+        self.update_rate_cbb.setItemText(5, _translate("MainWindow", "50 s"))
         self.update_ctrl_btn.setToolTip(
             _translate("MainWindow", "Start/stop updating values (Ctrl+F5)."))
         self.update_ctrl_btn.setText(_translate("MainWindow", "..."))
