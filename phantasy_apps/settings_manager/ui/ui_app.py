@@ -595,6 +595,34 @@ class Ui_MainWindow(object):
         self.label_6 = QtWidgets.QLabel(self.centralwidget)
         self.label_6.setObjectName("label_6")
         self.horizontalLayout.addWidget(self.label_6)
+        self.verticalLayout_5 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_5.setSpacing(1)
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setMinimumSize(QtCore.QSize(0, 15))
+        self.label_2.setMaximumSize(QtCore.QSize(16777215, 15))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.label_2.setFont(font)
+        self.label_2.setStyleSheet("QLabel {\n" "    color: #888A85;\n" "}")
+        self.label_2.setObjectName("label_2")
+        self.verticalLayout_5.addWidget(self.label_2)
+        self.last_refreshed_lbl = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.last_refreshed_lbl.setFont(font)
+        self.last_refreshed_lbl.setStyleSheet("QLabel {\n"
+                                              "    color: #2E3436;\n"
+                                              "}")
+        self.last_refreshed_lbl.setText("")
+        self.last_refreshed_lbl.setObjectName("last_refreshed_lbl")
+        self.verticalLayout_5.addWidget(self.last_refreshed_lbl)
+        self.horizontalLayout.addLayout(self.verticalLayout_5)
+        self.line = QtWidgets.QFrame(self.centralwidget)
+        self.line.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.horizontalLayout.addWidget(self.line)
         self.update_rate_cbb = QtWidgets.QComboBox(self.centralwidget)
         self.update_rate_cbb.setEnabled(True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -612,24 +640,6 @@ class Ui_MainWindow(object):
         self.update_rate_cbb.addItem("")
         self.update_rate_cbb.addItem("")
         self.horizontalLayout.addWidget(self.update_rate_cbb)
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setObjectName("label_2")
-        self.horizontalLayout.addWidget(self.label_2)
-        self.last_refreshed_lbl = QtWidgets.QLabel(self.centralwidget)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.last_refreshed_lbl.setFont(font)
-        self.last_refreshed_lbl.setStyleSheet("QLabel {\n"
-                                              "    color: #2E3436;\n"
-                                              "}")
-        self.last_refreshed_lbl.setText("")
-        self.last_refreshed_lbl.setObjectName("last_refreshed_lbl")
-        self.horizontalLayout.addWidget(self.last_refreshed_lbl)
-        self.line = QtWidgets.QFrame(self.centralwidget)
-        self.line.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line.setObjectName("line")
-        self.horizontalLayout.addWidget(self.line)
         self.update_ctrl_btn = QtWidgets.QToolButton(self.centralwidget)
         icon16 = QtGui.QIcon()
         icon16.addPixmap(QtGui.QPixmap(":/sm-icons/start.png"),
@@ -640,6 +650,8 @@ class Ui_MainWindow(object):
         self.update_ctrl_btn.setIconSize(QtCore.QSize(32, 32))
         self.update_ctrl_btn.setCheckable(True)
         self.update_ctrl_btn.setChecked(False)
+        self.update_ctrl_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
         self.update_ctrl_btn.setAutoRaise(True)
         self.update_ctrl_btn.setObjectName("update_ctrl_btn")
         self.horizontalLayout.addWidget(self.update_ctrl_btn)
@@ -1736,22 +1748,23 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p>Auto : Realtime update</p><p>1-5 : Update every 0.2 to 1 second</p></body></html>"
             ))
-        self.label_6.setText(_translate("MainWindow", "Update Rate"))
+        self.label_6.setText(_translate("MainWindow", "Settings Data"))
+        self.label_2.setText(_translate("MainWindow", "Last refreshed at"))
         self.update_rate_cbb.setItemText(0, _translate("MainWindow", "1 s"))
         self.update_rate_cbb.setItemText(1, _translate("MainWindow", "2 s"))
         self.update_rate_cbb.setItemText(2, _translate("MainWindow", "5 s"))
         self.update_rate_cbb.setItemText(3, _translate("MainWindow", "10 s"))
         self.update_rate_cbb.setItemText(4, _translate("MainWindow", "20 s"))
         self.update_rate_cbb.setItemText(5, _translate("MainWindow", "50 s"))
-        self.label_2.setText(_translate("MainWindow", "Last refreshed at: "))
         self.update_ctrl_btn.setToolTip(
             _translate("MainWindow", "Start/stop updating values (Ctrl+F5)."))
-        self.update_ctrl_btn.setText(_translate("MainWindow", "..."))
+        self.update_ctrl_btn.setText(
+            _translate("MainWindow", "Keep Refreshing"))
         self.update_ctrl_btn.setShortcut(_translate("MainWindow", "Ctrl+F5"))
         self.single_update_btn.setToolTip(
             _translate("MainWindow", "Update for one time (F5)."))
         self.single_update_btn.setText(_translate("MainWindow",
-                                                  "Refresh Data"))
+                                                  "Refresh Once"))
         self.single_update_btn.setShortcut(_translate("MainWindow", "F5"))
         self.apply_btn.setToolTip(
             _translate(
