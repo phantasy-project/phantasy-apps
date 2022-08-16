@@ -3406,8 +3406,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         m.m_src.on_snp_loaded(data)
         self._current_snpdata = data
-        # enable auto data updating
-        self.update_ctrl_btn.setChecked(True)
+        # enable auto data updating in 5 seconds
+        delayed_exec(lambda: self.update_ctrl_btn.setChecked(True), 5000)
 
     def on_snp_saved(self, name, path):
         m = self.snp_treeView.model()
