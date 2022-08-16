@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(2233, 1434)
+        MainWindow.resize(2401, 1434)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/sm-icons/logo.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -592,6 +592,10 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem3)
+        self.last_refreshed_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.last_refreshed_lbl.setText("")
+        self.last_refreshed_lbl.setObjectName("last_refreshed_lbl")
+        self.horizontalLayout.addWidget(self.last_refreshed_lbl)
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setFrameShape(QtWidgets.QFrame.VLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -603,6 +607,9 @@ class Ui_MainWindow(object):
         self.update_rate_cbb = QtWidgets.QComboBox(self.centralwidget)
         self.update_rate_cbb.setEnabled(True)
         self.update_rate_cbb.setObjectName("update_rate_cbb")
+        self.update_rate_cbb.addItem("")
+        self.update_rate_cbb.addItem("")
+        self.update_rate_cbb.addItem("")
         self.update_rate_cbb.addItem("")
         self.update_rate_cbb.addItem("")
         self.update_rate_cbb.addItem("")
@@ -976,7 +983,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.filter_hbox, 1, 16, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 2233, 32))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 2401, 32))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -1116,7 +1123,7 @@ class Ui_MainWindow(object):
         self.tag_filter_area.setWidgetResizable(True)
         self.tag_filter_area.setObjectName("tag_filter_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 2182, 89))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 2350, 89))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tag_filter_area.setWidget(self.scrollAreaWidgetContents)
         self.horizontalLayout_7.addWidget(self.tag_filter_area)
@@ -1724,6 +1731,12 @@ class Ui_MainWindow(object):
         self.update_rate_cbb.setItemText(3, _translate("MainWindow", "0.5 Hz"))
         self.update_rate_cbb.setItemText(4, _translate("MainWindow", "0.2 Hz"))
         self.update_rate_cbb.setItemText(5, _translate("MainWindow", "0.1 Hz"))
+        self.update_rate_cbb.setItemText(6, _translate("MainWindow",
+                                                       "0.05 Hz"))
+        self.update_rate_cbb.setItemText(7, _translate("MainWindow",
+                                                       "0.025 Hz"))
+        self.update_rate_cbb.setItemText(8,
+                                         _translate("MainWindow", "0.0125 Hz"))
         self.update_ctrl_btn.setToolTip(
             _translate("MainWindow", "Start/stop updating values (Ctrl+F5)."))
         self.update_ctrl_btn.setText(_translate("MainWindow", "..."))
