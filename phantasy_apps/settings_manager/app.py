@@ -126,7 +126,7 @@ STRIPPER_POS = 224.903684519998
 PX_SIZE = 24
 ION_ICON_SIZE = 48
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
-IDX_RATE_MAP = {0: 1.0, 1: 2.0, 2: 5.0, 3: 0.5, 4: 0.2, 5: 0.1}
+IDX_RATE_MAP = {0: 1.0, 1: 2.0, 2: 5.0, 3: 0.5, 4: 0.2, 5: 0.1, 6: 0.05, 7: 0.025, 8: 0.0125}
 FILTER_TT = """\
 Filter strings 'keyword=pattern', multiple conditions could be linked with 'and', support 'in'
 test. More details please click the right help button."""
@@ -564,7 +564,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.ndigit_sbox.setEnabled(False)
         self.ndigit_sbox.setToolTip("Go to 'Preferences -> Float number precision' to change the value.")
         # hide update_rate_cbb,
-        self.update_rate_cbb.setCurrentText("0.5 Hz")
+        self.update_rate_cbb.setCurrentText("0.025 Hz")
         self.update_rate_cbb.setVisible(False)
         # reword "Update Rate" label
         self.label_6.setText("Settings Data")
