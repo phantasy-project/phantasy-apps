@@ -2968,7 +2968,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m = self._tv.model()
         if m is None:
             return
-        self.turn_off_updater_if_necessary()
+        # self.turn_off_updater_if_necessary()
         src_m = m.sourceModel()
         # single update
         self._updater = DAQT(daq_func=partial(self.update_value_single, src_m,
@@ -3348,7 +3348,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_load_settings(self, data):
         # data: SnapshotData
         # settings(data.data): DataFrame
-        self.turn_off_updater_if_necessary()
+        # self.turn_off_updater_if_necessary()
         if self._lat is None or self._last_machine_name != data.machine or \
                 self._last_lattice_name != data.segment:
             self.__load_lattice(data.machine, data.segment)
@@ -3401,7 +3401,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.m_src.on_snp_loaded(data)
         self._current_snpdata = data
         # enable auto data updating in 5 seconds
-        delayed_exec(lambda: self.update_ctrl_btn.setChecked(True), 5000)
+        if not self.update_ctrl_btn.isChecked():
+            delayed_exec(lambda: self.update_ctrl_btn.setChecked(True), 5000)
 
     def on_snp_saved(self, name, path):
         m = self.snp_treeView.model()
