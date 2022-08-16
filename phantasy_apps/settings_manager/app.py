@@ -579,12 +579,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # hide update_rate_cbb,
         self.update_rate_cbb.setCurrentText("20 s") # 0.05 Hz
         self.update_rate_cbb.setVisible(False)
-        # reword "Update Rate" label
-        self.label_6.setText("Settings Data")
-        self.label_6.setToolTip("Press button to refresh data")
-        self.update_ctrl_btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.update_ctrl_btn.setText("Keep Refreshing")
-        self.single_update_btn.setText("Refresh Once")
 
         # WYSIWYC flag:
         self._wysiwyc_enabled = False
