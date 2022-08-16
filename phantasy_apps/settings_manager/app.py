@@ -3864,6 +3864,32 @@ p, li { white-space: pre-wrap; }
         self.enable_alms_btn.setToolTip(tt2.format(s))
         self._alm_type_idx_list = ALM_TYPE_MAP[s]
 
+    def load_snapshot(self, name: str):
+        # load the snapshot named by *name* (to match datetime column)
+        o = get_snapshotdata(name, self.data_uri)
+        if o is None:
+            QMessageBox.warning(self, "Load Snapshot", f"Cannot find the snapshot: '{name}'",
+                                QMessageBox.Ok, QMessageBox.Ok)
+            return
+        else:
+            self.on_load_settings(o)
+
+
+def get_snapshotdata(query_str: str, uri: str, column_name='datetime'):
+    """Search and return a  object from the database defined by *uri*, where
+    *query_str* matches the value of *column_name*.
+    """
+    db_conn = ensure_connect_db(uri)
+    df = pd.read_sql(
+            f"SELECT * FROM snapshot WHERE {column_name} = '{query_str}' LIMIT 1", db_conn)
+    if df.empty:
+        print(f"Invalid snapshot named '{query_str}'")
+        o = None
+    else:
+        o = read_data(list(df.iterrows())[0][1], 'sql') # see df_all.iterrows()
+    db_conn.close()
+    return o
+
 
 def is_snp_data_exist(snpdata, snpdata_list):
     # if snpdata named 'name' exists.
