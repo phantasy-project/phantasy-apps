@@ -598,15 +598,18 @@ class Ui_MainWindow(object):
         self.verticalLayout_5 = QtWidgets.QVBoxLayout()
         self.verticalLayout_5.setSpacing(1)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setMinimumSize(QtCore.QSize(0, 15))
-        self.label_2.setMaximumSize(QtCore.QSize(16777215, 15))
+        self.last_refreshed_title_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.last_refreshed_title_lbl.setMinimumSize(QtCore.QSize(0, 15))
+        self.last_refreshed_title_lbl.setMaximumSize(QtCore.QSize(
+            16777215, 15))
         font = QtGui.QFont()
         font.setPointSize(10)
-        self.label_2.setFont(font)
-        self.label_2.setStyleSheet("QLabel {\n" "    color: #888A85;\n" "}")
-        self.label_2.setObjectName("label_2")
-        self.verticalLayout_5.addWidget(self.label_2)
+        self.last_refreshed_title_lbl.setFont(font)
+        self.last_refreshed_title_lbl.setStyleSheet("QLabel {\n"
+                                                    "    color: #888A85;\n"
+                                                    "}")
+        self.last_refreshed_title_lbl.setObjectName("last_refreshed_title_lbl")
+        self.verticalLayout_5.addWidget(self.last_refreshed_title_lbl)
         self.last_refreshed_lbl = QtWidgets.QLabel(self.centralwidget)
         font = QtGui.QFont()
         font.setFamily("Monospace")
@@ -614,7 +617,6 @@ class Ui_MainWindow(object):
         self.last_refreshed_lbl.setStyleSheet("QLabel {\n"
                                               "    color: #2E3436;\n"
                                               "}")
-        self.last_refreshed_lbl.setText("")
         self.last_refreshed_lbl.setObjectName("last_refreshed_lbl")
         self.verticalLayout_5.addWidget(self.last_refreshed_lbl)
         self.horizontalLayout.addLayout(self.verticalLayout_5)
@@ -1749,7 +1751,10 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Auto : Realtime update</p><p>1-5 : Update every 0.2 to 1 second</p></body></html>"
             ))
         self.label_6.setText(_translate("MainWindow", "Settings Data"))
-        self.label_2.setText(_translate("MainWindow", "Last refreshed at"))
+        self.last_refreshed_title_lbl.setText(
+            _translate("MainWindow", "Last refreshed at"))
+        self.last_refreshed_lbl.setText(
+            _translate("MainWindow", "                   "))
         self.update_rate_cbb.setItemText(0, _translate("MainWindow", "1 s"))
         self.update_rate_cbb.setItemText(1, _translate("MainWindow", "2 s"))
         self.update_rate_cbb.setItemText(2, _translate("MainWindow", "5 s"))
