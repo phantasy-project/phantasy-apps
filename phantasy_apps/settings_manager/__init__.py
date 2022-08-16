@@ -19,6 +19,8 @@ def run(cli=False):
             description="Manage the physics settings of an accelerator")
     parser.add_argument("--config", dest="config",
             help="Path of the configuration file")
+    parser.add_argument("--snapshot", dest="snapshot",
+            help="The name of a snapshot to load, if valid one is defined")
     parser.add_argument("--snapshot-window-off", action='store_true',
             help="Turn off the snapshot window")
 
@@ -37,6 +39,10 @@ def run(cli=False):
     w.setWindowTitle(__title__)
     if args.snapshot_window_off:
         w.snp_dock.close()
+
+    if args.snapshot is not None:
+        w.snp_dock.close()
+        w.load_snapshot(args.snapshot)
 
     if cli:
         app.exec_()
