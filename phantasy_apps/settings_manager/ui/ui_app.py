@@ -592,24 +592,6 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem3)
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setObjectName("label_2")
-        self.horizontalLayout.addWidget(self.label_2)
-        self.last_refreshed_lbl = QtWidgets.QLabel(self.centralwidget)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.last_refreshed_lbl.setFont(font)
-        self.last_refreshed_lbl.setStyleSheet("QLabel {\n"
-                                              "    color: #2E3436;\n"
-                                              "}")
-        self.last_refreshed_lbl.setText("")
-        self.last_refreshed_lbl.setObjectName("last_refreshed_lbl")
-        self.horizontalLayout.addWidget(self.last_refreshed_lbl)
-        self.line = QtWidgets.QFrame(self.centralwidget)
-        self.line.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line.setObjectName("line")
-        self.horizontalLayout.addWidget(self.line)
         self.label_6 = QtWidgets.QLabel(self.centralwidget)
         self.label_6.setObjectName("label_6")
         self.horizontalLayout.addWidget(self.label_6)
@@ -630,6 +612,24 @@ class Ui_MainWindow(object):
         self.update_rate_cbb.addItem("")
         self.update_rate_cbb.addItem("")
         self.horizontalLayout.addWidget(self.update_rate_cbb)
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setObjectName("label_2")
+        self.horizontalLayout.addWidget(self.label_2)
+        self.last_refreshed_lbl = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.last_refreshed_lbl.setFont(font)
+        self.last_refreshed_lbl.setStyleSheet("QLabel {\n"
+                                              "    color: #2E3436;\n"
+                                              "}")
+        self.last_refreshed_lbl.setText("")
+        self.last_refreshed_lbl.setObjectName("last_refreshed_lbl")
+        self.horizontalLayout.addWidget(self.last_refreshed_lbl)
+        self.line = QtWidgets.QFrame(self.centralwidget)
+        self.line.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.horizontalLayout.addWidget(self.line)
         self.update_ctrl_btn = QtWidgets.QToolButton(self.centralwidget)
         icon16 = QtGui.QIcon()
         icon16.addPixmap(QtGui.QPixmap(":/sm-icons/start.png"),
@@ -1571,8 +1571,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
-        MainWindow.setTabOrder(self.lv_view_btn, self.update_rate_cbb)
-        MainWindow.setTabOrder(self.update_rate_cbb, self.update_ctrl_btn)
+        MainWindow.setTabOrder(self.lv_view_btn, self.update_ctrl_btn)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -1732,7 +1731,6 @@ class Ui_MainWindow(object):
         self.total_field_number_title_lbl.setText(
             _translate("MainWindow", "Fields"))
         self.total_field_number_lbl.setText(_translate("MainWindow", "0"))
-        self.label_2.setText(_translate("MainWindow", "Last refreshed at: "))
         self.label_6.setToolTip(
             _translate(
                 "MainWindow",
@@ -1745,6 +1743,7 @@ class Ui_MainWindow(object):
         self.update_rate_cbb.setItemText(3, _translate("MainWindow", "10 s"))
         self.update_rate_cbb.setItemText(4, _translate("MainWindow", "20 s"))
         self.update_rate_cbb.setItemText(5, _translate("MainWindow", "50 s"))
+        self.label_2.setText(_translate("MainWindow", "Last refreshed at: "))
         self.update_ctrl_btn.setToolTip(
             _translate("MainWindow", "Start/stop updating values (Ctrl+F5)."))
         self.update_ctrl_btn.setText(_translate("MainWindow", "..."))
