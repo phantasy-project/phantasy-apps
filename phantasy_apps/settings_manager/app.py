@@ -813,6 +813,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_loaded.connect(self.on_update_pos_filter)
         # re-enable filter buttons if any
         self.snp_loaded.connect(self.refresh_filter_btns)
+        # post loaded snp info
+        self.snp_loaded.connect(self.post_snp_info)
         #
         self.snp_saved.connect(self.on_snp_saved)
 
@@ -2716,7 +2718,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def on_data_refresh_done(self):
         # Data refreshing is done (before any waiting): update the last updated timestamp.
-        ts = datetime.fromtimestamp(time.time()).strftime("%Y-%m-%d %T")
+        ts = datetime.now().strftime("%Y-%m-%d %T")
         self.last_refreshed_lbl.setText(ts)
 
     def set_widgets_status_for_updating(self, status, is_single=True):
@@ -2920,6 +2922,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_update_pos_filter(self, snpdata):
         self.pos_filter_btn.toggled.emit(self.pos_filter_btn.isChecked())
         self.pos_dspin.valueChanged.emit(self.pos_dspin.value())
+
+    def post_snp_info(self, snpdata):
+        info_text = f"Snapshot: {snpdata.ts_as_str()}, {snpdata.ion_as_str()}"
+        ts_text = f"Loaded at {datetime.now().strftime('%Y-%m-%d %T')}"
+        self.loaded_snp_info_lbl.setText(info_text)
+        self.loaded_snp_ts_lbl.setText(ts_text)
 
     def dragEnterEvent(self, e):
         if e.mimeData().hasUrls():
