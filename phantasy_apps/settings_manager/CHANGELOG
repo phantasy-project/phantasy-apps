@@ -1,4 +1,17 @@
 ========================
+Version 10.2: 2022-08-17
+========================
+
+ - Improved data refreshing efficiency when Alarm Config button is checked.
+ - Enable 'Keep Refreshing' after loading a snapshot, refresh data every 20 seconds.
+ - Resolved one issue regarding high CPU loading.
+ - Improved the Settings View looking style.
+ - Post text info when data is refreshed and snapshot is loaded.
+ - Added argument support for --snapshot and --snapshot-window-off options.
+ - Changed the settling time of alarm set to 20 ms.
+ - Other bugfixes.
+
+========================
 Version 10.1: 2022-07-15
 ========================
 
