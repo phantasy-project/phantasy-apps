@@ -1,3 +1,15 @@
+Version 5.4.1
+-------------
+2022-08-17
+
+- SM: see the changelog in settings_manager sub-directory.
+- CV:
+  - Reset mem space before loading a new task.
+  - Add widget for plotting all curves.
+  - Support visualizing all curves in the same figure offline and online.
+  - Pass 'alter_idx' as a new keyword arg to alter_action.
+- AL: Support attach changelog info thru app config via key 'changelog'.
+
 Version 5.3.1
 -------------
 2022-03-18
