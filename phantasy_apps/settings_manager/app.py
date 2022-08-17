@@ -245,6 +245,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # UI
         self.setupUi(self)
         self.postInitUi()
+        # resizing
+        self.resize(1920, 1440)
 
         self.default_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         self.default_font_size = self.default_font.pointSize()
