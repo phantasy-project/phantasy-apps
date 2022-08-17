@@ -2,7 +2,7 @@
 Version=1.0
 Type=Application
 Name=Settings Manager
-Comment=Manage Accelerator Settings
+Comment=Manage the physics settings of accelerator system
 Terminal=false
 Exec=settings_manager
 Icon=phantasy-sm
