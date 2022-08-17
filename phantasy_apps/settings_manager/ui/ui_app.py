@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(2401, 1434)
+        MainWindow.resize(2401, 1440)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/sm-icons/logo.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -399,22 +399,27 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.setContentsMargins(0, 0, -1, -1)
         self.verticalLayout_6.setSpacing(1)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
+        self.loaded_snp_info_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.loaded_snp_info_lbl.setText("")
+        self.loaded_snp_info_lbl.setObjectName("loaded_snp_info_lbl")
+        self.verticalLayout_6.addWidget(self.loaded_snp_info_lbl)
         self.loaded_snp_ts_lbl = QtWidgets.QLabel(self.centralwidget)
         self.loaded_snp_ts_lbl.setMinimumSize(QtCore.QSize(0, 15))
         self.loaded_snp_ts_lbl.setMaximumSize(QtCore.QSize(16777215, 15))
         font = QtGui.QFont()
         font.setPointSize(9)
         self.loaded_snp_ts_lbl.setFont(font)
-        self.loaded_snp_ts_lbl.setStyleSheet("QLabel {\n"
-                                             "    color: #888A85;\n"
-                                             "}")
+        self.loaded_snp_ts_lbl.setStyleSheet(
+            "QLabel {\n"
+            "    color: #888A85;\n"
+            "    border-top: 1px solid gray;\n"
+            "}")
         self.loaded_snp_ts_lbl.setText("")
+        self.loaded_snp_ts_lbl.setAlignment(QtCore.Qt.AlignRight
+                                            | QtCore.Qt.AlignTrailing
+                                            | QtCore.Qt.AlignVCenter)
         self.loaded_snp_ts_lbl.setObjectName("loaded_snp_ts_lbl")
         self.verticalLayout_6.addWidget(self.loaded_snp_ts_lbl)
-        self.loaded_snp_info_lbl = QtWidgets.QLabel(self.centralwidget)
-        self.loaded_snp_info_lbl.setText("")
-        self.loaded_snp_info_lbl.setObjectName("loaded_snp_info_lbl")
-        self.verticalLayout_6.addWidget(self.loaded_snp_info_lbl)
         self.horizontalLayout_9.addLayout(self.verticalLayout_6)
         spacerItem2 = QtWidgets.QSpacerItem(600, 30,
                                             QtWidgets.QSizePolicy.Expanding,
@@ -1128,6 +1133,63 @@ class Ui_MainWindow(object):
         self.select_all_ions_btn.setObjectName("select_all_ions_btn")
         self.horizontalLayout_8.addWidget(self.select_all_ions_btn)
         self.gridLayout_3.addLayout(self.horizontalLayout_8, 4, 0, 1, 1)
+        self.horizontalLayout_10 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_10.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_10.setObjectName("horizontalLayout_10")
+        self.filter_date_chkbox = QtWidgets.QCheckBox(self.dockWidgetContents)
+        self.filter_date_chkbox.setObjectName("filter_date_chkbox")
+        self.horizontalLayout_10.addWidget(self.filter_date_chkbox)
+        self.dateEdit1 = QtWidgets.QDateEdit(self.dockWidgetContents)
+        self.dateEdit1.setEnabled(False)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.dateEdit1.sizePolicy().hasHeightForWidth())
+        self.dateEdit1.setSizePolicy(sizePolicy)
+        self.dateEdit1.setReadOnly(True)
+        self.dateEdit1.setCalendarPopup(False)
+        self.dateEdit1.setObjectName("dateEdit1")
+        self.horizontalLayout_10.addWidget(self.dateEdit1)
+        self.label_7 = QtWidgets.QLabel(self.dockWidgetContents)
+        self.label_7.setObjectName("label_7")
+        self.horizontalLayout_10.addWidget(self.label_7)
+        self.dateEdit2 = QtWidgets.QDateEdit(self.dockWidgetContents)
+        self.dateEdit2.setEnabled(False)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.dateEdit2.sizePolicy().hasHeightForWidth())
+        self.dateEdit2.setSizePolicy(sizePolicy)
+        self.dateEdit2.setReadOnly(True)
+        self.dateEdit2.setCalendarPopup(False)
+        self.dateEdit2.setObjectName("dateEdit2")
+        self.horizontalLayout_10.addWidget(self.dateEdit2)
+        self.toolButton_2 = QtWidgets.QToolButton(self.dockWidgetContents)
+        self.toolButton_2.setObjectName("toolButton_2")
+        self.horizontalLayout_10.addWidget(self.toolButton_2)
+        spacerItem5 = QtWidgets.QSpacerItem(100, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_10.addItem(spacerItem5)
+        self.filter_note_chkbox = QtWidgets.QCheckBox(self.dockWidgetContents)
+        self.filter_note_chkbox.setObjectName("filter_note_chkbox")
+        self.horizontalLayout_10.addWidget(self.filter_note_chkbox)
+        self.snp_note_filter_lineEdit = QtWidgets.QLineEdit(
+            self.dockWidgetContents)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(3)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.snp_note_filter_lineEdit.sizePolicy().hasHeightForWidth())
+        self.snp_note_filter_lineEdit.setSizePolicy(sizePolicy)
+        self.snp_note_filter_lineEdit.setObjectName("snp_note_filter_lineEdit")
+        self.horizontalLayout_10.addWidget(self.snp_note_filter_lineEdit)
+        self.gridLayout_3.addLayout(self.horizontalLayout_10, 5, 0, 1, 1)
         self.snp_treeView = QtWidgets.QTreeView(self.dockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Expanding)
@@ -1145,21 +1207,6 @@ class Ui_MainWindow(object):
         self.snp_treeView.setAnimated(True)
         self.snp_treeView.setObjectName("snp_treeView")
         self.gridLayout_3.addWidget(self.snp_treeView, 6, 0, 1, 1)
-        self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_6.setContentsMargins(-1, 0, -1, -1)
-        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
-        self.current_snp_lbl = QtWidgets.QLabel(self.dockWidgetContents)
-        self.current_snp_lbl.setObjectName("current_snp_lbl")
-        self.horizontalLayout_6.addWidget(self.current_snp_lbl)
-        self.current_snp_lineEdit = QtWidgets.QLineEdit(
-            self.dockWidgetContents)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.current_snp_lineEdit.setFont(font)
-        self.current_snp_lineEdit.setReadOnly(True)
-        self.current_snp_lineEdit.setObjectName("current_snp_lineEdit")
-        self.horizontalLayout_6.addWidget(self.current_snp_lineEdit)
-        self.gridLayout_3.addLayout(self.horizontalLayout_6, 7, 0, 1, 1)
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_7.setContentsMargins(-1, 0, 0, -1)
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
@@ -1218,10 +1265,10 @@ class Ui_MainWindow(object):
         self.snp_new_lbl = QtWidgets.QLabel(self.dockWidgetContents)
         self.snp_new_lbl.setObjectName("snp_new_lbl")
         self.horizontalLayout_4.addWidget(self.snp_new_lbl)
-        spacerItem5 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem6 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem5)
+        self.horizontalLayout_4.addItem(spacerItem6)
         self.snp_refresh_btn = QtWidgets.QToolButton(self.dockWidgetContents)
         icon32 = QtGui.QIcon()
         icon32.addPixmap(QtGui.QPixmap(":/sm-icons/refresh.png"),
@@ -1245,63 +1292,6 @@ class Ui_MainWindow(object):
         self.total_snp_lbl.setObjectName("total_snp_lbl")
         self.horizontalLayout_4.addWidget(self.total_snp_lbl)
         self.gridLayout_3.addLayout(self.horizontalLayout_4, 2, 0, 1, 1)
-        self.horizontalLayout_10 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_10.setContentsMargins(-1, 0, -1, -1)
-        self.horizontalLayout_10.setObjectName("horizontalLayout_10")
-        self.filter_date_chkbox = QtWidgets.QCheckBox(self.dockWidgetContents)
-        self.filter_date_chkbox.setObjectName("filter_date_chkbox")
-        self.horizontalLayout_10.addWidget(self.filter_date_chkbox)
-        self.dateEdit1 = QtWidgets.QDateEdit(self.dockWidgetContents)
-        self.dateEdit1.setEnabled(False)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.dateEdit1.sizePolicy().hasHeightForWidth())
-        self.dateEdit1.setSizePolicy(sizePolicy)
-        self.dateEdit1.setReadOnly(True)
-        self.dateEdit1.setCalendarPopup(False)
-        self.dateEdit1.setObjectName("dateEdit1")
-        self.horizontalLayout_10.addWidget(self.dateEdit1)
-        self.label_7 = QtWidgets.QLabel(self.dockWidgetContents)
-        self.label_7.setObjectName("label_7")
-        self.horizontalLayout_10.addWidget(self.label_7)
-        self.dateEdit2 = QtWidgets.QDateEdit(self.dockWidgetContents)
-        self.dateEdit2.setEnabled(False)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.dateEdit2.sizePolicy().hasHeightForWidth())
-        self.dateEdit2.setSizePolicy(sizePolicy)
-        self.dateEdit2.setReadOnly(True)
-        self.dateEdit2.setCalendarPopup(False)
-        self.dateEdit2.setObjectName("dateEdit2")
-        self.horizontalLayout_10.addWidget(self.dateEdit2)
-        self.toolButton_2 = QtWidgets.QToolButton(self.dockWidgetContents)
-        self.toolButton_2.setObjectName("toolButton_2")
-        self.horizontalLayout_10.addWidget(self.toolButton_2)
-        spacerItem6 = QtWidgets.QSpacerItem(100, 20,
-                                            QtWidgets.QSizePolicy.Expanding,
-                                            QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_10.addItem(spacerItem6)
-        self.filter_note_chkbox = QtWidgets.QCheckBox(self.dockWidgetContents)
-        self.filter_note_chkbox.setObjectName("filter_note_chkbox")
-        self.horizontalLayout_10.addWidget(self.filter_note_chkbox)
-        self.snp_note_filter_lineEdit = QtWidgets.QLineEdit(
-            self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(3)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.snp_note_filter_lineEdit.sizePolicy().hasHeightForWidth())
-        self.snp_note_filter_lineEdit.setSizePolicy(sizePolicy)
-        self.snp_note_filter_lineEdit.setObjectName("snp_note_filter_lineEdit")
-        self.horizontalLayout_10.addWidget(self.snp_note_filter_lineEdit)
-        self.gridLayout_3.addLayout(self.horizontalLayout_10, 5, 0, 1, 1)
         self.snp_dock.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(4), self.snp_dock)
         self.log_dock = DockWidget(MainWindow)
@@ -1900,8 +1890,16 @@ class Ui_MainWindow(object):
         self.label_13.setText(_translate("MainWindow", "Select Ions:"))
         self.select_none_ions_btn.setText(_translate("MainWindow", "None"))
         self.select_all_ions_btn.setText(_translate("MainWindow", "All"))
-        self.current_snp_lbl.setText(
-            _translate("MainWindow", "Current Snapshot"))
+        self.filter_date_chkbox.setText(
+            _translate("MainWindow", "Filter  between"))
+        self.dateEdit1.setDisplayFormat(_translate("MainWindow", "yyyy-MM-dd"))
+        self.label_7.setText(_translate("MainWindow", "and"))
+        self.dateEdit2.setDisplayFormat(_translate("MainWindow", "yyyy-MM-dd"))
+        self.toolButton_2.setText(_translate("MainWindow", "..."))
+        self.filter_note_chkbox.setText(_translate("MainWindow",
+                                                   "Filter Note"))
+        self.snp_note_filter_lineEdit.setToolTip(
+            _translate("MainWindow", "Ignore cases, loose wildcard match."))
         self.snp_expand_btn.setToolTip(
             _translate("MainWindow", "Click to expand all."))
         self.snp_expand_btn.setText(_translate("MainWindow", "..."))
@@ -1924,16 +1922,6 @@ class Ui_MainWindow(object):
         self.total_snp_lbl.setText(
             _translate("MainWindow",
                        "<html><head/><body><p>0</p></body></html>"))
-        self.filter_date_chkbox.setText(
-            _translate("MainWindow", "Filter  between"))
-        self.dateEdit1.setDisplayFormat(_translate("MainWindow", "yyyy-MM-dd"))
-        self.label_7.setText(_translate("MainWindow", "and"))
-        self.dateEdit2.setDisplayFormat(_translate("MainWindow", "yyyy-MM-dd"))
-        self.toolButton_2.setText(_translate("MainWindow", "..."))
-        self.filter_note_chkbox.setText(_translate("MainWindow",
-                                                   "Filter Note"))
-        self.snp_note_filter_lineEdit.setToolTip(
-            _translate("MainWindow", "Ignore cases, loose wildcard match."))
         self.log_dock.setWindowTitle(_translate("MainWindow", "Setting Logs"))
         self.findtext_lbl.setText(_translate("MainWindow", "Find Text"))
         self.label_11.setText(_translate("MainWindow", "Total log entries:"))
