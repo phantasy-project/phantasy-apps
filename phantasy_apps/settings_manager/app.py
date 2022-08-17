@@ -162,6 +162,7 @@ ALM_TYPE_MAP = { # [read, tune]
 SNP_NAME_PV = "PHY:SM_SNP_LAST_NAME"
 SNP_NOTE_PV = "PHY:SM_SNP_LAST_NOTE"
 
+_CHANGELOG_FILE = os.path.join(os.path.dirname(__file__), 'CHANGELOG.pdf')
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # settings view filter button group status (or) changed --> update
@@ -3642,6 +3643,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         self._n_snp_max = next(N_SNP_MAX)
         self.sender().setText(str(self._n_snp_max))
+
+    @pyqtSlot()
+    def onShowChangelog(self):
+        """Open and read changelog.
+        """
+        QDesktopServices.openUrl(QUrl(_CHANGELOG_FILE))
 
     @pyqtSlot()
     def onManageDB(self):
