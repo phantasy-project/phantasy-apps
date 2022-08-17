@@ -1446,9 +1446,12 @@ class Ui_MainWindow(object):
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionManage_Database.setIcon(icon44)
         self.actionManage_Database.setObjectName("actionManage_Database")
+        self.actionChangelog = QtWidgets.QAction(MainWindow)
+        self.actionChangelog.setObjectName("actionChangelog")
         self.menu_File.addAction(self.actionLoad_From_Snapshot)
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
+        self.menu_Help.addAction(self.actionChangelog)
         self.menu_Help.addAction(self.action_About)
         self.menu_Help.addAction(self.actionAbout_Qt)
         self.menuTools.addAction(self.actionFix_Corrector_Names)
@@ -1599,6 +1602,7 @@ class Ui_MainWindow(object):
             MainWindow.on_show_enabled_read_alms)
         self.show_enabled_tune_alms_btn.toggled['bool'].connect(
             MainWindow.on_show_enabled_tune_alms)
+        self.actionChangelog.triggered.connect(MainWindow.onShowChangelog)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
@@ -2007,6 +2011,7 @@ class Ui_MainWindow(object):
                        "Capture additional data as machine state."))
         self.actionManage_Database.setText(
             _translate("MainWindow", "Manage Database"))
+        self.actionChangelog.setText(_translate("MainWindow", "Changelog"))
 
 
 from phantasy_ui.widgets import DockWidget
