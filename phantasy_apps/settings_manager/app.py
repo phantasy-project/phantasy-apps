@@ -784,10 +784,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # almset pb
         self.alm_set_pb.setVisible(False)
 
-        # current snp lbl/le
+        # current snp
         self._current_snpdata = None
-        for i in (self.current_snp_lbl, self.current_snp_lineEdit):
-            i.setVisible(False)
 
         # snp filters, {btn_text (elemt, tag):ischecked?}
         self._current_btn_filter = dict()
