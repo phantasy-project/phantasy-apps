@@ -989,7 +989,7 @@ class _Delegate(QStyledItemDelegate):
 
     def sizeHint(self, option, index):
         size = QStyledItemDelegate.sizeHint(self, option, index)
-        size.setHeight(size.height() * 1.2)
+        size.setHeight(size.height() * 1.3)
         return size
 
 
