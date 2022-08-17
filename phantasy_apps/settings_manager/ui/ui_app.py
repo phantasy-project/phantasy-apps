@@ -390,6 +390,32 @@ class Ui_MainWindow(object):
         self.delete_btn.setAutoRaise(True)
         self.delete_btn.setObjectName("delete_btn")
         self.horizontalLayout_9.addWidget(self.delete_btn)
+        self.line_6 = QtWidgets.QFrame(self.centralwidget)
+        self.line_6.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_6.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_6.setObjectName("line_6")
+        self.horizontalLayout_9.addWidget(self.line_6)
+        self.verticalLayout_6 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_6.setContentsMargins(0, 0, -1, -1)
+        self.verticalLayout_6.setSpacing(1)
+        self.verticalLayout_6.setObjectName("verticalLayout_6")
+        self.loaded_snp_ts_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.loaded_snp_ts_lbl.setMinimumSize(QtCore.QSize(0, 15))
+        self.loaded_snp_ts_lbl.setMaximumSize(QtCore.QSize(16777215, 15))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        self.loaded_snp_ts_lbl.setFont(font)
+        self.loaded_snp_ts_lbl.setStyleSheet("QLabel {\n"
+                                             "    color: #888A85;\n"
+                                             "}")
+        self.loaded_snp_ts_lbl.setText("")
+        self.loaded_snp_ts_lbl.setObjectName("loaded_snp_ts_lbl")
+        self.verticalLayout_6.addWidget(self.loaded_snp_ts_lbl)
+        self.loaded_snp_info_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.loaded_snp_info_lbl.setText("")
+        self.loaded_snp_info_lbl.setObjectName("loaded_snp_info_lbl")
+        self.verticalLayout_6.addWidget(self.loaded_snp_info_lbl)
+        self.horizontalLayout_9.addLayout(self.verticalLayout_6)
         spacerItem2 = QtWidgets.QSpacerItem(600, 30,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
@@ -617,6 +643,7 @@ class Ui_MainWindow(object):
         self.last_refreshed_lbl.setStyleSheet("QLabel {\n"
                                               "    color: #2E3436;\n"
                                               "}")
+        self.last_refreshed_lbl.setText("")
         self.last_refreshed_lbl.setObjectName("last_refreshed_lbl")
         self.verticalLayout_5.addWidget(self.last_refreshed_lbl)
         self.horizontalLayout.addLayout(self.verticalLayout_5)
@@ -1753,8 +1780,6 @@ class Ui_MainWindow(object):
         self.label_6.setText(_translate("MainWindow", "Settings Data"))
         self.last_refreshed_title_lbl.setText(
             _translate("MainWindow", "Last refreshed at"))
-        self.last_refreshed_lbl.setText(
-            _translate("MainWindow", "                   "))
         self.update_rate_cbb.setItemText(0, _translate("MainWindow", "1 s"))
         self.update_rate_cbb.setItemText(1, _translate("MainWindow", "2 s"))
         self.update_rate_cbb.setItemText(2, _translate("MainWindow", "5 s"))
