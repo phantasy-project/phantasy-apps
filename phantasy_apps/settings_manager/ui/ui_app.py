@@ -413,6 +413,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.setSpacing(1)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.loaded_snp_note_lbl = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.loaded_snp_note_lbl.sizePolicy().hasHeightForWidth())
+        self.loaded_snp_note_lbl.setSizePolicy(sizePolicy)
         self.loaded_snp_note_lbl.setMinimumSize(QtCore.QSize(0, 15))
         self.loaded_snp_note_lbl.setMaximumSize(QtCore.QSize(16777215, 15))
         font = QtGui.QFont()
