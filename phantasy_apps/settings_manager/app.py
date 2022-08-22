@@ -161,6 +161,9 @@ ALM_TYPE_MAP = { # [read, tune]
 # SNP PVs
 SNP_NAME_PV = "PHY:SM_SNP_LAST_NAME"
 SNP_NOTE_PV = "PHY:SM_SNP_LAST_NOTE"
+SNP_ION_PV = "PHY:SM_SNP_LAST_ION"
+SNP_AUTHOR_PV = "PHY:SM_SNP_LAST_AUTHOR"
+SNP_PUBLISHER_PV = "PHY:SM_SNP_LAST_PUBLISHER"
 
 _CHANGELOG_FILE = os.path.join(os.path.dirname(__file__), 'CHANGELOG.pdf')
 
@@ -3397,11 +3400,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 print(msg)
                 ref_st_pv.value = val0
         # update metadata onto OPI
-        snp_name = data.ts_as_str() + ", " + data.ion_as_str()
+        snp_name = data.ts_as_str()
+        snp_ion_str = data.ion_as_str()
+        snp_author = data.user
         snp_note = '' if data.note == "Input note ..." else data.note
         if snp_name != caget(SNP_NAME_PV):
             caput(SNP_NAME_PV, snp_name, wait=False)
             caput(SNP_NOTE_PV, snp_note, wait=False)
+            caput(SNP_ION_PV, snp_ion_str, wait=False)
+            caput(SNP_AUTHOR_PV, snp_author, wait=False)
+            caput(SNP_PUBLISHER_PV, getuser(), wait=False)
 
     def on_snp_loaded(self, data):
         m = self.snp_treeView.model()
