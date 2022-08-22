@@ -352,6 +352,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.show_init_settings_btn)
         self.gridLayout.addLayout(self.horizontalLayout_2, 5, 1, 1, 16)
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_9.setSpacing(4)
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.grow_fontsize_btn = QtWidgets.QToolButton(self.centralwidget)
         icon9 = QtGui.QIcon()
@@ -396,13 +397,30 @@ class Ui_MainWindow(object):
         self.line_6.setObjectName("line_6")
         self.horizontalLayout_9.addWidget(self.line_6)
         self.verticalLayout_6 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_6.setContentsMargins(0, 0, -1, -1)
+        self.verticalLayout_6.setContentsMargins(-1, 0, -1, -1)
         self.verticalLayout_6.setSpacing(1)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.loaded_snp_info_lbl = QtWidgets.QLabel(self.centralwidget)
-        self.loaded_snp_info_lbl.setText("")
+        self.loaded_snp_info_lbl.setStyleSheet(
+            "QLabel {\n"
+            "    border-top: 0px solid gray;\n"
+            "    border-bottom: 1px solid gray;\n"
+            "}")
         self.loaded_snp_info_lbl.setObjectName("loaded_snp_info_lbl")
         self.verticalLayout_6.addWidget(self.loaded_snp_info_lbl)
+        self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_6.setContentsMargins(0, 0, -1, -1)
+        self.horizontalLayout_6.setSpacing(1)
+        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
+        self.loaded_snp_note_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.loaded_snp_note_lbl.setMinimumSize(QtCore.QSize(0, 15))
+        self.loaded_snp_note_lbl.setMaximumSize(QtCore.QSize(16777215, 15))
+        font = QtGui.QFont()
+        font.setFamily("Cantarell")
+        font.setPointSize(9)
+        self.loaded_snp_note_lbl.setFont(font)
+        self.loaded_snp_note_lbl.setObjectName("loaded_snp_note_lbl")
+        self.horizontalLayout_6.addWidget(self.loaded_snp_note_lbl)
         self.loaded_snp_ts_lbl = QtWidgets.QLabel(self.centralwidget)
         self.loaded_snp_ts_lbl.setMinimumSize(QtCore.QSize(0, 15))
         self.loaded_snp_ts_lbl.setMaximumSize(QtCore.QSize(16777215, 15))
@@ -412,14 +430,15 @@ class Ui_MainWindow(object):
         self.loaded_snp_ts_lbl.setStyleSheet(
             "QLabel {\n"
             "    color: #888A85;\n"
-            "    border-top: 1px solid gray;\n"
+            "    border-top: 0px solid gray;\n"
+            "    border-left: 1px solid gray;\n"
             "}")
-        self.loaded_snp_ts_lbl.setText("")
         self.loaded_snp_ts_lbl.setAlignment(QtCore.Qt.AlignRight
                                             | QtCore.Qt.AlignTrailing
                                             | QtCore.Qt.AlignVCenter)
         self.loaded_snp_ts_lbl.setObjectName("loaded_snp_ts_lbl")
-        self.verticalLayout_6.addWidget(self.loaded_snp_ts_lbl)
+        self.horizontalLayout_6.addWidget(self.loaded_snp_ts_lbl)
+        self.verticalLayout_6.addLayout(self.horizontalLayout_6)
         self.horizontalLayout_9.addLayout(self.verticalLayout_6)
         spacerItem2 = QtWidgets.QSpacerItem(600, 30,
                                             QtWidgets.QSizePolicy.Expanding,
@@ -1735,6 +1754,13 @@ class Ui_MainWindow(object):
         self.delete_btn.setToolTip(
             _translate("MainWindow", "Delete selected items."))
         self.delete_btn.setText(_translate("MainWindow", "Delete"))
+        self.loaded_snp_info_lbl.setText(
+            _translate("MainWindow",
+                       "Snapshot: 2022-02-24T08:49:11, 40Ar18(9+)"))
+        self.loaded_snp_note_lbl.setText(
+            _translate("MainWindow", "snapshot note..."))
+        self.loaded_snp_ts_lbl.setText(
+            _translate("MainWindow", "Loaded at 2022-08-22 10:47:37"))
         self.filter_btn.setToolTip(
             _translate(
                 "MainWindow",
