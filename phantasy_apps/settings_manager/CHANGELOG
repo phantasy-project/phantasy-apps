@@ -1,4 +1,13 @@
 ========================
+Version 10.3: 2022-08-22
+========================
+
+ - Add menu for reading changelog.
+ - Post snapshot note info when a snapshot is loaded.
+ - Update the PV info for loaded snapshot.
+ - Return +charge_state for SnapshotData.ion_as_str().
+
+========================
 Version 10.2: 2022-08-17
 ========================
 
