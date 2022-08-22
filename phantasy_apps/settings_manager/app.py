@@ -31,6 +31,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QColor
 from PyQt5.QtGui import QFont
 from PyQt5.QtGui import QFontDatabase
+from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtGui import QPixmap
@@ -576,6 +577,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._machstate = None
 
     def __post_init_ui(self):
+        # hide loaded snp info
+        self.set_post_snp_info_visible(False)
         # data is refreshed
         self.last_refreshed.connect(self.on_data_refresh_done)
 
@@ -2928,10 +2931,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.pos_dspin.valueChanged.emit(self.pos_dspin.value())
 
     def post_snp_info(self, snpdata):
+        self.set_post_snp_info_visible(True)
         info_text = f"Snapshot: {snpdata.ts_as_str()}, {snpdata.ion_as_str()}"
         ts_text = f"Loaded at {datetime.now().strftime('%Y-%m-%d %T')}"
+        note_lbl = self.loaded_snp_note_lbl
+        full_note_text = snpdata.note
+        note_text = QFontMetrics(note_lbl.font()).elidedText(full_note_text,
+                                 Qt.ElideRight, note_lbl.width())
         self.loaded_snp_info_lbl.setText(info_text)
         self.loaded_snp_ts_lbl.setText(ts_text)
+        note_lbl.setText(note_text)
+        note_lbl.setToolTip(full_note_text)
+
+    def set_post_snp_info_visible(self, visibility):
+        [o.setVisible(visibility) for o in (
+                self.loaded_snp_info_lbl,
+                self.loaded_snp_ts_lbl,
+                self.loaded_snp_note_lbl)]
 
     def dragEnterEvent(self, e):
         if e.mimeData().hasUrls():
