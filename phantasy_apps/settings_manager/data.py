@@ -564,7 +564,7 @@ class SnapshotData:
     def ion_as_str(self):
         if self.ion_name == '':
             return ""
-        return f"{self.ion_mass}{self.ion_name}{self.ion_number}(+{self.ion_charge})"
+        return f"{self.ion_mass}{self.ion_name}{self.ion_number}({self.ion_charge}+)"
 
     def tags_as_str(self):
         return ",".join(self.tags)
