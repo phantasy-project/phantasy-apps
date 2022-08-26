@@ -2734,16 +2734,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.one_updater.meta_signal1.connect(
             partial(self.on_update_display, m))
         self.one_updater.daqStarted.connect(lambda:self.refresh_pb.setVisible(True))
-        self.one_updater.daqStarted.connect(
-            lambda: printlog("Data refreshing..."))
         # self.one_updater.daqStarted.connect(
         #     partial(self.set_widgets_status_for_updating, 'START'))
         self.one_updater.progressUpdated.connect(self._on_data_refresh_progressed)
         # self.one_updater.finished.connect(
         #     partial(self.set_widgets_status_for_updating, 'STOP'))
         self.one_updater.daqFinished.connect(lambda:self.refresh_pb.setVisible(False))
-        self.one_updater.daqFinished.connect(
-            lambda: printlog("Data refreshing...done."))
         self.one_updater.daqFinished.connect(self.last_refreshed)
         self.one_updater.start()
 
@@ -2751,6 +2747,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # Data refreshing is done (before any waiting): update the last updated timestamp.
         ts = datetime.now().strftime("%Y-%m-%d %T")
         self.last_refreshed_lbl.setText(ts)
+        # add log message
+        msg = "[{0}]: Data is refreshed.".format(
+            datetime.fromtimestamp(time.time()).strftime(TS_FMT))
+        self.log_textEdit.append(msg)
 
     def set_widgets_status_for_updating(self, status, is_single=True):
         """Set widgets status for updating.
@@ -3449,7 +3449,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     ename, fname, ref_st_pv.pvname, val0
                 )
                 self.log_textEdit.append(msg)
-                print(msg)
                 ref_st_pv.value = val0
         # update metadata onto OPI
         snp_name = data.ts_as_str()
