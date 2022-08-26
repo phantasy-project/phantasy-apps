@@ -2731,7 +2731,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.one_updater = DAQT(daq_func=partial(self._refresh_single, m, m0,
                                                  False),
                                 daq_seq=self.obj_it_tuple,
-                                nproc=NPROC)
+                                nproc=1) # NPROC) # set NPROC 1 to allow report correct progress
         self.one_updater.meta_signal1.connect(
             partial(self.on_update_display, m))
         self.one_updater.daqStarted.connect(lambda:self.refresh_pb.setVisible(True))
