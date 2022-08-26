@@ -2427,6 +2427,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def update_value_single(self, m, m0, delt, viewport_only, iiter):
         # update data tree for one time, iterate all items.
+
+        #
+        m0 = self._tv.model()
+        if m0 is None:
+            return
+        m = m0.sourceModel()
+        #
+
         if delt == -1:
             worker = self._updater
         else:
