@@ -168,6 +168,10 @@ SNP_PUBLISHER_PV = "PHY:SM_SNP_LAST_PUBLISHER"
 
 _CHANGELOG_FILE = os.path.join(os.path.dirname(__file__), 'CHANGELOG.pdf')
 
+# refresh period
+DATA_REFRESH_PERIOD = 10000 # milliseconds
+
+
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # settings view filter button group status (or) changed --> update
     filter_btn_group_status_changed = pyqtSignal()
@@ -882,6 +886,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.dateEdit2.setDate(QDate(NOW_YEAR, NOW_MONTH, NOW_DAY))
         # snp note filter
         self.snp_note_filter_enabled = False
+
+        # periodical clicker on single data refresh
+        self._data_refresh_timer = QTimer(self)
+        self._data_refresh_timer.timeout.connect(self.on_click_refresh_once)
+        self._data_refresh_timer.start(DATA_REFRESH_PERIOD)
+
+    def on_click_refresh_once(self):
+        if self._tv.model() is None:
+            return
+        self.single_update_btn.clicked.emit()
 
     @pyqtSlot(bool)
     def on_toggle_show_init_settings_btn(self, toggled):
@@ -2433,6 +2447,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if m0 is None:
             return
         m = m0.sourceModel()
+        print(len(self.obj_it_tuple))
         #
 
         if delt == -1:
@@ -2443,7 +2458,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         cnt_fld = 0
         # if self._filter_btn_enabled:  # force iterate all if any (3) filter btn is on
         #    viewport_only = False
-        for o, it in self.obj_it_tuple:
+        for o, it in zip(m._fld_obj, m._fld_it):
             _cnt_fld = self._refresh_single(m,
                                             m0,
                                             viewport_only, (o, it),
@@ -3454,8 +3469,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.m_src.on_snp_loaded(data)
         self._current_snpdata = data
         # enable auto data updating in 5 seconds
-        if not self.update_ctrl_btn.isChecked():
-            delayed_exec(lambda: self.update_ctrl_btn.setChecked(True), 5000)
+        # if not self.update_ctrl_btn.isChecked():
+        #    delayed_exec(lambda: self.update_ctrl_btn.setChecked(True), 5000)
 
     def on_snp_saved(self, name, path):
         m = self.snp_treeView.model()
