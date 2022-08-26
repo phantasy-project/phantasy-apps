@@ -794,8 +794,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # refset pb
         self.refset_pb.setVisible(False)
         # data refresh pb
-        # self.refresh_pb.setVisible(False)
-        # self.refresh_pb.setRange(0, 0)
+        self.refresh_pb.setVisible(False)
         # almset pb
         self.alm_set_pb.setVisible(False)
 
