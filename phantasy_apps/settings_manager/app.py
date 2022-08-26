@@ -583,6 +583,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def __post_init_ui(self):
         # hide loaded snp info
         self.set_post_snp_info_visible(False)
+        # hide last data refreshed info
+        self.set_last_data_refreshed_info_visible(False)
         # data is refreshed
         self.last_refreshed.connect(self.on_data_refresh_done)
 
@@ -2744,6 +2746,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.one_updater.start()
 
     def on_data_refresh_done(self):
+        self.set_last_data_refreshed_info_visible(True)
         # Data refreshing is done (before any waiting): update the last updated timestamp.
         ts = datetime.now().strftime("%Y-%m-%d %T")
         self.last_refreshed_lbl.setText(ts)
@@ -2983,6 +2986,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self.loaded_snp_info_lbl,
                 self.loaded_snp_ts_lbl,
                 self.loaded_snp_note_lbl)]
+
+    def set_last_data_refreshed_info_visible(self, visibility):
+        [o.setVisible(visibility) for o in (
+                self.last_refreshed_lbl,
+                self.last_refreshed_title_lbl)]
 
     def dragEnterEvent(self, e):
         if e.mimeData().hasUrls():
