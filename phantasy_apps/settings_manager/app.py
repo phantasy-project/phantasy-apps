@@ -592,6 +592,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # hide update_rate_cbb,
         self.update_rate_cbb.setCurrentText("20 s") # 0.05 Hz
         self.update_rate_cbb.setVisible(False)
+        # hide keep refreshing button (to be dropped)
+        self.update_ctrl_btn.setVisible(False)
 
         # WYSIWYC flag:
         self._wysiwyc_enabled = False
@@ -791,9 +793,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.apply_pb.setVisible(False)
         # refset pb
         self.refset_pb.setVisible(False)
-        # refresh pb
-        self.refresh_pb.setVisible(False)
-        self.refresh_pb.setRange(0, 0)
+        # data refresh pb
+        # self.refresh_pb.setVisible(False)
+        # self.refresh_pb.setRange(0, 0)
         # almset pb
         self.alm_set_pb.setVisible(False)
 
@@ -2737,7 +2739,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             lambda: printlog("Data refreshing..."))
         # self.one_updater.daqStarted.connect(
         #     partial(self.set_widgets_status_for_updating, 'START'))
-        #self.one_updater.progressUpdated.connect(self._on_data_refresh_progressed)
+        self.one_updater.progressUpdated.connect(self._on_data_refresh_progressed)
         # self.one_updater.finished.connect(
         #     partial(self.set_widgets_status_for_updating, 'STOP'))
         self.one_updater.daqFinished.connect(lambda:self.refresh_pb.setVisible(False))
