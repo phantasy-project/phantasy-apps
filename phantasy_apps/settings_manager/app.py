@@ -2942,14 +2942,25 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.set_post_snp_info_visible(True)
         info_text = f"Snapshot: {snpdata.ts_as_str()}, {snpdata.ion_as_str()}"
         ts_text = f"Loaded at {datetime.now().strftime('%Y-%m-%d %T')}"
-        note_lbl = self.loaded_snp_note_lbl
-        full_note_text = snpdata.note
-        note_text = QFontMetrics(note_lbl.font()).elidedText(full_note_text,
-                                 Qt.ElideRight, note_lbl.width())
         self.loaded_snp_info_lbl.setText(info_text)
         self.loaded_snp_ts_lbl.setText(ts_text)
+        self.set_loaded_snp_note_lbl(snpdata.note)
+
+    def set_loaded_snp_note_lbl(self, full_note_text: str):
+        note_lbl = self.loaded_snp_note_lbl
+        note_text = QFontMetrics(note_lbl.font()).elidedText(full_note_text,
+                                 Qt.ElideRight, note_lbl.width())
         note_lbl.setText(note_text)
         note_lbl.setToolTip(full_note_text)
+
+    def update_loaded_snp_info(self, snpdata):
+        """Update loaded snapshot info if any metadata of the snapshot data is changed.
+        """
+        if snpdata.name == self._current_snpdata.name:
+            # update note string if Note is updated.
+            note_str_now = self.loaded_snp_note_lbl.text()
+            if snpdata.note != note_str_now:
+                self.set_loaded_snp_note_lbl(snpdata.note)
 
     def set_post_snp_info_visible(self, visibility):
         [o.setVisible(visibility) for o in (
@@ -3244,6 +3255,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.save_settings.connect(self.on_save_settings)
         m.save_settings.connect(
             self.snp_filters_updated)  # update dynamic filter buttons (tag)
+        m.save_settings.connect(self.update_loaded_snp_info)
 
     def on_snp_filter_date_range_updated(self):
         """Filter snapshots by data range
