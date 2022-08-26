@@ -17,17 +17,7 @@ class Ui_MainWindow(object):
         icon.addPixmap(QtGui.QPixmap(":/sm-icons/logo.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
-        MainWindow.setStyleSheet("QProgressBar {\n"
-                                 "    border: 1px solid gray;\n"
-                                 "    border-radius: 1px;\n"
-                                 "    text-align: center;\n"
-                                 "}\n"
-                                 "\n"
-                                 "QProgressBar::chunk {\n"
-                                 "    background-color: #05B8CC;\n"
-                                 "    width: 10px;\n"
-                                 "    margin: 0.5px;\n"
-                                 "}")
+        MainWindow.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -649,6 +639,36 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem3)
+        self.refresh_pb = QtWidgets.QProgressBar(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.refresh_pb.sizePolicy().hasHeightForWidth())
+        self.refresh_pb.setSizePolicy(sizePolicy)
+        self.refresh_pb.setMinimumSize(QtCore.QSize(10, 36))
+        self.refresh_pb.setMaximumSize(QtCore.QSize(10, 36))
+        self.refresh_pb.setStyleSheet("/*\n"
+                                      "QProgressBar {\n"
+                                      "    border: 1px solid gray;\n"
+                                      "    border-radius: 1px;\n"
+                                      "    text-align: center;\n"
+                                      "}\n"
+                                      "\n"
+                                      "QProgressBar::chunk {\n"
+                                      "    background-color: #05B8CC;\n"
+                                      "    width: 10px;\n"
+                                      "    margin: 0.5px;\n"
+                                      "}\n"
+                                      "*/")
+        self.refresh_pb.setMaximum(100)
+        self.refresh_pb.setProperty("value", 0)
+        self.refresh_pb.setOrientation(QtCore.Qt.Vertical)
+        self.refresh_pb.setInvertedAppearance(False)
+        self.refresh_pb.setFormat("")
+        self.refresh_pb.setObjectName("refresh_pb")
+        self.horizontalLayout.addWidget(self.refresh_pb)
         self.label_6 = QtWidgets.QLabel(self.centralwidget)
         self.label_6.setObjectName("label_6")
         self.horizontalLayout.addWidget(self.label_6)
@@ -730,20 +750,6 @@ class Ui_MainWindow(object):
         self.single_update_btn.setAutoRaise(True)
         self.single_update_btn.setObjectName("single_update_btn")
         self.verticalLayout_3.addWidget(self.single_update_btn)
-        self.refresh_pb = QtWidgets.QProgressBar(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.refresh_pb.sizePolicy().hasHeightForWidth())
-        self.refresh_pb.setSizePolicy(sizePolicy)
-        self.refresh_pb.setMinimumSize(QtCore.QSize(0, 10))
-        self.refresh_pb.setMaximumSize(QtCore.QSize(16777215, 10))
-        self.refresh_pb.setProperty("value", 0)
-        self.refresh_pb.setFormat("")
-        self.refresh_pb.setObjectName("refresh_pb")
-        self.verticalLayout_3.addWidget(self.refresh_pb)
         self.horizontalLayout.addLayout(self.verticalLayout_3)
         self.line_2 = QtWidgets.QFrame(self.centralwidget)
         self.line_2.setFrameShape(QtWidgets.QFrame.VLine)
@@ -829,6 +835,17 @@ class Ui_MainWindow(object):
         self.apply_pb.setSizePolicy(sizePolicy)
         self.apply_pb.setMinimumSize(QtCore.QSize(0, 10))
         self.apply_pb.setMaximumSize(QtCore.QSize(16777215, 10))
+        self.apply_pb.setStyleSheet("QProgressBar {\n"
+                                    "    border: 1px solid gray;\n"
+                                    "    border-radius: 1px;\n"
+                                    "    text-align: center;\n"
+                                    "}\n"
+                                    "\n"
+                                    "QProgressBar::chunk {\n"
+                                    "    background-color: #05B8CC;\n"
+                                    "    width: 10px;\n"
+                                    "    margin: 0.5px;\n"
+                                    "}")
         self.apply_pb.setProperty("value", 0)
         self.apply_pb.setFormat("")
         self.apply_pb.setObjectName("apply_pb")
