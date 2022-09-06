@@ -1656,7 +1656,6 @@ class _SnpProxyModel(QSortFilterProxyModel):
         if not user_test:
             return False
 
-
         #
         return True
 
