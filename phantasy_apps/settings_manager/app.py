@@ -847,9 +847,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             QPixmap(":/sm-icons/new.png").scaled(PX_SIZE, PX_SIZE))
         self.snp_new_lbl.setVisible(False)
 
-        # expand all snps
-        self.snp_expand_btn.setChecked(True)
-
         # tag,ions filters, radiobtn
         self.select_all_ions_btn.clicked.connect(
             partial(self.on_snp_filters_select_all_ions, True))
@@ -896,6 +893,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_note_filter_enabled = False
         # hide snp filter note textedit
         self.filter_note_chkbox.toggled.emit(False)
+
+        # expand/collapse snapshot tree
+        self.snp_expand_btn.clicked.connect(partial(self.on_snp_expand, True))
+        self.snp_collapse_btn.clicked.connect(partial(self.on_snp_expand, False))
 
         # periodical clicker on single data refresh
         self._data_refresh_timer = QTimer(self)
@@ -2536,18 +2537,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.stop_auto_update()
             printlog("Stop auto updating.")
 
-    @pyqtSlot(bool)
-    def on_snp_expand_collapse(self, expanded):
+    @pyqtSlot()
+    def on_snp_expand(self, expanded):
         if expanded:
             self.snp_treeView.expandAll()
-            tt = "Click to collapse all."
-            text = "Collapse"
         else:
             self.snp_treeView.collapseAll()
-            tt = "Click to expand all."
-            text = "Expand"
-        self.sender().setText(text)
-        self.sender().setToolTip(tt)
 
     @pyqtSlot()
     def on_select(self, mode, checked=None):
@@ -3183,6 +3178,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.update_snp_btn_filters()
         # apply filter
         self.apply_snp_btn_filters()
+        self.snp_expand_btn.clicked.emit()
 
     def update_snp_btn_filters(self):
         ion_btn_filters = {}    # {ion_name: {A: {Q1,Q2...}}, ...}
@@ -3245,6 +3241,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             m.filter_user_enabled = is_checked
             m.filter_user_list = [k for k, v in _d.items() if v]
             m.invalidate()
+            self.snp_expand_btn.clicked.emit()
 
         def _create_widgetaction(text, parent):
             _chkbox = QCheckBox(text, parent)
@@ -3345,7 +3342,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.m_src.set_tag_filters(self._current_tag_filter)
         m.reset_cache()
         m.invalidate()
-        self.snp_expand_btn.toggled.emit(self.snp_expand_btn.isChecked())
         # ion cnt
         ion_cnt = self.snp_treeView.model().m_src._ion_filter_cnt
         layout = self.snp_filter_hbox
@@ -3379,7 +3375,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def update_snp_dock_view(self):
         m = SnapshotDataModel(self.snp_treeView, self._snp_dock_list)
         m.set_model()
-        self.snp_expand_btn.toggled.emit(self.snp_expand_btn.isChecked())
         m.save_settings.connect(self.on_save_settings)
         m.save_settings.connect(
             self.snp_filters_updated)  # update dynamic filter buttons (tag)
@@ -3395,6 +3390,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         m.filter_date_enabled = self.snp_date_range_filter_enabled
         self._apply_snp_date_range_filter(m)
+        self.snp_expand_btn.clicked.emit()
 
     def _apply_snp_date_range_filter(self, m):
         _d1 = self.dateEdit1.date()
@@ -3443,6 +3439,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         m.filter_note_enabled = self.snp_note_filter_enabled
         self._apply_snp_note_filter(m)
+        self.snp_expand_btn.clicked.emit()
 
     @pyqtSlot(bool)
     def on_toggle_snp_filter_note(self, is_checked):
