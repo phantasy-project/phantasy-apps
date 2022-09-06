@@ -963,7 +963,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         #
         def on_toggle_filter_btn(category, btn, is_checked):
-            # enable filtering by field if button is checked
+            # enable filtering by category if button is checked
             m = self._tv.model()
             if m is None:
                 return
@@ -3171,8 +3171,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.apply_snp_btn_filters()
 
     def update_snp_btn_filters(self):
-        ion_btn_filters = {}
+        ion_btn_filters = {}    # {ion_name: {A: {Q1,Q2...}}, ...}
         tag_btn_filters = set()
+        user_filters = set()
         d = None
         for data in self._snp_dock_list:
             d = ion_btn_filters.setdefault(data.ion_name, {})
@@ -3181,9 +3182,91 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 tag_btn_filters.add('NOTAG')
             else:
                 tag_btn_filters.update(data.tags)
+            user_filters.add(data.user)
         del d
         self._build_btn_filters(self.snp_filter_hbox, ion_btn_filters)
         self._build_tag_filters(self.tag_filter_area, tag_btn_filters)
+        # dropdown menu for checkable user names.
+        self._build_user_filters(self.snp_filter_ctrls_hbox, user_filters)
+
+    def _build_user_filters(self, container, filters):
+        # dropdown menu with checkable user names
+        #
+        child = container.takeAt(0)
+        while child:
+            w = child.widget()
+            if w is not None:
+                w.setParent(None)
+            del w
+            del child
+            child = container.takeAt(0)
+        #
+        filters = list(filters)
+        _d = {i: True for i in filters}
+        #
+        def _on_update_filter_string(k, btn, is_toggled):
+            if k == 'All':  # update checkstates for other actions
+                btn.toggled.disconnect()
+                for obj in self.sender().parent().findChildren(QCheckBox):
+                    obj.setChecked(is_toggled)
+                btn.toggled.connect(
+                    partial(_on_toggle_filter_btn, btn))
+            else:
+                _d[k] = is_toggled
+                obj = self.sender().parent().findChild(QCheckBox, "sel_user_act")
+                obj.toggled.disconnect()
+                obj.setChecked(all(_d.values()))
+                obj.toggled.connect(
+                    partial(_on_update_filter_string, 'All', btn))
+
+            btn.setToolTip("Filter by {}\nChecked: {}".format(
+                'User',
+                ','.join([k for k, v in _d.items() if v])))
+            btn.toggled.emit(btn.isChecked())
+        #
+        def _on_toggle_filter_btn(btn, is_checked):
+            m = self.snp_treeView.model()
+            if m is None:
+                return
+            m.filter_user_enabled = is_checked
+            m.filter_user_list = [k for k, v in _d.items() if v]
+            m.invalidate()
+
+        def _create_widgetaction(text, parent):
+            _chkbox = QCheckBox(text, parent)
+            _chkbox.setChecked(True)
+            _wa = QWidgetAction(parent)
+            _wa.setDefaultWidget(_chkbox)
+            _chkbox.setStyleSheet("""QCheckBox{padding-left:10px;}""")
+            return _chkbox, _wa
+
+        def _build_actions(btn):
+            menu = QMenu(self)
+            for i in filters:
+                _chkbox, _wa = _create_widgetaction(i, menu)
+                _chkbox.toggled.connect(
+                    partial(_on_update_filter_string, i, btn))
+                menu.addAction(_wa)
+            menu.addSeparator()
+            _chkbox_all, _wa_all = _create_widgetaction('All', menu)
+            _chkbox_all.setObjectName("sel_user_act")
+            _chkbox_all.toggled.connect(
+                partial(_on_update_filter_string, 'All', btn))
+            menu.addAction(_wa_all)
+            btn.setMenu(menu)
+
+        #
+        _btn = QToolButton(self)
+        _btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        _btn.setText("User")
+        _btn.setCheckable(True)
+        _btn.setToolTip("Filter by User")
+        _btn.setPopupMode(QToolButton.MenuButtonPopup)
+        _btn.toggled.connect(
+            partial(_on_toggle_filter_btn, _btn))
+        #
+        container.addWidget(_btn)
+        _build_actions(_btn)
 
     def _build_tag_filters(self, area, filters):
         w = area.takeWidget()

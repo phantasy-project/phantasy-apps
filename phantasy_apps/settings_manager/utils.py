@@ -1575,6 +1575,9 @@ class _SnpProxyModel(QSortFilterProxyModel):
         # note filter
         self.filter_note_enabled = False
         self.filter_note_string = None
+        # user name filter
+        self.filter_user_enabled = False
+        self.filter_user_list = []
 
     def reset_cache(self):
         self._ion_hit_cache = {}
@@ -1644,6 +1647,15 @@ class _SnpProxyModel(QSortFilterProxyModel):
             note_test = True
         if not note_test:
             return False
+
+        # user name test
+        if self.filter_user_enabled:
+            user_test = snp_data.user in self.filter_user_list
+        else:
+            user_test = True
+        if not user_test:
+            return False
+
 
         #
         return True
