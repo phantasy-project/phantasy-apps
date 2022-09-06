@@ -886,7 +886,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # snp date range filter
         self.snp_date_range_filter_enabled = False
-        self.dateEdit1.setDate(QDate(NOW_YEAR, NOW_MONTH, NOW_DAY))
+        self.dateEdit1.setDate(QDate(NOW_YEAR, NOW_MONTH, NOW_DAY).addMonths(-12))
         self.dateEdit2.setDate(QDate(NOW_YEAR, NOW_MONTH, NOW_DAY))
         self.daterange_picker_btn.clicked.connect(self.on_select_daterange)
         self.filter_date_chkbox.toggled.connect(self.on_toggle_snp_filter_date_range)
@@ -3233,7 +3233,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 obj.toggled.connect(
                     partial(_on_update_filter_string, 'All', btn))
 
-            btn.setToolTip("Filter by {}\nChecked: {}".format(
+            btn.setToolTip("Check to enable filtering by {}\nChecked: {}".format(
                 'User',
                 ','.join([k for k, v in _d.items() if v])))
             btn.toggled.emit(btn.isChecked())
