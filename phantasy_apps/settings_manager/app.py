@@ -2523,9 +2523,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if expanded:
             self.snp_treeView.expandAll()
             tt = "Click to collapse all."
+            self.snp_expand_lbl.setText("Collapse")
         else:
             self.snp_treeView.collapseAll()
             tt = "Click to expand all."
+            self.snp_expand_lbl.setText("Expand")
         self.sender().setToolTip(tt)
 
     @pyqtSlot()
