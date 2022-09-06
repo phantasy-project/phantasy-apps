@@ -39,6 +39,7 @@ from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import QCompleter
+from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QMessageBox
@@ -943,13 +944,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             _d = self._check_state_dict[category]
             if k == 'All':  # update checkstates for other actions
                 btn.toggled.disconnect()
-                for obj in self.sender().parent().findChildren(QAction):
+                for obj in self.sender().parent().findChildren(QCheckBox):
                     obj.setChecked(is_toggled)
                 btn.toggled.connect(
                     partial(on_toggle_filter_btn, category, btn))
             else:
                 _d[k] = is_toggled
-                obj = self.sender().parent().findChild(QAction, "sel_act")
+                obj = self.sender().parent().findChild(QCheckBox, "sel_act")
                 obj.toggled.disconnect()
                 obj.setChecked(all(_d.values()))
                 obj.toggled.connect(
@@ -975,23 +976,27 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 m.filter_dtype_list = [k for k, v in _d.items() if v]
             self.filter_lineEdit.editingFinished.emit()
 
+        def _create_widgetaction(text, parent):
+            _chkbox = QCheckBox(text, parent)
+            _chkbox.setChecked(True)
+            _wa = QWidgetAction(parent)
+            _wa.setDefaultWidget(_chkbox)
+            _chkbox.setStyleSheet("""QCheckBox{padding-left:10px;}""")
+            return _chkbox, _wa
+
         def _build_actions(btn, category):
             menu = QMenu(self)
             for i in _act_name_dict[category]:
-                iact = QAction(i, menu)
-                iact.setCheckable(True)
-                iact.setChecked(True)
-                iact.toggled.connect(
+                _chkbox, _wa = _create_widgetaction(i, menu)
+                _chkbox.toggled.connect(
                     partial(on_update_filter_string, i, category, btn))
-                menu.addAction(iact)
+                menu.addAction(_wa)
             menu.addSeparator()
-            sel_act = QAction("All", menu)
-            sel_act.setObjectName("sel_act")
-            sel_act.setCheckable(True)
-            sel_act.setChecked(True)
-            sel_act.toggled.connect(
+            _chkbox_all, _wa_all = _create_widgetaction('All', menu)
+            _chkbox_all.setObjectName("sel_act")
+            _chkbox_all.toggled.connect(
                 partial(on_update_filter_string, 'All', category, btn))
-            menu.addAction(sel_act)
+            menu.addAction(_wa_all)
             btn.setMenu(menu)
 
         # list of checkable field/dtype button actions
