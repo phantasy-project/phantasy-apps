@@ -3165,12 +3165,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._bpmviz_w.show()
 
     def on_snp_filters_updated(self):
-        # update btn filters
-        self.update_btn_filters()
+        # update snp btn filters
+        self.update_snp_btn_filters()
         # apply filter
         self.apply_snp_btn_filters()
 
-    def update_btn_filters(self):
+    def update_snp_btn_filters(self):
         ion_btn_filters = {}
         tag_btn_filters = set()
         d = None
