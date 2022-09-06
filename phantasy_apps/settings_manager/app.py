@@ -888,13 +888,26 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_date_range_filter_enabled = False
         self.dateEdit1.setDate(QDate(NOW_YEAR, NOW_MONTH, NOW_DAY))
         self.dateEdit2.setDate(QDate(NOW_YEAR, NOW_MONTH, NOW_DAY))
+        self.daterange_picker_btn.clicked.connect(self.on_select_daterange)
+        self.filter_date_chkbox.toggled.connect(self.on_toggle_snp_filter_date_range)
+        self.filter_date_chkbox.toggled.connect(self.on_date_range_visible)
+        self.filter_date_chkbox.toggled.emit(False)
         # snp note filter
         self.snp_note_filter_enabled = False
+        # hide snp filter note textedit
+        self.filter_note_chkbox.toggled.emit(False)
 
         # periodical clicker on single data refresh
         self._data_refresh_timer = QTimer(self)
         self._data_refresh_timer.timeout.connect(self.on_click_refresh_once)
         self._data_refresh_timer.start(DATA_REFRESH_PERIOD)
+
+    @pyqtSlot(bool)
+    def on_date_range_visible(self, is_checked):
+        """Update daterange controls visibility.
+        """
+        [o.setVisible(is_checked) for o in (self.dateEdit1, self.daterange_lbl,
+                                            self.dateEdit2, self.daterange_picker_btn)]
 
     def on_click_refresh_once(self):
         if self._tv.model() is None:
@@ -2528,11 +2541,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if expanded:
             self.snp_treeView.expandAll()
             tt = "Click to collapse all."
-            self.snp_expand_lbl.setText("Collapse")
+            text = "Collapse"
         else:
             self.snp_treeView.collapseAll()
             tt = "Click to expand all."
-            self.snp_expand_lbl.setText("Expand")
+            text = "Expand"
+        self.sender().setText(text)
         self.sender().setToolTip(tt)
 
     @pyqtSlot()
