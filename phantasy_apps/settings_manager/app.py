@@ -3222,7 +3222,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             del child
             child = container.takeAt(0)
         #
-        filters = list(filters)
+        filters = sorted(filters)
         _d = {i: True for i in filters}
         #
         def _on_update_filter_string(k, btn, is_toggled):
