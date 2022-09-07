@@ -172,6 +172,9 @@ _CHANGELOG_FILE = os.path.join(os.path.dirname(__file__), 'CHANGELOG.pdf')
 # refresh period
 DATA_REFRESH_PERIOD = 10000 # milliseconds
 
+# MAX lines of setting logs
+MAX_LOG_LINES = 3000
+
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # settings view filter button group status (or) changed --> update
@@ -898,10 +901,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_expand_btn.clicked.connect(partial(self.on_snp_expand, True))
         self.snp_collapse_btn.clicked.connect(partial(self.on_snp_expand, False))
 
+        # setting logs
+        self.log_textEdit.textChanged.connect(self.on_logtext_updated)
+
         # periodical clicker on single data refresh
         self._data_refresh_timer = QTimer(self)
         self._data_refresh_timer.timeout.connect(self.on_click_refresh_once)
         self._data_refresh_timer.start(DATA_REFRESH_PERIOD)
+
+    @pyqtSlot()
+    def on_logtext_updated(self):
+        # Setting logs updated.
+        self.sender().document().setMaximumBlockCount(MAX_LOG_LINES)
 
     @pyqtSlot(bool)
     def on_date_range_visible(self, is_checked):
