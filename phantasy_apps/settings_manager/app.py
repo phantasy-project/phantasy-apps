@@ -3353,6 +3353,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.m_src.set_tag_filters(self._current_tag_filter)
         m.reset_cache()
         m.invalidate()
+        self.snp_expand_btn.clicked.emit()
         # ion cnt
         ion_cnt = self.snp_treeView.model().m_src._ion_filter_cnt
         layout = self.snp_filter_hbox
