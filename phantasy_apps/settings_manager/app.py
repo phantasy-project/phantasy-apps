@@ -1688,6 +1688,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         scaling_factor = float(self.scaling_factor_lineEdit.text())
         # scale operator, default is 0: 'x', (1: '+')
         scale_op = SCALE_OP_MAP[self.scale_op_cbb.currentIndex()]
+
+        # show warning if scaling factor != 1.0
+        if scaling_factor != 1.0:
+            r = QMessageBox.warning(self, "Apply Settings",
+                    '''<html><head/><body><p>Are you sure to apply settings with scaling factor of <span style=" font-weight:600; color:#ff007f;">{0:g}</span>?</p></body></html>'''.format(scaling_factor),
+                    QMessageBox.Yes | QMessageBox.No)
+            if r == QMessageBox.No:
+                return
         #
         self.idx_px_list = []  # list to apply icon [(idx_src, px, log_msg)]
         settings_selected = m.get_selection()
@@ -1712,7 +1720,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                only_checked_items=False,
                                post_current_sp=False)
             msg += "Snapshot saved!\n "
-        msg += f"Now start to set device with new settings in current page ({len(settings_selected)} checked)."
+        msg += f"Now start to set device with new settings in current page ({len(settings_selected)} checked), see 'Setting Logs' for the details."
 
         r = QMessageBox.information(self, "Apply Settings", msg,
                                     QMessageBox.Ok | QMessageBox.Cancel)
