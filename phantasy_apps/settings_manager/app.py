@@ -3568,6 +3568,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # data: SnapshotData
         # settings(data.data): DataFrame
         print("Push snpdata as reference settings.")
+        r = QMessageBox.question(
+            self, "Publish Snapshot",
+            '''<html><head/><body><p>Are you sure to publish snapshot: <span style=" color:#0055ff;">{}</span> as the reference settings?</p><p>This is to set all device reference set PVs with the values in <span style=" font-style:italic;">Setpoint(x0)</span> column of the snapshot.</p><p>All the snapshot information and the device settings will be available in <span style=" font-style:italic;">Settings Manager OPI</span>.</p></body></html>'''.format(data.ts_as_str() + ',' + data.ion_as_str()),
+            QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+        if r == QMessageBox.No:
+            return
         data.extract_blob()
         for i, irow in data.data.iterrows():
             ename, fname, val0 = irow.Name, irow.Field, irow.Setpoint
