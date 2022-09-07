@@ -17,7 +17,23 @@ class Ui_MainWindow(object):
         icon.addPixmap(QtGui.QPixmap(":/sm-icons/logo.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
-        MainWindow.setStyleSheet("")
+        MainWindow.setStyleSheet(
+            "QCheckBox::indicator {\n"
+            "    width: 16px;\n"
+            "    height: 16px;\n"
+            "}\n"
+            "QCheckBox::indicator::unchecked {\n"
+            "    image: url(:/sm-icons/uncheck-square.png);\n"
+            "}\n"
+            "QCheckBox::indicator::checked {\n"
+            "    image: url(:/sm-icons/check-square-fill.png);\n"
+            "}\n"
+            "QAbstractItemView::indicator::unchecked {\n"
+            "    image: url(:/sm-icons/uncheck-square.png);\n"
+            "}\n"
+            "QAbstractItemView::indicator::checked {\n"
+            "    image: url(:/sm-icons/check-square-fill.png);\n"
+            "}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
