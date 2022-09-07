@@ -1939,13 +1939,13 @@ class Ui_MainWindow(object):
         self.scaling_factor_lineEdit.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Scaling factor, input a number e.g. 0.8, or an expression, e.g. 12 / 18, then press Enter.</p></body></html>"
+                "<html><head/><body><p>Scaling factor, select the math operator (\'+\' is for shifting), input a number e.g. 0.8, or an expression, e.g. 12 / 18, then press <span style=\" font-style:italic;\">Enter.</span></p><p>For regular scaling operation (\'x\'), first filter out the list of devices eligible for scaling. </p></body></html>"
             ))
         self.scaling_factor_lineEdit.setText(_translate("MainWindow", "1.0"))
         self.auto_sf_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Check to enable auto fill the scaling factor.</p></body></html>"
+                "<html><head/><body><p>Check to enable auto fill the scaling factor, which is calculated based on the ratio of the loaded and running Q/A values.</p></body></html>"
             ))
         self.auto_sf_btn.setText(_translate("MainWindow", "..."))
         self.strict_wildcard_chkbox.setToolTip(
