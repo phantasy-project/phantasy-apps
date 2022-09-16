@@ -537,7 +537,7 @@ class SnapshotData:
                 _tags = v
             else:
                 _tags = [str(v),]
-            v = [i for i in [re.sub(r'\s+', '', s) for s in _tags] if i not in ('', 'nan')]
+            v = [i.upper() for i in [re.sub(r'\s+', '', s) for s in _tags] if i not in ('', 'nan')]
         return v
 
     def ts_as_str(self):
@@ -587,7 +587,7 @@ class SnapshotData:
         self.name, self.timestamp = get_sha1()
 
     def is_golden(self):
-        return 'golden' in self.tags
+        return 'GOLDEN' in self.tags
 
     def __str__(self):
         # str(self.data)
