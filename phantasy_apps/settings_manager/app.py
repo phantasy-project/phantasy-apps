@@ -85,6 +85,7 @@ from .app_date_range import DateRangeDialog
 from .app_loadfrom import LoadSettingsDialog
 from .app_pref import PreferencesDialog
 from .app_bpmviz import BPMVizWidget
+from .app_postsnp import PostSnapshotDialog
 from .data import CSV_HEADER
 from .data import DEFAULT_DATA_FMT
 from .data import ElementPVConfig
@@ -3114,15 +3115,21 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # update snpdata to snp dock.
         if self._tv.model() is None:
             return
+
+        # pop up a dialog for tag selection
+        postsnp_dlg = PostSnapshotDialog(self)
+        r = postsnp_dlg.exec_()
+        if r == QDialog.Accepted:
+            tag_str = ','.join(postsnp_dlg.get_selected_tag_list())
+            note = postsnp_dlg.get_note()
+
         # capture current ion info
         ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species(
         )
 
         # capture settings view filter text if any
-        if self.filter_lineEdit.text() == '':
-            note = None
-        else:
-            note = f"Filter: {self.filter_lineEdit.text()}, "
+        if self.filter_lineEdit.text() != '':
+            note += f", Filter: {self.filter_lineEdit.text()}, "
         # create a new snapshotdata
         snp_data = SnapshotData(get_settings_data(*self.get_data_models()),
                                 ion_name=ion_name,
@@ -3133,6 +3140,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                 segment=self._last_lattice_name,
                                 version=self._version,
                                 note=note,
+                                tags=tag_str,
                                 table_version=10)
         # machstate
         if self.snp_ms_chkbox.isChecked():
