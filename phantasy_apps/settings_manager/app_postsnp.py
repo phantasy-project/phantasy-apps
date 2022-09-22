@@ -14,13 +14,12 @@ from PyQt5.QtWidgets import QWidget
 
 from phantasy_ui.widgets import FlowLayout
 
-# from .ui.ui_postsnp import Ui_Dialog
-from phantasy_apps.settings_manager.ui.ui_post_snp import Ui_Dialog
+from .ui.ui_post_snp import Ui_Dialog
 
 
 DEFAULT_TAG_LIST = ["LINAC", "FSEE", "GOLDEN"]
 
-BTN_STY = """
+TAG_BTN_STY = """
 QPushButton {
     padding: 3px 3px 3px 3px;
     background-color: rgb(45, 91, 227);
@@ -76,10 +75,9 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         _tags = sorted(list(tags))
         for tag in _tags:
             o = QPushButton(tag, self)
-            o.setStyleSheet(BTN_STY)
+            o.setStyleSheet(TAG_BTN_STY)
             o.setCheckable(True)
             o.toggled.connect(partial(self.on_update_tags, tag))
-            #if tag == 'GOLDEN':
             layout.addWidget(o)
         w.setLayout(layout)
         area.setWidget(w)

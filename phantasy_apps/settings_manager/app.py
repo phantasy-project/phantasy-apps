@@ -47,6 +47,7 @@ from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QWidgetAction
 from PyQt5.QtWidgets import QToolButton
+from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QShortcut
 from PyQt5.QtWidgets import QWidget
@@ -86,6 +87,7 @@ from .app_loadfrom import LoadSettingsDialog
 from .app_pref import PreferencesDialog
 from .app_bpmviz import BPMVizWidget
 from .app_postsnp import PostSnapshotDialog
+from .app_postsnp import TAG_BTN_STY
 from .data import CSV_HEADER
 from .data import DEFAULT_DATA_FMT
 from .data import ElementPVConfig
@@ -1061,7 +1063,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         BaseAppForm.resizeEvent(self, e)
 
     def on_snp_filters_select_all_tags(self, is_checked):
-        for i in self.tag_filter_area.findChildren(QToolButton):
+        for i in self.tag_filter_area.findChildren(QPushButton):
             i.setChecked(is_checked)
 
     def on_snp_filters_select_all_ions(self, is_checked):
@@ -3318,8 +3320,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             _filters = sorted(list(filters))
         for tag in _filters:
-            o = QToolButton(self.snp_dock)
-            o.setText(tag)
+            o = QPushButton(tag, self.snp_dock)
+            o.setStyleSheet(TAG_BTN_STY)
             o.setCheckable(True)
             o.toggled.connect(partial(self.on_update_tag_filters, tag))
             layout.addWidget(o)
