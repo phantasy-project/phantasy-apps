@@ -7,19 +7,44 @@
 from functools import partial
 
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QDialog
-from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QSizePolicy
-from PyQt5.QtWidgets import QToolButton
-from PyQt5.QtWidgets import QWidgetAction
+from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QWidget
+
+from phantasy_ui.widgets import FlowLayout
 
 # from .ui.ui_postsnp import Ui_Dialog
 from phantasy_apps.settings_manager.ui.ui_post_snp import Ui_Dialog
 
 
 DEFAULT_TAG_LIST = ["LINAC", "FSEE", "GOLDEN"]
+
+BTN_STY = """
+QPushButton {
+    padding: 3px 3px 3px 3px;
+    background-color: rgb(45, 91, 227);
+    border: none;
+    border-radius: 6px;
+    color: rgb(255, 255, 255);
+    border-left: 1px solid rgb(45, 91, 227);
+    border-right: 1px solid rgb(45, 91, 227);
+    border-bottom: 2px solid rgb(45, 91, 227);
+    qproperty-icon: url(":/sm-icons/plus-white.png") off, url(":/sm-icons/checkmark-white.png") on;
+}
+QPushButton:hover {
+    background-color: rgb(50, 105, 255);
+    border-left: 1px solid rgb(50, 105, 255);
+    border-right: 1px solid rgb(50, 105, 255);
+    border-bottom: 2px solid rgb(50, 105, 255);
+}
+QPushButton:checked {
+    background-color: rgb(249, 72, 119);
+    border-left: 1px solid rgb(249, 72, 119);
+    border-right: 1px solid rgb(249, 72, 119);
+    border-bottom: 2px solid rgb(249, 72, 119);
+}
+"""
 
 
 class PostSnapshotDialog(QDialog, Ui_Dialog):
@@ -38,74 +63,36 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
     def _post_init(self):
         # build multi-select tag list
         tag_list = get_tag_list()
-        self.selected_tag_list = None
-        self._build_tags_list(self.tags_hbox, tag_list)
+        self._selected_tag_list = []
+        self._build_tags_list(self.tags_area, tag_list)
 
-    def _build_tags_list(self, container, tags):
-        # dropdown menu with checkable tag names
-        # tags: a list of predefined tags.
-        #
-        child = container.takeAt(0)
-        while child:
-            w = child.widget()
-            if w is not None:
-                w.setParent(None)
-            del w
-            del child
-            child = container.takeAt(0)
-        #
-        _d = {i: False for i in tags}
-        #
-        def _on_update_tag_selection(k, btn, is_toggled):
-            if k == 'All':  # update checkstates for other actions
-                for obj in self.sender().parent().findChildren(QCheckBox):
-                    obj.setChecked(is_toggled)
-            else:
-                _d[k] = is_toggled
-                obj = self.sender().parent().findChild(QCheckBox, "sel_tag_act")
-                obj.toggled.disconnect()
-                obj.setChecked(all(_d.values()))
-                obj.toggled.connect(
-                    partial(_on_update_tag_selection, 'All', btn))
+    def _build_tags_list(self, area, tags):
+        # build a flow list of checkable toolbuttons for tag selection.
+        w = area.takeWidget()
+        w.setParent(None)
+        w = QWidget(self)
+        w.setContentsMargins(2, 4, 0, 0)
+        layout = FlowLayout()
+        _tags = sorted(list(tags))
+        for tag in _tags:
+            o = QPushButton(tag, self)
+            o.setStyleSheet(BTN_STY)
+            o.setCheckable(True)
+            o.toggled.connect(partial(self.on_update_tags, tag))
+            #if tag == 'GOLDEN':
+            layout.addWidget(o)
+        w.setLayout(layout)
+        area.setWidget(w)
 
-            #
-            self.selected_tag_list = [k for k, v in _d.items() if v]
-            btn.setToolTip("Selected tags: {}".format(
-                ','.join(self.selected_tag_list)))
-            self.selected_tags.setText(','.join(self.selected_tag_list))
-
-        def _create_widgetaction(text, parent):
-            _chkbox = QCheckBox(text, parent)
-            _chkbox.setChecked(False)
-            _wa = QWidgetAction(parent)
-            _wa.setDefaultWidget(_chkbox)
-            _chkbox.setStyleSheet("""QCheckBox{padding-left:10px;}""")
-            return _chkbox, _wa
-
-        def _build_actions(btn):
-            menu = QMenu(self)
-            for i in tags:
-                _chkbox, _wa = _create_widgetaction(i, menu)
-                _chkbox.toggled.connect(
-                    partial(_on_update_tag_selection, i, btn))
-                menu.addAction(_wa)
-            menu.addSeparator()
-            _chkbox_all, _wa_all = _create_widgetaction('All', menu)
-            _chkbox_all.setObjectName("sel_tag_act")
-            _chkbox_all.toggled.connect(
-                partial(_on_update_tag_selection, 'All', btn))
-            menu.addAction(_wa_all)
-            btn.setMenu(menu)
-
-        #
-        _btn = QToolButton(self)
-        _btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        _btn.setText("Select Tags")
-        _btn.setToolTip("Select tags for the snapshot")
-        _btn.setPopupMode(QToolButton.MenuButtonPopup)
-        #
-        container.addWidget(_btn)
-        _build_actions(_btn)
+    def on_update_tags(self, tag: str, is_checked: bool):
+        """Update tag string.
+        """
+        if is_checked:
+            self._selected_tag_list.append(tag)
+        else:
+            self._selected_tag_list.remove(tag)
+        self._selected_tag_str = ','.join(sorted(self._selected_tag_list))
+        self.selected_tags.setText(self._selected_tag_str)
 
     @pyqtSlot()
     def on_click_ok(self):
@@ -118,7 +105,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         self.setResult(QDialog.Accepted)
 
     def get_selected_tag_list(self):
-        return self.selected_tag_list
+        return self._selected_tag_list
 
     def get_note(self):
         return self.note_textEdit.toPlainText().strip()
