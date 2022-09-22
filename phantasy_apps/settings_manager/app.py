@@ -3122,6 +3122,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if r == QDialog.Accepted:
             tag_str = ','.join(postsnp_dlg.get_selected_tag_list())
             note = postsnp_dlg.get_note()
+        else:
+            QMessageBox.warning(self, "Take Snapshot",
+                                "Tag and Note must be set for making a new snapshot.",
+                                QMessageBox.Ok, QMessageBox.Ok)
+            return
 
         # capture current ion info
         ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species(
@@ -3129,7 +3134,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # capture settings view filter text if any
         if self.filter_lineEdit.text() != '':
-            note += f", Filter: {self.filter_lineEdit.text()}, "
+            note += f"Filter: {self.filter_lineEdit.text()}, "
         # create a new snapshotdata
         snp_data = SnapshotData(get_settings_data(*self.get_data_models()),
                                 ion_name=ion_name,
