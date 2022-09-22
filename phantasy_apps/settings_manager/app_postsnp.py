@@ -14,36 +14,11 @@ from PyQt5.QtWidgets import QWidget
 
 from phantasy_ui.widgets import FlowLayout
 
+from .utils import TAG_BTN_STY
 from .ui.ui_post_snp import Ui_Dialog
 
 
 DEFAULT_TAG_LIST = ["LINAC", "FSEE", "GOLDEN"]
-
-TAG_BTN_STY = """
-QPushButton {
-    padding: 3px 3px 3px 3px;
-    background-color: rgb(45, 91, 227);
-    border: none;
-    border-radius: 6px;
-    color: rgb(255, 255, 255);
-    border-left: 1px solid rgb(45, 91, 227);
-    border-right: 1px solid rgb(45, 91, 227);
-    border-bottom: 2px solid rgb(45, 91, 227);
-    qproperty-icon: url(":/sm-icons/plus-white.png") off, url(":/sm-icons/checkmark-white.png") on;
-}
-QPushButton:hover {
-    background-color: rgb(50, 105, 255);
-    border-left: 1px solid rgb(50, 105, 255);
-    border-right: 1px solid rgb(50, 105, 255);
-    border-bottom: 2px solid rgb(50, 105, 255);
-}
-QPushButton:checked {
-    background-color: rgb(249, 72, 119);
-    border-left: 1px solid rgb(249, 72, 119);
-    border-right: 1px solid rgb(249, 72, 119);
-    border-bottom: 2px solid rgb(249, 72, 119);
-}
-"""
 
 
 class PostSnapshotDialog(QDialog, Ui_Dialog):
@@ -75,7 +50,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         _tags = sorted(list(tags))
         for tag in _tags:
             o = QPushButton(tag, self)
-            o.setStyleSheet(TAG_BTN_STY)
+            o.setStyleSheet(TAG_BTN_STY.format(fs="10pt"))
             o.setCheckable(True)
             o.toggled.connect(partial(self.on_update_tags, tag))
             layout.addWidget(o)

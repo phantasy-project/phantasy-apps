@@ -87,7 +87,6 @@ from .app_loadfrom import LoadSettingsDialog
 from .app_pref import PreferencesDialog
 from .app_bpmviz import BPMVizWidget
 from .app_postsnp import PostSnapshotDialog
-from .app_postsnp import TAG_BTN_STY
 from .data import CSV_HEADER
 from .data import DEFAULT_DATA_FMT
 from .data import ElementPVConfig
@@ -118,6 +117,7 @@ from .utils import BG_COLOR_GOLDEN_NO
 from .utils import CHP_STS_TUPLE
 from .utils import TGT_STS_TUPLE
 from .utils import ref_pv as get_ref_set_pv
+from .utils import TAG_BTN_STY
 from .contrib.db.db_utils import ensure_connect_db
 
 # scaling op
@@ -3321,7 +3321,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             _filters = sorted(list(filters))
         for tag in _filters:
             o = QPushButton(tag, self.snp_dock)
-            o.setStyleSheet(TAG_BTN_STY)
+            o.setStyleSheet(TAG_BTN_STY.format(fs="9pt"))
             o.setCheckable(True)
             o.toggled.connect(partial(self.on_update_tag_filters, tag))
             layout.addWidget(o)

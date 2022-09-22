@@ -141,6 +141,34 @@ TBTN_STY_REGULAR = TBTN_STY_BASE.format(c=TBTN_STY_COLOR_TUPLE)
 
 DEFAULT_X12_TOL = 0.15
 
+TAG_BTN_STY = """
+QPushButton {{
+    font-size: {fs};
+    padding: 3px 3px 3px 3px;
+    background-color: rgb(45, 91, 227);
+    border: none;
+    border-radius: 6px;
+    color: rgb(255, 255, 255);
+    border-left: 1px solid rgb(45, 91, 227);
+    border-right: 1px solid rgb(45, 91, 227);
+    border-bottom: 2px solid rgb(45, 91, 227);
+    qproperty-icon: url(":/sm-icons/plus-white.png") off, url(":/sm-icons/checkmark-white.png") on;
+}}
+QPushButton:hover {{
+    background-color: rgb(50, 105, 255);
+    border-left: 1px solid rgb(50, 105, 255);
+    border-right: 1px solid rgb(50, 105, 255);
+    border-bottom: 2px solid rgb(50, 105, 255);
+}}
+QPushButton:checked {{
+    background-color: rgb(249, 72, 119);
+    border-left: 1px solid rgb(249, 72, 119);
+    border-right: 1px solid rgb(249, 72, 119);
+    border-bottom: 2px solid rgb(249, 72, 119);
+}}
+"""
+
+
 
 def get_foi_dict(filepath):
     """Return a dict of field of interest per element type.
