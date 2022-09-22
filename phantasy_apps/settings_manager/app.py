@@ -3075,46 +3075,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m = self._tv.model()
         if m is None:
             return
-        # self.turn_off_updater_if_necessary()
-        src_m = m.sourceModel()
-        # single update
-        self._updater = DAQT(daq_func=partial(self.update_value_single, src_m,
-                                              m, -1, False),
-                             daq_seq=range(1))
-        self._updater.meta_signal1.connect(
-            partial(self.on_update_display, src_m))
-        # self._updater.daqStarted.connect(
-        #     partial(self.set_widgets_status_for_updating, 'START'))
-        # self._updater.finished.connect(
-        #     partial(self.set_widgets_status_for_updating, 'STOP'))
-        loop = QEventLoop()
-        self._updater.finished.connect(loop.exit)
-        self._updater.start()
-        loop.exec_()
-        #
-        if post_current_sp:
-            current_sp_idx = src_m.i_cset
-            stored_sp_idx = src_m.i_val0
-            for i in range(m.rowCount()):
-                sp_val_str = m.data(m.index(i, current_sp_idx))
-                m.setData(m.index(i, stored_sp_idx), sp_val_str)
-        #
-        self.on_snapshots_changed(cast)
-
-    @pyqtSlot()
-    def on_show_query_tips(self):
-        if self._query_tips_form is None:
-            self._query_tips_form = w = QWidget()
-            ui = QueryTipsForm()
-            ui.setupUi(w)
-            w.setWindowTitle("Query Tips")
-        self._query_tips_form.show()
-
-    def on_snapshots_changed(self, cast=True):
-        # New captured snapshot.
-        # update snpdata to snp dock.
-        if self._tv.model() is None:
-            return
 
         # pop up a dialog for tag selection
         postsnp_dlg = PostSnapshotDialog(self)
@@ -3128,13 +3088,48 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                 QMessageBox.Ok, QMessageBox.Ok)
             return
 
+
+        # self.turn_off_updater_if_necessary()
+        src_m = m.sourceModel()
+        # single update
+        self._updater = DAQT(daq_func=partial(self.update_value_single, src_m,
+                                              m, -1, False),
+                             daq_seq=range(1))
+        self._updater.meta_signal1.connect(
+            partial(self.on_update_display, src_m))
+        loop = QEventLoop()
+        self._updater.finished.connect(loop.exit)
+        self._updater.start()
+        loop.exec_()
+        #
+        if post_current_sp:
+            current_sp_idx = src_m.i_cset
+            stored_sp_idx = src_m.i_val0
+            for i in range(m.rowCount()):
+                sp_val_str = m.data(m.index(i, current_sp_idx))
+                m.setData(m.index(i, stored_sp_idx), sp_val_str)
+        #
+        self.on_snapshots_changed(cast, note, tag_str)
+
+    @pyqtSlot()
+    def on_show_query_tips(self):
+        if self._query_tips_form is None:
+            self._query_tips_form = w = QWidget()
+            ui = QueryTipsForm()
+            ui.setupUi(w)
+            w.setWindowTitle("Query Tips")
+        self._query_tips_form.show()
+
+    def on_snapshots_changed(self, cast=True, note='', tag_str=''):
+        # New captured snapshot.
+        # update snpdata to snp dock.
+        if self._tv.model() is None:
+            return
+
         # capture current ion info
         ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species(
         )
 
-        # capture settings view filter text if any
-        if self.filter_lineEdit.text() != '':
-            note += f", Filter: {self.filter_lineEdit.text()}, "
         # create a new snapshotdata
         snp_data = SnapshotData(get_settings_data(*self.get_data_models()),
                                 ion_name=ion_name,
