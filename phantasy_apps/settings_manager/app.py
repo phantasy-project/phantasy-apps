@@ -3134,7 +3134,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # capture settings view filter text if any
         if self.filter_lineEdit.text() != '':
-            note += f"Filter: {self.filter_lineEdit.text()}, "
+            note += f", Filter: {self.filter_lineEdit.text()}, "
         # create a new snapshotdata
         snp_data = SnapshotData(get_settings_data(*self.get_data_models()),
                                 ion_name=ion_name,

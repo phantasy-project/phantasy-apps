@@ -121,7 +121,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         return self.selected_tag_list
 
     def get_note(self):
-        return self.note_textEdit.toPlainText()
+        return self.note_textEdit.toPlainText().strip()
 
 
 def get_tag_list():
