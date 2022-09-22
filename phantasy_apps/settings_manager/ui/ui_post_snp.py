@@ -57,8 +57,13 @@ class Ui_Dialog(object):
             self.selected_tags.sizePolicy().hasHeightForWidth())
         self.selected_tags.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
-        font.setItalic(True)
+        font.setItalic(False)
         self.selected_tags.setFont(font)
+        self.selected_tags.setStyleSheet(
+            "QLabel {\n"
+            "    color: rgb(255, 0, 127);\n"
+            "    background-color: rgb(233, 233, 233);\n"
+            "}")
         self.selected_tags.setText("")
         self.selected_tags.setObjectName("selected_tags")
         self.gridLayout.addWidget(self.selected_tags, 2, 1, 1, 2)
