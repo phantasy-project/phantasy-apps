@@ -3079,7 +3079,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
 
         # pop up a dialog for tag selection
-        postsnp_dlg = PostSnapshotDialog(self)
+        postsnp_dlg = PostSnapshotDialog(self.default_font_size, self)
         r = postsnp_dlg.exec_()
         if r == QDialog.Accepted:
             tag_str = ','.join(postsnp_dlg.get_selected_tag_list())
@@ -3321,7 +3321,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             _filters = sorted(list(filters))
         for tag in _filters:
             o = QPushButton(tag, self.snp_dock)
-            o.setStyleSheet(TAG_BTN_STY.format(fs=10))
+            o.setStyleSheet(TAG_BTN_STY.format(fs=self.default_font_size - 1))
             o.setCheckable(True)
             o.toggled.connect(partial(self.on_update_tag_filters, tag))
             layout.addWidget(o)

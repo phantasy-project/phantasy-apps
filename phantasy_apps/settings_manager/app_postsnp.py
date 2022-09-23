@@ -23,9 +23,10 @@ DEFAULT_TAG_LIST = ["LINAC", "FSEE", "GOLDEN"]
 
 class PostSnapshotDialog(QDialog, Ui_Dialog):
 
-    def __init__(self, parent=None):
+    def __init__(self, tag_fontsize: int, parent=None):
         super(self.__class__, self).__init__()
         self.parent = parent
+        sef._tag_fs = tag_fontsize
 
         # UI
         self.setupUi(self)
@@ -50,7 +51,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         _tags = sorted(list(tags))
         for tag in _tags:
             o = QPushButton(tag, self)
-            o.setStyleSheet(TAG_BTN_STY.format(fs=10))
+            o.setStyleSheet(TAG_BTN_STY.format(fs=self._tag_fs))
             o.setCheckable(True)
             o.toggled.connect(partial(self.on_update_tags, tag))
             layout.addWidget(o)
