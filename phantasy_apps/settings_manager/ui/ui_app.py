@@ -47,353 +47,204 @@ class Ui_MainWindow(object):
         self.gridLayout.setContentsMargins(4, 4, 4, 4)
         self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
-        self.settingsView = QtWidgets.QTreeView(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(
-            self.settingsView.sizePolicy().hasHeightForWidth())
-        self.settingsView.setSizePolicy(sizePolicy)
-        self.settingsView.setSelectionMode(
-            QtWidgets.QAbstractItemView.ExtendedSelection)
-        self.settingsView.setUniformRowHeights(True)
-        self.settingsView.setObjectName("settingsView")
-        self.gridLayout.addWidget(self.settingsView, 3, 1, 1, 16)
-        self.horizontalLayout_11 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_11.setContentsMargins(-1, 0, -1, -1)
-        self.horizontalLayout_11.setSpacing(4)
-        self.horizontalLayout_11.setObjectName("horizontalLayout_11")
-        self.init_settings_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.filter_hbox = QtWidgets.QHBoxLayout()
+        self.filter_hbox.setContentsMargins(-1, 0, -1, -1)
+        self.filter_hbox.setSpacing(4)
+        self.filter_hbox.setObjectName("filter_hbox")
+        self.stripper_filter_hbox = QtWidgets.QHBoxLayout()
+        self.stripper_filter_hbox.setSpacing(1)
+        self.stripper_filter_hbox.setObjectName("stripper_filter_hbox")
+        self.pos1_filter_btn = QtWidgets.QToolButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.init_settings_lbl.sizePolicy().hasHeightForWidth())
-        self.init_settings_lbl.setSizePolicy(sizePolicy)
-        self.init_settings_lbl.setObjectName("init_settings_lbl")
-        self.horizontalLayout_11.addWidget(self.init_settings_lbl)
-        spacerItem = QtWidgets.QSpacerItem(40, 20,
-                                           QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_11.addItem(spacerItem)
-        self.init_settings_chkbox = QtWidgets.QCheckBox(self.centralwidget)
-        self.init_settings_chkbox.setObjectName("init_settings_chkbox")
-        self.horizontalLayout_11.addWidget(self.init_settings_chkbox)
-        self.skip_none_chkbox = QtWidgets.QCheckBox(self.centralwidget)
-        self.skip_none_chkbox.setObjectName("skip_none_chkbox")
-        self.horizontalLayout_11.addWidget(self.skip_none_chkbox)
-        self.gridLayout.addLayout(self.horizontalLayout_11, 6, 1, 1, 16)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
-        self.horizontalLayout_2.setSpacing(4)
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.show_refset_ctrls_btn = QtWidgets.QToolButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.show_refset_ctrls_btn.sizePolicy().hasHeightForWidth())
-        self.show_refset_ctrls_btn.setSizePolicy(sizePolicy)
+            self.pos1_filter_btn.sizePolicy().hasHeightForWidth())
+        self.pos1_filter_btn.setSizePolicy(sizePolicy)
+        self.pos1_filter_btn.setMinimumSize(QtCore.QSize(0, 0))
+        self.pos1_filter_btn.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/sm-icons/right-arrow.png"),
+        icon1.addPixmap(QtGui.QPixmap(":/sm-icons/arrow_backward.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon1.addPixmap(QtGui.QPixmap(":/sm-icons/left-arrow.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.On)
-        self.show_refset_ctrls_btn.setIcon(icon1)
-        self.show_refset_ctrls_btn.setIconSize(QtCore.QSize(24, 24))
-        self.show_refset_ctrls_btn.setCheckable(True)
-        self.show_refset_ctrls_btn.setChecked(True)
-        self.show_refset_ctrls_btn.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon)
-        self.show_refset_ctrls_btn.setAutoRaise(True)
-        self.show_refset_ctrls_btn.setObjectName("show_refset_ctrls_btn")
-        self.horizontalLayout_2.addWidget(self.show_refset_ctrls_btn)
-        self.refset_ctrl_hbox = QtWidgets.QHBoxLayout()
-        self.refset_ctrl_hbox.setContentsMargins(0, 0, -1, 0)
-        self.refset_ctrl_hbox.setSpacing(2)
-        self.refset_ctrl_hbox.setObjectName("refset_ctrl_hbox")
-        self.show_diff_x0ref_btn = QtWidgets.QToolButton(self.centralwidget)
+        self.pos1_filter_btn.setIcon(icon1)
+        self.pos1_filter_btn.setIconSize(QtCore.QSize(30, 30))
+        self.pos1_filter_btn.setCheckable(True)
+        self.pos1_filter_btn.setChecked(True)
+        self.pos1_filter_btn.setAutoRaise(True)
+        self.pos1_filter_btn.setObjectName("pos1_filter_btn")
+        self.stripper_filter_hbox.addWidget(self.pos1_filter_btn)
+        self.pos_filter_btn = QtWidgets.QToolButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
+                                           QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.show_diff_x0ref_btn.sizePolicy().hasHeightForWidth())
-        self.show_diff_x0ref_btn.setSizePolicy(sizePolicy)
+            self.pos_filter_btn.sizePolicy().hasHeightForWidth())
+        self.pos_filter_btn.setSizePolicy(sizePolicy)
+        self.pos_filter_btn.setMinimumSize(QtCore.QSize(0, 0))
+        self.pos_filter_btn.setIconSize(QtCore.QSize(30, 30))
+        self.pos_filter_btn.setCheckable(False)
+        self.pos_filter_btn.setAutoRaise(False)
+        self.pos_filter_btn.setObjectName("pos_filter_btn")
+        self.stripper_filter_hbox.addWidget(self.pos_filter_btn)
+        self.pos_dspin = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.pos_dspin.sizePolicy().hasHeightForWidth())
+        self.pos_dspin.setSizePolicy(sizePolicy)
+        self.pos_dspin.setMaximum(1000.0)
+        self.pos_dspin.setProperty("value", 223.74)
+        self.pos_dspin.setObjectName("pos_dspin")
+        self.stripper_filter_hbox.addWidget(self.pos_dspin)
+        self.pos2_filter_btn = QtWidgets.QToolButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.pos2_filter_btn.sizePolicy().hasHeightForWidth())
+        self.pos2_filter_btn.setSizePolicy(sizePolicy)
+        self.pos2_filter_btn.setMinimumSize(QtCore.QSize(0, 0))
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/dx0ref_warning.png"),
+        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/arrow_forward.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_diff_x0ref_btn.setIcon(icon2)
-        self.show_diff_x0ref_btn.setIconSize(QtCore.QSize(80, 30))
-        self.show_diff_x0ref_btn.setCheckable(True)
-        self.show_diff_x0ref_btn.setObjectName("show_diff_x0ref_btn")
-        self.refset_ctrl_hbox.addWidget(self.show_diff_x0ref_btn)
-        self.show_diff_x2ref_btn = QtWidgets.QToolButton(self.centralwidget)
+        self.pos2_filter_btn.setIcon(icon2)
+        self.pos2_filter_btn.setIconSize(QtCore.QSize(30, 30))
+        self.pos2_filter_btn.setCheckable(True)
+        self.pos2_filter_btn.setChecked(True)
+        self.pos2_filter_btn.setAutoRaise(True)
+        self.pos2_filter_btn.setObjectName("pos2_filter_btn")
+        self.stripper_filter_hbox.addWidget(self.pos2_filter_btn)
+        self.filter_hbox.addLayout(self.stripper_filter_hbox)
+        self.line_3 = QtWidgets.QFrame(self.centralwidget)
+        self.line_3.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_3.setObjectName("line_3")
+        self.filter_hbox.addWidget(self.line_3)
+        self.show_disconnected_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
+                                           QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.show_diff_x2ref_btn.sizePolicy().hasHeightForWidth())
-        self.show_diff_x2ref_btn.setSizePolicy(sizePolicy)
+            self.show_disconnected_btn.sizePolicy().hasHeightForWidth())
+        self.show_disconnected_btn.setSizePolicy(sizePolicy)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/dx2ref_warning.png"),
+        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/fail.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_diff_x2ref_btn.setIcon(icon3)
-        self.show_diff_x2ref_btn.setIconSize(QtCore.QSize(80, 30))
-        self.show_diff_x2ref_btn.setCheckable(True)
-        self.show_diff_x2ref_btn.setObjectName("show_diff_x2ref_btn")
-        self.refset_ctrl_hbox.addWidget(self.show_diff_x2ref_btn)
-        self.refset_ctrl_vbox = QtWidgets.QVBoxLayout()
-        self.refset_ctrl_vbox.setSizeConstraint(
-            QtWidgets.QLayout.SetMinimumSize)
-        self.refset_ctrl_vbox.setContentsMargins(0, 0, -1, -1)
-        self.refset_ctrl_vbox.setSpacing(1)
-        self.refset_ctrl_vbox.setObjectName("refset_ctrl_vbox")
-        self.update_ref_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.show_disconnected_btn.setIcon(icon3)
+        self.show_disconnected_btn.setIconSize(QtCore.QSize(30, 30))
+        self.show_disconnected_btn.setCheckable(True)
+        self.show_disconnected_btn.setObjectName("show_disconnected_btn")
+        self.filter_hbox.addWidget(self.show_disconnected_btn)
+        self.show_warning_dx02_btn = QtWidgets.QToolButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
+                                           QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.update_ref_btn.sizePolicy().hasHeightForWidth())
-        self.update_ref_btn.setSizePolicy(sizePolicy)
-        self.update_ref_btn.setObjectName("update_ref_btn")
-        self.refset_ctrl_vbox.addWidget(self.update_ref_btn)
-        self.refset_pb = QtWidgets.QProgressBar(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.refset_pb.sizePolicy().hasHeightForWidth())
-        self.refset_pb.setSizePolicy(sizePolicy)
-        self.refset_pb.setMinimumSize(QtCore.QSize(0, 10))
-        self.refset_pb.setMaximumSize(QtCore.QSize(16777215, 10))
-        self.refset_pb.setProperty("value", 0)
-        self.refset_pb.setFormat("")
-        self.refset_pb.setObjectName("refset_pb")
-        self.refset_ctrl_vbox.addWidget(self.refset_pb)
-        self.refset_ctrl_hbox.addLayout(self.refset_ctrl_vbox)
-        self.horizontalLayout_2.addLayout(self.refset_ctrl_hbox)
-        self.show_alm_ctrls_btn = QtWidgets.QToolButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.show_alm_ctrls_btn.sizePolicy().hasHeightForWidth())
-        self.show_alm_ctrls_btn.setSizePolicy(sizePolicy)
-        self.show_alm_ctrls_btn.setIcon(icon1)
-        self.show_alm_ctrls_btn.setIconSize(QtCore.QSize(24, 24))
-        self.show_alm_ctrls_btn.setCheckable(True)
-        self.show_alm_ctrls_btn.setChecked(True)
-        self.show_alm_ctrls_btn.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon)
-        self.show_alm_ctrls_btn.setAutoRaise(True)
-        self.show_alm_ctrls_btn.setObjectName("show_alm_ctrls_btn")
-        self.horizontalLayout_2.addWidget(self.show_alm_ctrls_btn)
-        self.horizontalLayout_14 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_14.setContentsMargins(0, -1, 0, -1)
-        self.horizontalLayout_14.setSpacing(2)
-        self.horizontalLayout_14.setObjectName("horizontalLayout_14")
-        self.show_enabled_read_alms_btn = QtWidgets.QToolButton(
-            self.centralwidget)
+            self.show_warning_dx02_btn.sizePolicy().hasHeightForWidth())
+        self.show_warning_dx02_btn.setSizePolicy(sizePolicy)
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/alarm_on_green.png"),
+        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/dx02_warning.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_enabled_read_alms_btn.setIcon(icon4)
-        self.show_enabled_read_alms_btn.setIconSize(QtCore.QSize(24, 24))
-        self.show_enabled_read_alms_btn.setCheckable(True)
-        self.show_enabled_read_alms_btn.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon)
-        self.show_enabled_read_alms_btn.setObjectName(
-            "show_enabled_read_alms_btn")
-        self.horizontalLayout_14.addWidget(self.show_enabled_read_alms_btn)
-        self.show_disabled_read_alms_btn = QtWidgets.QToolButton(
-            self.centralwidget)
+        self.show_warning_dx02_btn.setIcon(icon4)
+        self.show_warning_dx02_btn.setIconSize(QtCore.QSize(80, 30))
+        self.show_warning_dx02_btn.setCheckable(True)
+        self.show_warning_dx02_btn.setObjectName("show_warning_dx02_btn")
+        self.filter_hbox.addWidget(self.show_warning_dx02_btn)
+        self.show_warning_dx12_btn = QtWidgets.QToolButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.show_warning_dx12_btn.sizePolicy().hasHeightForWidth())
+        self.show_warning_dx12_btn.setSizePolicy(sizePolicy)
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/alarm_off_red.png"),
+        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/dx12_warning.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_disabled_read_alms_btn.setIcon(icon5)
-        self.show_disabled_read_alms_btn.setIconSize(QtCore.QSize(24, 24))
-        self.show_disabled_read_alms_btn.setCheckable(True)
-        self.show_disabled_read_alms_btn.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon)
-        self.show_disabled_read_alms_btn.setObjectName(
-            "show_disabled_read_alms_btn")
-        self.horizontalLayout_14.addWidget(self.show_disabled_read_alms_btn)
-        self.show_enabled_tune_alms_btn = QtWidgets.QToolButton(
-            self.centralwidget)
-        self.show_enabled_tune_alms_btn.setIcon(icon4)
-        self.show_enabled_tune_alms_btn.setIconSize(QtCore.QSize(24, 24))
-        self.show_enabled_tune_alms_btn.setCheckable(True)
-        self.show_enabled_tune_alms_btn.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon)
-        self.show_enabled_tune_alms_btn.setObjectName(
-            "show_enabled_tune_alms_btn")
-        self.horizontalLayout_14.addWidget(self.show_enabled_tune_alms_btn)
-        self.show_disabled_tune_alms_btn = QtWidgets.QToolButton(
-            self.centralwidget)
-        self.show_disabled_tune_alms_btn.setIcon(icon5)
-        self.show_disabled_tune_alms_btn.setIconSize(QtCore.QSize(24, 24))
-        self.show_disabled_tune_alms_btn.setCheckable(True)
-        self.show_disabled_tune_alms_btn.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon)
-        self.show_disabled_tune_alms_btn.setObjectName(
-            "show_disabled_tune_alms_btn")
-        self.horizontalLayout_14.addWidget(self.show_disabled_tune_alms_btn)
-        self.alm_dec_line = QtWidgets.QFrame(self.centralwidget)
-        self.alm_dec_line.setFrameShape(QtWidgets.QFrame.VLine)
-        self.alm_dec_line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.alm_dec_line.setObjectName("alm_dec_line")
-        self.horizontalLayout_14.addWidget(self.alm_dec_line)
-        self.verticalLayout_4 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_4.setSizeConstraint(
-            QtWidgets.QLayout.SetMinimumSize)
-        self.verticalLayout_4.setContentsMargins(0, 0, -1, 0)
-        self.verticalLayout_4.setSpacing(1)
-        self.verticalLayout_4.setObjectName("verticalLayout_4")
-        self.horizontalLayout_15 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_15.setContentsMargins(0, 0, -1, -1)
-        self.horizontalLayout_15.setSpacing(2)
-        self.horizontalLayout_15.setObjectName("horizontalLayout_15")
-        self.disable_alms_btn = QtWidgets.QToolButton(self.centralwidget)
+        self.show_warning_dx12_btn.setIcon(icon5)
+        self.show_warning_dx12_btn.setIconSize(QtCore.QSize(80, 30))
+        self.show_warning_dx12_btn.setCheckable(True)
+        self.show_warning_dx12_btn.setObjectName("show_warning_dx12_btn")
+        self.filter_hbox.addWidget(self.show_warning_dx12_btn)
+        self.show_state_diff_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
+                                           QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.disable_alms_btn.sizePolicy().hasHeightForWidth())
-        self.disable_alms_btn.setSizePolicy(sizePolicy)
+            self.show_state_diff_btn.sizePolicy().hasHeightForWidth())
+        self.show_state_diff_btn.setSizePolicy(sizePolicy)
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/sm-icons/alarm_off.png"),
+        icon6.addPixmap(QtGui.QPixmap(":/sm-icons/red-green.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.disable_alms_btn.setIcon(icon6)
-        self.disable_alms_btn.setIconSize(QtCore.QSize(24, 24))
-        self.disable_alms_btn.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon)
-        self.disable_alms_btn.setObjectName("disable_alms_btn")
-        self.horizontalLayout_15.addWidget(self.disable_alms_btn)
-        self.enable_alms_btn = QtWidgets.QToolButton(self.centralwidget)
+        self.show_state_diff_btn.setIcon(icon6)
+        self.show_state_diff_btn.setIconSize(QtCore.QSize(30, 30))
+        self.show_state_diff_btn.setCheckable(True)
+        self.show_state_diff_btn.setObjectName("show_state_diff_btn")
+        self.filter_hbox.addWidget(self.show_state_diff_btn)
+        self.show_all_selected_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
+                                           QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.enable_alms_btn.sizePolicy().hasHeightForWidth())
-        self.enable_alms_btn.setSizePolicy(sizePolicy)
+            self.show_all_selected_btn.sizePolicy().hasHeightForWidth())
+        self.show_all_selected_btn.setSizePolicy(sizePolicy)
         icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(":/sm-icons/alarm_on.png"),
+        icon7.addPixmap(QtGui.QPixmap(":/sm-icons/checked.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.enable_alms_btn.setIcon(icon7)
-        self.enable_alms_btn.setIconSize(QtCore.QSize(24, 24))
-        self.enable_alms_btn.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon)
-        self.enable_alms_btn.setObjectName("enable_alms_btn")
-        self.horizontalLayout_15.addWidget(self.enable_alms_btn)
-        self.alm_type_cbb = QtWidgets.QComboBox(self.centralwidget)
-        self.alm_type_cbb.setObjectName("alm_type_cbb")
-        self.alm_type_cbb.addItem("")
-        self.alm_type_cbb.addItem("")
-        self.alm_type_cbb.addItem("")
-        self.horizontalLayout_15.addWidget(self.alm_type_cbb)
-        self.verticalLayout_4.addLayout(self.horizontalLayout_15)
-        self.alm_set_pb = QtWidgets.QProgressBar(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.alm_set_pb.sizePolicy().hasHeightForWidth())
-        self.alm_set_pb.setSizePolicy(sizePolicy)
-        self.alm_set_pb.setMinimumSize(QtCore.QSize(0, 10))
-        self.alm_set_pb.setMaximumSize(QtCore.QSize(16777215, 10))
-        self.alm_set_pb.setProperty("value", 0)
-        self.alm_set_pb.setFormat("")
-        self.alm_set_pb.setObjectName("alm_set_pb")
-        self.verticalLayout_4.addWidget(self.alm_set_pb)
-        self.horizontalLayout_14.addLayout(self.verticalLayout_4)
-        self.horizontalLayout_2.addLayout(self.horizontalLayout_14)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
-                                            QtWidgets.QSizePolicy.Expanding,
-                                            QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem1)
-        self.snp_ms_chkbox = QtWidgets.QCheckBox(self.centralwidget)
-        self.snp_ms_chkbox.setObjectName("snp_ms_chkbox")
-        self.horizontalLayout_2.addWidget(self.snp_ms_chkbox)
-        self.wysiwyc_chkbox = QtWidgets.QCheckBox(self.centralwidget)
-        self.wysiwyc_chkbox.setObjectName("wysiwyc_chkbox")
-        self.horizontalLayout_2.addWidget(self.wysiwyc_chkbox)
-        self.line_4 = QtWidgets.QFrame(self.centralwidget)
-        self.line_4.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_4.setObjectName("line_4")
-        self.horizontalLayout_2.addWidget(self.line_4)
-        self.auto_ndigit_chkbox = QtWidgets.QCheckBox(self.centralwidget)
-        self.auto_ndigit_chkbox.setEnabled(True)
-        self.auto_ndigit_chkbox.setObjectName("auto_ndigit_chkbox")
-        self.horizontalLayout_2.addWidget(self.auto_ndigit_chkbox)
-        self.ndigit_lbl = QtWidgets.QLabel(self.centralwidget)
-        self.ndigit_lbl.setObjectName("ndigit_lbl")
-        self.horizontalLayout_2.addWidget(self.ndigit_lbl)
-        self.ndigit_sbox = QtWidgets.QSpinBox(self.centralwidget)
-        self.ndigit_sbox.setMaximum(20)
-        self.ndigit_sbox.setProperty("value", 3)
-        self.ndigit_sbox.setObjectName("ndigit_sbox")
-        self.horizontalLayout_2.addWidget(self.ndigit_sbox)
-        self.show_init_settings_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(":/sm-icons/down-arrow.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon8.addPixmap(QtGui.QPixmap(":/sm-icons/up-arrow.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.On)
-        self.show_init_settings_btn.setIcon(icon8)
-        self.show_init_settings_btn.setIconSize(QtCore.QSize(24, 24))
-        self.show_init_settings_btn.setCheckable(True)
-        self.show_init_settings_btn.setChecked(True)
-        self.show_init_settings_btn.setAutoRaise(True)
-        self.show_init_settings_btn.setObjectName("show_init_settings_btn")
-        self.horizontalLayout_2.addWidget(self.show_init_settings_btn)
-        self.gridLayout.addLayout(self.horizontalLayout_2, 5, 1, 1, 16)
+        self.show_all_selected_btn.setIcon(icon7)
+        self.show_all_selected_btn.setIconSize(QtCore.QSize(24, 30))
+        self.show_all_selected_btn.setCheckable(True)
+        self.show_all_selected_btn.setObjectName("show_all_selected_btn")
+        self.filter_hbox.addWidget(self.show_all_selected_btn)
+        self.filter_ctrls_hbox = QtWidgets.QHBoxLayout()
+        self.filter_ctrls_hbox.setSpacing(4)
+        self.filter_ctrls_hbox.setObjectName("filter_ctrls_hbox")
+        self.filter_hbox.addLayout(self.filter_ctrls_hbox)
+        self.gridLayout.addLayout(self.filter_hbox, 1, 16, 1, 1)
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_9.setSpacing(4)
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.grow_fontsize_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(":/sm-icons/increase-font.png"),
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/sm-icons/increase-font.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.grow_fontsize_btn.setIcon(icon9)
+        self.grow_fontsize_btn.setIcon(icon8)
         self.grow_fontsize_btn.setIconSize(QtCore.QSize(30, 30))
         self.grow_fontsize_btn.setAutoRaise(True)
         self.grow_fontsize_btn.setObjectName("grow_fontsize_btn")
         self.horizontalLayout_9.addWidget(self.grow_fontsize_btn)
         self.shrink_fontsize_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap(":/sm-icons/decrease-font.png"),
-                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.shrink_fontsize_btn.setIcon(icon10)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/sm-icons/decrease-font.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.shrink_fontsize_btn.setIcon(icon9)
         self.shrink_fontsize_btn.setIconSize(QtCore.QSize(30, 30))
         self.shrink_fontsize_btn.setAutoRaise(True)
         self.shrink_fontsize_btn.setObjectName("shrink_fontsize_btn")
         self.horizontalLayout_9.addWidget(self.shrink_fontsize_btn)
         self.toolButton = QtWidgets.QToolButton(self.centralwidget)
-        icon11 = QtGui.QIcon()
-        icon11.addPixmap(QtGui.QPixmap(":/sm-icons/resize-horizontal.png"),
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap(":/sm-icons/resize-horizontal.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.toolButton.setIcon(icon11)
+        self.toolButton.setIcon(icon10)
         self.toolButton.setIconSize(QtCore.QSize(30, 30))
         self.toolButton.setAutoRaise(True)
         self.toolButton.setObjectName("toolButton")
         self.horizontalLayout_9.addWidget(self.toolButton)
         self.delete_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon12 = QtGui.QIcon()
-        icon12.addPixmap(QtGui.QPixmap(":/sm-icons/delete.png"),
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap(":/sm-icons/delete.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.delete_btn.setIcon(icon12)
+        self.delete_btn.setIcon(icon11)
         self.delete_btn.setIconSize(QtCore.QSize(30, 30))
         self.delete_btn.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
         self.delete_btn.setAutoRaise(True)
@@ -455,10 +306,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.addWidget(self.loaded_snp_ts_lbl)
         self.verticalLayout_6.addLayout(self.horizontalLayout_6)
         self.horizontalLayout_9.addLayout(self.verticalLayout_6)
-        spacerItem2 = QtWidgets.QSpacerItem(600, 30,
-                                            QtWidgets.QSizePolicy.Expanding,
-                                            QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_9.addItem(spacerItem2)
+        spacerItem = QtWidgets.QSpacerItem(600, 30,
+                                           QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_9.addItem(spacerItem)
         self.filter_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -514,10 +365,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.filter_tip_btn.sizePolicy().hasHeightForWidth())
         self.filter_tip_btn.setSizePolicy(sizePolicy)
-        icon13 = QtGui.QIcon()
-        icon13.addPixmap(QtGui.QPixmap(":/sm-icons/help.png"),
+        icon12 = QtGui.QIcon()
+        icon12.addPixmap(QtGui.QPixmap(":/sm-icons/help.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.filter_tip_btn.setIcon(icon13)
+        self.filter_tip_btn.setIcon(icon12)
         self.filter_tip_btn.setIconSize(QtCore.QSize(30, 30))
         self.filter_tip_btn.setAutoRaise(True)
         self.filter_tip_btn.setObjectName("filter_tip_btn")
@@ -569,10 +420,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setSpacing(4)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.reload_lattice_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon14 = QtGui.QIcon()
-        icon14.addPixmap(QtGui.QPixmap(":/sm-icons/reload.png"),
+        icon13 = QtGui.QIcon()
+        icon13.addPixmap(QtGui.QPixmap(":/sm-icons/reload.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.reload_lattice_btn.setIcon(icon14)
+        self.reload_lattice_btn.setIcon(icon13)
         self.reload_lattice_btn.setIconSize(QtCore.QSize(24, 24))
         self.reload_lattice_btn.setAutoRaise(True)
         self.reload_lattice_btn.setObjectName("reload_lattice_btn")
@@ -588,10 +439,10 @@ class Ui_MainWindow(object):
         self.lv_lbl.setObjectName("lv_lbl")
         self.horizontalLayout.addWidget(self.lv_lbl)
         self.lv_view_btn = QtWidgets.QToolButton(self.centralwidget)
-        icon15 = QtGui.QIcon()
-        icon15.addPixmap(QtGui.QPixmap(":/sm-icons/view-details.png"),
+        icon14 = QtGui.QIcon()
+        icon14.addPixmap(QtGui.QPixmap(":/sm-icons/view-details.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.lv_view_btn.setIcon(icon15)
+        self.lv_view_btn.setIcon(icon14)
         self.lv_view_btn.setAutoRaise(True)
         self.lv_view_btn.setObjectName("lv_view_btn")
         self.horizontalLayout.addWidget(self.lv_view_btn)
@@ -622,7 +473,12 @@ class Ui_MainWindow(object):
         self.lv_segm_lbl.setObjectName("lv_segm_lbl")
         self.horizontalLayout.addWidget(self.lv_segm_lbl)
         self.show_sts_btn = QtWidgets.QToolButton(self.centralwidget)
-        self.show_sts_btn.setIcon(icon1)
+        icon15 = QtGui.QIcon()
+        icon15.addPixmap(QtGui.QPixmap(":/sm-icons/right-arrow.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon15.addPixmap(QtGui.QPixmap(":/sm-icons/left-arrow.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.On)
+        self.show_sts_btn.setIcon(icon15)
         self.show_sts_btn.setIconSize(QtCore.QSize(24, 24))
         self.show_sts_btn.setCheckable(True)
         self.show_sts_btn.setChecked(True)
@@ -654,10 +510,10 @@ class Ui_MainWindow(object):
             "}")
         self.total_field_number_lbl.setObjectName("total_field_number_lbl")
         self.horizontalLayout.addWidget(self.total_field_number_lbl)
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem3)
+        self.horizontalLayout.addItem(spacerItem1)
         self.refresh_pb = QtWidgets.QProgressBar(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Expanding)
@@ -941,169 +797,313 @@ class Ui_MainWindow(object):
         self.label.setObjectName("label")
         self.horizontalLayout_12.addWidget(self.label)
         self.gridLayout.addLayout(self.horizontalLayout_12, 1, 1, 1, 1)
-        self.filter_hbox = QtWidgets.QHBoxLayout()
-        self.filter_hbox.setContentsMargins(-1, 0, -1, -1)
-        self.filter_hbox.setSpacing(4)
-        self.filter_hbox.setObjectName("filter_hbox")
-        self.stripper_filter_hbox = QtWidgets.QHBoxLayout()
-        self.stripper_filter_hbox.setSpacing(1)
-        self.stripper_filter_hbox.setObjectName("stripper_filter_hbox")
-        self.pos1_filter_btn = QtWidgets.QToolButton(self.centralwidget)
+        self.settingsView = QtWidgets.QTreeView(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(
+            self.settingsView.sizePolicy().hasHeightForWidth())
+        self.settingsView.setSizePolicy(sizePolicy)
+        self.settingsView.setSelectionMode(
+            QtWidgets.QAbstractItemView.ExtendedSelection)
+        self.settingsView.setUniformRowHeights(True)
+        self.settingsView.setObjectName("settingsView")
+        self.gridLayout.addWidget(self.settingsView, 3, 1, 1, 16)
+        self.horizontalLayout_11 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_11.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_11.setSpacing(4)
+        self.horizontalLayout_11.setObjectName("horizontalLayout_11")
+        self.init_settings_lbl = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.pos1_filter_btn.sizePolicy().hasHeightForWidth())
-        self.pos1_filter_btn.setSizePolicy(sizePolicy)
-        self.pos1_filter_btn.setMinimumSize(QtCore.QSize(0, 0))
-        self.pos1_filter_btn.setText("")
+            self.init_settings_lbl.sizePolicy().hasHeightForWidth())
+        self.init_settings_lbl.setSizePolicy(sizePolicy)
+        self.init_settings_lbl.setObjectName("init_settings_lbl")
+        self.horizontalLayout_11.addWidget(self.init_settings_lbl)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_11.addItem(spacerItem2)
+        self.init_settings_chkbox = QtWidgets.QCheckBox(self.centralwidget)
+        self.init_settings_chkbox.setObjectName("init_settings_chkbox")
+        self.horizontalLayout_11.addWidget(self.init_settings_chkbox)
+        self.skip_none_chkbox = QtWidgets.QCheckBox(self.centralwidget)
+        self.skip_none_chkbox.setObjectName("skip_none_chkbox")
+        self.horizontalLayout_11.addWidget(self.skip_none_chkbox)
+        self.gridLayout.addLayout(self.horizontalLayout_11, 6, 1, 1, 16)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_2.setSpacing(4)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.show_refset_ctrls_btn = QtWidgets.QToolButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.show_refset_ctrls_btn.sizePolicy().hasHeightForWidth())
+        self.show_refset_ctrls_btn.setSizePolicy(sizePolicy)
+        self.show_refset_ctrls_btn.setIcon(icon15)
+        self.show_refset_ctrls_btn.setIconSize(QtCore.QSize(24, 24))
+        self.show_refset_ctrls_btn.setCheckable(True)
+        self.show_refset_ctrls_btn.setChecked(True)
+        self.show_refset_ctrls_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.show_refset_ctrls_btn.setAutoRaise(True)
+        self.show_refset_ctrls_btn.setObjectName("show_refset_ctrls_btn")
+        self.horizontalLayout_2.addWidget(self.show_refset_ctrls_btn)
+        self.refset_ctrl_hbox = QtWidgets.QHBoxLayout()
+        self.refset_ctrl_hbox.setContentsMargins(0, 0, -1, 0)
+        self.refset_ctrl_hbox.setSpacing(2)
+        self.refset_ctrl_hbox.setObjectName("refset_ctrl_hbox")
+        self.show_diff_x0ref_btn = QtWidgets.QToolButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.show_diff_x0ref_btn.sizePolicy().hasHeightForWidth())
+        self.show_diff_x0ref_btn.setSizePolicy(sizePolicy)
         icon24 = QtGui.QIcon()
-        icon24.addPixmap(QtGui.QPixmap(":/sm-icons/arrow_backward.png"),
+        icon24.addPixmap(QtGui.QPixmap(":/sm-icons/dx0ref_warning.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pos1_filter_btn.setIcon(icon24)
-        self.pos1_filter_btn.setIconSize(QtCore.QSize(30, 30))
-        self.pos1_filter_btn.setCheckable(True)
-        self.pos1_filter_btn.setChecked(True)
-        self.pos1_filter_btn.setAutoRaise(True)
-        self.pos1_filter_btn.setObjectName("pos1_filter_btn")
-        self.stripper_filter_hbox.addWidget(self.pos1_filter_btn)
-        self.pos_filter_btn = QtWidgets.QToolButton(self.centralwidget)
+        self.show_diff_x0ref_btn.setIcon(icon24)
+        self.show_diff_x0ref_btn.setIconSize(QtCore.QSize(80, 30))
+        self.show_diff_x0ref_btn.setCheckable(True)
+        self.show_diff_x0ref_btn.setObjectName("show_diff_x0ref_btn")
+        self.refset_ctrl_hbox.addWidget(self.show_diff_x0ref_btn)
+        self.show_diff_x2ref_btn = QtWidgets.QToolButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
+                                           QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.pos_filter_btn.sizePolicy().hasHeightForWidth())
-        self.pos_filter_btn.setSizePolicy(sizePolicy)
-        self.pos_filter_btn.setMinimumSize(QtCore.QSize(0, 0))
-        self.pos_filter_btn.setIconSize(QtCore.QSize(30, 30))
-        self.pos_filter_btn.setCheckable(False)
-        self.pos_filter_btn.setAutoRaise(False)
-        self.pos_filter_btn.setObjectName("pos_filter_btn")
-        self.stripper_filter_hbox.addWidget(self.pos_filter_btn)
-        self.pos_dspin = QtWidgets.QDoubleSpinBox(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.pos_dspin.sizePolicy().hasHeightForWidth())
-        self.pos_dspin.setSizePolicy(sizePolicy)
-        self.pos_dspin.setMaximum(1000.0)
-        self.pos_dspin.setProperty("value", 223.74)
-        self.pos_dspin.setObjectName("pos_dspin")
-        self.stripper_filter_hbox.addWidget(self.pos_dspin)
-        self.pos2_filter_btn = QtWidgets.QToolButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.pos2_filter_btn.sizePolicy().hasHeightForWidth())
-        self.pos2_filter_btn.setSizePolicy(sizePolicy)
-        self.pos2_filter_btn.setMinimumSize(QtCore.QSize(0, 0))
+            self.show_diff_x2ref_btn.sizePolicy().hasHeightForWidth())
+        self.show_diff_x2ref_btn.setSizePolicy(sizePolicy)
         icon25 = QtGui.QIcon()
-        icon25.addPixmap(QtGui.QPixmap(":/sm-icons/arrow_forward.png"),
+        icon25.addPixmap(QtGui.QPixmap(":/sm-icons/dx2ref_warning.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pos2_filter_btn.setIcon(icon25)
-        self.pos2_filter_btn.setIconSize(QtCore.QSize(30, 30))
-        self.pos2_filter_btn.setCheckable(True)
-        self.pos2_filter_btn.setChecked(True)
-        self.pos2_filter_btn.setAutoRaise(True)
-        self.pos2_filter_btn.setObjectName("pos2_filter_btn")
-        self.stripper_filter_hbox.addWidget(self.pos2_filter_btn)
-        self.filter_hbox.addLayout(self.stripper_filter_hbox)
-        self.line_3 = QtWidgets.QFrame(self.centralwidget)
-        self.line_3.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line_3.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_3.setObjectName("line_3")
-        self.filter_hbox.addWidget(self.line_3)
-        self.show_disconnected_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.show_diff_x2ref_btn.setIcon(icon25)
+        self.show_diff_x2ref_btn.setIconSize(QtCore.QSize(80, 30))
+        self.show_diff_x2ref_btn.setCheckable(True)
+        self.show_diff_x2ref_btn.setObjectName("show_diff_x2ref_btn")
+        self.refset_ctrl_hbox.addWidget(self.show_diff_x2ref_btn)
+        self.refset_ctrl_vbox = QtWidgets.QVBoxLayout()
+        self.refset_ctrl_vbox.setSizeConstraint(
+            QtWidgets.QLayout.SetMinimumSize)
+        self.refset_ctrl_vbox.setContentsMargins(0, 0, -1, -1)
+        self.refset_ctrl_vbox.setSpacing(1)
+        self.refset_ctrl_vbox.setObjectName("refset_ctrl_vbox")
+        self.update_ref_btn = QtWidgets.QPushButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
+                                           QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.show_disconnected_btn.sizePolicy().hasHeightForWidth())
-        self.show_disconnected_btn.setSizePolicy(sizePolicy)
+            self.update_ref_btn.sizePolicy().hasHeightForWidth())
+        self.update_ref_btn.setSizePolicy(sizePolicy)
+        self.update_ref_btn.setObjectName("update_ref_btn")
+        self.refset_ctrl_vbox.addWidget(self.update_ref_btn)
+        self.refset_pb = QtWidgets.QProgressBar(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.refset_pb.sizePolicy().hasHeightForWidth())
+        self.refset_pb.setSizePolicy(sizePolicy)
+        self.refset_pb.setMinimumSize(QtCore.QSize(0, 10))
+        self.refset_pb.setMaximumSize(QtCore.QSize(16777215, 10))
+        self.refset_pb.setProperty("value", 0)
+        self.refset_pb.setFormat("")
+        self.refset_pb.setObjectName("refset_pb")
+        self.refset_ctrl_vbox.addWidget(self.refset_pb)
+        self.refset_ctrl_hbox.addLayout(self.refset_ctrl_vbox)
+        self.horizontalLayout_2.addLayout(self.refset_ctrl_hbox)
+        self.show_alm_ctrls_btn = QtWidgets.QToolButton(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.show_alm_ctrls_btn.sizePolicy().hasHeightForWidth())
+        self.show_alm_ctrls_btn.setSizePolicy(sizePolicy)
+        self.show_alm_ctrls_btn.setIcon(icon15)
+        self.show_alm_ctrls_btn.setIconSize(QtCore.QSize(24, 24))
+        self.show_alm_ctrls_btn.setCheckable(True)
+        self.show_alm_ctrls_btn.setChecked(True)
+        self.show_alm_ctrls_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.show_alm_ctrls_btn.setAutoRaise(True)
+        self.show_alm_ctrls_btn.setObjectName("show_alm_ctrls_btn")
+        self.horizontalLayout_2.addWidget(self.show_alm_ctrls_btn)
+        self.horizontalLayout_14 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_14.setContentsMargins(0, -1, 0, -1)
+        self.horizontalLayout_14.setSpacing(2)
+        self.horizontalLayout_14.setObjectName("horizontalLayout_14")
+        self.show_enabled_read_alms_btn = QtWidgets.QToolButton(
+            self.centralwidget)
         icon26 = QtGui.QIcon()
-        icon26.addPixmap(QtGui.QPixmap(":/sm-icons/fail.png"),
+        icon26.addPixmap(QtGui.QPixmap(":/sm-icons/alarm_on_green.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_disconnected_btn.setIcon(icon26)
-        self.show_disconnected_btn.setIconSize(QtCore.QSize(30, 30))
-        self.show_disconnected_btn.setCheckable(True)
-        self.show_disconnected_btn.setObjectName("show_disconnected_btn")
-        self.filter_hbox.addWidget(self.show_disconnected_btn)
-        self.show_warning_dx02_btn = QtWidgets.QToolButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.show_warning_dx02_btn.sizePolicy().hasHeightForWidth())
-        self.show_warning_dx02_btn.setSizePolicy(sizePolicy)
+        self.show_enabled_read_alms_btn.setIcon(icon26)
+        self.show_enabled_read_alms_btn.setIconSize(QtCore.QSize(24, 24))
+        self.show_enabled_read_alms_btn.setCheckable(True)
+        self.show_enabled_read_alms_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.show_enabled_read_alms_btn.setObjectName(
+            "show_enabled_read_alms_btn")
+        self.horizontalLayout_14.addWidget(self.show_enabled_read_alms_btn)
+        self.show_disabled_read_alms_btn = QtWidgets.QToolButton(
+            self.centralwidget)
         icon27 = QtGui.QIcon()
-        icon27.addPixmap(QtGui.QPixmap(":/sm-icons/dx02_warning.png"),
+        icon27.addPixmap(QtGui.QPixmap(":/sm-icons/alarm_off_red.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_warning_dx02_btn.setIcon(icon27)
-        self.show_warning_dx02_btn.setIconSize(QtCore.QSize(80, 30))
-        self.show_warning_dx02_btn.setCheckable(True)
-        self.show_warning_dx02_btn.setObjectName("show_warning_dx02_btn")
-        self.filter_hbox.addWidget(self.show_warning_dx02_btn)
-        self.show_warning_dx12_btn = QtWidgets.QToolButton(self.centralwidget)
+        self.show_disabled_read_alms_btn.setIcon(icon27)
+        self.show_disabled_read_alms_btn.setIconSize(QtCore.QSize(24, 24))
+        self.show_disabled_read_alms_btn.setCheckable(True)
+        self.show_disabled_read_alms_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.show_disabled_read_alms_btn.setObjectName(
+            "show_disabled_read_alms_btn")
+        self.horizontalLayout_14.addWidget(self.show_disabled_read_alms_btn)
+        self.show_enabled_tune_alms_btn = QtWidgets.QToolButton(
+            self.centralwidget)
+        self.show_enabled_tune_alms_btn.setIcon(icon26)
+        self.show_enabled_tune_alms_btn.setIconSize(QtCore.QSize(24, 24))
+        self.show_enabled_tune_alms_btn.setCheckable(True)
+        self.show_enabled_tune_alms_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.show_enabled_tune_alms_btn.setObjectName(
+            "show_enabled_tune_alms_btn")
+        self.horizontalLayout_14.addWidget(self.show_enabled_tune_alms_btn)
+        self.show_disabled_tune_alms_btn = QtWidgets.QToolButton(
+            self.centralwidget)
+        self.show_disabled_tune_alms_btn.setIcon(icon27)
+        self.show_disabled_tune_alms_btn.setIconSize(QtCore.QSize(24, 24))
+        self.show_disabled_tune_alms_btn.setCheckable(True)
+        self.show_disabled_tune_alms_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.show_disabled_tune_alms_btn.setObjectName(
+            "show_disabled_tune_alms_btn")
+        self.horizontalLayout_14.addWidget(self.show_disabled_tune_alms_btn)
+        self.alm_dec_line = QtWidgets.QFrame(self.centralwidget)
+        self.alm_dec_line.setFrameShape(QtWidgets.QFrame.VLine)
+        self.alm_dec_line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.alm_dec_line.setObjectName("alm_dec_line")
+        self.horizontalLayout_14.addWidget(self.alm_dec_line)
+        self.verticalLayout_4 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_4.setSizeConstraint(
+            QtWidgets.QLayout.SetMinimumSize)
+        self.verticalLayout_4.setContentsMargins(0, 0, -1, 0)
+        self.verticalLayout_4.setSpacing(1)
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.horizontalLayout_15 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_15.setContentsMargins(0, 0, -1, -1)
+        self.horizontalLayout_15.setSpacing(2)
+        self.horizontalLayout_15.setObjectName("horizontalLayout_15")
+        self.disable_alms_btn = QtWidgets.QToolButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
+                                           QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.show_warning_dx12_btn.sizePolicy().hasHeightForWidth())
-        self.show_warning_dx12_btn.setSizePolicy(sizePolicy)
+            self.disable_alms_btn.sizePolicy().hasHeightForWidth())
+        self.disable_alms_btn.setSizePolicy(sizePolicy)
         icon28 = QtGui.QIcon()
-        icon28.addPixmap(QtGui.QPixmap(":/sm-icons/dx12_warning.png"),
+        icon28.addPixmap(QtGui.QPixmap(":/sm-icons/alarm_off.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_warning_dx12_btn.setIcon(icon28)
-        self.show_warning_dx12_btn.setIconSize(QtCore.QSize(80, 30))
-        self.show_warning_dx12_btn.setCheckable(True)
-        self.show_warning_dx12_btn.setObjectName("show_warning_dx12_btn")
-        self.filter_hbox.addWidget(self.show_warning_dx12_btn)
-        self.show_state_diff_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.disable_alms_btn.setIcon(icon28)
+        self.disable_alms_btn.setIconSize(QtCore.QSize(24, 24))
+        self.disable_alms_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.disable_alms_btn.setObjectName("disable_alms_btn")
+        self.horizontalLayout_15.addWidget(self.disable_alms_btn)
+        self.enable_alms_btn = QtWidgets.QToolButton(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
+                                           QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.show_state_diff_btn.sizePolicy().hasHeightForWidth())
-        self.show_state_diff_btn.setSizePolicy(sizePolicy)
+            self.enable_alms_btn.sizePolicy().hasHeightForWidth())
+        self.enable_alms_btn.setSizePolicy(sizePolicy)
         icon29 = QtGui.QIcon()
-        icon29.addPixmap(QtGui.QPixmap(":/sm-icons/red-green.png"),
+        icon29.addPixmap(QtGui.QPixmap(":/sm-icons/alarm_on.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_state_diff_btn.setIcon(icon29)
-        self.show_state_diff_btn.setIconSize(QtCore.QSize(30, 30))
-        self.show_state_diff_btn.setCheckable(True)
-        self.show_state_diff_btn.setObjectName("show_state_diff_btn")
-        self.filter_hbox.addWidget(self.show_state_diff_btn)
-        self.show_all_selected_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.enable_alms_btn.setIcon(icon29)
+        self.enable_alms_btn.setIconSize(QtCore.QSize(24, 24))
+        self.enable_alms_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.enable_alms_btn.setObjectName("enable_alms_btn")
+        self.horizontalLayout_15.addWidget(self.enable_alms_btn)
+        self.alm_type_cbb = QtWidgets.QComboBox(self.centralwidget)
+        self.alm_type_cbb.setObjectName("alm_type_cbb")
+        self.alm_type_cbb.addItem("")
+        self.alm_type_cbb.addItem("")
+        self.alm_type_cbb.addItem("")
+        self.horizontalLayout_15.addWidget(self.alm_type_cbb)
+        self.verticalLayout_4.addLayout(self.horizontalLayout_15)
+        self.alm_set_pb = QtWidgets.QProgressBar(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
+                                           QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.show_all_selected_btn.sizePolicy().hasHeightForWidth())
-        self.show_all_selected_btn.setSizePolicy(sizePolicy)
+            self.alm_set_pb.sizePolicy().hasHeightForWidth())
+        self.alm_set_pb.setSizePolicy(sizePolicy)
+        self.alm_set_pb.setMinimumSize(QtCore.QSize(0, 10))
+        self.alm_set_pb.setMaximumSize(QtCore.QSize(16777215, 10))
+        self.alm_set_pb.setProperty("value", 0)
+        self.alm_set_pb.setFormat("")
+        self.alm_set_pb.setObjectName("alm_set_pb")
+        self.verticalLayout_4.addWidget(self.alm_set_pb)
+        self.horizontalLayout_14.addLayout(self.verticalLayout_4)
+        self.horizontalLayout_2.addLayout(self.horizontalLayout_14)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem3)
+        self.snp_ms_chkbox = QtWidgets.QCheckBox(self.centralwidget)
+        self.snp_ms_chkbox.setObjectName("snp_ms_chkbox")
+        self.horizontalLayout_2.addWidget(self.snp_ms_chkbox)
+        self.wysiwyc_chkbox = QtWidgets.QCheckBox(self.centralwidget)
+        self.wysiwyc_chkbox.setObjectName("wysiwyc_chkbox")
+        self.horizontalLayout_2.addWidget(self.wysiwyc_chkbox)
+        self.line_4 = QtWidgets.QFrame(self.centralwidget)
+        self.line_4.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_4.setObjectName("line_4")
+        self.horizontalLayout_2.addWidget(self.line_4)
+        self.auto_ndigit_chkbox = QtWidgets.QCheckBox(self.centralwidget)
+        self.auto_ndigit_chkbox.setEnabled(True)
+        self.auto_ndigit_chkbox.setObjectName("auto_ndigit_chkbox")
+        self.horizontalLayout_2.addWidget(self.auto_ndigit_chkbox)
+        self.ndigit_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.ndigit_lbl.setObjectName("ndigit_lbl")
+        self.horizontalLayout_2.addWidget(self.ndigit_lbl)
+        self.ndigit_sbox = QtWidgets.QSpinBox(self.centralwidget)
+        self.ndigit_sbox.setMaximum(20)
+        self.ndigit_sbox.setProperty("value", 3)
+        self.ndigit_sbox.setObjectName("ndigit_sbox")
+        self.horizontalLayout_2.addWidget(self.ndigit_sbox)
+        self.show_init_settings_btn = QtWidgets.QToolButton(self.centralwidget)
         icon30 = QtGui.QIcon()
-        icon30.addPixmap(QtGui.QPixmap(":/sm-icons/checked.png"),
+        icon30.addPixmap(QtGui.QPixmap(":/sm-icons/down-arrow.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_all_selected_btn.setIcon(icon30)
-        self.show_all_selected_btn.setIconSize(QtCore.QSize(24, 30))
-        self.show_all_selected_btn.setCheckable(True)
-        self.show_all_selected_btn.setObjectName("show_all_selected_btn")
-        self.filter_hbox.addWidget(self.show_all_selected_btn)
-        self.filter_ctrls_hbox = QtWidgets.QHBoxLayout()
-        self.filter_ctrls_hbox.setSpacing(4)
-        self.filter_ctrls_hbox.setObjectName("filter_ctrls_hbox")
-        self.filter_hbox.addLayout(self.filter_ctrls_hbox)
-        self.gridLayout.addLayout(self.filter_hbox, 1, 16, 1, 1)
+        icon30.addPixmap(QtGui.QPixmap(":/sm-icons/up-arrow.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.On)
+        self.show_init_settings_btn.setIcon(icon30)
+        self.show_init_settings_btn.setIconSize(QtCore.QSize(24, 24))
+        self.show_init_settings_btn.setCheckable(True)
+        self.show_init_settings_btn.setChecked(True)
+        self.show_init_settings_btn.setAutoRaise(True)
+        self.show_init_settings_btn.setObjectName("show_init_settings_btn")
+        self.horizontalLayout_2.addWidget(self.show_init_settings_btn)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 5, 1, 1, 16)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 2357, 32))
@@ -1164,160 +1164,73 @@ class Ui_MainWindow(object):
         self.snp_dock.setObjectName("snp_dock")
         self.dockWidgetContents = QtWidgets.QWidget()
         self.dockWidgetContents.setObjectName("dockWidgetContents")
-        self.gridLayout_3 = QtWidgets.QGridLayout(self.dockWidgetContents)
-        self.gridLayout_3.setContentsMargins(4, 4, 4, 4)
-        self.gridLayout_3.setSpacing(4)
-        self.gridLayout_3.setObjectName("gridLayout_3")
-        self.horizontalLayout_10 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_10.setContentsMargins(-1, 0, -1, -1)
-        self.horizontalLayout_10.setSpacing(4)
-        self.horizontalLayout_10.setObjectName("horizontalLayout_10")
-        self.snp_expand_btn = QtWidgets.QToolButton(self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+        self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.dockWidgetContents)
+        self.verticalLayout_7.setContentsMargins(4, 2, 4, 0)
+        self.verticalLayout_7.setSpacing(4)
+        self.verticalLayout_7.setObjectName("verticalLayout_7")
+        self.snp_info_frame = QtWidgets.QFrame(self.dockWidgetContents)
+        self.snp_info_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.snp_info_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.snp_info_frame.setObjectName("snp_info_frame")
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.snp_info_frame)
+        self.horizontalLayout_4.setContentsMargins(2, 2, 2, 2)
+        self.horizontalLayout_4.setSpacing(2)
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.label_5 = QtWidgets.QLabel(self.snp_info_frame)
+        self.label_5.setObjectName("label_5")
+        self.horizontalLayout_4.addWidget(self.label_5)
+        self.data_uri_lineEdit = QtWidgets.QLineEdit(self.snp_info_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.snp_expand_btn.sizePolicy().hasHeightForWidth())
-        self.snp_expand_btn.setSizePolicy(sizePolicy)
-        self.snp_expand_btn.setMinimumSize(QtCore.QSize(0, 0))
-        icon31 = QtGui.QIcon()
-        icon31.addPixmap(QtGui.QPixmap(":/sm-icons/expand.png"),
-                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.snp_expand_btn.setIcon(icon31)
-        self.snp_expand_btn.setIconSize(QtCore.QSize(24, 24))
-        self.snp_expand_btn.setCheckable(False)
-        self.snp_expand_btn.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon)
-        self.snp_expand_btn.setAutoRaise(True)
-        self.snp_expand_btn.setObjectName("snp_expand_btn")
-        self.horizontalLayout_10.addWidget(self.snp_expand_btn)
-        self.snp_collapse_btn = QtWidgets.QToolButton(self.dockWidgetContents)
-        icon32 = QtGui.QIcon()
-        icon32.addPixmap(QtGui.QPixmap(":/sm-icons/collapse.png"),
-                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.snp_collapse_btn.setIcon(icon32)
-        self.snp_collapse_btn.setIconSize(QtCore.QSize(24, 24))
-        self.snp_collapse_btn.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon)
-        self.snp_collapse_btn.setAutoRaise(True)
-        self.snp_collapse_btn.setObjectName("snp_collapse_btn")
-        self.horizontalLayout_10.addWidget(self.snp_collapse_btn)
+            self.data_uri_lineEdit.sizePolicy().hasHeightForWidth())
+        self.data_uri_lineEdit.setSizePolicy(sizePolicy)
+        self.data_uri_lineEdit.setReadOnly(True)
+        self.data_uri_lineEdit.setObjectName("data_uri_lineEdit")
+        self.horizontalLayout_4.addWidget(self.data_uri_lineEdit)
+        self.snp_new_lbl = QtWidgets.QLabel(self.snp_info_frame)
+        self.snp_new_lbl.setObjectName("snp_new_lbl")
+        self.horizontalLayout_4.addWidget(self.snp_new_lbl)
         spacerItem4 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_10.addItem(spacerItem4)
-        self.filter_date_chkbox = QtWidgets.QToolButton(
-            self.dockWidgetContents)
+        self.horizontalLayout_4.addItem(spacerItem4)
+        self.snp_refresh_btn = QtWidgets.QToolButton(self.snp_info_frame)
+        icon31 = QtGui.QIcon()
+        icon31.addPixmap(QtGui.QPixmap(":/sm-icons/refresh.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.snp_refresh_btn.setIcon(icon31)
+        self.snp_refresh_btn.setIconSize(QtCore.QSize(24, 24))
+        self.snp_refresh_btn.setAutoRaise(True)
+        self.snp_refresh_btn.setObjectName("snp_refresh_btn")
+        self.horizontalLayout_4.addWidget(self.snp_refresh_btn)
+        self.nsnp_btn = QtWidgets.QPushButton(self.snp_info_frame)
+        self.nsnp_btn.setObjectName("nsnp_btn")
+        self.horizontalLayout_4.addWidget(self.nsnp_btn)
+        self.label_10 = QtWidgets.QLabel(self.snp_info_frame)
+        self.label_10.setObjectName("label_10")
+        self.horizontalLayout_4.addWidget(self.label_10)
+        self.total_snp_lbl = QtWidgets.QLabel(self.snp_info_frame)
+        self.total_snp_lbl.setStyleSheet("QLabel {\n"
+                                         "    font-weight: bold;\n"
+                                         "    color: rgb(0, 0, 255);\n"
+                                         "}")
+        self.total_snp_lbl.setObjectName("total_snp_lbl")
+        self.horizontalLayout_4.addWidget(self.total_snp_lbl)
+        self.verticalLayout_7.addWidget(self.snp_info_frame)
+        self.splitter_2 = QtWidgets.QSplitter(self.dockWidgetContents)
+        self.splitter_2.setOrientation(QtCore.Qt.Vertical)
+        self.splitter_2.setObjectName("splitter_2")
+        self.snp_tag_ion_frame = QtWidgets.QFrame(self.splitter_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.filter_date_chkbox.sizePolicy().hasHeightForWidth())
-        self.filter_date_chkbox.setSizePolicy(sizePolicy)
-        self.filter_date_chkbox.setCheckable(True)
-        self.filter_date_chkbox.setObjectName("filter_date_chkbox")
-        self.horizontalLayout_10.addWidget(self.filter_date_chkbox)
-        self.dateEdit1 = QtWidgets.QDateEdit(self.dockWidgetContents)
-        self.dateEdit1.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.dateEdit1.sizePolicy().hasHeightForWidth())
-        self.dateEdit1.setSizePolicy(sizePolicy)
-        self.dateEdit1.setReadOnly(False)
-        self.dateEdit1.setMaximumDate(QtCore.QDate(2099, 12, 31))
-        self.dateEdit1.setMinimumDate(QtCore.QDate(2000, 1, 1))
-        self.dateEdit1.setCalendarPopup(False)
-        self.dateEdit1.setObjectName("dateEdit1")
-        self.horizontalLayout_10.addWidget(self.dateEdit1)
-        self.daterange_lbl = QtWidgets.QLabel(self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.daterange_lbl.sizePolicy().hasHeightForWidth())
-        self.daterange_lbl.setSizePolicy(sizePolicy)
-        self.daterange_lbl.setObjectName("daterange_lbl")
-        self.horizontalLayout_10.addWidget(self.daterange_lbl)
-        self.dateEdit2 = QtWidgets.QDateEdit(self.dockWidgetContents)
-        self.dateEdit2.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.dateEdit2.sizePolicy().hasHeightForWidth())
-        self.dateEdit2.setSizePolicy(sizePolicy)
-        self.dateEdit2.setReadOnly(False)
-        self.dateEdit2.setMaximumDate(QtCore.QDate(2099, 12, 31))
-        self.dateEdit2.setMinimumDate(QtCore.QDate(2000, 1, 1))
-        self.dateEdit2.setCalendarPopup(False)
-        self.dateEdit2.setObjectName("dateEdit2")
-        self.horizontalLayout_10.addWidget(self.dateEdit2)
-        self.daterange_picker_btn = QtWidgets.QToolButton(
-            self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.daterange_picker_btn.sizePolicy().hasHeightForWidth())
-        self.daterange_picker_btn.setSizePolicy(sizePolicy)
-        self.daterange_picker_btn.setCheckable(False)
-        self.daterange_picker_btn.setObjectName("daterange_picker_btn")
-        self.horizontalLayout_10.addWidget(self.daterange_picker_btn)
-        self.filter_note_chkbox = QtWidgets.QToolButton(
-            self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.filter_note_chkbox.sizePolicy().hasHeightForWidth())
-        self.filter_note_chkbox.setSizePolicy(sizePolicy)
-        self.filter_note_chkbox.setCheckable(True)
-        self.filter_note_chkbox.setChecked(False)
-        self.filter_note_chkbox.setObjectName("filter_note_chkbox")
-        self.horizontalLayout_10.addWidget(self.filter_note_chkbox)
-        self.snp_note_filter_lineEdit = QtWidgets.QLineEdit(
-            self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.snp_note_filter_lineEdit.sizePolicy().hasHeightForWidth())
-        self.snp_note_filter_lineEdit.setSizePolicy(sizePolicy)
-        self.snp_note_filter_lineEdit.setObjectName("snp_note_filter_lineEdit")
-        self.horizontalLayout_10.addWidget(self.snp_note_filter_lineEdit)
-        self.snp_filter_ctrls_hbox = QtWidgets.QHBoxLayout()
-        self.snp_filter_ctrls_hbox.setSpacing(4)
-        self.snp_filter_ctrls_hbox.setObjectName("snp_filter_ctrls_hbox")
-        self.horizontalLayout_10.addLayout(self.snp_filter_ctrls_hbox)
-        self.gridLayout_3.addLayout(self.horizontalLayout_10, 4, 0, 1, 1)
-        self.snp_treeView = QtWidgets.QTreeView(self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(1)
-        sizePolicy.setHeightForWidth(
-            self.snp_treeView.sizePolicy().hasHeightForWidth())
-        self.snp_treeView.setSizePolicy(sizePolicy)
-        self.snp_treeView.setDragDropMode(
-            QtWidgets.QAbstractItemView.NoDragDrop)
-        self.snp_treeView.setIndentation(10)
-        self.snp_treeView.setRootIsDecorated(True)
-        self.snp_treeView.setUniformRowHeights(True)
-        self.snp_treeView.setSortingEnabled(False)
-        self.snp_treeView.setAnimated(True)
-        self.snp_treeView.setObjectName("snp_treeView")
-        self.gridLayout_3.addWidget(self.snp_treeView, 5, 0, 1, 1)
-        self.snp_tag_ion_frame = QtWidgets.QFrame(self.dockWidgetContents)
+            self.snp_tag_ion_frame.sizePolicy().hasHeightForWidth())
+        self.snp_tag_ion_frame.setSizePolicy(sizePolicy)
         self.snp_tag_ion_frame.setStyleSheet(
             "QScrollArea {\n"
             "    border-top: 0px solid #B8B8B8;\n"
@@ -1335,7 +1248,7 @@ class Ui_MainWindow(object):
         self.tag_filter_frame = QtWidgets.QFrame(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setHorizontalStretch(2)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.tag_filter_frame.sizePolicy().hasHeightForWidth())
@@ -1371,7 +1284,7 @@ class Ui_MainWindow(object):
         self.tag_filter_area.setObjectName("tag_filter_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(
-            0, 0, 1994, 117))
+            0, 0, 1161, 117))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tag_filter_area.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_2.addWidget(self.tag_filter_area, 0, 0, 1, 5)
@@ -1379,6 +1292,14 @@ class Ui_MainWindow(object):
         self.select_all_tags_btn.setObjectName("select_all_tags_btn")
         self.gridLayout_2.addWidget(self.select_all_tags_btn, 1, 2, 1, 1)
         self.ion_filter_frame = QtWidgets.QFrame(self.splitter)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.ion_filter_frame.sizePolicy().hasHeightForWidth())
+        self.ion_filter_frame.setSizePolicy(sizePolicy)
+        self.ion_filter_frame.setMinimumSize(QtCore.QSize(0, 110))
         self.ion_filter_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.ion_filter_frame.setFrameShadow(QtWidgets.QFrame.Plain)
         self.ion_filter_frame.setObjectName("ion_filter_frame")
@@ -1399,7 +1320,7 @@ class Ui_MainWindow(object):
         self.ion_filter_area.setObjectName("ion_filter_area")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(
-            QtCore.QRect(0, 0, 307, 117))
+            QtCore.QRect(0, 0, 1140, 117))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.ion_filter_area.setWidget(self.scrollAreaWidgetContents_2)
@@ -1419,54 +1340,163 @@ class Ui_MainWindow(object):
         self.select_all_ions_btn.setObjectName("select_all_ions_btn")
         self.gridLayout_4.addWidget(self.select_all_ions_btn, 1, 2, 1, 1)
         self.gridLayout_5.addWidget(self.splitter, 0, 0, 1, 1)
-        self.gridLayout_3.addWidget(self.snp_tag_ion_frame, 3, 0, 1, 1)
-        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_4.setContentsMargins(-1, 0, -1, -1)
-        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.label_5 = QtWidgets.QLabel(self.dockWidgetContents)
-        self.label_5.setObjectName("label_5")
-        self.horizontalLayout_4.addWidget(self.label_5)
-        self.data_uri_lineEdit = QtWidgets.QLineEdit(self.dockWidgetContents)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+        self.snp_view_frame = QtWidgets.QFrame(self.splitter_2)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(
+            self.snp_view_frame.sizePolicy().hasHeightForWidth())
+        self.snp_view_frame.setSizePolicy(sizePolicy)
+        self.snp_view_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.snp_view_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.snp_view_frame.setObjectName("snp_view_frame")
+        self.gridLayout_6 = QtWidgets.QGridLayout(self.snp_view_frame)
+        self.gridLayout_6.setContentsMargins(2, 2, 2, 2)
+        self.gridLayout_6.setSpacing(2)
+        self.gridLayout_6.setObjectName("gridLayout_6")
+        self.snp_expand_btn = QtWidgets.QToolButton(self.snp_view_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.data_uri_lineEdit.sizePolicy().hasHeightForWidth())
-        self.data_uri_lineEdit.setSizePolicy(sizePolicy)
-        self.data_uri_lineEdit.setReadOnly(True)
-        self.data_uri_lineEdit.setObjectName("data_uri_lineEdit")
-        self.horizontalLayout_4.addWidget(self.data_uri_lineEdit)
-        self.snp_new_lbl = QtWidgets.QLabel(self.dockWidgetContents)
-        self.snp_new_lbl.setObjectName("snp_new_lbl")
-        self.horizontalLayout_4.addWidget(self.snp_new_lbl)
-        spacerItem7 = QtWidgets.QSpacerItem(40, 20,
+            self.snp_expand_btn.sizePolicy().hasHeightForWidth())
+        self.snp_expand_btn.setSizePolicy(sizePolicy)
+        self.snp_expand_btn.setMinimumSize(QtCore.QSize(0, 0))
+        icon32 = QtGui.QIcon()
+        icon32.addPixmap(QtGui.QPixmap(":/sm-icons/expand.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.snp_expand_btn.setIcon(icon32)
+        self.snp_expand_btn.setIconSize(QtCore.QSize(24, 24))
+        self.snp_expand_btn.setCheckable(False)
+        self.snp_expand_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.snp_expand_btn.setAutoRaise(True)
+        self.snp_expand_btn.setObjectName("snp_expand_btn")
+        self.gridLayout_6.addWidget(self.snp_expand_btn, 0, 0, 1, 1)
+        self.snp_collapse_btn = QtWidgets.QToolButton(self.snp_view_frame)
+        icon33 = QtGui.QIcon()
+        icon33.addPixmap(QtGui.QPixmap(":/sm-icons/collapse.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.snp_collapse_btn.setIcon(icon33)
+        self.snp_collapse_btn.setIconSize(QtCore.QSize(24, 24))
+        self.snp_collapse_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.snp_collapse_btn.setAutoRaise(True)
+        self.snp_collapse_btn.setObjectName("snp_collapse_btn")
+        self.gridLayout_6.addWidget(self.snp_collapse_btn, 0, 1, 1, 1)
+        spacerItem7 = QtWidgets.QSpacerItem(739, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem7)
-        self.snp_refresh_btn = QtWidgets.QToolButton(self.dockWidgetContents)
-        icon33 = QtGui.QIcon()
-        icon33.addPixmap(QtGui.QPixmap(":/sm-icons/refresh.png"),
-                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.snp_refresh_btn.setIcon(icon33)
-        self.snp_refresh_btn.setIconSize(QtCore.QSize(24, 24))
-        self.snp_refresh_btn.setAutoRaise(True)
-        self.snp_refresh_btn.setObjectName("snp_refresh_btn")
-        self.horizontalLayout_4.addWidget(self.snp_refresh_btn)
-        self.nsnp_btn = QtWidgets.QPushButton(self.dockWidgetContents)
-        self.nsnp_btn.setObjectName("nsnp_btn")
-        self.horizontalLayout_4.addWidget(self.nsnp_btn)
-        self.label_10 = QtWidgets.QLabel(self.dockWidgetContents)
-        self.label_10.setObjectName("label_10")
-        self.horizontalLayout_4.addWidget(self.label_10)
-        self.total_snp_lbl = QtWidgets.QLabel(self.dockWidgetContents)
-        self.total_snp_lbl.setStyleSheet("QLabel {\n"
-                                         "    font-weight: bold;\n"
-                                         "    color: rgb(0, 0, 255);\n"
-                                         "}")
-        self.total_snp_lbl.setObjectName("total_snp_lbl")
-        self.horizontalLayout_4.addWidget(self.total_snp_lbl)
-        self.gridLayout_3.addLayout(self.horizontalLayout_4, 2, 0, 1, 1)
+        self.gridLayout_6.addItem(spacerItem7, 0, 2, 1, 1)
+        self.filter_date_chkbox = QtWidgets.QToolButton(self.snp_view_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.filter_date_chkbox.sizePolicy().hasHeightForWidth())
+        self.filter_date_chkbox.setSizePolicy(sizePolicy)
+        self.filter_date_chkbox.setCheckable(True)
+        self.filter_date_chkbox.setObjectName("filter_date_chkbox")
+        self.gridLayout_6.addWidget(self.filter_date_chkbox, 0, 3, 1, 1)
+        self.dateEdit1 = QtWidgets.QDateEdit(self.snp_view_frame)
+        self.dateEdit1.setEnabled(True)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.dateEdit1.sizePolicy().hasHeightForWidth())
+        self.dateEdit1.setSizePolicy(sizePolicy)
+        self.dateEdit1.setReadOnly(False)
+        self.dateEdit1.setMaximumDate(QtCore.QDate(2099, 12, 31))
+        self.dateEdit1.setMinimumDate(QtCore.QDate(2000, 1, 1))
+        self.dateEdit1.setCalendarPopup(False)
+        self.dateEdit1.setObjectName("dateEdit1")
+        self.gridLayout_6.addWidget(self.dateEdit1, 0, 4, 1, 1)
+        self.daterange_lbl = QtWidgets.QLabel(self.snp_view_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.daterange_lbl.sizePolicy().hasHeightForWidth())
+        self.daterange_lbl.setSizePolicy(sizePolicy)
+        self.daterange_lbl.setObjectName("daterange_lbl")
+        self.gridLayout_6.addWidget(self.daterange_lbl, 0, 5, 1, 1)
+        self.dateEdit2 = QtWidgets.QDateEdit(self.snp_view_frame)
+        self.dateEdit2.setEnabled(True)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.dateEdit2.sizePolicy().hasHeightForWidth())
+        self.dateEdit2.setSizePolicy(sizePolicy)
+        self.dateEdit2.setReadOnly(False)
+        self.dateEdit2.setMaximumDate(QtCore.QDate(2099, 12, 31))
+        self.dateEdit2.setMinimumDate(QtCore.QDate(2000, 1, 1))
+        self.dateEdit2.setCalendarPopup(False)
+        self.dateEdit2.setObjectName("dateEdit2")
+        self.gridLayout_6.addWidget(self.dateEdit2, 0, 6, 1, 1)
+        self.daterange_picker_btn = QtWidgets.QToolButton(self.snp_view_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.daterange_picker_btn.sizePolicy().hasHeightForWidth())
+        self.daterange_picker_btn.setSizePolicy(sizePolicy)
+        self.daterange_picker_btn.setCheckable(False)
+        self.daterange_picker_btn.setObjectName("daterange_picker_btn")
+        self.gridLayout_6.addWidget(self.daterange_picker_btn, 0, 7, 1, 1)
+        self.filter_note_chkbox = QtWidgets.QToolButton(self.snp_view_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.filter_note_chkbox.sizePolicy().hasHeightForWidth())
+        self.filter_note_chkbox.setSizePolicy(sizePolicy)
+        self.filter_note_chkbox.setCheckable(True)
+        self.filter_note_chkbox.setChecked(False)
+        self.filter_note_chkbox.setObjectName("filter_note_chkbox")
+        self.gridLayout_6.addWidget(self.filter_note_chkbox, 0, 8, 1, 1)
+        self.snp_note_filter_lineEdit = QtWidgets.QLineEdit(
+            self.snp_view_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.snp_note_filter_lineEdit.sizePolicy().hasHeightForWidth())
+        self.snp_note_filter_lineEdit.setSizePolicy(sizePolicy)
+        self.snp_note_filter_lineEdit.setObjectName("snp_note_filter_lineEdit")
+        self.gridLayout_6.addWidget(self.snp_note_filter_lineEdit, 0, 9, 1, 1)
+        self.snp_filter_ctrls_hbox = QtWidgets.QHBoxLayout()
+        self.snp_filter_ctrls_hbox.setSpacing(4)
+        self.snp_filter_ctrls_hbox.setObjectName("snp_filter_ctrls_hbox")
+        self.gridLayout_6.addLayout(self.snp_filter_ctrls_hbox, 0, 10, 1, 1)
+        self.snp_treeView = QtWidgets.QTreeView(self.snp_view_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(
+            self.snp_treeView.sizePolicy().hasHeightForWidth())
+        self.snp_treeView.setSizePolicy(sizePolicy)
+        self.snp_treeView.setDragDropMode(
+            QtWidgets.QAbstractItemView.NoDragDrop)
+        self.snp_treeView.setIndentation(10)
+        self.snp_treeView.setRootIsDecorated(True)
+        self.snp_treeView.setUniformRowHeights(True)
+        self.snp_treeView.setSortingEnabled(False)
+        self.snp_treeView.setAnimated(True)
+        self.snp_treeView.setObjectName("snp_treeView")
+        self.gridLayout_6.addWidget(self.snp_treeView, 1, 0, 1, 11)
+        self.verticalLayout_7.addWidget(self.splitter_2)
         self.snp_dock.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(4), self.snp_dock)
         self.log_dock = DockWidget(MainWindow)
@@ -1785,113 +1815,50 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.init_settings_lbl.setText(
-            _translate("MainWindow",
-                       "Initialize settings table from loaded lattice"))
-        self.init_settings_chkbox.setToolTip(
+        self.pos_filter_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Initialize device settings with the whole loaded lattice, check to generate the settings table.</p></body></html>"
+                "Reset the reference value of pos filter with stripper position."
             ))
-        self.init_settings_chkbox.setText(
-            _translate("MainWindow", "Initialize with loaded lattice"))
-        self.skip_none_chkbox.setToolTip(
+        self.pos_filter_btn.setText(_translate("MainWindow", "Stripper"))
+        self.pos_dspin.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Skip devices that are not reachable (when initializing with loaded lattice).</p></body></html>"
+                "Click left and right arrow buttons to filter devices with longitudinal position (logical OR applies)."
             ))
-        self.skip_none_chkbox.setText(
-            _translate("MainWindow", "Skip Non-reachable Devices"))
-        self.show_refset_ctrls_btn.setToolTip(
+        self.pos_dspin.setSuffix(_translate("MainWindow", " m"))
+        self.pos2_filter_btn.setText(_translate("MainWindow", "..."))
+        self.show_disconnected_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Show/hide controls for reference settings.</p></body></html>"
+                "<html><head/><body><p>Show all disconnected items.</p></body></html>"
             ))
-        self.show_refset_ctrls_btn.setText(
-            _translate("MainWindow", "Reference Set"))
-        self.show_diff_x0ref_btn.setToolTip(
+        self.show_disconnected_btn.setText(
+            _translate("MainWindow", "Disconnected"))
+        self.show_warning_dx02_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Show x<span style=\" vertical-align:sub;\">0 </span>!= x<span style=\" vertical-align:sub;\">ref</span>, up to number of precision.</p></body></html>"
+                "<html><head/><body><p>Show x<span style=\" vertical-align:sub;\">0 </span>!= x<span style=\" vertical-align:sub;\">2</span>, up to number of precision.</p></body></html>"
             ))
-        self.show_diff_x0ref_btn.setText(_translate("MainWindow", "dx0ref"))
-        self.show_diff_x2ref_btn.setToolTip(
+        self.show_warning_dx02_btn.setText(_translate("MainWindow", "dx02"))
+        self.show_warning_dx12_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Show x<span style=\" vertical-align:sub;\">2 </span>!= x<span style=\" vertical-align:sub;\">ref</span>, up to number of precision.</p></body></html>"
+                "<html><head/><body><p>Show Δ(x<span style=\" vertical-align:sub;\">1</span>, x<span style=\" vertical-align:sub;\">2</span>) &gt; tolerance.</p></body></html>"
             ))
-        self.show_diff_x2ref_btn.setText(_translate("MainWindow", "dx2ref"))
-        self.update_ref_btn.setToolTip(
+        self.show_warning_dx12_btn.setText(_translate("MainWindow", "dx12"))
+        self.show_state_diff_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Update reference settings with the selected data source (x0 or x2), only works for the checked rows.</p></body></html>"
-            ))
-        self.update_ref_btn.setText(
-            _translate("MainWindow", "Update Reference"))
-        self.show_alm_ctrls_btn.setToolTip(
+                "Show all devices with different state and last state."))
+        self.show_state_diff_btn.setText(_translate("MainWindow",
+                                                    "State Diff"))
+        self.show_all_selected_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Enable/disable alarms for checked devices.</p></body></html>"
+                "<html><head/><body><p>Show all checked items.</p></body></html>"
             ))
-        self.show_alm_ctrls_btn.setText(
-            _translate("MainWindow", "Alarm Config"))
-        self.show_enabled_read_alms_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Show enabled read alarms.</p></body></html>"
-            ))
-        self.show_enabled_read_alms_btn.setText(
-            _translate("MainWindow", "Read"))
-        self.show_disabled_read_alms_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Show disabled read alarms.</p></body></html>"
-            ))
-        self.show_disabled_read_alms_btn.setText(
-            _translate("MainWindow", "Read"))
-        self.show_enabled_tune_alms_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Show enabled tune alarms.</p></body></html>"
-            ))
-        self.show_enabled_tune_alms_btn.setText(
-            _translate("MainWindow", "Tune"))
-        self.show_disabled_tune_alms_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Show disabled tune alarms.</p></body></html>"
-            ))
-        self.show_disabled_tune_alms_btn.setText(
-            _translate("MainWindow", "Tune"))
-        self.disable_alms_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Disable All alarms for checked items.</p></body></html>"
-            ))
-        self.disable_alms_btn.setText(_translate("MainWindow", "Disable"))
-        self.enable_alms_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Enable All alarms for checked items.</p></body></html>"
-            ))
-        self.enable_alms_btn.setText(_translate("MainWindow", "Enable"))
-        self.alm_type_cbb.setItemText(0, _translate("MainWindow", "All"))
-        self.alm_type_cbb.setItemText(1, _translate("MainWindow", "Tune"))
-        self.alm_type_cbb.setItemText(2, _translate("MainWindow", "Read"))
-        self.snp_ms_chkbox.setText(
-            _translate("MainWindow", "Take Snapshot with Machine State"))
-        self.wysiwyc_chkbox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>If checked, take the snapshot in the way of \'What You See Is What You Capture\'.</p></body></html>"
-            ))
-        self.wysiwyc_chkbox.setText(_translate("MainWindow", "WYSIWYC"))
-        self.auto_ndigit_chkbox.setToolTip(
-            _translate("MainWindow",
-                       "Change data presenting format to \'{n}g\'."))
-        self.auto_ndigit_chkbox.setText(_translate("MainWindow", "Auto"))
-        self.ndigit_lbl.setText(_translate("MainWindow", "Precision number"))
-        self.show_init_settings_btn.setText(_translate("MainWindow", "..."))
+        self.show_all_selected_btn.setText(_translate("MainWindow", "Checked"))
         self.grow_fontsize_btn.setToolTip(
             _translate(
                 "MainWindow",
@@ -2019,56 +1986,144 @@ class Ui_MainWindow(object):
             ))
         self.n_all_checked_items_lbl.setText(_translate("MainWindow", "0"))
         self.label.setText(_translate("MainWindow", "Checked Items"))
-        self.pos_filter_btn.setToolTip(
+        self.init_settings_lbl.setText(
+            _translate("MainWindow",
+                       "Initialize settings table from loaded lattice"))
+        self.init_settings_chkbox.setToolTip(
             _translate(
                 "MainWindow",
-                "Reset the reference value of pos filter with stripper position."
+                "<html><head/><body><p>Initialize device settings with the whole loaded lattice, check to generate the settings table.</p></body></html>"
             ))
-        self.pos_filter_btn.setText(_translate("MainWindow", "Stripper"))
-        self.pos_dspin.setToolTip(
+        self.init_settings_chkbox.setText(
+            _translate("MainWindow", "Initialize with loaded lattice"))
+        self.skip_none_chkbox.setToolTip(
             _translate(
                 "MainWindow",
-                "Click left and right arrow buttons to filter devices with longitudinal position (logical OR applies)."
+                "<html><head/><body><p>Skip devices that are not reachable (when initializing with loaded lattice).</p></body></html>"
             ))
-        self.pos_dspin.setSuffix(_translate("MainWindow", " m"))
-        self.pos2_filter_btn.setText(_translate("MainWindow", "..."))
-        self.show_disconnected_btn.setToolTip(
+        self.skip_none_chkbox.setText(
+            _translate("MainWindow", "Skip Non-reachable Devices"))
+        self.show_refset_ctrls_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Show all disconnected items.</p></body></html>"
+                "<html><head/><body><p>Show/hide controls for reference settings.</p></body></html>"
             ))
-        self.show_disconnected_btn.setText(
-            _translate("MainWindow", "Disconnected"))
-        self.show_warning_dx02_btn.setToolTip(
+        self.show_refset_ctrls_btn.setText(
+            _translate("MainWindow", "Reference Set"))
+        self.show_diff_x0ref_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Show x<span style=\" vertical-align:sub;\">0 </span>!= x<span style=\" vertical-align:sub;\">2</span>, up to number of precision.</p></body></html>"
+                "<html><head/><body><p>Show x<span style=\" vertical-align:sub;\">0 </span>!= x<span style=\" vertical-align:sub;\">ref</span>, up to number of precision.</p></body></html>"
             ))
-        self.show_warning_dx02_btn.setText(_translate("MainWindow", "dx02"))
-        self.show_warning_dx12_btn.setToolTip(
+        self.show_diff_x0ref_btn.setText(_translate("MainWindow", "dx0ref"))
+        self.show_diff_x2ref_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Show Δ(x<span style=\" vertical-align:sub;\">1</span>, x<span style=\" vertical-align:sub;\">2</span>) &gt; tolerance.</p></body></html>"
+                "<html><head/><body><p>Show x<span style=\" vertical-align:sub;\">2 </span>!= x<span style=\" vertical-align:sub;\">ref</span>, up to number of precision.</p></body></html>"
             ))
-        self.show_warning_dx12_btn.setText(_translate("MainWindow", "dx12"))
-        self.show_state_diff_btn.setToolTip(
+        self.show_diff_x2ref_btn.setText(_translate("MainWindow", "dx2ref"))
+        self.update_ref_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "Show all devices with different state and last state."))
-        self.show_state_diff_btn.setText(_translate("MainWindow",
-                                                    "State Diff"))
-        self.show_all_selected_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Show all checked items.</p></body></html>"
+                "<html><head/><body><p>Update reference settings with the selected data source (x0 or x2), only works for the checked rows.</p></body></html>"
             ))
-        self.show_all_selected_btn.setText(_translate("MainWindow", "Checked"))
+        self.update_ref_btn.setText(
+            _translate("MainWindow", "Update Reference"))
+        self.show_alm_ctrls_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Enable/disable alarms for checked devices.</p></body></html>"
+            ))
+        self.show_alm_ctrls_btn.setText(
+            _translate("MainWindow", "Alarm Config"))
+        self.show_enabled_read_alms_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Show enabled read alarms.</p></body></html>"
+            ))
+        self.show_enabled_read_alms_btn.setText(
+            _translate("MainWindow", "Read"))
+        self.show_disabled_read_alms_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Show disabled read alarms.</p></body></html>"
+            ))
+        self.show_disabled_read_alms_btn.setText(
+            _translate("MainWindow", "Read"))
+        self.show_enabled_tune_alms_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Show enabled tune alarms.</p></body></html>"
+            ))
+        self.show_enabled_tune_alms_btn.setText(
+            _translate("MainWindow", "Tune"))
+        self.show_disabled_tune_alms_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Show disabled tune alarms.</p></body></html>"
+            ))
+        self.show_disabled_tune_alms_btn.setText(
+            _translate("MainWindow", "Tune"))
+        self.disable_alms_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Disable All alarms for checked items.</p></body></html>"
+            ))
+        self.disable_alms_btn.setText(_translate("MainWindow", "Disable"))
+        self.enable_alms_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Enable All alarms for checked items.</p></body></html>"
+            ))
+        self.enable_alms_btn.setText(_translate("MainWindow", "Enable"))
+        self.alm_type_cbb.setItemText(0, _translate("MainWindow", "All"))
+        self.alm_type_cbb.setItemText(1, _translate("MainWindow", "Tune"))
+        self.alm_type_cbb.setItemText(2, _translate("MainWindow", "Read"))
+        self.snp_ms_chkbox.setText(
+            _translate("MainWindow", "Take Snapshot with Machine State"))
+        self.wysiwyc_chkbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>If checked, take the snapshot in the way of \'What You See Is What You Capture\'.</p></body></html>"
+            ))
+        self.wysiwyc_chkbox.setText(_translate("MainWindow", "WYSIWYC"))
+        self.auto_ndigit_chkbox.setToolTip(
+            _translate("MainWindow",
+                       "Change data presenting format to \'{n}g\'."))
+        self.auto_ndigit_chkbox.setText(_translate("MainWindow", "Auto"))
+        self.ndigit_lbl.setText(_translate("MainWindow", "Precision number"))
+        self.show_init_settings_btn.setText(_translate("MainWindow", "..."))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menuTools.setTitle(_translate("MainWindow", "Tools"))
         self.menu_View.setTitle(_translate("MainWindow", "&View"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.snp_dock.setWindowTitle(_translate("MainWindow", "Snapshots"))
+        self.label_5.setText(_translate("MainWindow", "Working Database"))
+        self.snp_new_lbl.setToolTip(
+            _translate(
+                "MainWindow",
+                "Snapshot files have been updated in the last 1 minute."))
+        self.snp_new_lbl.setText(_translate("MainWindow", "snp_sts"))
+        self.snp_refresh_btn.setToolTip(
+            _translate("MainWindow", "Refresh snapshots."))
+        self.snp_refresh_btn.setText(_translate("MainWindow", "..."))
+        self.nsnp_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Click to update the total number of snapshots to display, press refresh button to update snapshot list.</p></body></html>"
+            ))
+        self.nsnp_btn.setText(_translate("MainWindow", "N-SNP"))
+        self.label_10.setText(_translate("MainWindow", "Total"))
+        self.total_snp_lbl.setText(
+            _translate("MainWindow",
+                       "<html><head/><body><p>0</p></body></html>"))
+        self.label_12.setText(_translate("MainWindow", "Select"))
+        self.select_none_tags_btn.setText(_translate("MainWindow", "None"))
+        self.select_all_tags_btn.setText(_translate("MainWindow", "All"))
+        self.select_none_ions_btn.setText(_translate("MainWindow", "None"))
+        self.label_13.setText(_translate("MainWindow", "Select"))
+        self.select_all_ions_btn.setText(_translate("MainWindow", "All"))
         self.snp_expand_btn.setToolTip(
             _translate(
                 "MainWindow",
@@ -2101,31 +2156,6 @@ class Ui_MainWindow(object):
         self.filter_note_chkbox.setText(_translate("MainWindow", "Note"))
         self.snp_note_filter_lineEdit.setToolTip(
             _translate("MainWindow", "Ignore cases, loose wildcard match."))
-        self.label_12.setText(_translate("MainWindow", "Select"))
-        self.select_none_tags_btn.setText(_translate("MainWindow", "None"))
-        self.select_all_tags_btn.setText(_translate("MainWindow", "All"))
-        self.select_none_ions_btn.setText(_translate("MainWindow", "None"))
-        self.label_13.setText(_translate("MainWindow", "Select"))
-        self.select_all_ions_btn.setText(_translate("MainWindow", "All"))
-        self.label_5.setText(_translate("MainWindow", "Working Database"))
-        self.snp_new_lbl.setToolTip(
-            _translate(
-                "MainWindow",
-                "Snapshot files have been updated in the last 1 minute."))
-        self.snp_new_lbl.setText(_translate("MainWindow", "snp_sts"))
-        self.snp_refresh_btn.setToolTip(
-            _translate("MainWindow", "Refresh snapshots."))
-        self.snp_refresh_btn.setText(_translate("MainWindow", "..."))
-        self.nsnp_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Click to update the total number of snapshots to display, press refresh button to update snapshot list.</p></body></html>"
-            ))
-        self.nsnp_btn.setText(_translate("MainWindow", "N-SNP"))
-        self.label_10.setText(_translate("MainWindow", "Total"))
-        self.total_snp_lbl.setText(
-            _translate("MainWindow",
-                       "<html><head/><body><p>0</p></body></html>"))
         self.log_dock.setWindowTitle(_translate("MainWindow", "Setting Logs"))
         self.findtext_lbl.setText(_translate("MainWindow", "Find Text"))
         self.label_11.setText(_translate("MainWindow", "Total log entries:"))
