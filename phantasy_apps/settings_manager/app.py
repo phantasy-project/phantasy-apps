@@ -21,6 +21,7 @@ from subprocess import Popen
 from PyQt5.QtCore import QDate
 from PyQt5.QtCore import QEventLoop
 from PyQt5.QtCore import QPoint
+from PyQt5.QtCore import QRect
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import QUrl
@@ -34,6 +35,7 @@ from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QKeySequence
+from PyQt5.QtGui import QPainter
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtGui import QDesktopServices
@@ -3352,7 +3354,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 btn.setIcon(icon)
                 btn.setIconSize(QSize(ION_ICON_SIZE, ION_ICON_SIZE))
             else:
-                btn.setFixedSize(QSize(ION_ICON_SIZE, ION_ICON_SIZE))
+                size = QSize(ION_ICON_SIZE, ION_ICON_SIZE)
+                px = QPixmap(size)
+                px.fill(QColor(255, 255, 255, 0))
+                pt = QPainter(px)
+                ft = pt.font();
+                ft.setPointSize(ft.pointSize() + 2)
+                pt.setFont(ft)
+                pt.drawText(QRect(0, 0, ION_ICON_SIZE, ION_ICON_SIZE), Qt.AlignCenter, k)
+                pt.end()
+                btn.setIcon(QIcon(px))
+                btn.setIconSize(size)
+
             btn.setCheckable(True)
             btn.toggled.connect(partial(self.on_update_snp_filters, k))
             layout.addWidget(btn)
