@@ -3219,7 +3219,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 tag_btn_filters.update(data.tags)
             user_filters.add(data.user)
         del d
-        self._build_btn_filters(self.ion_filter_area, ion_btn_filters)
+        _ion_btn_filters = OrderedDict(sorted(ion_btn_filters.items()))
+        if 'NAN' in _ion_btn_filters:
+            _ion_btn_filters.move_to_end('NAN')
+        self._build_btn_filters(self.ion_filter_area, _ion_btn_filters)
         self._build_tag_filters(self.tag_filter_area, tag_btn_filters)
         # dropdown menu for checkable user names.
         self._build_user_filters(self.snp_filter_ctrls_hbox, user_filters)
