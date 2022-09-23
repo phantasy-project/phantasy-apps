@@ -1067,12 +1067,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             i.setChecked(is_checked)
 
     def on_snp_filters_select_all_ions(self, is_checked):
-        l = self.snp_filter_hbox
-        for i in range(l.count()):
-            w = l.itemAt(i).widget()
-            if w is None:
-                continue
-            w.setChecked(is_checked)
+        for i in self.ion_filter_area.findChildren(QToolButton):
+            i.setChecked(is_checked)
 
     @pyqtSlot(bool)
     def on_enable_search(self, auto_collapse, enabled):
@@ -3223,7 +3219,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 tag_btn_filters.update(data.tags)
             user_filters.add(data.user)
         del d
-        self._build_btn_filters(self.snp_filter_hbox, ion_btn_filters)
+        self._build_btn_filters(self.ion_filter_area, ion_btn_filters)
         self._build_tag_filters(self.tag_filter_area, tag_btn_filters)
         # dropdown menu for checkable user names.
         self._build_user_filters(self.snp_filter_ctrls_hbox, user_filters)
@@ -3335,17 +3331,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._current_tag_filter[tag] = is_checked
         self.apply_snp_btn_filters()
 
-    def _build_btn_filters(self, container, filters):
-        child = container.takeAt(0)
-        while child:
-            w = child.widget()
-            if w is not None:
-                self._current_btn_filter[w.text()] = w.isChecked()
-                w.setParent(None)
-            del w
-            del child
-            child = container.takeAt(0)
-        container.addStretch(1)
+    def _build_btn_filters(self, area, filters):
+        w = area.takeWidget()
+        w.setParent(None)
+        w = QWidget(self)
+        w.setContentsMargins(0, 6, 0, 0)
+        layout = FlowLayout()
         for k, v in filters.items():
             # k: ion name, v: {A: {Q...}}
             btn = QToolButton(self.snp_dock)
@@ -3361,8 +3352,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 btn.setFixedSize(QSize(ION_ICON_SIZE, ION_ICON_SIZE))
             btn.setCheckable(True)
             btn.toggled.connect(partial(self.on_update_snp_filters, k))
-            container.addWidget(btn)
+            layout.addWidget(btn)
             btn.setChecked(self._current_btn_filter.get(k, True))
+        w.setLayout(layout)
+        area.setWidget(w)
 
     def apply_snp_btn_filters(self):
         # ion, tag
@@ -3374,7 +3367,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_expand_btn.clicked.emit()
         # ion cnt
         ion_cnt = self.snp_treeView.model().m_src._ion_filter_cnt
-        layout = self.snp_filter_hbox
+        layouts = self.ion_filter_area.findChildren(FlowLayout)
+        if layouts == []:
+            return
+        layout = layouts[0]
         for i in range(layout.count()):
             w = layout.itemAt(i).widget()
             if w is None:

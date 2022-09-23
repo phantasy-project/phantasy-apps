@@ -1168,37 +1168,6 @@ class Ui_MainWindow(object):
         self.gridLayout_3.setContentsMargins(4, 4, 4, 4)
         self.gridLayout_3.setSpacing(4)
         self.gridLayout_3.setObjectName("gridLayout_3")
-        self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_8.setContentsMargins(-1, 0, -1, -1)
-        self.horizontalLayout_8.setSpacing(4)
-        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
-        self.label_12 = QtWidgets.QLabel(self.dockWidgetContents)
-        self.label_12.setObjectName("label_12")
-        self.horizontalLayout_8.addWidget(self.label_12)
-        self.select_none_tags_btn = QtWidgets.QPushButton(
-            self.dockWidgetContents)
-        self.select_none_tags_btn.setObjectName("select_none_tags_btn")
-        self.horizontalLayout_8.addWidget(self.select_none_tags_btn)
-        self.select_all_tags_btn = QtWidgets.QPushButton(
-            self.dockWidgetContents)
-        self.select_all_tags_btn.setObjectName("select_all_tags_btn")
-        self.horizontalLayout_8.addWidget(self.select_all_tags_btn)
-        spacerItem4 = QtWidgets.QSpacerItem(40, 20,
-                                            QtWidgets.QSizePolicy.Expanding,
-                                            QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_8.addItem(spacerItem4)
-        self.label_13 = QtWidgets.QLabel(self.dockWidgetContents)
-        self.label_13.setObjectName("label_13")
-        self.horizontalLayout_8.addWidget(self.label_13)
-        self.select_none_ions_btn = QtWidgets.QPushButton(
-            self.dockWidgetContents)
-        self.select_none_ions_btn.setObjectName("select_none_ions_btn")
-        self.horizontalLayout_8.addWidget(self.select_none_ions_btn)
-        self.select_all_ions_btn = QtWidgets.QPushButton(
-            self.dockWidgetContents)
-        self.select_all_ions_btn.setObjectName("select_all_ions_btn")
-        self.horizontalLayout_8.addWidget(self.select_all_ions_btn)
-        self.gridLayout_3.addLayout(self.horizontalLayout_8, 4, 0, 1, 1)
         self.horizontalLayout_10 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_10.setContentsMargins(-1, 0, -1, -1)
         self.horizontalLayout_10.setSpacing(4)
@@ -1234,10 +1203,10 @@ class Ui_MainWindow(object):
         self.snp_collapse_btn.setAutoRaise(True)
         self.snp_collapse_btn.setObjectName("snp_collapse_btn")
         self.horizontalLayout_10.addWidget(self.snp_collapse_btn)
-        spacerItem5 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_10.addItem(spacerItem5)
+        self.horizontalLayout_10.addItem(spacerItem4)
         self.filter_date_chkbox = QtWidgets.QToolButton(
             self.dockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -1330,7 +1299,7 @@ class Ui_MainWindow(object):
         self.snp_filter_ctrls_hbox.setSpacing(4)
         self.snp_filter_ctrls_hbox.setObjectName("snp_filter_ctrls_hbox")
         self.horizontalLayout_10.addLayout(self.snp_filter_ctrls_hbox)
-        self.gridLayout_3.addLayout(self.horizontalLayout_10, 5, 0, 1, 1)
+        self.gridLayout_3.addLayout(self.horizontalLayout_10, 4, 0, 1, 1)
         self.snp_treeView = QtWidgets.QTreeView(self.dockWidgetContents)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Expanding)
@@ -1347,36 +1316,110 @@ class Ui_MainWindow(object):
         self.snp_treeView.setSortingEnabled(False)
         self.snp_treeView.setAnimated(True)
         self.snp_treeView.setObjectName("snp_treeView")
-        self.gridLayout_3.addWidget(self.snp_treeView, 6, 0, 1, 1)
-        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_7.setContentsMargins(-1, 0, 0, -1)
-        self.horizontalLayout_7.setSpacing(4)
-        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        self.tag_filter_area = QtWidgets.QScrollArea(self.dockWidgetContents)
+        self.gridLayout_3.addWidget(self.snp_treeView, 5, 0, 1, 1)
+        self.snp_tag_ion_frame = QtWidgets.QFrame(self.dockWidgetContents)
+        self.snp_tag_ion_frame.setStyleSheet(
+            "QScrollArea {\n"
+            "    border-top: 0px solid #B8B8B8;\n"
+            "    border-bottom: 1px solid #B8B8B8;\n"
+            "}")
+        self.snp_tag_ion_frame.setObjectName("snp_tag_ion_frame")
+        self.gridLayout_5 = QtWidgets.QGridLayout(self.snp_tag_ion_frame)
+        self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_5.setHorizontalSpacing(2)
+        self.gridLayout_5.setVerticalSpacing(0)
+        self.gridLayout_5.setObjectName("gridLayout_5")
+        self.splitter = QtWidgets.QSplitter(self.snp_tag_ion_frame)
+        self.splitter.setOrientation(QtCore.Qt.Horizontal)
+        self.splitter.setObjectName("splitter")
+        self.tag_filter_frame = QtWidgets.QFrame(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
+            self.tag_filter_frame.sizePolicy().hasHeightForWidth())
+        self.tag_filter_frame.setSizePolicy(sizePolicy)
+        self.tag_filter_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.tag_filter_frame.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.tag_filter_frame.setObjectName("tag_filter_frame")
+        self.gridLayout_2 = QtWidgets.QGridLayout(self.tag_filter_frame)
+        self.gridLayout_2.setContentsMargins(2, 0, 2, 2)
+        self.gridLayout_2.setSpacing(2)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.label_12 = QtWidgets.QLabel(self.tag_filter_frame)
+        self.label_12.setObjectName("label_12")
+        self.gridLayout_2.addWidget(self.label_12, 1, 0, 1, 1)
+        spacerItem5 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout_2.addItem(spacerItem5, 1, 3, 1, 1)
+        self.select_none_tags_btn = QtWidgets.QPushButton(
+            self.tag_filter_frame)
+        self.select_none_tags_btn.setObjectName("select_none_tags_btn")
+        self.gridLayout_2.addWidget(self.select_none_tags_btn, 1, 1, 1, 1)
+        self.tag_filter_area = QtWidgets.QScrollArea(self.tag_filter_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(
             self.tag_filter_area.sizePolicy().hasHeightForWidth())
         self.tag_filter_area.setSizePolicy(sizePolicy)
-        self.tag_filter_area.setStyleSheet("/*\n"
-                                           "QScrollArea {\n"
-                                           "    border: none;\n"
-                                           "}*/")
+        self.tag_filter_area.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.tag_filter_area.setWidgetResizable(True)
         self.tag_filter_area.setObjectName("tag_filter_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 2312, 89))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(
+            0, 0, 1994, 117))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tag_filter_area.setWidget(self.scrollAreaWidgetContents)
-        self.horizontalLayout_7.addWidget(self.tag_filter_area)
-        self.snp_filter_hbox = QtWidgets.QHBoxLayout()
-        self.snp_filter_hbox.setContentsMargins(0, 0, -1, -1)
-        self.snp_filter_hbox.setSpacing(4)
-        self.snp_filter_hbox.setObjectName("snp_filter_hbox")
-        self.horizontalLayout_7.addLayout(self.snp_filter_hbox)
-        self.gridLayout_3.addLayout(self.horizontalLayout_7, 3, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.tag_filter_area, 0, 0, 1, 5)
+        self.select_all_tags_btn = QtWidgets.QPushButton(self.tag_filter_frame)
+        self.select_all_tags_btn.setObjectName("select_all_tags_btn")
+        self.gridLayout_2.addWidget(self.select_all_tags_btn, 1, 2, 1, 1)
+        self.ion_filter_frame = QtWidgets.QFrame(self.splitter)
+        self.ion_filter_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.ion_filter_frame.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.ion_filter_frame.setObjectName("ion_filter_frame")
+        self.gridLayout_4 = QtWidgets.QGridLayout(self.ion_filter_frame)
+        self.gridLayout_4.setContentsMargins(2, 0, 2, 2)
+        self.gridLayout_4.setSpacing(2)
+        self.gridLayout_4.setObjectName("gridLayout_4")
+        self.ion_filter_area = QtWidgets.QScrollArea(self.ion_filter_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(
+            self.ion_filter_area.sizePolicy().hasHeightForWidth())
+        self.ion_filter_area.setSizePolicy(sizePolicy)
+        self.ion_filter_area.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.ion_filter_area.setWidgetResizable(True)
+        self.ion_filter_area.setObjectName("ion_filter_area")
+        self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents_2.setGeometry(
+            QtCore.QRect(0, 0, 307, 117))
+        self.scrollAreaWidgetContents_2.setObjectName(
+            "scrollAreaWidgetContents_2")
+        self.ion_filter_area.setWidget(self.scrollAreaWidgetContents_2)
+        self.gridLayout_4.addWidget(self.ion_filter_area, 0, 0, 1, 5)
+        self.select_none_ions_btn = QtWidgets.QPushButton(
+            self.ion_filter_frame)
+        self.select_none_ions_btn.setObjectName("select_none_ions_btn")
+        self.gridLayout_4.addWidget(self.select_none_ions_btn, 1, 1, 1, 1)
+        self.label_13 = QtWidgets.QLabel(self.ion_filter_frame)
+        self.label_13.setObjectName("label_13")
+        self.gridLayout_4.addWidget(self.label_13, 1, 0, 1, 1)
+        spacerItem6 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout_4.addItem(spacerItem6, 1, 3, 1, 1)
+        self.select_all_ions_btn = QtWidgets.QPushButton(self.ion_filter_frame)
+        self.select_all_ions_btn.setObjectName("select_all_ions_btn")
+        self.gridLayout_4.addWidget(self.select_all_ions_btn, 1, 2, 1, 1)
+        self.gridLayout_5.addWidget(self.splitter, 0, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.snp_tag_ion_frame, 3, 0, 1, 1)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setContentsMargins(-1, 0, -1, -1)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
@@ -1397,10 +1440,10 @@ class Ui_MainWindow(object):
         self.snp_new_lbl = QtWidgets.QLabel(self.dockWidgetContents)
         self.snp_new_lbl.setObjectName("snp_new_lbl")
         self.horizontalLayout_4.addWidget(self.snp_new_lbl)
-        spacerItem6 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem7 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem6)
+        self.horizontalLayout_4.addItem(spacerItem7)
         self.snp_refresh_btn = QtWidgets.QToolButton(self.dockWidgetContents)
         icon33 = QtGui.QIcon()
         icon33.addPixmap(QtGui.QPixmap(":/sm-icons/refresh.png"),
@@ -1465,10 +1508,10 @@ class Ui_MainWindow(object):
         self.setlog_count_lbl = QtWidgets.QLabel(self.dockWidgetContents_2)
         self.setlog_count_lbl.setObjectName("setlog_count_lbl")
         self.horizontalLayout_5.addWidget(self.setlog_count_lbl)
-        spacerItem7 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem8 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_5.addItem(spacerItem7)
+        self.horizontalLayout_5.addItem(spacerItem8)
         self.open_log_btn = QtWidgets.QPushButton(self.dockWidgetContents_2)
         self.open_log_btn.setObjectName("open_log_btn")
         self.horizontalLayout_5.addWidget(self.open_log_btn)
@@ -2026,12 +2069,6 @@ class Ui_MainWindow(object):
         self.menu_View.setTitle(_translate("MainWindow", "&View"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.snp_dock.setWindowTitle(_translate("MainWindow", "Snapshots"))
-        self.label_12.setText(_translate("MainWindow", "Select Tags:"))
-        self.select_none_tags_btn.setText(_translate("MainWindow", "None"))
-        self.select_all_tags_btn.setText(_translate("MainWindow", "All"))
-        self.label_13.setText(_translate("MainWindow", "Select Ions:"))
-        self.select_none_ions_btn.setText(_translate("MainWindow", "None"))
-        self.select_all_ions_btn.setText(_translate("MainWindow", "All"))
         self.snp_expand_btn.setToolTip(
             _translate(
                 "MainWindow",
@@ -2064,6 +2101,12 @@ class Ui_MainWindow(object):
         self.filter_note_chkbox.setText(_translate("MainWindow", "Note"))
         self.snp_note_filter_lineEdit.setToolTip(
             _translate("MainWindow", "Ignore cases, loose wildcard match."))
+        self.label_12.setText(_translate("MainWindow", "Select"))
+        self.select_none_tags_btn.setText(_translate("MainWindow", "None"))
+        self.select_all_tags_btn.setText(_translate("MainWindow", "All"))
+        self.select_none_ions_btn.setText(_translate("MainWindow", "None"))
+        self.label_13.setText(_translate("MainWindow", "Select"))
+        self.select_all_ions_btn.setText(_translate("MainWindow", "All"))
         self.label_5.setText(_translate("MainWindow", "Working Database"))
         self.snp_new_lbl.setToolTip(
             _translate(
