@@ -1360,13 +1360,14 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.tag_filter_area.sizePolicy().hasHeightForWidth())
         self.tag_filter_area.setSizePolicy(sizePolicy)
-        self.tag_filter_area.setStyleSheet("QScrollArea {\n"
+        self.tag_filter_area.setStyleSheet("/*\n"
+                                           "QScrollArea {\n"
                                            "    border: none;\n"
-                                           "}")
+                                           "}*/")
         self.tag_filter_area.setWidgetResizable(True)
         self.tag_filter_area.setObjectName("tag_filter_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 2314, 89))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 2312, 89))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tag_filter_area.setWidget(self.scrollAreaWidgetContents)
         self.horizontalLayout_7.addWidget(self.tag_filter_area)

@@ -50,7 +50,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         _tags = sorted(list(tags))
         for tag in _tags:
             o = QPushButton(tag, self)
-            o.setStyleSheet(TAG_BTN_STY.format(fs="10pt"))
+            o.setStyleSheet(TAG_BTN_STY.format(fs=10))
             o.setCheckable(True)
             o.toggled.connect(partial(self.on_update_tags, tag))
             layout.addWidget(o)

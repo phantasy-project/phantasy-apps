@@ -61,7 +61,7 @@ class Ui_Dialog(object):
         self.selected_tags.setFont(font)
         self.selected_tags.setStyleSheet(
             "QLabel {\n"
-            "    color: rgb(255, 0, 127);\n"
+            "    color: rgb(0, 123, 255);\n"
             "    background-color: rgb(233, 233, 233);\n"
             "}")
         self.selected_tags.setText("")

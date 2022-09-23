@@ -3321,7 +3321,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             _filters = sorted(list(filters))
         for tag in _filters:
             o = QPushButton(tag, self.snp_dock)
-            o.setStyleSheet(TAG_BTN_STY.format(fs="9pt"))
+            o.setStyleSheet(TAG_BTN_STY.format(fs=10))
             o.setCheckable(True)
             o.toggled.connect(partial(self.on_update_tag_filters, tag))
             layout.addWidget(o)
