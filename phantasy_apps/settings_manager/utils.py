@@ -142,7 +142,7 @@ TBTN_STY_REGULAR = TBTN_STY_BASE.format(c=TBTN_STY_COLOR_TUPLE)
 DEFAULT_X12_TOL = 0.15
 
 TAG_BTN_STY = """
-QPushButton {{
+QToolButton {{
     font-size: {fs}pt;
     padding: 3px 3px 3px 3px;
     background-color: rgb(255, 133, 170);
@@ -151,16 +151,16 @@ QPushButton {{
     color: rgb(255, 255, 255);
     qproperty-icon: url(":/sm-icons/plus-white.png") off, url(":/sm-icons/checkmark-white.png") on;
 }}
-QPushButton:hover {{
+QToolButton:hover {{
     background-color: rgb(255, 158, 195);
 }}
-QPushButton:checked {{
+QToolButton:checked {{
     background-color: rgb(0, 123, 255);
 }}
 """
 
 TAG_BTN_STY1 = """
-QPushButton {{
+QToolButton {{
     font-size: {fs}pt;
     border-radius: 6px;
     padding: 3px 3px 3px 3px;
@@ -171,10 +171,10 @@ QPushButton {{
     border-bottom: 2px solid rgb(139, 139, 139);
     qproperty-icon: url("none") off, url(":/sm-icons/checkmark-blue.png") on;
 }}
-QPushButton:hover {{
+QToolButton:hover {{
     background-color: rgb(224, 238, 255);
 }}
-QPushButton:checked {{
+QToolButton:checked {{
     color: rgb(45, 91, 227);
     border-top: 2px solid rgb(50, 105, 255);
     border-left: 2px solid rgb(50, 105, 255);

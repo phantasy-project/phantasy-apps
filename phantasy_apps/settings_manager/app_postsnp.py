@@ -7,9 +7,10 @@
 from functools import partial
 
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QToolButton
 from PyQt5.QtWidgets import QWidget
 
 from phantasy_ui.widgets import FlowLayout
@@ -26,7 +27,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
     def __init__(self, tag_fontsize: int, parent=None):
         super(self.__class__, self).__init__()
         self.parent = parent
-        sef._tag_fs = tag_fontsize
+        self._tag_fs = tag_fontsize
 
         # UI
         self.setupUi(self)
@@ -50,7 +51,9 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         layout = FlowLayout()
         _tags = sorted(list(tags))
         for tag in _tags:
-            o = QPushButton(tag, self)
+            o = QToolButton(self)
+            o.setText(tag)
+            o.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             o.setStyleSheet(TAG_BTN_STY.format(fs=self._tag_fs))
             o.setCheckable(True)
             o.toggled.connect(partial(self.on_update_tags, tag))

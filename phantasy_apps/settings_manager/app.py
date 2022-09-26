@@ -855,15 +855,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             QPixmap(":/sm-icons/new.png").scaled(PX_SIZE, PX_SIZE))
         self.snp_new_lbl.setVisible(False)
 
-        # tag,ions filters, radiobtn
+        # tag, ions filter buttons
         self.select_all_ions_btn.clicked.connect(
-            partial(self.on_snp_filters_select_all_ions, True))
+            partial(self.on_check_snp_filters, "ion", "all"))
         self.select_none_ions_btn.clicked.connect(
-            partial(self.on_snp_filters_select_all_ions, False))
+            partial(self.on_check_snp_filters, "ion", "none"))
+        self.select_invert_ions_btn.clicked.connect(
+            partial(self.on_check_snp_filters, "ion", "invert"))
+
         self.select_all_tags_btn.clicked.connect(
-            partial(self.on_snp_filters_select_all_tags, True))
+            partial(self.on_check_snp_filters, "tag", "all"))
         self.select_none_tags_btn.clicked.connect(
-            partial(self.on_snp_filters_select_all_tags, False))
+            partial(self.on_check_snp_filters, "tag", "none"))
+        self.select_invert_tags_btn.clicked.connect(
+            partial(self.on_check_snp_filters, "tag", "invert"))
 
         # settings view filter btn status
         self.filter_btn_group_status_changed.connect(
@@ -1064,13 +1069,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.resizeDocks([self.snp_dock], [self.width() * 0.5], Qt.Horizontal)
         BaseAppForm.resizeEvent(self, e)
 
-    def on_snp_filters_select_all_tags(self, is_checked):
-        for i in self.tag_filter_area.findChildren(QPushButton):
-            i.setChecked(is_checked)
-
-    def on_snp_filters_select_all_ions(self, is_checked):
-        for i in self.ion_filter_area.findChildren(QToolButton):
-            i.setChecked(is_checked)
+    def on_check_snp_filters(self, filter_type, check_type):
+        area = getattr(self, f"{filter_type}_filter_area")
+        if check_type == 'all':
+            [i.setChecked(True) for i in area.findChildren(QToolButton)]
+        elif check_type == 'none':
+            [i.setChecked(False) for i in area.findChildren(QToolButton)]
+        else: # invert
+            [i.setChecked(not i.isChecked()) for i in area.findChildren(QToolButton)]
 
     @pyqtSlot(bool)
     def on_enable_search(self, auto_collapse, enabled):
@@ -3321,7 +3327,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             _filters = sorted(list(filters))
         for tag in _filters:
-            o = QPushButton(tag, self.snp_dock)
+            o = QToolButton(self.snp_dock)
+            o.setText(tag)
+            o.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             o.setStyleSheet(TAG_BTN_STY.format(fs=self.default_font_size - 1))
             o.setCheckable(True)
             o.toggled.connect(partial(self.on_update_tag_filters, tag))

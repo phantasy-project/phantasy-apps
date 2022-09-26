@@ -770,7 +770,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
         self.select_all_btn = QtWidgets.QToolButton(self.centralwidget)
         icon21 = QtGui.QIcon()
-        icon21.addPixmap(QtGui.QPixmap(":/sm-icons/select-all.png"),
+        icon21.addPixmap(QtGui.QPixmap(":/sm-icons/check-all.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.select_all_btn.setIcon(icon21)
         self.select_all_btn.setIconSize(QtCore.QSize(30, 30))
@@ -781,7 +781,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_12.addWidget(self.select_all_btn)
         self.deselect_all_btn = QtWidgets.QToolButton(self.centralwidget)
         icon22 = QtGui.QIcon()
-        icon22.addPixmap(QtGui.QPixmap(":/sm-icons/uncheck.png"),
+        icon22.addPixmap(QtGui.QPixmap(":/sm-icons/check-none.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.deselect_all_btn.setIcon(icon22)
         self.deselect_all_btn.setIconSize(QtCore.QSize(30, 30))
@@ -792,7 +792,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_12.addWidget(self.deselect_all_btn)
         self.invert_selection_btn = QtWidgets.QToolButton(self.centralwidget)
         icon23 = QtGui.QIcon()
-        icon23.addPixmap(QtGui.QPixmap(":/sm-icons/invert-selection.png"),
+        icon23.addPixmap(QtGui.QPixmap(":/sm-icons/check-invert.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.invert_selection_btn.setIcon(icon23)
         self.invert_selection_btn.setIconSize(QtCore.QSize(30, 30))
@@ -1330,15 +1330,15 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setContentsMargins(2, 0, 2, 2)
         self.gridLayout_2.setSpacing(2)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.label_12 = QtWidgets.QLabel(self.tag_filter_frame)
-        self.label_12.setObjectName("label_12")
-        self.gridLayout_2.addWidget(self.label_12, 1, 0, 1, 1)
         spacerItem5 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_2.addItem(spacerItem5, 1, 3, 1, 1)
-        self.select_none_tags_btn = QtWidgets.QPushButton(
+        self.gridLayout_2.addItem(spacerItem5, 1, 4, 1, 1)
+        self.select_none_tags_btn = QtWidgets.QToolButton(
             self.tag_filter_frame)
+        self.select_none_tags_btn.setIcon(icon22)
+        self.select_none_tags_btn.setIconSize(QtCore.QSize(28, 28))
+        self.select_none_tags_btn.setAutoRaise(True)
         self.select_none_tags_btn.setObjectName("select_none_tags_btn")
         self.gridLayout_2.addWidget(self.select_none_tags_btn, 1, 1, 1, 1)
         self.tag_filter_area = QtWidgets.QScrollArea(self.tag_filter_frame)
@@ -1354,13 +1354,23 @@ class Ui_MainWindow(object):
         self.tag_filter_area.setObjectName("tag_filter_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(
-            0, 0, 1191, 117))
+            0, 0, 1191, 119))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tag_filter_area.setWidget(self.scrollAreaWidgetContents)
-        self.gridLayout_2.addWidget(self.tag_filter_area, 0, 0, 1, 5)
-        self.select_all_tags_btn = QtWidgets.QPushButton(self.tag_filter_frame)
+        self.gridLayout_2.addWidget(self.tag_filter_area, 0, 0, 1, 6)
+        self.select_all_tags_btn = QtWidgets.QToolButton(self.tag_filter_frame)
+        self.select_all_tags_btn.setIcon(icon21)
+        self.select_all_tags_btn.setIconSize(QtCore.QSize(28, 28))
+        self.select_all_tags_btn.setAutoRaise(True)
         self.select_all_tags_btn.setObjectName("select_all_tags_btn")
-        self.gridLayout_2.addWidget(self.select_all_tags_btn, 1, 2, 1, 1)
+        self.gridLayout_2.addWidget(self.select_all_tags_btn, 1, 3, 1, 1)
+        self.select_invert_tags_btn = QtWidgets.QToolButton(
+            self.tag_filter_frame)
+        self.select_invert_tags_btn.setIcon(icon23)
+        self.select_invert_tags_btn.setIconSize(QtCore.QSize(28, 28))
+        self.select_invert_tags_btn.setAutoRaise(True)
+        self.select_invert_tags_btn.setObjectName("select_invert_tags_btn")
+        self.gridLayout_2.addWidget(self.select_invert_tags_btn, 1, 2, 1, 1)
         self.ion_filter_frame = QtWidgets.QFrame(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -1377,6 +1387,19 @@ class Ui_MainWindow(object):
         self.gridLayout_4.setContentsMargins(2, 0, 2, 2)
         self.gridLayout_4.setSpacing(2)
         self.gridLayout_4.setObjectName("gridLayout_4")
+        self.select_none_ions_btn = QtWidgets.QToolButton(
+            self.ion_filter_frame)
+        self.select_none_ions_btn.setIcon(icon22)
+        self.select_none_ions_btn.setIconSize(QtCore.QSize(28, 28))
+        self.select_none_ions_btn.setAutoRaise(True)
+        self.select_none_ions_btn.setObjectName("select_none_ions_btn")
+        self.gridLayout_4.addWidget(self.select_none_ions_btn, 1, 1, 1, 1)
+        self.select_all_ions_btn = QtWidgets.QToolButton(self.ion_filter_frame)
+        self.select_all_ions_btn.setIcon(icon21)
+        self.select_all_ions_btn.setIconSize(QtCore.QSize(28, 28))
+        self.select_all_ions_btn.setAutoRaise(True)
+        self.select_all_ions_btn.setObjectName("select_all_ions_btn")
+        self.gridLayout_4.addWidget(self.select_all_ions_btn, 1, 3, 1, 1)
         self.ion_filter_area = QtWidgets.QScrollArea(self.ion_filter_frame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -1390,25 +1413,22 @@ class Ui_MainWindow(object):
         self.ion_filter_area.setObjectName("ion_filter_area")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(
-            QtCore.QRect(0, 0, 1168, 117))
+            QtCore.QRect(0, 0, 1168, 119))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.ion_filter_area.setWidget(self.scrollAreaWidgetContents_2)
-        self.gridLayout_4.addWidget(self.ion_filter_area, 0, 0, 1, 5)
-        self.select_none_ions_btn = QtWidgets.QPushButton(
-            self.ion_filter_frame)
-        self.select_none_ions_btn.setObjectName("select_none_ions_btn")
-        self.gridLayout_4.addWidget(self.select_none_ions_btn, 1, 1, 1, 1)
-        self.label_13 = QtWidgets.QLabel(self.ion_filter_frame)
-        self.label_13.setObjectName("label_13")
-        self.gridLayout_4.addWidget(self.label_13, 1, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.ion_filter_area, 0, 0, 1, 6)
         spacerItem6 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_4.addItem(spacerItem6, 1, 3, 1, 1)
-        self.select_all_ions_btn = QtWidgets.QPushButton(self.ion_filter_frame)
-        self.select_all_ions_btn.setObjectName("select_all_ions_btn")
-        self.gridLayout_4.addWidget(self.select_all_ions_btn, 1, 2, 1, 1)
+        self.gridLayout_4.addItem(spacerItem6, 1, 4, 1, 1)
+        self.select_invert_ions_btn = QtWidgets.QToolButton(
+            self.ion_filter_frame)
+        self.select_invert_ions_btn.setIcon(icon23)
+        self.select_invert_ions_btn.setIconSize(QtCore.QSize(28, 28))
+        self.select_invert_ions_btn.setAutoRaise(True)
+        self.select_invert_ions_btn.setObjectName("select_invert_ions_btn")
+        self.gridLayout_4.addWidget(self.select_invert_ions_btn, 1, 2, 1, 1)
         self.gridLayout_5.addWidget(self.splitter, 0, 0, 1, 1)
         self.snp_view_frame = QtWidgets.QFrame(self.splitter_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -2188,12 +2208,28 @@ class Ui_MainWindow(object):
         self.total_snp_lbl.setText(
             _translate("MainWindow",
                        "<html><head/><body><p>0</p></body></html>"))
-        self.label_12.setText(_translate("MainWindow", "Select"))
-        self.select_none_tags_btn.setText(_translate("MainWindow", "None"))
-        self.select_all_tags_btn.setText(_translate("MainWindow", "All"))
-        self.select_none_ions_btn.setText(_translate("MainWindow", "None"))
-        self.label_13.setText(_translate("MainWindow", "Select"))
-        self.select_all_ions_btn.setText(_translate("MainWindow", "All"))
+        self.select_none_tags_btn.setToolTip(
+            _translate("MainWindow", "Select none tags."))
+        self.select_none_tags_btn.setText(
+            _translate("MainWindow", "Select None"))
+        self.select_all_tags_btn.setToolTip(
+            _translate("MainWindow", "Select all tags."))
+        self.select_all_tags_btn.setText(_translate("MainWindow",
+                                                    "Select All"))
+        self.select_invert_tags_btn.setToolTip(
+            _translate("MainWindow", "Invert the tag selection."))
+        self.select_invert_tags_btn.setText(_translate("MainWindow", "..."))
+        self.select_none_ions_btn.setToolTip(
+            _translate("MainWindow", "Select none ions."))
+        self.select_none_ions_btn.setText(
+            _translate("MainWindow", "Select None"))
+        self.select_all_ions_btn.setToolTip(
+            _translate("MainWindow", "Select all ions."))
+        self.select_all_ions_btn.setText(_translate("MainWindow",
+                                                    "Select All"))
+        self.select_invert_ions_btn.setToolTip(
+            _translate("MainWindow", "Invert the ion selections."))
+        self.select_invert_ions_btn.setText(_translate("MainWindow", "..."))
         self.snp_expand_btn.setToolTip(
             _translate(
                 "MainWindow",
