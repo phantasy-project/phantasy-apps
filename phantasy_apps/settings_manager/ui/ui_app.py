@@ -1379,7 +1379,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.ion_filter_frame.sizePolicy().hasHeightForWidth())
         self.ion_filter_frame.setSizePolicy(sizePolicy)
-        self.ion_filter_frame.setMinimumSize(QtCore.QSize(0, 110))
+        self.ion_filter_frame.setMinimumSize(QtCore.QSize(0, 120))
         self.ion_filter_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.ion_filter_frame.setFrameShadow(QtWidgets.QFrame.Plain)
         self.ion_filter_frame.setObjectName("ion_filter_frame")
