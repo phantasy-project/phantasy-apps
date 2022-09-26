@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(2357, 1440)
+        MainWindow.resize(2416, 1440)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/sm-icons/logo.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -33,6 +33,41 @@ class Ui_MainWindow(object):
             "}\n"
             "QAbstractItemView::indicator::checked {\n"
             "    image: url(:/sm-icons/check-square-fill.png);\n"
+            "}\n"
+            "\n"
+            "/*Splitter*/\n"
+            "QSplitter::handle {\n"
+            "    height: 6px;\n"
+            "    width: 6px;\n"
+            "}\n"
+            "QSplitter::handle:horizontal {\n"
+            "    image: url(:/sm-icons/separator-v.png);\n"
+            "}\n"
+            "QSplitter::handle:horizontal:pressed, QSplitter::handle:horizontal:hover {\n"
+            "    image: url(:/sm-icons/separator-v-pressed.png);\n"
+            "}\n"
+            "QSplitter::handle:vertical {\n"
+            "    image: url(:/sm-icons/separator-h.png);\n"
+            "}\n"
+            "QSplitter::handle:vertical:pressed, QSplitter::handle:vertical:hover {\n"
+            "    image: url(:/sm-icons/separator-h-pressed.png);\n"
+            "}\n"
+            "\n"
+            "QMainWindow::separator {\n"
+            "    width: 6px;\n"
+            "    height: 6px;\n"
+            "}\n"
+            "QMainWindow::separator:horizontal {\n"
+            "    image: url(:/sm-icons/separator-h.png);\n"
+            "}\n"
+            "QMainWindow::separator:horizontal:hover, QMainWindow::separator:horizontal:pressed {\n"
+            "    image: url(:/sm-icons/separator-h-pressed.png);\n"
+            "}\n"
+            "QMainWindow::separator:vertical {\n"
+            "    image: url(:/sm-icons/separator-v.png);\n"
+            "}\n"
+            "QMainWindow::separator:vertical:hover, QMainWindow::separator:vertical:pressed {\n"
+            "    image: url(:/sm-icons/separator-v-pressed.png);\n"
             "}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -1106,7 +1141,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.horizontalLayout_2, 5, 1, 1, 16)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 2357, 32))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 2416, 32))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -1121,14 +1156,50 @@ class Ui_MainWindow(object):
         self.toolBar.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         self.toolBar.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.toolBar.setAutoFillBackground(False)
-        self.toolBar.setStyleSheet("QToolBar {\n"
-                                   "    padding: 4px;\n"
-                                   "    spacing: 4px;\n"
-                                   "}\n"
-                                   "\n"
-                                   "QToolBar::handle {\n"
-                                   "    image: url(handle.png);\n"
-                                   "}QToolb")
+        self.toolBar.setStyleSheet(
+            "QCheckBox::indicator {\n"
+            "    width: 16px;\n"
+            "    height: 16px;\n"
+            "}\n"
+            "QCheckBox::indicator::unchecked {\n"
+            "    image: url(:/sm-icons/uncheck-square.png);\n"
+            "}\n"
+            "QCheckBox::indicator::checked {\n"
+            "    image: url(:/sm-icons/check-square-fill.png);\n"
+            "}\n"
+            "QAbstractItemView::indicator::unchecked {\n"
+            "    image: url(:/sm-icons/uncheck-square.png);\n"
+            "}\n"
+            "QAbstractItemView::indicator::checked {\n"
+            "    image: url(:/sm-icons/check-square-fill.png);\n"
+            "}\n"
+            "\n"
+            "\n"
+            "QSplitter::handle:horizontal {\n"
+            "    image: url(:/sm-icons/separator-h.png);\n"
+            "}\n"
+            "QSplitter::handle:horizontal:hover {\n"
+            "    image: url(:/sm-icons/separator-h-pressed.png);\n"
+            "}\n"
+            "QSplitter::handle:vertical {\n"
+            "    image: url(:/sm-icons/separator-v.png);\n"
+            "}\n"
+            "QSplitter::handle:vertical:hover {\n"
+            "    image: url(:/sm-icons/separator-v-pressed.png);\n"
+            "}\n"
+            "\n"
+            "QMainWindow::separator:horizontal {\n"
+            "    image: url(:/sm-icons/separator-h.png);\n"
+            "}\n"
+            "QMainWindow::separator:horizontal:hover {\n"
+            "    image: url(:/sm-icons/separator-h-pressed.png);\n"
+            "}\n"
+            "QMainWindow::separator:vertical {\n"
+            "    image: url(:/sm-icons/separator-v.png);\n"
+            "}\n"
+            "QMainWindow::separator:vertical:hover {\n"
+            "    image: url(:/sm-icons/separator-v-pressed.png);\n"
+            "}")
         self.toolBar.setAllowedAreas(QtCore.Qt.BottomToolBarArea
                                      | QtCore.Qt.TopToolBarArea)
         self.toolBar.setOrientation(QtCore.Qt.Horizontal)
@@ -1149,7 +1220,6 @@ class Ui_MainWindow(object):
         self.snp_dock.setStyleSheet("QDockWidget {\n"
                                     "    font-weight: bold;\n"
                                     "}\n"
-                                    "\n"
                                     "QDockWidget::title {\n"
                                     "    text-align: left;\n"
                                     "    background: lightblue;\n"
@@ -1284,7 +1354,7 @@ class Ui_MainWindow(object):
         self.tag_filter_area.setObjectName("tag_filter_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(
-            0, 0, 1161, 117))
+            0, 0, 1191, 117))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tag_filter_area.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_2.addWidget(self.tag_filter_area, 0, 0, 1, 5)
@@ -1320,7 +1390,7 @@ class Ui_MainWindow(object):
         self.ion_filter_area.setObjectName("ion_filter_area")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(
-            QtCore.QRect(0, 0, 1140, 117))
+            QtCore.QRect(0, 0, 1168, 117))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.ion_filter_area.setWidget(self.scrollAreaWidgetContents_2)
@@ -1386,7 +1456,7 @@ class Ui_MainWindow(object):
         self.snp_collapse_btn.setAutoRaise(True)
         self.snp_collapse_btn.setObjectName("snp_collapse_btn")
         self.gridLayout_6.addWidget(self.snp_collapse_btn, 0, 1, 1, 1)
-        spacerItem7 = QtWidgets.QSpacerItem(739, 20,
+        spacerItem7 = QtWidgets.QSpacerItem(769, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_6.addItem(spacerItem7, 0, 2, 1, 1)
@@ -1500,7 +1570,7 @@ class Ui_MainWindow(object):
         self.snp_dock.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(4), self.snp_dock)
         self.log_dock = DockWidget(MainWindow)
-        self.log_dock.setMinimumSize(QtCore.QSize(697, 152))
+        self.log_dock.setMinimumSize(QtCore.QSize(702, 152))
         self.log_dock.setStyleSheet("QDockWidget {\n"
                                     "    font-weight: normal;\n"
                                     "}\n"

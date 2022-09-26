@@ -93,7 +93,7 @@ class Ui_Dialog(object):
         self.label_3.setText(
             _translate(
                 "Dialog",
-                "<html><head/><body><p><span style=\" font-size:14pt; font-weight:600;\">Finalize a New Snapshot</span></p></body></html>"
+                "<html><head/><body><p><span style=\" font-size:14pt; font-weight:600;\">Make a New Snapshot</span></p></body></html>"
             ))
         self.pushButton.setText(_translate("Dialog", "OK"))
 
