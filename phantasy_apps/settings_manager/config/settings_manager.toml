@@ -20,7 +20,8 @@ TITLE = "Configurations for Settings Manager"
   # HIDE_COLUMNS = ['dx01', 'tolerance', 'writable']
 
 [MACH_STATE]
-  CONFIG_PATH = "/files/shared/ap/HLA/.phyapps/phantasy-apps/phantasy_apps/msviz/config/metadata.toml"
+  # CONFIG_PATH = "/files/shared/ap/HLA/.phyapps/phantasy-apps/phantasy_apps/msviz/config/metadata.toml"
+  CONFIG_PATH = "/files/shared/ap/settings_manager/metadata.toml"
   ENABLED = true
   DAQ_RATE = 5
   DAQ_NSHOT = 20
