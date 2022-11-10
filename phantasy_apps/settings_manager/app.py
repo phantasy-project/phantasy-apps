@@ -1189,6 +1189,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # del
         del_action = QAction(self._del_icon, "&Delete", menu)
         del_action.triggered.connect(partial(self.on_del_settings, snpdata))
+
+        # del admin
+        del_admin_action = QAction(self._del_icon, "&Delete (Admin)", menu)
+        del_admin_action.triggered.connect(partial(self.on_del_settings_admin, snpdata))
         # load
         load_action = QAction(self._load_icon, "&Load", menu)
         load_action.triggered.connect(partial(self.on_load_settings, snpdata))
@@ -1208,6 +1212,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.addSeparator()
         menu.addAction(saveas_action)
         menu.addAction(del_action)
+        if getuser() == 'zhangt': # Admin
+            menu.addAction(del_admin_action)
         return menu
 
     @pyqtSlot()
@@ -3522,17 +3528,31 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m = self.snp_treeView.model().m_src
         m.remove_data(data_to_del)
 
-        if getuser() == 'zhangt': # Admin
-            # delete from DB
-            delete_data(self._db_conn_pool.get(self.data_uri), data)
-        else:
-            # add 'ARCHIVE' tag
-            _tag_list = data_to_del.tags
-            if 'ARCHIVE' not in _tag_list:
-                _tag_list.append('ARCHIVE')
-                data_to_del.tags = ','.join(_tag_list)
-                self.on_save_settings(data_to_del)
+        # override tags with 'ARCHIVE'
+        data_to_del.tags = 'ARCHIVE'
+        self.on_save_settings(data_to_del)
 
+        self.total_snp_lbl.setText(str(len(self._snp_dock_list)))
+        del data_to_del
+
+    def on_del_settings_admin(self, data):
+        # delete from MEM (done), and model, and datafile (if exists)
+        r = QMessageBox.warning(None, "Delete Snapshot",
+                                f"Are you sure to delete the snapshot created at {data.ts_as_str()}?",
+                                QMessageBox.Yes | QMessageBox.No,
+                                QMessageBox.No)
+        if r == QMessageBox.No:
+            return
+        for i, d in enumerate(self._snp_dock_list):
+            if d.name == data.name:
+                data_to_del = self._snp_dock_list.pop(i)
+                break
+        #
+        m = self.snp_treeView.model().m_src
+        m.remove_data(data_to_del)
+
+        # delete from DB
+        delete_data(self._db_conn_pool.get(self.data_uri), data)
         self.total_snp_lbl.setText(str(len(self._snp_dock_list)))
         del data_to_del
 
