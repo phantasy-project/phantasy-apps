@@ -1207,8 +1207,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.addAction(mviz_action)
         menu.addSeparator()
         menu.addAction(saveas_action)
-        if getuser() == 'zhangt':
-            menu.addAction(del_action)
+        menu.addAction(del_action)
         return menu
 
     @pyqtSlot()
@@ -3335,6 +3334,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             o.toggled.connect(partial(self.on_update_tag_filters, tag))
             layout.addWidget(o)
             o.setChecked(self._current_tag_filter.get(tag, True))
+            if tag == 'ARCHIVE': # not show ARCHIVEd snapshots
+                o.setChecked(False)
         w.setLayout(layout)
         area.setWidget(w)
 
@@ -3517,10 +3518,21 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             if d.name == data.name:
                 data_to_del = self._snp_dock_list.pop(i)
                 break
+        #
         m = self.snp_treeView.model().m_src
         m.remove_data(data_to_del)
-        # delete from DB
-        delete_data(self._db_conn_pool.get(self.data_uri), data)
+
+        if getuser() == 'zhangt': # Admin
+            # delete from DB
+            delete_data(self._db_conn_pool.get(self.data_uri), data)
+        else:
+            # add 'ARCHIVE' tag
+            _tag_list = data_to_del.tags
+            if 'ARCHIVE' not in _tag_list:
+                _tag_list.append('ARCHIVE')
+                data_to_del.tags = ','.join(_tag_list)
+                self.on_save_settings(data_to_del)
+
         self.total_snp_lbl.setText(str(len(self._snp_dock_list)))
         del data_to_del
 
