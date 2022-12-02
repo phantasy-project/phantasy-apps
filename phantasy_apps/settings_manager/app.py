@@ -13,7 +13,7 @@ import time
 import toml
 from collections import OrderedDict
 from datetime import datetime
-from epics import caget, caput
+from epics import caget, caput, ca
 from functools import partial
 from getpass import getuser
 from subprocess import Popen
@@ -286,6 +286,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # init AA
         self.init_aa()
 
+        # init ca
+        self.init_ca()
+
         # init filter string buttons
         self.init_filter_str_ctls()
 
@@ -369,6 +372,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 mgmt_client_conf.get('URL'))
         # print(self._aa_data_client)
         # print(self._aa_mgmt_client)
+
+    def init_ca(self):
+        ca_conf = self.pref_dict.get('EPICS', None)
+        if ca_conf is None:
+            return
+        for k, v in ca_conf.items():
+            if isinstance(v, list):
+                v = ' '.join(v)
+            os.environ[f'EPICS_{k}'] = v
+        _reset_ca()
 
     def init_config(self, confdir=None):
         # preferences
@@ -4240,6 +4253,12 @@ _ISEG_PVS = (
     'ISEG:5230101:0:0:Control:doClear',
     'ISEG:5230101:0:1:Control:doClear',
 )
+
+
+def _reset_ca():
+    ca.clear_cache()
+    ca.finalize_libca()
+    ca.initialize_libca()
 
 
 def _reset_trip_events():
