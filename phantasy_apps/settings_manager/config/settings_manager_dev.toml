@@ -42,3 +42,8 @@ TITLE = "Configurations for Settings Manager"
     NAME = "Correlation Visualizer"
     EXEC = "correlation_visualizer"
     ARGS = "--config {ename}.json"
+
+# EPICS
+[EPICS]
+  CA_AUTO_ADDR_LIST = "NO"
+  CA_ADDR_LIST = ["localhost", "controlgw1.nscl.msu.edu:6064", "controlgw2.nscl.msu.edu:6064"]
