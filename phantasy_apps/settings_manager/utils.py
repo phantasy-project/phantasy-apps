@@ -225,19 +225,6 @@ TGT_STS_TUPLE = ('Invalid', 'Home/Be 3.811 mm', 'Viewer', 'Be 4064 mm',
                  'Be 8.892 mm')
 
 
-# REF ST PV MAP
-with open(find_dconf("settings_manager", "refstpv.json")) as fp:
-    REF_ST_PV_MAP = {k:get_pv(v) for k,v in json.load(fp).items()}
-
-# TOL PV MAP
-with open(find_dconf("settings_manager", "tolpv.json")) as fp:
-    TOL_PV_MAP = {k:get_pv(v) for k,v in json.load(fp).items()}
-
-# Device alarm switch PV MAP
-with open(find_dconf("settings_manager", "almactpv.json")) as fp:
-    ALM_ACT_PV_MAP = {k:(get_pv(v[0]), get_pv(v[1])) for k,v in json.load(fp).items()}
-
-
 class SettingsModel(QStandardItemModel):
     """Settings model from Settings instance.
 
@@ -267,11 +254,16 @@ class SettingsModel(QStandardItemModel):
 
     def __init__(self, parent, flat_settings, **kws):
         # kw: ndigit, font, auto_fmt, device_states
+        # pv_map: dict of additional pv data
         super(self.__class__, self).__init__(parent)
         self._ndigit = kws.get('ndigit', 6)
         self._font = kws.get('font', None)
         self._auto_fmt = kws.get('auto_fmt', False)
         self._last_sts_dict = kws.get('device_states', {})
+        self._pv_map = kws.get('pv_map', {})
+        self.ref_st_pv_map = self._pv_map.get('refset', {})
+        self.tol_pv_map = self._pv_map.get('tol', {})
+        self.alm_act_pv_map = self._pv_map.get('almact', {})
 
         if self._auto_fmt:
             self.fmt = '{{0:{0}g}}'.format(self._ndigit)
@@ -389,7 +381,7 @@ class SettingsModel(QStandardItemModel):
             # tolerance for dx12
             # tol is read from _TOL PV
             item_tol = QStandardItem(self.fmt.format(DEFAULT_X12_TOL))
-            item_tol.setData(tol_pv(fld.ename, fld.name), Qt.UserRole + 1) # None if not support
+            item_tol.setData(self.get_tol_pv(fld.ename, fld.name), Qt.UserRole + 1) # None if not support
             item_tol.setEditable(False)
             row.append(item_tol)
 
@@ -416,7 +408,7 @@ class SettingsModel(QStandardItemModel):
             #
             # reference value, xref
             item_ref_st = QStandardItem('-')
-            item_ref_st.setData(ref_pv(fld.ename, fld.name), Qt.UserRole + 1) # None if not available
+            item_ref_st.setData(self.get_ref_pv(fld.ename, fld.name), Qt.UserRole + 1) # None if not available
             item_ref_st.setEditable(False)
             # extend with x2 - xref, x0 - xref
             ref_row = [item_ref_st, QStandardItem('-'), QStandardItem('-')]
@@ -424,7 +416,7 @@ class SettingsModel(QStandardItemModel):
             row.extend(ref_row)
 
             # alarm switches, read and tune alms
-            tune_alm_pv, read_alm_pv = alm_pv(fld.ename, fld.name)
+            tune_alm_pv, read_alm_pv = self.get_alm_pv(fld.ename, fld.name)
             item_read_alm = QStandardItem('')
             item_read_alm.setData(read_alm_pv, Qt.UserRole + 1) # None if not availble
             item_read_alm.setEditable(False)
@@ -558,6 +550,18 @@ class SettingsModel(QStandardItemModel):
             if is_item_checked(it):
                 n += 1
         return n
+
+    def get_ref_pv(self, ename, fname):
+        # Return the PV obj for reference set.
+        return self.ref_st_pv_map.get(f"{ename}-{fname}", None)
+
+    def get_tol_pv(self, ename, fname):
+        # Return the PV obj for live rd-st tolerance.
+        return self.tol_pv_map.get(f"{ename}-{fname}", None)
+
+    def get_alm_pv(self, ename, fname):
+        # Return the PV objs for alarm switches, (tune, read)
+        return self.alm_act_pv_map.get(f"{ename}-{fname}", (None, None))
 
 
 class _SortProxyModel(QSortFilterProxyModel):
@@ -1762,16 +1766,4 @@ def set_device_state_item(sts_str):
     return item
 
 
-def ref_pv(ename, fname):
-    # Return the PV obj for reference set.
-    return REF_ST_PV_MAP.get(f"{ename}-{fname}", None)
 
-
-def tol_pv(ename, fname):
-    # Return the PV obj for live rd-st tolerance.
-    return TOL_PV_MAP.get(f"{ename}-{fname}", None)
-
-
-def alm_pv(ename, fname):
-    # Return the PV objs for alarm switches, (tune, read)
-    return ALM_ACT_PV_MAP.get(f"{ename}-{fname}", (None, None))

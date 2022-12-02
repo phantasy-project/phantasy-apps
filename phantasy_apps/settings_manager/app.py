@@ -13,7 +13,7 @@ import time
 import toml
 from collections import OrderedDict
 from datetime import datetime
-from epics import caget, caput, ca
+from epics import caget, caput, ca, get_pv
 from functools import partial
 from getpass import getuser
 from subprocess import Popen
@@ -118,7 +118,6 @@ from .utils import NUM_LENGTH
 from .utils import BG_COLOR_GOLDEN_NO
 from .utils import CHP_STS_TUPLE
 from .utils import TGT_STS_TUPLE
-from .utils import ref_pv as get_ref_set_pv
 from .utils import TAG_BTN_STY
 from .contrib.db.db_utils import ensure_connect_db
 
@@ -286,8 +285,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # init AA
         self.init_aa()
 
-        # init ca
+        # init CA
         self.init_ca()
+
+        # init data files, e.g. JSON files of refst, tol, almact PVs
+        # {} or 'refset', 'tol', 'almact' keys of values
+        self._pv_map = self.init_datafiles()
 
         # init filter string buttons
         self.init_filter_str_ctls()
@@ -382,6 +385,39 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 v = ' '.join(v)
             os.environ[f'EPICS_{k}'] = v
         _reset_ca()
+
+    def init_datafiles(self):
+        dfile_conf = self.pref_dict.get('DATA', None)
+        if dfile_conf is None:
+            return {}
+
+        # REF ST PV MAP
+        fpath_refset = dfile_conf.get('REFST_PVFILE', None)
+        if fpath_refset is None:
+            ref_st_pv_map = {}
+        else:
+            with open(fpath_refset) as fp:
+                ref_st_pv_map = {k: get_pv(v) for k,v in json.load(fp).items()}
+
+        # TOL PV MAP
+        fpath_tol = dfile_conf.get('TOL_PVFILE', None)
+        if fpath_tol is None:
+            tol_pv_map = {}
+        else:
+            with open(fpath_tol) as fp:
+                tol_pv_map = {k:get_pv(v) for k,v in json.load(fp).items()}
+
+        # Device alarm switch PV MAP
+        fpath_almact = dfile_conf.get('ALMACT_PVFILE', None)
+        if fpath_almact is None:
+            alm_act_pv_map = {}
+        else:
+            with open(fpath_almact) as fp:
+                alm_act_pv_map = {k:(get_pv(v[0]), get_pv(v[1])) for k,v in json.load(fp).items()}
+
+        #
+        return {'refset': ref_st_pv_map, 'tol': tol_pv_map,
+                'almact': alm_act_pv_map}
 
     def init_config(self, confdir=None):
         # preferences
@@ -564,7 +600,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                               device_states=self._last_sts_dict,
                               ndigit=self.ndigit,
                               font=self.font,
-                              auto_fmt=self.auto_ndigit_chkbox.isChecked())
+                              auto_fmt=self.auto_ndigit_chkbox.isChecked(),
+                              pv_map=self._pv_map,
+                              )
         model.settings_sts.connect(self.on_settings_sts)
         model.item_deletion_updated[list].connect(self.on_delete_items)
         model.checked_items_inc_dec_updated.connect(
@@ -3652,7 +3690,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         data.extract_blob()
         for i, irow in data.data.iterrows():
             ename, fname, val0 = irow.Name, irow.Field, irow.Setpoint
-            ref_st_pv = get_ref_set_pv(ename, fname)
+            ref_st_pv = self._pv_map.get(f'{ename}-{fname}', None)
             if ref_st_pv is not None:
                 msg = "[{0}] {1}[{2}]: Set {3} to {4}.".format(
                     datetime.fromtimestamp(time.time()).strftime(TS_FMT),
