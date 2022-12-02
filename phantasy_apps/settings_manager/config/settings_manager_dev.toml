@@ -43,7 +43,16 @@ TITLE = "Configurations for Settings Manager"
     EXEC = "correlation_visualizer"
     ARGS = "--config {ename}.json"
 
-# EPICS
-[EPICS]
-  CA_AUTO_ADDR_LIST = "NO"
-  CA_ADDR_LIST = ["localhost", "controlgw1.nscl.msu.edu:6064", "controlgw2.nscl.msu.edu:6064"]
+# EPICS : do not use
+#[EPICS]
+#  CA_AUTO_ADDR_LIST = "NO"
+#  CA_ADDR_LIST = ["localhost", "controlgw1.nscl.msu.edu:6064", "controlgw2.nscl.msu.edu:6064"]
+
+# other configuration data
+[DATA]
+  # tolerance PVs
+  TOL_PVFILE = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/tolpv.json"
+  # reference set PVs
+  REFST_PVFILE = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/refstpv.json"
+  # alarm switch PVs
+  ALMACT_PVFILE = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/almactpv.json"

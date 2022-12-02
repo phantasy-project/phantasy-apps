@@ -58,3 +58,12 @@ FILEPATH = "/files/shared/ap/settings_manager/filters/01_scaling.flt"
 NAME = "Filters"
 DESC = "Choose predefined filters..."
 DIRPATH = "/files/shared/ap/settings_manager/filters"
+
+# other configuration data
+[DATA]
+  # tolerance PVs
+  TOL_PVFILE = "/files/shared/ap/HLA/.phyapps/phantasy-apps/phantasy_apps/settings_manager/config/tolpv.json"
+  # reference set PVs
+  REFST_PVFILE = "/files/shared/ap/HLA/.phyapps/phantasy-apps/phantasy_apps/settings_manager/config/refstpv.json"
+  # alarm switch PVs
+  ALMACT_PVFILE = "/files/shared/ap/HLA/.phyapps/phantasy-apps/phantasy_apps/settings_manager/config/almactpv.json"
