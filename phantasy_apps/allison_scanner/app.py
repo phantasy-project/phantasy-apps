@@ -997,7 +997,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     def _initial_devices(self, mode="Live"):
         if mode == "Live":
-            all_devices_dict = get_all_devices("FRIB", "LEBT", "EMS")
+            all_devices_dict = get_all_devices("FRIB", "EMS", "EMS")
         else:
             all_devices_dict = get_all_devices("SIM", "DEVICES", "EMS")
         self._all_devices_dict = all_devices_dict
