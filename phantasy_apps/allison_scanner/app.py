@@ -1235,9 +1235,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         #  - Live, pull from PVs
         #  - Simulation, load from UI or roll back with default ones
         if mode == "Live":
-            n = caget('FE_ISRC1:BEAM:ELMT_BOOK')
-            q = caget('FE_ISRC1:BEAM:Q_BOOK')
-            a = caget('FE_ISRC1:BEAM:A_BOOK')
+            n, a, _, q = self.beamSpeciesDisplayWidget.get_species()
             kv = caget('FE_SCS1:BEAM:HV_BOOK')
             ek = kv * 1000.0 * q / a
         else: # Simulation
