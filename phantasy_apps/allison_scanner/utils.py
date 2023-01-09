@@ -36,7 +36,7 @@ def get_all_devices(machine="FRIB", segment="LEBT", type="EMS"):
     """
     mp = MachinePortal(machine, segment)
     elems = mp.get_elements(type=type)
-    r = [(i.name, i) for i in sorted(elems, key=lambda x:x.name[-4:])]
+    r = [(i.name, i) for i in sorted(elems, key=lambda x:x.name)]
     return OrderedDict(r)
 
 
