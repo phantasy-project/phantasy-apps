@@ -1117,7 +1117,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 or self.show_warning_dx12_btn.isChecked() or self.show_state_diff_btn.isChecked()
 
     def resizeEvent(self, e):
-        self.resizeDocks([self.snp_dock], [self.width() * 0.5], Qt.Horizontal)
+        self.resizeDocks([self.snp_dock], [int(self.width() * 0.5)], Qt.Horizontal)
         BaseAppForm.resizeEvent(self, e)
 
     def on_check_snp_filters(self, filter_type, check_type):
@@ -1845,7 +1845,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         idx_src, _, msg = idx_px_list[-1]
         m.hlrow(idx_src)
         self.log_textEdit.append(msg)
-        self.apply_pb.setValue(per * 100)
+        self.apply_pb.setValue(int(per * 100))
 
     def closeEvent(self, e):
         BaseAppForm.closeEvent(self, e)
@@ -2812,7 +2812,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(float, 'QString')
     def _on_data_refresh_progressed(self, per, str_idx):
-        self.refresh_pb.setValue(per * 100)
+        self.refresh_pb.setValue(int(per * 100))
 
     @pyqtSlot()
     def on_single_update(self):
@@ -3863,7 +3863,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def _meta_fetcher_progressed(self, f, s):
         printlog(f"Fetching machine state: {f * 100:>5.1f}%, {s}")
-        self._meta_fetcher_pb.setValue(100 * f)
+        self._meta_fetcher_pb.setValue(int(100 * f))
         self._meta_fetcher_pb.move(
             self.geometry().x() + self.geometry().width() / 2 -
             self._meta_fetcher_pb.geometry().width() / 2,
@@ -4066,7 +4066,7 @@ p, li { white-space: pre-wrap; }
         idx_src, msg = refset_pb_list[-1]
         m.hlrow(idx_src)
         self.log_textEdit.append(msg)
-        self.refset_pb.setValue(per * 100)
+        self.refset_pb.setValue(int(per * 100))
 
     @pyqtSlot(bool)
     def on_toggle_refset_ctrls(self, is_checked):
@@ -4168,7 +4168,7 @@ p, li { white-space: pre-wrap; }
         idx_src, msg = alm_set_pb_list[-1]
         m.hlrow(idx_src)
         self.log_textEdit.append(msg)
-        self.refset_pb.setValue(per * 100)
+        self.refset_pb.setValue(int(per * 100))
 
     def set_widgets_status_for_alm_set(self, status):
         """Set widgets status for alm set.

@@ -427,7 +427,7 @@ class TrajectoryViewerWindow(BaseAppForm, Ui_MainWindow):
                                 "BPMs are not found, Choose Monitors first.", QMessageBox.Ok)
             return
         # start DAQ
-        self.daq_timer.start(1000.0 / self._daqfreq)
+        self.daq_timer.start(int(1000.0 / self._daqfreq))
         self.start_btn.setEnabled(False)
         self.stop_btn.setEnabled(True)
         # not neat but good for testing
