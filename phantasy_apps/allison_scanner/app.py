@@ -72,6 +72,8 @@ CNT_IS_INT_STY = """
 
 PX_SIZE = 24
 
+ION_SOURCE_NAME_MAP = {'FE_SCS1': 'ISRC1', 'FE_SCS2': 'ISRC2'}
+
 
 class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
@@ -453,8 +455,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_device_changed(self, s):
         """Change device by selecting the name.
         """
+        # switch EMS device
         self._currnet_device_name = s
         self._current_device_elem = self._all_devices_dict[s]
+        # switch ion source
+        self.beamSpeciesDisplayWidget.set_ion_source(
+            ION_SOURCE_NAME_MAP.get(s[:7], 'ISRC1'))
+        #
         self.on_update_device()
         self.statusInfoChanged.emit("Selected device: {}".format(s))
 
