@@ -73,6 +73,8 @@ CNT_IS_INT_STY = """
 PX_SIZE = 24
 
 ION_SOURCE_NAME_MAP = {'FE_SCS1': 'ISRC1', 'FE_SCS2': 'ISRC2'}
+HV_MAP = {'ISRC1': 'FE_SCS1:BEAM:HV_BOOK',
+          'ISRC2': 'FE_SCS2:BEAM:HV_BOOK'}
 
 
 class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
@@ -459,8 +461,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._currnet_device_name = s
         self._current_device_elem = self._all_devices_dict[s]
         # switch ion source
-        self.beamSpeciesDisplayWidget.set_ion_source(
-            ION_SOURCE_NAME_MAP.get(s[:7], 'ISRC1'))
+        isrc_name = ION_SOURCE_NAME_MAP.get(s[:7], 'ISRC1')
+        self.beamSpeciesDisplayWidget.set_ion_source(isrc_name)
         #
         self.on_update_device()
         self.statusInfoChanged.emit("Selected device: {}".format(s))
@@ -1244,7 +1246,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         #  - Simulation, load from UI or roll back with default ones
         if mode == "Live":
             n, a, _, q = self.beamSpeciesDisplayWidget.get_species()
-            kv = caget('FE_SCS1:BEAM:HV_BOOK')
+            pv_hv_book = HV_MAP.get(self.beamSpeciesDisplayWidget.get_ion_source())
+            kv = caget(pv_hv_book)
             ek = kv * 1000.0 * q / a
         else: # Simulation
             # get from UI
