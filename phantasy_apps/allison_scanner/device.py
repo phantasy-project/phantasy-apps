@@ -408,7 +408,7 @@ class Device(QObject):
                 return
         print("--- Reset interlock-{}: Done!".format(self._id))
 
-    def retract(self, pos0=152.0):
+    def retract(self, pos0=200.0):
         pos_fld = self.elem.get_field('POS{}'.format(self._id))
         pos_fld.value = pos0
         return pos_fld

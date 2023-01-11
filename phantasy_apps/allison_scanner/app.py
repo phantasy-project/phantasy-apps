@@ -687,8 +687,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         try:
             float(x)
         except (ValueError, TypeError):
-            v = 152.0
-            self.vpos_lineEdit.setText('152.0')
+            v = 200.0
+            self.vpos_lineEdit.setText('200.0')
         else:
             v = float(x)
         finally:
