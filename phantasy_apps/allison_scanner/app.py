@@ -421,6 +421,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # pvs
         _id = self._ems_device._id
         elem = self._ems_device.elem
+        #
         self._data_pv = elem.pv('DATA{}'.format(_id))[0]
         self._status_pv = elem.pv('SCAN_STATUS{}'.format(_id))[0]
         self._trigger_pv = elem.pv('START_SCAN{}'.format(_id))[0]
@@ -458,7 +459,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """Change device by selecting the name.
         """
         # switch EMS device
-        self._currnet_device_name = s
+        self._current_device_name = s
         self._current_device_elem = self._all_devices_dict[s]
         # switch ion source
         isrc_name = ION_SOURCE_NAME_MAP.get(s[:7], 'ISRC1')
@@ -472,6 +473,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         ems = Device(self._current_device_elem, self._ems_orientation,
                      self._dconf)
         self._ems_device = ems
+        self.ems_orientation_cbb.currentTextChanged.emit(self.ems_orientation_cbb.currentText())
 
         if ems.info == "Installed":
             px = self.installed_px
@@ -631,8 +633,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._run()
 
     def _run(self):
-        if not self._validate_conflicts():
-            return
+        if self._current_device_name[:7] == "FE_SCS1":
+            if not self._validate_conflicts():
+                return
 
         is_valid = self._valid_device()
         if is_valid is False:
