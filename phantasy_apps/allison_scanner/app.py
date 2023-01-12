@@ -467,6 +467,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.on_update_device()
         self.statusInfoChanged.emit("Selected device: {}".format(s))
+        # trigger v2d
+        self.on_update_model()
 
     def on_update_device(self):
         # update ems device.
