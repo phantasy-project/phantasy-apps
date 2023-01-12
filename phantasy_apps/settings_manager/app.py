@@ -3073,6 +3073,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def update_loaded_snp_info(self, snpdata):
         """Update loaded snapshot info if any metadata of the snapshot data is changed.
         """
+        if self._current_snpdata is None:
+            print("Warning: No snapshot is loaded.")
+            return
         if snpdata.name == self._current_snpdata.name:
             # update note string if Note is updated.
             note_str_now = self.loaded_snp_note_lbl.text()
