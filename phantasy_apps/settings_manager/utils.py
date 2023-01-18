@@ -196,6 +196,7 @@ DEFAULT_FOI_DICT = get_foi_dict(DEFAULT_FOI_PATH)
 # override write permission (for those does not have correct ACF)
 ELEM_WRITE_PERM = {
  'FE_ISRC1:BEAM': False,
+ 'FE_ISRC2:BEAM': False,
  'FE_RFQ:CAV_D1005': False,
  'FE_ISRC1:DRV_D0686:POS': False,
  'FE_ISRC1:DRV_D0686': False,
