@@ -1752,6 +1752,9 @@ STS_PX_MAP = {
 "Chopper state: Off": ":/sm-icons/chp_off.png",
 "Chopper state: Blocking": ":/sm-icons/chp_blocking.png",
 "Chopper state: Running": ":/sm-icons/chp_running.png",
+
+"Ion source is active": ":/sm-icons/on.png",
+"Ion source is inactive": ":/sm-icons/off.png",
 }
 def set_device_state_item(sts_str):
     """Return QStandardItem object based on the input device state string (*sts_str*).

@@ -767,6 +767,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # blocking beam or not
         _blocking_px = QPixmap(":/sm-icons/off.png")
         _non_blocking_px = QPixmap(":/sm-icons/on.png")
+        # ion active or not
+        _ion_inactive_px = QPixmap(":/sm-icons/off.png")
+        _ion_active_px = QPixmap(":/sm-icons/on.png")
 
         # aperture
         _ap_in_px, _ap_out_px = _blocking_px, _non_blocking_px
@@ -778,6 +781,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # position monitor (PPAC)
         self._pm_in_px_tuple = (_non_blocking_px, _blocking_px)
+
+        # ion source active?
+        self._ion_act_px_tuple = (_ion_inactive_px, _ion_active_px)
 
         # chopper
         self._chp_invalud_px = QPixmap(":/sm-icons/chp_invalid.png")
@@ -2396,6 +2402,19 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     tt = "PPAC is OUT"
                 else:
                     tt = "PPAC is IN"
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "ION":
+            if 'ACT' in elem.fields:
+                act_sts = int(elem.ACT)
+                px = self._ion_act_px_tuple[act_sts]
+                if act_sts == 0:
+                    tt = "Ion source is inactive"
+                else:
+                    tt = "Ion source is active"
             worker.meta_signal1.emit(
                 (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit(
