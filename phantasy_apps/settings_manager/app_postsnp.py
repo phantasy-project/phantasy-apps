@@ -19,7 +19,7 @@ from .utils import TAG_BTN_STY
 from .ui.ui_post_snp import Ui_Dialog
 
 
-DEFAULT_TAG_LIST = ["LINAC", "FSEE", "GOLDEN"]
+DEFAULT_TAG_LIST = ["LINAC", "FSEE", "GOLDEN", "SCS1", "SCS2", "TEST"]
 
 
 class PostSnapshotDialog(QDialog, Ui_Dialog):
