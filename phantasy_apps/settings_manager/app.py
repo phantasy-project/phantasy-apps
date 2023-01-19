@@ -689,6 +689,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.toolBar.addWidget(spacer)
         self.beam_display_widget = BeamSpeciesDisplayWidget()
+        self.beam_display_widget.isrc1_btn.setEnabled(False)
+        self.beam_display_widget.isrc2_btn.setEnabled(False)
         self.toolBar.addWidget(self.beam_display_widget)
         #
         self._post_info = True  # post info after loading lattice
