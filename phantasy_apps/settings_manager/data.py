@@ -309,7 +309,8 @@ def read_excel(filepath, **kws):
 #            _df.loc['attribute', 'tags'] = []
         #df_info = _df.T
         #df_info.insert(0, "data_path", os.path.abspath(filepath))
-        df_data = pd.read_excel(fp, sheet_name=SnapshotData.SETTINGS_SHEET_NAME)
+        _df_data = pd.read_excel(fp, sheet_name=SnapshotData.SETTINGS_SHEET_NAME)
+        df_data = _df_data[~_df_data.Name.isna()]
         if SnapshotData.MACHSTATE_SHEET_NAME in fp.sheet_names:
             df_machstate = pd.read_excel(fp, sheet_name=SnapshotData.MACHSTATE_SHEET_NAME, index_col=[0, 1])
         else:
