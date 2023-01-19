@@ -841,6 +841,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         except ValueError:
             print("Invalid input of Q, A, Ek...")
             return
+        try:
+            assert hasattr(self, '_model') == True
+        except AssertionError:
+            print("Model is not reaady.")
+            return
         self._model.ion_charge = ionc
         self._model.ion_mass = ionm
         self._model.ion_energy = ione
