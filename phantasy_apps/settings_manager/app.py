@@ -428,6 +428,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.init_settings = INIT_SETTINGS
         self.ndigit = N_DIGIT
         self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self.ndigit)
+        # for field NMR, HALL
+        self.fmt_nmr = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, 5)
 
         self.dsrc_mode = DATA_SOURCE_MODE
         self.db_engine = DB_ENGINE
@@ -2217,6 +2219,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         irow = idx0.row()
         rd_val, sp_val = o.value, o.current_setting()
 
+        #
+        if o.name in ('NMR', 'NMR_phy', 'HALL', 'HALL_PROBE'):
+            fmt, ndigit = self.fmt_nmr, 5
+        else:
+            fmt, ndigit = self.fmt, self.ndigit
+
         # write access
         wa_idx = m.index(irow, m.i_writable)
         wa = ELEM_WRITE_PERM.get(o.ename, o.write_access)
@@ -2257,7 +2265,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         v_tuple = (rd_val, sp_val)
         for iidx, val in zip(idx_tuple, v_tuple):
             worker.meta_signal1.emit(
-                (iidx, self.fmt.format(val), Qt.DisplayRole))
+                (iidx, fmt.format(val), Qt.DisplayRole))
 
         x0 = float(m.data(x0_idx))
         x1, x2 = rd_val, sp_val
@@ -2269,10 +2277,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         v_tuple = (dx01, dx02, dx12)
         for iidx, val in zip(idx_tuple, v_tuple):
             worker.meta_signal1.emit(
-                (iidx, self.fmt.format(val), Qt.DisplayRole))
+                (iidx, fmt.format(val), Qt.DisplayRole))
         worker.meta_signal1.emit(
             (ratio_x20_idx, get_ratio_as_string(x2, x0,
-                                                self.fmt), Qt.DisplayRole))
+                                                fmt), Qt.DisplayRole))
 
         # tolerance
         tol_pv = m.data(tol_idx, Qt.UserRole + 1)
@@ -2280,7 +2288,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if tol_pv is not None:
             tol_v = tol_pv.value
             if tol_v is not None:
-                tol_v_str = self.fmt.format(tol_v)
+                tol_v_str = fmt.format(tol_v)
                 if tol_v_str != tol_v0_str:
                     worker.meta_signal1.emit((tol_idx, tol_v_str, Qt.DisplayRole))
 
@@ -2294,7 +2302,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 (dx12_idx, self._no_warning_px, Qt.DecorationRole))
             worker.meta_signal1.emit((dx12_idx, None, Qt.UserRole))
 
-        if not is_close(x0, x2, self.ndigit):
+        if not is_close(x0, x2, ndigit):
             worker.meta_signal1.emit(
                 (dx02_idx, self._warning_px, Qt.DecorationRole))
             worker.meta_signal1.emit((dx02_idx, 'warning', Qt.UserRole))
@@ -2312,11 +2320,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     dx2ref = x2 - ref_v
                     dx0ref = x0 - ref_v
                     for iidx, iv in zip((ref_st_idx, dx2ref_idx, dx0ref_idx), (ref_v, dx2ref, dx0ref)):
-                        worker.meta_signal1.emit((iidx, self.fmt.format(iv), Qt.DisplayRole))
+                        worker.meta_signal1.emit((iidx, fmt.format(iv), Qt.DisplayRole))
 
                     # warnings?
                     for iidx, iv in zip((dx2ref_idx, dx0ref_idx), (x2, x0)):
-                        if not is_close(iv, ref_v, self.ndigit):
+                        if not is_close(iv, ref_v, ndigit):
                             worker.meta_signal1.emit(
                                 (iidx, self._warning_px, Qt.DecorationRole))
                             worker.meta_signal1.emit(

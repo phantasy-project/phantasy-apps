@@ -113,7 +113,7 @@ fields = ['XCEN', 'XCEN_phy', 'YCEN', 'YCEN_phy',
           'CHV', 'CHV_phy']
 
 [BEND]
-fields = ['I', 'B', 'I_TC', 'B_TC', 'NMR', 'NMR_phy']
+fields = ['I', 'B', 'I_TC', 'B_TC', 'NMR', 'NMR_phy', 'HALL', 'HALL_PROBE']
 
 [EBEND]
 fields = ['V', 'VOLT']

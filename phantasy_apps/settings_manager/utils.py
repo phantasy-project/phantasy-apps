@@ -271,6 +271,9 @@ class SettingsModel(QStandardItemModel):
         else:
             self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self._ndigit)
 
+        # for field NMR, HALL
+        self.fmt_nmr = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, 5)
+
         if self._font is None:
             self._font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
 
@@ -343,6 +346,12 @@ class SettingsModel(QStandardItemModel):
         ename_set = set()
 
         for elem, fname, fld, fval0 in self._settings:
+            # add an exception for number format
+            if fname in ('NMR', 'NMR_phy', 'HALL', 'HALL_PROBE'):
+                fmt = self.fmt_nmr
+            else:
+                fmt = self.fmt
+            #
             ename = elem.name
             item_ename = QStandardItem(ename)
             item_ename.setData(elem.sb, Qt.UserRole + 1)
@@ -359,7 +368,7 @@ class SettingsModel(QStandardItemModel):
             if fval0 is None:
                 item_val0 = QStandardItem('-')
             else:
-                item_val0 = QStandardItem(self.fmt.format(fval0))
+                item_val0 = QStandardItem(fmt.format(fval0))
             item_rd = QStandardItem('-')
             item_cset = QStandardItem('-')
 
@@ -381,7 +390,7 @@ class SettingsModel(QStandardItemModel):
 
             # tolerance for dx12
             # tol is read from _TOL PV
-            item_tol = QStandardItem(self.fmt.format(DEFAULT_X12_TOL))
+            item_tol = QStandardItem(fmt.format(DEFAULT_X12_TOL))
             item_tol.setData(self.get_tol_pv(fld.ename, fld.name), Qt.UserRole + 1) # None if not support
             item_tol.setEditable(False)
             row.append(item_tol)
