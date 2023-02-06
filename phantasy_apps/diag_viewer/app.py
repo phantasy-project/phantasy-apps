@@ -93,6 +93,13 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self._elem_sel_widget = None
         # pv elems sel widget
         self._pv_elem_sel_widget = None
+
+        # lattice viewer
+        self._enable_widgets(False)
+        self._lv = None
+        self.lv_view_btn.clicked.connect(self.on_show_latinfo)
+        self.reload_lattice_btn.clicked.connect(self.on_reload_lattice)
+
         #
         # list of field names of selected elements
         self.__mp = None
@@ -319,6 +326,7 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
     def update_lattice(self, o):
         self.__mp = o
         self.segments_updated.emit(self.__mp.lattice_names)
+        self.update_lattice_info_lbls(o.last_machine_name, o.last_lattice_name)
 
     @pyqtSlot()
     def on_choose_devices_pv(self):
@@ -541,3 +549,43 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
             self._auto_rotate_deg_dnum = deg
         elif self.show_dname_rbtn.isChecked():
             self._auto_rotate_deg_dname = deg
+
+    def _enable_widgets(self, enabled):
+        for w in (self.lv_lbl, self.lv_mach_lbl, self.lv_segm_lbl,
+                  self.lv_view_btn, self.reload_lattice_btn):
+            w.setEnabled(enabled)
+
+    def update_lattice_info_lbls(self, mach, segm):
+        self._enable_widgets(True)
+        self.lv_mach_lbl.setText(mach)
+        self.lv_segm_lbl.setText(segm)
+
+    @pyqtSlot()
+    def on_show_latinfo(self):
+        machine = self.lv_mach_lbl.text()
+        lattice = self.lv_segm_lbl.text()
+        if machine == '' or lattice == '':
+            return
+
+        from phantasy_apps.lattice_viewer import LatticeViewerWindow
+        from phantasy_apps.lattice_viewer import __version__
+        from phantasy_apps.lattice_viewer import __title__
+
+        if self._lv is None:
+            self._lv = LatticeViewerWindow(__version__)
+            self._lv.setWindowTitle("{} ({})".format(__title__,
+                                                     self.getAppTitle()))
+            self._lv._initialize_lattice_widget()
+        lw = self._lv._lattice_load_window
+        lw.mach_cbb.setCurrentText(machine)
+        lw.seg_cbb.setCurrentText(lattice)
+        lw.load_btn.clicked.emit()
+        self._lv.show()
+
+    @pyqtSlot()
+    def on_reload_lattice(self):
+        """Reload lattice.
+        """
+        self.actionLoad_Lattice.triggered.emit()
+        self._lattice_load_window.load_btn.clicked.emit()
+
