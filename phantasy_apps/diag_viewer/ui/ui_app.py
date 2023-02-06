@@ -101,7 +101,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.device_gbox.sizePolicy().hasHeightForWidth())
         self.device_gbox.setSizePolicy(sizePolicy)
-        self.device_gbox.setMinimumSize(QtCore.QSize(300, 0))
+        self.device_gbox.setMinimumSize(QtCore.QSize(450, 0))
         self.device_gbox.setObjectName("device_gbox")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.device_gbox)
         self.verticalLayout_2.setContentsMargins(4, 10, 4, 4)
@@ -166,18 +166,18 @@ class Ui_MainWindow(object):
         self.device_select_hbox.addWidget(self.refresh_bpm_btn)
         self.select_all_elems_btn = QtWidgets.QToolButton(self.device_gbox)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/icons/select-all.png"),
+        icon2.addPixmap(QtGui.QPixmap(":/dv/check-all.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.select_all_elems_btn.setIcon(icon2)
-        self.select_all_elems_btn.setIconSize(QtCore.QSize(20, 20))
+        self.select_all_elems_btn.setIconSize(QtCore.QSize(24, 24))
         self.select_all_elems_btn.setObjectName("select_all_elems_btn")
         self.device_select_hbox.addWidget(self.select_all_elems_btn)
         self.inverse_selection_btn = QtWidgets.QToolButton(self.device_gbox)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/icons/invert-selection.png"),
+        icon3.addPixmap(QtGui.QPixmap(":/dv/check-invert.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.inverse_selection_btn.setIcon(icon3)
-        self.inverse_selection_btn.setIconSize(QtCore.QSize(20, 20))
+        self.inverse_selection_btn.setIconSize(QtCore.QSize(24, 24))
         self.inverse_selection_btn.setObjectName("inverse_selection_btn")
         self.device_select_hbox.addWidget(self.inverse_selection_btn)
         spacerItem = QtWidgets.QSpacerItem(40, 20,
@@ -185,8 +185,8 @@ class Ui_MainWindow(object):
                                            QtWidgets.QSizePolicy.Minimum)
         self.device_select_hbox.addItem(spacerItem)
         self.field_cbb = QtWidgets.QComboBox(self.device_gbox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
@@ -205,14 +205,122 @@ class Ui_MainWindow(object):
         self.gridLayout.setContentsMargins(4, 10, 4, 4)
         self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
-        self.reset_figure_btn = QtWidgets.QPushButton(self.control_gbox)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/icons/load.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.reset_figure_btn.setIcon(icon4)
-        self.reset_figure_btn.setIconSize(QtCore.QSize(24, 24))
-        self.reset_figure_btn.setObjectName("reset_figure_btn")
-        self.gridLayout.addWidget(self.reset_figure_btn, 2, 2, 1, 1)
+        self.label_5 = QtWidgets.QLabel(self.control_gbox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_5.sizePolicy().hasHeightForWidth())
+        self.label_5.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_5.setFont(font)
+        self.label_5.setStyleSheet("QLabel {\n"
+                                   "    border-top: 0px solid gray;\n"
+                                   "    border-right: 5px solid gray;\n"
+                                   "}\n"
+                                   "")
+        self.label_5.setAlignment(QtCore.Qt.AlignRight
+                                  | QtCore.Qt.AlignTrailing
+                                  | QtCore.Qt.AlignVCenter)
+        self.label_5.setObjectName("label_5")
+        self.gridLayout.addWidget(self.label_5, 2, 0, 1, 1)
+        self.viz_hbox = QtWidgets.QHBoxLayout()
+        self.viz_hbox.setSpacing(4)
+        self.viz_hbox.setObjectName("viz_hbox")
+        self.label_11 = QtWidgets.QLabel(self.control_gbox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_11.sizePolicy().hasHeightForWidth())
+        self.label_11.setSizePolicy(sizePolicy)
+        self.label_11.setObjectName("label_11")
+        self.viz_hbox.addWidget(self.label_11)
+        self.id_as_x_rbtn = QtWidgets.QRadioButton(self.control_gbox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.id_as_x_rbtn.sizePolicy().hasHeightForWidth())
+        self.id_as_x_rbtn.setSizePolicy(sizePolicy)
+        self.id_as_x_rbtn.setObjectName("id_as_x_rbtn")
+        self.xaxis_data_group = QtWidgets.QButtonGroup(MainWindow)
+        self.xaxis_data_group.setObjectName("xaxis_data_group")
+        self.xaxis_data_group.addButton(self.id_as_x_rbtn)
+        self.viz_hbox.addWidget(self.id_as_x_rbtn)
+        self.pos_as_x_rbtn = QtWidgets.QRadioButton(self.control_gbox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.pos_as_x_rbtn.sizePolicy().hasHeightForWidth())
+        self.pos_as_x_rbtn.setSizePolicy(sizePolicy)
+        self.pos_as_x_rbtn.setStyleSheet("")
+        self.pos_as_x_rbtn.setObjectName("pos_as_x_rbtn")
+        self.xaxis_data_group.addButton(self.pos_as_x_rbtn)
+        self.viz_hbox.addWidget(self.pos_as_x_rbtn)
+        self.line_4 = QtWidgets.QFrame(self.control_gbox)
+        self.line_4.setStyleSheet("Line {\n"
+                                  "    color: gray;\n"
+                                  "}")
+        self.line_4.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.line_4.setLineWidth(1)
+        self.line_4.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_4.setObjectName("line_4")
+        self.viz_hbox.addWidget(self.line_4)
+        self.show_dnum_rbtn = QtWidgets.QRadioButton(self.control_gbox)
+        self.show_dnum_rbtn.setObjectName("show_dnum_rbtn")
+        self.xticklbls_group = QtWidgets.QButtonGroup(MainWindow)
+        self.xticklbls_group.setObjectName("xticklbls_group")
+        self.xticklbls_group.addButton(self.show_dnum_rbtn)
+        self.viz_hbox.addWidget(self.show_dnum_rbtn)
+        self.show_dname_rbtn = QtWidgets.QRadioButton(self.control_gbox)
+        self.show_dname_rbtn.setObjectName("show_dname_rbtn")
+        self.xticklbls_group.addButton(self.show_dname_rbtn)
+        self.viz_hbox.addWidget(self.show_dname_rbtn)
+        self.auto_rotate_chkbox = QtWidgets.QCheckBox(self.control_gbox)
+        self.auto_rotate_chkbox.setChecked(True)
+        self.auto_rotate_chkbox.setObjectName("auto_rotate_chkbox")
+        self.viz_hbox.addWidget(self.auto_rotate_chkbox)
+        self.auto_rotate_dsbox = QtWidgets.QDoubleSpinBox(self.control_gbox)
+        self.auto_rotate_dsbox.setObjectName("auto_rotate_dsbox")
+        self.viz_hbox.addWidget(self.auto_rotate_dsbox)
+        self.line = QtWidgets.QFrame(self.control_gbox)
+        self.line.setStyleSheet("Line {\n"
+                                "    color: gray;\n"
+                                "}")
+        self.line.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.line.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line.setObjectName("line")
+        self.viz_hbox.addWidget(self.line)
+        self.annote_height_chkbox = QtWidgets.QCheckBox(self.control_gbox)
+        self.annote_height_chkbox.setObjectName("annote_height_chkbox")
+        self.viz_hbox.addWidget(self.annote_height_chkbox)
+        self.auto_lbls_chkbox = QtWidgets.QCheckBox(self.control_gbox)
+        self.auto_lbls_chkbox.setChecked(True)
+        self.auto_lbls_chkbox.setObjectName("auto_lbls_chkbox")
+        self.viz_hbox.addWidget(self.auto_lbls_chkbox)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.viz_hbox.addItem(spacerItem1)
+        self.label_7 = QtWidgets.QLabel(self.control_gbox)
+        self.label_7.setStyleSheet("QLabel {\n"
+                                   "    color: #555753;\n"
+                                   "    border-top: 0px solid gray;\n"
+                                   "    border-left: 1px solid gray;\n"
+                                   "    font-style: italic;\n"
+                                   "}\n"
+                                   "")
+        self.label_7.setObjectName("label_7")
+        self.viz_hbox.addWidget(self.label_7)
+        self.gridLayout.addLayout(self.viz_hbox, 2, 1, 1, 1)
         self.daq_hbox = QtWidgets.QHBoxLayout()
         self.daq_hbox.setSpacing(4)
         self.daq_hbox.setObjectName("daq_hbox")
@@ -270,15 +378,16 @@ class Ui_MainWindow(object):
         self.daq_pb.setAlignment(QtCore.Qt.AlignCenter)
         self.daq_pb.setObjectName("daq_pb")
         self.daq_hbox.addWidget(self.daq_pb)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.daq_hbox.addItem(spacerItem1)
+        self.daq_hbox.addItem(spacerItem2)
         self.capture_btn = QtWidgets.QPushButton(self.control_gbox)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/icons/single.png"),
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/icons/single.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.capture_btn.setIcon(icon5)
+        self.capture_btn.setIcon(icon4)
+        self.capture_btn.setIconSize(QtCore.QSize(24, 24))
         self.capture_btn.setObjectName("capture_btn")
         self.daq_hbox.addWidget(self.capture_btn)
         self.start_btn = QtWidgets.QPushButton(self.control_gbox)
@@ -289,195 +398,14 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.start_btn.sizePolicy().hasHeightForWidth())
         self.start_btn.setSizePolicy(sizePolicy)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.start_btn.setIcon(icon6)
+        self.start_btn.setIcon(icon5)
+        self.start_btn.setIconSize(QtCore.QSize(24, 24))
         self.start_btn.setObjectName("start_btn")
         self.daq_hbox.addWidget(self.start_btn)
-        self.stop_btn = QtWidgets.QPushButton(self.control_gbox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.stop_btn.sizePolicy().hasHeightForWidth())
-        self.stop_btn.setSizePolicy(sizePolicy)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.stop_btn.setIcon(icon7)
-        self.stop_btn.setIconSize(QtCore.QSize(24, 24))
-        self.stop_btn.setObjectName("stop_btn")
-        self.daq_hbox.addWidget(self.stop_btn)
-        self.gridLayout.addLayout(self.daq_hbox, 3, 1, 1, 2)
-        self.viz_hbox = QtWidgets.QHBoxLayout()
-        self.viz_hbox.setSpacing(4)
-        self.viz_hbox.setObjectName("viz_hbox")
-        self.label_11 = QtWidgets.QLabel(self.control_gbox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_11.sizePolicy().hasHeightForWidth())
-        self.label_11.setSizePolicy(sizePolicy)
-        self.label_11.setObjectName("label_11")
-        self.viz_hbox.addWidget(self.label_11)
-        self.id_as_x_rbtn = QtWidgets.QRadioButton(self.control_gbox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.id_as_x_rbtn.sizePolicy().hasHeightForWidth())
-        self.id_as_x_rbtn.setSizePolicy(sizePolicy)
-        self.id_as_x_rbtn.setObjectName("id_as_x_rbtn")
-        self.xaxis_data_group = QtWidgets.QButtonGroup(MainWindow)
-        self.xaxis_data_group.setObjectName("xaxis_data_group")
-        self.xaxis_data_group.addButton(self.id_as_x_rbtn)
-        self.viz_hbox.addWidget(self.id_as_x_rbtn)
-        self.pos_as_x_rbtn = QtWidgets.QRadioButton(self.control_gbox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.pos_as_x_rbtn.sizePolicy().hasHeightForWidth())
-        self.pos_as_x_rbtn.setSizePolicy(sizePolicy)
-        self.pos_as_x_rbtn.setStyleSheet("")
-        self.pos_as_x_rbtn.setObjectName("pos_as_x_rbtn")
-        self.xaxis_data_group.addButton(self.pos_as_x_rbtn)
-        self.viz_hbox.addWidget(self.pos_as_x_rbtn)
-        self.line_4 = QtWidgets.QFrame(self.control_gbox)
-        self.line_4.setStyleSheet("")
-        self.line_4.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.line_4.setLineWidth(1)
-        self.line_4.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line_4.setObjectName("line_4")
-        self.viz_hbox.addWidget(self.line_4)
-        self.show_dnum_rbtn = QtWidgets.QRadioButton(self.control_gbox)
-        self.show_dnum_rbtn.setObjectName("show_dnum_rbtn")
-        self.xticklbls_group = QtWidgets.QButtonGroup(MainWindow)
-        self.xticklbls_group.setObjectName("xticklbls_group")
-        self.xticklbls_group.addButton(self.show_dnum_rbtn)
-        self.viz_hbox.addWidget(self.show_dnum_rbtn)
-        self.show_dname_rbtn = QtWidgets.QRadioButton(self.control_gbox)
-        self.show_dname_rbtn.setObjectName("show_dname_rbtn")
-        self.xticklbls_group.addButton(self.show_dname_rbtn)
-        self.viz_hbox.addWidget(self.show_dname_rbtn)
-        self.auto_rotate_chkbox = QtWidgets.QCheckBox(self.control_gbox)
-        self.auto_rotate_chkbox.setChecked(True)
-        self.auto_rotate_chkbox.setObjectName("auto_rotate_chkbox")
-        self.viz_hbox.addWidget(self.auto_rotate_chkbox)
-        self.auto_rotate_dsbox = QtWidgets.QDoubleSpinBox(self.control_gbox)
-        self.auto_rotate_dsbox.setObjectName("auto_rotate_dsbox")
-        self.viz_hbox.addWidget(self.auto_rotate_dsbox)
-        self.line = QtWidgets.QFrame(self.control_gbox)
-        self.line.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line.setObjectName("line")
-        self.viz_hbox.addWidget(self.line)
-        self.annote_height_chkbox = QtWidgets.QCheckBox(self.control_gbox)
-        self.annote_height_chkbox.setObjectName("annote_height_chkbox")
-        self.viz_hbox.addWidget(self.annote_height_chkbox)
-        self.line_2 = QtWidgets.QFrame(self.control_gbox)
-        self.line_2.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_2.setObjectName("line_2")
-        self.viz_hbox.addWidget(self.line_2)
-        self.auto_lbls_chkbox = QtWidgets.QCheckBox(self.control_gbox)
-        self.auto_lbls_chkbox.setChecked(True)
-        self.auto_lbls_chkbox.setObjectName("auto_lbls_chkbox")
-        self.viz_hbox.addWidget(self.auto_lbls_chkbox)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20,
-                                            QtWidgets.QSizePolicy.Expanding,
-                                            QtWidgets.QSizePolicy.Minimum)
-        self.viz_hbox.addItem(spacerItem2)
-        self.gridLayout.addLayout(self.viz_hbox, 2, 1, 1, 1)
-        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.reload_lattice_btn = QtWidgets.QToolButton(self.control_gbox)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(":/icons/select.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.reload_lattice_btn.setIcon(icon8)
-        self.reload_lattice_btn.setIconSize(QtCore.QSize(24, 24))
-        self.reload_lattice_btn.setAutoRaise(True)
-        self.reload_lattice_btn.setObjectName("reload_lattice_btn")
-        self.horizontalLayout_5.addWidget(self.reload_lattice_btn)
-        self.lv_lbl = QtWidgets.QLabel(self.control_gbox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lv_lbl.sizePolicy().hasHeightForWidth())
-        self.lv_lbl.setSizePolicy(sizePolicy)
-        self.lv_lbl.setObjectName("lv_lbl")
-        self.horizontalLayout_5.addWidget(self.lv_lbl)
-        self.lv_view_btn = QtWidgets.QToolButton(self.control_gbox)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(":/icons/view-details.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.lv_view_btn.setIcon(icon9)
-        self.lv_view_btn.setIconSize(QtCore.QSize(24, 24))
-        self.lv_view_btn.setAutoRaise(True)
-        self.lv_view_btn.setObjectName("lv_view_btn")
-        self.horizontalLayout_5.addWidget(self.lv_view_btn)
-        self.lv_mach_lbl = QtWidgets.QLabel(self.control_gbox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lv_mach_lbl.sizePolicy().hasHeightForWidth())
-        self.lv_mach_lbl.setSizePolicy(sizePolicy)
-        self.lv_mach_lbl.setStyleSheet("QLabel {\n"
-                                       "    color: #007BFF;\n"
-                                       "}")
-        self.lv_mach_lbl.setObjectName("lv_mach_lbl")
-        self.horizontalLayout_5.addWidget(self.lv_mach_lbl)
-        self.lv_segm_lbl = QtWidgets.QLabel(self.control_gbox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.lv_segm_lbl.sizePolicy().hasHeightForWidth())
-        self.lv_segm_lbl.setSizePolicy(sizePolicy)
-        self.lv_segm_lbl.setStyleSheet("QLabel {\n"
-                                       "    color: #DC3545;\n"
-                                       "}")
-        self.lv_segm_lbl.setObjectName("lv_segm_lbl")
-        self.horizontalLayout_5.addWidget(self.lv_segm_lbl)
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20,
-                                            QtWidgets.QSizePolicy.Expanding,
-                                            QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_5.addItem(spacerItem3)
-        self.gridLayout.addLayout(self.horizontalLayout_5, 0, 0, 1, 2)
-        self.label_5 = QtWidgets.QLabel(self.control_gbox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_5.sizePolicy().hasHeightForWidth())
-        self.label_5.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        self.label_5.setFont(font)
-        self.label_5.setStyleSheet("QLabel {\n"
-                                   "    border-top: 0px solid gray;\n"
-                                   "    border-right: 5px solid gray;\n"
-                                   "}\n"
-                                   "")
-        self.label_5.setAlignment(QtCore.Qt.AlignRight
-                                  | QtCore.Qt.AlignTrailing
-                                  | QtCore.Qt.AlignVCenter)
-        self.label_5.setObjectName("label_5")
-        self.gridLayout.addWidget(self.label_5, 2, 0, 1, 1)
+        self.gridLayout.addLayout(self.daq_hbox, 3, 1, 1, 1)
         self.label_6 = QtWidgets.QLabel(self.control_gbox)
         font = QtGui.QFont()
         font.setBold(True)
@@ -494,12 +422,111 @@ class Ui_MainWindow(object):
         self.label_6.setObjectName("label_6")
         self.gridLayout.addWidget(self.label_6, 3, 0, 1, 1)
         self.line_3 = QtWidgets.QFrame(self.control_gbox)
-        self.line_3.setStyleSheet("")
+        self.line_3.setStyleSheet("Line {\n"
+                                  "    color: gray;\n"
+                                  "}")
         self.line_3.setFrameShadow(QtWidgets.QFrame.Plain)
         self.line_3.setLineWidth(1)
         self.line_3.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_3.setObjectName("line_3")
-        self.gridLayout.addWidget(self.line_3, 1, 0, 1, 3)
+        self.gridLayout.addWidget(self.line_3, 1, 0, 1, 2)
+        self.lattice_hbox = QtWidgets.QHBoxLayout()
+        self.lattice_hbox.setSpacing(4)
+        self.lattice_hbox.setObjectName("lattice_hbox")
+        self.reload_lattice_btn = QtWidgets.QToolButton(self.control_gbox)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/icons/select.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.reload_lattice_btn.setIcon(icon6)
+        self.reload_lattice_btn.setIconSize(QtCore.QSize(24, 24))
+        self.reload_lattice_btn.setAutoRaise(True)
+        self.reload_lattice_btn.setObjectName("reload_lattice_btn")
+        self.lattice_hbox.addWidget(self.reload_lattice_btn)
+        self.lv_lbl = QtWidgets.QLabel(self.control_gbox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.lv_lbl.sizePolicy().hasHeightForWidth())
+        self.lv_lbl.setSizePolicy(sizePolicy)
+        self.lv_lbl.setObjectName("lv_lbl")
+        self.lattice_hbox.addWidget(self.lv_lbl)
+        self.lv_view_btn = QtWidgets.QToolButton(self.control_gbox)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(":/icons/view-details.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.lv_view_btn.setIcon(icon7)
+        self.lv_view_btn.setIconSize(QtCore.QSize(24, 24))
+        self.lv_view_btn.setAutoRaise(True)
+        self.lv_view_btn.setObjectName("lv_view_btn")
+        self.lattice_hbox.addWidget(self.lv_view_btn)
+        self.lv_mach_lbl = QtWidgets.QLabel(self.control_gbox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.lv_mach_lbl.sizePolicy().hasHeightForWidth())
+        self.lv_mach_lbl.setSizePolicy(sizePolicy)
+        self.lv_mach_lbl.setStyleSheet("QLabel {\n"
+                                       "    color: #007BFF;\n"
+                                       "}")
+        self.lv_mach_lbl.setObjectName("lv_mach_lbl")
+        self.lattice_hbox.addWidget(self.lv_mach_lbl)
+        self.lv_segm_lbl = QtWidgets.QLabel(self.control_gbox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.lv_segm_lbl.sizePolicy().hasHeightForWidth())
+        self.lv_segm_lbl.setSizePolicy(sizePolicy)
+        self.lv_segm_lbl.setStyleSheet("QLabel {\n"
+                                       "    color: #DC3545;\n"
+                                       "}")
+        self.lv_segm_lbl.setObjectName("lv_segm_lbl")
+        self.lattice_hbox.addWidget(self.lv_segm_lbl)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.lattice_hbox.addItem(spacerItem3)
+        self.gridLayout.addLayout(self.lattice_hbox, 0, 0, 1, 2)
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_3.setContentsMargins(0, -1, -1, -1)
+        self.verticalLayout_3.setSpacing(4)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.reset_figure_btn = QtWidgets.QPushButton(self.control_gbox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.reset_figure_btn.sizePolicy().hasHeightForWidth())
+        self.reset_figure_btn.setSizePolicy(sizePolicy)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/icons/load.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.reset_figure_btn.setIcon(icon8)
+        self.reset_figure_btn.setIconSize(QtCore.QSize(24, 24))
+        self.reset_figure_btn.setObjectName("reset_figure_btn")
+        self.verticalLayout_3.addWidget(self.reset_figure_btn)
+        self.stop_btn = QtWidgets.QPushButton(self.control_gbox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.stop_btn.sizePolicy().hasHeightForWidth())
+        self.stop_btn.setSizePolicy(sizePolicy)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.stop_btn.setIcon(icon9)
+        self.stop_btn.setIconSize(QtCore.QSize(24, 24))
+        self.stop_btn.setObjectName("stop_btn")
+        self.verticalLayout_3.addWidget(self.stop_btn)
+        self.gridLayout.addLayout(self.verticalLayout_3, 0, 2, 4, 1)
         self.verticalLayout.addWidget(self.control_gbox)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -601,46 +628,7 @@ class Ui_MainWindow(object):
         self.inverse_selection_btn.setText(
             _translate("MainWindow", "Inverse Selection"))
         self.control_gbox.setTitle(_translate("MainWindow", "Control Panel"))
-        self.reset_figure_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Reset figure is always required after changing any configuration, before Capture/Start.</p></body></html>"
-            ))
-        self.reset_figure_btn.setText(_translate("MainWindow", "Reset"))
-        self.label_2.setText(_translate("MainWindow", "Frequency"))
-        self.daqfreq_dSpinbox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Total number of shot captured in one second.</p></body></html>"
-            ))
-        self.daqfreq_dSpinbox.setSuffix(_translate("MainWindow", " Hz"))
-        self.label.setText(_translate("MainWindow", "Shot Number"))
-        self.daq_nshot_sbox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Total shot number in one DAQ iteration.</p></body></html>"
-            ))
-        self.viz_cnt_lbl.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Completed DAQ iterations.</p></body></html>"
-            ))
-        self.viz_cnt_lbl.setText(_translate("MainWindow", "0"))
-        self.capture_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Do single DAQ.</p></body></html>"))
-        self.capture_btn.setText(_translate("MainWindow", "Capture"))
-        self.start_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Do DAQ untile Stop button is pushed.</p></body></html>"
-            ))
-        self.start_btn.setText(_translate("MainWindow", "Start"))
-        self.stop_btn.setToolTip(
-            _translate("MainWindow",
-                       "<html><head/><body><p>Stop DAQ.</p></body></html>"))
-        self.stop_btn.setText(_translate("MainWindow", "Stop"))
+        self.label_5.setText(_translate("MainWindow", "DataViz"))
         self.label_11.setText(_translate("MainWindow", "X-Axis"))
         self.id_as_x_rbtn.setToolTip(
             _translate(
@@ -677,6 +665,40 @@ class Ui_MainWindow(object):
         self.annote_height_chkbox.setText(
             _translate("MainWindow", "Height Annotation"))
         self.auto_lbls_chkbox.setText(_translate("MainWindow", "Auto Labels"))
+        self.label_7.setText(
+            _translate("MainWindow",
+                       "Reset after changing  DataViz and DAQ configurations"))
+        self.label_2.setText(_translate("MainWindow", "Frequency"))
+        self.daqfreq_dSpinbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Total number of shot captured in one second.</p></body></html>"
+            ))
+        self.daqfreq_dSpinbox.setSuffix(_translate("MainWindow", " Hz"))
+        self.label.setText(_translate("MainWindow", "Shot Number"))
+        self.daq_nshot_sbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Total shot number in one DAQ iteration.</p></body></html>"
+            ))
+        self.viz_cnt_lbl.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Completed DAQ iterations.</p></body></html>"
+            ))
+        self.viz_cnt_lbl.setText(_translate("MainWindow", "0"))
+        self.capture_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Do single DAQ.</p></body></html>"))
+        self.capture_btn.setText(_translate("MainWindow", "Capture"))
+        self.start_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Do DAQ untile Stop button is pushed.</p></body></html>"
+            ))
+        self.start_btn.setText(_translate("MainWindow", "Start"))
+        self.label_6.setText(_translate("MainWindow", "DAQ"))
         self.reload_lattice_btn.setToolTip(
             _translate("MainWindow", "Reload Lattice."))
         self.reload_lattice_btn.setText(_translate("MainWindow", "..."))
@@ -688,8 +710,16 @@ class Ui_MainWindow(object):
         self.lv_mach_lbl.setText(_translate("MainWindow", "machine"))
         self.lv_segm_lbl.setToolTip(_translate("MainWindow", "Segment name."))
         self.lv_segm_lbl.setText(_translate("MainWindow", "segment"))
-        self.label_5.setText(_translate("MainWindow", "DataViz"))
-        self.label_6.setText(_translate("MainWindow", "DAQ"))
+        self.reset_figure_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Reset figure is always required after changing any configuration, before Capture/Start.</p></body></html>"
+            ))
+        self.reset_figure_btn.setText(_translate("MainWindow", "Reset"))
+        self.stop_btn.setToolTip(
+            _translate("MainWindow",
+                       "<html><head/><body><p>Stop DAQ.</p></body></html>"))
+        self.stop_btn.setText(_translate("MainWindow", "Stop"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
