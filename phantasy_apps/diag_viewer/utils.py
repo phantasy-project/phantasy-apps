@@ -23,7 +23,7 @@ class ElementListModelDV(ElementListModel):
             # fields
             elem = self.name_elem_map[ename]
             cbb = QComboBox()
-            cbb.addItems(elem.fields)
+            cbb.addItems(elem.get_eng_fields())
             v.setIndexWidget(self.index(i, self.i_field), cbb)
             elem_item = self.item(i, self.i_name)
             cbb.currentTextChanged.connect(
@@ -37,6 +37,6 @@ class ElementListModelDV(ElementListModel):
             btn.clicked.connect(partial(self.show_elem_info, elem))
         try:
             # emit list of element fields
-            self.fieldsSelected.emit(elem.fields)
+            self.fieldsSelected.emit(elem.get_eng_fields())
         except:
             print("No selected fields.")
