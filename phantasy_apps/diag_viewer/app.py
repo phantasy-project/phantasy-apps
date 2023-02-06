@@ -125,9 +125,9 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
 
         self.reset_figure_btn.clicked.disconnect(self.on_init_dataviz)
         # xdata opt
-        self.id_as_x_rbtn.setChecked(False)
-        self.pos_as_x_rbtn.setChecked(True)
-        self._xdata_gauge = 'pos'
+        self.id_as_x_rbtn.setChecked(True)
+        self.pos_as_x_rbtn.setChecked(False)
+        self._xdata_gauge = 'id'
 
         # show with D#### or device name
         self._xtklbls_dnum = []   # init by reset
