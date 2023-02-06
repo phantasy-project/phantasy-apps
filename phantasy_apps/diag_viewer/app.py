@@ -6,6 +6,7 @@ from collections import OrderedDict
 from functools import partial
 
 import numpy as np
+from PyQt5.QtCore import QEventLoop
 from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import pyqtSignal
@@ -24,6 +25,9 @@ from .ui.ui_app import Ui_MainWindow
 from .utils import ElementListModelDV as ElementListModel
 
 DTYPE_LIST = ("BCM", "ND", "HMR", )
+
+DEFAULT_MACHINE = 'FRIB'
+DEFAULT_SEGMENT = 'LINAC'
 
 
 class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
@@ -72,6 +76,10 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
 
         #
         self._post_init()
+
+        #
+        self.show()
+        self.preload_lattice(DEFAULT_MACHINE, DEFAULT_SEGMENT)
 
     def _post_init(self,):
         # bpms from TV
@@ -293,6 +301,19 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self._lattice_load_window.show()
         # reset element selection widgets
         self._elem_sel_widget = None
+
+    def preload_lattice(self, mach, segm):
+        return self.__load_lattice(mach, segm)
+
+    def __load_lattice(self, mach, segm):
+        self.actionLoad_Lattice.triggered.emit()
+        self._lattice_load_window.mach_cbb.setCurrentText(mach)
+        self._lattice_load_window.seg_cbb.setCurrentText(segm)
+        self._lattice_load_window.auto_monitor_chkbox.setChecked(False)
+        loop = QEventLoop()
+        self._lattice_load_window.latticeChanged.connect(loop.exit)
+        self._lattice_load_window.load_btn.clicked.emit()
+        loop.exec_()
 
     @pyqtSlot(QVariant)
     def update_lattice(self, o):

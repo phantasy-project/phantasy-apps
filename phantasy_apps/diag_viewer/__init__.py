@@ -24,7 +24,6 @@ def run(cli=False):
     set_mplstyle(sys.argv)
     app = QApplication(sys.argv)
     w = DeviceViewerWindow(version=__version__)
-    w.show()
     w.setWindowTitle(__title__)
     if cli:
         app.exec_()
