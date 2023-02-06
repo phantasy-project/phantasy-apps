@@ -259,6 +259,12 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self.on_auto_lbls(self._auto_lbls)
         #
 
+        # disable pos_as_x
+        # check show_dnum_rbtn if none of them is checked.
+        if not self.show_dnum_rbtn.isChecked() and not self.show_dname_rbtn.isChecked():
+            self.show_dnum_rbtn.setChecked(True)
+        self.pos_as_x_rbtn.setEnabled(False)
+
     @pyqtSlot(bool)
     def on_apply_id_as_xdata(self, f):
         if f:
