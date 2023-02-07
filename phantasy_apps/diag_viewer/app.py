@@ -254,10 +254,21 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
 
         # tmp solution
         from mpl4qt.widgets.mplconfig import MatplotlibConfigBarPanel
-        MatplotlibConfigBarPanel(self.matplotlibbarWidget)
+        _conf_dlg = MatplotlibConfigBarPanel(self.matplotlibbarWidget)
         self.annote_height_chkbox.toggled.emit(self.annote_height_chkbox.isChecked())
         self.on_auto_lbls(self._auto_lbls)
         #
+        _conf_dlg.set_annote_fontsize(13)
+        tick_font = _conf_dlg.parent.getFigureXYticksFont()
+        lbl_font = _conf_dlg.parent.getFigureXYlabelFont()
+        tick_font.setPointSize(15)
+        lbl_font.setPointSize(16)
+        _conf_dlg.parent.setFigureXYticksFont(tick_font)
+        _conf_dlg.parent.setFigureXYlabelFont(lbl_font)
+        _conf_dlg.parent.setFigureMTicksToggle(False)
+        _conf_dlg.set_ebline_width(2)
+        self.annote_height_chkbox.setChecked(True)
+        self.annote_height_chkbox.setChecked(False)
 
         # disable pos_as_x
         # check show_dnum_rbtn if none of them is checked.
