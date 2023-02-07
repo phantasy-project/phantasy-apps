@@ -14,7 +14,10 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QSizePolicy
 from phantasy_ui import BaseAppForm
+from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from phantasy_ui.widgets import ElementSelectionWidget
 from phantasy_ui.widgets import LatticeWidget
@@ -82,6 +85,15 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self.preload_lattice(DEFAULT_MACHINE, DEFAULT_SEGMENT)
 
     def _post_init(self,):
+        # add beamSpeciesDisplayWidget
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.toolBar.addWidget(spacer)
+        self.beam_display_widget = BeamSpeciesDisplayWidget()
+        self.beam_display_widget.isrc1_btn.setEnabled(False)
+        self.beam_display_widget.isrc2_btn.setEnabled(False)
+        self.toolBar.addWidget(self.beam_display_widget)
+
         # bpms from TV
         self._bpms_dict = None
         self._icon_refresh = QIcon(QPixmap(":/icons/refresh.png"))
