@@ -41,7 +41,7 @@ from phantasy_apps.utils import find_dconf
 from .data import SnapshotData
 
 AVAILABLE_IONS = ('He', 'Ne', 'Ar', 'Kr', 'Xe', 'U', 'Se', 'Ca', 'Pb',
-                  'O', 'Bi', 'Zn', 'Tm')
+                  'O', 'Bi', 'Zn', 'Tm', 'Pt')
 
 FMT = "{0:.6g}"
 
