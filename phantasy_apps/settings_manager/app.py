@@ -870,6 +870,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # apply pb
         self.apply_pb.setVisible(False)
+        # abort apply button
+        self.abort_apply_btn.setVisible(False)
         # refset pb
         self.refset_pb.setVisible(False)
         # data refresh pb
@@ -1791,6 +1793,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                              scale_op),
                             daq_seq=settings_selected)
         self.applyer.daqStarted.connect(lambda: self.apply_pb.setVisible(True))
+        self.applyer.daqStarted.connect(lambda: self.abort_apply_btn.setVisible(True))
         self.applyer.daqStarted.connect(
             partial(self.set_widgets_status_for_applying, 'START'))
         self.applyer.progressUpdated.connect(
@@ -1800,6 +1803,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             partial(self.set_widgets_status_for_applying, 'STOP'))
         self.applyer.daqFinished.connect(
             lambda: self.apply_pb.setVisible(False))
+        self.applyer.daqFinished.connect(
+            lambda: self.abort_apply_btn.setVisible(False))
         self.applyer.daqFinished.connect(
             lambda: self.single_update_btn.clicked.emit())
         self.applyer.start()
@@ -3110,6 +3115,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def set_last_data_refreshed_info_visible(self, visibility):
         [o.setVisible(visibility) for o in (
+                self.settingsdata_lbl,
                 self.last_refreshed_lbl,
                 self.last_refreshed_title_lbl)]
 
@@ -4221,6 +4227,12 @@ p, li { white-space: pre-wrap; }
             return
         else:
             self.on_load_settings(o)
+
+    @pyqtSlot()
+    def on_abort_apply(self):
+        """Abort settings apply immediately.
+        """
+        self.applyer.abort()
 
 
 def get_snapshotdata(query_str: str, uri: str, column_name='datetime'):
