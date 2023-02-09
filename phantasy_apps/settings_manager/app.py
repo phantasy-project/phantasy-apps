@@ -237,6 +237,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # last refresh: data is refreshed
     last_refreshed = pyqtSignal()
 
+    # eligible (True/False) to issue apply command
+    sigApplyReady = pyqtSignal(bool)
+
     def __init__(self, version, config_dir=None):
         super(SettingsManagerWindow, self).__init__()
 
@@ -645,6 +648,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._machstate = None
 
     def __post_init_ui(self):
+        # apply ready?
+        self.sigApplyReady.connect(self.apply_btn.setEnabled)
         # hide loaded snp info
         self.set_post_snp_info_visible(False)
         # hide last data refreshed info
@@ -4018,6 +4023,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         n = int(self.n_all_checked_items_lbl.text())
         n_new = n + i
         self.n_all_checked_items_lbl.setText(str(n_new))
+        if n_new > 0:
+            self.sigApplyReady.emit(True)
+        else:
+            self.sigApplyReady.emit(False)
 
     def get_data_models(self):
         """Get the model for settings data retrieval.
