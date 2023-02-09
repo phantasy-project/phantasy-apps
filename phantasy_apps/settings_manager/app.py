@@ -1787,25 +1787,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             if r == QMessageBox.No:
                 return
 
-        # ask if want to take a snapshot of current settings of all checked devices
-        r = QMessageBox.question(
-            self, "Take Snapshot",
-            "Do you want to take a snapshot for current page before changing device settings?",
-            QMessageBox.Yes | QMessageBox.No)
-        msg = ''
-        if r == QMessageBox.Yes:
-            # take a snapshot
-            self.take_snapshot(cast=False,
-                               only_checked_items=False,
-                               post_current_sp=False)
-            msg += "Snapshot saved!\n "
-        msg += f"Now start to set device with new settings in current page ({len(settings_selected)} checked), see 'Setting Logs' for the details."
-
-        r = QMessageBox.information(self, "Apply Settings", msg,
-                                    QMessageBox.Ok | QMessageBox.Cancel)
-        if r == QMessageBox.Cancel:
-            return
-
         self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor,
                                              scale_op),
                             daq_seq=settings_selected)
@@ -3191,7 +3172,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                 "Tag and Note must be set for making a new snapshot.",
                                 QMessageBox.Ok, QMessageBox.Ok)
             return
-
 
         # self.turn_off_updater_if_necessary()
         src_m = m.sourceModel()
