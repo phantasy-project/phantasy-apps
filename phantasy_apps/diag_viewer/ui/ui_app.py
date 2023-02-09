@@ -351,7 +351,7 @@ class Ui_MainWindow(object):
         self.annote_height_chkbox.setObjectName("annote_height_chkbox")
         self.viz_hbox.addWidget(self.annote_height_chkbox)
         self.annote_fmt_cbb = QtWidgets.QComboBox(self.control_gbox)
-        self.annote_fmt_cbb.setEditable(True)
+        self.annote_fmt_cbb.setEditable(False)
         self.annote_fmt_cbb.setObjectName("annote_fmt_cbb")
         self.annote_fmt_cbb.addItem("")
         self.annote_fmt_cbb.addItem("")
