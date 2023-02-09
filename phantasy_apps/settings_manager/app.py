@@ -1769,16 +1769,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # scale operator, default is 0: 'x' [multiply], (1: '+') [plus]
         scale_op = SCALE_OP_MAP[self.scale_op_cbb.currentIndex()]
 
-        # show warning if scaling factor != 1.0
-        if scaling_factor != 1.0:
-            r = QMessageBox.warning(self, "Apply Settings",
-                    '''<html><head/><body><p>Are you sure to apply settings with scaling factor of <span style=" font-weight:600; color:#ff007f;">{0:g}</span>?</p></body></html>'''.format(scaling_factor),
-                    QMessageBox.Yes | QMessageBox.No)
-            if r == QMessageBox.No:
-                return
         #
         self.idx_px_list = []  # list to apply icon [(idx_src, px, log_msg)]
         settings_selected = m.get_selection()
+
+        # show warning if scaling factor != 1.0 (x) or != 0.0 (+)
+        if scaling_factor != 1.0 and scale_op == 'x':
+            r = QMessageBox.warning(self, "Apply Settings",
+                    '''<html><head/><body><p>Are you sure to apply ({0}) settings by scaling the factor of <span style=" font-weight:600; color:#ff007f;">{1:g}</span> ?</p></body></html>'''.format(len(settings_selected), scaling_factor),
+                    QMessageBox.Yes | QMessageBox.No)
+            if r == QMessageBox.No:
+                return
+        elif scaling_factor != 0.0 and scale_op == '+':
+            r = QMessageBox.warning(self, "Apply Settings",
+                    '''<html><head/><body><p>Are you sure to apply ({0}) settings by shifting the value of <span style=" font-weight:600; color:#ff007f;">{1:g}</span> ?</p></body></html>'''.format(len(settings_selected), scaling_factor),
+                    QMessageBox.Yes | QMessageBox.No)
+            if r == QMessageBox.No:
+                return
 
         # ask if want to take a snapshot of current settings of all checked devices
         r = QMessageBox.question(
