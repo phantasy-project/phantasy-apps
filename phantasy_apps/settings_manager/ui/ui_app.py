@@ -2057,12 +2057,14 @@ class Ui_MainWindow(object):
             ))
         self.apply_btn.setText(_translate("MainWindow", "Apply"))
         self.scale_op_cbb.setToolTip(
-            _translate("MainWindow",
-                       "Select the arithmetical operation for scaling."))
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Select the arithmetical operation for scaling (<span style=\" color:#0055ff;\">x</span>) or shifting (<span style=\" color:#ff0000;\">+</span>).</p></body></html>"
+            ))
         self.scaling_factor_lineEdit.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Scaling factor, select the math operator (\'+\' is for shifting), input a number e.g. 0.8, or an expression, e.g. 12 / 18, then press <span style=\" font-style:italic;\">Enter.</span></p><p>For regular scaling operation (\'x\'), first filter out the list of devices eligible for scaling. </p></body></html>"
+                "<html><head/><body><p>The value of scaling factor or shifting amount, select the math operator (\'+\' is for shifting), input a number e.g. 0.8, or an expression, e.g. 12 / 18, then press <span style=\" font-style:italic;\">Enter.</span></p><p>For regular scaling operation (\'x\'), either filter out the list of settings that are eligible for scaling (per physicist perspective), or internally, only scale the settings for those field in (<span style=\" font-family:\'ui-monospace\',\'SFMono-Regular\',\'SF Mono\',\'Menlo\',\'Consolas\',\'Liberation Mono\',\'monospace\'; color:#24292f; background-color:rgba(175,184,193,0.2);\">\'I\',\'V\',\'AMP\',\'AMP1\',\'AMP2\',\'AMP3\',\'I_TC\').</span></p></body></html>"
             ))
         self.scaling_factor_lineEdit.setText(_translate("MainWindow", "1.0"))
         self.auto_sf_btn.setToolTip(
