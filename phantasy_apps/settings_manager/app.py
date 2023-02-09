@@ -121,6 +121,8 @@ from .utils import TGT_STS_TUPLE
 from .utils import TAG_BTN_STY
 from .contrib.db.db_utils import ensure_connect_db
 
+# scaling eligible field names:
+SCALABLE_FIELD_NAMES = ('I','V','AMP','AMP1','AMP2','AMP3','I_TC')
 # scaling op
 SCALE_OP_MAP = ('x', '+') # simple form for {0: 'x', 1: '+'}
 #
@@ -1759,7 +1761,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # scaling factor
         scaling_factor = float(self.scaling_factor_lineEdit.text())
-        # scale operator, default is 0: 'x', (1: '+')
+        # scale operator, default is 0: 'x' [multiply], (1: '+') [plus]
         scale_op = SCALE_OP_MAP[self.scale_op_cbb.currentIndex()]
 
         # show warning if scaling factor != 1.0
@@ -1817,16 +1819,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             lambda: self.single_update_btn.clicked.emit())
         self.applyer.start()
 
-    def apply_single(self, sf, sop, tuple_idx_settings):
+    def apply_single(self, sf: float, sop: str, tuple_idx_settings: tuple):
         # sop: scale operator
         idx_src, settings, new_fval0 = tuple_idx_settings
         elem, fname, fld, fval0 = settings
         ename = elem.name
         # print("New fval: {}, fval0: {}".format(new_fval0, fval0))
         if sop == 'x':
-            fval_to_set = new_fval0 * sf
+            if fname in SCALABLE_FIELD_NAMES:
+                fval_to_set = new_fval0 * sf
+            else:
+                fval_to_set = new_fval0
         elif sop == '+':
             fval_to_set = new_fval0 + sf
+        #
         try:
             t0 = time.time()
             fval_current_settings = fld.current_setting()
