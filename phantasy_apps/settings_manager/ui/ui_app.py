@@ -1972,6 +1972,8 @@ class Ui_MainWindow(object):
             MainWindow.on_toggle_snp_filter_note)  # type: ignore
         self.filter_note_chkbox.toggled['bool'].connect(
             self.snp_note_filter_lineEdit.setVisible)  # type: ignore
+        self.abort_apply_btn.clicked.connect(
+            MainWindow.on_abort_apply)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
