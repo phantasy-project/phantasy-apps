@@ -85,6 +85,12 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self.preload_lattice(DEFAULT_MACHINE, DEFAULT_SEGMENT)
 
     def _post_init(self,):
+        # convenient buttons for choose all IC, ND, HMR, BCM, FC, BPM devices.
+        for _dtype in ('IC', 'ND', 'HMR', 'BCM', 'FC', 'BPM'):
+            _btn = getattr(self, f"choose_{_dtype.lower()}_btn")
+            _btn.setToolTip(f"Click to pick all {_dtype} devices.")
+            _btn.clicked.connect(partial(self.choose_device_by_type, _dtype))
+
         # add beamSpeciesDisplayWidget
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -359,6 +365,10 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self.__mp = o
         self.segments_updated.emit(self.__mp.lattice_names)
         self.update_lattice_info_lbls(o.last_machine_name, o.last_lattice_name)
+        all_dtypes = self.__mp.get_all_types()
+        for _dtype in ('IC', 'ND', 'HMR', 'BCM', 'FC', 'BPM'):
+            _btn = getattr(self, f"choose_{_dtype.lower()}_btn")
+            _btn.setVisible(_dtype in all_dtypes)
 
     @pyqtSlot()
     def on_choose_devices_pv(self):
@@ -367,6 +377,15 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
             self._pv_elem_sel_widget = DeviceSelectionWidget(self)
             self._pv_elem_sel_widget.pv_elems_selected.connect(self.on_update_elem_objs)
         self._pv_elem_sel_widget.show()
+
+    @pyqtSlot()
+    def choose_device_by_type(self, dtype: str):
+        """Choose devices by given type.
+        """
+        w = ElementSelectionWidget(self,
+                self.__mp, dtypes=[dtype,])
+        w.elementsSelected.connect(self.on_update_elems)
+        w.apply_btn.clicked.emit()
 
     @pyqtSlot()
     def on_choose_devices(self):
