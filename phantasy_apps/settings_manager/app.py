@@ -1776,19 +1776,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.idx_px_list = []  # list to apply icon [(idx_src, px, log_msg)]
         settings_selected = m.get_selection()
 
-        # show warning if scaling factor != 1.0 (x) or != 0.0 (+)
-        if scaling_factor != 1.0 and scale_op == 'x':
+        # show warning before applying
+        if scale_op == 'x':
             r = QMessageBox.warning(self, "Apply Settings",
-                    '''<html><head/><body><p>Are you sure to apply ({0}) settings by scaling the factor of <span style=" font-weight:600; color:#ff007f;">{1:g}</span> ?</p></body></html>'''.format(len(settings_selected), scaling_factor),
+                    '''<html><head/><body><p>You are about to apply ({0}) settings by scaling the factor of <span style=" font-weight:600; color:#ff007f;">{1:g}</span> ?</p></body></html>'''.format(len(settings_selected), scaling_factor),
                     QMessageBox.Yes | QMessageBox.No)
-            if r == QMessageBox.No:
-                return
-        elif scaling_factor != 0.0 and scale_op == '+':
+        elif scale_op == '+':
             r = QMessageBox.warning(self, "Apply Settings",
-                    '''<html><head/><body><p>Are you sure to apply ({0}) settings by shifting the value of <span style=" font-weight:600; color:#ff007f;">{1:g}</span> ?</p></body></html>'''.format(len(settings_selected), scaling_factor),
+                    '''<html><head/><body><p>You are about to apply ({0}) settings by shifting the value of <span style=" font-weight:600; color:#ff007f;">{1:g}</span> ?</p></body></html>'''.format(len(settings_selected), scaling_factor),
                     QMessageBox.Yes | QMessageBox.No)
-            if r == QMessageBox.No:
-                return
+        if r == QMessageBox.No:
+            return
 
         self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor,
                                              scale_op),
