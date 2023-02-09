@@ -85,6 +85,12 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self.preload_lattice(DEFAULT_MACHINE, DEFAULT_SEGMENT)
 
     def _post_init(self,):
+        # convenient buttons for choose all IC, ND, HMR, BCM, FC, BPM devices.
+        for _dtype in ('IC', 'ND', 'HMR', 'BCM', 'FC', 'BPM'):
+            _btn = getattr(self, f"choose_{_dtype.lower()}_btn")
+            _btn.setToolTip(f"Click to pick all {_dtype} devices.")
+            _btn.clicked.connect(partial(self.choose_device_by_type, _dtype))
+
         # add beamSpeciesDisplayWidget
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -217,10 +223,10 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
 
         self._delt = 1.0 / self._daqfreq
         self.daq_th = DAQT(daq_func=self.daq_single, daq_seq=range(self._daq_nshot))
-        self.daq_th.started.connect(partial(self.set_widgets_status, "START"))
+        self.daq_th.daqStarted.connect(partial(self.set_widgets_status, "START"))
         self.daq_th.progressUpdated.connect(self.on_update_daq_status)
         self.daq_th.resultsReady.connect(self.on_daq_results_ready)
-        self.daq_th.finished.connect(self.on_daq_start)
+        self.daq_th.daqFinished.connect(self.on_daq_start)
 
         self.daq_th.start()
 
@@ -229,6 +235,7 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         """Stop DAQ.
         """
         self._daq_stop = True
+        self.daq_th.abort()
 
     def __refresh_data(self):
         h = [getattr(e, f) for e, f in zip(self._elems_list, self._field_list)]
@@ -268,19 +275,19 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         from mpl4qt.widgets.mplconfig import MatplotlibConfigBarPanel
         _conf_dlg = MatplotlibConfigBarPanel(self.matplotlibbarWidget)
         self.annote_height_chkbox.toggled.emit(self.annote_height_chkbox.isChecked())
+        self.annote_fmt_cbb.currentTextChanged.emit(self.annote_fmt_cbb.currentText())
         self.on_auto_lbls(self._auto_lbls)
         #
         _conf_dlg.set_annote_fontsize(13)
+        _conf_dlg.set_annote_bbox_alpha(0.8)
         tick_font = _conf_dlg.parent.getFigureXYticksFont()
         lbl_font = _conf_dlg.parent.getFigureXYlabelFont()
         tick_font.setPointSize(15)
-        lbl_font.setPointSize(16)
+        lbl_font.setPointSize(17)
         _conf_dlg.parent.setFigureXYticksFont(tick_font)
         _conf_dlg.parent.setFigureXYlabelFont(lbl_font)
         _conf_dlg.parent.setFigureMTicksToggle(False)
         _conf_dlg.set_ebline_width(2)
-        self.annote_height_chkbox.setChecked(True)
-        self.annote_height_chkbox.setChecked(False)
 
         # disable pos_as_x
         # check show_dnum_rbtn if none of them is checked.
@@ -304,13 +311,10 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         olist1 = (self.reset_figure_btn, self.start_btn,
                   self.id_as_x_rbtn, self.pos_as_x_rbtn,
                   self.devices_treeView, self.capture_btn, )
-        olist2 = (self.stop_btn, )
         if status != "START":
             [o.setEnabled(True) for o in olist1]
-            [o.setEnabled(False) for o in olist2]
         else:
             [o.setEnabled(False) for o in olist1]
-            [o.setEnabled(True) for o in olist2]
 
     @pyqtSlot(bool)
     def on_annote_height(self, f):
@@ -325,6 +329,11 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
             # hide annotes
             [i.set_visible(False) for i in o._all_annotes]
         o.update_figure()
+
+    @pyqtSlot('QString')
+    def on_change_annote_format(self, fmt: str):
+        self.matplotlibbarWidget.update_annote_config_dict(fmt=f"${{0:{fmt}}}$")
+        self.matplotlibbarWidget.on_annote_config_changed()
 
     @pyqtSlot()
     def onLoadLatticeAction(self):
@@ -356,6 +365,10 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self.__mp = o
         self.segments_updated.emit(self.__mp.lattice_names)
         self.update_lattice_info_lbls(o.last_machine_name, o.last_lattice_name)
+        all_dtypes = self.__mp.get_all_types()
+        for _dtype in ('IC', 'ND', 'HMR', 'BCM', 'FC', 'BPM'):
+            _btn = getattr(self, f"choose_{_dtype.lower()}_btn")
+            _btn.setVisible(_dtype in all_dtypes)
 
     @pyqtSlot()
     def on_choose_devices_pv(self):
@@ -364,6 +377,15 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
             self._pv_elem_sel_widget = DeviceSelectionWidget(self)
             self._pv_elem_sel_widget.pv_elems_selected.connect(self.on_update_elem_objs)
         self._pv_elem_sel_widget.show()
+
+    @pyqtSlot()
+    def choose_device_by_type(self, dtype: str):
+        """Choose devices by given type.
+        """
+        w = ElementSelectionWidget(self,
+                self.__mp, dtypes=[dtype,])
+        w.elementsSelected.connect(self.on_update_elems)
+        w.apply_btn.clicked.emit()
 
     @pyqtSlot()
     def on_choose_devices(self):
@@ -487,7 +509,7 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         QTimer.singleShot(200,
                 lambda:self.daq_status_lbl.setPixmap(self._viz_inactive_px))
         if self._daq_nshot > 1:
-            self.daq_pb.setValue(f * 100)
+            self.daq_pb.setValue(int(f * 100))
 
     @pyqtSlot()
     def on_single_viz_update(self):
@@ -499,10 +521,10 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
 
         self._delt = 1.0 / self._daqfreq
         self.daq_th = DAQT(daq_func=self.daq_single, daq_seq=range(self._daq_nshot))
-        self.daq_th.started.connect(partial(self.set_widgets_status, "START"))
+        self.daq_th.daqStarted.connect(partial(self.set_widgets_status, "START"))
         self.daq_th.progressUpdated.connect(self.on_update_daq_status)
         self.daq_th.resultsReady.connect(self.on_daq_results_ready)
-        self.daq_th.finished.connect(partial(self.set_widgets_status, "STOP"))
+        self.daq_th.daqFinished.connect(partial(self.set_widgets_status, "STOP"))
         self.daq_th.start()
 
     @pyqtSlot()
@@ -568,7 +590,7 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
     def _auto_ylbl(self):
         fld = self._field_list[0]
         ename = self._elems_list[0]
-        ylbl = "Device readings for '{}' ({})".format(ename.family, fld)
+        ylbl = "Device readings for {}-{}".format(ename.family, fld)
         self.matplotlibbarWidget.setFigureYlabel(ylbl)
 
     @pyqtSlot(float)

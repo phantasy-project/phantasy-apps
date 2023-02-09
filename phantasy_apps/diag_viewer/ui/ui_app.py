@@ -14,20 +14,20 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1920, 1440)
+        MainWindow.resize(2025, 1440)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/dv.png"), QtGui.QIcon.Normal,
                        QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setStyleSheet("QProgressBar {\n"
                                  "    border: 1px solid gray;\n"
-                                 "    border-radius: 5px;\n"
+                                 "    border-radius: 2px;\n"
                                  "    height: 5px;\n"
                                  "}\n"
                                  "\n"
                                  "QProgressBar::chunk {\n"
                                  "    background-color: #05B8CC;\n"
-                                 "    width: 15px;\n"
+                                 "    width: 10px;\n"
                                  "    margin: 0.5px;\n"
                                  "}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -85,7 +85,7 @@ class Ui_MainWindow(object):
         self.matplotlibbarWidget.setFigureMTicksToggle(True)
         font = QtGui.QFont()
         font.setFamily("sans-serif")
-        font.setPointSize(14)
+        font.setPointSize(15)
         font.setBold(False)
         font.setItalic(False)
         font.setWeight(50)
@@ -127,7 +127,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.choose_elems_btn.sizePolicy().hasHeightForWidth())
         self.choose_elems_btn.setSizePolicy(sizePolicy)
-        self.choose_elems_btn.setIconSize(QtCore.QSize(20, 20))
+        self.choose_elems_btn.setIconSize(QtCore.QSize(24, 24))
         self.choose_elems_btn.setObjectName("choose_elems_btn")
         self.horizontalLayout.addWidget(self.choose_elems_btn)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
@@ -151,9 +151,54 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.choose_elems_pv_btn.sizePolicy().hasHeightForWidth())
         self.choose_elems_pv_btn.setSizePolicy(sizePolicy)
+        self.choose_elems_pv_btn.setIconSize(QtCore.QSize(24, 24))
         self.choose_elems_pv_btn.setObjectName("choose_elems_pv_btn")
         self.horizontalLayout_2.addWidget(self.choose_elems_pv_btn)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+        self.line_2 = QtWidgets.QFrame(self.device_gbox)
+        self.line_2.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.line_2.setLineWidth(1)
+        self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_2.setObjectName("line_2")
+        self.verticalLayout_2.addWidget(self.line_2)
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setContentsMargins(4, 4, 4, 4)
+        self.horizontalLayout_4.setSpacing(4)
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.choose_ic_btn = QtWidgets.QToolButton(self.device_gbox)
+        self.choose_ic_btn.setIconSize(QtCore.QSize(24, 24))
+        self.choose_ic_btn.setObjectName("choose_ic_btn")
+        self.horizontalLayout_4.addWidget(self.choose_ic_btn)
+        self.choose_nd_btn = QtWidgets.QToolButton(self.device_gbox)
+        self.choose_nd_btn.setIconSize(QtCore.QSize(24, 24))
+        self.choose_nd_btn.setObjectName("choose_nd_btn")
+        self.horizontalLayout_4.addWidget(self.choose_nd_btn)
+        self.choose_hmr_btn = QtWidgets.QToolButton(self.device_gbox)
+        self.choose_hmr_btn.setIconSize(QtCore.QSize(24, 24))
+        self.choose_hmr_btn.setObjectName("choose_hmr_btn")
+        self.horizontalLayout_4.addWidget(self.choose_hmr_btn)
+        self.choose_bcm_btn = QtWidgets.QToolButton(self.device_gbox)
+        self.choose_bcm_btn.setIconSize(QtCore.QSize(24, 24))
+        self.choose_bcm_btn.setObjectName("choose_bcm_btn")
+        self.horizontalLayout_4.addWidget(self.choose_bcm_btn)
+        self.choose_fc_btn = QtWidgets.QToolButton(self.device_gbox)
+        self.choose_fc_btn.setIconSize(QtCore.QSize(24, 24))
+        self.choose_fc_btn.setObjectName("choose_fc_btn")
+        self.horizontalLayout_4.addWidget(self.choose_fc_btn)
+        self.choose_bpm_btn = QtWidgets.QToolButton(self.device_gbox)
+        self.choose_bpm_btn.setIconSize(QtCore.QSize(24, 24))
+        self.choose_bpm_btn.setObjectName("choose_bpm_btn")
+        self.horizontalLayout_4.addWidget(self.choose_bpm_btn)
+        spacerItem = QtWidgets.QSpacerItem(40, 20,
+                                           QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_4)
+        self.line_5 = QtWidgets.QFrame(self.device_gbox)
+        self.line_5.setFrameShadow(QtWidgets.QFrame.Plain)
+        self.line_5.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_5.setObjectName("line_5")
+        self.verticalLayout_2.addWidget(self.line_5)
         self.device_select_hbox = QtWidgets.QHBoxLayout()
         self.device_select_hbox.setSpacing(6)
         self.device_select_hbox.setObjectName("device_select_hbox")
@@ -180,10 +225,10 @@ class Ui_MainWindow(object):
         self.inverse_selection_btn.setIconSize(QtCore.QSize(24, 24))
         self.inverse_selection_btn.setObjectName("inverse_selection_btn")
         self.device_select_hbox.addWidget(self.inverse_selection_btn)
-        spacerItem = QtWidgets.QSpacerItem(40, 20,
-                                           QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Minimum)
-        self.device_select_hbox.addItem(spacerItem)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.device_select_hbox.addItem(spacerItem1)
         self.field_cbb = QtWidgets.QComboBox(self.device_gbox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -289,6 +334,9 @@ class Ui_MainWindow(object):
         self.auto_rotate_chkbox.setObjectName("auto_rotate_chkbox")
         self.viz_hbox.addWidget(self.auto_rotate_chkbox)
         self.auto_rotate_dsbox = QtWidgets.QDoubleSpinBox(self.control_gbox)
+        self.auto_rotate_dsbox.setDecimals(1)
+        self.auto_rotate_dsbox.setMaximum(180.0)
+        self.auto_rotate_dsbox.setSingleStep(5.0)
         self.auto_rotate_dsbox.setObjectName("auto_rotate_dsbox")
         self.viz_hbox.addWidget(self.auto_rotate_dsbox)
         self.line = QtWidgets.QFrame(self.control_gbox)
@@ -302,15 +350,25 @@ class Ui_MainWindow(object):
         self.annote_height_chkbox = QtWidgets.QCheckBox(self.control_gbox)
         self.annote_height_chkbox.setObjectName("annote_height_chkbox")
         self.viz_hbox.addWidget(self.annote_height_chkbox)
+        self.annote_fmt_cbb = QtWidgets.QComboBox(self.control_gbox)
+        self.annote_fmt_cbb.setEditable(True)
+        self.annote_fmt_cbb.setObjectName("annote_fmt_cbb")
+        self.annote_fmt_cbb.addItem("")
+        self.annote_fmt_cbb.addItem("")
+        self.annote_fmt_cbb.addItem("")
+        self.viz_hbox.addWidget(self.annote_fmt_cbb)
         self.auto_lbls_chkbox = QtWidgets.QCheckBox(self.control_gbox)
         self.auto_lbls_chkbox.setChecked(True)
         self.auto_lbls_chkbox.setObjectName("auto_lbls_chkbox")
         self.viz_hbox.addWidget(self.auto_lbls_chkbox)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.viz_hbox.addItem(spacerItem1)
+        self.viz_hbox.addItem(spacerItem2)
         self.label_7 = QtWidgets.QLabel(self.control_gbox)
+        font = QtGui.QFont()
+        font.setItalic(True)
+        self.label_7.setFont(font)
         self.label_7.setStyleSheet("QLabel {\n"
                                    "    color: #555753;\n"
                                    "    border-top: 0px solid gray;\n"
@@ -345,8 +403,8 @@ class Ui_MainWindow(object):
         self.daqfreq_dSpinbox.setDecimals(1)
         self.daqfreq_dSpinbox.setMinimum(0.0)
         self.daqfreq_dSpinbox.setMaximum(10.0)
-        self.daqfreq_dSpinbox.setSingleStep(0.5)
-        self.daqfreq_dSpinbox.setProperty("value", 1.0)
+        self.daqfreq_dSpinbox.setSingleStep(1.0)
+        self.daqfreq_dSpinbox.setProperty("value", 5.0)
         self.daqfreq_dSpinbox.setObjectName("daqfreq_dSpinbox")
         self.daq_hbox.addWidget(self.daqfreq_dSpinbox)
         self.label = QtWidgets.QLabel(self.control_gbox)
@@ -378,16 +436,16 @@ class Ui_MainWindow(object):
         self.daq_pb.setAlignment(QtCore.Qt.AlignCenter)
         self.daq_pb.setObjectName("daq_pb")
         self.daq_hbox.addWidget(self.daq_pb)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.daq_hbox.addItem(spacerItem2)
+        self.daq_hbox.addItem(spacerItem3)
         self.capture_btn = QtWidgets.QPushButton(self.control_gbox)
         icon4 = QtGui.QIcon()
         icon4.addPixmap(QtGui.QPixmap(":/icons/single.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.capture_btn.setIcon(icon4)
-        self.capture_btn.setIconSize(QtCore.QSize(24, 24))
+        self.capture_btn.setIconSize(QtCore.QSize(32, 32))
         self.capture_btn.setObjectName("capture_btn")
         self.daq_hbox.addWidget(self.capture_btn)
         self.start_btn = QtWidgets.QPushButton(self.control_gbox)
@@ -402,7 +460,7 @@ class Ui_MainWindow(object):
         icon5.addPixmap(QtGui.QPixmap(":/icons/start.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
         self.start_btn.setIcon(icon5)
-        self.start_btn.setIconSize(QtCore.QSize(24, 24))
+        self.start_btn.setIconSize(QtCore.QSize(32, 32))
         self.start_btn.setObjectName("start_btn")
         self.daq_hbox.addWidget(self.start_btn)
         self.gridLayout.addLayout(self.daq_hbox, 3, 1, 1, 1)
@@ -487,16 +545,16 @@ class Ui_MainWindow(object):
                                        "}")
         self.lv_segm_lbl.setObjectName("lv_segm_lbl")
         self.lattice_hbox.addWidget(self.lv_segm_lbl)
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.lattice_hbox.addItem(spacerItem3)
+        self.lattice_hbox.addItem(spacerItem4)
         self.gridLayout.addLayout(self.lattice_hbox, 0, 0, 1, 2)
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
         self.verticalLayout_3.setContentsMargins(0, -1, -1, -1)
         self.verticalLayout_3.setSpacing(4)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.reset_figure_btn = QtWidgets.QPushButton(self.control_gbox)
+        self.reset_figure_btn = QtWidgets.QToolButton(self.control_gbox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -508,7 +566,9 @@ class Ui_MainWindow(object):
         icon8.addPixmap(QtGui.QPixmap(":/icons/load.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
         self.reset_figure_btn.setIcon(icon8)
-        self.reset_figure_btn.setIconSize(QtCore.QSize(24, 24))
+        self.reset_figure_btn.setIconSize(QtCore.QSize(42, 42))
+        self.reset_figure_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextUnderIcon)
         self.reset_figure_btn.setObjectName("reset_figure_btn")
         self.verticalLayout_3.addWidget(self.reset_figure_btn)
         self.stop_btn = QtWidgets.QPushButton(self.control_gbox)
@@ -523,14 +583,14 @@ class Ui_MainWindow(object):
         icon9.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
         self.stop_btn.setIcon(icon9)
-        self.stop_btn.setIconSize(QtCore.QSize(24, 24))
+        self.stop_btn.setIconSize(QtCore.QSize(32, 32))
         self.stop_btn.setObjectName("stop_btn")
         self.verticalLayout_3.addWidget(self.stop_btn)
         self.gridLayout.addLayout(self.verticalLayout_3, 0, 2, 4, 1)
         self.verticalLayout.addWidget(self.control_gbox)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 32))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 2025, 32))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -579,8 +639,6 @@ class Ui_MainWindow(object):
             MainWindow.on_apply_pos_as_xdata)  # type: ignore
         self.start_btn.clicked.connect(MainWindow.on_daq_start)  # type: ignore
         self.stop_btn.clicked.connect(MainWindow.on_daq_stop)  # type: ignore
-        self.reset_figure_btn.clicked.connect(
-            MainWindow.on_init_dataviz)  # type: ignore
         self.annote_height_chkbox.toggled['bool'].connect(
             MainWindow.on_annote_height)  # type: ignore
         self.actionLoad_Lattice.triggered.connect(
@@ -597,6 +655,10 @@ class Ui_MainWindow(object):
             MainWindow.on_refresh_model)  # type: ignore
         self.auto_rotate_dsbox.valueChanged['double'].connect(
             MainWindow.on_rotate_xtks)  # type: ignore
+        self.reset_figure_btn.clicked.connect(
+            MainWindow.on_init_dataviz)  # type: ignore
+        self.annote_fmt_cbb.currentTextChanged['QString'].connect(
+            MainWindow.on_change_annote_format)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -612,6 +674,12 @@ class Ui_MainWindow(object):
         self.choose_elems_pv_btn.setToolTip(
             _translate("MainWindow", "Select devices built from input PVs."))
         self.choose_elems_pv_btn.setText(_translate("MainWindow", "Choose"))
+        self.choose_ic_btn.setText(_translate("MainWindow", "IC"))
+        self.choose_nd_btn.setText(_translate("MainWindow", "ND"))
+        self.choose_hmr_btn.setText(_translate("MainWindow", "HMR"))
+        self.choose_bcm_btn.setText(_translate("MainWindow", "BCM"))
+        self.choose_fc_btn.setText(_translate("MainWindow", "FC"))
+        self.choose_bpm_btn.setText(_translate("MainWindow", "BPM"))
         self.refresh_bpm_btn.setToolTip(
             _translate("MainWindow", "Refresh BPMs selection."))
         self.refresh_bpm_btn.setText(_translate("MainWindow", "..."))
@@ -664,10 +732,19 @@ class Ui_MainWindow(object):
             ))
         self.annote_height_chkbox.setText(
             _translate("MainWindow", "Height Annotation"))
+        self.annote_fmt_cbb.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Annotation format.</p></body></html>"))
+        self.annote_fmt_cbb.setItemText(0, _translate("MainWindow", ".3g"))
+        self.annote_fmt_cbb.setItemText(1, _translate("MainWindow", ".3f"))
+        self.annote_fmt_cbb.setItemText(2, _translate("MainWindow", ".3e"))
         self.auto_lbls_chkbox.setText(_translate("MainWindow", "Auto Labels"))
         self.label_7.setText(
-            _translate("MainWindow",
-                       "Reset after changing  DataViz and DAQ configurations"))
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p><span style=\" font-style:normal;\">Reset after changing </span>DataViz<span style=\" font-style:normal;\"> or </span>DAQ<span style=\" font-style:normal;\"> configurations</span></p></body></html>"
+            ))
         self.label_2.setText(_translate("MainWindow", "Frequency"))
         self.daqfreq_dSpinbox.setToolTip(
             _translate(
@@ -687,15 +764,17 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Completed DAQ iterations.</p></body></html>"
             ))
         self.viz_cnt_lbl.setText(_translate("MainWindow", "0"))
+        self.daq_pb.setFormat(_translate("MainWindow", "%p%"))
         self.capture_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Do single DAQ.</p></body></html>"))
+                "<html><head/><body><p>Fetch and visualize the data until the total shot number is reached.</p></body></html>"
+            ))
         self.capture_btn.setText(_translate("MainWindow", "Capture"))
         self.start_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Do DAQ untile Stop button is pushed.</p></body></html>"
+                "<html><head/><body><p>Keep fetching and visualizing data until the Stop button is pushed.</p></body></html>"
             ))
         self.start_btn.setText(_translate("MainWindow", "Start"))
         self.label_6.setText(_translate("MainWindow", "DAQ"))
