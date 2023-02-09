@@ -237,6 +237,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # last refresh: data is refreshed
     last_refreshed = pyqtSignal()
 
+    # eligible (True/False) to issue apply command
+    sigApplyReady = pyqtSignal(bool)
+
     def __init__(self, version, config_dir=None):
         super(SettingsManagerWindow, self).__init__()
 
@@ -645,6 +648,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._machstate = None
 
     def __post_init_ui(self):
+        # apply ready?
+        self.sigApplyReady.connect(self.apply_btn.setEnabled)
         # hide loaded snp info
         self.set_post_snp_info_visible(False)
         # hide last data refreshed info
@@ -865,6 +870,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # apply pb
         self.apply_pb.setVisible(False)
+        # abort apply button
+        self.abort_apply_btn.setVisible(False)
         # refset pb
         self.refset_pb.setVisible(False)
         # data refresh pb
@@ -1764,48 +1771,29 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # scale operator, default is 0: 'x' [multiply], (1: '+') [plus]
         scale_op = SCALE_OP_MAP[self.scale_op_cbb.currentIndex()]
 
-        # show warning if scaling factor != 1.0
-        if scaling_factor != 1.0:
-            r = QMessageBox.warning(self, "Apply Settings",
-                    '''<html><head/><body><p>Are you sure to apply settings with scaling factor of <span style=" font-weight:600; color:#ff007f;">{0:g}</span>?</p></body></html>'''.format(scaling_factor),
-                    QMessageBox.Yes | QMessageBox.No)
-            if r == QMessageBox.No:
-                return
         #
         self.idx_px_list = []  # list to apply icon [(idx_src, px, log_msg)]
         settings_selected = m.get_selection()
-        if len(settings_selected) == 0:
-            QMessageBox.warning(
-                self, "Apply Settings",
-                '<html><head/><body><p>Not any items are checked, <span style=" '
-                'font-style:italic;">Apply </span>only works with checked items in current page<span style=" '
-                'font-style:italic;">.</span></p></body></html>',
-                QMessageBox.Ok)
-            return
 
-        # ask if want to take a snapshot of current settings of all checked devices
-        r = QMessageBox.question(
-            self, "Take Snapshot",
-            "Do you want to take a snapshot for current page before changing device settings?",
-            QMessageBox.Yes | QMessageBox.No)
-        msg = ''
-        if r == QMessageBox.Yes:
-            # take a snapshot
-            self.take_snapshot(cast=False,
-                               only_checked_items=False,
-                               post_current_sp=False)
-            msg += "Snapshot saved!\n "
-        msg += f"Now start to set device with new settings in current page ({len(settings_selected)} checked), see 'Setting Logs' for the details."
-
-        r = QMessageBox.information(self, "Apply Settings", msg,
-                                    QMessageBox.Ok | QMessageBox.Cancel)
-        if r == QMessageBox.Cancel:
-            return
+        # show warning if scaling factor != 1.0 (x) or != 0.0 (+)
+        if scaling_factor != 1.0 and scale_op == 'x':
+            r = QMessageBox.warning(self, "Apply Settings",
+                    '''<html><head/><body><p>Are you sure to apply ({0}) settings by scaling the factor of <span style=" font-weight:600; color:#ff007f;">{1:g}</span> ?</p></body></html>'''.format(len(settings_selected), scaling_factor),
+                    QMessageBox.Yes | QMessageBox.No)
+            if r == QMessageBox.No:
+                return
+        elif scaling_factor != 0.0 and scale_op == '+':
+            r = QMessageBox.warning(self, "Apply Settings",
+                    '''<html><head/><body><p>Are you sure to apply ({0}) settings by shifting the value of <span style=" font-weight:600; color:#ff007f;">{1:g}</span> ?</p></body></html>'''.format(len(settings_selected), scaling_factor),
+                    QMessageBox.Yes | QMessageBox.No)
+            if r == QMessageBox.No:
+                return
 
         self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor,
                                              scale_op),
                             daq_seq=settings_selected)
         self.applyer.daqStarted.connect(lambda: self.apply_pb.setVisible(True))
+        self.applyer.daqStarted.connect(lambda: self.abort_apply_btn.setVisible(True))
         self.applyer.daqStarted.connect(
             partial(self.set_widgets_status_for_applying, 'START'))
         self.applyer.progressUpdated.connect(
@@ -1815,6 +1803,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             partial(self.set_widgets_status_for_applying, 'STOP'))
         self.applyer.daqFinished.connect(
             lambda: self.apply_pb.setVisible(False))
+        self.applyer.daqFinished.connect(
+            lambda: self.abort_apply_btn.setVisible(False))
         self.applyer.daqFinished.connect(
             lambda: self.single_update_btn.clicked.emit())
         self.applyer.start()
@@ -2884,9 +2874,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         ts = datetime.now().strftime("%Y-%m-%d %T")
         self.last_refreshed_lbl.setText(ts)
         # add log message
-        msg = "[{0}]: Data is refreshed.".format(
-            datetime.fromtimestamp(time.time()).strftime(TS_FMT))
-        self.log_textEdit.append(msg)
+        # msg = "[{0}]: Data is refreshed.".format(
+        #     datetime.fromtimestamp(time.time()).strftime(TS_FMT))
+        # self.log_textEdit.append(msg)
 
     def set_widgets_status_for_updating(self, status, is_single=True):
         """Set widgets status for updating.
@@ -3125,6 +3115,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def set_last_data_refreshed_info_visible(self, visibility):
         [o.setVisible(visibility) for o in (
+                self.settingsdata_lbl,
                 self.last_refreshed_lbl,
                 self.last_refreshed_title_lbl)]
 
@@ -3187,7 +3178,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                 "Tag and Note must be set for making a new snapshot.",
                                 QMessageBox.Ok, QMessageBox.Ok)
             return
-
 
         # self.turn_off_updater_if_necessary()
         src_m = m.sourceModel()
@@ -4018,6 +4008,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         n = int(self.n_all_checked_items_lbl.text())
         n_new = n + i
         self.n_all_checked_items_lbl.setText(str(n_new))
+        if n_new > 0:
+            self.sigApplyReady.emit(True)
+        else:
+            self.sigApplyReady.emit(False)
 
     def get_data_models(self):
         """Get the model for settings data retrieval.
@@ -4233,6 +4227,12 @@ p, li { white-space: pre-wrap; }
             return
         else:
             self.on_load_settings(o)
+
+    @pyqtSlot()
+    def on_abort_apply(self):
+        """Abort settings apply immediately.
+        """
+        self.applyer.abort()
 
 
 def get_snapshotdata(query_str: str, uri: str, column_name='datetime'):
