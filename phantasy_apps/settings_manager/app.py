@@ -2874,9 +2874,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         ts = datetime.now().strftime("%Y-%m-%d %T")
         self.last_refreshed_lbl.setText(ts)
         # add log message
-        msg = "[{0}]: Data is refreshed.".format(
-            datetime.fromtimestamp(time.time()).strftime(TS_FMT))
-        self.log_textEdit.append(msg)
+        # msg = "[{0}]: Data is refreshed.".format(
+        #     datetime.fromtimestamp(time.time()).strftime(TS_FMT))
+        # self.log_textEdit.append(msg)
 
     def set_widgets_status_for_updating(self, status, is_single=True):
         """Set widgets status for updating.
