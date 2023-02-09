@@ -1779,14 +1779,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.idx_px_list = []  # list to apply icon [(idx_src, px, log_msg)]
         settings_selected = m.get_selection()
-        if len(settings_selected) == 0:
-            QMessageBox.warning(
-                self, "Apply Settings",
-                '<html><head/><body><p>Not any items are checked, <span style=" '
-                'font-style:italic;">Apply </span>only works with checked items in current page<span style=" '
-                'font-style:italic;">.</span></p></body></html>',
-                QMessageBox.Ok)
-            return
 
         # ask if want to take a snapshot of current settings of all checked devices
         r = QMessageBox.question(
