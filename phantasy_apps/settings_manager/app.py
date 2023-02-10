@@ -3310,10 +3310,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 tag_btn_filters.update(data.tags)
             user_filters.add(data.user)
         del d
-        _ion_btn_filters = OrderedDict(sorted(ion_btn_filters.items(), key=lambda i: sym2z(i[0])))
-        if 'NAN' in _ion_btn_filters:
-            _ion_btn_filters.move_to_end('NAN')
-
+        _ion_btn_filters = OrderedDict(sorted(
+            ion_btn_filters.items(), key=lambda i: _sym2z(i[0])
+        ))
         self._build_btn_filters(self.ion_filter_area, _ion_btn_filters)
         self._build_tag_filters(self.tag_filter_area, tag_btn_filters)
         # dropdown menu for checkable user names.
@@ -4342,3 +4341,9 @@ def _reset_trip_events():
     # 'PM', 'FC', 'EMS', 'ND', 'HMR', 'IC'):
     for pv in _ISEG_PVS:
         caput(pv, 1)
+
+def _sym2z(sym: str):
+    z = sym2z(sym)
+    if z is None:
+        z = 999
+    return z
