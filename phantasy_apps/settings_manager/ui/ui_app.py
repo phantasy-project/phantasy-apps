@@ -615,7 +615,7 @@ class Ui_MainWindow(object):
         self.last_refreshed_lbl = QtWidgets.QLabel(self.centralwidget)
         font = QtGui.QFont()
         font.setFamily("Monospace")
-        font.setPointSize(10)
+        font.setPointSize(11)
         self.last_refreshed_lbl.setFont(font)
         self.last_refreshed_lbl.setStyleSheet("QLabel {\n"
                                               "    color: #2E3436;\n"
