@@ -736,192 +736,240 @@ class _SortProxyModel(QSortFilterProxyModel):
         ndigit = src_model._ndigit
 
         # ENG/PHY
-        ftype = src_model.item(src_row, src_model.i_name).ftype
-        ftype_test = ftype in self.filter_ftypes
+        try:
+            ftype = src_model.item(src_row, src_model.i_name).ftype
+            ftype_test = ftype in self.filter_ftypes
+        except AttributeError:
+            ftype_test = True
         #
         if not ftype_test:
             return False
 
         # checked items
-        if self.filter_checked_enabled:
-            item_checked_test = is_item_checked(
-                    src_model.item(src_row, src_model.i_name))
-        else:
+        try:
+            if self.filter_checked_enabled:
+                item_checked_test = is_item_checked(
+                        src_model.item(src_row, src_model.i_name))
+            else:
+                item_checked_test = True
+        except AttributeError:
             item_checked_test = True
         #
         if not item_checked_test:
             return False
 
         # dx12 checked
-        if self.filter_dx12_warning_enabled:
-            data = src_model.data(
-                    src_model.index(src_row, self.filter_col_index['dx12']),
-                    Qt.UserRole)
-            dx12_warning_test = data is not None
-        else:
+        try:
+            if self.filter_dx12_warning_enabled:
+                data = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['dx12']),
+                        Qt.UserRole)
+                dx12_warning_test = data is not None
+            else:
+                dx12_warning_test = True
+        except AttributeError:
             dx12_warning_test = True
         #
         if not dx12_warning_test:
             return False
 
         # dx02 checked
-        if self.filter_dx02_warning_enabled:
-            data = src_model.data(
-                    src_model.index(src_row, self.filter_col_index['dx02']),
-                    Qt.UserRole)
-            dx02_warning_test = data is not None
-        else:
+        try:
+            if self.filter_dx02_warning_enabled:
+                data = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['dx02']),
+                        Qt.UserRole)
+                dx02_warning_test = data is not None
+            else:
+                dx02_warning_test = True
+        except AttributeError:
             dx02_warning_test = True
         #
         if not dx02_warning_test:
             return False
 
         # diff(x0, ref_st) checked
-        if self.filter_dx0ref_warning_enabled:
-            data = src_model.data(
-                    src_model.index(src_row, self.filter_col_index['dx0ref']),
-                    Qt.UserRole)
-            dx0ref_warning_test = data is not None
-        else:
+        try:
+            if self.filter_dx0ref_warning_enabled:
+                data = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['dx0ref']),
+                        Qt.UserRole)
+                dx0ref_warning_test = data is not None
+            else:
+                dx0ref_warning_test = True
+        except AttributeError:
             dx0ref_warning_test = True
         #
         if not dx0ref_warning_test:
             return False
 
         # diff(x2, ref_st) checked
-        if self.filter_dx2ref_warning_enabled:
-            data = src_model.data(
-                    src_model.index(src_row, self.filter_col_index['dx2ref']),
-                    Qt.UserRole)
-            dx2ref_warning_test = data is not None
-        else:
+        try:
+            if self.filter_dx2ref_warning_enabled:
+                data = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['dx2ref']),
+                        Qt.UserRole)
+                dx2ref_warning_test = data is not None
+            else:
+                dx2ref_warning_test = True
+        except AttributeError:
             dx2ref_warning_test = True
         #
         if not dx2ref_warning_test:
             return False
 
         # disconnected checked
-        if self.filter_disconnected_enabled:
-            data = src_model.data(
-                    src_model.index(src_row, self.filter_col_index['device']),
-                    Qt.ToolTipRole)
-            disconnected_test = data == 'Device is not connected'
-        else:
+        try:
+            if self.filter_disconnected_enabled:
+                data = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['device']),
+                        Qt.ToolTipRole)
+                disconnected_test = data == 'Device is not connected'
+            else:
+                disconnected_test = True
+        except AttributeError:
             disconnected_test = True
         #
         if not disconnected_test:
             return False
 
         # disabled read alam checked
-        if self.filter_disabled_read_alm_enabled:
-            data = src_model.data(
-                    src_model.index(src_row, self.filter_col_index['read_alm']),
-                    Qt.UserRole)
-            disabled_read_alm_test = data == 0.0
-        else:
+        try:
+            if self.filter_disabled_read_alm_enabled:
+                data = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['read_alm']),
+                        Qt.UserRole)
+                disabled_read_alm_test = data == 0.0
+            else:
+                disabled_read_alm_test = True
+        except AttributeError:
             disabled_read_alm_test = True
         #
         if not disabled_read_alm_test:
             return False
 
         # disabled tune alam checked
-        if self.filter_disabled_tune_alm_enabled:
-            data = src_model.data(
-                    src_model.index(src_row, self.filter_col_index['tune_alm']),
-                    Qt.UserRole)
-            disabled_tune_alm_test = data == 0.0
-        else:
+        try:
+            if self.filter_disabled_tune_alm_enabled:
+                data = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['tune_alm']),
+                        Qt.UserRole)
+                disabled_tune_alm_test = data == 0.0
+            else:
+                disabled_tune_alm_test = True
+        except AttributeError:
             disabled_tune_alm_test = True
         #
         if not disabled_tune_alm_test:
             return False
 
         # enabled read alam checked
-        if self.filter_enabled_read_alm_enabled:
-            data = src_model.data(
-                    src_model.index(src_row, self.filter_col_index['read_alm']),
-                    Qt.UserRole)
-            enabled_read_alm_test = data == 1.0
-        else:
+        try:
+            if self.filter_enabled_read_alm_enabled:
+                data = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['read_alm']),
+                        Qt.UserRole)
+                enabled_read_alm_test = data == 1.0
+            else:
+                enabled_read_alm_test = True
+        except AttributeError:
             enabled_read_alm_test = True
         #
         if not enabled_read_alm_test:
             return False
 
         # enabled tune alam checked
-        if self.filter_enabled_tune_alm_enabled:
-            data = src_model.data(
-                    src_model.index(src_row, self.filter_col_index['tune_alm']),
-                    Qt.UserRole)
-            enabled_tune_alm_test = data == 1.0
-        else:
+        try:
+            if self.filter_enabled_tune_alm_enabled:
+                data = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['tune_alm']),
+                        Qt.UserRole)
+                enabled_tune_alm_test = data == 1.0
+            else:
+                enabled_tune_alm_test = True
+        except AttributeError:
             enabled_tune_alm_test = True
         #
         if not enabled_tune_alm_test:
             return False
 
         # state diff checked
-        if self.filter_state_diff_enabled:
-            sts = src_model.data(
-                    src_model.index(src_row, self.filter_col_index['state']),
-                    Qt.ToolTipRole)
-            last_sts = src_model.data(
-                    src_model.index(src_row, self.filter_col_index['last_state']),
-                    Qt.ToolTipRole)
-            state_diff_test = sts != last_sts
-        else:
+        try:
+            if self.filter_state_diff_enabled:
+                sts = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['state']),
+                        Qt.ToolTipRole)
+                last_sts = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['last_state']),
+                        Qt.ToolTipRole)
+                state_diff_test = sts != last_sts
+            else:
+                state_diff_test = True
+        except AttributeError:
             state_diff_test = True
         #
         if not state_diff_test:
             return False
 
         # field test
-        if self.filter_field_enabled:
-            data = src_model.data(
-                    src_model.index(src_row, self.filter_col_index['field']),
-                    Qt.DisplayRole)
-            field_test = data in self.filter_field_list
-        else:
+        try:
+            if self.filter_field_enabled:
+                data = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['field']),
+                        Qt.DisplayRole)
+                field_test = data in self.filter_field_list
+            else:
+                field_test = True
+        except AttributeError:
             field_test = True
         #
         if not field_test:
             return False
 
         # dtype test
-        if self.filter_dtype_enabled:
-            data = src_model.data(
-                    src_model.index(src_row, self.filter_col_index['type']),
-                    Qt.DisplayRole)
-            dtype_test = data in self.filter_dtype_list
-        else:
+        try:
+            if self.filter_dtype_enabled:
+                data = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['type']),
+                        Qt.DisplayRole)
+                dtype_test = data in self.filter_dtype_list
+            else:
+                dtype_test = True
+        except AttributeError:
             dtype_test = True
         #
         if not dtype_test:
             return False
 
         # pos test (sb <= pos or sb > pos)
-        if self.filter_pos1_enabled or self.filter_pos2_enabled:
-            data = src_model.data(
-                    src_model.index(src_row, self.filter_col_index['pos']),
-                    Qt.DisplayRole)
-            v = float(data)
-            pos1_test = False
-            pos2_test = False
-            pos = self.filter_pos_value
-            if self.filter_pos1_enabled:
-                pos1_test = v <= pos
-            if self.filter_pos2_enabled:
-                pos2_test = v > pos
-            pos_test = pos1_test or pos2_test
-        else:
+        try:
+            if self.filter_pos1_enabled or self.filter_pos2_enabled:
+                data = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['pos']),
+                        Qt.DisplayRole)
+                v = float(data)
+                pos1_test = False
+                pos2_test = False
+                pos = self.filter_pos_value
+                if self.filter_pos1_enabled:
+                    pos1_test = v <= pos
+                if self.filter_pos2_enabled:
+                    pos2_test = v > pos
+                pos_test = pos1_test or pos2_test
+            else:
+                pos_test = True
+        except AttributeError:
             pos_test = True
         #
         if not pos_test:
             return False
 
         # string filters
-        if not self.test_string_filters(src_row, src_model):
-            return False
+        try:
+            if not self.test_string_filters(src_row, src_model):
+                return False
+        except AttributeError:
+            return True
 
         return True
 
@@ -1046,7 +1094,7 @@ class _Delegate(QStyledItemDelegate):
 
     def sizeHint(self, option, index):
         size = QStyledItemDelegate.sizeHint(self, option, index)
-        size.setHeight(size.height() * 1.3)
+        size.setHeight(int(size.height() * 1.3))
         return size
 
 
@@ -1621,12 +1669,12 @@ class _DelegateSnapshot(QStyledItemDelegate):
 class _SnpProxyModel(QSortFilterProxyModel):
 
     def __init__(self, model):
-        super(self.__class__, self).__init__()
+        super(_SnpProxyModel, self).__init__()
         self.m_src = model
         self.setSourceModel(model)
         self.setRecursiveFilteringEnabled(True)
         self.reset_cache()
-        # date filer
+        # date range filter
         self.filter_date_enabled = False
         self.filter_date_tuple = None # (date1, date2)
         # note filter
@@ -1687,29 +1735,41 @@ class _SnpProxyModel(QSortFilterProxyModel):
             return False
 
         # date
-        if self.filter_date_enabled:
-            dt1, dt2 = self.filter_date_tuple
-            date_test = (dt1 <= snp_data.ts_as_datetime() <= dt2)
-        else:
+        try:
+            if self.filter_date_enabled:
+                dt1, dt2 = self.filter_date_tuple
+                date_test = (dt1 <= snp_data.ts_as_datetime() <= dt2)
+            else:
+                date_test = True
+        except AttributeError:
             date_test = True
+
         if not date_test:
             return False
 
         # note
-        if self.filter_note_enabled:
-            # ignore case, loose wild card match
-            note_test = re.match(translate(self.filter_note_string.lower()),
-                    snp_data.note.lower()) is not None
-        else:
+        try:
+            if self.filter_note_enabled:
+                # ignore case, loose wild card match
+                note_test = re.match(translate(self.filter_note_string.lower()),
+                        snp_data.note.lower()) is not None
+            else:
+                note_test = True
+        except AttributeError:
             note_test = True
+
         if not note_test:
             return False
 
         # user name test
-        if self.filter_user_enabled:
-            user_test = snp_data.user in self.filter_user_list
-        else:
+        try:
+            if self.filter_user_enabled:
+                user_test = snp_data.user in self.filter_user_list
+            else:
+                user_test = True
+        except AttributeError:
             user_test = True
+
         if not user_test:
             return False
 
