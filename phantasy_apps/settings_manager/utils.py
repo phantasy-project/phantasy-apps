@@ -9,6 +9,7 @@ import time
 import shutil
 from collections import Counter
 from collections import OrderedDict
+from datetime import datetime
 from epics import get_pv
 from fnmatch import translate
 from functools import partial
@@ -1779,4 +1780,39 @@ def set_device_state_item(sts_str):
     return item
 
 
+TS_FMT = "%Y-%m-%dT%H:%M:%S.%f"
+class SetLogMessager:
+    """Message for set log.
+    """
+    DEFAULT_TEXT_COLOR = QColor("#343A40") # .bg-dark
+    SKIP_SET_TEXT_COLOR = QColor("#DC3545") # .bg-danger
+    SET_TEXT_COLOR = QColor("#17A2B8") # .bg-info
+    def __init__(self, ename: str, fname: str, old_set: float,
+                 new_set: float, raw_set: float, set_op: str, set_fac: float,
+                 is_skip: bool = False):
+        # if is_skip, do nothing, else set
+        # Device {ename} [{fname}] is set from {old_set} to {new_set},
+        # {new_set} = {raw_set} * ({new_set} / {raw_set}), or:
+        # {new_set} = {raw_set} + ({new_set} - {raw_set})
+        self._ename = ename
+        self._fname = fname
+        self._old_set = old_set # current setting
+        self._new_set = new_set # new setting (after scaling/shifting)
+        self._raw_set = raw_set # saved setting (before scaling/shifting)
+        self._set_op = set_op # '*' or '+'
+        self._set_fac = set_fac # scaling factor or shifting amount
+        self._is_skip = is_skip
+        self._ts = time.time()
 
+    def is_skip_set(self):
+        return self._is_skip
+
+    def __str__(self):
+        msg = "[{0}] #_#Set {1:<20s} [{2}] from {3} to {4} ({5} {6} {7}).".format(
+            datetime.fromtimestamp(self._ts).strftime(TS_FMT),
+            self._ename, self._fname, self._old_set, self._new_set, self._raw_set,
+            self._set_op, self._set_fac)
+        if self._is_skip:
+            return msg.replace('#_#', '[Skip] ')
+        else:
+            return msg.replace('#_#', '')

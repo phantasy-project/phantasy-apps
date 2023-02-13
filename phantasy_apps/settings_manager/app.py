@@ -121,6 +121,7 @@ from .utils import TGT_STS_TUPLE
 from .utils import TAG_BTN_STY
 from .contrib.db.db_utils import ensure_connect_db
 from .config import sym2z
+from .utils import SetLogMessager
 
 # scaling eligible field names:
 SCALABLE_FIELD_NAMES = ('I','V','AMP','AMP1','AMP2','AMP3','I_TC')
@@ -240,6 +241,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     # eligible (True/False) to issue apply command
     sigApplyReady = pyqtSignal(bool)
+
+    # set log text color
+    sigSetLogColorChanged = pyqtSignal(QColor)
+    sigSetLogColorReset = pyqtSignal()
+    sigSetLogColorSkip = pyqtSignal()
+    sigSetLogColorSet = pyqtSignal()
 
     def __init__(self, version, config_dir=None):
         super(SettingsManagerWindow, self).__init__()
@@ -916,6 +923,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.log_dock.closed.connect(
             lambda: self.actionShow_Device_Settings_Log.setChecked(False))
         self.actionShow_Device_Settings_Log.setChecked(False)
+        self.sigSetLogColorChanged.connect(self.log_textEdit.setTextColor)
+        self.sigSetLogColorReset.connect(
+                lambda: self.log_textEdit.setTextColor(SetLogMessager.DEFAULT_TEXT_COLOR))
+        self.sigSetLogColorSkip.connect(
+                lambda: self.log_textEdit.setTextColor(SetLogMessager.SKIP_SET_TEXT_COLOR))
+        self.sigSetLogColorSet.connect(
+                lambda: self.log_textEdit.setTextColor(SetLogMessager.SET_TEXT_COLOR))
 
         # hide findtext_lbl and findtext_lineEdit
         for o in (self.findtext_lbl, self.findtext_lineEdit):
@@ -1773,7 +1787,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         scale_op = SCALE_OP_MAP[self.scale_op_cbb.currentIndex()]
 
         #
-        self.idx_px_list = []  # list to apply icon [(idx_src, px, log_msg)]
+        self.idx_px_list = []  # list to apply icon [(idx_src, px, setlogMessager)]
         settings_selected = m.get_selection()
 
         # show warning before applying
@@ -1826,16 +1840,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             t0 = time.time()
             fval_current_settings = fld.current_setting()
             if is_close(fval_current_settings, fval_to_set, self.ndigit):
-                msg = "[{0}] [Skip] Set {1:<20s} [{2}] from {3} to {4} (raw set value: {5}).".format(
-                    datetime.fromtimestamp(time.time()).strftime(TS_FMT),
-                    ename, fname, fval_current_settings, fval_to_set,
-                    new_fval0)
+                msger = SetLogMessager(ename, fname, fval_current_settings, fval_to_set, new_fval0, sop, sf, True)
             else:
                 fld.value = fval_to_set
-                msg = "[{0}] Set {1:<20s} [{2}] from {3} to {4} (raw set value: {5}).".format(
-                    datetime.fromtimestamp(time.time()).strftime(TS_FMT),
-                    ename, fname, fval_current_settings, fval_to_set,
-                    new_fval0)
+                msger = SetLogMessager(ename, fname, fval_current_settings, fval_to_set, new_fval0, sop, sf)
         except:
             px = self.fail_px
         else:
@@ -1843,13 +1851,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             dt = self.t_wait - (time.time() - t0)
             if dt > 0:
                 time.sleep(dt)
-        self.idx_px_list.append((idx_src, px, msg))
+        self.idx_px_list.append((idx_src, px, msger))
 
     @pyqtSlot(float, 'QString')
     def on_apply_settings_progress(self, idx_px_list, m, per, str_idx):
-        idx_src, _, msg = idx_px_list[-1]
+        idx_src, _, msger = idx_px_list[-1]
         m.hlrow(idx_src)
-        self.log_textEdit.append(msg)
+        if msger.is_skip_set():
+            self.sigSetLogColorSkip.emit()
+        else:
+            self.sigSetLogColorSet.emit()
+        self.log_textEdit.append(str(msger))
+        self.sigSetLogColorReset.emit()
         self.apply_pb.setValue(int(per * 100))
 
     def closeEvent(self, e):
