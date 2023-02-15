@@ -184,8 +184,8 @@ DATA_REFRESH_PERIOD = 10000 # milliseconds
 # MAX lines of setting logs
 MAX_LOG_LINES = 3000
 
-REVERT_TT_REASON = """<html><head/><body><p>Revert <span style=" color:#0055ff;">{n}</span> device settings (<span style=" color:#ff007f;">{op} {ov}</span>) changed at <span style=" color:#0055ff;">{ts} </span>for <span style=" color:#aa00ff;">{reason}</span>.</p></body></html>"""
-REVERT_TT_NO_REASON = """<html><head/><body><p>Revert <span style=" color:#0055ff;">{n}</span> device settings (<span style=" color:#ff007f;">{op} {ov}</span>) changed at <span style=" color:#0055ff;">{ts}</span>.</p></body></html>"""
+REVERT_TT_REASON = """<html><head/><body><p>Revert <span style=" color:#0055ff;">{n}</span> device settings (<span style=" color:#ff007f;">{op} {ov}</span>) changed at <span style=" color:#0055ff;">{ts} </span>for <span style=" color:#aa00ff;">{reason}</span>. Original snapshot: {snapshot}.</p></body></html>"""
+REVERT_TT_NO_REASON = """<html><head/><body><p>Revert <span style=" color:#0055ff;">{n}</span> device settings (<span style=" color:#ff007f;">{op} {ov}</span>) changed at <span style=" color:#0055ff;">{ts}</span>. Original snapshot: {snapshot}.</p></body></html>"""
 
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -4334,16 +4334,21 @@ p, li { white-space: pre-wrap; }
 
     def build_revert_button(self, apply_ts: str, apply_reason: str):
         # Build a button for revert after Apply is triggered.
+        n = self.effSetLogMsgContainer_dict.get(apply_ts).count_items()
+        if n == 0:
+            return None
         btn = QToolButton()
         btn.setIcon(QIcon(QPixmap(":/sm-icons/revert.png")))
         btn.setIconSize(QSize(PX_SIZE * 2, PX_SIZE * 2))
-        n = self.effSetLogMsgContainer_dict.get(apply_ts).count_items()
         op = SCALE_OP_MAP[self.scale_op_cbb.currentIndex()]
         ov = float(self.scaling_factor_lineEdit.text())
+        snp_name = self._current_snpdata.ts_as_str() + "-" + self._current_snpdata.ion_as_str()
         if apply_reason == '':
-            btn.setToolTip(REVERT_TT_NO_REASON.format(n=n, op=op, ov=ov, ts=apply_ts))
+            btn.setToolTip(REVERT_TT_NO_REASON.format(n=n, op=op, ov=ov, ts=apply_ts,
+                snapshot=snp_name))
         else:
-            btn.setToolTip(REVERT_TT_REASON.format(n=n, op=op, ov=ov, ts=apply_ts, reason=apply_reason))
+            btn.setToolTip(REVERT_TT_REASON.format(n=n, op=op, ov=ov, ts=apply_ts,
+                reason=apply_reason, snapshot=snp_name))
         btn.setText(f"{apply_ts}\n{apply_reason} ({op} {ov})")
         # btn.setAutoRaise(True)
         btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
@@ -4356,7 +4361,8 @@ p, li { white-space: pre-wrap; }
         """
         layout = self.revert_area.findChildren(FlowLayout)[0]
         btn = self.build_revert_button(apply_ts, apply_reason)
-        layout.addWidget(btn)
+        if btn is not None:
+            layout.addWidget(btn)
 
     @pyqtSlot()
     def on_purge_reverts(self):
