@@ -1815,10 +1815,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.applyer.daqStarted.connect(lambda: self.abort_apply_btn.setVisible(True))
         self.applyer.daqStarted.connect(
             partial(self.set_widgets_status_for_applying, 'START'))
-        self.applyer.meta_signal1.connect(self.on_update_setlog)
-        self.applyer.progressUpdated.connect(
-            partial(self.on_apply_settings_progress, self.idx_px_list,
-                    m.sourceModel()))
+        self.applyer.meta_signal1.connect(partial(self.on_update_setlog, m.sourceModel()))
+        self.applyer.progressUpdated.connect(self.on_apply_settings_progress)
         self.applyer.daqFinished.connect(
             partial(self.set_widgets_status_for_applying, 'STOP'))
         self.applyer.daqFinished.connect(
@@ -1847,10 +1845,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             t0 = time.perf_counter()
             fval_current_settings = fld.current_setting()
             if is_close(fval_current_settings, fval_to_set, self.ndigit):
-                msger = SetLogMessager(None, ename, fname, fval_current_settings, fval_to_set, new_fval0, sop, sf, True)
+                msger = SetLogMessager(None, ename, fname, fval_current_settings,
+                                       fval_to_set, new_fval0, sop, sf, idx_src, True)
             else:
                 fld.value = fval_to_set
-                msger = SetLogMessager(fld, ename, fname, fval_current_settings, fval_to_set, new_fval0, sop, sf)
+                msger = SetLogMessager(fld, ename, fname, fval_current_settings,
+                                       fval_to_set, new_fval0, sop, sf, idx_src)
         except:
             px = self.fail_px
         else:
@@ -1861,9 +1861,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 time.sleep(dt)
         self.idx_px_list.append((idx_src, px, msger))
 
-    def on_update_setlog(self, msger):
+    def on_update_setlog(self, m, msger):
         """Update set log.
         """
+        m.hlrow(msger._idx_src)
         if msger.is_skip_set():
             self.sigSetLogColorSkip.emit()
         else:
@@ -1873,12 +1874,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.log_textEdit.append(str(msger))
 
     @pyqtSlot(float, 'QString')
-    def on_apply_settings_progress(self, idx_px_list, m, per, str_idx):
+    def on_apply_settings_progress(self, per: float, str_idx: str):
         # note: time wait (self.t_wait) cannot be too small, otherwise, this routine does
         # not have enough time to proceed, thus happens with missed/duplicated log messagers.
-        # effSetLogMsgContainer updating should be put into apply_single routine!
-        idx_src, _, _ = idx_px_list[-1]
-        m.hlrow(idx_src)
+        # effSetLogMsgContainer updating should be put into apply_single routine, and
+        # progress update routine to on_setlog_changed method.
         self.apply_pb.setValue(int(per * 100))
 
     def closeEvent(self, e):
@@ -2929,7 +2929,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def set_widgets_status_for_applying(self, status):
         """Set widgets status for applying.
         """
-        w1 = (self.apply_btn, )
+        w1 = (self.apply_btn, self.revert_apply_btn, )
         [i.setDisabled(status == 'START') for i in w1]
 
     def set_widgets_status_for_ref_set(self, status):
@@ -4276,11 +4276,12 @@ p, li { white-space: pre-wrap; }
             # print(f"Revert {item._ename} [{item._fname}] to {item._old_set}")
             item._fld.value = item._old_set
             msger = SetLogMessager(None, item._ename, item._fname, item._new_set, item._old_set,
-                    item._old_set, '*', 1, is_revert=True, orig_ts=item._ts)
+                    item._old_set, '*', 1, item._idx_src, is_revert=True, orig_ts=item._ts)
             self._reverter.meta_signal1.emit(msger)
             time.sleep(self.t_wait)
 
-        def _on_update_revertlog(msger):
+        def _on_update_revertlog(m, msger):
+            m.hlrow(msger._idx_src)
             self.sigSetLogColorReset.emit()
             self.log_textEdit.append(str(msger))
 
@@ -4289,8 +4290,12 @@ p, li { white-space: pre-wrap; }
 
         self._reverter = DAQT(daq_func=_revert_single, daq_seq=self.effSetLogMsgContainer._items[::-1])
         self._reverter.daqStarted.connect(lambda: self.apply_pb.setVisible(True))
-        self._reverter.meta_signal1.connect(_on_update_revertlog)
+        self._reverter.daqStarted.connect(
+            partial(self.set_widgets_status_for_applying, 'START'))
+        self._reverter.meta_signal1.connect(partial(_on_update_revertlog, self._tv.model().sourceModel()))
         self._reverter.progressUpdated.connect(_on_revert_progress)
+        self._reverter.daqFinished.connect(
+            partial(self.set_widgets_status_for_applying, 'STOP'))
         self._reverter.daqFinished.connect(lambda: self.apply_pb.setVisible(False))
         self._reverter.daqFinished.connect(lambda: self.effSetLogMsgContainer.clear())
         self._reverter.daqFinished.connect(lambda: self.single_update_btn.clicked.emit())
