@@ -2080,6 +2080,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.total_show_number_lbl.setText(str(m.rowCount()))
         self.update_filter_completer(full_str)
+        # disable/enable apply button?
+        if len(m.get_selection()) > 0:
+            self.sigApplyReady.emit(True)
+        else:
+            self.sigApplyReady.emit(False)
 
     def __load_lattice(self, mach, segm, post_info=True):
         self._post_info = post_info
