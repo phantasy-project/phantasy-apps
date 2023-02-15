@@ -3423,6 +3423,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         _btn.setText("User")
         _btn.setCheckable(True)
         _btn.setToolTip("Filter by User")
+        _btn.setIcon(QIcon(QPixmap(":/sm-icons/person.png")))
+        _btn.setIconSize(QSize(PX_SIZE, PX_SIZE))
+        _btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         _btn.setPopupMode(QToolButton.MenuButtonPopup)
         _btn.toggled.connect(
             partial(_on_toggle_filter_btn, _btn))
