@@ -4358,6 +4358,17 @@ p, li { white-space: pre-wrap; }
         btn = self.build_revert_button(apply_ts, apply_reason)
         layout.addWidget(btn)
 
+    @pyqtSlot()
+    def on_purge_reverts(self):
+        """Purge all reverts.
+        """
+        for _, v in self.effSetLogMsgContainer_dict.items():
+            v.clear()
+        self.effSetLogMsgContainer_dict = {}
+        w = self.revert_area.takeWidget()
+        w.setParent(None)
+        self._init_revert_area()
+
 
 def get_snapshotdata(query_str: str, uri: str, column_name='datetime'):
     """Search and return a  object from the database defined by *uri*, where
