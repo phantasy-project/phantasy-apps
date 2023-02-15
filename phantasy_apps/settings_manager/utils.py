@@ -1902,7 +1902,7 @@ class EffSetLogMsgContainer(QObject):
     # if contains items
     sigHasItems = pyqtSignal(bool)
 
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         super(self.__class__, self).__init__()
         self.parent = parent
         self.clear()
@@ -1914,3 +1914,6 @@ class EffSetLogMsgContainer(QObject):
     def clear(self):
         self._items = []
         self.sigHasItems.emit(False)
+
+    def count_items(self):
+        return len(self._items)

@@ -184,6 +184,9 @@ DATA_REFRESH_PERIOD = 10000 # milliseconds
 # MAX lines of setting logs
 MAX_LOG_LINES = 3000
 
+REVERT_TT_REASON = """<html><head/><body><p>Revert <span style=" color:#0055ff;">{n}</span> device settings (<span style=" color:#ff007f;">{op} {ov}</span>) changed at <span style=" color:#0055ff;">{ts} </span>for <span style=" color:#aa00ff;">{reason}</span>.</p></body></html>"""
+REVERT_TT_NO_REASON = """<html><head/><body><p>Revert <span style=" color:#0055ff;">{n}</span> device settings (<span style=" color:#ff007f;">{op} {ov}</span>) changed at <span style=" color:#0055ff;">{ts}</span>.</p></body></html>"""
+
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # settings view filter button group status (or) changed --> update
@@ -921,9 +924,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_saved.connect(self.on_snp_saved)
 
         # log dock
-        self.effSetLogMsgContainer = EffSetLogMsgContainer(self)
-        self.effSetLogMsgContainer.sigHasItems.connect(self.revert_apply_btn.setVisible)
-        self.effSetLogMsgContainer.clear()
+
+        # dict of SetLogMessagers,
+        # key: timestamp of apply, value: EffSetLogMsgContainer
+        self.effSetLogMsgContainer_dict = {}
+        self._init_revert_area()
+
+        #
         self.log_dock.closed.connect(
             lambda: self.actionShow_Device_Settings_Log.setChecked(False))
         self.actionShow_Device_Settings_Log.setChecked(False)
@@ -1805,8 +1812,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     QMessageBox.Yes | QMessageBox.No)
         if r == QMessageBox.No:
             return
-        #
-        self.effSetLogMsgContainer.clear() # keep a list of SetLogMessagers (effective) for revert
+
+        # when apply is triggered, reason of why change device settings
+        _apply_ts = datetime.fromtimestamp(time.time()).strftime(TS_FMT)[:-3]
+        _apply_reason = self.apply_reason_lineEdit.text()
+        _effSetLogMsgContainer = self.effSetLogMsgContainer_dict.setdefault(_apply_ts,
+                                                                    EffSetLogMsgContainer())
+        _effSetLogMsgContainer.clear()
         #
         self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor,
                                              scale_op),
@@ -1815,7 +1827,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.applyer.daqStarted.connect(lambda: self.abort_apply_btn.setVisible(True))
         self.applyer.daqStarted.connect(
             partial(self.set_widgets_status_for_applying, 'START'))
-        self.applyer.meta_signal1.connect(partial(self.on_update_setlog, m.sourceModel()))
+        self.applyer.meta_signal1.connect(partial(self.on_update_setlog,
+                                                  _effSetLogMsgContainer,
+                                                  m.sourceModel()))
         self.applyer.progressUpdated.connect(self.on_apply_settings_progress)
         self.applyer.daqFinished.connect(
             partial(self.set_widgets_status_for_applying, 'STOP'))
@@ -1825,6 +1839,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             lambda: self.abort_apply_btn.setVisible(False))
         self.applyer.daqFinished.connect(
             lambda: self.single_update_btn.clicked.emit())
+        self.applyer.daqFinished.connect(lambda: self.apply_reason_lineEdit.clear())
+        self.applyer.daqFinished.connect(
+            partial(self.add_new_revert, _apply_ts, _apply_reason))
         self.applyer.start()
 
     def apply_single(self, sf: float, sop: str, tuple_idx_settings: tuple):
@@ -1861,7 +1878,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 time.sleep(dt)
         self.idx_px_list.append((idx_src, px, msger))
 
-    def on_update_setlog(self, m, msger):
+    def on_update_setlog(self, setLogMsgContainer, m, msger):
         """Update set log.
         """
         m.hlrow(msger._idx_src)
@@ -1870,7 +1887,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             self.sigSetLogColorSet.emit()
             # keep mesger for revert
-            self.effSetLogMsgContainer.append(msger)
+            setLogMsgContainer.append(msger)
         self.log_textEdit.append(str(msger))
 
     @pyqtSlot(float, 'QString')
@@ -2929,7 +2946,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def set_widgets_status_for_applying(self, status):
         """Set widgets status for applying.
         """
-        w1 = (self.apply_btn, self.revert_apply_btn, )
+        w1 = (self.apply_btn, )
         [i.setDisabled(status == 'START') for i in w1]
 
     def set_widgets_status_for_ref_set(self, status):
@@ -4269,9 +4286,13 @@ p, li { white-space: pre-wrap; }
         self.applyer.abort()
 
     @pyqtSlot()
-    def on_revert_apply(self):
+    def on_revert_apply(self, apply_ts: str, btn: QToolButton):
         """Revert settings changed by last "Apply".
         """
+        # title: name of apply
+        # btn: original toobutton where click singal is from
+        setLogMsgContainer = self.effSetLogMsgContainer_dict.get(apply_ts)
+
         def _revert_single(item: SetLogMessager):
             # print(f"Revert {item._ename} [{item._fname}] to {item._old_set}")
             item._fld.value = item._old_set
@@ -4288,18 +4309,54 @@ p, li { white-space: pre-wrap; }
         def _on_revert_progress(p: float, s: str):
             self.apply_pb.setValue(int(p * 100))
 
-        self._reverter = DAQT(daq_func=_revert_single, daq_seq=self.effSetLogMsgContainer._items[::-1])
+        self._reverter = DAQT(daq_func=_revert_single, daq_seq=setLogMsgContainer._items[::-1])
         self._reverter.daqStarted.connect(lambda: self.apply_pb.setVisible(True))
         self._reverter.daqStarted.connect(
             partial(self.set_widgets_status_for_applying, 'START'))
+        self._reverter.daqStarted.connect(lambda: btn.setDisabled(True))
         self._reverter.meta_signal1.connect(partial(_on_update_revertlog, self._tv.model().sourceModel()))
         self._reverter.progressUpdated.connect(_on_revert_progress)
         self._reverter.daqFinished.connect(
             partial(self.set_widgets_status_for_applying, 'STOP'))
+        self._reverter.daqFinished.connect(lambda: btn.setDisabled(False))
         self._reverter.daqFinished.connect(lambda: self.apply_pb.setVisible(False))
-        self._reverter.daqFinished.connect(lambda: self.effSetLogMsgContainer.clear())
+        self._reverter.daqFinished.connect(lambda: self.effSetLogMsgContainer_dict.get(apply_ts).clear())
         self._reverter.daqFinished.connect(lambda: self.single_update_btn.clicked.emit())
         self._reverter.start()
+
+    def _init_revert_area(self):
+        # layout for revert buttons
+        w = QWidget(self)
+        w.setContentsMargins(0, 6, 0, 0)
+        layout = FlowLayout()
+        w.setLayout(layout)
+        self.revert_area.setWidget(w)
+
+    def build_revert_button(self, apply_ts: str, apply_reason: str):
+        # Build a button for revert after Apply is triggered.
+        btn = QToolButton()
+        btn.setIcon(QIcon(QPixmap(":/sm-icons/revert.png")))
+        btn.setIconSize(QSize(PX_SIZE * 2, PX_SIZE * 2))
+        n = self.effSetLogMsgContainer_dict.get(apply_ts).count_items()
+        op = SCALE_OP_MAP[self.scale_op_cbb.currentIndex()]
+        ov = float(self.scaling_factor_lineEdit.text())
+        if apply_reason == '':
+            btn.setToolTip(REVERT_TT_NO_REASON.format(n=n, op=op, ov=ov, ts=apply_ts))
+        else:
+            btn.setToolTip(REVERT_TT_REASON.format(n=n, op=op, ov=ov, ts=apply_ts, reason=apply_reason))
+        btn.setText(f"{apply_ts}\n{apply_reason} ({op} {ov})")
+        # btn.setAutoRaise(True)
+        btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        btn.clicked.connect(partial(self.on_revert_apply, apply_ts, btn))
+        self.effSetLogMsgContainer_dict.get(apply_ts).sigHasItems.connect(btn.setVisible)
+        return btn
+
+    def add_new_revert(self, apply_ts: str, apply_reason: str):
+        """Build a new toolbutton for revert apply.
+        """
+        layout = self.revert_area.findChildren(FlowLayout)[0]
+        btn = self.build_revert_button(apply_ts, apply_reason)
+        layout.addWidget(btn)
 
 
 def get_snapshotdata(query_str: str, uri: str, column_name='datetime'):
