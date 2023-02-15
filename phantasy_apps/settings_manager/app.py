@@ -122,6 +122,7 @@ from .utils import TAG_BTN_STY
 from .contrib.db.db_utils import ensure_connect_db
 from .config import sym2z
 from .utils import SetLogMessager
+from .utils import EffSetLogMsgContainer
 
 # scaling eligible field names:
 SCALABLE_FIELD_NAMES = ('I','V','AMP','AMP1','AMP2','AMP3','I_TC')
@@ -920,6 +921,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_saved.connect(self.on_snp_saved)
 
         # log dock
+        self.effSetLogMsgContainer = EffSetLogMsgContainer(self)
+        self.effSetLogMsgContainer.sigHasItems.connect(self.revert_apply_btn.setVisible)
+        self.effSetLogMsgContainer.clear()
         self.log_dock.closed.connect(
             lambda: self.actionShow_Device_Settings_Log.setChecked(False))
         self.actionShow_Device_Settings_Log.setChecked(False)
@@ -1801,7 +1805,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     QMessageBox.Yes | QMessageBox.No)
         if r == QMessageBox.No:
             return
-
+        #
+        self.effSetLogMsgContainer.clear() # keep a list of SetLogMessagers (effective) for revert
+        #
         self.applyer = DAQT(daq_func=partial(self.apply_single, scaling_factor,
                                              scale_op),
                             daq_seq=settings_selected)
@@ -1809,6 +1815,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.applyer.daqStarted.connect(lambda: self.abort_apply_btn.setVisible(True))
         self.applyer.daqStarted.connect(
             partial(self.set_widgets_status_for_applying, 'START'))
+        self.applyer.meta_signal1.connect(self.on_update_setlog)
         self.applyer.progressUpdated.connect(
             partial(self.on_apply_settings_progress, self.idx_px_list,
                     m.sourceModel()))
@@ -1837,32 +1844,41 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             fval_to_set = new_fval0 + sf
         #
         try:
-            t0 = time.time()
+            t0 = time.perf_counter()
             fval_current_settings = fld.current_setting()
             if is_close(fval_current_settings, fval_to_set, self.ndigit):
-                msger = SetLogMessager(ename, fname, fval_current_settings, fval_to_set, new_fval0, sop, sf, True)
+                msger = SetLogMessager(None, ename, fname, fval_current_settings, fval_to_set, new_fval0, sop, sf, True)
             else:
                 fld.value = fval_to_set
-                msger = SetLogMessager(ename, fname, fval_current_settings, fval_to_set, new_fval0, sop, sf)
+                msger = SetLogMessager(fld, ename, fname, fval_current_settings, fval_to_set, new_fval0, sop, sf)
         except:
             px = self.fail_px
         else:
+            self.applyer.meta_signal1.emit(msger)
             px = self.done_px
-            dt = self.t_wait - (time.time() - t0)
+            dt = self.t_wait - (time.perf_counter() - t0)
             if dt > 0:
                 time.sleep(dt)
         self.idx_px_list.append((idx_src, px, msger))
 
-    @pyqtSlot(float, 'QString')
-    def on_apply_settings_progress(self, idx_px_list, m, per, str_idx):
-        idx_src, _, msger = idx_px_list[-1]
-        m.hlrow(idx_src)
+    def on_update_setlog(self, msger):
+        """Update set log.
+        """
         if msger.is_skip_set():
             self.sigSetLogColorSkip.emit()
         else:
             self.sigSetLogColorSet.emit()
+            # keep mesger for revert
+            self.effSetLogMsgContainer.append(msger)
         self.log_textEdit.append(str(msger))
-        self.sigSetLogColorReset.emit()
+
+    @pyqtSlot(float, 'QString')
+    def on_apply_settings_progress(self, idx_px_list, m, per, str_idx):
+        # note: time wait (self.t_wait) cannot be too small, otherwise, this routine does
+        # not have enough time to proceed, thus happens with missed/duplicated log messagers.
+        # effSetLogMsgContainer updating should be put into apply_single routine!
+        idx_src, _, _ = idx_px_list[-1]
+        m.hlrow(idx_src)
         self.apply_pb.setValue(int(per * 100))
 
     def closeEvent(self, e):
@@ -2682,8 +2698,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_device_selected(self, selections):
         # Selected elements/fields
         self._elem_selected = selections
-        # debug
-        # print(selections)
 
     @pyqtSlot(bool)
     def on_pv_mode_toggled(self, is_checked):
@@ -2835,7 +2849,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         printlog("DB puller is working...")
 
     def _on_db_pull_resultsReady(self, res):
-        self._snp_dock_list = res
+        self._snp_dock_list = [i for i in res if i is not None]
 
     def _on_db_pull_finished(self):
         n = len(self._snp_dock_list)
@@ -4245,6 +4259,34 @@ p, li { white-space: pre-wrap; }
         """Abort settings apply immediately.
         """
         self.applyer.abort()
+
+    @pyqtSlot()
+    def on_revert_apply(self):
+        """Revert settings changed by last "Apply".
+        """
+        def _revert_single(item: SetLogMessager):
+            # print(f"Revert {item._ename} [{item._fname}] to {item._old_set}")
+            item._fld.value = item._old_set
+            msger = SetLogMessager(None, item._ename, item._fname, item._new_set, item._old_set,
+                    item._old_set, '*', 1, is_revert=True, orig_ts=item._ts)
+            self._reverter.meta_signal1.emit(msger)
+            time.sleep(self.t_wait)
+
+        def _on_update_revertlog(msger):
+            self.sigSetLogColorReset.emit()
+            self.log_textEdit.append(str(msger))
+
+        def _on_revert_progress(p: float, s: str):
+            self.apply_pb.setValue(int(p * 100))
+
+        self._reverter = DAQT(daq_func=_revert_single, daq_seq=self.effSetLogMsgContainer._items[::-1])
+        self._reverter.daqStarted.connect(lambda: self.apply_pb.setVisible(True))
+        self._reverter.meta_signal1.connect(_on_update_revertlog)
+        self._reverter.progressUpdated.connect(_on_revert_progress)
+        self._reverter.daqFinished.connect(lambda: self.apply_pb.setVisible(False))
+        self._reverter.daqFinished.connect(lambda: self.effSetLogMsgContainer.clear())
+        self._reverter.daqFinished.connect(lambda: self.single_update_btn.clicked.emit())
+        self._reverter.start()
 
 
 def get_snapshotdata(query_str: str, uri: str, column_name='datetime'):

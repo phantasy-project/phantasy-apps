@@ -15,6 +15,7 @@ from fnmatch import translate
 from functools import partial
 from numpy.testing import assert_almost_equal
 
+from PyQt5.QtCore import QObject
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtCore import QPersistentModelIndex
@@ -1847,13 +1848,15 @@ class SetLogMessager:
     DEFAULT_TEXT_COLOR = QColor("#343A40") # .bg-dark
     SKIP_SET_TEXT_COLOR = QColor("#DC3545") # .bg-danger
     SET_TEXT_COLOR = QColor("#17A2B8") # .bg-info
-    def __init__(self, ename: str, fname: str, old_set: float,
+    def __init__(self, fld, ename: str, fname: str, old_set: float,
                  new_set: float, raw_set: float, set_op: str, set_fac: float,
-                 is_skip: bool = False):
+                 is_skip: bool = False, **kws):
+        # fld: CaField object
         # if is_skip, do nothing, else set
         # Device {ename} [{fname}] is set from {old_set} to {new_set},
         # {new_set} = {raw_set} * ({new_set} / {raw_set}), or:
         # {new_set} = {raw_set} + ({new_set} - {raw_set})
+        self._fld = fld
         self._ename = ename
         self._fname = fname
         self._old_set = old_set # current setting
@@ -1863,16 +1866,46 @@ class SetLogMessager:
         self._set_fac = set_fac # scaling factor or shifting amount
         self._is_skip = is_skip
         self._ts = time.time()
+        # revert
+        self._is_revert = kws.get('is_revert', False)
+        self._orig_ts = kws.get('orig_ts') # original timestamp when set is done.
 
     def is_skip_set(self):
         return self._is_skip
 
     def __str__(self):
-        msg = "[{0}] #_#Set {1:<20s} [{2}] from {3} to {4} ({5} {6} {7}).".format(
-            datetime.fromtimestamp(self._ts).strftime(TS_FMT),
-            self._ename, self._fname, self._old_set, self._new_set, self._raw_set,
-            self._set_op, self._set_fac)
         if self._is_skip:
-            return msg.replace('#_#', '[Skip] ')
+            msg = "[{0}] [Skip] {1:<20s} [{2}] from {3} to {4} ({5} {6} {7}).".format(
+                datetime.fromtimestamp(self._ts).strftime(TS_FMT),
+                self._ename, self._fname, self._old_set, self._new_set, self._raw_set,
+                self._set_op, self._set_fac)
+        elif self._is_revert:
+            msg = "[{0}] [Revert] {1:<20s} [{2}] from {3} to {4} -> [{5}].".format(
+                datetime.fromtimestamp(self._ts).strftime(TS_FMT),
+                self._ename, self._fname, self._old_set, self._new_set,
+                datetime.fromtimestamp(self._orig_ts).strftime(TS_FMT))
         else:
-            return msg.replace('#_#', '')
+            msg = "[{0}] [Set] {1:<20s} [{2}] from {3} to {4} ({5} {6} {7}).".format(
+                datetime.fromtimestamp(self._ts).strftime(TS_FMT),
+                self._ename, self._fname, self._old_set, self._new_set, self._raw_set,
+                self._set_op, self._set_fac)
+        return msg
+
+
+class EffSetLogMsgContainer(QObject):
+
+    # if contains items
+    sigHasItems = pyqtSignal(bool)
+
+    def __init__(self, parent):
+        super(self.__class__, self).__init__()
+        self.parent = parent
+        self.clear()
+
+    def append(self, o: SetLogMessager):
+        self._items.append(o)
+        self.sigHasItems.emit(True)
+
+    def clear(self):
+        self._items = []
+        self.sigHasItems.emit(False)
