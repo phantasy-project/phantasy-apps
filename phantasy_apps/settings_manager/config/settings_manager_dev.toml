@@ -43,6 +43,13 @@ TITLE = "Configurations for Settings Manager"
     EXEC = "correlation_visualizer"
     ARGS = "--config {ename}.json"
 
+
+[FILTER_BUTTONS]
+#[FILTER_BUTTONS.BTN1]
+
+[FILTER_GROUPS]
+#[FILTER_GROUPS.GRP1]
+
 # EPICS : do not use
 #[EPICS]
 #  CA_AUTO_ADDR_LIST = "NO"
