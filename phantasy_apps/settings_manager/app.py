@@ -3758,7 +3758,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         data.extract_blob()
         for i, irow in data.data.iterrows():
             ename, fname, val0 = irow.Name, irow.Field, irow.Setpoint
-            ref_st_pv = self._pv_map.get(f'{ename}-{fname}', None)
+            ref_st_pv = self._pv_map.get('refset').get(f'{ename}-{fname}', None)
             if ref_st_pv is not None:
                 msg = "[{0}] {1}[{2}]: Set {3} to {4}.".format(
                     datetime.fromtimestamp(time.time()).strftime(TS_FMT),
