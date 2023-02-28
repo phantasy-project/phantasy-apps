@@ -1,0 +1,14 @@
+# Configuration for Permission Manager app.
+
+title = "Configurations for Permission Manager"
+
+[default]
+use = "dev"
+
+[dev]
+CONF_PATH = "/home/tong/pm_dirpath.txt"
+ALLOWED_ROOT_PATH = "/home/tong/Dropbox"
+ADDITIONAL_GROUP_LIST = ["root", "docker"]
+
+[ftc]
+
