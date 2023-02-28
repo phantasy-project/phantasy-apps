@@ -7,7 +7,7 @@ use = "dev"
 
 [dev]
 CONF_PATH = "/home/tong/pm_dirpath.txt"
-ALLOWED_ROOT_PATH = "/home/tong/Dropbox"
+ALLOWED_ROOT_PATH = "/tmp"
 ADDITIONAL_GROUP_LIST = ["root", "docker"]
 
 [ftc]
