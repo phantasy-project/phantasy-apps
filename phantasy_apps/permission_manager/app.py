@@ -135,6 +135,8 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.perm_list, self.conf_path, self.additional_group_list, self.allowed_root_path,= \
                 read_config(configpath)
+        #
+        self.allowed_root_path_lineEdit.setText(self.allowed_root_path)
 
         self.sigPermListChanged.connect(self.on_perm_list_changed)
 

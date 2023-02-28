@@ -21,6 +21,23 @@ class Ui_MainWindow(object):
         self.verticalLayout.setContentsMargins(4, 10, 4, 4)
         self.verticalLayout.setSpacing(4)
         self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setContentsMargins(-1, 4, -1, 4)
+        self.horizontalLayout_2.setSpacing(4)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setObjectName("label_2")
+        self.horizontalLayout_2.addWidget(self.label_2)
+        self.allowed_root_path_lineEdit = QtWidgets.QLineEdit(
+            self.centralwidget)
+        font = QtGui.QFont()
+        font.setItalic(True)
+        self.allowed_root_path_lineEdit.setFont(font)
+        self.allowed_root_path_lineEdit.setReadOnly(True)
+        self.allowed_root_path_lineEdit.setObjectName(
+            "allowed_root_path_lineEdit")
+        self.horizontalLayout_2.addWidget(self.allowed_root_path_lineEdit)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.splitter = QtWidgets.QSplitter(self.centralwidget)
         self.splitter.setOrientation(QtCore.Qt.Vertical)
         self.splitter.setObjectName("splitter")
@@ -61,7 +78,7 @@ class Ui_MainWindow(object):
         self.live_area.setObjectName("live_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(
-            0, 0, 1292, 573))
+            0, 0, 1292, 526))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.live_area.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.live_area, 0, 0, 1, 1)
@@ -203,10 +220,12 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.label_2.setText(
+            _translate("MainWindow",
+                       "Manage the folder permissions recursively in"))
         self.live_groupBox.setTitle(_translate("MainWindow", "Live"))
         self.config_groupBox.setTitle(_translate("MainWindow", "Config"))
-        self.label.setText(_translate("MainWindow",
-                                      "Manage Folder Permission"))
+        self.label.setText(_translate("MainWindow", "Select a directory"))
         self.pushButton_2.setText(_translate("MainWindow", "Browse"))
         self.pushButton.setText(_translate("MainWindow", "Add"))
         self.pushButton_3.setText(_translate("MainWindow", "Remove"))
