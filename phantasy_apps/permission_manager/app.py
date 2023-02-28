@@ -14,6 +14,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QLabel, QCheckBox, QComboBox
+from PyQt5.QtWidgets import QTextEdit
 from PyQt5.QtWidgets import QSizePolicy, QGridLayout
 from PyQt5.QtWidgets import QFrame
 
@@ -24,6 +25,34 @@ from .ui.ui_app import Ui_MainWindow
 
 
 REFRESH_INTERVAL = 15000 # ms
+
+_HELP_TEXT = """
+<html>
+<body>
+<p style="white-space: pre-wrap; margin: 0px;"><span style="font-family: Cantarell; font-size: 12pt; font-style: italic;">Permission Manager</span><span style="font-family: Cantarell; font-size: 12pt;">&nbsp;is created to provide a convenient way to configure and monitor folder permissions recursively.</span></p>
+
+<p style="white-space: pre-wrap; margin: 0px;"><span style="font-family: Cantarell; font-size: 12pt;">The area of &quot;</span><span style="font-family: Cantarell; font-size: 12pt; font-weight: 600;">Live</span><span style="font-family: Cantarell; font-size: 12pt;">&quot; is for showing the live permissions of the folders being managed.</span></p>
+
+<p style="white-space: pre-wrap; margin: 0px;"><span style="font-family: Cantarell; font-size: 12pt;">The area of &quot;</span><span style="font-family: Cantarell; font-size: 12pt; font-weight: 600;">Config</span><span style="font-family: Cantarell; font-size: 12pt;">&quot; is for configuring the desired folder permissions through user interactions.</span></p>
+
+<p style="white-space: pre-wrap; margin: 0px;"><span style="font-family: Cantarell; font-size: 12pt;">If the live permission matches the configured one, a&nbsp;</span><span style="font-family: Cantarell; font-size: 12pt; font-weight: 600; color: rgb(0, 170, 0);">green</span><span style="font-family: Cantarell; font-size: 12pt; color: rgb(0, 170, 0);">&nbsp;</span><span style="font-family: Cantarell; font-size: 12pt;">check icon will be posted, otherwise, a&nbsp;</span><span style="font-family: Cantarell; font-size: 12pt; font-weight: 600; color: rgb(255, 0, 0);">red</span><span style="font-family: Cantarell; font-size: 12pt;">&nbsp;cross icon will be shown.</span></p>
+
+<ul>
+	<li style="white-space: pre-wrap; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;"><span style="font-family: Cantarell; font-size: 12pt;">To add a new folder: click the&nbsp;</span><span style="font-family: Cantarell; font-size: 12pt; font-style: italic;">Browse</span><span style="font-family: Cantarell; font-size: 12pt;">&nbsp;button, then click the&nbsp;</span><span style="font-family: Cantarell; font-size: 12pt; font-style: italic;">Add</span><span style="font-family: Cantarell; font-size: 12pt;">&nbsp;button.</span></li>
+	<li style="white-space: pre-wrap; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;"><span style="font-family: Cantarell; font-size: 12pt;">​</span>To remove a folder from the list: Copy or choose the folder path into the input box, then click the <span style="font-family: Cantarell; font-size: 12pt; font-style: italic;">Remove</span><span style="font-family: Cantarell; font-size: 12pt;">&nbsp;button.</span></li>
+	<li style="white-space: pre-wrap; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;"><span style="font-family: Cantarell; font-size: 12pt;">To c</span>hange the permissions: check/uncheck the permission checkboxes in the &quot;<span style="font-family: Cantarell; font-size: 12pt; font-weight: 600;">Config&quot;</span><span style="font-family: Cantarell; font-size: 12pt;">&nbsp;area for each folder path.</span></li>
+	<li style="white-space: pre-wrap; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;"><font face="Cantarell">To c</font>hange the group: select the wanted group name from the dropdown menu in the &quot;<span style="font-family: Cantarell; font-size: 12pt; font-weight: 600;">Config</span><span style="font-family: Cantarell; font-size: 12pt;">&quot; area for each folder path.</span></li>
+</ul>
+
+<p style="white-space: pre-wrap; margin: 0px;"><span style="font-family: Cantarell; font-size: 12pt; font-weight: 600;">Please note:</span></p>
+
+<ul>
+	<li style="white-space: pre-wrap; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;"><span style="font-family: Cantarell; font-size: 12pt; font-weight: 600;">​</span><span style="font-family: Cantarell; font-size: 12pt;">It will take up to&nbsp;</span><span style="font-family: Cantarell; font-size: 12pt; font-weight: 600;">1</span><span style="font-family: Cantarell; font-size: 12pt;">&nbsp;minute to see the updated live permissions.</span></li>
+	<li style="white-space: pre-wrap; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;"><span style="font-family: Cantarell; font-size: 12pt;">​</span>Read (R) and executable (X) usually come and go together, so do not just change a single one.</li>
+</ul>
+</body>
+</html>
+"""
 
 
 class _Perm:
@@ -132,6 +161,8 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
         self.setupUi(self)
         self.postInitUi()
 
+        # help
+        self._hint_dlg = None
         #
         self.perm_list, self.conf_path, self.additional_group_list, self.allowed_root_path,= \
                 read_config(configpath)
@@ -389,6 +420,23 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
             fp.writelines("\n".join((str(i) for i in self.perm_list)))
             fp.write("\n")
             fp.flush()
+
+    @pyqtSlot()
+    def onHint(self):
+        """Show a brief text as the help.
+        """
+        if self._hint_dlg is None:
+            self._hint_dlg = QTextEdit()
+            self._hint_dlg.setHtml(_HELP_TEXT)
+            self._hint_dlg.setReadOnly(True)
+            self._hint_dlg.setWindowTitle("Permission Manager - Help")
+            self._hint_dlg.setStyleSheet("""QTextEdit {
+                border-top: 0px solid gray;
+                border-bottom: 5px solid gray;
+                border-right: 5px solid gray;
+                border-left: 0px solid gray;}""")
+        self._hint_dlg.show()
+        self._hint_dlg.resize(880, 550)
 
 
 def get_perm(d: str):

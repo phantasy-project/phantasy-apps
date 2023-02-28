@@ -30,6 +30,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.label_2)
         self.allowed_root_path_lineEdit = QtWidgets.QLineEdit(
             self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.allowed_root_path_lineEdit.sizePolicy().hasHeightForWidth())
+        self.allowed_root_path_lineEdit.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setItalic(True)
         self.allowed_root_path_lineEdit.setFont(font)
@@ -37,6 +44,15 @@ class Ui_MainWindow(object):
         self.allowed_root_path_lineEdit.setObjectName(
             "allowed_root_path_lineEdit")
         self.horizontalLayout_2.addWidget(self.allowed_root_path_lineEdit)
+        self.toolButton = QtWidgets.QToolButton(self.centralwidget)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/_misc/help.png"), QtGui.QIcon.Normal,
+                       QtGui.QIcon.Off)
+        self.toolButton.setIcon(icon)
+        self.toolButton.setIconSize(QtCore.QSize(32, 32))
+        self.toolButton.setAutoRaise(True)
+        self.toolButton.setObjectName("toolButton")
+        self.horizontalLayout_2.addWidget(self.toolButton)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.splitter = QtWidgets.QSplitter(self.centralwidget)
         self.splitter.setOrientation(QtCore.Qt.Vertical)
@@ -78,7 +94,7 @@ class Ui_MainWindow(object):
         self.live_area.setObjectName("live_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(
-            0, 0, 1292, 526))
+            0, 0, 1292, 522))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.live_area.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.live_area, 0, 0, 1, 1)
@@ -152,10 +168,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.pushButton_2.sizePolicy().hasHeightForWidth())
         self.pushButton_2.setSizePolicy(sizePolicy)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/_misc/open.png"), QtGui.QIcon.Normal,
-                       QtGui.QIcon.Off)
-        self.pushButton_2.setIcon(icon)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/_misc/open.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.pushButton_2.setIcon(icon1)
         self.pushButton_2.setIconSize(QtCore.QSize(32, 32))
         self.pushButton_2.setObjectName("pushButton_2")
         self.horizontalLayout.addWidget(self.pushButton_2)
@@ -167,10 +183,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.pushButton.sizePolicy().hasHeightForWidth())
         self.pushButton.setSizePolicy(sizePolicy)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/_misc/add.png"), QtGui.QIcon.Normal,
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/_misc/add.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.pushButton.setIcon(icon1)
+        self.pushButton.setIcon(icon2)
         self.pushButton.setIconSize(QtCore.QSize(32, 32))
         self.pushButton.setObjectName("pushButton")
         self.horizontalLayout.addWidget(self.pushButton)
@@ -182,10 +198,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.pushButton_3.sizePolicy().hasHeightForWidth())
         self.pushButton_3.setSizePolicy(sizePolicy)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/_misc/remove.png"),
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/_misc/remove.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton_3.setIcon(icon2)
+        self.pushButton_3.setIcon(icon3)
         self.pushButton_3.setIconSize(QtCore.QSize(32, 32))
         self.pushButton_3.setObjectName("pushButton_3")
         self.horizontalLayout.addWidget(self.pushButton_3)
@@ -215,6 +231,7 @@ class Ui_MainWindow(object):
         self.pushButton_2.clicked.connect(MainWindow.onOpen)  # type: ignore
         self.pushButton.clicked.connect(MainWindow.onAdd)  # type: ignore
         self.pushButton_3.clicked.connect(MainWindow.onRemove)  # type: ignore
+        self.toolButton.clicked.connect(MainWindow.onHint)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -223,11 +240,47 @@ class Ui_MainWindow(object):
         self.label_2.setText(
             _translate("MainWindow",
                        "Manage the folder permissions recursively in"))
+        self.allowed_root_path_lineEdit.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Manage the folder permissions under pointed directory.</p></body></html>"
+            ))
+        self.toolButton.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Click for the help info of this app.</p></body></html>"
+            ))
+        self.toolButton.setText(_translate("MainWindow", "..."))
         self.live_groupBox.setTitle(_translate("MainWindow", "Live"))
+        self.live_area.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Live permissions for the folders being managed.</p></body></html>"
+            ))
         self.config_groupBox.setTitle(_translate("MainWindow", "Config"))
+        self.config_area.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Configure permissions for the folders being managed.</p></body></html>"
+            ))
         self.label.setText(_translate("MainWindow", "Select a directory"))
+        self.pushButton_2.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Choose a folder to be managed.</p></body></html>"
+            ))
         self.pushButton_2.setText(_translate("MainWindow", "Browse"))
+        self.pushButton.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Add the selected folder to the list of folders being managed.</p></body></html>"
+            ))
         self.pushButton.setText(_translate("MainWindow", "Add"))
+        self.pushButton_3.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Remove the folder from the list of folders being managed.</p></body></html>"
+            ))
         self.pushButton_3.setText(_translate("MainWindow", "Remove"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
