@@ -10,6 +10,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QLabel, QCheckBox, QComboBox
@@ -20,6 +21,9 @@ from phantasy_ui import BaseAppForm
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_open_directory
 from .ui.ui_app import Ui_MainWindow
+
+
+REFRESH_INTERVAL = 15000 # ms
 
 
 class _Perm:
@@ -137,7 +141,7 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.on_refresh)
-        self.timer.start(5000)
+        self.timer.start(REFRESH_INTERVAL)
         #
         self.sigPermListChanged.emit(self.perm_list)
         QTimer.singleShot(0, lambda:self.on_refresh())
@@ -239,8 +243,12 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
         w.setContentsMargins(0, 6, 0, 0)
         l = QGridLayout()
         # headers
-        headers = ("", "Path", "User", "R", "W", "X", "Group", "R", "W", "X",
-                   "|", "R", "W", "X")
+        if is_live:
+            headers = ("", "Path", "Match?", "User", "R", "W", "X", "Group", "R", "W", "X",
+                       "|", "R", "W", "X")
+        else:
+            headers = ("", "Path", "User", "R", "W", "X", "Group", "R", "W", "X",
+                       "|", "R", "W", "X")
         for j, s in enumerate(headers):
             if s == "|":
                 _w = QFrame(self)
@@ -262,6 +270,15 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
             _path_lbl = QLabel(_fullpath, self)
             _path_lbl.setTextInteractionFlags(
                     Qt.LinksAccessibleByMouse | Qt.TextSelectableByMouse)
+
+            if is_live:
+                # match?
+                _match_lbl = QLabel(self)
+                if d.is_set():
+                    _match_lbl.setPixmap(QPixmap(":/_misc/match.png").scaled(32, 32))
+                else:
+                    _match_lbl.setPixmap(QPixmap(":/_misc/not-match.png").scaled(32, 32))
+
             # user
             _u_lbl = QLabel(_u, self)
             # user, r,w,x
@@ -318,11 +335,20 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
                     _o.stateChanged.connect(partial(self.on_perm_conf_changed, d, _o_t))
 
             # place a row for d
-            for j, _w in enumerate((QLabel(str(i), self),
-                                    _path_lbl,
-                                    _u_lbl, _u_r, _u_w, _u_x,
-                                    _g_lbl, _g_r, _g_w, _g_x, _v_line,
-                                    _o_r, _o_w, _o_x)):
+            if is_live:
+                w_list = (QLabel(str(i), self),
+                          _path_lbl,
+                          _match_lbl,
+                          _u_lbl, _u_r, _u_w, _u_x,
+                          _g_lbl, _g_r, _g_w, _g_x, _v_line,
+                          _o_r, _o_w, _o_x)
+            else:
+                w_list = (QLabel(str(i), self),
+                          _path_lbl,
+                          _u_lbl, _u_r, _u_w, _u_x,
+                          _g_lbl, _g_r, _g_w, _g_x, _v_line,
+                          _o_r, _o_w, _o_x)
+            for j, _w in enumerate(w_list):
                 if j == 0:
                     _w.setStyleSheet("""
                     QLabel {
@@ -331,9 +357,6 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
                         border-right: 5px solid gray;
                     }""")
                 l.addWidget(_w, i, j)
-
-            # is set?
-            print(f"{d.fullpath} permission is set? {d.is_set()}")
         #
         _vspacer = QWidget()
         _vspacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
