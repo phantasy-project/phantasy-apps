@@ -4,6 +4,7 @@
 import os
 import subprocess
 import toml
+from functools import partial
 
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
@@ -21,6 +22,57 @@ from phantasy_ui import get_open_directory
 from .ui.ui_app import Ui_MainWindow
 
 
+class _Perm:
+    # line: <dirpath>;user,775, group
+    def __init__(self, line: str):
+        _path, _perm_s = line.split(";")
+        self.fullpath = os.path.abspath(os.path.expanduser(_path))
+        self.user, self.group, self.u_perm, self.g_perm, self.o_perm, _ = \
+                self._get_perm(self.fullpath, _perm_s)
+
+    def _get_perm(self, fullpath: str, perm_s: str):
+        """Get the config permissions of *fullpath* from *perm_s*, if perm_s is '', get the live perms.
+        """
+        if perm_s == '':
+            return self.get_live_perms()
+        else:
+            # path;user,775,group
+            _usr, perm_, _grp = perm_s.split(",")
+            bin_list = list(bin(int(perm_, 8)))[2:]
+            perm_u = [j if i == '1' else '-' for i, j in zip(bin_list[:3], list('rwx'))]
+            perm_g = [j if i == '1' else '-' for i, j in zip(bin_list[3:6], list('rwx'))]
+            perm_o = [j if i == '1' else '-' for i, j in zip(bin_list[6:], list('rwx'))]
+            return _usr, _grp.strip(), perm_u, perm_g, perm_o, fullpath
+
+    def is_set(self):
+        """Return True if live perm matches config perm, otherwise return False.
+        """
+        return self.get_live_perms() == self.get_conf_perms()
+
+    def __str__(self):
+        perm_list = self.u_perm + self.g_perm + self.o_perm
+        _s_bin = ''.join([{'r':'1','w':'1','x':'1','-':'0'}.get(i) for i in perm_list])
+        print(f"{self.fullpath};{self.user},{oct(int(_s_bin, 2))},{self.group}")
+        return f"{self.fullpath};{self.user},{oct(int(_s_bin, 2))},{self.group}"
+
+    def get_live_perms(self):
+        """Return a tuple of live folder permissions.
+        """
+        return get_perm(self.fullpath)
+
+    def get_conf_perms(self):
+        """Return a tuple of config folder permissions.
+        """
+        return self.user, self.group, self.u_perm, self.g_perm, self.o_perm, self.fullpath
+
+    def change_conf_perm(self, i: str, j: str, enabled: bool):
+        """Change the config permission for j bit of i, i could be 'u', 'g' or 'o',
+        'j' could be 'r', 'w' or 'x'.
+        """
+        _perm = {'u': self.u_perm, 'g': self.g_perm, 'o': self.o_perm}.get(i)
+        _perm[list('rwx').index(j)] = '-' if not enabled else j
+
+
 def read_config(configpath: str):
     _c = toml.load(configpath)
     _use_conf = _c[_c['default']['use']]
@@ -29,28 +81,31 @@ def read_config(configpath: str):
     allowed_root_path = _use_conf['ALLOWED_ROOT_PATH']
     additional_group_list = _use_conf['ADDITIONAL_GROUP_LIST']
 
-    dirpath_list = []
+    perm_list = []
     if not os.path.isfile(conf_path):
         with open(conf_path, "w") as fp:
             fp.write("# A list of directory path for Permission Manager.\n")
+            fp.flush()
         os.chmod(conf_path, 0o664)
     else:
         for line in open(conf_path, "r"):
             if line.startswith("#"):
                 continue
-            _pth = os.path.abspath(os.path.expanduser(line.strip()))
+            _pth = os.path.abspath(os.path.expanduser(line.split(';')[0].strip()))
             if not _pth.startswith(allowed_root_path):
                 print(f"Skip {_pth} not in {allowed_root_path}")
                 continue
-            dirpath_list.append(_pth)
+            perm_list.append(_Perm(line))
 
-    print( dirpath_list, conf_path, additional_group_list, allowed_root_path)
-    return dirpath_list, conf_path, additional_group_list, allowed_root_path
+    print( perm_list, conf_path, additional_group_list, allowed_root_path)
+    return perm_list, conf_path, additional_group_list, allowed_root_path
 
 
 class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
 
-    sigDirPathListChanged = pyqtSignal(list)
+    # a list of dirpaths for permission management configs
+    # each one is _Perm instance
+    sigPermListChanged = pyqtSignal(list)
 
     def __init__(self, version: str, configpath: str):
         super(PermissionManagerWindow, self).__init__()
@@ -74,17 +129,17 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
         self.postInitUi()
 
         #
-        self.dirpath_list, self.conf_path, self.additional_group_list, self.allowed_root_path,= \
+        self.perm_list, self.conf_path, self.additional_group_list, self.allowed_root_path,= \
                 read_config(configpath)
 
-        self.sigDirPathListChanged.connect(self.on_dirpath_list_changed)
+        self.sigPermListChanged.connect(self.on_perm_list_changed)
 
         #
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.on_refresh)
         self.timer.start(5000)
         #
-        self.sigDirPathListChanged.emit(self.dirpath_list)
+        self.sigPermListChanged.emit(self.perm_list)
         QTimer.singleShot(0, lambda:self.on_refresh())
         #
 
@@ -97,11 +152,13 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
             self.dirpath_lineEdit.setText(folderpath)
         else:
             QMessageBox.warning(self, "Choose a Folder",
-                                f"Please choose a folder under: '{allowed_root_path}'",
+                                f"Please choose a folder under: '{self.allowed_root_path}'",
                                 QMessageBox.Ok, QMessageBox.Ok)
             return
 
     def _get_folderpath(self):
+        if self.dirpath_lineEdit.text() == '':
+            return None
         folderpath = os.path.abspath(os.path.expanduser(
                 self.dirpath_lineEdit.text().strip()))
         if os.path.isdir(folderpath):
@@ -114,21 +171,22 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def onAdd(self):
-        """Add a folderpath.
+        """Add a folderpath with live perms into the conf dirpath file.
         """
         folderpath = self._get_folderpath()
         if folderpath is None:
             return
-        if folderpath in self.dirpath_list:
+        if folderpath in [i.fullpath for i in self.perm_list]:
             QMessageBox.warning(self, "Add Folderpath",
                     f"'{folderpath}' is already added and being managed.",
                     QMessageBox.Ok, QMessageBox.Ok)
         else:
-            self.dirpath_list.append(folderpath)
+            _perm = _Perm(f"{folderpath};")
+            self.perm_list.append(_perm)
             with open(self.conf_path, "a") as fp:
-                fp.write(folderpath)
-                fp.write("\n")
-            self.sigDirPathListChanged.emit(self.dirpath_list)
+                fp.write(str(_perm) + "\n")
+                fp.flush()
+            self.sigPermListChanged.emit(self.perm_list)
 
     @pyqtSlot()
     def onRemove(self):
@@ -137,32 +195,43 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
         folderpath = self._get_folderpath()
         if folderpath is None:
             return
-        if folderpath not in self.dirpath_list:
+        if folderpath not in [i.fullpath for i in self.perm_list]:
             QMessageBox.warning(self, "Remove Folderpath",
                     f"'{folderpath}' is not being managed.",
                     QMessageBox.Ok, QMessageBox.Ok)
         else:
-            self.dirpath_list.remove(folderpath)
-            self.sigDirPathListChanged.emit(self.dirpath_list)
-            with open(self.conf_path, "w") as fp:
-                fp.write("# A list of directory path for Permission Manager.\n")
-                fp.writelines("\n".join(self.dirpath_list))
+            for i, o in enumerate(self.perm_list):
+                if o.fullpath == folderpath:
+                    self.perm_list.pop(i)
+                    del o
+            self.write_conf()
+            self.sigPermListChanged.emit(self.perm_list)
 
     @pyqtSlot()
     def on_refresh(self):
         """Refresh the dirpath permissions.
         """
         print("Refresh...")
-        self._layout_paths(self.dirpath_list, self.live_area, enable_checkbox=False)
+        self._layout_paths(self.perm_list, self.live_area, is_live=True)
 
     @pyqtSlot(list)
-    def on_dirpath_list_changed(self, dirpath_list: list):
-        """Post the dirpath permission info config.
+    def on_perm_list_changed(self, perm_list: list):
+        """Post the dirpath permission info config, not live permissions.
         """
-        self._layout_paths(dirpath_list, self.config_area, enable_checkbox=True,
+        self._layout_paths(perm_list, self.config_area, is_live=False,
                            groups=self.additional_group_list)
 
-    def _layout_paths(self, dirpath_list, area, enable_checkbox, groups=None):
+    def _layout_paths(self, perm_list, area, is_live=False, groups=None):
+        """List all the dirpaths with config management rules, each folderpath one line.
+
+        # config_area: for configurations
+        # live_area: for live permissions
+        """
+        if is_live:
+            enable_checkbox = False
+        else:
+            enable_checkbox = True # support change checkbox for permission
+        #
         w = area.takeWidget()
         w.setParent(None)
 
@@ -183,76 +252,118 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
             l.addWidget(_w, 0, j)
 
         i = 1
-        for i, d in enumerate(dirpath_list, 1):
-            _u, _g, _u_perm, _g_perm, _o_perm, _fullpath = get_perm(d)
-            # print(_fullpath, _u, _g, _u_perm, _g_perm, _o_perm)
+        for i, d in enumerate(perm_list, 1):
+            if is_live:
+                _u, _g, _u_perm, _g_perm, _o_perm, _fullpath = d.get_live_perms()
+            else:
+                _u, _g, _u_perm, _g_perm, _o_perm, _fullpath = d.get_conf_perms()
 
+            # dirpath
             _path_lbl = QLabel(_fullpath, self)
             _path_lbl.setTextInteractionFlags(
                     Qt.LinksAccessibleByMouse | Qt.TextSelectableByMouse)
-
+            # user
             _u_lbl = QLabel(_u, self)
+            # user, r,w,x
             _u_r = QCheckBox(self)
             _u_r.setChecked(_u_perm[0]=='r')
-            _u_r.setEnabled(enable_checkbox)
             _u_w = QCheckBox(self)
             _u_w.setChecked(_u_perm[1]=='w')
-            _u_w.setEnabled(enable_checkbox)
             _u_x = QCheckBox(self)
             _u_x.setChecked(_u_perm[2]=='x')
-            _u_x.setEnabled(enable_checkbox)
 
+            # group
             if groups is not None:
                 if _g not in groups:
                     groups.insert(0, _g)
                 _g_lbl = QComboBox(self)
                 _g_lbl.addItems(groups)
                 _g_lbl.setCurrentText(_g)
+                _g_lbl.currentTextChanged.connect(partial(self.on_group_conf_changed, d))
             else:
                 _g_lbl = QLabel(_g, self)
 
+            # group, r,w,x
             _g_r = QCheckBox(self)
             _g_r.setChecked(_g_perm[0]=='r')
-            _g_r.setEnabled(enable_checkbox)
             _g_w = QCheckBox(self)
             _g_w.setChecked(_g_perm[1]=='w')
-            _g_w.setEnabled(enable_checkbox)
             _g_x = QCheckBox(self)
             _g_x.setChecked(_g_perm[2]=='x')
-            _g_x.setEnabled(enable_checkbox)
 
+            # vline before other perms.
+            _v_line = QFrame(self)
+            _v_line.setFrameShape(QFrame.VLine)
+            _v_line.setFrameShadow(QFrame.Plain)
+
+            # other, r,w,x
             _o_r = QCheckBox(self)
             _o_r.setChecked(_o_perm[0]=='r')
-            _o_r.setEnabled(enable_checkbox)
             _o_w = QCheckBox(self)
             _o_w.setChecked(_o_perm[1]=='w')
-            _o_w.setEnabled(enable_checkbox)
             _o_x = QCheckBox(self)
             _o_x.setChecked(_o_perm[2]=='x')
-            _o_x.setEnabled(enable_checkbox)
 
-            _o_line = QFrame(self)
-            _o_line.setFrameShape(QFrame.VLine)
-            _o_line.setFrameShadow(QFrame.Plain)
+            # config checkboxes
+            for _o, _o_t in zip(
+                    (_u_r, _u_w, _u_x,
+                     _g_r, _g_w, _g_x,
+                     _o_r, _o_w, _o_x),
+                    (('u', 'r'), ('u', 'w'), ('u', 'x'),
+                     ('g', 'r'), ('g', 'w'), ('g', 'x'),
+                     ('o', 'r'), ('o', 'w'), ('o', 'x'))
+                ):
+                _o.setEnabled(enable_checkbox)
+                if enable_checkbox: # support change perms
+                    _o.stateChanged.connect(partial(self.on_perm_conf_changed, d, _o_t))
+
+            # place a row for d
             for j, _w in enumerate((QLabel(str(i), self),
                                     _path_lbl,
                                     _u_lbl, _u_r, _u_w, _u_x,
-                                    _g_lbl, _g_r, _g_w, _g_x,
-                                    _o_line, _o_r, _o_w, _o_x)):
+                                    _g_lbl, _g_r, _g_w, _g_x, _v_line,
+                                    _o_r, _o_w, _o_x)):
                 if j == 0:
                     _w.setStyleSheet("""
                     QLabel {
+                        font-family: monospace;
                         border-top: 0px solid gray;
                         border-right: 5px solid gray;
-                    }
-                    """)
+                    }""")
                 l.addWidget(_w, i, j)
+
+            # is set?
+            print(f"{d.fullpath} permission is set? {d.is_set()}")
         #
         _vspacer = QWidget()
         _vspacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         l.addWidget(_vspacer, i + 1, 1)
         w.setLayout(l)
         area.setWidget(w)
+
+    @pyqtSlot('QString')
+    def on_group_conf_changed(self, perm: _Perm, group: str):
+        """The group is changed.
+        """
+        print(f"{perm.fullpath} group is changed from {perm.group} to {group}")
+        perm.group = group
+        self.write_conf()
+
+    @pyqtSlot(int)
+    def on_perm_conf_changed(self, perm: _Perm, perm_bit_tuple: tuple, state: int):
+        """Change the config permission of *perm* for *perm_bit_tuple*,
+        perm_bit_tuple is a tuple of e.g. ('i', 'j'), i could be 'u','g','o', j could be 'r','w','x'.
+        """
+        perm.change_conf_perm(*perm_bit_tuple, state==Qt.Checked)
+        self.write_conf()
+
+    def write_conf(self):
+         # update file
+        with open(self.conf_path, "w") as fp:
+            fp.write("# A list of directory path for Permission Manager.\n")
+            fp.writelines("\n".join((str(i) for i in self.perm_list)))
+            fp.write("\n")
+            fp.flush()
 
 
 def get_perm(d: str):
