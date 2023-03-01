@@ -15,6 +15,58 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1316, 873)
+        MainWindow.setStyleSheet(
+            "QCheckBox::indicator {\n"
+            "    width: 16px;\n"
+            "    height: 16px;\n"
+            "}\n"
+            "QCheckBox::indicator::unchecked {\n"
+            "    image: url(:/_misc/uncheck-square.png);\n"
+            "}\n"
+            "QCheckBox::indicator::checked {\n"
+            "    image: url(:/_misc/check-square-fill.png);\n"
+            "}\n"
+            "QAbstractItemView::indicator::unchecked {\n"
+            "    image: url(:/_misc/uncheck-square.png);\n"
+            "}\n"
+            "QAbstractItemView::indicator::checked {\n"
+            "    image: url(:/_misc/check-square-fill.png);\n"
+            "}\n"
+            "\n"
+            "/*Splitter*/\n"
+            "QSplitter::handle {\n"
+            "    height: 6px;\n"
+            "    width: 6px;\n"
+            "}\n"
+            "QSplitter::handle:horizontal {\n"
+            "    image: url(:/_misc/separator-v.png);\n"
+            "}\n"
+            "QSplitter::handle:horizontal:pressed, QSplitter::handle:horizontal:hover {\n"
+            "    image: url(:/_misc/separator-v-pressed.png);\n"
+            "}\n"
+            "QSplitter::handle:vertical {\n"
+            "    image: url(:/_misc/separator-h.png);\n"
+            "}\n"
+            "QSplitter::handle:vertical:pressed, QSplitter::handle:vertical:hover {\n"
+            "    image: url(:/_misc/separator-h-pressed.png);\n"
+            "}\n"
+            "\n"
+            "QMainWindow::separator {\n"
+            "    width: 6px;\n"
+            "    height: 6px;\n"
+            "}\n"
+            "QMainWindow::separator:horizontal {\n"
+            "    image: url(:/_misc/separator-h.png);\n"
+            "}\n"
+            "QMainWindow::separator:horizontal:hover, QMainWindow::separator:horizontal:pressed {\n"
+            "    image: url(:/_misc/separator-h-pressed.png);\n"
+            "}\n"
+            "QMainWindow::separator:vertical {\n"
+            "    image: url(:/_misc/separator-v.png);\n"
+            "}\n"
+            "QMainWindow::separator:vertical:hover, QMainWindow::separator:vertical:pressed {\n"
+            "    image: url(:/_misc/separator-v-pressed.png);\n"
+            "}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -94,7 +146,7 @@ class Ui_MainWindow(object):
         self.live_area.setObjectName("live_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(
-            0, 0, 1292, 522))
+            0, 0, 1292, 521))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.live_area.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.live_area, 0, 0, 1, 1)
