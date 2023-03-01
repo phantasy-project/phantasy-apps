@@ -25,7 +25,7 @@ from phantasy_ui import get_open_directory
 from .ui.ui_app import Ui_MainWindow
 
 
-REFRESH_INTERVAL = 15000 # ms
+REFRESH_INTERVAL = 5000 # ms
 
 _HELP_TEXT = """
 <html>
@@ -86,7 +86,6 @@ class _Perm:
     def __str__(self):
         perm_list = self.u_perm + self.g_perm + self.o_perm
         _s_bin = ''.join([{'r':'1','w':'1','x':'1','-':'0'}.get(i) for i in perm_list])
-        print(f"{self.fullpath};{self.user},{oct(int(_s_bin, 2))},{self.group}")
         return f"{self.fullpath};{self.user},{oct(int(_s_bin, 2))},{self.group}"
 
     def get_live_perms(self):
@@ -131,7 +130,6 @@ def read_config(configpath: str):
                 continue
             perm_list.append(_Perm(line))
 
-    print( perm_list, conf_path, additional_group_list, allowed_root_path)
     return perm_list, conf_path, additional_group_list, allowed_root_path
 
 
@@ -402,7 +400,6 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_group_conf_changed(self, perm: _Perm, group: str):
         """The group is changed.
         """
-        print(f"{perm.fullpath} group is changed from {perm.group} to {group}")
         perm.group = group
         self.write_conf()
 
