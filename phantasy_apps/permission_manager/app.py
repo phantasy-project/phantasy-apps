@@ -5,6 +5,7 @@ import os
 import subprocess
 import toml
 from functools import partial
+from pathlib import Path
 
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
@@ -125,7 +126,7 @@ def read_config(configpath: str):
             if line.startswith("#"):
                 continue
             _pth = os.path.abspath(os.path.expanduser(line.split(';')[0].strip()))
-            if not _pth.startswith(allowed_root_path):
+            if Path(allowed_root_path) not in Path(_pth).parents:
                 print(f"Skip {_pth} not in {allowed_root_path}")
                 continue
             perm_list.append(_Perm(line))
@@ -185,7 +186,7 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
         """Open a folder.
         """
         folderpath = get_open_directory(self)
-        if folderpath.startswith(self.allowed_root_path):
+        if Path(self.allowed_root_path) in Path(folderpath).parents:
             self.dirpath_lineEdit.setText(folderpath)
         else:
             QMessageBox.warning(self, "Choose a Folder",
@@ -248,7 +249,6 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_refresh(self):
         """Refresh the dirpath permissions.
         """
-        print("Refresh...")
         self._layout_paths(self.perm_list, self.live_area, is_live=True)
 
     @pyqtSlot(list)
@@ -324,10 +324,9 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
 
             # group
             if groups is not None:
-                if _g not in groups:
-                    groups.insert(0, _g)
                 _g_lbl = QComboBox(self)
                 _g_lbl.addItems(groups)
+                _g_lbl.addItem(_u)
                 _g_lbl.setCurrentText(_g)
                 _g_lbl.currentTextChanged.connect(partial(self.on_group_conf_changed, d))
             else:
