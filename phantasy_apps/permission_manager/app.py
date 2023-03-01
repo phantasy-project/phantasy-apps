@@ -80,7 +80,9 @@ class _Perm:
     def is_set(self):
         """Return True if live perm matches config perm, otherwise return False.
         """
-        return self.get_live_perms() == self.get_conf_perms()
+        _l = str(self.get_live_perms()).replace('s', 'x')
+        _r = str(self.get_conf_perms()).replace('s', 'x')
+        return _l == _r
 
     def __str__(self):
         perm_list = self.u_perm + self.g_perm + self.o_perm
@@ -319,7 +321,7 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
             _u_w = QCheckBox(self)
             _u_w.setChecked(_u_perm[1]=='w')
             _u_x = QCheckBox(self)
-            _u_x.setChecked(_u_perm[2]=='x')
+            _u_x.setChecked(_u_perm[2] in ('x', 's'))
 
             # group
             if groups is not None:
@@ -337,7 +339,7 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
             _g_w = QCheckBox(self)
             _g_w.setChecked(_g_perm[1]=='w')
             _g_x = QCheckBox(self)
-            _g_x.setChecked(_g_perm[2]=='x')
+            _g_x.setChecked(_g_perm[2] in ('x', 's'))
 
             # vline before other perms.
             _v_line = QFrame(self)
@@ -350,7 +352,7 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
             _o_w = QCheckBox(self)
             _o_w.setChecked(_o_perm[1]=='w')
             _o_x = QCheckBox(self)
-            _o_x.setChecked(_o_perm[2]=='x')
+            _o_x.setChecked(_o_perm[2] in ('x', 's'))
 
             # config checkboxes
             for _o, _o_t in zip(
