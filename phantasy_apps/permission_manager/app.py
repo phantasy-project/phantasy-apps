@@ -85,7 +85,7 @@ class _Perm:
 
     def __str__(self):
         perm_list = self.u_perm + self.g_perm + self.o_perm
-        _s_bin = ''.join([{'r':'1','w':'1','x':'1','-':'0'}.get(i) for i in perm_list])
+        _s_bin = ''.join([{'r':'1','w':'1','x':'1','-':'0','s':'1'}.get(i) for i in perm_list])
         return f"{self.fullpath};{self.user},{oct(int(_s_bin, 2))},{self.group}"
 
     def get_live_perms(self):
