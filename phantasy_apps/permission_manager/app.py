@@ -20,7 +20,6 @@ from PyQt5.QtWidgets import QSizePolicy, QGridLayout
 from PyQt5.QtWidgets import QFrame
 
 from phantasy_ui import BaseAppForm
-from phantasy_ui import get_open_filename
 from phantasy_ui import get_open_directory
 from .ui.ui_app import Ui_MainWindow
 
@@ -183,7 +182,7 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
     def onOpen(self):
         """Open a folder.
         """
-        folderpath = get_open_directory(self)
+        folderpath = get_open_directory(self, cdir=self.allowed_root_path)
         if Path(self.allowed_root_path) in Path(folderpath).parents:
             self.dirpath_lineEdit.setText(folderpath)
         else:
