@@ -11,4 +11,6 @@ ALLOWED_ROOT_PATH = "/tmp"
 ADDITIONAL_GROUP_LIST = ["root", "docker"]
 
 [ftc]
-
+CONF_PATH = "/files/shared/ap/HLA/pm_dirpath.txt"
+ALLOWED_ROOT_PATH = "/files/shared/ap"
+ADDITIONAL_GROUP_LIST = ["apg", "phyopsg"]
