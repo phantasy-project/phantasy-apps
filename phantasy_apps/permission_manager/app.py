@@ -225,6 +225,7 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
                 fp.write(str(_perm) + "\n")
                 fp.flush()
             self.sigPermListChanged.emit(self.perm_list)
+        self.dirpath_lineEdit.clear()
 
     @pyqtSlot()
     def onRemove(self):
@@ -244,6 +245,7 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
                     del o
             self.write_conf()
             self.sigPermListChanged.emit(self.perm_list)
+        self.dirpath_lineEdit.clear()
 
     @pyqtSlot()
     def on_refresh(self):
