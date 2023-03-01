@@ -6,8 +6,12 @@
 # Tong Zhang <zhangt@frib.msu.edu>
 # 2023-02-28 17:06:54 EST
 #
+# The FTC app config is at: /files/shared/ap/HLA/permMgmt/pm-config.toml
+# pm_dirpath.txt keeps track of the folder paths for permission management.
+#
 
-DIRPATH_CONF_FILE=/home/tong/pm_dirpath.txt
+DIRPATH_CONF_FILE=/files/shared/ap/HLA/permMgmt/pm_dirpath.txt
+# DIRPATH_CONF_FILE=/home/tong/pm_dirpath.txt
 
 /bin/grep -v '^#' ${DIRPATH_CONF_FILE} | /bin/grep -v "^$" |
 while read line; do
