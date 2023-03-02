@@ -6,7 +6,7 @@ title = "Configurations for Permission Manager"
 use = "dev"
 
 [dev]
-CONF_PATH = "/home/tong/pm_dirpath.txt"
+CONF_PATH = "/home/tong/test/pm_dirpath.txt"
 ALLOWED_ROOT_PATH = "/tmp"
 ADDITIONAL_GROUP_LIST = ["root", "docker"]
 
