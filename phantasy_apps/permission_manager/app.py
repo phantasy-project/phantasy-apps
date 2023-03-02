@@ -27,31 +27,21 @@ from .ui.ui_app import Ui_MainWindow
 REFRESH_INTERVAL = 5000 # ms
 
 _HELP_TEXT = """
-<html>
-<body>
-<p style="white-space: pre-wrap; margin: 0px;"><span style="font-family: Cantarell; font-size: 12pt; font-style: italic;">Permission Manager</span><span style="font-family: Cantarell; font-size: 12pt;">&nbsp;is created to provide a convenient way to configure and monitor folder permissions recursively.</span></p>
-
-<p style="white-space: pre-wrap; margin: 0px;"><span style="font-family: Cantarell; font-size: 12pt;">The area of &quot;</span><span style="font-family: Cantarell; font-size: 12pt; font-weight: 600;">Live</span><span style="font-family: Cantarell; font-size: 12pt;">&quot; is for showing the live permissions of the folders being managed.</span></p>
-
-<p style="white-space: pre-wrap; margin: 0px;"><span style="font-family: Cantarell; font-size: 12pt;">The area of &quot;</span><span style="font-family: Cantarell; font-size: 12pt; font-weight: 600;">Config</span><span style="font-family: Cantarell; font-size: 12pt;">&quot; is for configuring the desired folder permissions through user interactions.</span></p>
-
-<p style="white-space: pre-wrap; margin: 0px;"><span style="font-family: Cantarell; font-size: 12pt;">If the live permission matches the configured one, a&nbsp;</span><span style="font-family: Cantarell; font-size: 12pt; font-weight: 600; color: rgb(0, 170, 0);">green</span><span style="font-family: Cantarell; font-size: 12pt; color: rgb(0, 170, 0);">&nbsp;</span><span style="font-family: Cantarell; font-size: 12pt;">check icon will be posted, otherwise, a&nbsp;</span><span style="font-family: Cantarell; font-size: 12pt; font-weight: 600; color: rgb(255, 0, 0);">red</span><span style="font-family: Cantarell; font-size: 12pt;">&nbsp;cross icon will be shown.</span></p>
-
-<ul>
-	<li style="white-space: pre-wrap; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;"><span style="font-family: Cantarell; font-size: 12pt;">To add a new folder: click the&nbsp;</span><span style="font-family: Cantarell; font-size: 12pt; font-style: italic;">Browse</span><span style="font-family: Cantarell; font-size: 12pt;">&nbsp;button, then click the&nbsp;</span><span style="font-family: Cantarell; font-size: 12pt; font-style: italic;">Add</span><span style="font-family: Cantarell; font-size: 12pt;">&nbsp;button.</span></li>
-	<li style="white-space: pre-wrap; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;"><span style="font-family: Cantarell; font-size: 12pt;">​</span>To remove a folder from the list: Copy or choose the folder path into the input box, then click the <span style="font-family: Cantarell; font-size: 12pt; font-style: italic;">Remove</span><span style="font-family: Cantarell; font-size: 12pt;">&nbsp;button.</span></li>
-	<li style="white-space: pre-wrap; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;"><span style="font-family: Cantarell; font-size: 12pt;">To c</span>hange the permissions: check/uncheck the permission checkboxes in the &quot;<span style="font-family: Cantarell; font-size: 12pt; font-weight: 600;">Config&quot;</span><span style="font-family: Cantarell; font-size: 12pt;">&nbsp;area for each folder path.</span></li>
-	<li style="white-space: pre-wrap; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;"><font face="Cantarell">To c</font>hange the group: select the wanted group name from the dropdown menu in the &quot;<span style="font-family: Cantarell; font-size: 12pt; font-weight: 600;">Config</span><span style="font-family: Cantarell; font-size: 12pt;">&quot; area for each folder path.</span></li>
-</ul>
-
-<p style="white-space: pre-wrap; margin: 0px;"><span style="font-family: Cantarell; font-size: 12pt; font-weight: 600;">Please note:</span></p>
-
-<ul>
-	<li style="white-space: pre-wrap; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;"><span style="font-family: Cantarell; font-size: 12pt; font-weight: 600;">​</span><span style="font-family: Cantarell; font-size: 12pt;">It will take up to&nbsp;</span><span style="font-family: Cantarell; font-size: 12pt; font-weight: 600;">1</span><span style="font-family: Cantarell; font-size: 12pt;">&nbsp;minute to see the updated live permissions.</span></li>
-	<li style="white-space: pre-wrap; margin-top: 0px; margin-bottom: 0px; margin-right: 0px;"><span style="font-family: Cantarell; font-size: 12pt;">​</span>Read (R) and executable (X) usually come and go together, so do not just change a single one.</li>
-</ul>
-</body>
-</html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html><head><meta name="qrichtext" content="1" /><style type="text/css">
+p, li { white-space: pre-wrap; }
+</style></head><body style=" font-family:'Cantarell'; font-size:12pt; font-weight:400; font-style:normal;">
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:14pt; font-style:italic;">Permission Manager</span><span style=" font-size:14pt;"> is created to provide a convenient way to configure and monitor folder permissions recursively.</span><span style=" font-size:14pt;"> </span></p>
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:14pt;">The area of &quot;</span><span style=" font-size:14pt; font-weight:600;">Live</span><span style=" font-size:14pt;">&quot; is for showing the live permissions of the folders being managed.</span><span style=" font-size:14pt;"> </span></p>
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:14pt;">The area of &quot;</span><span style=" font-size:14pt; font-weight:600;">Config</span><span style=" font-size:14pt;">&quot; is for configuring the desired folder permissions through user interactions.</span><span style=" font-size:14pt;"> </span></p>
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:14pt;">If the live permission matches the configured one, a </span><span style=" font-size:14pt; font-weight:600; color:#00aa00;">green</span><span style=" font-size:14pt; color:#00aa00;"> </span><span style=" font-size:14pt;">check icon will be posted, otherwise, a </span><span style=" font-size:14pt; font-weight:600; color:#ff0000;">red</span><span style=" font-size:14pt;"> cross icon will be shown.</span><span style=" font-size:14pt;"> </span></p>
+<ul style="margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;"><li style=" font-size:14pt;" style=" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">To add a new folder: click the <span style=" font-style:italic;">Browse</span> button, then click the <span style=" font-style:italic;">Add</span> button. </li>
+<li style=" font-size:14pt;" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">​To remove a folder from the list: Copy or choose the folder path into the input box, then click the <span style=" font-style:italic;">Remove</span> button. </li>
+<li style=" font-size:14pt;" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">To change the permissions: check/uncheck the permission checkboxes in the &quot;<span style=" font-weight:600;">Config&quot;</span> area for each folder path. </li>
+<li style=" font-size:14pt;" style=" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">To change the group: select the wanted group name from the dropdown menu in the &quot;<span style=" font-weight:600;">Config</span>&quot; area for each folder path. </li></ul>
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:14pt; font-weight:600;">Please note:</span><span style=" font-size:14pt;"> </span></p>
+<ul style="margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;"><li style=" font-size:14pt;" style=" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-weight:600;">​</span>It will take up to at least <span style=" font-weight:600;">1</span> minute to see the updated live permissions. </li>
+<li style=" font-size:14pt;" style=" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">​Read (R) and executable (X) usually come and go together, so do not just change a single one.</li></ul></body></html>
 """
 
 
@@ -447,7 +437,7 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
                 border-right: 5px solid gray;
                 border-left: 0px solid gray;}""")
         self._hint_dlg.show()
-        self._hint_dlg.resize(880, 550)
+        self._hint_dlg.resize(880, 650)
 
 
 def get_perm(d: str):
@@ -462,4 +452,3 @@ def get_perm(d: str):
     _o_perm = list(_perm[6:])
     _filepath = s.split()[-1]
     return _u, _g, _u_perm, _g_perm, _o_perm, _filepath
-
