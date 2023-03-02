@@ -12,16 +12,25 @@
 
 DIRPATH_CONF_FILE=/files/shared/ap/HLA/permMgmt/pm_dirpath.txt
 # DIRPATH_CONF_FILE=/home/tong/pm_dirpath.txt
-LOG_DIR=${DIRPATH_CONF_FILE}/../.pm-logs
 
+LOG_DIR=$(dirname ${DIRPATH_CONF_FILE})/.pm-logs
 [[ ! -e ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
+rootlog="${LOG_DIR}/perm.log"
 
 /bin/grep -v '^#' ${DIRPATH_CONF_FILE} | /bin/grep -v "^$" |
 while read line; do
     dirpath=$(echo $line | awk -F';' '{print $1}')
-    is_updated_log=${LOG_DIR}/${dirpath}.log
-    [[ -f ${is_updated_log} ]] && echo "" > ${is_updated_log}
-    if [[ $(cat ${is_updated_log}) = "" ]]; then
+    dirpath_=$(echo ${dirpath} | tr "/" "_")
+    # if logfile is Refreshing..., continue
+    logfile="${LOG_DIR}/${dirpath_}.log"
+
+    [[ ! -f "${logfile}" ]] && echo "Initialized at $(date +%Y-%m-%dT%H:%M:%S_%Z)" > ${logfile}
+
+    if [[ $(cat ${logfile}) != "Refreshing..." ]]; then
+	#
+	echo "[$(date +'%Y-%m-%dT%H:%M:%S %Z')] [$$] Proceeding with ${dirpath} ..." | tee -a ${rootlog}
+	#
+	echo "Refreshing..." > ${logfile}
         perm_s=$(echo $line | awk -F';' '{print $2}')
         _u=$(echo $perm_s | awk -F',' '{print $1}')
         _g=$(echo $perm_s | awk -F',' '{print $3}')
@@ -29,6 +38,6 @@ while read line; do
         chgrp -R ${_g} ${dirpath}
         chmod -R ${_p} ${dirpath}
         find ${dirpath} -type f -a ! \( -name '*.sh' -o -name '*.py' \) -exec chmod -x {} \;
-        echo "${dirpath} is refreshed at $(date)" > ${is_updated_log}
+	echo "Refreshed at $(date +%Y-%m-%dT%H:%M:%S_%Z)" > ${logfile}
     fi
 done
