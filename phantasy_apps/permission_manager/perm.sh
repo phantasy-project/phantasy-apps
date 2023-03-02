@@ -11,7 +11,7 @@
 #
 
 DIRPATH_CONF_FILE=/files/shared/ap/HLA/permMgmt/pm_dirpath.txt
-# DIRPATH_CONF_FILE=/home/tong/pm_dirpath.txt
+# DIRPATH_CONF_FILE=/home/tong/test/pm_dirpath.txt
 
 LOG_DIR=$(dirname ${DIRPATH_CONF_FILE})/.pm-logs
 [[ ! -e ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
@@ -27,10 +27,10 @@ while read line; do
     [[ ! -f "${logfile}" ]] && echo "Initialized at $(date +%Y-%m-%dT%H:%M:%S_%Z)" > ${logfile}
 
     if [[ $(cat ${logfile}) != "Refreshing..." ]]; then
-	#
-	echo "[$(date +'%Y-%m-%dT%H:%M:%S %Z')] [$$] Proceeding with ${dirpath} ..." | tee -a ${rootlog}
-	#
-	echo "Refreshing..." > ${logfile}
+    #
+    echo "[$(date +'%Y-%m-%dT%H:%M:%S %Z')] [$$] Proceeding with ${dirpath} ..." | tee -a ${rootlog}
+    #
+    echo "Refreshing..." > ${logfile}
         perm_s=$(echo $line | awk -F';' '{print $2}')
         _u=$(echo $perm_s | awk -F',' '{print $1}')
         _g=$(echo $perm_s | awk -F',' '{print $3}')
@@ -38,6 +38,6 @@ while read line; do
         chgrp -R ${_g} ${dirpath}
         chmod -R ${_p} ${dirpath}
         find ${dirpath} -type f -a ! \( -name '*.sh' -o -name '*.py' \) -exec chmod -x {} \;
-	echo "Refreshed at $(date +%Y-%m-%dT%H:%M:%S_%Z)" > ${logfile}
+    echo "Refreshed ${dirpath} at $(date +%Y-%m-%dT%H:%M:%S_%Z)" > ${logfile}
     fi
 done
