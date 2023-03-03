@@ -15,6 +15,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QLabel, QCheckBox, QComboBox
+from PyQt5.QtWidgets import QSpinBox
 from PyQt5.QtWidgets import QTextEdit
 from PyQt5.QtWidgets import QSizePolicy, QGridLayout
 from PyQt5.QtWidgets import QFrame
@@ -46,9 +47,10 @@ p, li { white-space: pre-wrap; }
 
 
 class _Perm:
-    # line: <dirpath>;user,775, group
+    # line: <dirpath>;user,775,group;wait(min)
     def __init__(self, line: str):
-        _path, _perm_s = line.split(";")
+        _path, _perm_s, _t_min = line.split(";")
+        self.t_wait_min = int(_t_min)
         self.fullpath = os.path.abspath(os.path.expanduser(_path))
         self.user, self.group, self.u_perm, self.g_perm, self.o_perm, _ = \
                 self._get_perm(self.fullpath, _perm_s)
@@ -77,7 +79,7 @@ class _Perm:
     def __str__(self):
         perm_list = self.u_perm + self.g_perm + self.o_perm
         _s_bin = ''.join([{'r':'1','w':'1','x':'1','-':'0','s':'1'}.get(i) for i in perm_list])
-        return f"{self.fullpath};{self.user},{oct(int(_s_bin, 2))},{self.group}"
+        return f"{self.fullpath};{self.user},{oct(int(_s_bin, 2))},{self.group};{self.t_wait_min}"
 
     def get_live_perms(self):
         """Return a tuple of live folder permissions.
@@ -273,7 +275,7 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
             headers = ("", "Path", "Match?", "", "Last Refreshed", "User", "R", "W", "X", "Group", "R", "W", "X",
                        "|", "R", "W", "X")
         else:
-            headers = ("", "Path", "User", "R", "W", "X", "Group", "R", "W", "X",
+            headers = ("", "Path", "Interval", "User", "R", "W", "X", "Group", "R", "W", "X",
                        "|", "R", "W", "X")
         for j, s in enumerate(headers):
             if s == "|":
@@ -382,8 +384,14 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
                           _g_lbl, _g_r, _g_w, _g_x, _v_line,
                           _o_r, _o_w, _o_x)
             else:
+                _t_min_sbox = QSpinBox(self)
+                _t_min_sbox.setRange(0, 9999)
+                _t_min_sbox.setSingleStep(1)
+                _t_min_sbox.setSuffix(" m")
+                _t_min_sbox.setValue(d.t_wait_min)
+                _t_min_sbox.valueChanged.connect(partial(self.on_t_wait_changed, d))
                 w_list = (QLabel(str(i), self),
-                          _path_lbl,
+                          _path_lbl, _t_min_sbox,
                           _u_lbl, _u_r, _u_w, _u_x,
                           _g_lbl, _g_r, _g_w, _g_x, _v_line,
                           _o_r, _o_w, _o_x)
@@ -402,6 +410,13 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
         l.addWidget(_vspacer, i + 1, 1)
         w.setLayout(l)
         area.setWidget(w)
+
+    @pyqtSlot(int)
+    def on_t_wait_changed(self, perm: _Perm, t_wait: int):
+        """Time interval for perm scan.
+        """
+        perm.t_wait_min = t_wait
+        self.write_conf()
 
     @pyqtSlot('QString')
     def on_group_conf_changed(self, perm: _Perm, group: str):

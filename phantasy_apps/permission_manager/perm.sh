@@ -38,10 +38,12 @@ while read line; do
         _u=$(echo $perm_s | awk -F',' '{print $1}')
         _g=$(echo $perm_s | awk -F',' '{print $3}')
         _p=$(echo $perm_s | awk -F',' '{print $2}' | cut -c 3-)
+        _tmin=$(echo $line | awk -F';' '{print $3}')
         chgrp -R ${_g} ${dirpath}
         chmod -R ${_p} ${dirpath}
         find ${dirpath} -type f -a ! \( -name '*.sh' -o -name '*.py' \) -exec chmod -x {} \;
         echo "$(date +%Y-%m-%dT%H:%M:%S)" > ${logfile2}
+        sleep ${_tmin}m
         echo "Refreshed" > ${logfile1}
     fi
 done
