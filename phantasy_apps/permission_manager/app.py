@@ -10,11 +10,14 @@ from pathlib import Path
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QLabel, QCheckBox, QComboBox
+from PyQt5.QtWidgets import QToolButton
 from PyQt5.QtWidgets import QSpinBox
 from PyQt5.QtWidgets import QTextEdit
 from PyQt5.QtWidgets import QSizePolicy, QGridLayout
@@ -275,7 +278,7 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
             headers = ("", "Path", "Match?", "", "Last Refreshed", "User", "R", "W", "X", "Group", "R", "W", "X",
                        "|", "R", "W", "X")
         else:
-            headers = ("", "Path", "Interval", "User", "R", "W", "X", "Group", "R", "W", "X",
+            headers = ("", "Path", "Interval", "", "User", "R", "W", "X", "Group", "R", "W", "X",
                        "|", "R", "W", "X")
         for j, s in enumerate(headers):
             if s == "|":
@@ -314,8 +317,6 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
                 else:
                     _refresh_status = "idle"
                 _refreshed_lbl = QLabel(self)
-                #_refreshed_lbl.setText(_refresh_status)
-                #_refreshed_lbl.setToolTip(_refresh_status)
                 if _refresh_status == "running":
                     _refreshed_lbl.setPixmap(QPixmap(":/_misc/pending.png").scaled(32, 32))
 
@@ -327,7 +328,7 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
                     _last_refreshed_date = ""
                 _last_refreshed_lbl = QLabel(self)
                 _last_refreshed_lbl.setText(_last_refreshed_date)
-                _last_refreshed_lbl.setToolTip(f"{_fullpath} was refreshed at {_last_refreshed_date}")
+                _last_refreshed_lbl.setToolTip(f"{_fullpath} was refreshed at {_last_refreshed_date}\nNow is {_refresh_status}")
 
             # user
             _u_lbl = QLabel(_u, self)
@@ -397,9 +398,13 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
                 _t_min_sbox.setSingleStep(1)
                 _t_min_sbox.setSuffix(" m")
                 _t_min_sbox.setValue(d.t_wait_min)
-                _t_min_sbox.valueChanged.connect(partial(self.on_t_wait_changed, d))
+                _t_min_btn = QToolButton(self)
+                _t_min_btn.setIcon(QIcon(QPixmap(":/_misc/apply.png")))
+                _t_min_btn.setIconSize(QSize(28, 28))
+                _t_min_btn.setToolTip("Click to change time interval.")
+                _t_min_btn.clicked.connect(partial(self.on_t_wait_changed, d, _t_min_sbox))
                 w_list = (QLabel(str(i), self),
-                          _path_lbl, _t_min_sbox,
+                          _path_lbl, _t_min_sbox, _t_min_btn,
                           _u_lbl, _u_r, _u_w, _u_x,
                           _g_lbl, _g_r, _g_w, _g_x, _v_line,
                           _o_r, _o_w, _o_x)
@@ -419,12 +424,14 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
         w.setLayout(l)
         area.setWidget(w)
 
-    @pyqtSlot(int)
-    def on_t_wait_changed(self, perm: _Perm, t_wait: int):
+    @pyqtSlot()
+    def on_t_wait_changed(self, perm: _Perm, _o: QSpinBox):
         """Time interval for perm scan.
         """
-        perm.t_wait_min = t_wait
-        self.write_conf()
+        new_t_min = _o.value()
+        if perm.t_wait_min != new_t_min:
+            perm.t_wait_min = new_t_min
+            self.write_conf()
 
     @pyqtSlot('QString')
     def on_group_conf_changed(self, perm: _Perm, group: str):
