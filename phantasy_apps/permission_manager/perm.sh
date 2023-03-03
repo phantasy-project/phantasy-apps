@@ -46,9 +46,9 @@ while read line; do
         echo "[$(date +'%Y-%m-%dT%H:%M:%S %Z')] [$$] Proceeding with ${dirpath} ... done" | tee -a ${rootlog}
         echo "waiting" > ${logfile1}
         if [[ _tmin -gt 0 ]]; then
-            echo "[$(date +'%Y-%m-%dT%H:%M:%S %Z')] [$$] Waiting before next run for ${dirpath} ..." | tee -a ${rootlog}
+            echo "[$(date +'%Y-%m-%dT%H:%M:%S %Z')] [$$] Waiting ${_tmin} mins before next run for ${dirpath} ..." | tee -a ${rootlog}
             sleep ${_tmin}m
-            echo "[$(date +'%Y-%m-%dT%H:%M:%S %Z')] [$$] Waiting before next run for ${dirpath} ... done" | tee -a ${rootlog}
+            echo "[$(date +'%Y-%m-%dT%H:%M:%S %Z')] [$$] Waiting ${_tmin} mins before next run for ${dirpath} ... done" | tee -a ${rootlog}
         fi
         echo "idle" > ${logfile1}
     fi
