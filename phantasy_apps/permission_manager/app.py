@@ -312,11 +312,11 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
                 if _log1.is_file():
                     _refresh_status = _log1.read_text().strip()
                 else:
-                    _refresh_status = ""
+                    _refresh_status = "idle"
                 _refreshed_lbl = QLabel(self)
-                if _refresh_status.startswith("Refreshed"):
-                    pass
-                else:
+                #_refreshed_lbl.setText(_refresh_status)
+                #_refreshed_lbl.setToolTip(_refresh_status)
+                if _refresh_status == "running":
                     _refreshed_lbl.setPixmap(QPixmap(":/_misc/pending.png").scaled(32, 32))
 
                 # last refreshed date
