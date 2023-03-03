@@ -47,27 +47,27 @@ p, li { white-space: pre-wrap; }
 
 
 class _Perm:
-    # line: <dirpath>;user,775,group;wait(min)
+    # line: <dirpath>;user,775,group;tmin
     def __init__(self, line: str):
-        _path, _perm_s, _t_min = line.split(";")
-        self.t_wait_min = int(_t_min)
+        _path, _perm_s = line.split(";", 1)
         self.fullpath = os.path.abspath(os.path.expanduser(_path))
-        self.user, self.group, self.u_perm, self.g_perm, self.o_perm, _ = \
+        (self.user, self.group, self.u_perm, self.g_perm, self.o_perm, _), self.t_wait_min = \
                 self._get_perm(self.fullpath, _perm_s)
 
     def _get_perm(self, fullpath: str, perm_s: str):
         """Get the config permissions of *fullpath* from *perm_s*, if perm_s is '', get the live perms.
         """
         if perm_s == '':
-            return self.get_live_perms()
+            return self.get_live_perms(), 10 # , t_min
         else:
-            # path;user,775,group
-            _usr, perm_, _grp = perm_s.split(",")
+            # user,775,group;tmin
+            _perm_s, _t_min = perm_s.split(';')
+            _usr, perm_, _grp = _perm_s.split(",")
             bin_list = list(bin(int(perm_, 8)))[2:]
             perm_u = [j if i == '1' else '-' for i, j in zip(bin_list[:3], list('rwx'))]
             perm_g = [j if i == '1' else '-' for i, j in zip(bin_list[3:6], list('rwx'))]
             perm_o = [j if i == '1' else '-' for i, j in zip(bin_list[6:], list('rwx'))]
-            return _usr, _grp.strip(), perm_u, perm_g, perm_o, fullpath
+            return (_usr, _grp.strip(), perm_u, perm_g, perm_o, fullpath), int(_t_min)
 
     def is_set(self):
         """Return True if live perm matches config perm, otherwise return False.
@@ -306,17 +306,25 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
                     _match_lbl.setPixmap(QPixmap(":/_misc/match.png").scaled(32, 32))
                 else:
                     _match_lbl.setPixmap(QPixmap(":/_misc/not-match.png").scaled(32, 32))
+
                 # refreshing? or Refreshed
-                _refresh_status = self.logdirpath.joinpath(
-                        _fullpath.replace("/", "_") + '_1.log').read_text().strip()
-                if _refresh_status.startswith("Refreshed"):
-                    _refreshed_lbl = QLabel(self)
+                _log1 = self.logdirpath.joinpath(_fullpath.replace("/", "_") + '_1.log')
+                if _log1.is_file():
+                    _refresh_status = _log1.read_text().strip()
                 else:
-                    _refreshed_lbl = QLabel(self)
+                    _refresh_status = ""
+                _refreshed_lbl = QLabel(self)
+                if _refresh_status.startswith("Refreshed"):
+                    pass
+                else:
                     _refreshed_lbl.setPixmap(QPixmap(":/_misc/pending.png").scaled(32, 32))
+
                 # last refreshed date
-                _last_refreshed_date = self.logdirpath.joinpath(
-                        _fullpath.replace("/", "_") + '_2.log').read_text().strip()
+                _log2 = self.logdirpath.joinpath(_fullpath.replace("/", "_") + '_2.log')
+                if _log2.is_file():
+                    _last_refreshed_date = _log2.read_text().strip()
+                else:
+                    _last_refreshed_date = ""
                 _last_refreshed_lbl = QLabel(self)
                 _last_refreshed_lbl.setText(_last_refreshed_date)
                 _last_refreshed_lbl.setToolTip(f"{_fullpath} was refreshed at {_last_refreshed_date}")
