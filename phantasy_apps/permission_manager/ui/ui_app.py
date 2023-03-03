@@ -161,6 +161,8 @@ class Ui_MainWindow(object):
             "    border-right: 5px solid gray;\n"
             "       border-left: 0px solid gray;\n"
             "}")
+        self.config_groupBox.setCheckable(True)
+        self.config_groupBox.setChecked(False)
         self.config_groupBox.setObjectName("config_groupBox")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.config_groupBox)
         self.gridLayout_2.setContentsMargins(0, 8, 0, 0)
@@ -284,6 +286,8 @@ class Ui_MainWindow(object):
         self.pushButton.clicked.connect(MainWindow.onAdd)  # type: ignore
         self.pushButton_3.clicked.connect(MainWindow.onRemove)  # type: ignore
         self.toolButton.clicked.connect(MainWindow.onHint)  # type: ignore
+        self.config_groupBox.toggled['bool'].connect(
+            self.config_area.setEnabled)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -304,17 +308,7 @@ class Ui_MainWindow(object):
             ))
         self.toolButton.setText(_translate("MainWindow", "..."))
         self.live_groupBox.setTitle(_translate("MainWindow", "Live"))
-        self.live_area.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Live permissions for the folders being managed.</p></body></html>"
-            ))
         self.config_groupBox.setTitle(_translate("MainWindow", "Config"))
-        self.config_area.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Configure permissions for the folders being managed.</p></body></html>"
-            ))
         self.label.setText(_translate("MainWindow", "Select a directory"))
         self.pushButton_2.setToolTip(
             _translate(
