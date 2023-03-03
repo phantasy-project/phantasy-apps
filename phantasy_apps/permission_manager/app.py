@@ -270,7 +270,7 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
         l = QGridLayout()
         # headers
         if is_live:
-            headers = ("", "Path", "Match?", "Last Refreshed", "User", "R", "W", "X", "Group", "R", "W", "X",
+            headers = ("", "Path", "Match?", "", "Last Refreshed", "User", "R", "W", "X", "Group", "R", "W", "X",
                        "|", "R", "W", "X")
         else:
             headers = ("", "Path", "User", "R", "W", "X", "Group", "R", "W", "X",
@@ -306,14 +306,18 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
                     _match_lbl.setPixmap(QPixmap(":/_misc/not-match.png").scaled(32, 32))
                 # refreshing? or Refreshed
                 _refresh_status = self.logdirpath.joinpath(
-                        _fullpath.replace("/", "_") + '.log').read_text().strip()
+                        _fullpath.replace("/", "_") + '_1.log').read_text().strip()
                 if _refresh_status.startswith("Refreshed"):
-                    _refresh_date = _refresh_status.split()[-1][:-4]
+                    _refreshed_lbl = QLabel(self)
                 else:
-                    _refresh_date = "Refreshing..."
-                _sts_lbl = QLabel(self)
-                _sts_lbl.setText(_refresh_date)
-                _sts_lbl.setToolTip(_refresh_status)
+                    _refreshed_lbl = QLabel(self)
+                    _refreshed_lbl.setPixmap(QPixmap(":/_misc/pending.png").scaled(32, 32))
+                # last refreshed date
+                _last_refreshed_date = self.logdirpath.joinpath(
+                        _fullpath.replace("/", "_") + '_2.log').read_text().strip()
+                _last_refreshed_lbl = QLabel(self)
+                _last_refreshed_lbl.setText(_last_refreshed_date)
+                _last_refreshed_lbl.setToolTip(f"{_fullpath} was refreshed at {_last_refreshed_date}")
 
             # user
             _u_lbl = QLabel(_u, self)
@@ -373,7 +377,7 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
             if is_live:
                 w_list = (QLabel(str(i), self),
                           _path_lbl,
-                          _match_lbl, _sts_lbl,
+                          _match_lbl, _refreshed_lbl, _last_refreshed_lbl,
                           _u_lbl, _u_r, _u_w, _u_x,
                           _g_lbl, _g_r, _g_w, _g_x, _v_line,
                           _o_r, _o_w, _o_x)

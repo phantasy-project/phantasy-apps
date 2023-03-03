@@ -21,16 +21,19 @@ rootlog="${LOG_DIR}/perm.log"
 while read line; do
     dirpath=$(echo $line | awk -F';' '{print $1}')
     dirpath_=$(echo ${dirpath} | tr "/" "_")
-    # if logfile is Refreshing..., continue
-    logfile="${LOG_DIR}/${dirpath_}.log"
+    # is running?
+    logfile1="${LOG_DIR}/${dirpath_}_1.log"
+    # last updated
+    logfile2="${LOG_DIR}/${dirpath_}_2.log"
 
-    [[ ! -f "${logfile}" ]] && echo "Initialized at $(date +%Y-%m-%dT%H:%M:%S_%Z)" > ${logfile}
+    [[ ! -f "${logfile1}" ]] && echo "" > ${logfile1}
+    [[ ! -f "${logfile2}" ]] && echo "" > ${logfile2}
 
-    if [[ $(cat ${logfile}) != "Refreshing..." ]]; then
-    #
-    echo "[$(date +'%Y-%m-%dT%H:%M:%S %Z')] [$$] Proceeding with ${dirpath} ..." | tee -a ${rootlog}
-    #
-    echo "Refreshing..." > ${logfile}
+    if [[ $(cat ${logfile1}) != "Refreshing..." ]]; then
+        #
+        echo "[$(date +'%Y-%m-%dT%H:%M:%S %Z')] [$$] Proceeding with ${dirpath} ..." | tee -a ${rootlog}
+        #
+        echo "Refreshing..." > ${logfile1}
         perm_s=$(echo $line | awk -F';' '{print $2}')
         _u=$(echo $perm_s | awk -F',' '{print $1}')
         _g=$(echo $perm_s | awk -F',' '{print $3}')
@@ -38,6 +41,7 @@ while read line; do
         chgrp -R ${_g} ${dirpath}
         chmod -R ${_p} ${dirpath}
         find ${dirpath} -type f -a ! \( -name '*.sh' -o -name '*.py' \) -exec chmod -x {} \;
-    echo "Refreshed ${dirpath} at $(date +%Y-%m-%dT%H:%M:%S_%Z)" > ${logfile}
+        echo "$(date +%Y-%m-%dT%H:%M:%S)" > ${logfile2}
+        echo "Refreshed" > ${logfile1}
     fi
 done
