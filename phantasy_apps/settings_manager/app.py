@@ -177,6 +177,7 @@ SNP_AUTHOR_PV = "PHY:SM_SNP_LAST_AUTHOR"
 SNP_PUBLISHER_PV = "PHY:SM_SNP_LAST_PUBLISHER"
 
 _CHANGELOG_FILE = os.path.join(os.path.dirname(__file__), 'CHANGELOG.pdf')
+_USERGUIDE_FILE = os.path.join(os.path.dirname(__file__), 'docs/SettingsManager_UserGuide.pdf')
 
 # refresh period
 DATA_REFRESH_PERIOD = 10000 # milliseconds
@@ -660,6 +661,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._machstate = None
 
     def __post_init_ui(self):
+        # add user guide help menu
+        self._user_guide_mitem = QAction("User Guide", self)
+        self.menu_Help.insertAction(self.actionChangelog, self._user_guide_mitem)
+        self._user_guide_mitem.triggered.connect(self.onShowUserGuide)
+
         # apply ready?
         self.sigApplyReady.connect(self.apply_btn.setEnabled)
         # hide loaded snp info
@@ -3769,7 +3775,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         data.extract_blob()
         for i, irow in data.data.iterrows():
             ename, fname, val0 = irow.Name, irow.Field, irow.Setpoint
-            ref_st_pv = self._pv_map.get(f'{ename}-{fname}', None)
+            ref_st_pv = self._pv_map.get('refset').get(f'{ename}-{fname}', None)
             if ref_st_pv is not None:
                 msg = "[{0}] {1}[{2}]: Set {3} to {4}.".format(
                     datetime.fromtimestamp(time.time()).strftime(TS_FMT),
@@ -4035,6 +4041,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Open and read changelog.
         """
         QDesktopServices.openUrl(QUrl(_CHANGELOG_FILE))
+
+    @pyqtSlot()
+    def onShowUserGuide(self):
+        """Open and read user guide.
+        """
+        QDesktopServices.openUrl(QUrl(_USERGUIDE_FILE))
 
     @pyqtSlot()
     def onManageDB(self):

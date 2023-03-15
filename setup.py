@@ -66,6 +66,7 @@ def set_entry_points():
         'phy_calc=phantasy_apps.calculator_app:run',
         'synoptic_app=phantasy_apps.synoptic_app:run',
         'msviz=phantasy_apps.msviz:run',
+        'permission_manager=phantasy_apps.permission_manager:run',
     ]
     return r
 
