@@ -85,7 +85,7 @@ from archappl.client import ArchiverDataClient
 from archappl.client import ArchiverMgmtClient
 
 from .app_date_range import DateRangeDialog
-from .app_loadfrom import LoadSettingsDialog
+from .app_import import ImportSNPDialog
 from .app_pref import PreferencesDialog
 from .app_bpmviz import BPMVizWidget
 from .app_postsnp import PostSnapshotDialog
@@ -723,7 +723,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._post_info = True  # post info after loading lattice
         #
         self._tv = self.settingsView
-        self._load_from_dlg = None
+        self._import_snp_dlg = None
         self._elem_select_dlg = None
         self._lattice_load_window = None
         self._fixnames_dlg = None
@@ -1314,7 +1314,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.addSeparator()
         menu.addAction(saveas_action)
         menu.addAction(del_action)
-        if getuser() == 'zhangt': # Admin
+        if getuser() in ('zhangt', 'tong'): # Admin
             menu.addAction(del_admin_action)
         return menu
 
@@ -1720,7 +1720,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(QVariant)
     def on_update_widgets_status(self, o):
         # WIP: control widget status after lattice is loaded.
-        self.actionLoad_From_Snapshot.setEnabled(True)
         self.update_lattice_info_lbls(o.last_machine_name, o.last_lattice_name)
 
     @pyqtSlot()
@@ -1766,13 +1765,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.update_rate_cbb.setToolTip(tt)
 
     @pyqtSlot()
-    def on_load_from_snp(self):
-        """Load settings from .snp file.
+    def onImport(self):
+        """Import one or more .csv, .xlsx files as new snapshots.
         """
-        if self._load_from_dlg is None:
-            self._load_from_dlg = LoadSettingsDialog(self)
-        self._load_from_dlg.settingsLoaded.connect(self.on_settings_loaded)
-        self._load_from_dlg.show()
+        if self._import_snp_dlg is None:
+            self._import_snp_dlg = ImportSNPDialog(self)
+        self._import_snp_dlg.sigRefreshDatabase.connect(self.db_refresh)
+        self._import_snp_dlg.show()
 
     @pyqtSlot('QString')
     def on_scaling_factor_changed(self, s):
