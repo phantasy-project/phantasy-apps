@@ -14,7 +14,7 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(2416, 1440)
+        MainWindow.resize(2317, 1467)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/sm-icons/logo.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -1202,7 +1202,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addLayout(self.horizontalLayout_2, 5, 1, 1, 16)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 2416, 31))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 2317, 32))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -1414,7 +1414,7 @@ class Ui_MainWindow(object):
         self.tag_filter_area.setWidgetResizable(True)
         self.tag_filter_area.setObjectName("tag_filter_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1576, 93))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1509, 89))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tag_filter_area.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_2.addWidget(self.tag_filter_area, 0, 0, 1, 6)
@@ -1473,7 +1473,7 @@ class Ui_MainWindow(object):
         self.ion_filter_area.setObjectName("ion_filter_area")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(
-            0, 0, 784, 93))
+            0, 0, 751, 89))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.ion_filter_area.setWidget(self.scrollAreaWidgetContents_2)
@@ -1730,7 +1730,7 @@ class Ui_MainWindow(object):
         self.revert_area.setObjectName("revert_area")
         self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_3.setGeometry(
-            QtCore.QRect(0, 0, 2380, 93))
+            QtCore.QRect(0, 0, 2280, 89))
         self.scrollAreaWidgetContents_3.setObjectName(
             "scrollAreaWidgetContents_3")
         self.gridLayout_3 = QtWidgets.QGridLayout(
@@ -1768,57 +1768,51 @@ class Ui_MainWindow(object):
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.action_Save.setIcon(icon39)
         self.action_Save.setObjectName("action_Save")
-        self.actionLoad_From_Snapshot = QtWidgets.QAction(MainWindow)
-        icon40 = QtGui.QIcon()
-        icon40.addPixmap(QtGui.QPixmap(":/sm-icons/folder-open-snp.png"),
-                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_From_Snapshot.setIcon(icon40)
-        self.actionLoad_From_Snapshot.setObjectName("actionLoad_From_Snapshot")
         self.actionPhysics_Fields = QtWidgets.QAction(MainWindow)
         self.actionPhysics_Fields.setCheckable(True)
         self.actionPhysics_Fields.setChecked(False)
-        icon41 = QtGui.QIcon()
-        icon41.addPixmap(QtGui.QPixmap(":/sm-icons/physics.png"),
+        icon40 = QtGui.QIcon()
+        icon40.addPixmap(QtGui.QPixmap(":/sm-icons/physics.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionPhysics_Fields.setIcon(icon41)
+        self.actionPhysics_Fields.setIcon(icon40)
         self.actionPhysics_Fields.setObjectName("actionPhysics_Fields")
         self.actionEngineering_Fields = QtWidgets.QAction(MainWindow)
         self.actionEngineering_Fields.setCheckable(True)
         self.actionEngineering_Fields.setChecked(True)
-        icon42 = QtGui.QIcon()
-        icon42.addPixmap(QtGui.QPixmap(":/sm-icons/engineering.png"),
+        icon41 = QtGui.QIcon()
+        icon41.addPixmap(QtGui.QPixmap(":/sm-icons/engineering.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionEngineering_Fields.setIcon(icon42)
+        self.actionEngineering_Fields.setIcon(icon41)
         self.actionEngineering_Fields.setObjectName("actionEngineering_Fields")
         self.actionLoad_Lattice = QtWidgets.QAction(MainWindow)
-        icon43 = QtGui.QIcon()
-        icon43.addPixmap(QtGui.QPixmap(":/sm-icons/load_lattice.png"),
+        icon42 = QtGui.QIcon()
+        icon42.addPixmap(QtGui.QPixmap(":/sm-icons/load_lattice.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Lattice.setIcon(icon43)
+        self.actionLoad_Lattice.setIcon(icon42)
         self.actionLoad_Lattice.setObjectName("actionLoad_Lattice")
         self.actionLoad_Settings = QtWidgets.QAction(MainWindow)
-        icon44 = QtGui.QIcon()
-        icon44.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
+        icon43 = QtGui.QIcon()
+        icon43.addPixmap(QtGui.QPixmap(":/sm-icons/open.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionLoad_Settings.setIcon(icon44)
+        self.actionLoad_Settings.setIcon(icon43)
         self.actionLoad_Settings.setObjectName("actionLoad_Settings")
         self.actionPreferences = QtWidgets.QAction(MainWindow)
-        icon45 = QtGui.QIcon()
-        icon45.addPixmap(QtGui.QPixmap(":/sm-icons/preferences.png"),
+        icon44 = QtGui.QIcon()
+        icon44.addPixmap(QtGui.QPixmap(":/sm-icons/preferences.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionPreferences.setIcon(icon45)
+        self.actionPreferences.setIcon(icon44)
         self.actionPreferences.setObjectName("actionPreferences")
         self.actionAdd_Devices = QtWidgets.QAction(MainWindow)
-        icon46 = QtGui.QIcon()
-        icon46.addPixmap(QtGui.QPixmap(":/sm-icons/add.png"),
+        icon45 = QtGui.QIcon()
+        icon45.addPixmap(QtGui.QPixmap(":/sm-icons/add.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionAdd_Devices.setIcon(icon46)
+        self.actionAdd_Devices.setIcon(icon45)
         self.actionAdd_Devices.setObjectName("actionAdd_Devices")
         self.actionTake_Snapshot = QtWidgets.QAction(MainWindow)
-        icon47 = QtGui.QIcon()
-        icon47.addPixmap(QtGui.QPixmap(":/sm-icons/snapshot.png"),
+        icon46 = QtGui.QIcon()
+        icon46.addPixmap(QtGui.QPixmap(":/sm-icons/snapshot.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionTake_Snapshot.setIcon(icon47)
+        self.actionTake_Snapshot.setIcon(icon46)
         self.actionTake_Snapshot.setObjectName("actionTake_Snapshot")
         self.actionFix_Corrector_Names = QtWidgets.QAction(MainWindow)
         self.actionFix_Corrector_Names.setObjectName(
@@ -1833,20 +1827,22 @@ class Ui_MainWindow(object):
         self.actionSnapshots.setChecked(True)
         self.actionSnapshots.setObjectName("actionSnapshots")
         self.actionCapture_machstate = QtWidgets.QAction(MainWindow)
-        icon48 = QtGui.QIcon()
-        icon48.addPixmap(QtGui.QPixmap(":/sm-icons/machstate.png"),
+        icon47 = QtGui.QIcon()
+        icon47.addPixmap(QtGui.QPixmap(":/sm-icons/machstate.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionCapture_machstate.setIcon(icon48)
+        self.actionCapture_machstate.setIcon(icon47)
         self.actionCapture_machstate.setObjectName("actionCapture_machstate")
         self.actionManage_Database = QtWidgets.QAction(MainWindow)
-        icon49 = QtGui.QIcon()
-        icon49.addPixmap(QtGui.QPixmap(":/sm-icons/db.png"),
+        icon48 = QtGui.QIcon()
+        icon48.addPixmap(QtGui.QPixmap(":/sm-icons/db.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionManage_Database.setIcon(icon49)
+        self.actionManage_Database.setIcon(icon48)
         self.actionManage_Database.setObjectName("actionManage_Database")
         self.actionChangelog = QtWidgets.QAction(MainWindow)
         self.actionChangelog.setObjectName("actionChangelog")
-        self.menu_File.addAction(self.actionLoad_From_Snapshot)
+        self.actionImport = QtWidgets.QAction(MainWindow)
+        self.actionImport.setIcon(icon43)
+        self.actionImport.setObjectName("actionImport")
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
         self.menu_Help.addAction(self.actionChangelog)
@@ -1861,6 +1857,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_View.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
         self.toolBar.addAction(self.actionLoad_Lattice)
+        self.toolBar.addAction(self.actionImport)
         self.toolBar.addAction(self.actionAdd_Devices)
         self.toolBar.addAction(self.actionTake_Snapshot)
         self.toolBar.addAction(self.actionCapture_machstate)
@@ -1877,8 +1874,6 @@ class Ui_MainWindow(object):
         self.action_About.triggered.connect(MainWindow.onAbout)  # type: ignore
         self.apply_btn.clicked.connect(
             MainWindow.on_apply_settings)  # type: ignore
-        self.actionLoad_From_Snapshot.triggered.connect(
-            MainWindow.on_load_from_snp)  # type: ignore
         self.actionPhysics_Fields.toggled['bool'].connect(
             MainWindow.on_toggle_phyfields)  # type: ignore
         self.actionEngineering_Fields.toggled['bool'].connect(
@@ -2021,6 +2016,8 @@ class Ui_MainWindow(object):
             MainWindow.on_abort_apply)  # type: ignore
         self.purge_revert_btn.clicked.connect(
             MainWindow.on_purge_reverts)  # type: ignore
+        self.actionImport.triggered.connect(
+            MainWindow.onImport)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
@@ -2434,15 +2431,6 @@ class Ui_MainWindow(object):
         self.action_Save.setToolTip(
             _translate("MainWindow", "Save settings into a file."))
         self.action_Save.setShortcut(_translate("MainWindow", "Ctrl+S"))
-        self.actionLoad_From_Snapshot.setText(
-            _translate("MainWindow", "Load From Snapshot"))
-        self.actionLoad_From_Snapshot.setIconText(
-            _translate("MainWindow", "Load Snapshot"))
-        self.actionLoad_From_Snapshot.setToolTip(
-            _translate("MainWindow",
-                       "Load settings from a snapshot (.snp) file."))
-        self.actionLoad_From_Snapshot.setShortcut(
-            _translate("MainWindow", "Ctrl+L"))
         self.actionPhysics_Fields.setText(_translate("MainWindow", "Physics"))
         self.actionPhysics_Fields.setIconText(
             _translate("MainWindow", "Physics Fields"))
@@ -2499,6 +2487,9 @@ class Ui_MainWindow(object):
         self.actionManage_Database.setText(
             _translate("MainWindow", "Manage Database"))
         self.actionChangelog.setText(_translate("MainWindow", "Changelog"))
+        self.actionImport.setText(_translate("MainWindow", "Import"))
+        self.actionImport.setToolTip(
+            _translate("MainWindow", "Import Snapshots from Files."))
 
 
 from phantasy_ui.widgets import DockWidget
