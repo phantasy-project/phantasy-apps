@@ -20,6 +20,7 @@ from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtCore import QPersistentModelIndex
 from PyQt5.QtCore import QItemSelectionModel
+from PyQt5.QtCore import QModelIndex
 from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import Qt
@@ -1850,6 +1851,7 @@ class SetLogMessager:
     SET_TEXT_COLOR = QColor("#17A2B8") # .bg-info
     def __init__(self, fld, ename: str, fname: str, old_set: float,
                  new_set: float, raw_set: float, set_op: str, set_fac: float,
+                 idx_src: QModelIndex,
                  is_skip: bool = False, **kws):
         # fld: CaField object
         # if is_skip, do nothing, else set
@@ -1864,6 +1866,7 @@ class SetLogMessager:
         self._raw_set = raw_set # saved setting (before scaling/shifting)
         self._set_op = set_op # '*' or '+'
         self._set_fac = set_fac # scaling factor or shifting amount
+        self._idx_src = idx_src
         self._is_skip = is_skip
         self._ts = time.time()
         # revert
@@ -1893,11 +1896,13 @@ class SetLogMessager:
 
 
 class EffSetLogMsgContainer(QObject):
+    """Container for keeping SetLogMessager objects.
+    """
 
     # if contains items
     sigHasItems = pyqtSignal(bool)
 
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         super(self.__class__, self).__init__()
         self.parent = parent
         self.clear()
@@ -1909,3 +1914,6 @@ class EffSetLogMsgContainer(QObject):
     def clear(self):
         self._items = []
         self.sigHasItems.emit(False)
+
+    def count_items(self):
+        return len(self._items)
