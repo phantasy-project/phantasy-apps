@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
 import time
 from datetime import datetime
 from epics import caget, caput
@@ -76,6 +77,9 @@ ION_SOURCE_NAME_MAP = {'FE_SCS1': 'ISRC1', 'FE_SCS2': 'ISRC2'}
 HV_MAP = {'ISRC1': 'FE_SCS1:BEAM:HV_BOOK',
           'ISRC2': 'FE_SCS2:BEAM:HV_BOOK'}
 
+_USERGUIDE_FILE = os.path.join(os.path.dirname(__file__),
+    'docs/AllisonScanner_UserGuide.pdf')
+
 
 class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
@@ -130,6 +134,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._post_init()
 
     def _post_init(self):
+        self._user_guide_mitem = QAction("User Guide", self)
+        self.menu_Help.insertAction(self.actionAbout, self._user_guide_mitem)
+        self._user_guide_mitem.triggered.connect(self.onShowUserGuide)
+
         if self._device_mode == "Simulation" and not self._sim_ioc_conf_inited:
             self.on_show_sim_ioc_conf()
         # disable freezed configuration controls
@@ -258,6 +266,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         settings_act.triggered.connect(self.show_settings_list)
         m.addAction(settings_act)
         self.default_config_btn.setMenu(m)
+
+    @pyqtSlot()
+    def onShowUserGuide(self):
+        """Open and read user guide.
+        """
+        QDesktopServices.openUrl(QUrl(_USERGUIDE_FILE))
 
     def _init_scan_settings(self):
         self._scan_settings_list = []
