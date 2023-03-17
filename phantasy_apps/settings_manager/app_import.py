@@ -34,6 +34,13 @@ class ImportSNPDialog(QDialog, Ui_Dialog):
         self.import_pb.setVisible(False)
 
     @pyqtSlot()
+    def onClearFiles(self):
+        """Clear selected filepaths.
+        """
+        self.filepaths_textEdit.clear()
+        self.filepath_list.clear()
+
+    @pyqtSlot()
     def onOpenFiles(self):
         """open .csv, .xlsx files.
         """

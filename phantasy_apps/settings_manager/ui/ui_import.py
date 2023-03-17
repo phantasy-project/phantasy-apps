@@ -100,11 +100,15 @@ class Ui_Dialog(object):
         self.ok_btn.setObjectName("ok_btn")
         self.horizontalLayout.addWidget(self.ok_btn)
         self.gridLayout.addLayout(self.horizontalLayout, 4, 0, 1, 4)
+        self.pushButton = QtWidgets.QPushButton(Dialog)
+        self.pushButton.setObjectName("pushButton")
+        self.gridLayout.addWidget(self.pushButton, 0, 2, 1, 1)
 
         self.retranslateUi(Dialog)
         self.browse_btn.clicked.connect(Dialog.onOpenFiles)  # type: ignore
         self.cancel_btn.clicked.connect(Dialog.reject)  # type: ignore
         self.ok_btn.clicked.connect(Dialog.onImportSnapshots)  # type: ignore
+        self.pushButton.clicked.connect(Dialog.onClearFiles)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -128,6 +132,11 @@ class Ui_Dialog(object):
             _translate("Dialog", "Additional Tags (separated with ,)"))
         self.cancel_btn.setText(_translate("Dialog", "Cancel"))
         self.ok_btn.setText(_translate("Dialog", "OK"))
+        self.pushButton.setToolTip(
+            _translate(
+                "Dialog",
+                "<html><head/><body><p>Clear filepaths.</p></body></html>"))
+        self.pushButton.setText(_translate("Dialog", "Clear"))
 
 
 if __name__ == "__main__":
