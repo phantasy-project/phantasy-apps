@@ -211,6 +211,13 @@ ELEM_WRITE_PERM = {
  'FE_LEBT:ATT_D0974-2': False,
  'FE_LEBT:AP_D0796': False,
  'FE_LEBT:AP_D0807': False,
+ 'FE_SRC2:PSE_D0665': False,
+ 'FE_SRC2:SOLR_D0669': False,
+ 'FE_SRC2:HVP_D0677': False,
+ 'FE_ISRC1:PSEL_D0679': False,
+ 'FE_ISRC1:SOLR_D0690': False,
+ 'FE_ISRC1:DCH_D0695': False,
+ 'FE_ISRC1:DCV_D0695': False,
 }
 
 # default length for number display
