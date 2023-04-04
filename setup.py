@@ -67,6 +67,7 @@ def set_entry_points():
         'synoptic_app=phantasy_apps.synoptic_app:run',
         'msviz=phantasy_apps.msviz:run',
         'permission_manager=phantasy_apps.permission_manager:run',
+        'autoship=phantasy_apps.autoship:run',
     ]
     return r
 
