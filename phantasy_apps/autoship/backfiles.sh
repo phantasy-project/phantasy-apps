@@ -10,11 +10,11 @@
 # ah_filelist.txt keeps track of the folder paths for AutoShip.
 #
 
-# DIRPATH_CONF_FILE=/files/shared/ap/HLA/autoShip/ah_filelist.txt
-DIRPATH_CONF_FILE=/home/tong/test/ah_filelist.txt
+DIRPATH_CONF_FILE=/files/shared/ap/HLA/autoShip/ah_filelist.txt
+# DIRPATH_CONF_FILE=/home/tong/test/ah_filelist.txt
 
-# DST=/files/shared/outbound-to-office-network/zhangt/FTC-AP
-DST=/tmp/autoship-test
+DST=/files/shared/outbound-to-office-network/zhangt/FTC-AP
+# DST=/tmp/autoship-test
 
 LOG_DIR=$(dirname ${DIRPATH_CONF_FILE})/.ah-logs
 [[ ! -e ${LOG_DIR} ]] && mkdir -p ${LOG_DIR}
