@@ -1,0 +1,14 @@
+# Configuration for Autoship app.
+
+title = "Configurations for Autoship"
+
+[default]
+use = "dev"
+
+[dev]
+CONF_PATH = "/home/tong/test/ah_filelist.txt"
+ALLOWED_ROOT_PATH = "/home/tong"
+
+[ftc]
+CONF_PATH = "/files/shared/ap/HLA/autoShip/ah_filelist.txt"
+ALLOWED_ROOT_PATH = "/files/shared/ap"
