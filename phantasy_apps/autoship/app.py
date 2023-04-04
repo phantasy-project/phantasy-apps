@@ -287,6 +287,8 @@ class AutoShipWindow(BaseAppForm, Ui_MainWindow):
                 _is_remote_chkbox = QCheckBox("Remote", self)
                 _is_remote_chkbox.setChecked(d.is_remote)
                 _is_remote_chkbox.toggled.connect(partial(self.on_toggle_remote, d))
+                _is_remote_chkbox.setEnabled(False)
+                _is_remote_chkbox.setToolTip("Not Support Yet")
                 w_list = (QLabel(str(i), self),
                           _path_lbl, _t_min_sbox, _t_min_btn,
                           _is_remote_chkbox)
