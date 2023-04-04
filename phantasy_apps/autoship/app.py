@@ -57,6 +57,7 @@ def read_config(configpath: str):
 
     conf_path = _use_conf['CONF_PATH']
     allowed_root_path = _use_conf['ALLOWED_ROOT_PATH']
+    extra_allowed_root_path_list = _use_conf['EXTRA_ALLOWED_ROOT_PATH']
 
     path_list = []
     if not os.path.isfile(conf_path):
@@ -69,12 +70,12 @@ def read_config(configpath: str):
             if line.startswith("#"):
                 continue
             _pth = os.path.abspath(os.path.expanduser(line.split(';')[0].strip()))
-            if Path(allowed_root_path) not in Path(_pth).parents:
+            if all(Path(p) not in Path(_pth).parents for p in extra_allowed_root_path_list + [allowed_root_path]):
                 print(f"Skip {_pth} not in {allowed_root_path}")
                 continue
             path_list.append(_Path(line))
 
-    return path_list, conf_path, allowed_root_path
+    return path_list, conf_path, allowed_root_path, extra_allowed_root_path_list
 
 
 class AutoShipWindow(BaseAppForm, Ui_MainWindow):
@@ -107,7 +108,7 @@ class AutoShipWindow(BaseAppForm, Ui_MainWindow):
         # help
         self._hint_dlg = None
         #
-        self.path_list, self.conf_path, self.allowed_root_path = \
+        self.path_list, self.conf_path, self.allowed_root_path, self.extra_allowed_root_path_list = \
                 read_config(configpath)
         # logdir
         self.logdirpath = Path(self.conf_path).parent.joinpath(".ah-logs")
@@ -130,7 +131,7 @@ class AutoShipWindow(BaseAppForm, Ui_MainWindow):
         """Open a folder.
         """
         folderpath = get_open_directory(self, cdir=self.allowed_root_path)
-        if Path(self.allowed_root_path) in Path(folderpath).parents:
+        if any(Path(p) in Path(folderpath).parents for p in self.extra_allowed_root_path_list + [self.allowed_root_path]):
             self.dirpath_lineEdit.setText(folderpath)
         else:
             QMessageBox.warning(self, "Choose a Folder",

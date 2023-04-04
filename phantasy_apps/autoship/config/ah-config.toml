@@ -1,0 +1,11 @@
+# Configuration for Autoship app.
+
+title = "Configurations for Autoship"
+
+[default]
+use = "ftc"
+
+[ftc]
+CONF_PATH = "/files/shared/ap/HLA/autoShip/ah_filelist.txt"
+ALLOWED_ROOT_PATH = "/files/shared/ap"
+EXTRA_ALLOWED_ROOT_PATH = ["/user/steiner"]
