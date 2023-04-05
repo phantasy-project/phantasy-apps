@@ -48,8 +48,8 @@ while read line; do
         #
         echo "running" > ${logfile1}
         _tmin=$(echo $line | awk -F';' '{print $2}')
-        chmod -R go+rX $DST/$(basename ${dirpath})
         ${exec_cmd} -r $dirpath $DST/
+        chmod -R go+rX $DST/$(basename ${dirpath})
         echo "$(date +%Y-%m-%dT%H:%M:%S)" > ${logfile2}
         echo "[$(date +'%Y-%m-%dT%H:%M:%S %Z')] [$$] Proceeding with ${dirpath} ... done" | tee -a ${rootlog}
         echo "waiting" > ${logfile1}
