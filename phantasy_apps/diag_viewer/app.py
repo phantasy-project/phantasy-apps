@@ -134,7 +134,7 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         # DAQ freq
         self._daq_stop = False
         self._daq_nshot = 1
-        self._daqfreq = 1.0
+        self._daqfreq = 5.0
         self.daqfreq_dSpinbox.valueChanged[float].connect(self.update_daqfreq)
         self.daq_nshot_sbox.valueChanged[int].connect(self.update_daq_nshot)
         self._viz_active_px = QPixmap(":/icons/active.png")
