@@ -25,7 +25,7 @@ COLUMNS = [
 ROW_HEIGHT = 48
 PX_SIZE = 20
 
-MP = MachinePortal("FRIB", "MPS")
+MP = MachinePortal("FRIB", "MPS", auto_monitor=True)
 NAME_MAP = {i.name: i for i in MP.get_elements(name='*')}
 DF_ELEM_ND = pd.DataFrame.from_records(
     [[i.name] + 24 * ['-'] for i in MP.get_elements(type='ND')], columns=COLUMNS)
