@@ -32,6 +32,7 @@ class MPSDiagWidget(QWidget, Ui_Form):
         self._post_init()
 
     def _post_init(self):
+        self._dt_ms = int(1000.0 / self.refresh_rate_dsbox.value())
         self.dtype_lbl.setText(
             '<html><head/><body><p><span style=" font-size:20pt; font-weight:600; color:#0055ff;">{dtype}</span></p></body></html>'.format(
                 dtype=DEVICE_TYPE_FULLNAME_MAP[self.device_type]))
@@ -64,7 +65,8 @@ class MPSDiagWidget(QWidget, Ui_Form):
         """Refresh the data model.
         """
         if is_checked:
-            self._r_tmr.start(int(1000.0 / self.refresh_rate_dsbox.value()))
+            self._dt_ms = int(1000.0 / self.refresh_rate_dsbox.value())
+            self._r_tmr.start(self._dt_ms)
         else:
             self._r_tmr.stop()
         for _w in (self.refresh_rate_dsbox,):
@@ -72,11 +74,13 @@ class MPSDiagWidget(QWidget, Ui_Form):
 
     @pyqtSlot()
     def onDataRefreshStarted(self):
-        self.refresh_sts_lbl.setPixmap(QPixmap(":/sm-icons/active.png"))
+        pass
+        # self.refresh_sts_lbl.setPixmap(QPixmap(":/sm-icons/inactive.png"))
 
     @pyqtSlot()
     def onDataRefreshStopped(self):
-        self.refresh_sts_lbl.setPixmap(QPixmap(":/sm-icons/inactive.png"))
+        self.refresh_sts_lbl.setPixmap(QPixmap(":/sm-icons/active.png"))
+        delayed_exec(lambda:self.refresh_sts_lbl.setPixmap(QPixmap(":/sm-icons/inactive.png")), self._dt_ms * 0.6)
 
     def closeEvent(self, evt):
         self._r_tmr.stop()
