@@ -17,6 +17,7 @@ DEVICE_TYPE_FULLNAME_MAP = {
     'HMR': 'Halo Monitor Ring',
 }
 
+
 class MPSDiagWidget(QWidget, Ui_Form):
 
     def __init__(self, device_type: str, parent=None):
@@ -25,14 +26,15 @@ class MPSDiagWidget(QWidget, Ui_Form):
 
         self.setupUi(self)
         self.device_type = device_type
-        self.setWindowTitle(f"MPS Configurtions: Beam Loss Threshold ({self.device_type})")
+        self.setWindowTitle(
+            f"MPS Configurtions: Beam Loss Threshold ({self.device_type})")
 
         self._post_init()
 
     def _post_init(self):
         self.dtype_lbl.setText(
-        '<html><head/><body><p><span style=" font-size:20pt; font-weight:600; color:#0055ff;">{dtype}</span></p></body></html>'.format(
-            dtype=DEVICE_TYPE_FULLNAME_MAP[self.device_type]))
+            '<html><head/><body><p><span style=" font-size:20pt; font-weight:600; color:#0055ff;">{dtype}</span></p></body></html>'.format(
+                dtype=DEVICE_TYPE_FULLNAME_MAP[self.device_type]))
         self.view.setItemDelegate(MPSBeamLossDataDelegateModel(self.view))
         self.set_data()
         self.hide_columns()

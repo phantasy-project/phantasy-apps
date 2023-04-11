@@ -1,20 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import time
+import pandas as pd
+from phantasy import MachinePortal
+from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QAbstractTableModel
-# from PyQt5.QtCore import QAbstractItemModel
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QModelIndex
-import time
-
-from phantasy_ui.widgets import DataAcquisitionThread as DAQT
-
-import pandas as pd
-from threading import Thread
 
 COLUMNS = [
     'Device', 'Average', 'Peak Avg.', '1 MHz Std.', 'Avg. Time',
@@ -27,17 +24,15 @@ COLUMNS = [
 
 ROW_HEIGHT = 48
 PX_SIZE = 20
-T_WAIT = 5
 
-from phantasy import MachinePortal
 MP = MachinePortal("FRIB", "MPS")
 NAME_MAP = {i.name: i for i in MP.get_elements(name='*')}
 DF_ELEM_ND = pd.DataFrame.from_records(
-        [[i.name] + 24 * ['-'] for i in MP.get_elements(type='ND')], columns=COLUMNS)
+    [[i.name] + 24 * ['-'] for i in MP.get_elements(type='ND')], columns=COLUMNS)
 DF_ELEM_IC = pd.DataFrame.from_records(
-        [[i.name] + 24 * ['-'] for i in MP.get_elements(type='IC')], columns=COLUMNS)
+    [[i.name] + 24 * ['-'] for i in MP.get_elements(type='IC')], columns=COLUMNS)
 DF_ELEM_HMR = pd.DataFrame.from_records(
-        [[i.name] + 24 * ['-'] for i in MP.get_elements(type='HMR')], columns=COLUMNS)
+    [[i.name] + 24 * ['-'] for i in MP.get_elements(type='HMR')], columns=COLUMNS)
 
 GREEK_MU = u'\N{GREEK SMALL LETTER MU}'
 UNIT_MAP = {
@@ -52,7 +47,6 @@ DF_MAP = {
     'HMR': DF_ELEM_HMR,
 }
 
-# from phantasy_apps.settings_manager import run
 
 def _gen_data(irow: pd.Series):
     """Get a row of data for device of *name*.
@@ -61,7 +55,7 @@ def _gen_data(irow: pd.Series):
     elem = NAME_MAP[name]
     mps_trip_bits = format(elem.MPS_EN_CMD, "08b")
     _10ms_h, _10ms_l, _1500us_h, _1500us_l, _150us_h, _150us_l, _15us_h, _15us_l = \
-            [int(i) for i in list(mps_trip_bits)]
+        [int(i) for i in list(mps_trip_bits)]
     _10ms_th_h, _10ms_th_l = elem.MPS_10MSHI_TH, elem.MPS_10MSLO_TH
     _1500us_th_h, _1500us_th_l = elem.MPS_1500USHI_TH, elem.MPS_1500USLO_TH
     _150us_th_h, _150us_th_l = elem.MPS_150USHI_TH, elem.MPS_150USLO_TH
@@ -73,11 +67,11 @@ def _gen_data(irow: pd.Series):
     _pkavg = elem.PKAVG
     _std = elem.STD
     return name, _lavg, _pkavg, _std, _lavg_t, \
-            _lavg_th_h, _lavg_h, _lavg_th_l, _lavg_l, \
-            _10ms_th_h, _10ms_h, _10ms_th_l, _10ms_l, \
-            _1500us_th_h, _1500us_h, _1500us_th_l, _1500us_l, \
-            _150us_th_h, _150us_h, _150us_th_l, _150us_l, \
-            _15us_th_h, _15us_h, _15us_th_l, _15us_l
+        _lavg_th_h, _lavg_h, _lavg_th_l, _lavg_l, \
+        _10ms_th_h, _10ms_h, _10ms_th_l, _10ms_l, \
+        _1500us_th_h, _1500us_h, _1500us_th_l, _1500us_l, \
+        _150us_th_h, _150us_h, _150us_th_l, _150us_l, \
+        _15us_th_h, _15us_h, _15us_th_l, _15us_l
 
 
 def _get_dataframe(dtype: str):
@@ -94,12 +88,12 @@ class MPSBeamLossDataModel(QAbstractTableModel):
 
     # column ids
     ColumnDevice, ColumnLongAvg, ColumnPeakAvg, ColumnStd, ColumnLongAvgTime, \
-    ColumnLAvgThHi, ColumnLAvgThHi_E, ColumnLAvgThLo, ColumnLAvgThLo_E, \
-    Column10msThHi, Column10msThHi_E, Column10msThLo, Column10msThLo_E, \
-    Column1500usThHi, Column1500usThHi_E, Column1500usThLo, Column1500usThLo_E, \
-    Column150usThHi, Column150usThHi_E, Column150usThLo, Column150usThLo_E, \
-    Column15usThHi, Column15usThHi_E, Column15usThLo, Column15usThLo_E, \
-    ColumnCount = range(26)
+        ColumnLAvgThHi, ColumnLAvgThHi_E, ColumnLAvgThLo, ColumnLAvgThLo_E, \
+        Column10msThHi, Column10msThHi_E, Column10msThLo, Column10msThLo_E, \
+        Column1500usThHi, Column1500usThHi_E, Column1500usThLo, Column1500usThLo_E, \
+        Column150usThHi, Column150usThHi_E, Column150usThLo, Column150usThLo_E, \
+        Column15usThHi, Column15usThHi_E, Column15usThLo, Column15usThLo_E, \
+        ColumnCount = range(26)
 
     # column names
     columnNameMap = {
@@ -210,7 +204,7 @@ class MPSBeamLossDataModel(QAbstractTableModel):
         if role == Qt.DisplayRole and column not in MPSBeamLossDataModel.CHK_COLUMNS:
             if v != '-' and column in MPSBeamLossDataModel.columnFormat:
                 return MPSBeamLossDataModel.columnFormat[column].format(
-                        value=float(v), unit=self._unit)
+                    value=float(v), unit=self._unit)
             else:
                 return v
 
@@ -218,14 +212,14 @@ class MPSBeamLossDataModel(QAbstractTableModel):
             if column in MPSBeamLossDataModel.CHK_COLUMNS:
                 if v == 1.0:
                     return QPixmap(":/sm-icons/check-square-fill.png").scaled(PX_SIZE, PX_SIZE,
-                            Qt.KeepAspectRatio, Qt.SmoothTransformation)
-                else: # v == 0.0
+                                                                              Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                else:  # v == 0.0
                     return QPixmap(":/sm-icons/uncheck-square.png").scaled(PX_SIZE, PX_SIZE,
-                            Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                                                                           Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
-        #elif role == Qt.CheckStateRole and column == self.ColumnDevice:
+        # elif role == Qt.CheckStateRole and column == self.ColumnDevice:
         #    return Qt.Checked if self._data['_checkState'].iat[row] else Qt.Unchecked
-        #elif role == Qt.UserRole + 10: # not writable
+        # elif role == Qt.UserRole + 10: # not writable
         #    return self._data.Writable.iat[row] == False
 
     def setData(self, index: QModelIndex, value, role: int = Qt.EditRole):
@@ -245,7 +239,7 @@ class MPSBeamLossDataModel(QAbstractTableModel):
             return Qt.NoItemFlags
         if self.data(index, Qt.UserRole + 10):
             return Qt.NoItemFlags
-        #if index.column() == self.ColumnDevice:
+        # if index.column() == self.ColumnDevice:
         #    return Qt.ItemIsUserCheckable | QAbstractItemModel.flags(self, index)
         return QAbstractTableModel.flags(self, index)
 
@@ -265,7 +259,8 @@ class MPSBeamLossDataModel(QAbstractTableModel):
             # update data
             self._data = _get_dataframe(self.device_type)
             self.dataframeUpdated.emit(self._data)
-            print(f"[{self.device_type}] Data Refreshed: {(time.time() - t0) * 1e3:.1f} ms")
+            print(
+                f"[{self.device_type}] Data Refreshed: {(time.time() - t0) * 1e3:.1f} ms")
         #
         self._th = DAQT(daq_func=_onUpdateData, daq_seq=range(1))
         self._th.daqStarted.connect(self.dataRefreshStarted)
@@ -299,7 +294,6 @@ class MPSBeamLossDataDelegateModel(QStyledItemDelegate):
         else:
             option.displayAlignment = Qt.AlignRight | Qt.AlignVCenter
         QStyledItemDelegate.paint(self, painter, option, index)
-
 
 
 if __name__ == '__main__':
