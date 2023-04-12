@@ -3,12 +3,16 @@
 
 import time
 import pandas as pd
+import numpy as np
 from phantasy import MachinePortal
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QBrush
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QAbstractTableModel
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QModelIndex
@@ -24,6 +28,11 @@ COLUMNS = [
 
 ROW_HEIGHT = 48
 PX_SIZE = 20
+RED_COLOR = QColor(220, 53, 69, 240)
+GREEN_COLOR = QColor(40, 167, 69, 240)
+BLUE_COLOR = QColor(0, 123, 255, 240)
+WHITE_COLOR = QColor(255, 255, 255, 255)
+BLACK_COLOR = QColor(0, 0, 0, 255)
 
 MP = MachinePortal("FRIB", "MPS", auto_monitor=True)
 NAME_MAP = {i.name: i for i in MP.get_elements(name='*')}
@@ -132,19 +141,19 @@ class MPSBeamLossDataModel(QAbstractTableModel):
 
     columnFormat = {
         ColumnLongAvg: "{value:.6f} {unit}",
-        ColumnPeakAvg: "{value:.3f} {unit}",
-        ColumnStd: "{value:.3f} {unit}",
+        ColumnPeakAvg: "{value:.6f} {unit}",
+        ColumnStd: "{value:.6f} {unit}",
         ColumnLongAvgTime: "{value:.1f} s",
-        ColumnLAvgThHi: "{value:.2e} {unit}",
-        ColumnLAvgThLo: "{value:.2e} {unit}",
-        Column10msThHi: "{value:.2e} {unit}",
-        Column10msThLo: "{value:.2e} {unit}",
-        Column1500usThHi: "{value:.2e} {unit}",
-        Column1500usThLo: "{value:.2e} {unit}",
-        Column150usThHi: "{value:.2e} {unit}",
-        Column150usThLo: "{value:.2e} {unit}",
-        Column15usThHi: "{value:.2e} {unit}",
-        Column15usThLo: "{value:.2e} {unit}",
+        ColumnLAvgThHi: "{value:.4e} {unit}",
+        ColumnLAvgThLo: "{value:.4e} {unit}",
+        Column10msThHi: "{value:.4e} {unit}",
+        Column10msThLo: "{value:.4e} {unit}",
+        Column1500usThHi: "{value:.4e} {unit}",
+        Column1500usThLo: "{value:.4e} {unit}",
+        Column150usThHi: "{value:.4e} {unit}",
+        Column150usThLo: "{value:.4e} {unit}",
+        Column15usThHi: "{value:.4e} {unit}",
+        Column15usThLo: "{value:.4e} {unit}",
     }
 
     columnHiddenMap = {
@@ -164,6 +173,7 @@ class MPSBeamLossDataModel(QAbstractTableModel):
 
     #
     dataframeUpdated = pyqtSignal(pd.DataFrame)
+    refDataframeUpdated = pyqtSignal(pd.DataFrame)
     # data refreshing started
     dataRefreshStarted = pyqtSignal()
     # data refreshing stopped
@@ -176,10 +186,12 @@ class MPSBeamLossDataModel(QAbstractTableModel):
         self._unit = UNIT_MAP[device_type]
         data = DF_MAP[device_type]
         self.set_dataframe(data)
+        self.set_ref_dataframe(None)
         #
         self.__post_init()
         # start data refreshing thread
         self.dataframeUpdated.connect(self.update_dataframe)
+        self.refDataframeUpdated.connect(self.update_ref_dataframe)
 
         #
         self.refresh_data()
@@ -201,6 +213,8 @@ class MPSBeamLossDataModel(QAbstractTableModel):
             return None
         row, column = index.row(), index.column()
         v = self._data.iloc[row, column]
+        v_ref = None if self._ref_data is None else self._ref_data.iloc[row, column]
+        is_diff = v_ref is not None and not is_equal(v_ref, v)
         if role == Qt.DisplayRole and column not in MPSBeamLossDataModel.CHK_COLUMNS:
             if v != '-' and column in MPSBeamLossDataModel.columnFormat:
                 return MPSBeamLossDataModel.columnFormat[column].format(
@@ -211,11 +225,45 @@ class MPSBeamLossDataModel(QAbstractTableModel):
         if role == Qt.DecorationRole:
             if column in MPSBeamLossDataModel.CHK_COLUMNS:
                 if v == 1.0:
-                    return QPixmap(":/sm-icons/check-square-fill.png").scaled(PX_SIZE, PX_SIZE,
-                                                                              Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                    if is_diff:
+                        return QPixmap(":/sm-icons/check-square-fill-red.png").scaled(PX_SIZE, PX_SIZE,
+                                                                                      Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                    else:
+                        return QPixmap(":/sm-icons/check-square-fill.png").scaled(PX_SIZE, PX_SIZE,
+                                                                                  Qt.KeepAspectRatio, Qt.SmoothTransformation)
                 else:  # v == 0.0
-                    return QPixmap(":/sm-icons/uncheck-square.png").scaled(PX_SIZE, PX_SIZE,
-                                                                           Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                    if is_diff:
+                        return QPixmap(":/sm-icons/uncheck-square-red.png").scaled(PX_SIZE, PX_SIZE,
+                                                                                   Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                    else:
+                        return QPixmap(":/sm-icons/uncheck-square.png").scaled(PX_SIZE, PX_SIZE,
+                                                                               Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        
+        if role == Qt.ForegroundRole:
+            if is_diff:
+                if v > v_ref:
+                    return QBrush(RED_COLOR)
+                else:
+                    return QBrush(GREEN_COLOR)
+            else:
+                return QBrush(BLACK_COLOR)
+        
+        if role == Qt.ToolTipRole:
+            if is_diff:
+                if column not in MPSBeamLossDataModel.CHK_COLUMNS:
+                    v_ref_fmted = MPSBeamLossDataModel.columnFormat[column].format(
+                        value=float(v_ref), unit=self._unit)
+                    rel_per = f" [{(v - v_ref)/abs(v_ref) * 100:+.1f}%]"
+                else:
+                    v_ref_fmted = "Enabled" if v_ref == 1.0 else "Disabled"
+                    rel_per = ''
+                if v > v_ref:
+                    cname = RED_COLOR.name()
+                else:
+                    cname = GREEN_COLOR.name()
+                return f'''<p><span style=" text-decoration: underline;">Reference value is:</span></p><p><span style=" color:{cname};">{v_ref_fmted}{rel_per}</span>.</p>'''
+            else:
+                return None
 
         # elif role == Qt.CheckStateRole and column == self.ColumnDevice:
         #    return Qt.Checked if self._data['_checkState'].iat[row] else Qt.Unchecked
@@ -245,12 +293,26 @@ class MPSBeamLossDataModel(QAbstractTableModel):
 
     def set_dataframe(self, df: pd.DataFrame):
         self._data = df
+    
+    def set_ref_dataframe(self, ref_df: pd.DataFrame):
+        self._ref_data = ref_df
+
+    def get_dataframe(self):
+        return self._data
+
+    def get_ref_dataframe(self):
+        return self._ref_data
 
     def update_dataframe(self, df: pd.DataFrame):
         # update data
-        t0 = time.time()
         self.layoutAboutToBeChanged.emit()
         self.set_dataframe(df)
+        self.layoutChanged.emit()
+
+    def update_ref_dataframe(self, df: pd.DataFrame):
+        # update ref data
+        self.layoutAboutToBeChanged.emit()
+        self.set_ref_dataframe(df)
         self.layoutChanged.emit()
 
     def refresh_data(self):
@@ -269,6 +331,18 @@ class MPSBeamLossDataModel(QAbstractTableModel):
 
     def get_hidden_columns(self):
         return MPSBeamLossDataModel.columnHiddenMap[self.device_type]
+    
+    def highlight_diff(self, ref_df: pd.DataFrame):
+        """Highlight the cells with different values by comparing with the input data.
+        """
+        # test
+        #df = pd.read_csv('/tmp/20230412T091656_ND.csv')
+        #df_bool_diff = self._data != df # dataframe of boolean of current data is diff from the loaded one
+        #df_val_diff = df[df_bool_diff]  # cell values from the loaded dataframe, not NaN
+        def _onUpdateData(i):
+            self.refDataframeUpdated.emit(ref_df)
+        #
+        DAQT(daq_func=_onUpdateData, daq_seq=range(1)).start()
 
 
 class MPSBeamLossDataDelegateModel(QStyledItemDelegate):
@@ -294,6 +368,18 @@ class MPSBeamLossDataDelegateModel(QStyledItemDelegate):
         else:
             option.displayAlignment = Qt.AlignRight | Qt.AlignVCenter
         QStyledItemDelegate.paint(self, painter, option, index)
+
+
+def is_equal(a, b, decimal=6):
+    if isinstance(a, str):
+        return a == b
+
+    try:
+        np.testing.assert_almost_equal(a, b, decimal)
+    except AssertionError:
+        return False
+    else:
+        return True
 
 
 if __name__ == '__main__':
