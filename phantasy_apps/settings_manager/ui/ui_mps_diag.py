@@ -14,7 +14,7 @@ class Ui_Form(object):
 
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(1230, 600)
+        Form.resize(1400, 800)
         self.gridLayout = QtWidgets.QGridLayout(Form)
         self.gridLayout.setContentsMargins(4, 4, 4, 4)
         self.gridLayout.setSpacing(4)
@@ -90,15 +90,49 @@ class Ui_Form(object):
         icon.addPixmap(QtGui.QPixmap(":/sm-icons/resize-horizontal.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.auto_width_btn.setIcon(icon)
-        self.auto_width_btn.setIconSize(QtCore.QSize(30, 30))
+        self.auto_width_btn.setIconSize(QtCore.QSize(24, 24))
         self.auto_width_btn.setAutoRaise(True)
         self.auto_width_btn.setObjectName("auto_width_btn")
         self.horizontalLayout.addWidget(self.auto_width_btn)
+        self.pushButton = QtWidgets.QPushButton(Form)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/sm-icons/save.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton.setIcon(icon1)
+        self.pushButton.setIconSize(QtCore.QSize(24, 24))
+        self.pushButton.setObjectName("pushButton")
+        self.horizontalLayout.addWidget(self.pushButton)
+        self.pushButton_2 = QtWidgets.QPushButton(Form)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/compare.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_2.setIcon(icon2)
+        self.pushButton_2.setIconSize(QtCore.QSize(24, 24))
+        self.pushButton_2.setObjectName("pushButton_2")
+        self.horizontalLayout.addWidget(self.pushButton_2)
+        self.pushButton_3 = QtWidgets.QPushButton(Form)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/clear.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_3.setIcon(icon3)
+        self.pushButton_3.setIconSize(QtCore.QSize(24, 24))
+        self.pushButton_3.setObjectName("pushButton_3")
+        self.horizontalLayout.addWidget(self.pushButton_3)
+        self.ref_datafilepath_lineEdit = QtWidgets.QLineEdit(Form)
+        self.ref_datafilepath_lineEdit.setReadOnly(True)
+        self.ref_datafilepath_lineEdit.setObjectName(
+            "ref_datafilepath_lineEdit")
+        self.horizontalLayout.addWidget(self.ref_datafilepath_lineEdit)
         spacerItem = QtWidgets.QSpacerItem(40, 20,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.refresh_btn = QtWidgets.QPushButton(Form)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/start.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.refresh_btn.setIcon(icon4)
+        self.refresh_btn.setIconSize(QtCore.QSize(24, 24))
         self.refresh_btn.setCheckable(True)
         self.refresh_btn.setObjectName("refresh_btn")
         self.horizontalLayout.addWidget(self.refresh_btn)
@@ -116,6 +150,9 @@ class Ui_Form(object):
             Form.auto_resize_columns)  # type: ignore
         self.refresh_btn.toggled['bool'].connect(
             Form.refreshData)  # type: ignore
+        self.pushButton.clicked.connect(Form.saveData)  # type: ignore
+        self.pushButton_2.clicked.connect(Form.compareData)  # type: ignore
+        self.pushButton_3.clicked.connect(Form.clearDiff)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -135,6 +172,33 @@ class Ui_Form(object):
         self.auto_width_btn.setToolTip(
             _translate("Form", "Auto adjust column width."))
         self.auto_width_btn.setText(_translate("Form", "Auto Width"))
+        self.pushButton.setToolTip(
+            _translate(
+                "Form",
+                "<html><head/><body><p>Save data into a CSV file.</p></body></html>"
+            ))
+        self.pushButton.setText(_translate("Form", "SaveAs"))
+        self.pushButton_2.setToolTip(
+            _translate(
+                "Form",
+                "<html><head/><body><p>Load a CSV file and do the comparison, highlight the differences.</p></body></html>"
+            ))
+        self.pushButton_2.setText(_translate("Form", "Diff-Load"))
+        self.pushButton_3.setToolTip(
+            _translate(
+                "Form",
+                "<html><head/><body><p>Reset comparison.</p></body></html>"))
+        self.pushButton_3.setText(_translate("Form", "Reset-Diff"))
+        self.ref_datafilepath_lineEdit.setToolTip(
+            _translate(
+                "Form",
+                "<html><head/><body><p>The loaded data for comparing.</p></body></html>"
+            ))
+        self.refresh_btn.setToolTip(
+            _translate(
+                "Form",
+                "<html><head/><body><p>Check to active auto data refreshing, uncheck to stop.</p></body></html>"
+            ))
         self.refresh_btn.setText(_translate("Form", "Refresh"))
         self.refresh_rate_dsbox.setSuffix(_translate("Form", " Hz"))
 
