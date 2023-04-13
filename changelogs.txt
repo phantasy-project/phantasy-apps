@@ -18,6 +18,11 @@ Version 5.5.0
   - Refine the Apply procedure, reduce the confirmation messages
   - Support multi-staged Revert Apply operations
   - Support abort the procedure of settings apply
+- DV
+  - Support abort the running DAQ thread at any time
+  - Refined annotation controls
+  - Default pre-load FRIB/LINAC
+  - Created buttons for load diag devices
 
 Version 5.4.3
 -------------
