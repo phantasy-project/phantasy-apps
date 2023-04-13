@@ -14,34 +14,11 @@ class Ui_Form(object):
 
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(1400, 800)
+        Form.resize(1600, 1200)
         self.gridLayout = QtWidgets.QGridLayout(Form)
         self.gridLayout.setContentsMargins(4, 4, 4, 4)
         self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
-        self.label = QtWidgets.QLabel(Form)
-        self.label.setStyleSheet("QLabel {\n"
-                                 "    margin-bottom: 10px;\n"
-                                 "}")
-        self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
-        self.dtype_lbl = QtWidgets.QLabel(Form)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.dtype_lbl.sizePolicy().hasHeightForWidth())
-        self.dtype_lbl.setSizePolicy(sizePolicy)
-        self.dtype_lbl.setStyleSheet("QLabel {\n"
-                                     "    margin-left: 20px;\n"
-                                     "    margin-bottom: 10px;\n"
-                                     "}")
-        self.dtype_lbl.setAlignment(QtCore.Qt.AlignLeading
-                                    | QtCore.Qt.AlignLeft
-                                    | QtCore.Qt.AlignVCenter)
-        self.dtype_lbl.setObjectName("dtype_lbl")
-        self.gridLayout.addWidget(self.dtype_lbl, 0, 1, 1, 1)
         self.view = QtWidgets.QTreeView(Form)
         self.view.setStyleSheet(
             "QHeaderView {\n"
@@ -78,7 +55,7 @@ class Ui_Form(object):
         self.view.setIndentation(10)
         self.view.setUniformRowHeights(True)
         self.view.setObjectName("view")
-        self.gridLayout.addWidget(self.view, 1, 0, 1, 2)
+        self.gridLayout.addWidget(self.view, 2, 0, 1, 2)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSpacing(4)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -102,36 +79,63 @@ class Ui_Form(object):
         self.pushButton.setIconSize(QtCore.QSize(24, 24))
         self.pushButton.setObjectName("pushButton")
         self.horizontalLayout.addWidget(self.pushButton)
-        self.pushButton_2 = QtWidgets.QPushButton(Form)
+        self.pushButton_4 = QtWidgets.QPushButton(Form)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/compare.png"),
+        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/snapshot.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton_2.setIcon(icon2)
+        self.pushButton_4.setIcon(icon2)
+        self.pushButton_4.setIconSize(QtCore.QSize(24, 24))
+        self.pushButton_4.setObjectName("pushButton_4")
+        self.horizontalLayout.addWidget(self.pushButton_4)
+        self.pushButton_2 = QtWidgets.QPushButton(Form)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/compare.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.pushButton_2.setIcon(icon3)
         self.pushButton_2.setIconSize(QtCore.QSize(24, 24))
         self.pushButton_2.setObjectName("pushButton_2")
         self.horizontalLayout.addWidget(self.pushButton_2)
         self.pushButton_3 = QtWidgets.QPushButton(Form)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/clear.png"),
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/clear.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.pushButton_3.setIcon(icon3)
+        self.pushButton_3.setIcon(icon4)
         self.pushButton_3.setIconSize(QtCore.QSize(24, 24))
         self.pushButton_3.setObjectName("pushButton_3")
         self.horizontalLayout.addWidget(self.pushButton_3)
-        self.ref_datafilepath_lineEdit = QtWidgets.QLineEdit(Form)
-        self.ref_datafilepath_lineEdit.setReadOnly(True)
-        self.ref_datafilepath_lineEdit.setObjectName(
-            "ref_datafilepath_lineEdit")
-        self.horizontalLayout.addWidget(self.ref_datafilepath_lineEdit)
+        self.diff_type_lbl = QtWidgets.QLabel(Form)
+        self.diff_type_lbl.setText("")
+        self.diff_type_lbl.setObjectName("diff_type_lbl")
+        self.horizontalLayout.addWidget(self.diff_type_lbl)
+        self.ref_datafilepath_lbl = QtWidgets.QLabel(Form)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.ref_datafilepath_lbl.sizePolicy().hasHeightForWidth())
+        self.ref_datafilepath_lbl.setSizePolicy(sizePolicy)
+        self.ref_datafilepath_lbl.setMinimumSize(QtCore.QSize(700, 0))
+        self.ref_datafilepath_lbl.setStyleSheet("QLabel {\n"
+                                                "    background: white;\n"
+                                                "    border: 1px solid gray;\n"
+                                                "}")
+        self.ref_datafilepath_lbl.setText("")
+        self.ref_datafilepath_lbl.setScaledContents(False)
+        self.ref_datafilepath_lbl.setWordWrap(False)
+        self.ref_datafilepath_lbl.setTextInteractionFlags(
+            QtCore.Qt.LinksAccessibleByMouse | QtCore.Qt.TextSelectableByMouse)
+        self.ref_datafilepath_lbl.setObjectName("ref_datafilepath_lbl")
+        self.horizontalLayout.addWidget(self.ref_datafilepath_lbl)
         spacerItem = QtWidgets.QSpacerItem(40, 20,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.refresh_btn = QtWidgets.QPushButton(Form)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/start.png"),
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/start.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.refresh_btn.setIcon(icon4)
+        self.refresh_btn.setIcon(icon5)
         self.refresh_btn.setIconSize(QtCore.QSize(24, 24))
         self.refresh_btn.setCheckable(True)
         self.refresh_btn.setObjectName("refresh_btn")
@@ -143,7 +147,48 @@ class Ui_Form(object):
         self.refresh_rate_dsbox.setProperty("value", 1.0)
         self.refresh_rate_dsbox.setObjectName("refresh_rate_dsbox")
         self.horizontalLayout.addWidget(self.refresh_rate_dsbox)
-        self.gridLayout.addLayout(self.horizontalLayout, 2, 0, 1, 2)
+        self.gridLayout.addLayout(self.horizontalLayout, 3, 0, 1, 2)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_2.setSpacing(4)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label = QtWidgets.QLabel(Form)
+        self.label.setStyleSheet("QLabel {\n"
+                                 "    margin-bottom: 10px;\n"
+                                 "}")
+        self.label.setObjectName("label")
+        self.horizontalLayout_2.addWidget(self.label)
+        self.dtype_lbl = QtWidgets.QLabel(Form)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.dtype_lbl.sizePolicy().hasHeightForWidth())
+        self.dtype_lbl.setSizePolicy(sizePolicy)
+        self.dtype_lbl.setStyleSheet("QLabel {\n"
+                                     "    margin-left: 20px;\n"
+                                     "    margin-bottom: 10px;\n"
+                                     "}")
+        self.dtype_lbl.setAlignment(QtCore.Qt.AlignLeading
+                                    | QtCore.Qt.AlignLeft
+                                    | QtCore.Qt.AlignVCenter)
+        self.dtype_lbl.setObjectName("dtype_lbl")
+        self.horizontalLayout_2.addWidget(self.dtype_lbl)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem1)
+        self.diff_help_btn = QtWidgets.QToolButton(Form)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/sm-icons/new.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.diff_help_btn.setIcon(icon6)
+        self.diff_help_btn.setIconSize(QtCore.QSize(40, 40))
+        self.diff_help_btn.setAutoRaise(True)
+        self.diff_help_btn.setObjectName("diff_help_btn")
+        self.horizontalLayout_2.addWidget(self.diff_help_btn)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 2)
 
         self.retranslateUi(Form)
         self.auto_width_btn.clicked.connect(
@@ -153,21 +198,13 @@ class Ui_Form(object):
         self.pushButton.clicked.connect(Form.saveData)  # type: ignore
         self.pushButton_2.clicked.connect(Form.compareData)  # type: ignore
         self.pushButton_3.clicked.connect(Form.clearDiff)  # type: ignore
+        self.pushButton_4.clicked.connect(Form.takeDiff)  # type: ignore
+        self.diff_help_btn.clicked.connect(Form.onHelpDiffMode)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
-        self.label.setText(
-            _translate(
-                "Form",
-                "<html><head/><body><p><span style=\" font-size:20pt;\">Read-Only Diagnostics MPS Threshold Configurtions</span></p></body></html>"
-            ))
-        self.dtype_lbl.setText(
-            _translate(
-                "Form",
-                "<html><head/><body><p><span style=\" font-size:20pt; font-weight:600; color:#0055ff;\">Device Type</span></p></body></html>"
-            ))
         self.refresh_sts_lbl.setText(_translate("Form", "sts"))
         self.auto_width_btn.setToolTip(
             _translate("Form", "Auto adjust column width."))
@@ -178,22 +215,23 @@ class Ui_Form(object):
                 "<html><head/><body><p>Save data into a CSV file.</p></body></html>"
             ))
         self.pushButton.setText(_translate("Form", "SaveAs"))
+        self.pushButton_4.setToolTip(
+            _translate(
+                "Form",
+                "<html><head/><body><p>Take a snapshot of current live readings as reference for diff.</p></body></html>"
+            ))
+        self.pushButton_4.setText(_translate("Form", "Take-Diff"))
         self.pushButton_2.setToolTip(
             _translate(
                 "Form",
                 "<html><head/><body><p>Load a CSV file and do the comparison, highlight the differences.</p></body></html>"
             ))
-        self.pushButton_2.setText(_translate("Form", "Diff-Load"))
+        self.pushButton_2.setText(_translate("Form", "Load-Diff"))
         self.pushButton_3.setToolTip(
             _translate(
                 "Form",
                 "<html><head/><body><p>Reset comparison.</p></body></html>"))
         self.pushButton_3.setText(_translate("Form", "Reset-Diff"))
-        self.ref_datafilepath_lineEdit.setToolTip(
-            _translate(
-                "Form",
-                "<html><head/><body><p>The loaded data for comparing.</p></body></html>"
-            ))
         self.refresh_btn.setToolTip(
             _translate(
                 "Form",
@@ -201,6 +239,22 @@ class Ui_Form(object):
             ))
         self.refresh_btn.setText(_translate("Form", "Refresh"))
         self.refresh_rate_dsbox.setSuffix(_translate("Form", " Hz"))
+        self.label.setText(
+            _translate(
+                "Form",
+                "<html><head/><body><p><span style=\" font-size:18pt;\">Read-Only Diagnostics MPS Threshold Configurtions</span></p></body></html>"
+            ))
+        self.dtype_lbl.setText(
+            _translate(
+                "Form",
+                "<html><head/><body><p><span style=\" font-size:18pt; font-weight:600; color:#0055ff;\">Device Type</span></p></body></html>"
+            ))
+        self.diff_help_btn.setToolTip(
+            _translate(
+                "Form",
+                "<html><head/><body><p>Click to see the details for diff mode.</p></body></html>"
+            ))
+        self.diff_help_btn.setText(_translate("Form", "..."))
 
 
 from . import resources_rc
