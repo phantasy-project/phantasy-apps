@@ -68,6 +68,7 @@ def set_entry_points():
         'msviz=phantasy_apps.msviz:run',
         'permission_manager=phantasy_apps.permission_manager:run',
         'autoship=phantasy_apps.autoship:run',
+        'threshold_manager=phantasy_apps.threshold_manager:run',
     ]
     return r
 
