@@ -226,17 +226,17 @@ class MPSBeamLossDataModel(QAbstractTableModel):
             if column in MPSBeamLossDataModel.CHK_COLUMNS:
                 if v == 1.0:
                     if is_diff:
-                        return QPixmap(":/sm-icons/check-square-fill-red.png").scaled(PX_SIZE, PX_SIZE,
+                        return QPixmap(":/tm-icons/check-square-fill-red.png").scaled(PX_SIZE, PX_SIZE,
                                                                                       Qt.KeepAspectRatio, Qt.SmoothTransformation)
                     else:
-                        return QPixmap(":/sm-icons/check-square-fill.png").scaled(PX_SIZE, PX_SIZE,
+                        return QPixmap(":/tm-icons/check-square-fill.png").scaled(PX_SIZE, PX_SIZE,
                                                                                   Qt.KeepAspectRatio, Qt.SmoothTransformation)
                 else:  # v == 0.0
                     if is_diff:
-                        return QPixmap(":/sm-icons/uncheck-square-red.png").scaled(PX_SIZE, PX_SIZE,
+                        return QPixmap(":/tm-icons/uncheck-square-green.png").scaled(PX_SIZE, PX_SIZE,
                                                                                    Qt.KeepAspectRatio, Qt.SmoothTransformation)
                     else:
-                        return QPixmap(":/sm-icons/uncheck-square.png").scaled(PX_SIZE, PX_SIZE,
+                        return QPixmap(":/tm-icons/uncheck-square.png").scaled(PX_SIZE, PX_SIZE,
                                                                                Qt.KeepAspectRatio, Qt.SmoothTransformation)
         
         if role == Qt.ForegroundRole:

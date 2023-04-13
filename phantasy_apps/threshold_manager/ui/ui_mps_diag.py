@@ -64,7 +64,7 @@ class Ui_Form(object):
         self.horizontalLayout.addWidget(self.refresh_sts_lbl)
         self.auto_width_btn = QtWidgets.QToolButton(Form)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/sm-icons/resize-horizontal.png"),
+        icon.addPixmap(QtGui.QPixmap(":/tm-icons/resize-horizontal.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.auto_width_btn.setIcon(icon)
         self.auto_width_btn.setIconSize(QtCore.QSize(24, 24))
@@ -73,7 +73,7 @@ class Ui_Form(object):
         self.horizontalLayout.addWidget(self.auto_width_btn)
         self.pushButton = QtWidgets.QPushButton(Form)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/sm-icons/save.png"),
+        icon1.addPixmap(QtGui.QPixmap(":/tm-icons/save.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.pushButton.setIcon(icon1)
         self.pushButton.setIconSize(QtCore.QSize(24, 24))
@@ -81,7 +81,7 @@ class Ui_Form(object):
         self.horizontalLayout.addWidget(self.pushButton)
         self.pushButton_4 = QtWidgets.QPushButton(Form)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/snapshot.png"),
+        icon2.addPixmap(QtGui.QPixmap(":/tm-icons/snapshot.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.pushButton_4.setIcon(icon2)
         self.pushButton_4.setIconSize(QtCore.QSize(24, 24))
@@ -89,7 +89,7 @@ class Ui_Form(object):
         self.horizontalLayout.addWidget(self.pushButton_4)
         self.pushButton_2 = QtWidgets.QPushButton(Form)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/compare.png"),
+        icon3.addPixmap(QtGui.QPixmap(":/tm-icons/compare.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.pushButton_2.setIcon(icon3)
         self.pushButton_2.setIconSize(QtCore.QSize(24, 24))
@@ -97,7 +97,7 @@ class Ui_Form(object):
         self.horizontalLayout.addWidget(self.pushButton_2)
         self.pushButton_3 = QtWidgets.QPushButton(Form)
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/clear.png"),
+        icon4.addPixmap(QtGui.QPixmap(":/tm-icons/clear.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.pushButton_3.setIcon(icon4)
         self.pushButton_3.setIconSize(QtCore.QSize(24, 24))
@@ -133,7 +133,7 @@ class Ui_Form(object):
         self.horizontalLayout.addItem(spacerItem)
         self.refresh_btn = QtWidgets.QPushButton(Form)
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/start.png"),
+        icon5.addPixmap(QtGui.QPixmap(":/tm-icons/start.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.refresh_btn.setIcon(icon5)
         self.refresh_btn.setIconSize(QtCore.QSize(24, 24))
@@ -181,7 +181,7 @@ class Ui_Form(object):
         self.horizontalLayout_2.addItem(spacerItem1)
         self.diff_help_btn = QtWidgets.QToolButton(Form)
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/sm-icons/new.png"),
+        icon6.addPixmap(QtGui.QPixmap(":/tm-icons/new.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.diff_help_btn.setIcon(icon6)
         self.diff_help_btn.setIconSize(QtCore.QSize(40, 40))

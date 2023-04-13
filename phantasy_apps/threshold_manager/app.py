@@ -16,9 +16,9 @@ from PyQt5.QtCore import Qt
 
 from phantasy_ui import delayed_exec
 from phantasy_ui import get_open_filename
-from phantasy_apps.settings_manager.ui.ui_mps_diag import Ui_Form
-from phantasy_apps.settings_manager._mps_model import MPSBeamLossDataModel
-from phantasy_apps.settings_manager._mps_model import MPSBeamLossDataDelegateModel
+from phantasy_apps.threshold_manager.ui.ui_mps_diag import Ui_Form
+from phantasy_apps.threshold_manager._mps_model import MPSBeamLossDataModel
+from phantasy_apps.threshold_manager._mps_model import MPSBeamLossDataDelegateModel
 
 DEVICE_TYPE_FULLNAME_MAP = {
     'ND': 'Neutron Detector',
@@ -86,12 +86,11 @@ class MPSDiagWidget(QWidget, Ui_Form):
     @pyqtSlot()
     def onDataRefreshStarted(self):
         pass
-        # self.refresh_sts_lbl.setPixmap(QPixmap(":/sm-icons/inactive.png"))
 
     @pyqtSlot()
     def onDataRefreshStopped(self):
-        self.refresh_sts_lbl.setPixmap(QPixmap(":/sm-icons/active.png"))
-        delayed_exec(lambda:self.refresh_sts_lbl.setPixmap(QPixmap(":/sm-icons/inactive.png")), int(self._dt_ms * 0.6))
+        self.refresh_sts_lbl.setPixmap(QPixmap(":/tm-icons/active.png"))
+        delayed_exec(lambda:self.refresh_sts_lbl.setPixmap(QPixmap(":/tm-icons/inactive.png")), int(self._dt_ms * 0.6))
 
     def closeEvent(self, evt):
         self._r_tmr.stop()
