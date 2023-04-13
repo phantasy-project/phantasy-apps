@@ -1,3 +1,24 @@
+Version 5.5.0
+-------------
+2023-04-13
+
+- Add new apps
+  - AH: AutoShip
+  - PM: Permission Manager
+- AS
+  - Extend support to the new allison scanner device in HP-ECR beamline
+  - Auto-adapt the configurtions regarding ECR source
+- SM
+  - Fixed crash when editing snapshot metadata but no snapshot is loaded
+  - Override the write permission for the devices in ECR (internal)
+  - Fixed import snapshot from spreadsheet
+  - Add support to show hall probe and NMR readings
+  - Do not scale non-scalable device settings, e.g. PHA
+  - Refined the data structure of set log
+  - Refine the Apply procedure, reduce the confirmation messages
+  - Support multi-staged Revert Apply operations
+  - Support abort the procedure of settings apply
+
 Version 5.4.3
 -------------
 2022-12-02
