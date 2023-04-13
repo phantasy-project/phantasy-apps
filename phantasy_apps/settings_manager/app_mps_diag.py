@@ -7,9 +7,12 @@ from datetime import datetime
 
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QMessageBox
+
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QFontMetrics
+from PyQt5.QtCore import Qt
 
 from phantasy_ui import delayed_exec
 from phantasy_ui import get_open_filename
@@ -39,9 +42,10 @@ class MPSDiagWidget(QWidget, Ui_Form):
         self._post_init()
 
     def _post_init(self):
+        self.diff_help_btn.setVisible(False)
         self._dt_ms = int(1000.0 / self.refresh_rate_dsbox.value())
         self.dtype_lbl.setText(
-            '<html><head/><body><p><span style=" font-size:20pt; font-weight:600; color:#0055ff;">{dtype}</span></p></body></html>'.format(
+            '<html><head/><body><p><span style=" font-size:18pt; font-weight:600; color:#0055ff;">{dtype}</span></p></body></html>'.format(
                 dtype=DEVICE_TYPE_FULLNAME_MAP[self.device_type]))
         self.view.setItemDelegate(MPSBeamLossDataDelegateModel(self.view))
         self.set_data()
@@ -110,16 +114,56 @@ class MPSDiagWidget(QWidget, Ui_Form):
         if filepath is None:
             return None
         ref_df = pd.read_csv(filepath)
-        self.ref_datafilepath_lineEdit.setText(filepath)
+
+        self.diff_type_lbl.setText('<p><span style="font-weight:600;color:#007BFF;">[FILE]</span></p>')
+        _fulltext = f'''<p><span style="font-weight:600;color:#007BFF;">[FILE]</span> {filepath}</p>'''
+        _intext = QFontMetrics(
+            self.ref_datafilepath_lbl.font()).elidedText(filepath,
+                                                         Qt.ElideRight, self.ref_datafilepath_lbl.width())
+        self.ref_datafilepath_lbl.setText(_intext)
+        self.ref_datafilepath_lbl.setToolTip(_fulltext)
         self.__model.highlight_diff(ref_df)
+        self.diff_help_btn.setVisible(True)
     
     @pyqtSlot()
     def clearDiff(self):
         """Clear diff.
         """
-        self.ref_datafilepath_lineEdit.clear()
+        self.ref_datafilepath_lbl.clear()
+        self.diff_type_lbl.clear()
         self.__model.update_ref_dataframe(None)
+        self.diff_help_btn.setVisible(False)
 
+    @pyqtSlot()
+    def takeDiff(self):
+        """Take a snapshot of current live readings for diff.
+        """
+        auto_name = datetime.now().strftime("%Y%m%dT%H%M%S") + f"_{self.device_type}"
+        self.__model.highlight_diff(self.__model.get_dataframe())
+        self.diff_type_lbl.setText('<p><span style="font-weight:600;color:#DC3545;">[MEM]</span></p>')
+        _fulltext = f'''<p><span style="font-weight:600;color:#DC3545;">[MEM]</span> {auto_name}</p>'''
+        _intext = QFontMetrics(
+            self.ref_datafilepath_lbl.font()).elidedText(auto_name,
+                                                         Qt.ElideRight, self.ref_datafilepath_lbl.width())
+        self.ref_datafilepath_lbl.setText(_intext)
+        self.ref_datafilepath_lbl.setToolTip(_fulltext)
+        self.diff_help_btn.setVisible(True)
+    
+    @pyqtSlot()
+    def onHelpDiffMode(self):
+        """Show the help message for diff mode.
+        """
+        _help_text = '''<html>
+        <p>Diff mode is enabled: Colored cells indicate diff from the reference,
+        reference could be loaded from saved data ("Load-Diff") or set through
+        "Take-Diff".</p>
+        <p><span style="color:#28a745;">Green</span> color indicates the live
+        reading is lower than the reference; <span style="color:#dc3545;">red</span>
+        color is higher, hover on the cell gives the reference reading and the relative
+        difference in percentage.</p></html>
+        '''
+        QMessageBox.information(self, "Diff Mode Help", _help_text, QMessageBox.Ok, QMessageBox.Ok)
+        
 
 
 if __name__ == '__main__':
