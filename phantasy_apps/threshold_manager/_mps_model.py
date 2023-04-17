@@ -455,15 +455,19 @@ class SnapshotModel(QAbstractTableModel):
         v = snp_data.get_column_data(column)
         
         if role == Qt.DisplayRole:
-            if column == SnapshotModel.ColumnTags:
-                return ' ' * (len(v) + 2)
-            elif column == SnapshotModel.ColumnIonName:
+            if column == SnapshotModel.ColumnIonName:
                 return None
+            elif column == SnapshotModel.ColumnTags:
+                return ' ' * (len(v) + 2)
             elif column in SnapshotModel.columnFormat:
                 return SnapshotModel.columnFormat[column].format(
                         value=float(v))
             else:
                 return v
+
+        if role == Qt.UserRole:
+            if column == SnapshotModel.ColumnTags:
+                return v.upper()
 
         if role == Qt.DecorationRole:
             if column == SnapshotModel.ColumnIonName:
@@ -475,15 +479,9 @@ class SnapshotModel(QAbstractTableModel):
             else:
                 return get_pixmap_default()
 
-        if role == Qt.UserRole:
-            if column == SnapshotModel.ColumnTags:
-                return v.upper()
-
         if role == Qt.ToolTipRole:
             return v
-            #if column in (SnapshotModel.ColumnNote, SnapshotModel.ColumnTags,
-            #              SnapshotModel.ColumnIonName):
-            #    return v
+
         return None
     
     def canFetchMore(self, index: QModelIndex):
@@ -544,6 +542,7 @@ class SnapshotDelegateModel(QStyledItemDelegate):
             else:
                 if option.state & QStyle.State_Selected or option.state & QStyle.State_MouseOver:
                     QStyledItemDelegate.paint(self, painter, option, index)
+
                 w = QWidget()
                 layout = QHBoxLayout()
                 layout.setContentsMargins(4, 4, 4, 4)
@@ -580,6 +579,8 @@ class SnapshotDelegateModel(QStyledItemDelegate):
                     """QWidget { background-color: transparent; }""")
                 rect = option.rect.adjusted(2, 2, -2, -2)
                 painter.drawPixmap(rect.x(), rect.y(), w.grab())
+        else:
+            QStyledItemDelegate.paint(self, painter, option, index)
 
         if index.column() in SnapshotModel.RIGHT_ALIGN_COLUMNS:
             option.displayAlignment = Qt.AlignRight | Qt.AlignVCenter
@@ -588,7 +589,6 @@ class SnapshotDelegateModel(QStyledItemDelegate):
         else:
             option.displayAlignment = Qt.AlignLeft | Qt.AlignVCenter
         
-        QStyledItemDelegate.paint(self, painter, option, index)
 
 
 def get_nrow(db_con: sqlite3.Connection, table_name: str):
