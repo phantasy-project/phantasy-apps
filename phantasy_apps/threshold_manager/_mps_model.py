@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import sqlite3
 import time
 import pandas as pd
 import numpy as np
+from datetime import datetime
 from phantasy import MachinePortal
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
-from PyQt5.QtWidgets import QStyledItemDelegate
+from PyQt5.QtWidgets import (
+    QStyledItemDelegate, QStyle, QWidget, QGraphicsDropShadowEffect,
+    QHBoxLayout, QSizePolicy, QLabel,
+)
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QColor
@@ -16,6 +21,10 @@ from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QAbstractTableModel
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QModelIndex
+from phantasy_apps.threshold_manager.data import SnapshotData
+from phantasy_apps.threshold_manager.utils import (
+    get_pixmap_default, get_pixmap_note, get_pixmap_user, get_pixmap_element
+)
 
 COLUMNS = [
     'Device', 'Average', 'Peak Avg.', '1 MHz Std.', 'Avg. Time',
@@ -58,7 +67,7 @@ DF_MAP = {
 
 
 def _gen_data(irow: pd.Series):
-    """Get a row of data for device of *name*.
+    """Get a row of live data for device of *name*.
     """
     name = irow.Device
     elem = NAME_MAP[name]
@@ -368,6 +377,228 @@ class MPSBeamLossDataDelegateModel(QStyledItemDelegate):
         else:
             option.displayAlignment = Qt.AlignRight | Qt.AlignVCenter
         QStyledItemDelegate.paint(self, painter, option, index)
+
+
+class SnapshotModel(QAbstractTableModel):
+
+    # column ids
+    ColumnTime, ColumnIonName, ColumnIonNumber, ColumnIonMass, ColumnIonCharge, ColumnIonCharge1, \
+    ColumnUser, ColumnBeamPower, ColumnBeamEnergy, ColumnBeamDest, ColumnTags, ColumnNote, \
+    ColumnCount = range(13)
+
+    # column names
+    columnNameMap = {
+        ColumnTime: "Timestamp",
+        ColumnIonName: "Ion",
+        ColumnIonNumber: "Z",
+        ColumnIonMass: "A",
+        ColumnIonCharge: "Q",
+        ColumnIonCharge1: "Charge\nState",
+        ColumnUser: "Username",
+        ColumnBeamPower: "Beam Power",
+        ColumnBeamEnergy: "Beam Energy",
+        ColumnBeamDest: "Beam\nDestination",
+        ColumnTags: "Tags",
+        ColumnNote: "Note",      
+    }
+
+    RIGHT_ALIGN_COLUMNS = (
+        ColumnBeamPower,
+        ColumnBeamEnergy
+    )
+
+    CENTER_ALIGN_COLUMNS = (
+        ColumnIonName,
+        ColumnIonNumber,
+        ColumnIonMass,
+        ColumnIonCharge,
+        ColumnIonCharge1,
+    )
+    
+    columnFormat = {
+        ColumnBeamPower: "{value:.3f} W",
+        ColumnBeamEnergy: "{value:.3f} MeV/u",
+    }
+     
+
+    # columns to hide
+    columnHiddenList = ( ColumnIonNumber, )
+
+    def __init__(self, db_con: sqlite3.Connection, table_name: str, parent=None):
+        super().__init__(parent)
+        self.db_con = db_con
+        self.table_name = table_name
+        self.snpCount = 0
+        self.snpCountMax = get_nrow(db_con, table_name)
+        self.snpList = [] # List[SnapshotData]
+
+    def columnCount(self, parent=None):
+        return self.ColumnCount
+
+    def rowCount(self, parent=None):
+        return self.snpCount
+
+    def headerData(self, section: int, orientation: Qt.Orientation, role: int):
+        if orientation != Qt.Horizontal:
+            return None
+        if role != Qt.DisplayRole:
+            return None
+        return self.columnNameMap.get(section)
+    
+    def data(self, index: QModelIndex, role: int = Qt.DisplayRole):
+        if not index.isValid():
+            return None
+        if index.row() >= len(self.snpList) or index.row() < 0:
+            return None
+        row, column = index.row(), index.column()
+        snp_data = self.snpList[row]
+        v = snp_data.get_column_data(column)
+        
+        if role == Qt.DisplayRole:
+            if column == SnapshotModel.ColumnTags:
+                return ' ' * (len(v) + 2)
+            elif column == SnapshotModel.ColumnIonName:
+                return None
+            elif column in SnapshotModel.columnFormat:
+                return SnapshotModel.columnFormat[column].format(
+                        value=float(v))
+            else:
+                return v
+
+        if role == Qt.DecorationRole:
+            if column == SnapshotModel.ColumnIonName:
+                return get_pixmap_element(v)
+            elif column == SnapshotModel.ColumnNote:
+                return get_pixmap_note()
+            elif column == SnapshotModel.ColumnUser:
+                return get_pixmap_user()
+            else:
+                return get_pixmap_default()
+
+        if role == Qt.UserRole:
+            if column == SnapshotModel.ColumnTags:
+                return v.upper()
+
+        if role == Qt.ToolTipRole:
+            return v
+            #if column in (SnapshotModel.ColumnNote, SnapshotModel.ColumnTags,
+            #              SnapshotModel.ColumnIonName):
+            #    return v
+        return None
+    
+    def canFetchMore(self, index: QModelIndex):
+        return self.snpCount < self.snpCountMax
+    
+    def fetchMore(self, index: QModelIndex):
+        n_remainder = self.snpCountMax - self.snpCount
+        itemsToFetch = min(100, n_remainder)
+        self.beginInsertRows(QModelIndex(), self.snpCount,
+                             self.snpCount + itemsToFetch)
+        
+        nitems_fetched = self.fetch_items(itemsToFetch)
+        self.snpCount += nitems_fetched
+        self.endInsertRows()
+
+    def fetch_items(self, nitems: int):
+        # return number of fetched items.
+        cur = self.db_con.cursor()
+        r = cur.execute(f"SELECT * FROM {self.table_name} LIMIT {nitems} OFFSET {self.snpCount}")
+        cnt = 0
+        for item in r.fetchall():
+            cnt += 1
+            self.snpList.append(SnapshotData(item[1:]))
+        cur.close()
+        return cnt
+
+    def setDataSource(self, db_con: sqlite3.Connection, table_name: str):
+        """Reset datasource.
+        """
+        self.beginResetModel()
+        self.db_con = db_con
+        self.table_name = table_name
+        self.snpCount = 0
+        self.snpCountMax = get_nrow(db_con, table_name)
+        self.snpList = [] # List[SnapshotData]
+        self.endResetModel()
+
+    def get_hidden_columns(self):
+        return SnapshotModel.columnHiddenList
+
+
+class SnapshotDelegateModel(QStyledItemDelegate):
+    def __init__(self, parent=None, **kws):
+        super(self.__class__, self).__init__()
+        self.default_font_size = QFontDatabase.systemFont(
+            QFontDatabase.FixedFont).pointSize()
+
+    def sizeHint(self, option, index):
+        size = QStyledItemDelegate.sizeHint(self, option, index)
+        size.setHeight(ROW_HEIGHT)
+        return size
+
+    def paint(self, painter, option, index):
+        if index.column() == SnapshotModel.ColumnTags:  # Tags column
+            tags_str = index.model().data(index, Qt.UserRole)
+            if tags_str == '':
+                QStyledItemDelegate.paint(self, painter, option, index)
+            else:
+                if option.state & QStyle.State_Selected or option.state & QStyle.State_MouseOver:
+                    QStyledItemDelegate.paint(self, painter, option, index)
+                w = QWidget()
+                layout = QHBoxLayout()
+                layout.setContentsMargins(4, 4, 4, 4)
+                layout.setSpacing(2)
+                for tag in tags_str.split(','):
+                    shadow = QGraphicsDropShadowEffect()
+                    shadow.setBlurRadius(10)
+                    shadow.setOffset(2)
+                    lbl = QLabel(tag)
+                    lbl.setGraphicsEffect(shadow)
+                    lbl.setSizePolicy(QSizePolicy.Preferred,
+                                      QSizePolicy.Preferred)
+                    if tag == 'GOLDEN':
+                        lbl.setStyleSheet(f'''
+                        QLabel {{
+                            font-size: {self.default_font_size - 1}pt;
+                            border: 1px solid #AEAEAE;
+                            border-radius: 5px;
+                            margin: 1px;
+                            background-color: #EDD400;
+                        }}''')
+                    else:
+                        lbl.setStyleSheet(f'''
+                        QLabel {{
+                            font-size: {self.default_font_size - 1}pt;
+                            border: 1px solid #AEAEAE;
+                            border-radius: 5px;
+                            margin: 1px;
+                            background-color: #EEEEEC;
+                        }}''')
+                    layout.addWidget(lbl)
+                w.setLayout(layout)
+                w.setStyleSheet(
+                    """QWidget { background-color: transparent; }""")
+                rect = option.rect.adjusted(2, 2, -2, -2)
+                painter.drawPixmap(rect.x(), rect.y(), w.grab())
+
+        if index.column() in SnapshotModel.RIGHT_ALIGN_COLUMNS:
+            option.displayAlignment = Qt.AlignRight | Qt.AlignVCenter
+        elif index.column() in SnapshotModel.CENTER_ALIGN_COLUMNS:
+            option.displayAlignment = Qt.AlignHCenter | Qt.AlignVCenter
+        else:
+            option.displayAlignment = Qt.AlignLeft | Qt.AlignVCenter
+        
+        QStyledItemDelegate.paint(self, painter, option, index)
+
+
+def get_nrow(db_con: sqlite3.Connection, table_name: str):
+    """Return the total number of rows for *table_name*.
+    """
+    cur = db_con.cursor()
+    r = cur.execute(f"SELECT COUNT(*) FROM {table_name}")
+    n = r.fetchone()[0]
+    cur.close()
+    return n
 
 
 def is_equal(a, b, decimal=6):
