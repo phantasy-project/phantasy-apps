@@ -15,9 +15,23 @@ __version__ = '0.1'
 
 
 def run(cli=False):
+    parser = argparse.ArgumentParser(
+        description=
+        "Manage the threshold data for diagnostics MPS configurations.")
+    parser.add_argument("--config",
+                        dest="config",
+                        help="Path of the configuration file")
+    args = parser.parse_args(sys.argv[1:])
+
+    if args.config is None:
+        configpath = os.path.join(os.path.dirname(__file__),
+                                  "config/sample.toml")
+    else:
+        configpath = args.config
+
     app = QApplication(sys.argv)
     #
-    w = MPSThresholdManagerWindow(version=__version__)
+    w = MPSThresholdManagerWindow(version=__version__, configpath=configpath)
     w.setWindowTitle(__title__)
     w.show()
 

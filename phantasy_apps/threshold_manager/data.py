@@ -8,10 +8,18 @@ from collections import OrderedDict
 
 # default attr keys of snapshotdata
 ATTR_KEYS = [
-    "timestamp", "user",
-    "ion_name", "ion_number", "ion_mass", "ion_charge", "ion_charge_state",
-    "beam_power", "beam_energy", "beam_destination",
-    "tags", "note",
+    "timestamp",
+    "user",
+    "ion_name",
+    "ion_number",
+    "ion_mass",
+    "ion_charge",
+    "ion_charge_state",
+    "beam_power",
+    "beam_energy",
+    "beam_destination",
+    "tags",
+    "note",
 ]
 
 ATTR_DICT = OrderedDict([(k, None) for k in ATTR_KEYS])
@@ -22,6 +30,7 @@ class SnapshotData:
     """
     INFO_SHEET_NAME = "info"
     DATA_SHEET_NAME = "data"
+
     def __init__(self, row_data: list):
         # row_data is a list of data for:
         # * timestamp: float
@@ -44,10 +53,12 @@ class SnapshotData:
 
         #
         self.__writer_map = {
-             'xlsx': self.__write_to_excel,
+            'xlsx': self.__write_to_excel,
         }
         #
-        self.df_info = pd.DataFrame.from_dict(ATTR_DICT, orient='index', columns=['attribute']).T
+        self.df_info = pd.DataFrame.from_dict(ATTR_DICT,
+                                              orient='index',
+                                              columns=['attribute']).T
         for k, v in zip(ATTR_KEYS, row_data):
             self.df_info.loc['attribute', k] = v
 
@@ -57,7 +68,7 @@ class SnapshotData:
         return datetime.fromtimestamp(self.ts).strftime("%Y-%m-%dT%H:%M:%S")
 
     def get_column_data(self, i: int):
-        if i == 0: # timestamp as datetime string
+        if i == 0:  # timestamp as datetime string
             return self.ts_as_str()
         else:
             return self._row_data[i]
@@ -72,8 +83,13 @@ class SnapshotData:
         df_info = self.df_info.copy(deep=True)
         with pd.ExcelWriter(filepath) as fp:
             df_info.T.to_excel(fp,
-                    sheet_name=SnapshotData.INFO_SHEET_NAME, header=False, **kws)
-            self.data.to_excel(fp, sheet_name=SnapshotData.DATA_SHEET_NAME, index=False, **kws)
+                               sheet_name=SnapshotData.INFO_SHEET_NAME,
+                               header=False,
+                               **kws)
+            self.data.to_excel(fp,
+                               sheet_name=SnapshotData.DATA_SHEET_NAME,
+                               index=False,
+                               **kws)
 
     def to_blob(self):
         # output self to a binary blob, see also write()

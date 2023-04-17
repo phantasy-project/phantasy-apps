@@ -69,8 +69,8 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         self.diff_help_btn.setVisible(False)
         self._dt_ms = int(1000.0 / self.refresh_rate_dsbox.value())
         self.dtype_lbl.setText(
-            '<html><head/><body><p><span style=" font-size:18pt; font-weight:600; color:#0055ff;">{dtype}</span></p></body></html>'.format(
-                dtype=DEVICE_TYPE_FULLNAME_MAP[self.device_type]))
+            '<html><head/><body><p><span style=" font-size:18pt; font-weight:600; color:#0055ff;">{dtype}</span></p></body></html>'
+            .format(dtype=DEVICE_TYPE_FULLNAME_MAP[self.device_type]))
         self.view.setItemDelegate(MPSBeamLossDataDelegateModel(self.view))
         self.set_data()
         self.hide_columns()
@@ -104,7 +104,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
             self._r_tmr.start(self._dt_ms)
         else:
             self._r_tmr.stop()
-        for _w in (self.refresh_rate_dsbox,):
+        for _w in (self.refresh_rate_dsbox, ):
             _w.setDisabled(is_checked)
 
     @pyqtSlot()
@@ -114,7 +114,9 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
     @pyqtSlot()
     def onDataRefreshStopped(self):
         self.refresh_sts_lbl.setPixmap(QPixmap(":/tm-icons/active.png"))
-        delayed_exec(lambda:self.refresh_sts_lbl.setPixmap(QPixmap(":/tm-icons/inactive.png")), int(self._dt_ms * 0.6))
+        delayed_exec(
+            lambda: self.refresh_sts_lbl.setPixmap(
+                QPixmap(":/tm-icons/inactive.png")), int(self._dt_ms * 0.6))
 
     def closeEvent(self, evt):
         self._r_tmr.stop()
@@ -123,11 +125,13 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
     def saveData(self):
         """Save data into a file.
         """
-        _auto_filename = datetime.now().strftime("%Y%m%dT%H%M%S") + f"_{self.device_type}.csv"
+        _auto_filename = datetime.now().strftime(
+            "%Y%m%dT%H%M%S") + f"_{self.device_type}.csv"
         outfilepath = os.path.join(self.outdata_dir, _auto_filename)
         self.__model.get_dataframe().to_csv(outfilepath, index=False)
-        QMessageBox.information(self, "MPS Diagnostics Threshold Configs", f"Saved data to {outfilepath}",
-                                QMessageBox.Ok, QMessageBox.Ok)
+        QMessageBox.information(self, "MPS Diagnostics Threshold Configs",
+                                f"Saved data to {outfilepath}", QMessageBox.Ok,
+                                QMessageBox.Ok)
 
     @pyqtSlot()
     def compareData(self):
@@ -138,11 +142,12 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
             return None
         ref_df = pd.read_csv(filepath)
 
-        self.diff_type_lbl.setText('<p><span style="font-weight:600;color:#007BFF;">[FILE]</span></p>')
+        self.diff_type_lbl.setText(
+            '<p><span style="font-weight:600;color:#007BFF;">[FILE]</span></p>'
+        )
         _fulltext = f'''<p><span style="font-weight:600;color:#007BFF;">[FILE]</span> {filepath}</p>'''
-        _intext = QFontMetrics(
-            self.ref_datafilepath_lbl.font()).elidedText(filepath,
-                                                         Qt.ElideRight, self.ref_datafilepath_lbl.width())
+        _intext = QFontMetrics(self.ref_datafilepath_lbl.font()).elidedText(
+            filepath, Qt.ElideRight, self.ref_datafilepath_lbl.width())
         self.ref_datafilepath_lbl.setText(_intext)
         self.ref_datafilepath_lbl.setToolTip(_fulltext)
         self.__model.highlight_diff(ref_df)
@@ -161,13 +166,14 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
     def takeDiff(self):
         """Take a snapshot of current live readings for diff.
         """
-        auto_name = datetime.now().strftime("%Y%m%dT%H%M%S") + f"_{self.device_type}"
+        auto_name = datetime.now().strftime(
+            "%Y%m%dT%H%M%S") + f"_{self.device_type}"
         self.__model.highlight_diff(self.__model.get_dataframe())
-        self.diff_type_lbl.setText('<p><span style="font-weight:600;color:#DC3545;">[MEM]</span></p>')
+        self.diff_type_lbl.setText(
+            '<p><span style="font-weight:600;color:#DC3545;">[MEM]</span></p>')
         _fulltext = f'''<p><span style="font-weight:600;color:#DC3545;">[MEM]</span> {auto_name}</p>'''
-        _intext = QFontMetrics(
-            self.ref_datafilepath_lbl.font()).elidedText(auto_name,
-                                                         Qt.ElideRight, self.ref_datafilepath_lbl.width())
+        _intext = QFontMetrics(self.ref_datafilepath_lbl.font()).elidedText(
+            auto_name, Qt.ElideRight, self.ref_datafilepath_lbl.width())
         self.ref_datafilepath_lbl.setText(_intext)
         self.ref_datafilepath_lbl.setToolTip(_fulltext)
         self.diff_help_btn.setVisible(True)
@@ -185,7 +191,8 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         color is higher, hover on the cell gives the reference reading and the relative
         difference in percentage.</p></html>
         '''
-        QMessageBox.information(self, "Diff Mode Help", _help_text, QMessageBox.Ok, QMessageBox.Ok)
+        QMessageBox.information(self, "Diff Mode Help", _help_text,
+                                QMessageBox.Ok, QMessageBox.Ok)
 
 
 TABLE_NAME_MAP = {
@@ -193,6 +200,7 @@ TABLE_NAME_MAP = {
     'IC': 'mps_threshold_ic',
     'HMR': 'mps_threshold_hmr',
 }
+
 
 class SnapshotWidget(QWidget, SnapshotWidgetForm):
 
@@ -203,8 +211,8 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
         self.__table_name = TABLE_NAME_MAP[self.device_type]
 
         self.setupUi(self)
-        self.setWindowTitle("Snapshots of MPS Configurations") 
-        
+        self.setWindowTitle("Snapshots of MPS Configurations")
+
         self.__set_up_post_init_vars()
         self.__set_up_post_init_0()
         self.__set_up_events()
@@ -261,44 +269,44 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
             f"{__date2.toString()} 23:59:59")
 
     def __set_up_events(self):
-#        # note filter
-#        self.filter_note_btn.toggled.connect(
-#            self.filter_note_lineEdit.setVisible)
-#        self.filter_note_lineEdit.returnPressed.connect(self.activate_filters)
-#        # daterange filter
-#        self.filter_daterange_btn.toggled.connect(
-#            self.on_enable_daterange_filter)
-#        self.filter_daterange_dateEdit1.dateChanged.connect(
-#            self.onFilterDateRangeUpdated1)
-#        self.filter_daterange_dateEdit2.dateChanged.connect(
-#            self.onFilterDateRangeUpdated2)
-#        [
-#            self.filter_daterange_btn.toggled.connect(o.setVisible) for o in (
-#                self.filter_daterange_dateEdit1,
-#                self.daterange_lbl,
-#                self.filter_daterange_dateEdit2,
-#            )
-#        ]
+        #        # note filter
+        #        self.filter_note_btn.toggled.connect(
+        #            self.filter_note_lineEdit.setVisible)
+        #        self.filter_note_lineEdit.returnPressed.connect(self.activate_filters)
+        #        # daterange filter
+        #        self.filter_daterange_btn.toggled.connect(
+        #            self.on_enable_daterange_filter)
+        #        self.filter_daterange_dateEdit1.dateChanged.connect(
+        #            self.onFilterDateRangeUpdated1)
+        #        self.filter_daterange_dateEdit2.dateChanged.connect(
+        #            self.onFilterDateRangeUpdated2)
+        #        [
+        #            self.filter_daterange_btn.toggled.connect(o.setVisible) for o in (
+        #                self.filter_daterange_dateEdit1,
+        #                self.daterange_lbl,
+        #                self.filter_daterange_dateEdit2,
+        #            )
+        #        ]
         # initial max nitems
         self.init_nitem_sbox.valueChanged.connect(
             self.onInitialMaxNItemsChanged)
         # open db file
         self.db_open_btn.clicked.connect(self.onOpenDatabase)
-#        # check ion/tag filter buttons
-#        self.select_all_ions_btn.clicked.connect(
-#            partial(self.on_check_snp_filters, "ion", "all"))
-#        self.select_none_ions_btn.clicked.connect(
-#            partial(self.on_check_snp_filters, "ion", "none"))
-#        self.select_invert_ions_btn.clicked.connect(
-#            partial(self.on_check_snp_filters, "ion", "invert"))
-#        self.select_all_tags_btn.clicked.connect(
-#            partial(self.on_check_snp_filters, "tag", "all"))
-#        self.select_none_tags_btn.clicked.connect(
-#            partial(self.on_check_snp_filters, "tag", "none"))
-#        self.select_invert_tags_btn.clicked.connect(
-#            partial(self.on_check_snp_filters, "tag", "invert"))
-#        # note filter button
-#        self.filter_note_btn.toggled.connect(self.on_enable_note_filter)
+        #        # check ion/tag filter buttons
+        #        self.select_all_ions_btn.clicked.connect(
+        #            partial(self.on_check_snp_filters, "ion", "all"))
+        #        self.select_none_ions_btn.clicked.connect(
+        #            partial(self.on_check_snp_filters, "ion", "none"))
+        #        self.select_invert_ions_btn.clicked.connect(
+        #            partial(self.on_check_snp_filters, "ion", "invert"))
+        #        self.select_all_tags_btn.clicked.connect(
+        #            partial(self.on_check_snp_filters, "tag", "all"))
+        #        self.select_none_tags_btn.clicked.connect(
+        #            partial(self.on_check_snp_filters, "tag", "none"))
+        #        self.select_invert_tags_btn.clicked.connect(
+        #            partial(self.on_check_snp_filters, "tag", "invert"))
+        #        # note filter button
+        #        self.filter_note_btn.toggled.connect(self.on_enable_note_filter)
 
         # dblclick row
         self.view.doubleClicked.connect(self.onDblClickedItem)
@@ -464,6 +472,7 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
 #                (self.__df.timestamp <= self.__daterange_date2_s)
 #        return r[r].index
 #
+
     @pyqtSlot(int)
     def onInitialMaxNItemsChanged(self, i: int):
         # Max initial number of SnapshotItems is changed.
@@ -486,6 +495,7 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
             self.__initial_model()
         else:
             self.__refresh_model()
+
 
 #        t0 = time.perf_counter()
 #        # Update tag/ion filter
@@ -598,7 +608,6 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
         container.addWidget(_btn)
         _build_actions(_btn)
 
-
     @pyqtSlot(QDate)
     def onFilterDateRangeUpdated1(self, d: QDate):
         self.__daterange_date1_s = qdate2epochs(d)
@@ -623,7 +632,6 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
         self.fetched_nitem_lbl.setText(str(i))
         if self.__total_item_cnt < self.__max_init_nitems:
             self.expand_view()
-
 
     def onDataChanged(self, tl: QModelIndex, br: QModelIndex, roles: list):
         """The data of SnapshotModel is changed via editting.

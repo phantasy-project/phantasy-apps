@@ -20,15 +20,17 @@ ELMT_PIXMAP_OFF_DICT = {}
 def get_pixmap_note():
     return DECO_PIXMAP_DICT.setdefault(
         'note',
-        QPixmap(":/tm-icons/comment.png").scaled(
-            PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        QPixmap(":/tm-icons/comment.png").scaled(PX_SIZE, PX_SIZE,
+                                                 Qt.KeepAspectRatio,
+                                                 Qt.SmoothTransformation))
 
 
 def get_pixmap_user():
     return DECO_PIXMAP_DICT.setdefault(
         'user',
-        QPixmap(":/tm-icons/person.png").scaled(
-            PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        QPixmap(":/tm-icons/person.png").scaled(PX_SIZE, PX_SIZE,
+                                                Qt.KeepAspectRatio,
+                                                Qt.SmoothTransformation))
 
 
 def get_pixmap_default():
@@ -42,14 +44,14 @@ def get_pixmap_element(ion_name: str, state: str = 'on'):
         if state == 'on':
             return ELMT_PIXMAP_ON_DICT.setdefault(
                 ion_name,
-                QPixmap(
-                    f":/elements/elements/{ion_name}.png").scaledToHeight(
-                        px_size, Qt.SmoothTransformation))
+                QPixmap(f":/elements/elements/{ion_name}.png").scaledToHeight(
+                    px_size, Qt.SmoothTransformation))
         else:  # off
             return ELMT_PIXMAP_OFF_DICT.setdefault(
                 ion_name,
-                QPixmap(f":/elements/elements/{ion_name}-off.png").
-                scaledToHeight(px_size, Qt.SmoothTransformation))
+                QPixmap(
+                    f":/elements/elements/{ion_name}-off.png").scaledToHeight(
+                        px_size, Qt.SmoothTransformation))
     else:
         px = QPixmap(QSize(px_size, px_size))
         px.fill(QColor(240, 240, 240, 0))

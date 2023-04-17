@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import toml
 from phantasy_ui import BaseAppForm
 from phantasy_apps.threshold_manager._widget import MPSDiagWidget
-
+from phantasy_apps.threshold_manager._widget import SnapshotWidget
 from phantasy_apps.threshold_manager.ui.ui_app import Ui_MainWindow
 
 OUT_DATA_DIR = "/tmp"
 
 
+def read_config(configpath: str):
+    _c = toml.load(configpath)
+
+
 class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
 
-    def __init__(self, version):
+    def __init__(self, version: str, configpath: str):
         super().__init__()
 
         self._version = version
@@ -45,6 +50,9 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         self.ic_hbox.addWidget(self.ic_widget)
         self.hmr_hbox.addWidget(self.hmr_widget)
 
+        self.snp_widget = SnapshotWidget("ND")
+        self.snp_hbox.addWidget(self.snp_widget)
 
-
-
+        # test:
+        test_db_path = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/threshold_manager/tests/mps_model/test.db"
+        self.snp_widget.db_path_lineEdit.setText(test_db_path)

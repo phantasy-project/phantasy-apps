@@ -5,12 +5,16 @@ import sqlite3
 import time
 import pandas as pd
 import numpy as np
-from datetime import datetime
 from phantasy import MachinePortal
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from PyQt5.QtWidgets import (
-    QStyledItemDelegate, QStyle, QWidget, QGraphicsDropShadowEffect,
-    QHBoxLayout, QSizePolicy, QLabel,
+    QStyledItemDelegate,
+    QStyle,
+    QWidget,
+    QGraphicsDropShadowEffect,
+    QHBoxLayout,
+    QSizePolicy,
+    QLabel,
 )
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QPixmap
@@ -22,17 +26,37 @@ from PyQt5.QtCore import QAbstractTableModel
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QModelIndex
 from phantasy_apps.threshold_manager.data import SnapshotData
-from phantasy_apps.threshold_manager.utils import (
-    get_pixmap_default, get_pixmap_note, get_pixmap_user, get_pixmap_element
-)
+from phantasy_apps.threshold_manager.utils import (get_pixmap_default,
+                                                   get_pixmap_note,
+                                                   get_pixmap_user,
+                                                   get_pixmap_element)
 
 COLUMNS = [
-    'Device', 'Average', 'Peak Avg.', '1 MHz Std.', 'Avg. Time',
-    'LongAvg.Th(H)', 'LongAvg.Th(H)?', 'LongAvg.Th(L)', 'LongAvg.Th(L)?',
-    '10ms Th(H)', '10ms Th(H)?', '10ms Th(L)', '10ms Th(L)?',
-    '1500us Th(H)', '1500us Th(H)?', '1500us Th(L)', '1500us Th(L)?',
-    '150us Th(H)', '150us Th(H)?', '150us Th(L)', '150us Th(L)?',
-    '15us Th(H)', '15us Th(H)?', '15us Th(L)', '15us Th(L)?',
+    'Device',
+    'Average',
+    'Peak Avg.',
+    '1 MHz Std.',
+    'Avg. Time',
+    'LongAvg.Th(H)',
+    'LongAvg.Th(H)?',
+    'LongAvg.Th(L)',
+    'LongAvg.Th(L)?',
+    '10ms Th(H)',
+    '10ms Th(H)?',
+    '10ms Th(L)',
+    '10ms Th(L)?',
+    '1500us Th(H)',
+    '1500us Th(H)?',
+    '1500us Th(L)',
+    '1500us Th(L)?',
+    '150us Th(H)',
+    '150us Th(H)?',
+    '150us Th(L)',
+    '150us Th(L)?',
+    '15us Th(H)',
+    '15us Th(H)?',
+    '15us Th(L)',
+    '15us Th(L)?',
 ]
 
 ROW_HEIGHT = 48
@@ -45,12 +69,15 @@ BLACK_COLOR = QColor(0, 0, 0, 255)
 
 MP = MachinePortal("FRIB", "MPS", auto_monitor=True)
 NAME_MAP = {i.name: i for i in MP.get_elements(name='*')}
-DF_ELEM_ND = pd.DataFrame.from_records(
-    [[i.name] + 24 * ['-'] for i in MP.get_elements(type='ND')], columns=COLUMNS)
-DF_ELEM_IC = pd.DataFrame.from_records(
-    [[i.name] + 24 * ['-'] for i in MP.get_elements(type='IC')], columns=COLUMNS)
-DF_ELEM_HMR = pd.DataFrame.from_records(
-    [[i.name] + 24 * ['-'] for i in MP.get_elements(type='HMR')], columns=COLUMNS)
+DF_ELEM_ND = pd.DataFrame.from_records([[i.name] + 24 * ['-']
+                                        for i in MP.get_elements(type='ND')],
+                                       columns=COLUMNS)
+DF_ELEM_IC = pd.DataFrame.from_records([[i.name] + 24 * ['-']
+                                        for i in MP.get_elements(type='IC')],
+                                       columns=COLUMNS)
+DF_ELEM_HMR = pd.DataFrame.from_records([[i.name] + 24 * ['-']
+                                         for i in MP.get_elements(type='HMR')],
+                                        columns=COLUMNS)
 
 GREEK_MU = u'\N{GREEK SMALL LETTER MU}'
 UNIT_MAP = {
@@ -142,11 +169,11 @@ class MPSBeamLossDataModel(QAbstractTableModel):
         Column15usThLo_E: "",
     }
 
-    CHK_COLUMNS = (
-        ColumnLAvgThHi_E, Column10msThHi_E, Column1500usThHi_E, Column150usThHi_E, Column15usThHi_E,
-        ColumnLAvgThLo_E, Column10msThLo_E, Column1500usThLo_E, Column150usThLo_E, Column15usThLo_E
-    )
-    STR_COLUMNS = (ColumnDevice,)
+    CHK_COLUMNS = (ColumnLAvgThHi_E, Column10msThHi_E, Column1500usThHi_E,
+                   Column150usThHi_E, Column15usThHi_E, ColumnLAvgThLo_E,
+                   Column10msThLo_E, Column1500usThLo_E, Column150usThLo_E,
+                   Column15usThLo_E)
+    STR_COLUMNS = (ColumnDevice, )
 
     columnFormat = {
         ColumnLongAvg: "{value:.6f} {unit}",
@@ -166,18 +193,18 @@ class MPSBeamLossDataModel(QAbstractTableModel):
     }
 
     columnHiddenMap = {
-        'ND': (
-            ColumnLAvgThHi, Column10msThHi, Column1500usThHi, Column150usThHi, Column15usThHi,
-            ColumnLAvgThHi_E, Column10msThHi_E, Column1500usThHi_E, Column150usThHi_E, Column15usThHi_E
-        ),
-        'IC': (
-            ColumnLAvgThHi, Column10msThHi, Column1500usThHi, Column150usThHi, Column15usThHi,
-            ColumnLAvgThHi_E, Column10msThHi_E, Column1500usThHi_E, Column150usThHi_E, Column15usThHi_E
-        ),
-        'HMR': (
-            ColumnLAvgThLo, Column10msThLo, Column1500usThLo, Column150usThLo, Column15usThLo,
-            ColumnLAvgThLo_E, Column10msThLo_E, Column1500usThLo_E, Column150usThLo_E, Column15usThLo_E
-        ),
+        'ND':
+        (ColumnLAvgThHi, Column10msThHi, Column1500usThHi, Column150usThHi,
+         Column15usThHi, ColumnLAvgThHi_E, Column10msThHi_E,
+         Column1500usThHi_E, Column150usThHi_E, Column15usThHi_E),
+        'IC':
+        (ColumnLAvgThHi, Column10msThHi, Column1500usThHi, Column150usThHi,
+         Column15usThHi, ColumnLAvgThHi_E, Column10msThHi_E,
+         Column1500usThHi_E, Column150usThHi_E, Column15usThHi_E),
+        'HMR':
+        (ColumnLAvgThLo, Column10msThLo, Column1500usThLo, Column150usThLo,
+         Column15usThLo, ColumnLAvgThLo_E, Column10msThLo_E,
+         Column1500usThLo_E, Column150usThLo_E, Column15usThLo_E),
     }
 
     #
@@ -222,7 +249,8 @@ class MPSBeamLossDataModel(QAbstractTableModel):
             return None
         row, column = index.row(), index.column()
         v = self._data.iloc[row, column]
-        v_ref = None if self._ref_data is None else self._ref_data.iloc[row, column]
+        v_ref = None if self._ref_data is None else self._ref_data.iloc[row,
+                                                                        column]
         is_diff = v_ref is not None and not is_equal(v_ref, v)
         if role == Qt.DisplayRole and column not in MPSBeamLossDataModel.CHK_COLUMNS:
             if v != '-' and column in MPSBeamLossDataModel.columnFormat:
@@ -235,19 +263,26 @@ class MPSBeamLossDataModel(QAbstractTableModel):
             if column in MPSBeamLossDataModel.CHK_COLUMNS:
                 if v == 1.0:
                     if is_diff:
-                        return QPixmap(":/tm-icons/check-square-fill-red.png").scaled(PX_SIZE, PX_SIZE,
-                                                                                      Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                        return QPixmap(
+                            ":/tm-icons/check-square-fill-red.png").scaled(
+                                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio,
+                                Qt.SmoothTransformation)
                     else:
-                        return QPixmap(":/tm-icons/check-square-fill.png").scaled(PX_SIZE, PX_SIZE,
-                                                                                  Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                        return QPixmap(
+                            ":/tm-icons/check-square-fill.png").scaled(
+                                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio,
+                                Qt.SmoothTransformation)
                 else:  # v == 0.0
                     if is_diff:
-                        return QPixmap(":/tm-icons/uncheck-square-green.png").scaled(PX_SIZE, PX_SIZE,
-                                                                                   Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                        return QPixmap(
+                            ":/tm-icons/uncheck-square-green.png").scaled(
+                                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio,
+                                Qt.SmoothTransformation)
                     else:
-                        return QPixmap(":/tm-icons/uncheck-square.png").scaled(PX_SIZE, PX_SIZE,
-                                                                               Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        
+                        return QPixmap(":/tm-icons/uncheck-square.png").scaled(
+                            PX_SIZE, PX_SIZE, Qt.KeepAspectRatio,
+                            Qt.SmoothTransformation)
+
         if role == Qt.ForegroundRole:
             if is_diff:
                 if v > v_ref:
@@ -256,12 +291,12 @@ class MPSBeamLossDataModel(QAbstractTableModel):
                     return QBrush(GREEN_COLOR)
             else:
                 return QBrush(BLACK_COLOR)
-        
+
         if role == Qt.ToolTipRole:
             if is_diff:
                 if column not in MPSBeamLossDataModel.CHK_COLUMNS:
-                    v_ref_fmted = MPSBeamLossDataModel.columnFormat[column].format(
-                        value=float(v_ref), unit=self._unit)
+                    v_ref_fmted = MPSBeamLossDataModel.columnFormat[
+                        column].format(value=float(v_ref), unit=self._unit)
                     rel_per = f" [{(v - v_ref)/abs(v_ref) * 100:+.1f}%]"
                 else:
                     v_ref_fmted = "Enabled" if v_ref == 1.0 else "Disabled"
@@ -302,7 +337,7 @@ class MPSBeamLossDataModel(QAbstractTableModel):
 
     def set_dataframe(self, df: pd.DataFrame):
         self._data = df
-    
+
     def set_ref_dataframe(self, ref_df: pd.DataFrame):
         self._ref_data = ref_df
 
@@ -325,13 +360,16 @@ class MPSBeamLossDataModel(QAbstractTableModel):
         self.layoutChanged.emit()
 
     def refresh_data(self):
+
         def _onUpdateData(i):
             t0 = time.time()
             # update data
             self._data = _get_dataframe(self.device_type)
             self.dataframeUpdated.emit(self._data)
             print(
-                f"[{self.device_type}] Data Refreshed: {(time.time() - t0) * 1e3:.1f} ms")
+                f"[{self.device_type}] Data Refreshed: {(time.time() - t0) * 1e3:.1f} ms"
+            )
+
         #
         self._th = DAQT(daq_func=_onUpdateData, daq_seq=range(1))
         self._th.daqStarted.connect(self.dataRefreshStarted)
@@ -340,21 +378,24 @@ class MPSBeamLossDataModel(QAbstractTableModel):
 
     def get_hidden_columns(self):
         return MPSBeamLossDataModel.columnHiddenMap[self.device_type]
-    
+
     def highlight_diff(self, ref_df: pd.DataFrame):
         """Highlight the cells with different values by comparing with the input data.
         """
+
         # test
         #df = pd.read_csv('/tmp/20230412T091656_ND.csv')
         #df_bool_diff = self._data != df # dataframe of boolean of current data is diff from the loaded one
         #df_val_diff = df[df_bool_diff]  # cell values from the loaded dataframe, not NaN
         def _onUpdateData(i):
             self.refDataframeUpdated.emit(ref_df)
+
         #
         DAQT(daq_func=_onUpdateData, daq_seq=range(1)).start()
 
 
 class MPSBeamLossDataDelegateModel(QStyledItemDelegate):
+
     def __init__(self, parent=None, **kws):
         super(self.__class__, self).__init__()
         self.default_font_size = QFontDatabase.systemFont(
@@ -399,13 +440,10 @@ class SnapshotModel(QAbstractTableModel):
         ColumnBeamEnergy: "Beam Energy",
         ColumnBeamDest: "Beam\nDestination",
         ColumnTags: "Tags",
-        ColumnNote: "Note",      
+        ColumnNote: "Note",
     }
 
-    RIGHT_ALIGN_COLUMNS = (
-        ColumnBeamPower,
-        ColumnBeamEnergy
-    )
+    RIGHT_ALIGN_COLUMNS = (ColumnBeamPower, ColumnBeamEnergy)
 
     CENTER_ALIGN_COLUMNS = (
         ColumnIonName,
@@ -414,23 +452,25 @@ class SnapshotModel(QAbstractTableModel):
         ColumnIonCharge,
         ColumnIonCharge1,
     )
-    
+
     columnFormat = {
         ColumnBeamPower: "{value:.3f} W",
         ColumnBeamEnergy: "{value:.3f} MeV/u",
     }
-     
 
     # columns to hide
-    columnHiddenList = ( ColumnIonNumber, )
+    columnHiddenList = (ColumnIonNumber, )
 
-    def __init__(self, db_con: sqlite3.Connection, table_name: str, parent=None):
+    def __init__(self,
+                 db_con: sqlite3.Connection,
+                 table_name: str,
+                 parent=None):
         super().__init__(parent)
         self.db_con = db_con
         self.table_name = table_name
         self.snpCount = 0
         self.snpCountMax = get_nrow(db_con, table_name)
-        self.snpList = [] # List[SnapshotData]
+        self.snpList = []  # List[SnapshotData]
 
     def columnCount(self, parent=None):
         return self.ColumnCount
@@ -444,7 +484,7 @@ class SnapshotModel(QAbstractTableModel):
         if role != Qt.DisplayRole:
             return None
         return self.columnNameMap.get(section)
-    
+
     def data(self, index: QModelIndex, role: int = Qt.DisplayRole):
         if not index.isValid():
             return None
@@ -453,7 +493,7 @@ class SnapshotModel(QAbstractTableModel):
         row, column = index.row(), index.column()
         snp_data = self.snpList[row]
         v = snp_data.get_column_data(column)
-        
+
         if role == Qt.DisplayRole:
             if column == SnapshotModel.ColumnIonName:
                 return None
@@ -461,7 +501,7 @@ class SnapshotModel(QAbstractTableModel):
                 return ' ' * (len(v) + 2)
             elif column in SnapshotModel.columnFormat:
                 return SnapshotModel.columnFormat[column].format(
-                        value=float(v))
+                    value=float(v))
             else:
                 return v
 
@@ -483,16 +523,16 @@ class SnapshotModel(QAbstractTableModel):
             return v
 
         return None
-    
+
     def canFetchMore(self, index: QModelIndex):
         return self.snpCount < self.snpCountMax
-    
+
     def fetchMore(self, index: QModelIndex):
         n_remainder = self.snpCountMax - self.snpCount
         itemsToFetch = min(100, n_remainder)
         self.beginInsertRows(QModelIndex(), self.snpCount,
                              self.snpCount + itemsToFetch)
-        
+
         nitems_fetched = self.fetch_items(itemsToFetch)
         self.snpCount += nitems_fetched
         self.endInsertRows()
@@ -500,7 +540,9 @@ class SnapshotModel(QAbstractTableModel):
     def fetch_items(self, nitems: int):
         # return number of fetched items.
         cur = self.db_con.cursor()
-        r = cur.execute(f"SELECT * FROM {self.table_name} LIMIT {nitems} OFFSET {self.snpCount}")
+        r = cur.execute(
+            f"SELECT * FROM {self.table_name} LIMIT {nitems} OFFSET {self.snpCount}"
+        )
         cnt = 0
         for item in r.fetchall():
             cnt += 1
@@ -516,7 +558,7 @@ class SnapshotModel(QAbstractTableModel):
         self.table_name = table_name
         self.snpCount = 0
         self.snpCountMax = get_nrow(db_con, table_name)
-        self.snpList = [] # List[SnapshotData]
+        self.snpList = []  # List[SnapshotData]
         self.endResetModel()
 
     def get_hidden_columns(self):
@@ -524,6 +566,7 @@ class SnapshotModel(QAbstractTableModel):
 
 
 class SnapshotDelegateModel(QStyledItemDelegate):
+
     def __init__(self, parent=None, **kws):
         super(self.__class__, self).__init__()
         self.default_font_size = QFontDatabase.systemFont(
@@ -588,7 +631,6 @@ class SnapshotDelegateModel(QStyledItemDelegate):
             option.displayAlignment = Qt.AlignHCenter | Qt.AlignVCenter
         else:
             option.displayAlignment = Qt.AlignLeft | Qt.AlignVCenter
-        
 
 
 def get_nrow(db_con: sqlite3.Connection, table_name: str):
