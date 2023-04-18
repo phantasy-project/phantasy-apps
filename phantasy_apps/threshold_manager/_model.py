@@ -92,6 +92,14 @@ DF_MAP = {
     'HMR': DF_ELEM_HMR,
 }
 
+DEST_COLOR_MAP = {
+    'LEBT': '#5988E6',
+    'MEBT': '#ED9800',
+    'FS1A': '#54ED00',
+    'FS1B': '#E8ED00',
+    'TARGET': '#ED1700',
+}
+
 
 def _gen_data(irow: pd.Series):
     """Get a row of live data for device of *name*.
@@ -497,7 +505,7 @@ class SnapshotModel(QAbstractTableModel):
         if role == Qt.DisplayRole:
             if column == SnapshotModel.ColumnIonName:
                 return None
-            elif column == SnapshotModel.ColumnTags:
+            elif column == SnapshotModel.ColumnTags or column == SnapshotModel.ColumnBeamDest:
                 return ' ' * (len(v) + 2)
             elif column in SnapshotModel.columnFormat:
                 return SnapshotModel.columnFormat[column].format(
@@ -506,7 +514,7 @@ class SnapshotModel(QAbstractTableModel):
                 return v
 
         if role == Qt.UserRole:
-            if column == SnapshotModel.ColumnTags:
+            if column == SnapshotModel.ColumnTags or column == SnapshotModel.ColumnBeamDest:
                 return v.upper()
 
         if role == Qt.DecorationRole:
@@ -578,7 +586,14 @@ class SnapshotDelegateModel(QStyledItemDelegate):
         return size
 
     def paint(self, painter, option, index):
-        if index.column() == SnapshotModel.ColumnTags:  # Tags column
+        if index.column() in SnapshotModel.RIGHT_ALIGN_COLUMNS:
+            option.displayAlignment = Qt.AlignRight | Qt.AlignVCenter
+        elif index.column() in SnapshotModel.CENTER_ALIGN_COLUMNS:
+            option.displayAlignment = Qt.AlignHCenter | Qt.AlignVCenter
+        else:
+            option.displayAlignment = Qt.AlignLeft | Qt.AlignVCenter
+
+        if index.column() == SnapshotModel.ColumnTags:
             tags_str = index.model().data(index, Qt.UserRole)
             if tags_str == '':
                 QStyledItemDelegate.paint(self, painter, option, index)
@@ -622,15 +637,43 @@ class SnapshotDelegateModel(QStyledItemDelegate):
                     """QWidget { background-color: transparent; }""")
                 rect = option.rect.adjusted(2, 2, -2, -2)
                 painter.drawPixmap(rect.x(), rect.y(), w.grab())
+        elif index.column() == SnapshotModel.ColumnBeamDest:
+            dest = index.model().data(index, Qt.UserRole).strip()
+            if dest == '':
+                QStyledItemDelegate.paint(self, painter, option, index)
+            else:
+                if option.state & QStyle.State_Selected or option.state & QStyle.State_MouseOver:
+                    QStyledItemDelegate.paint(self, painter, option, index)
+
+                w = QWidget()
+                layout = QHBoxLayout()
+                layout.setContentsMargins(4, 4, 4, 4)
+                layout.setSpacing(2)
+
+                shadow = QGraphicsDropShadowEffect()
+                shadow.setBlurRadius(10)
+                shadow.setOffset(2)
+                lbl = QLabel(dest)
+                lbl.setGraphicsEffect(shadow)
+                lbl.setSizePolicy(QSizePolicy.Preferred,
+                                  QSizePolicy.Preferred)
+                bkgd_color = DEST_COLOR_MAP.get(dest, '#EEEEEC')
+                lbl.setStyleSheet(f'''
+                QLabel {{
+                    font-size: {self.default_font_size - 1}pt;
+                    border: 1px solid #AEAEAE;
+                    border-radius: 5px;
+                    margin: 1px;
+                    background-color: {bkgd_color};
+                }}''')
+                layout.addWidget(lbl)
+                w.setLayout(layout)
+                w.setStyleSheet(
+                    """QWidget { background-color: transparent; }""")
+                rect = option.rect.adjusted(2, 2, -2, -2)
+                painter.drawPixmap(rect.x(), rect.y(), w.grab())
         else:
             QStyledItemDelegate.paint(self, painter, option, index)
-
-        if index.column() in SnapshotModel.RIGHT_ALIGN_COLUMNS:
-            option.displayAlignment = Qt.AlignRight | Qt.AlignVCenter
-        elif index.column() in SnapshotModel.CENTER_ALIGN_COLUMNS:
-            option.displayAlignment = Qt.AlignHCenter | Qt.AlignVCenter
-        else:
-            option.displayAlignment = Qt.AlignLeft | Qt.AlignVCenter
 
 
 def get_nrow(db_con: sqlite3.Connection, table_name: str):
