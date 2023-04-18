@@ -29,14 +29,19 @@ from PyQt5.QtGui import (
     QFontMetrics,
 )
 
-from phantasy_ui import delayed_exec
-from phantasy_ui import get_open_filename
+from phantasy_ui import (
+    delayed_exec,
+    get_open_filename,
+)
+
 from phantasy_apps.threshold_manager.ui.ui_mps_diag import Ui_Form as MPSDiagWidgetForm
 from phantasy_apps.threshold_manager.ui.ui_snp_widget import Ui_Form as SnapshotWidgetForm
-from phantasy_apps.threshold_manager._mps_model import MPSBeamLossDataModel
-from phantasy_apps.threshold_manager._mps_model import MPSBeamLossDataDelegateModel
-from phantasy_apps.threshold_manager._mps_model import SnapshotModel
-from phantasy_apps.threshold_manager._mps_model import SnapshotDelegateModel
+from phantasy_apps.threshold_manager._model import (
+    MPSBeamLossDataModel,
+    MPSBeamLossDataDelegateModel,
+    SnapshotModel,
+    SnapshotDelegateModel,
+)
 from phantasy_apps.threshold_manager.db.utils import ensure_connect_db
 
 DEVICE_TYPE_FULLNAME_MAP = {

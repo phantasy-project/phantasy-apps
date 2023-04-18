@@ -1,8 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtCore import (QDate, QDateTime, Qt, QSize, QRect)
-from PyQt5.QtGui import (QPixmap, QColor, QPainter, QPen)
+from PyQt5.QtCore import (
+    Qt,
+    QSize,
+    QRect
+)
+from PyQt5.QtGui import (
+    QPixmap,
+    QColor,
+    QPainter,
+    QPen,
+)
 
 ROW_HEIGHT = 48
 PX_SIZE = 24
