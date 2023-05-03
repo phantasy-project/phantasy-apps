@@ -4387,6 +4387,12 @@ p, li { white-space: pre-wrap; }
         self._init_revert_area()
 
 
+def get_originated_template(snp_data: SnapshotData):
+    """Get the name of the originated snapshot template from the input snapshot data.
+    """
+    pass
+
+
 def get_snapshotdata(query_str: str, uri: str, column_name='datetime'):
     """Search and return a  object from the database defined by *uri*, where
     *query_str* matches the value of *column_name*.
