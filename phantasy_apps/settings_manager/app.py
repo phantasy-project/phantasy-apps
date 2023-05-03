@@ -4185,14 +4185,15 @@ p, li { white-space: pre-wrap; }
         if self._mp is None:
             return
         # test
-        name_elem_map = {i.name:i for i in self._mp.get_elements(name='*')}
         def f(row):
-            elem = name_elem_map[row.Name]
-            fld = elem.get_field(row.Field)
-            return row.Name, row.Field, row.Type, row.Pos, \
+            ename, fname = row.Name, row.Field
+            elem = self._lat[ename]
+            fld = elem.get_field(fname)
+            return ename, fname, row.Type, row.Pos, \
                    fld.current_setting(), fld.value, row.Setpoint, \
                    row.Tolerance, fld.write_access, \
                    get_pwr_sts(elem, fld.name)[0][1]
+
         snp_data_temp_tuple = self.snp_template_list[0]
         snp_data = snp_data_temp_tuple[2]
         snp_data.extract_blob()
@@ -4213,7 +4214,27 @@ p, li { white-space: pre-wrap; }
                                     note="Test new way of taking a snapshot",
                                     tags=tags,
                                     table_version=10)
-        insert_update_data(self._db_conn_pool.get(self.data_uri), new_snp_data)
+        # machstate
+        if self.snp_ms_chkbox.isChecked():
+            self.__config_meta_fetcher()
+            loop = QEventLoop()
+            self._meta_fetcher.finished.connect(loop.exit)
+            self._meta_fetcher.start()
+            loop.exec_()
+        else:
+            # reset machine state
+            self._machstate = None
+        #
+        new_snp_data.machstate = self._machstate
+
+        self._snp_dock_list.append(new_snp_data)
+        n = len(self._snp_dock_list)
+        self.data_uri_lineEdit.setText(self.data_uri)
+        self.total_snp_lbl.setText(str(n))
+        self.update_snp_dock_view()
+        self.on_load_settings(new_snp_data)
+        self.snp_filters_updated.emit()
+        self.on_save_settings(new_snp_data)
 
 
 
