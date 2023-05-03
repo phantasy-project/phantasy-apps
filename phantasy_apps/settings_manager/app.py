@@ -507,8 +507,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             # a list of snapshot templates, with expanded tabular data
             self.snp_template_list = res
 
+        def _load_done():
+            print("Preloading snapshot templates is done!")
+
         self._snp_temp_loader = DAQT(daq_func=_load_single, daq_seq=temp_conf.items())
         self._snp_temp_loader.resultsReady.connect(_load_ready)
+        self._snp_temp_loader.daqFinished.connect(_load_done)
         self._snp_temp_loader.start()
 
     @pyqtSlot()
@@ -4171,6 +4175,45 @@ p, li { white-space: pre-wrap; }
         w = self.revert_area.takeWidget()
         w.setParent(None)
         self._init_revert_area()
+
+
+    # test
+    def onClickTestButton(self):
+        # new way of taking snapshot
+        if self._mp is None:
+            return
+        # test
+        name_elem_map = {i.name:i for i in self._mp.get_elements(name='*')}
+        def f(row):
+            elem = name_elem_map[row.Name]
+            fld = elem.get_field(row.Field)
+            return row.Name, row.Field, row.Type, row.Pos, \
+                   fld.current_setting(), fld.value, row.Setpoint, \
+                   row.Tolerance, fld.write_access, \
+                   get_pwr_sts(elem, fld.name)[0][1]
+        snp_data_temp_tuple = self.snp_template_list[0]
+        snp_data = snp_data_temp_tuple[2]
+        snp_data.extra_blob()
+        _r = snp_data.data.apply(f, axis=1)
+        new_settings_df = pd.DataFrame.from_records(
+                            _r, columns=snp_data.data.columns)
+
+        tags = ','.join(snp_data_temp_tuple[1] + ['TEST'])
+        ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species()
+        new_snp_data = SnapshotData(new_settings_df,
+                                    ion_name=ion_name,
+                                    ion_number=ion_number,
+                                    ion_mass=ion_mass,
+                                    ion_charge=ion_charge,
+                                    machine=self._last_machine_name,
+                                    segment=self._last_lattice_name,
+                                    version=self._version,
+                                    note="Test new way of taking a snapshot",
+                                    tags=tags,
+                                    table_version=10)
+        insert_update_data(self._db_conn_pool.get(self.data_uri), new_snp_data)
+
+
 
 
 def get_originated_template(snp_data: SnapshotData):
