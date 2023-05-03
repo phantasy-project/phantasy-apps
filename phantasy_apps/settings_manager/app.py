@@ -2404,9 +2404,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 worker.meta_signal1.emit((tune_alm_idx, tune_alm_v, Qt.UserRole))
 
         elem = self._lat[o.ename]
-        (_px, _tt), (_px_role, _tt_role) = get_pwr_sts(elem, o.name)
+        (_px_name, _tt), (_px_role, _tt_role) = get_pwr_sts(elem, o.name)
         # emit signal to update power status
-        for _i, _r in zip((_px, _tt), (_px_role, _tt_role)):
+        for _i, _r in zip((_px_name, _tt), (_px_role, _tt_role)):
+            if _r == Qt.DecorationRole:
+                _i = QPixmap(_i).scaled(PX_SIZE, PX_SIZE, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
             worker.meta_signal1.emit((sts_idx, _i, _r))
 
         #
@@ -4193,7 +4195,7 @@ p, li { white-space: pre-wrap; }
                    get_pwr_sts(elem, fld.name)[0][1]
         snp_data_temp_tuple = self.snp_template_list[0]
         snp_data = snp_data_temp_tuple[2]
-        snp_data.extra_blob()
+        snp_data.extract_blob()
         _r = snp_data.data.apply(f, axis=1)
         new_settings_df = pd.DataFrame.from_records(
                             _r, columns=snp_data.data.columns)

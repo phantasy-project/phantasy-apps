@@ -1944,9 +1944,39 @@ class EffSetLogMsgContainer(QObject):
         return len(self._items)
 
 
+_pwr_on_px = ":/sm-icons/on.png"
+_pwr_off_px = ":/sm-icons/off.png"
+_pwr_unknown_px = ":/sm-icons/unknown.png"
+
+# blocking beam or not
+_blocking_px = ":/sm-icons/off.png"
+_non_blocking_px = ":/sm-icons/on.png"
+
+# chopper
+_chp_invalud_px = ":/sm-icons/chp_invalid.png"
+_chp_off_px = ":/sm-icons/chp_off.png"
+_chp_blocking_px = ":/sm-icons/chp_blocking.png"
+_chp_running_px = ":/sm-icons/chp_running.png"
+_chp_px_tuple = (_chp_invalud_px, _chp_off_px, _chp_blocking_px, _chp_running_px)
+
+# aperture
+_ap_in_px, _ap_out_px = _blocking_px, _non_blocking_px
+_ap_in_px_tuple = (_ap_out_px, _ap_in_px)
+
+# position monitor (PPAC)
+_pm_in_px_tuple = (_non_blocking_px, _blocking_px)
+
+# ion active or not
+_ion_inactive_px = ":/sm-icons/off.png"
+_ion_active_px = ":/sm-icons/on.png"
+_ion_act_px_tuple = (_ion_inactive_px, _ion_active_px)
+
+# attenuator
+_att_in_px, _att_out_px = _blocking_px, _non_blocking_px
+_att_out_px_tuple = (_att_in_px, _att_out_px)
 
 def get_pwr_sts(elem, fname: str):
-    """Return a tuple of (pixmap, tooltip) and the roles for each, from a high-level
+    """Return a tuple of (pixmap(image path), tooltip) and the roles for each, from a high-level
     element and field name.
 
     Returns
@@ -1954,38 +1984,6 @@ def get_pwr_sts(elem, fname: str):
     r : tuple
         A tuple of ((px, tt), (px_role, tt_tole)).
     """
-    _pwr_on_px = QPixmap(":/sm-icons/on.png")
-    _pwr_off_px = QPixmap(":/sm-icons/off.png")
-    _pwr_unknown_px = QPixmap(":/sm-icons/unknown.png")
-
-    # blocking beam or not
-    _blocking_px = QPixmap(":/sm-icons/off.png")
-    _non_blocking_px = QPixmap(":/sm-icons/on.png")
-
-    # chopper
-    _chp_invalud_px = QPixmap(":/sm-icons/chp_invalid.png")
-    _chp_off_px = QPixmap(":/sm-icons/chp_off.png")
-    _chp_blocking_px = QPixmap(":/sm-icons/chp_blocking.png")
-    _chp_running_px = QPixmap(":/sm-icons/chp_running.png")
-    _chp_px_tuple = (_chp_invalud_px, _chp_off_px, _chp_blocking_px, _chp_running_px)
-
-    # aperture
-    _ap_in_px, _ap_out_px = _blocking_px, _non_blocking_px
-    _ap_in_px_tuple = (_ap_out_px, _ap_in_px)
-
-    # position monitor (PPAC)
-    _pm_in_px_tuple = (_non_blocking_px, _blocking_px)
-
-    # ion active or not
-    _ion_inactive_px = QPixmap(":/sm-icons/off.png")
-    _ion_active_px = QPixmap(":/sm-icons/on.png")
-    _ion_act_px_tuple = (_ion_inactive_px, _ion_active_px)
-
-    # attenuator
-    _att_in_px, _att_out_px = _blocking_px, _non_blocking_px
-    _att_out_px_tuple = (_att_in_px, _att_out_px)
-
-
     #
     pwr_is_on = 'Unknown'
     px = _pwr_unknown_px
@@ -2006,14 +2004,12 @@ def get_pwr_sts(elem, fname: str):
         elif pwr_is_on == 0.0:
             px = _pwr_off_px
             tt = "Cavity phase is UNLOCKED"
-
     elif elem.family == "CHP":
         sts = elem.get_field('STATE')
         sts_val_int = sts.value
         sts_val_str = CHP_STS_TUPLE[sts_val_int]
         tt = f"Chopper state: {sts_val_str}"
         px = _chp_px_tuple[sts_val_int]
-
     elif elem.family == "AP":
         in_sts = elem.IN_STS
         px = _ap_in_px_tuple[in_sts]
@@ -2021,7 +2017,6 @@ def get_pwr_sts(elem, fname: str):
             tt = "Aperture device is OUT"
         else:
             tt = "Aperture device is IN"
-
     elif elem.family == "PM":
         if 'IN_STS' in elem.fields:
             in_sts = elem.IN_STS
@@ -2030,7 +2025,6 @@ def get_pwr_sts(elem, fname: str):
                 tt = "PPAC is OUT"
             else:
                 tt = "PPAC is IN"
-
     elif elem.family == "ION":
         if 'ACT' in elem.fields:
             act_sts = int(elem.ACT)
@@ -2039,7 +2033,6 @@ def get_pwr_sts(elem, fname: str):
                 tt = "Ion source is inactive"
             else:
                 tt = "Ion source is active"
-
     elif elem.family == "BD":
         if 'IN_STS' in elem.fields:
             in_sts = elem.IN_STS
@@ -2048,7 +2041,6 @@ def get_pwr_sts(elem, fname: str):
                 tt = "Beam dump is OUT"
             else:
                 tt = "Beam dump is IN"
-
     elif elem.family == "ELD":
         if 'IN_STS' in elem.fields:
             in_sts = elem.IN_STS
@@ -2057,7 +2049,6 @@ def get_pwr_sts(elem, fname: str):
                 tt = "Energy loss detector is OUT"
             else:
                 tt = "Energy loss detector is IN"
-
     elif elem.family == "TID":
         if 'IN_STS' in elem.fields:
             in_sts = elem.IN_STS
@@ -2066,7 +2057,6 @@ def get_pwr_sts(elem, fname: str):
                 tt = "Timing detector is OUT"
             else:
                 tt = "Timing detector is IN"
-
     elif elem.family == "PPOT":
         pos = elem.get_field('POS').value
         if elem.name == "FS_F2S1:PPOT_D1563":
@@ -2079,7 +2069,6 @@ def get_pwr_sts(elem, fname: str):
             elif pos == 3:
                 tt = "DB2 Degrader is IN"
                 px = _pwr_off_px # red
-
         elif elem.name == "FS_F2S2:PPOT_D1660":
             if pos == 0:
                 tt = "DB3 viewer/wedge is OUT"
@@ -2096,7 +2085,6 @@ def get_pwr_sts(elem, fname: str):
             elif pos == 5:
                 tt = "DB3 Wedge#3 is IN"
                 px = _pwr_off_px # red
-
     elif elem.family == "ATT":
         if 'OUT_STS' in elem.fields:
             out_sts = elem.OUT_STS
@@ -2113,7 +2101,6 @@ def get_pwr_sts(elem, fname: str):
             else:
                 px = _att_out_px_tuple[1]
                 tt = "Attenuator(s) OUT"
-
     elif elem.family == "PTA":
         sts = elem.get_field('TGT')
         sts_val_int = sts.value
@@ -2121,7 +2108,6 @@ def get_pwr_sts(elem, fname: str):
         tt = f"Target state: {sts_val_str}"
         px_role = Qt.DisplayRole
         px = sts_val_str
-
     elif elem.family == "SLT":
         if 'IN_STS' in elem.fields:
             in_sts = elem.IN_STS
@@ -2130,7 +2116,6 @@ def get_pwr_sts(elem, fname: str):
                 tt = "Slit is OUT"
             else:
                 tt = "Slit is IN"
-
     else:  # others
         if 'PWRSTS' in elem.fields:
             if fname == 'I_TC':
@@ -2147,7 +2132,4 @@ def get_pwr_sts(elem, fname: str):
             elif pwr_is_on == 0.0:
                 px = _pwr_off_px
                 tt = "Power is OFF"
-
-    if px_role == Qt.DecorationRole:
-        px = px.scaled(PX_SIZE, PX_SIZE, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
     return (px, tt), (px_role, Qt.ToolTipRole)
