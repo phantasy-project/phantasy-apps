@@ -254,14 +254,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     sigSetLogColorSkip = pyqtSignal()
     sigSetLogColorSet = pyqtSignal()
 
-    def __init__(self, version, config_dir=None):
+    def __init__(self, version, config_dir=None, **kws):
         super(SettingsManagerWindow, self).__init__()
 
         # app version
         self._version = version
-
-        # window title/icon
-        self.setWindowTitle("Settings Manager")
 
         # set app properties
         self.setAppTitle("Settings Manager")
@@ -296,7 +293,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # post init ui
         self.__post_init_ui()
 
-        #
+        # window title/icon
+        self.setWindowTitle(kws.get("title", "Settings Manager"))
         self.show()
         self.preload_lattice(self.pref_dict['LATTICE']['DEFAULT_MACHINE'],
                              self.pref_dict['LATTICE']['DEFAULT_SEGMENT'])
@@ -3016,12 +3014,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         postsnp_dlg = PostSnapshotDialog(self.default_font_size, self)
         r = postsnp_dlg.exec_()
         if r == QDialog.Accepted:
-            tag_str = ','.join(postsnp_dlg.get_selected_tag_list())
+            tag_str = postsnp_dlg.get_selected_tag_str()
             note = postsnp_dlg.get_note()
         else:
-            QMessageBox.warning(self, "Take Snapshot",
-                                "Tag and Note must be set for making a new snapshot.",
-                                QMessageBox.Ok, QMessageBox.Ok)
             return
 
         # self.turn_off_updater_if_necessary()
@@ -4262,7 +4257,7 @@ p, li { white-space: pre-wrap; }
             else:
                 # reset machine state
                 self._machstate = None
-     
+
             new_snp_data.machstate = self._machstate
             return new_snp_data
 

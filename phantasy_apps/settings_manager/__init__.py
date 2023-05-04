@@ -35,8 +35,8 @@ def run(cli=False):
 
     app = QApplication(sys.argv)
     #
-    w = SettingsManagerWindow(version=__version__, config_dir=args.config)
-    w.setWindowTitle(__title__)
+    w = SettingsManagerWindow(version=__version__, config_dir=args.config,
+                              title=__title__)
     if args.snapshot_window_off:
         w.snp_dock.close()
 
