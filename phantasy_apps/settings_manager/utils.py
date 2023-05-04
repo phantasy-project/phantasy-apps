@@ -148,10 +148,10 @@ TAG_BTN_STY = """
 QToolButton {{
     font-size: {fs}pt;
     padding: 3px 3px 3px 3px;
-    background-color: #BDBDBD;
-    border: none;
-    border-radius: 6px;
-    color: rgb(255, 255, 255);
+    background-color: #F5F5F5;
+    border: 0.5px solid #9E9E9E;
+    border-radius: 5px;
+    color: #424242;
     qproperty-icon: url(":/sm-icons/plus-white.png") off, url(":/sm-icons/checkmark-white.png") on;
 }}
 QToolButton:hover:!checked {{
@@ -162,6 +162,8 @@ QToolButton:hover:checked {{
     background-color: #90CAF9;
 }}
 QToolButton:checked {{
+    color: #FFFFFF;
+    border: 0.5px solid #2979FF;
     background-color: #448AFF;
 }}
 """
