@@ -3722,6 +3722,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def _meta_fetcher_started(self):
         printlog("Start to fetch machine state...")
         self._meta_fetcher_pb = QProgressBar()
+        self._meta_fetcher_pb.setStyleSheet("""
+        QProgressBar {
+            border: 1px solid gray;
+            border-radius: 1px;
+            text-align: center;
+        }
+        QProgressBar::chunk {
+            background-color: #7AAFF4;
+            width: 10px;
+            margin: 0.5px;
+        }""")
         self._meta_fetcher_pb.setWindowTitle("Capturing Machine State")
         self._meta_fetcher_pb.setWindowFlags(Qt.CustomizeWindowHint
                                              | Qt.WindowTitleHint)
@@ -3736,6 +3747,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def _meta_fetcher_stopped(self):
         printlog("Stopped fetching machine state.")
+        self._meta_fetcher_pb.setVisible(False)
 
     def _meta_fetcher_progressed(self, f, s):
         printlog(f"Fetching machine state: {f * 100:>5.1f}%, {s}")
@@ -4184,6 +4196,30 @@ p, li { white-space: pre-wrap; }
         # new way of taking snapshot
         if self._mp is None:
             return
+
+        # progressbar
+        _t_pb = QProgressBar()
+        _t_pb.setStyleSheet("""
+        QProgressBar {
+            border: 1px solid gray;
+            border-radius: 1px;
+            text-align: center;
+        }
+        QProgressBar::chunk {
+            background-color: #05B8CC;
+            width: 10px;
+            margin: 0.5px;
+        }""")
+        _t_pb.setWindowTitle("Taking Snapshot")
+        _t_pb.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+        _t_pb.setRange(0, 0)
+        _t_pb.move(
+            self.geometry().x() + self.geometry().width() / 2 -
+            _t_pb.geometry().width() / 2,
+            self.geometry().y() + self.geometry().height() / 2 -
+            _t_pb.geometry().height() / 2)
+        _t_pb.setVisible(False)
+
         # test
         def f(row):
             ename, fname = row.Name, row.Field
@@ -4195,48 +4231,66 @@ p, li { white-space: pre-wrap; }
                    get_pwr_sts(elem, fld.name)[0][1]
 
         snp_data_temp_tuple = self.snp_template_list[0]
-        snp_data = snp_data_temp_tuple[2]
-        snp_data.extract_blob()
-        _r = snp_data.data.apply(f, axis=1)
-        new_settings_df = pd.DataFrame.from_records(
-                            _r, columns=snp_data.data.columns)
+        snp_data, snp_tags = snp_data_temp_tuple[2], snp_data_temp_tuple[1]
 
-        tags = ','.join(snp_data_temp_tuple[1] + ['TEST'])
-        ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species()
-        new_snp_data = SnapshotData(new_settings_df,
-                                    ion_name=ion_name,
-                                    ion_number=ion_number,
-                                    ion_mass=ion_mass,
-                                    ion_charge=ion_charge,
-                                    machine=self._last_machine_name,
-                                    segment=self._last_lattice_name,
-                                    version=self._version,
-                                    note="Test new way of taking a snapshot",
-                                    tags=tags,
-                                    table_version=10)
-        # machstate
-        if self.snp_ms_chkbox.isChecked():
-            self.__config_meta_fetcher()
-            loop = QEventLoop()
-            self._meta_fetcher.finished.connect(loop.exit)
-            self._meta_fetcher.start()
-            loop.exec_()
-        else:
-            # reset machine state
-            self._machstate = None
+        def _take_snapshot(snp_data: SnapshotData):
+            snp_data.extract_blob()
+            _r = snp_data.data.apply(f, axis=1)
+            new_settings_df = pd.DataFrame.from_records(
+                                _r, columns=snp_data.data.columns)
+            tags = ','.join(snp_tags + ['TEST'])
+            ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species()
+            new_snp_data = SnapshotData(new_settings_df,
+                                        ion_name=ion_name,
+                                        ion_number=ion_number,
+                                        ion_mass=ion_mass,
+                                        ion_charge=ion_charge,
+                                        machine=self._last_machine_name,
+                                        segment=self._last_lattice_name,
+                                        version=self._version,
+                                        note="Test new way of taking a snapshot",
+                                        tags=tags,
+                                        table_version=10)
+
+            # machstate
+            if self.snp_ms_chkbox.isChecked():
+                self.__config_meta_fetcher()
+                loop = QEventLoop()
+                self._meta_fetcher.finished.connect(loop.exit)
+                self._meta_fetcher.start()
+                loop.exec_()
+            else:
+                # reset machine state
+                self._machstate = None
+     
+            new_snp_data.machstate = self._machstate
+            return new_snp_data
+
+        def _take_done(res: list):
+            new_snp_data = res[0]
+            self._snp_dock_list.append(new_snp_data)
+            n = len(self._snp_dock_list)
+            self.data_uri_lineEdit.setText(self.data_uri)
+            self.total_snp_lbl.setText(str(n))
+            self.update_snp_dock_view()
+            self.on_load_settings(new_snp_data)
+            self.snp_filters_updated.emit()
+            self.on_save_settings(new_snp_data)
+
+        def _t_started():
+            _t_pb.setVisible(True)
+            self.setEnabled(False)
+
+        def _t_finished():
+            _t_pb.setVisible(False)
+            self.setEnabled(True)
+
         #
-        new_snp_data.machstate = self._machstate
-
-        self._snp_dock_list.append(new_snp_data)
-        n = len(self._snp_dock_list)
-        self.data_uri_lineEdit.setText(self.data_uri)
-        self.total_snp_lbl.setText(str(n))
-        self.update_snp_dock_view()
-        self.on_load_settings(new_snp_data)
-        self.snp_filters_updated.emit()
-        self.on_save_settings(new_snp_data)
-
-
+        self._t = DAQT(daq_func=_take_snapshot, daq_seq=[snp_data])
+        self._t.daqStarted.connect(_t_started)
+        self._t.resultsReady.connect(_take_done)
+        self._t.daqFinished.connect(_t_finished)
+        self._t.start()
 
 
 def get_originated_template(snp_data: SnapshotData):
