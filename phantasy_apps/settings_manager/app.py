@@ -502,7 +502,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         def _load_single(t: tuple):
             _itemp_name, _itemp_conf = t
             _isnp_data = get_snapshotdata(_itemp_conf['DB_ENTRY'], self.data_uri)
-            _isnp_data.extract_blob()
+            if _isnp_data is not None:
+                _isnp_data.extract_blob()
             return (_itemp_conf['NAME'], _itemp_conf['DB_TAGS'], _isnp_data)
 
         def _load_ready(res):
