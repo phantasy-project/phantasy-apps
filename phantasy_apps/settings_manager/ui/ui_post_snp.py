@@ -14,7 +14,7 @@ class Ui_Dialog(object):
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(916, 622)
+        Dialog.resize(957, 622)
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setContentsMargins(6, 8, 6, 6)
         self.gridLayout.setSpacing(4)
@@ -29,10 +29,10 @@ class Ui_Dialog(object):
         self.tags_area.setWidgetResizable(True)
         self.tags_area.setObjectName("tags_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 902, 89))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 943, 89))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tags_area.setWidget(self.scrollAreaWidgetContents)
-        self.gridLayout.addWidget(self.tags_area, 7, 0, 1, 3)
+        self.gridLayout.addWidget(self.tags_area, 7, 0, 1, 4)
         self.label = QtWidgets.QLabel(Dialog)
         font = QtGui.QFont()
         font.setBold(True)
@@ -43,6 +43,10 @@ class Ui_Dialog(object):
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 8, 0, 1, 1)
         self.label_5 = QtWidgets.QLabel(Dialog)
+        self.label_5.setStyleSheet("QLabel {\n"
+                                   "    border: 0.5px solid gray;\n"
+                                   "    padding: 2px 5px 2px 5px; \n"
+                                   "}")
         self.label_5.setObjectName("label_5")
         self.gridLayout.addWidget(self.label_5, 3, 1, 1, 1)
         self.plainTextEdit = QtWidgets.QPlainTextEdit(Dialog)
@@ -58,7 +62,19 @@ class Ui_Dialog(object):
                                          "}")
         self.plainTextEdit.setReadOnly(True)
         self.plainTextEdit.setObjectName("plainTextEdit")
-        self.gridLayout.addWidget(self.plainTextEdit, 5, 0, 1, 3)
+        self.gridLayout.addWidget(self.plainTextEdit, 5, 0, 1, 4)
+        self.label_4 = QtWidgets.QLabel(Dialog)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_4.setFont(font)
+        self.label_4.setStyleSheet("QLabel {\n"
+                                   "    border-top: 0px solid gray;\n"
+                                   "    border-bottom: 1px solid gray;\n"
+                                   "    padding: 2px 0px 5px 0px;\n"
+                                   "}")
+        self.label_4.setObjectName("label_4")
+        self.gridLayout.addWidget(self.label_4, 0, 0, 1, 4)
         self.selected_tags = QtWidgets.QLabel(Dialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -77,7 +93,7 @@ class Ui_Dialog(object):
             "}")
         self.selected_tags.setText("")
         self.selected_tags.setObjectName("selected_tags")
-        self.gridLayout.addWidget(self.selected_tags, 6, 1, 1, 2)
+        self.gridLayout.addWidget(self.selected_tags, 6, 1, 1, 3)
         self.beamSpeciesDisplayWidget = BeamSpeciesDisplayWidget(Dialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -90,7 +106,7 @@ class Ui_Dialog(object):
         self.beamSpeciesDisplayWidget.setProperty(
             "allowClickingIonSourceButtons", False)
         self.beamSpeciesDisplayWidget.setObjectName("beamSpeciesDisplayWidget")
-        self.gridLayout.addWidget(self.beamSpeciesDisplayWidget, 1, 2, 3, 1)
+        self.gridLayout.addWidget(self.beamSpeciesDisplayWidget, 1, 3, 3, 1)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setContentsMargins(-1, 0, -1, -1)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -104,7 +120,7 @@ class Ui_Dialog(object):
         self.pushButton = QtWidgets.QPushButton(Dialog)
         self.pushButton.setObjectName("pushButton")
         self.horizontalLayout.addWidget(self.pushButton)
-        self.gridLayout.addLayout(self.horizontalLayout, 10, 0, 1, 3)
+        self.gridLayout.addLayout(self.horizontalLayout, 10, 0, 1, 4)
         self.orig_template_lbl = QtWidgets.QLabel(Dialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -114,8 +130,7 @@ class Ui_Dialog(object):
             self.orig_template_lbl.sizePolicy().hasHeightForWidth())
         self.orig_template_lbl.setSizePolicy(sizePolicy)
         self.orig_template_lbl.setStyleSheet("QLabel {\n"
-                                             "    color: #D81B60;\n"
-                                             "    border: 1px solid gray;\n"
+                                             "    border: 0.5px solid gray;\n"
                                              "    padding: 2px 5px 2px 5px; \n"
                                              "}")
         self.orig_template_lbl.setAlignment(QtCore.Qt.AlignLeading
@@ -128,7 +143,7 @@ class Ui_Dialog(object):
                                          "    color: rgb(0, 123, 255);\n"
                                          "}")
         self.note_textEdit.setObjectName("note_textEdit")
-        self.gridLayout.addWidget(self.note_textEdit, 9, 0, 1, 3)
+        self.gridLayout.addWidget(self.note_textEdit, 9, 0, 1, 4)
         self.on_loaded_rbtn = QtWidgets.QRadioButton(Dialog)
         self.on_loaded_rbtn.setChecked(True)
         self.on_loaded_rbtn.setObjectName("on_loaded_rbtn")
@@ -147,11 +162,11 @@ class Ui_Dialog(object):
         self.template_area.setObjectName("template_area")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(
-            0, 0, 902, 89))
+            0, 0, 943, 89))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.template_area.setWidget(self.scrollAreaWidgetContents_2)
-        self.gridLayout.addWidget(self.template_area, 4, 0, 1, 3)
+        self.gridLayout.addWidget(self.template_area, 4, 0, 1, 4)
         self.label_2 = QtWidgets.QLabel(Dialog)
         font = QtGui.QFont()
         font.setBold(True)
@@ -159,18 +174,17 @@ class Ui_Dialog(object):
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
         self.gridLayout.addWidget(self.label_2, 6, 0, 1, 1)
-        self.label_4 = QtWidgets.QLabel(Dialog)
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        self.label_4.setFont(font)
-        self.label_4.setStyleSheet("QLabel {\n"
-                                   "    border-top: 0px solid gray;\n"
-                                   "    border-bottom: 1px solid gray;\n"
-                                   "    padding: 2px 0px 5px 0px;\n"
-                                   "}")
-        self.label_4.setObjectName("label_4")
-        self.gridLayout.addWidget(self.label_4, 0, 0, 1, 3)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setContentsMargins(0, -1, -1, -1)
+        self.horizontalLayout_2.setSpacing(2)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.is_match_lbl = QtWidgets.QLabel(Dialog)
+        self.is_match_lbl.setMinimumSize(QtCore.QSize(64, 64))
+        self.is_match_lbl.setMaximumSize(QtCore.QSize(64, 64))
+        self.is_match_lbl.setAlignment(QtCore.Qt.AlignCenter)
+        self.is_match_lbl.setObjectName("is_match_lbl")
+        self.horizontalLayout_2.addWidget(self.is_match_lbl)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 1, 2, 3, 1)
 
         self.retranslateUi(Dialog)
         self.pushButton.clicked.connect(Dialog.on_click_ok)  # type: ignore
@@ -191,12 +205,13 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.on_template_rbtn.setText(_translate("Dialog", "On A Template"))
         self.label.setText(_translate("Dialog", "Note"))
-        self.label_5.setText(_translate("Dialog", "(the checked one)"))
+        self.label_5.setText(_translate("Dialog", "Beam in Operations"))
         self.plainTextEdit.setPlainText(
             _translate(
                 "Dialog",
                 "By default, the one matches the machine operations is checked, if not, meaning the loaded one is not originated from any."
             ))
+        self.label_4.setText(_translate("Dialog", "Create a New Snapshot"))
         self.pushButton_2.setText(_translate("Dialog", "Cancel"))
         self.pushButton.setText(_translate("Dialog", "OK"))
         self.orig_template_lbl.setToolTip(
@@ -211,7 +226,7 @@ class Ui_Dialog(object):
         self.on_loaded_rbtn.setText(_translate("Dialog",
                                                "On Currently Loaded"))
         self.label_2.setText(_translate("Dialog", "Tags"))
-        self.label_4.setText(_translate("Dialog", "Create a New Snapshot"))
+        self.is_match_lbl.setText(_translate("Dialog", "x"))
 
 
 from phantasy_ui.widgets.beam_species_displayWidget import BeamSpeciesDisplayWidget
