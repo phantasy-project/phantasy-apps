@@ -526,6 +526,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._snp_temp_loader.daqFinished.connect(_load_done)
         self._snp_temp_loader.start()
 
+    def get_originated_template(self):
+        """Return the name of snapshot template from the currently loaded one.
+
+        The result could be:
+        - The name of a template: loaded one exactly matches that template;
+        - The name of a template (subset): the loaded one is a subset of that template;
+        - None: the loaded one is not originated from any templates.
+        """
+        loaded_settings_name_set = set(self._current_snpdata.data.Name.unique())
+        for _tmp_name, _tmp_tags, _tmp_snp_data in self.snp_template_list:
+            _name_set = set(_tmp_snp_data.data.Name.unique())
+            if _name_set == loaded_settings_name_set:
+                return _tmp_name, _tmp_tags, _tmp_snp_data
+            elif loaded_settings_name_set.issubset(_name_set):
+                return _tmp_name + ",subset", _tmp_tags, _tmp_snp_data
+        return None, None, None
+
     @pyqtSlot()
     def on_auto_column_width(self):
         # auto adjust column width
@@ -905,6 +922,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # current snp
         self._current_snpdata = None
+        # originated template tuple: (name, taglist, snpdata_temp)
+        self._current_snpdata_originated = (None, None, None)
+
+        # template list, [(name, tag_list, snpdata),...]
+        self.snp_template_list = []
 
         # snp filters, {btn_text (elemt, tag):ischecked?}
         self._current_btn_filter = dict()
@@ -3024,7 +3046,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
 
         # pop up a dialog for tag selection
-        postsnp_dlg = PostSnapshotDialog(self.default_font_size, self)
+        postsnp_dlg = PostSnapshotDialog(self.default_font_size, self.snp_template_list, self)
+        postsnp_dlg.origTemplateSnapshot.emit(self._current_snpdata_originated)
         r = postsnp_dlg.exec_()
         if r == QDialog.Accepted:
             tag_str = postsnp_dlg.get_selected_tag_str()
@@ -3600,6 +3623,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         m.m_src.on_snp_loaded(data)
         self._current_snpdata = data
+
+        # figure out the originated template
+        self._current_snpdata_originated = self.get_originated_template()
+
         # enable auto data updating in 5 seconds
         # if not self.update_ctrl_btn.isChecked():
         #    delayed_exec(lambda: self.update_ctrl_btn.setChecked(True), 5000)
@@ -4311,12 +4338,6 @@ p, li { white-space: pre-wrap; }
         self._t.resultsReady.connect(_take_done)
         self._t.daqFinished.connect(_t_finished)
         self._t.start()
-
-
-def get_originated_template(snp_data: SnapshotData):
-    """Get the name of the originated snapshot template from the input snapshot data.
-    """
-    pass
 
 
 def get_snapshotdata(query_str: str, uri: str, column_name='datetime'):
