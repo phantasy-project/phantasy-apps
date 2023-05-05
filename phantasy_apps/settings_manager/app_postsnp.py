@@ -9,6 +9,7 @@ from functools import partial
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QToolButton
@@ -158,9 +159,11 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         _orig_name, _orig_tag_list, _temp_snpdata = self._current_snpdata_originated
         if _orig_name == temp_name_in_op:
             print("Loaded Snapshot Matches Beam Operations")
+            self.is_match_lbl.setPixmap(QPixmap(":/sm-icons/done.png"))
         else:
             print("Loaded Snapshot NOT Match Beam Operations")
-        
+            self.is_match_lbl.setPixmap(QPixmap(":/sm-icons/fail.png"))
+
         # check the temp button matches beam ops
         self.orig_template_lbl.setText(_orig_name)
         for w in self.template_area.findChildren(QToolButton):
