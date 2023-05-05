@@ -166,6 +166,8 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         else:
             self.is_match_lbl.setToolTip("The loaded snapshot does NOT MATCH beam operations!")
             self.is_match_lbl.setPixmap(self._not_matched_px)
+            # check based on template option (default is baed on currently loaded)
+            self.on_template_rbtn.setChecked(True)
 
         # check the temp button matches beam ops
         self.orig_template_lbl.setText(_orig_name)
