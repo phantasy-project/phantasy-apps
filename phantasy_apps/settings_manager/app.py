@@ -4235,10 +4235,9 @@ p, li { white-space: pre-wrap; }
         _t_pb.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
         _t_pb.setRange(0, 0)
         _t_pb.move(
-            self.geometry().x() + self.geometry().width() / 2 -
-            _t_pb.geometry().width() / 2,
-            self.geometry().y() + self.geometry().height() / 2 -
-            _t_pb.geometry().height() / 2)
+            int(self.geometry().x() + self.geometry().width() / 2 - _t_pb.geometry().width() / 2),
+            int(self.geometry().y() + self.geometry().height() / 2 - _t_pb.geometry().height() / 2)
+        )
         _t_pb.setVisible(False)
 
         # test
