@@ -15,6 +15,7 @@ from PyQt5.QtWidgets import QToolButton
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QButtonGroup
 
+from phantasy_ui import milli_sleep
 from phantasy_ui.widgets import FlowLayout
 
 from .utils import TAG_BTN_STY
@@ -24,21 +25,24 @@ from .ui.ui_post_snp import Ui_Dialog
 
 DEFAULT_TAG_LIST = ["LINAC", "FSEE", "GOLDEN", "SCS1", "SCS2", "TEST"]
 
+ISRC_NAME_MAP = {
+    'ISRC1': 'Artemis',
+    'ISRC2': 'HP-ECR'
+}
+
 
 class PostSnapshotDialog(QDialog, Ui_Dialog):
     """ The dialog to show after clicking 'Take Snapshot'.
     """
 
-    # originated template info of the loaded snapshot
-    # tuple of temp name, temp tag list, temp SnapshotData
-    origTemplateSnapshot = pyqtSignal(tuple)
-
-    def __init__(self, tag_fontsize: int, template_list: list, parent=None):
+    def __init__(self, tag_fontsize: int, template_list: list, current_snpdata_originated: tuple, parent=None):
         super(self.__class__, self).__init__()
         self.parent = parent
         self._tag_fs = tag_fontsize
         # template list: [(name, tag_list, snpdata),...]
         self._template_list = template_list
+        # current loaded snp originated template, (name, tag_list, snpdata)
+        self._current_snpdata_originated = current_snpdata_originated
 
         # UI
         self.setupUi(self)
@@ -48,14 +52,16 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         self._post_init()
 
     def _post_init(self):
-        #
-        self.origTemplateSnapshot.connect(self.onOrigTemplateChanged)
         # template area
         self._build_template_area()
         # build multi-select tag list
         tag_list = get_tag_list()
         self._selected_tag_list = []
         self._build_tags_list(self.tags_area, tag_list)
+
+        # check if current loaded snapshot matches beam operation
+        milli_sleep(500)
+        self.check_loaded_snp()
 
     def _build_tags_list(self, area, tags):
         # build a flow list of checkable toolbuttons for tag selection.
@@ -141,18 +147,26 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
     def get_note(self):
         return self.note_textEdit.toPlainText().strip()
 
-    @pyqtSlot(tuple)
-    def onOrigTemplateChanged(self, t: tuple):
-        """The originated template info of the currently loaded snapshot
-        is changed.
+    def check_loaded_snp(self):
+        """Check the originated template of the current loaded snapshot, to see if it matches beam operations.
         """
-        _temp_name, _temp_tag_list, _temp_snpdata = t
-        self.orig_template_lbl.setText(_temp_name)
+        # get template snapshot name with beam ops
+        isrc_name, bound_name, beam_dest = self.beamSpeciesDisplayWidget.get_bound_info()
+        temp_name_in_op = f"{bound_name}_{ISRC_NAME_MAP[isrc_name]}"
+
+        # check if loaded snapshot matches beam ops
+        _orig_name, _orig_tag_list, _temp_snpdata = self._current_snpdata_originated
+        if _orig_name == temp_name_in_op:
+            print("Loaded Snapshot Matches Beam Operations")
+        else:
+            print("Loaded Snapshot NOT Match Beam Operations")
+        
+        # check the temp button matches beam ops
+        self.orig_template_lbl.setText(_orig_name)
         for w in self.template_area.findChildren(QToolButton):
-            if w.text() == _temp_name:
+            if w.text() == temp_name_in_op:
                 w.setChecked(True)
                 break
-        print("Originated tag list: ", _temp_tag_list)
 
 
 def get_tag_list():

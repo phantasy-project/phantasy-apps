@@ -3046,8 +3046,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
 
         # pop up a dialog for tag selection
-        postsnp_dlg = PostSnapshotDialog(self.default_font_size, self.snp_template_list, self)
-        postsnp_dlg.origTemplateSnapshot.emit(self._current_snpdata_originated)
+        postsnp_dlg = PostSnapshotDialog(self.default_font_size, self.snp_template_list,
+                                         self._current_snpdata_originated, self)
         r = postsnp_dlg.exec_()
         if r == QDialog.Accepted:
             tag_str = postsnp_dlg.get_selected_tag_str()
