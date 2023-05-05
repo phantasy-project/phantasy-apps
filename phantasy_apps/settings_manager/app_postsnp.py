@@ -42,7 +42,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
 
         # UI
         self.setupUi(self)
-        self.setWindowTitle("Create a Snapshot")
+        self.setWindowTitle("Settings Manager: Take Snapshot")
 
         #
         self._post_init()
