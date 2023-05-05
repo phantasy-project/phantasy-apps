@@ -540,7 +540,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             if _name_set == loaded_settings_name_set:
                 return _tmp_name, _tmp_tags, _tmp_snp_data
             elif loaded_settings_name_set.issubset(_name_set):
-                return _tmp_name + ",subset", _tmp_tags, _tmp_snp_data
+                return _tmp_name + " (subset)", _tmp_tags, _tmp_snp_data
         return None, None, None
 
     @pyqtSlot()
