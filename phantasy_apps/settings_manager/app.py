@@ -258,6 +258,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         super(SettingsManagerWindow, self).__init__()
 
         self._splash_w = kws.get('splash', None)
+        self._task_list = [] # a list of tasks (also msg str) to be done before show
 
         # app version
         self._version = version
@@ -299,11 +300,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.setWindowTitle(kws.get("title", "Settings Manager"))
         # self.show()
 
-        _mach = self.pref_dict['LATTICE']['DEFAULT_MACHINE']
-        _segm = self.pref_dict['LATTICE']['DEFAULT_SEGMENT']
-        self._splash_w.showMessage(f"Loading lattice: {_mach}/{_segm}...", Qt.AlignBottom | Qt.AlignHCenter)
-        self.preload_lattice(_mach, _segm)
-        self._splash_w.showMessage(f"Loaded lattice: {_mach}/{_segm}.", Qt.AlignBottom | Qt.AlignHCenter)
+        self.preload_lattice(self.pref_dict['LATTICE']['DEFAULT_MACHINE'],
+                             self.pref_dict['LATTICE']['DEFAULT_SEGMENT'])
 
         # init AA
         self.init_aa()
@@ -512,10 +510,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.snp_template_list = res
 
         def _load_started():
-            self._splash_w.showMessage("Loading the snapshot templates...", Qt.AlignBottom | Qt.AlignHCenter)
+            self._task_list.append('Loading the snapshot templates...')
+            self._splash_msg_undone()
 
         def _load_done():
-            self._splash_w.showMessage("Loaded the snapshot templates.", Qt.AlignBottom | Qt.AlignHCenter)
+            task_name = "Loading the snapshot templates..."
+            self._task_list.remove(task_name)
+            self._splash_msg("Loaded the snapshot templates.")
+            self._splash_msg_undone()
 
         self._snp_temp_loader = DAQT(daq_func=_load_single, daq_seq=temp_conf.items())
         self._snp_temp_loader.daqStarted.connect(_load_started)
@@ -3721,8 +3723,21 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.on_data_uri_changed(True, self.data_uri)
         self.snp_new_lbl.setVisible(False)
 
+    def _splash_msg_undone(self):
+        delayed_exec(lambda: self._splash_w.showMessage("\n".join(self._task_list),
+                     Qt.AlignBottom | Qt.AlignHCenter), 500)
+
+    def _splash_msg(self, msg: str):
+        self._splash_w.showMessage(msg, Qt.AlignBottom | Qt.AlignHCenter)
+
     def preload_lattice(self, mach, segm):
-        return self.__load_lattice(mach, segm, False)
+        task_name = f'Loading lattice: {mach}/{segm}...'
+        self._task_list.append(task_name)
+        self._splash_msg_undone()
+        self.__load_lattice(mach, segm, False)
+        self._task_list.remove(task_name)
+        self._splash_msg(f"Loaded lattice: {mach}/{segm}.")
+        self._splash_msg_undone()
 
     def _meta_fetcher_started(self):
         printlog("Start to fetch machine state...")
