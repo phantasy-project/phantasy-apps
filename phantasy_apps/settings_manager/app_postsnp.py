@@ -53,6 +53,9 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         self._post_init()
 
     def _post_init(self):
+        #
+        self._matched_px = QPixmap(":/sm-icons/done.png").scaled(64, 64, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+        self._not_matched_px = QPixmap(":/sm-icons/fail.png").scaled(64, 64, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
         # template area
         self._build_template_area()
         # build multi-select tag list
@@ -158,11 +161,11 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         # check if loaded snapshot matches beam ops
         _orig_name, _orig_tag_list, _temp_snpdata = self._current_snpdata_originated
         if _orig_name == temp_name_in_op:
-            print("Loaded Snapshot Matches Beam Operations")
-            self.is_match_lbl.setPixmap(QPixmap(":/sm-icons/done.png"))
+            self.is_match_lbl.setToolTip("The loaded snapshot MATCHES beam operations.")
+            self.is_match_lbl.setPixmap(self._matched_px)
         else:
-            print("Loaded Snapshot NOT Match Beam Operations")
-            self.is_match_lbl.setPixmap(QPixmap(":/sm-icons/fail.png"))
+            self.is_match_lbl.setToolTip("The loaded snapshot does NOT MATCH beam operations!")
+            self.is_match_lbl.setPixmap(self._not_matched_px)
 
         # check the temp button matches beam ops
         self.orig_template_lbl.setText(_orig_name)
