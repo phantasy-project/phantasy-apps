@@ -257,6 +257,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def __init__(self, version, config_dir=None, **kws):
         super(SettingsManagerWindow, self).__init__()
 
+        self._splash_w = kws.get('splash', None)
+
         # app version
         self._version = version
 
@@ -296,8 +298,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # window title/icon
         self.setWindowTitle(kws.get("title", "Settings Manager"))
         # self.show()
-        self.preload_lattice(self.pref_dict['LATTICE']['DEFAULT_MACHINE'],
-                             self.pref_dict['LATTICE']['DEFAULT_SEGMENT'])
+
+        _mach = self.pref_dict['LATTICE']['DEFAULT_MACHINE']
+        _segm = self.pref_dict['LATTICE']['DEFAULT_SEGMENT']
+        self._splash_w.showMessage(f"Loading lattice: {_mach}/{_segm}...", Qt.AlignBottom | Qt.AlignHCenter)
+        self.preload_lattice(_mach, _segm)
+        self._splash_w.showMessage(f"Loaded lattice: {_mach}/{_segm}.", Qt.AlignBottom | Qt.AlignHCenter)
 
         # init AA
         self.init_aa()
@@ -505,10 +511,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             # a list of snapshot templates, with expanded tabular data
             self.snp_template_list = res
 
+        def _load_started():
+            self._splash_w.showMessage("Loading the snapshot templates...", Qt.AlignBottom | Qt.AlignHCenter)
+
         def _load_done():
-            print("Preloading snapshot templates is done!")
+            self._splash_w.showMessage("Loaded the snapshot templates.", Qt.AlignBottom | Qt.AlignHCenter)
 
         self._snp_temp_loader = DAQT(daq_func=_load_single, daq_seq=temp_conf.items())
+        self._snp_temp_loader.daqStarted.connect(_load_started)
         self._snp_temp_loader.resultsReady.connect(_load_ready)
         self._snp_temp_loader.daqFinished.connect(_load_done)
         self._snp_temp_loader.start()
