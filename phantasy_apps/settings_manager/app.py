@@ -295,7 +295,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # window title/icon
         self.setWindowTitle(kws.get("title", "Settings Manager"))
-        self.show()
+        # self.show()
         self.preload_lattice(self.pref_dict['LATTICE']['DEFAULT_MACHINE'],
                              self.pref_dict['LATTICE']['DEFAULT_SEGMENT'])
 
@@ -740,8 +740,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.toolBar.addWidget(spacer)
         self.beam_display_widget = BeamSpeciesDisplayWidget()
-        self.beam_display_widget.isrc1_btn.setEnabled(False)
-        self.beam_display_widget.isrc2_btn.setEnabled(False)
+        self.beam_display_widget.set_allow_clicking_src_btns(False)
         self.toolBar.addWidget(self.beam_display_widget)
         #
         self._post_info = True  # post info after loading lattice
@@ -2105,6 +2104,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def __load_lattice(self, mach, segm, post_info=True):
         self._post_info = post_info
         self.actionLoad_Lattice.triggered.emit()
+        self._lattice_load_window.setVisible(False)
         self._lattice_load_window.mach_cbb.setCurrentText(mach)
         self._lattice_load_window.seg_cbb.setCurrentText(segm)
         self._lattice_load_window.auto_monitor_chkbox.setChecked(False)
