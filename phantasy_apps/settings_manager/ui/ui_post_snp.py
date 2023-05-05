@@ -14,7 +14,7 @@ class Ui_Dialog(object):
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(974, 557)
+        Dialog.resize(916, 622)
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setContentsMargins(6, 8, 6, 6)
         self.gridLayout.setSpacing(4)
@@ -29,15 +29,36 @@ class Ui_Dialog(object):
         self.tags_area.setWidgetResizable(True)
         self.tags_area.setObjectName("tags_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 960, 89))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 902, 89))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tags_area.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.tags_area, 7, 0, 1, 3)
         self.label = QtWidgets.QLabel(Dialog)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.label.setFont(font)
         self.label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft
                                 | QtCore.Qt.AlignVCenter)
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 8, 0, 1, 1)
+        self.label_5 = QtWidgets.QLabel(Dialog)
+        self.label_5.setObjectName("label_5")
+        self.gridLayout.addWidget(self.label_5, 3, 1, 1, 1)
+        self.plainTextEdit = QtWidgets.QPlainTextEdit(Dialog)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.plainTextEdit.sizePolicy().hasHeightForWidth())
+        self.plainTextEdit.setSizePolicy(sizePolicy)
+        self.plainTextEdit.setStyleSheet("QPlainTextEdit {\n"
+                                         "    color: gray;\n"
+                                         "}")
+        self.plainTextEdit.setReadOnly(True)
+        self.plainTextEdit.setObjectName("plainTextEdit")
+        self.gridLayout.addWidget(self.plainTextEdit, 5, 0, 1, 3)
         self.selected_tags = QtWidgets.QLabel(Dialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -84,63 +105,6 @@ class Ui_Dialog(object):
         self.pushButton.setObjectName("pushButton")
         self.horizontalLayout.addWidget(self.pushButton)
         self.gridLayout.addLayout(self.horizontalLayout, 10, 0, 1, 3)
-        self.label_3 = QtWidgets.QLabel(Dialog)
-        self.label_3.setStyleSheet("QLabel {\n"
-                                   "    border-top: 0px solid gray;\n"
-                                   "    border-bottom: 1px solid gray;\n"
-                                   "    padding: 2px 0px 5px 0px;\n"
-                                   "}")
-        self.label_3.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_3.setObjectName("label_3")
-        self.gridLayout.addWidget(self.label_3, 0, 0, 1, 3)
-        self.note_textEdit = QtWidgets.QPlainTextEdit(Dialog)
-        self.note_textEdit.setStyleSheet("QPlainTextEdit {\n"
-                                         "    color: rgb(0, 123, 255);\n"
-                                         "}")
-        self.note_textEdit.setObjectName("note_textEdit")
-        self.gridLayout.addWidget(self.note_textEdit, 9, 0, 1, 3)
-        self.on_loaded_rbtn = QtWidgets.QRadioButton(Dialog)
-        self.on_loaded_rbtn.setChecked(True)
-        self.on_loaded_rbtn.setObjectName("on_loaded_rbtn")
-        self.buttonGroup.addButton(self.on_loaded_rbtn)
-        self.gridLayout.addWidget(self.on_loaded_rbtn, 1, 0, 1, 1)
-        self.template_area = QtWidgets.QScrollArea(Dialog)
-        self.template_area.setEnabled(False)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.template_area.sizePolicy().hasHeightForWidth())
-        self.template_area.setSizePolicy(sizePolicy)
-        self.template_area.setWidgetResizable(True)
-        self.template_area.setObjectName("template_area")
-        self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(
-            0, 0, 960, 89))
-        self.scrollAreaWidgetContents_2.setObjectName(
-            "scrollAreaWidgetContents_2")
-        self.template_area.setWidget(self.scrollAreaWidgetContents_2)
-        self.gridLayout.addWidget(self.template_area, 4, 0, 1, 3)
-        self.label_2 = QtWidgets.QLabel(Dialog)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout.addWidget(self.label_2, 6, 0, 1, 1)
-        self.label_4 = QtWidgets.QLabel(Dialog)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_4.sizePolicy().hasHeightForWidth())
-        self.label_4.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.label_4.setFont(font)
-        self.label_4.setStyleSheet("QLabel {\n"
-                                   "    color: gray;\n"
-                                   "}")
-        self.label_4.setObjectName("label_4")
-        self.gridLayout.addWidget(self.label_4, 5, 0, 1, 3)
         self.orig_template_lbl = QtWidgets.QLabel(Dialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -159,9 +123,54 @@ class Ui_Dialog(object):
                                             | QtCore.Qt.AlignVCenter)
         self.orig_template_lbl.setObjectName("orig_template_lbl")
         self.gridLayout.addWidget(self.orig_template_lbl, 1, 1, 1, 1)
-        self.label_5 = QtWidgets.QLabel(Dialog)
-        self.label_5.setObjectName("label_5")
-        self.gridLayout.addWidget(self.label_5, 3, 1, 1, 1)
+        self.note_textEdit = QtWidgets.QPlainTextEdit(Dialog)
+        self.note_textEdit.setStyleSheet("QPlainTextEdit {\n"
+                                         "    color: rgb(0, 123, 255);\n"
+                                         "}")
+        self.note_textEdit.setObjectName("note_textEdit")
+        self.gridLayout.addWidget(self.note_textEdit, 9, 0, 1, 3)
+        self.on_loaded_rbtn = QtWidgets.QRadioButton(Dialog)
+        self.on_loaded_rbtn.setChecked(True)
+        self.on_loaded_rbtn.setObjectName("on_loaded_rbtn")
+        self.buttonGroup.addButton(self.on_loaded_rbtn)
+        self.gridLayout.addWidget(self.on_loaded_rbtn, 1, 0, 1, 1)
+        self.template_area = QtWidgets.QScrollArea(Dialog)
+        self.template_area.setEnabled(False)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(
+            self.template_area.sizePolicy().hasHeightForWidth())
+        self.template_area.setSizePolicy(sizePolicy)
+        self.template_area.setWidgetResizable(True)
+        self.template_area.setObjectName("template_area")
+        self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(
+            0, 0, 902, 89))
+        self.scrollAreaWidgetContents_2.setObjectName(
+            "scrollAreaWidgetContents_2")
+        self.template_area.setWidget(self.scrollAreaWidgetContents_2)
+        self.gridLayout.addWidget(self.template_area, 4, 0, 1, 3)
+        self.label_2 = QtWidgets.QLabel(Dialog)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_2.setFont(font)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout.addWidget(self.label_2, 6, 0, 1, 1)
+        self.label_4 = QtWidgets.QLabel(Dialog)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_4.setFont(font)
+        self.label_4.setStyleSheet("QLabel {\n"
+                                   "    border-top: 0px solid gray;\n"
+                                   "    border-bottom: 1px solid gray;\n"
+                                   "    padding: 2px 0px 5px 0px;\n"
+                                   "}")
+        self.label_4.setObjectName("label_4")
+        self.gridLayout.addWidget(self.label_4, 0, 0, 1, 3)
 
         self.retranslateUi(Dialog)
         self.pushButton.clicked.connect(Dialog.on_click_ok)  # type: ignore
@@ -182,23 +191,14 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.on_template_rbtn.setText(_translate("Dialog", "On A Template"))
         self.label.setText(_translate("Dialog", "Note"))
-        self.pushButton_2.setText(_translate("Dialog", "Cancel"))
-        self.pushButton.setText(_translate("Dialog", "OK"))
-        self.label_3.setText(
-            _translate(
-                "Dialog",
-                "<html><head/><body><p><span style=\" font-size:14pt; font-weight:600;\">Create a New Snapshot</span></p></body></html>"
-            ))
-        self.note_textEdit.setPlaceholderText(
-            _translate("Dialog", "Input note ..."))
-        self.on_loaded_rbtn.setText(_translate("Dialog",
-                                               "On Currently Loaded"))
-        self.label_2.setText(_translate("Dialog", "Tags"))
-        self.label_4.setText(
+        self.label_5.setText(_translate("Dialog", "(the checked one)"))
+        self.plainTextEdit.setPlainText(
             _translate(
                 "Dialog",
                 "By default, the one matches the machine operations is checked, if not, meaning the loaded one is not originated from any."
             ))
+        self.pushButton_2.setText(_translate("Dialog", "Cancel"))
+        self.pushButton.setText(_translate("Dialog", "OK"))
         self.orig_template_lbl.setToolTip(
             _translate(
                 "Dialog",
@@ -206,7 +206,12 @@ class Ui_Dialog(object):
             ))
         self.orig_template_lbl.setText(
             _translate("Dialog", "originated template"))
-        self.label_5.setText(_translate("Dialog", "(the checked one)"))
+        self.note_textEdit.setPlaceholderText(
+            _translate("Dialog", "Input note ..."))
+        self.on_loaded_rbtn.setText(_translate("Dialog",
+                                               "On Currently Loaded"))
+        self.label_2.setText(_translate("Dialog", "Tags"))
+        self.label_4.setText(_translate("Dialog", "Create a New Snapshot"))
 
 
 from phantasy_ui.widgets.beam_species_displayWidget import BeamSpeciesDisplayWidget
