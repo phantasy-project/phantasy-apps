@@ -2145,8 +2145,14 @@ def get_pwr_sts(elem, fname: str):
     return (px, tt), (px_role, Qt.ToolTipRole)
 
 
-def take_snapshot(snp_note: str, snp_tags: list, snp_data: SnapshotData,
-                  meta_isrc_name: str, **kws):
+ISRC_INDEX_MAP = {
+    'Live': 'live',
+    'Artemis': 'ISRC1',
+    'HP-ECR': 'ISRC2',
+}
+
+def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
+                  meta_isrc_name: str = "Live", **kws):
     """Take a snapshot and insert to the database of Settings Manager.
     
     Parameters
@@ -2155,8 +2161,8 @@ def take_snapshot(snp_note: str, snp_tags: list, snp_data: SnapshotData,
         Note of the snapshot.
     tags : list
         A list of tag string of the snapshot.
-    data : SnapshotData
-        SnapshotData instance.
+    snp_data : SnapshotData
+        SnapshotData instance ==> template
     meta_isrc_name : str
         The name of the ion source name for fetching the ion metadata.
         "Live", "Artemis", "HP-ECR".
@@ -2181,12 +2187,14 @@ def take_snapshot(snp_note: str, snp_tags: list, snp_data: SnapshotData,
         2 (output progress with descriptions).
     fetch_mach_state_dict : dict
         The arguments for fetch_mach_state CLI tool: 'config_path', 'rate', 'nshot'.
+    cli : bool
+        If set, run as a CLI app.
     
     See Also
     --------
     fetch_mach_state
     """
-    print("Take a snapshot: ", meta_isrc_name, note, tags, data.ts_as_str())
+    print("Take a snapshot: ", meta_isrc_name, note, tags, snp_data.ts_as_str())
 
     machine = kws.get('machine', 'FRIB')
     segment = kws.get('segment', 'LINAC')
@@ -2194,6 +2202,7 @@ def take_snapshot(snp_note: str, snp_tags: list, snp_data: SnapshotData,
         from phantasy import MachinePortal
         mp = MachinePortal(machine, segment)
     else:
+        print("No MachinePortal found.")
         return
     lat = mp.work_lattice_conf
     if kws.get('version', None) is None:
@@ -2239,7 +2248,7 @@ def take_snapshot(snp_note: str, snp_tags: list, snp_data: SnapshotData,
         new_settings_df = pd.DataFrame.from_records(
                             _r, columns=snp_data.data.columns)
         ion_name, ion_mass, ion_number, ion_charge = BeamSpeciesDisplayWidget.get_species_meta(\
-                                                       meta_isrc_name)
+                                                       ISRC_INDEX_MAP[meta_isrc_name])
         new_snp_data = SnapshotData(new_settings_df,
                                     ion_name=ion_name,
                                     ion_number=ion_number,
@@ -2300,6 +2309,13 @@ def take_snapshot(snp_note: str, snp_tags: list, snp_data: SnapshotData,
     _t.daqStarted.connect(_t_started)
     _t.resultsReady.connect(_take_done)
     _t.daqFinished.connect(_t_finished)
-    _t.start()
-
-
+    
+    if kws.get('cli', False):
+        from PyQt5.QtCore import QCoreApplication
+        app = QCoreApplication([])
+        _t.daqFinished.connect(app.quit)
+        _t.start()
+        app.exec_()
+        return df
+    else:
+        _t.start()
