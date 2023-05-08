@@ -210,7 +210,7 @@ class Ui_Dialog(object):
                 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                 "p, li { white-space: pre-wrap; }\n"
                 "</style></head><body style=\" font-family:\'Cantarell\'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
-                "<ul style=\"margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;\"><li style=\"\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">This option will be enabled if the match symbol is <img src=\":/sm-icons/fail.png\" width=\"32\" style=\"vertical-align: middle;\" />.</li>\n"
+                "<ul style=\"margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;\"><li style=\"\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">This option will be enabled if the unmatched symbol <img src=\":/sm-icons/fail.png\" width=\"24\" style=\"vertical-align: middle;\" /> is showing.</li>\n"
                 "<li style=\"\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">By default, the template button matches the machine operations is checked. </li>\n"
                 "<li style=\"\" style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">It\'s the user\'s decision to choose other templates or re-check <span style=\" font-style:italic;\">On Currently Loaded</span> option.</li></ul></body></html>"
             ))
