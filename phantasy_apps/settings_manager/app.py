@@ -3053,9 +3053,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             snp_tags = postsnp_dlg.get_selected_tag_list()
             snp_note = postsnp_dlg.get_note()
             snp_temp_data = postsnp_dlg.get_snp_temp_data()
+            isrc_name_meta = postsnp_dlg.get_isrc_name_meta()
         else:
             return
-        self.__new_take_snapshot(snp_note, snp_tags, snp_temp_data)
+        self.__new_take_snapshot(snp_note, snp_tags, snp_temp_data, isrc_name_meta)
 
     @pyqtSlot()
     def on_show_query_tips(self):
@@ -4225,10 +4226,11 @@ p, li { white-space: pre-wrap; }
         snp_data, snp_tags = snp_data_temp_tuple[2], snp_data_temp_tuple[1]
         self.__new_take_snapshot("This is a new way of taking a snapshot",
                                  snp_tags, snp_data)
-        
-    def __new_take_snapshot(self, snp_note: str, snp_tags: list, snp_data: SnapshotData):
-    
-        print(snp_note, snp_tags, snp_data.ts_as_str())
+
+    def __new_take_snapshot(self, snp_note: str, snp_tags: list, snp_data: SnapshotData,
+                            meta_isrc_name: str):
+
+        print(meta_isrc_name, snp_note, snp_tags, snp_data.ts_as_str())
 
         # new way of taking snapshot
         if self._mp is None:
@@ -4270,7 +4272,8 @@ p, li { white-space: pre-wrap; }
             _r = snp_data.data.apply(_f, axis=1)
             new_settings_df = pd.DataFrame.from_records(
                                 _r, columns=snp_data.data.columns)
-            ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species()
+            ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species(\
+                                                           meta_isrc_name)
             new_snp_data = SnapshotData(new_settings_df,
                                         ion_name=ion_name,
                                         ion_number=ion_number,

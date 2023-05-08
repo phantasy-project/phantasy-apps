@@ -75,6 +75,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         """
         self.reset_tag_buttons()
         if is_checked:
+            self._isrc_name_meta = 'live'
             self._snp_temp_data = self._loaded_snp_data
             self._snp_temp_name = self._loaded_snp_name
         #
@@ -187,6 +188,10 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
     def get_note(self):
         return self.note_textEdit.toPlainText().strip()
 
+    def get_isrc_name_meta(self):
+        # isrc name for capture metainfo of ion,A,Q,Z
+        return self._isrc_name_meta
+
     def check_loaded_snp(self):
         """Check the originated template of the current loaded snapshot,
         to see if it matches beam operations. Auto-checked the template
@@ -195,6 +200,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         # get template snapshot name with beam ops
         isrc_name, bound_name, beam_dest = self.beamSpeciesDisplayWidget.get_bound_info()
         temp_name_in_op = f"{bound_name}_{ISRC_NAME_MAP[isrc_name]}"
+        self._isrc_name_meta = isrc_name # isrc name for meta info capture.
 
         # check if loaded snapshot matches beam ops
         if self._loaded_snp_name == temp_name_in_op:
