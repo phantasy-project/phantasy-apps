@@ -7,6 +7,7 @@ import os
 import re
 import time
 import shutil
+import pandas as pd
 from collections import Counter
 from collections import OrderedDict
 from datetime import datetime
@@ -38,8 +39,11 @@ from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtWidgets import QToolButton
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtWidgets import QProgressBar
 from phantasy import get_settings_from_element_list
 from phantasy_ui.widgets import is_item_checked
+from phantasy_ui.widgets import DataAcquisitionThread as DAQT
+from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 from phantasy_apps.utils import find_dconf
 from .data import SnapshotData
 
@@ -2139,3 +2143,163 @@ def get_pwr_sts(elem, fname: str):
                 px = _pwr_off_px
                 tt = "Power is OFF"
     return (px, tt), (px_role, Qt.ToolTipRole)
+
+
+def take_snapshot(snp_note: str, snp_tags: list, snp_data: SnapshotData,
+                  meta_isrc_name: str, **kws):
+    """Take a snapshot and insert to the database of Settings Manager.
+    
+    Parameters
+    ----------
+    note : str
+        Note of the snapshot.
+    tags : list
+        A list of tag string of the snapshot.
+    data : SnapshotData
+        SnapshotData instance.
+    meta_isrc_name : str
+        The name of the ion source name for fetching the ion metadata.
+        "Live", "Artemis", "HP-ECR".
+
+    Keyword Arguments
+    -----------------
+    with_machine_state : bool
+        Capture machine state data if set.
+    mp : MachinePortal
+        MachinePortal instance, if not defined, instantiating from 'machine' and 'segment'
+        arguments.
+    initial_mp : bool
+        If set, instantiating mp with machine and segment if mp is None.
+    machine : str
+        The name of the machine for instantiating mp, defaults to 'FRIB'.
+    segment : str
+        The name of the segment for instantiating mp, defaults to 'LINAC'.
+    version : str
+        Version string of Settings Manager.
+    verbose : int
+        Verbosity level of the log output, defaults to 0 (no output), 1 (output progress),
+        2 (output progress with descriptions).
+    fetch_mach_state_dict : dict
+        The arguments for fetch_mach_state CLI tool: 'config_path', 'rate', 'nshot'.
+    
+    See Also
+    --------
+    fetch_mach_state
+    """
+    print("Take a snapshot: ", meta_isrc_name, note, tags, data.ts_as_str())
+
+    machine = kws.get('machine', 'FRIB')
+    segment = kws.get('segment', 'LINAC')
+    if kws.get('mp', None) is None and kws.get('initial_mp', False):
+        from phantasy import MachinePortal
+        mp = MachinePortal(machine, segment)
+    else:
+        return
+    lat = mp.work_lattice_conf
+    if kws.get('version', None) is None:
+        from phantasy_apps.settings_manager import __version__
+        ver = __version__
+    else:
+        ver = __version__
+
+#    # progressbar
+#    _t_pb = QProgressBar()
+#    _t_pb.setStyleSheet("""
+#    QProgressBar {
+#        border: 1px solid gray;
+#        border-radius: 1px;
+#        text-align: center;
+#    }
+#    QProgressBar::chunk {
+#        background-color: #05B8CC;
+#        width: 10px;
+#        margin: 0.5px;
+#    }""")
+#    _t_pb.setWindowTitle("Taking Snapshot")
+#    _t_pb.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+#    _t_pb.setRange(0, 0)
+#    #_t_pb.move(
+#    #    int(self.geometry().x() + self.geometry().width() / 2 - _t_pb.geometry().width() / 2),
+#    #    int(self.geometry().y() + self.geometry().height() / 2 - _t_pb.geometry().height() / 2)
+#    #)
+#    _t_pb.setVisible(False)
+
+    def _f(row):
+        ename, fname = row.Name, row.Field
+        elem = lat[ename]
+        fld = elem.get_field(fname)
+        return ename, fname, row.Type, row.Pos, \
+               fld.current_setting(), fld.value, row.Setpoint, \
+               row.Tolerance, fld.write_access, \
+               get_pwr_sts(elem, fld.name)[0][1]
+
+    def _take_snapshot(snp_data: SnapshotData):
+        snp_data.extract_blob()
+        _r = snp_data.data.apply(_f, axis=1)
+        new_settings_df = pd.DataFrame.from_records(
+                            _r, columns=snp_data.data.columns)
+        ion_name, ion_mass, ion_number, ion_charge = BeamSpeciesDisplayWidget.get_species_meta(\
+                                                       meta_isrc_name)
+        new_snp_data = SnapshotData(new_settings_df,
+                                    ion_name=ion_name,
+                                    ion_number=ion_number,
+                                    ion_mass=ion_mass,
+                                    ion_charge=ion_charge,
+                                    machine=machine,
+                                    segment=segment,
+                                    version=ver,
+                                    note=note,
+                                    tags=','.join(tags),
+                                    table_version=10)
+
+        # machstate
+        if kws.get('with_machine_state', False):
+            from phantasy_apps.msviz.mach_state import DEFAULT_META_CONF_PATH
+            from phantasy_apps.msviz.mach_state import fetch_data
+            from phantasy_apps.msviz.mach_state import get_meta_conf_dict
+            from phantasy_apps.msviz.mach_state import merge_mach_conf
+            _DEFAULT_MS_DICT = {'config_path': DEFAULT_META_CONF_PATH}
+
+            _ms_dict = kws.get('fetch_mach_state_dict', _DEFAULT_MS_DICT)
+            
+            _conf = get_meta_conf_dict(_ms_dict['config_path'])
+            _mach_stat_conf = merge_mach_conf(_conf, _ms_dict.get('rate', None),
+                                              _ms_dict.get('nshot', None))
+            _dset = fetch_data(_mach_stat_conf, verbose=kws.get('verbose', 0))
+        else:
+            # reset machine state
+            _dset = None
+
+        new_snp_data.machstate = _dset
+        return new_snp_data
+
+    def _take_done(res: list):
+        new_snp_data = res[0]
+        # self._snp_dock_list.append(new_snp_data)
+        # n = len(self._snp_dock_list)
+        # self.data_uri_lineEdit.setText(self.data_uri)
+        # self.total_snp_lbl.setText(str(n))
+        # self.update_snp_dock_view()
+        # self.on_load_settings(new_snp_data)
+        # self.snp_filters_updated.emit()
+        # self.on_save_settings(new_snp_data)
+        new_snp_data.write("/tmp/test123.xlsx")
+
+    def _t_started():
+        print("Taking a snapshot...")
+        #_t_pb.setVisible(True)
+        #self.setEnabled(False)
+
+    def _t_finished():
+        print("Taking a snapshot... done!")
+        #_t_pb.setVisible(False)
+        #self.setEnabled(True)
+
+    #
+    _t = DAQT(daq_func=_take_snapshot, daq_seq=[snp_data])
+    _t.daqStarted.connect(_t_started)
+    _t.resultsReady.connect(_take_done)
+    _t.daqFinished.connect(_t_finished)
+    _t.start()
+
+
