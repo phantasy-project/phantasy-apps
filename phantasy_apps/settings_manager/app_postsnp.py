@@ -33,8 +33,8 @@ ISRC_NAME_MAP = {
 
 ISRC_INDEX_MAP = {
     'Live': 'live',
-    'Artemis': 'ISRC1':
-    'HP-ECR': 'ISRC2':
+    'Artemis': 'ISRC1',
+    'HP-ECR': 'ISRC2'
 }
 
 
