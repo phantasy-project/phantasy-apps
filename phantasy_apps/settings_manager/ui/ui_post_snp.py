@@ -21,9 +21,9 @@ class Ui_Dialog(object):
         self.gridLayout.setObjectName("gridLayout")
         self.on_template_rbtn = QtWidgets.QRadioButton(Dialog)
         self.on_template_rbtn.setObjectName("on_template_rbtn")
-        self.buttonGroup = QtWidgets.QButtonGroup(Dialog)
-        self.buttonGroup.setObjectName("buttonGroup")
-        self.buttonGroup.addButton(self.on_template_rbtn)
+        self.snpBaseBtnGrp = QtWidgets.QButtonGroup(Dialog)
+        self.snpBaseBtnGrp.setObjectName("snpBaseBtnGrp")
+        self.snpBaseBtnGrp.addButton(self.on_template_rbtn)
         self.gridLayout.addWidget(self.on_template_rbtn, 3, 0, 1, 1)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setContentsMargins(0, -1, -1, -1)
@@ -151,7 +151,7 @@ class Ui_Dialog(object):
         self.on_loaded_rbtn = QtWidgets.QRadioButton(Dialog)
         self.on_loaded_rbtn.setChecked(True)
         self.on_loaded_rbtn.setObjectName("on_loaded_rbtn")
-        self.buttonGroup.addButton(self.on_loaded_rbtn)
+        self.snpBaseBtnGrp.addButton(self.on_loaded_rbtn)
         self.gridLayout.addWidget(self.on_loaded_rbtn, 1, 0, 1, 1)
         self.template_area = QtWidgets.QScrollArea(Dialog)
         self.template_area.setEnabled(False)
@@ -185,6 +185,10 @@ class Ui_Dialog(object):
             Dialog.on_click_cancel)  # type: ignore
         self.on_template_rbtn.toggled['bool'].connect(
             self.template_area.setEnabled)  # type: ignore
+        self.on_loaded_rbtn.toggled['bool'].connect(
+            Dialog.onCheckOnLoaded)  # type: ignore
+        self.on_template_rbtn.toggled['bool'].connect(
+            Dialog.onCheckOnTemplate)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.pushButton, self.pushButton_2)
         Dialog.setTabOrder(self.pushButton_2, self.on_loaded_rbtn)
