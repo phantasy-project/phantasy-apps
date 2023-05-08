@@ -177,7 +177,7 @@ class Ui_Dialog(object):
         self.template_area.setObjectName("template_area")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(
-            0, 0, 860, 89))
+            0, 0, 708, 89))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.template_area.setWidget(self.scrollAreaWidgetContents_2)
@@ -186,19 +186,23 @@ class Ui_Dialog(object):
         self.verticalLayout.setContentsMargins(0, 0, -1, -1)
         self.verticalLayout.setSpacing(4)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.label_3 = QtWidgets.QLabel(Dialog)
-        self.label_3.setObjectName("label_3")
-        self.verticalLayout.addWidget(self.label_3)
+        self.plainTextEdit = QtWidgets.QPlainTextEdit(Dialog)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum,
+                                           QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.plainTextEdit.sizePolicy().hasHeightForWidth())
+        self.plainTextEdit.setSizePolicy(sizePolicy)
+        self.plainTextEdit.setReadOnly(True)
+        self.plainTextEdit.setObjectName("plainTextEdit")
+        self.verticalLayout.addWidget(self.plainTextEdit)
         self.isrc_name_meta_cbb = QtWidgets.QComboBox(Dialog)
         self.isrc_name_meta_cbb.setObjectName("isrc_name_meta_cbb")
         self.isrc_name_meta_cbb.addItem("")
         self.isrc_name_meta_cbb.addItem("")
         self.isrc_name_meta_cbb.addItem("")
         self.verticalLayout.addWidget(self.isrc_name_meta_cbb)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40,
-                                            QtWidgets.QSizePolicy.Minimum,
-                                            QtWidgets.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem1)
         self.horizontalLayout_3.addLayout(self.verticalLayout)
         self.gridLayout.addLayout(self.horizontalLayout_3, 4, 0, 1, 4)
 
@@ -254,7 +258,8 @@ class Ui_Dialog(object):
         self.on_loaded_rbtn.setText(_translate("Dialog",
                                                "On Currently Loaded"))
         self.label_2.setText(_translate("Dialog", "Tags"))
-        self.label_3.setText(_translate("Dialog", "ISRC"))
+        self.plainTextEdit.setPlainText(
+            _translate("Dialog", "Fetch the ion metadata from"))
         self.isrc_name_meta_cbb.setItemText(0, _translate("Dialog", "Live"))
         self.isrc_name_meta_cbb.setItemText(1, _translate("Dialog", "Artemis"))
         self.isrc_name_meta_cbb.setItemText(2, _translate("Dialog", "HP-ECR"))
