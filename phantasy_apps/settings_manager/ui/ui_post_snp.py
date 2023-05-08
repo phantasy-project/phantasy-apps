@@ -194,6 +194,9 @@ class Ui_Dialog(object):
         sizePolicy.setHeightForWidth(
             self.plainTextEdit.sizePolicy().hasHeightForWidth())
         self.plainTextEdit.setSizePolicy(sizePolicy)
+        self.plainTextEdit.setStyleSheet("QPlainTextEdit {\n"
+                                         "    background-color: #F5F5F5;\n"
+                                         "}")
         self.plainTextEdit.setReadOnly(True)
         self.plainTextEdit.setObjectName("plainTextEdit")
         self.verticalLayout.addWidget(self.plainTextEdit)
