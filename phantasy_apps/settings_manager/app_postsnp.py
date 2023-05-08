@@ -62,7 +62,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         # build multi-select tag list
         tag_list = get_tag_list()
         self._selected_tag_list = []
-        self._tag_btn_sts = {}
+        self._tag_btn_sts = {} # tag button dict: {tag-name: tag-btn-obj,...}
         self._build_tags_list(self.tags_area, tag_list)
 
         # check if current loaded snapshot matches beam operation
@@ -73,20 +73,31 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
     def onCheckOnLoaded(self, is_checked: bool):
         """Take snapshot on loaded one if enabled.
         """
+        self.reset_tag_buttons()
         if is_checked:
             self._snp_temp_data = self._loaded_snp_data
             self._snp_temp_name = self._loaded_snp_name
         #
         self._snp_temp_tags = self._loaded_snp_tag_list
         for tag in self._loaded_snp_tag_list:
-            self._tag_btn_sts[tag] = is_checked
+            self._tag_btn_sts[tag].setChecked(is_checked)
 
     @pyqtSlot(bool)
     def onCheckOnTemplate(self, is_checked: bool):
         """Take snapshot on a template if enabled.
         """
+        self.reset_tag_buttons()
         if is_checked:
             print("Take a snapshot based on a template.")
+        for w in self.template_area.findChildren(QToolButton):
+            if w.isChecked():
+                w.toggled.emit(True)
+                break
+
+    def reset_tag_buttons(self):
+        """Uncheck all tag buttons.
+        """
+        [o.setChecked(False) for o in self._tag_btn_sts.values()]
 
     def _build_tags_list(self, area, tags):
         # build a flow list of checkable toolbuttons for tag selection.
@@ -104,7 +115,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
             o.setCheckable(True)
             o.toggled.connect(partial(self.on_update_tags, tag))
             layout.addWidget(o)
-            self._tag_btn_sts[tag] = False
+            self._tag_btn_sts[tag] = o
         w.setLayout(layout)
         area.setWidget(w)
 
@@ -140,7 +151,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
             self._snp_temp_data = data
             self._snp_temp_tags = tags
         for tag in tags:
-            self._tag_btn_sts[tag] = is_checked
+            self._tag_btn_sts[tag].setChecked(is_checked)
 
     def on_update_tags(self, tag: str, is_checked: bool):
         """Update tag string.
