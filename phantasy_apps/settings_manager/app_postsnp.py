@@ -31,6 +31,12 @@ ISRC_NAME_MAP = {
     'ISRC2': 'HP-ECR'
 }
 
+ISRC_INDEX_MAP = {
+    'Live': 'live',
+    'Artemis': 'ISRC1':
+    'HP-ECR': 'ISRC2':
+}
+
 
 class PostSnapshotDialog(QDialog, Ui_Dialog):
     """ The dialog to show after clicking 'Take Snapshot'.
@@ -55,6 +61,8 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
 
     def _post_init(self):
         #
+        self.isrc_name_meta_cbb.setCurrentText('Live')
+        #
         self._matched_px = QPixmap(":/sm-icons/done.png").scaled(64, 64, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
         self._not_matched_px = QPixmap(":/sm-icons/fail.png").scaled(64, 64, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
         # template area
@@ -69,15 +77,28 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         milli_sleep(500)
         self.check_loaded_snp()
 
+    @pyqtSlot('QString')
+    def onIsrcNameMetaChanged(self, s: str):
+        """The name of ISRC name for meta info is changed.
+        """
+        self._isrc_name_meta = ISRC_INDEX_MAP[s]
+
+    def __set_isrc_name_meta_cbb(self, temp_name: str):
+        # set the option from the given snapshot template name.
+        if 'Artemis' in temp_name:
+            self.isrc_name_meta_cbb.setCurrentText('Artemis')
+        elif 'HP-ECR' in temp_name:
+            self.isrc_name_meta_cbb.setCurrentText('HP-ECR')
+
     @pyqtSlot(bool)
     def onCheckOnLoaded(self, is_checked: bool):
         """Take snapshot on loaded one if enabled.
         """
         self.reset_tag_buttons()
         if is_checked:
-            self._isrc_name_meta = 'live'
             self._snp_temp_data = self._loaded_snp_data
             self._snp_temp_name = self._loaded_snp_name
+            self.__set_isrc_name_meta_cbb(self._snp_temp_name)
         #
         self._snp_temp_tags = self._loaded_snp_tag_list
         for tag in self._loaded_snp_tag_list:
@@ -151,6 +172,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
             self._snp_temp_name = name
             self._snp_temp_data = data
             self._snp_temp_tags = tags
+            self.__set_isrc_name_meta_cbb(name)
         for tag in tags:
             self._tag_btn_sts[tag].setChecked(is_checked)
 
