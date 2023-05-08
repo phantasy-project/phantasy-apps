@@ -590,17 +590,17 @@ class SnapshotData:
     def is_golden(self):
         return 'GOLDEN' in self.tags
 
-    def __str__(self):
-        # str(self.data)
-        sio = io.StringIO()
-        sio.write("\t".join(CSV_HEADER))
-        sio.write("\n")
-        for ename, fname, ftype, spos, sp, rd, old_sp, tol, writable in self.data:
-            sio.write(
-                f"{ename}\t{fname}\t{ftype}\t{spos}\t{sp}\t{rd}\t{old_sp}\t{tol}\t{writable}\n")
-        text = sio.getvalue()
-        sio.close()
-        return text
+#    def __str__(self):
+#        # str(self.data)
+#        sio = io.StringIO()
+#        sio.write("\t".join(CSV_HEADER))
+#        sio.write("\n")
+#        for ename, fname, ftype, spos, sp, rd, old_sp, tol, writable in self.data:
+#            sio.write(
+#                f"{ename}\t{fname}\t{ftype}\t{spos}\t{sp}\t{rd}\t{old_sp}\t{tol}\t{writable}\n")
+#        text = sio.getvalue()
+#        sio.close()
+#        return text
 
     def __write_to_excel(self, filepath, **kws):
         # xlsx
