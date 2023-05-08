@@ -114,8 +114,14 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         """Update checked template snapshot info.
         """
         if is_checked:
-            print(name, tags)
-
+            self._snp_temp_name = name
+            self._snp_temp_data = data
+            self._snp_temp_tags = tags
+            for i in tags:
+                self.on_update_tags(i, True)
+        else:
+            for i in tags:
+                self.on_update_tags(i, False)
 
     def on_update_tags(self, tag: str, is_checked: bool):
         """Update tag string.
@@ -163,6 +169,9 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         if _orig_name == temp_name_in_op:
             self.is_match_lbl.setToolTip("The loaded snapshot MATCHES beam operations.")
             self.is_match_lbl.setPixmap(self._matched_px)
+            self._snp_temp_data = _temp_snpdata
+            self._snp_temp_tags = _orig_tag_list
+            self._snp_temp_name = _orig_name
         else:
             self.is_match_lbl.setToolTip("The loaded snapshot does NOT MATCH beam operations!")
             self.is_match_lbl.setPixmap(self._not_matched_px)
@@ -175,6 +184,11 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
             if w.text() == temp_name_in_op:
                 w.setChecked(True)
                 break
+    
+    def get_snp_temp_data(self):
+        """Return the snapshot data template for capturing a new snapshot.
+        """
+        return self._snp_temp_data
 
 
 def get_tag_list():

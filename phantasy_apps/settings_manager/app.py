@@ -3050,32 +3050,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                          self._current_snpdata_originated, self)
         r = postsnp_dlg.exec_()
         if r == QDialog.Accepted:
-            tag_str = postsnp_dlg.get_selected_tag_str()
-            note = postsnp_dlg.get_note()
+            snp_tags = postsnp_dlg.get_selected_tag_list()
+            snp_note = postsnp_dlg.get_note()
+            snp_temp_data = postsnp_dlg.get_snp_temp_data()
         else:
             return
-
-        # self.turn_off_updater_if_necessary()
-        src_m = m.sourceModel()
-        # single update
-        self._updater = DAQT(daq_func=partial(self.update_value_single, src_m,
-                                              m, -1, False),
-                             daq_seq=range(1))
-        self._updater.meta_signal1.connect(
-            partial(self.on_update_display, src_m))
-        loop = QEventLoop()
-        self._updater.finished.connect(loop.exit)
-        self._updater.start()
-        loop.exec_()
-        #
-        if post_current_sp:
-            current_sp_idx = src_m.i_cset
-            stored_sp_idx = src_m.i_val0
-            for i in range(m.rowCount()):
-                sp_val_str = m.data(m.index(i, current_sp_idx))
-                m.setData(m.index(i, stored_sp_idx), sp_val_str)
-        #
-        self.on_snapshots_changed(cast, note, tag_str)
+        self.__new_take_snapshot(snp_note, snp_tags, snp_temp_data)
 
     @pyqtSlot()
     def on_show_query_tips(self):
@@ -4241,6 +4221,15 @@ p, li { white-space: pre-wrap; }
 
     # test
     def onClickTestButton(self):
+        snp_data_temp_tuple = self.snp_template_list[0]
+        snp_data, snp_tags = snp_data_temp_tuple[2], snp_data_temp_tuple[1]
+        self.__new_take_snapshot("This is a new way of taking a snapshot",
+                                 snp_tags, snp_data)
+        
+    def __new_take_snapshot(self, snp_note: str, snp_tags: list, snp_data: SnapshotData):
+    
+        print(snp_note, snp_tags, snp_data.ts_as_str())
+
         # new way of taking snapshot
         if self._mp is None:
             return
@@ -4267,8 +4256,7 @@ p, li { white-space: pre-wrap; }
         )
         _t_pb.setVisible(False)
 
-        # test
-        def f(row):
+        def _f(row):
             ename, fname = row.Name, row.Field
             elem = self._lat[ename]
             fld = elem.get_field(fname)
@@ -4277,15 +4265,11 @@ p, li { white-space: pre-wrap; }
                    row.Tolerance, fld.write_access, \
                    get_pwr_sts(elem, fld.name)[0][1]
 
-        snp_data_temp_tuple = self.snp_template_list[0]
-        snp_data, snp_tags = snp_data_temp_tuple[2], snp_data_temp_tuple[1]
-
         def _take_snapshot(snp_data: SnapshotData):
             snp_data.extract_blob()
-            _r = snp_data.data.apply(f, axis=1)
+            _r = snp_data.data.apply(_f, axis=1)
             new_settings_df = pd.DataFrame.from_records(
                                 _r, columns=snp_data.data.columns)
-            tags = ','.join(snp_tags + ['TEST'])
             ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species()
             new_snp_data = SnapshotData(new_settings_df,
                                         ion_name=ion_name,
@@ -4295,8 +4279,8 @@ p, li { white-space: pre-wrap; }
                                         machine=self._last_machine_name,
                                         segment=self._last_lattice_name,
                                         version=self._version,
-                                        note="Test new way of taking a snapshot",
-                                        tags=tags,
+                                        note=snp_note,
+                                        tags=','.join(snp_tags),
                                         table_version=10)
 
             # machstate
