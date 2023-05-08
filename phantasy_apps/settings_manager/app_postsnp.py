@@ -43,7 +43,8 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         # template list: [(name, tag_list, snpdata),...]
         self._template_list = template_list
         # current loaded snp originated template, (name, tag_list, snpdata)
-        self._current_snpdata_originated = current_snpdata_originated
+        self._loaded_snp_name, self._loaded_snp_tag_list, \
+                self._loaded_snp_data = current_snpdata_originated
 
         # UI
         self.setupUi(self)
@@ -61,11 +62,31 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         # build multi-select tag list
         tag_list = get_tag_list()
         self._selected_tag_list = []
+        self._tag_btn_sts = {}
         self._build_tags_list(self.tags_area, tag_list)
 
         # check if current loaded snapshot matches beam operation
         milli_sleep(500)
         self.check_loaded_snp()
+
+    @pyqtSlot(bool)
+    def onCheckOnLoaded(self, is_checked: bool):
+        """Take snapshot on loaded one if enabled.
+        """
+        if is_checked:
+            self._snp_temp_data = self._loaded_snp_data
+            self._snp_temp_name = self._loaded_snp_name
+        #
+        self._snp_temp_tags = self._loaded_snp_tag_list
+        for tag in self._loaded_snp_tag_list:
+            self._tag_btn_sts[tag] = is_checked
+
+    @pyqtSlot(bool)
+    def onCheckOnTemplate(self, is_checked: bool):
+        """Take snapshot on a template if enabled.
+        """
+        if is_checked:
+            print("Take a snapshot based on a template.")
 
     def _build_tags_list(self, area, tags):
         # build a flow list of checkable toolbuttons for tag selection.
@@ -83,6 +104,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
             o.setCheckable(True)
             o.toggled.connect(partial(self.on_update_tags, tag))
             layout.addWidget(o)
+            self._tag_btn_sts[tag] = False
         w.setLayout(layout)
         area.setWidget(w)
 
@@ -117,11 +139,8 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
             self._snp_temp_name = name
             self._snp_temp_data = data
             self._snp_temp_tags = tags
-            for i in tags:
-                self.on_update_tags(i, True)
-        else:
-            for i in tags:
-                self.on_update_tags(i, False)
+        for tag in tags:
+            self._tag_btn_sts[tag] = is_checked
 
     def on_update_tags(self, tag: str, is_checked: bool):
         """Update tag string.
@@ -158,20 +177,18 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         return self.note_textEdit.toPlainText().strip()
 
     def check_loaded_snp(self):
-        """Check the originated template of the current loaded snapshot, to see if it matches beam operations.
+        """Check the originated template of the current loaded snapshot,
+        to see if it matches beam operations. Auto-checked the template
+        button if any matches current beam ops.
         """
         # get template snapshot name with beam ops
         isrc_name, bound_name, beam_dest = self.beamSpeciesDisplayWidget.get_bound_info()
         temp_name_in_op = f"{bound_name}_{ISRC_NAME_MAP[isrc_name]}"
 
         # check if loaded snapshot matches beam ops
-        _orig_name, _orig_tag_list, _temp_snpdata = self._current_snpdata_originated
-        if _orig_name == temp_name_in_op:
+        if self._loaded_snp_name == temp_name_in_op:
             self.is_match_lbl.setToolTip("The loaded snapshot MATCHES beam operations.")
             self.is_match_lbl.setPixmap(self._matched_px)
-            self._snp_temp_data = _temp_snpdata
-            self._snp_temp_tags = _orig_tag_list
-            self._snp_temp_name = _orig_name
         else:
             self.is_match_lbl.setToolTip("The loaded snapshot does NOT MATCH beam operations!")
             self.is_match_lbl.setPixmap(self._not_matched_px)
@@ -179,12 +196,12 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
             self.on_template_rbtn.setChecked(True)
 
         # check the temp button matches beam ops
-        self.orig_template_lbl.setText(_orig_name)
+        self.orig_template_lbl.setText(self._loaded_snp_name)
         for w in self.template_area.findChildren(QToolButton):
             if w.text() == temp_name_in_op:
                 w.setChecked(True)
                 break
-    
+
     def get_snp_temp_data(self):
         """Return the snapshot data template for capturing a new snapshot.
         """
