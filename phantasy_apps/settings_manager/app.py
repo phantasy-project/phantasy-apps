@@ -926,7 +926,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # current snp
         self._current_snpdata = None
         # originated template tuple: (name, taglist, snpdata_temp)
-        self._current_snpdata_originated = (None, None, None)
+        self._current_snpdata_originated = (None, [], None)
 
         # template list, [(name, tag_list, snpdata),...]
         self.snp_template_list = []
