@@ -266,7 +266,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         def _on_update_time():
             t_elapsed = f"{str(timedelta(seconds=int(time.time() - _t0)))}"
             print(t_elapsed)
-            self.pb.setFormat(t_elapsed)
+            self.pb_lbl.setText(t_elapsed)
 
         ticker = QTimer(self)
         ticker.timeout.connect(_on_update_time)
@@ -280,12 +280,14 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
 
         def _take_started():
             self.pb.setVisible(True)
+            self.pb_lbl.setVisible(True)
             _t0 = time.time()
             ticker.start(1000)
             print("Taking snapshot is started...")
 
         def _take_done():
             self.pb.setVisible(False)
+            self.pb_lbl.setVisible(False)
             ticker.stop()
             print("Taking snapshot is done.")
 
