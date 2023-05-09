@@ -171,12 +171,15 @@ class Ui_Dialog(object):
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.pb_lbl = QtWidgets.QLabel(Dialog)
+        self.pb_lbl.setStyleSheet("QLabel {\n"
+                                  "    font-family: monospace;\n"
+                                  "}")
         self.pb_lbl.setAlignment(QtCore.Qt.AlignCenter)
         self.pb_lbl.setObjectName("pb_lbl")
         self.verticalLayout_2.addWidget(self.pb_lbl)
         self.pb = QtWidgets.QProgressBar(Dialog)
-        self.pb.setMinimumSize(QtCore.QSize(0, 9))
-        self.pb.setMaximumSize(QtCore.QSize(16777215, 9))
+        self.pb.setMinimumSize(QtCore.QSize(145, 9))
+        self.pb.setMaximumSize(QtCore.QSize(145, 9))
         self.pb.setStyleSheet("QProgressBar {\n"
                               "    border: 1px solid grayl;\n"
                               "    border-radius: 1px;\n"
