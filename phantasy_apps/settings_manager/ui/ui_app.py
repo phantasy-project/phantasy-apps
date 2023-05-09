@@ -1163,9 +1163,9 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem3)
-        self.snp_ms_chkbox = QtWidgets.QCheckBox(self.centralwidget)
-        self.snp_ms_chkbox.setObjectName("snp_ms_chkbox")
-        self.horizontalLayout_2.addWidget(self.snp_ms_chkbox)
+        self.reset_ms_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.reset_ms_btn.setObjectName("reset_ms_btn")
+        self.horizontalLayout_2.addWidget(self.reset_ms_btn)
         self.wysiwyc_chkbox = QtWidgets.QCheckBox(self.centralwidget)
         self.wysiwyc_chkbox.setObjectName("wysiwyc_chkbox")
         self.horizontalLayout_2.addWidget(self.wysiwyc_chkbox)
@@ -2306,8 +2306,13 @@ class Ui_MainWindow(object):
         self.alm_type_cbb.setItemText(0, _translate("MainWindow", "All"))
         self.alm_type_cbb.setItemText(1, _translate("MainWindow", "Tune"))
         self.alm_type_cbb.setItemText(2, _translate("MainWindow", "Read"))
-        self.snp_ms_chkbox.setText(
-            _translate("MainWindow", "Take Snapshot with Machine State"))
+        self.reset_ms_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Click to reset captured machine state data.</p><p>1. View the difference of the current machine state data with the one saved with a snapshot, do \'Capture Machine State\', then righ-clicking a snapshot -&gt; Machine State;</p><p>2. To view the original machine state data of a snapshot, click this button, then right-clicking a snapshot -&gt; Machine State.</p></body></html>"
+            ))
+        self.reset_ms_btn.setText(
+            _translate("MainWindow", "Reset Machine State"))
         self.wysiwyc_chkbox.setToolTip(
             _translate(
                 "MainWindow",
