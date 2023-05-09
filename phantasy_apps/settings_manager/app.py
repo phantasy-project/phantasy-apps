@@ -290,6 +290,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # config
         self.init_config(config_dir)
 
+        # ms config
+        self._mach_state_config = self.get_ms_config()
+
         self.nsnp_btn.setVisible(False)
         self.__init_dsrc(self.dsrc_dict)
 
@@ -3056,7 +3059,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             isrc_name_meta = postsnp_dlg.get_isrc_name_meta()
         else:
             return
-        self.__new_take_snapshot(snp_note, snp_tags, snp_temp_data, isrc_name_meta)
+        # self.__new_take_snapshot(snp_note, snp_tags, snp_temp_data, isrc_name_meta)
 
     @pyqtSlot()
     def on_show_query_tips(self):
@@ -3825,13 +3828,19 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     f"Saved machine state data to {os.path.abspath(filename)}.",
                     QMessageBox.Ok, QMessageBox.Ok)
 
-    def __config_meta_fetcher(self):
-        # init mach state retriever
+    def get_ms_config(self):
+        """Return the configurations for machine state capture.
+        """
         conf = get_meta_conf_dict(MS_CONF_PATH)
         _rate = self.pref_dict['MACH_STATE'].get('DAQ_RATE', None)
         _nshot = self.pref_dict['MACH_STATE'].get('DAQ_NSHOT', None)
         mach_state_conf = merge_mach_conf(
             conf, nshot=_nshot, rate=_rate)  # redefine nshot, rate here
+        return mach_state_conf
+
+    def __config_meta_fetcher(self):
+        # init mach state retriever
+        self._mach_state_config = mach_state_conf = self.get_ms_config()
         pv_list = mach_state_conf['pv_list']
         grp_list = mach_state_conf['grp_list']
         daq_rate = mach_state_conf['daq_rate']

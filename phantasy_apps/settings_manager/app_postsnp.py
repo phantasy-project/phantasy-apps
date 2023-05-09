@@ -5,6 +5,7 @@
 """
 
 from functools import partial
+from datetime import timedelta
 
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
@@ -18,8 +19,10 @@ from PyQt5.QtWidgets import QButtonGroup
 
 from phantasy_ui import milli_sleep
 from phantasy_ui.widgets import FlowLayout
+from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 
 from .utils import TAG_BTN_STY
+from .utils import take_snapshot
 from .data import SnapshotData
 from .ui.ui_post_snp import Ui_Dialog
 
@@ -60,6 +63,10 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         self._post_init()
 
     def _post_init(self):
+        # hide pb
+        self.pb.setVisible(False)
+        # advanced ctrls.
+        self.show_adv_ctls_btn.setChecked(False)
         #
         self.isrc_name_meta_cbb.setCurrentText('Live')
         #
@@ -193,7 +200,8 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
                     "Tag and Note must be set for the new snapshot.",
                     QMessageBox.Ok, QMessageBox.Ok)
             return
-        self.close()
+        self.__take_snapshot()
+        # self.close()
         self.setResult(QDialog.Accepted)
 
     @pyqtSlot()
@@ -245,6 +253,51 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         """Return the snapshot data template for capturing a new snapshot.
         """
         return self._snp_temp_data
+
+    def __take_snapshot(self):
+        # meta snp
+        note = self.get_note()
+        tag_list = self.get_selected_tag_list()
+        snp_temp_data = self.get_snp_temp_data()
+        isrc_name_meta = self.get_isrc_name_meta()
+
+        # mach state?
+        with_machstate = self.snp_ms_chkbox.isChecked()
+
+        #
+        _t0 = time.time()
+        def _on_update_time():
+            self.pb.setFormat(f"{str(timedelta(seconds=time.time() - _t0))}")
+
+        ticker = QTimer(self)
+        ticker.timeout.connect(_on_update_time)
+
+        def _take(snp_data: SnapshotData):
+            new_snp_data = take_snapshot(note, tag_list, snp_data, isrc_name_meta,
+                                         mp=self.parent._mp, version=self.parent._version,
+                                         with_machstate=with_machstate,
+                                         machstate_conf=self.parent.get_ms_config())
+            return new_snp_data
+
+        def _take_started():
+            self.pb.setVisiable(True)
+            _t0 = time.time()
+            ticker.start(1000)
+            print("Taking snapshot is started...")
+
+        def _take_done():
+            self.pb.setVisible(False)
+            ticker.stop()
+            print("Taking snapshot is done.")
+
+        def _snp_ready(r: list):
+            print(f"Took snapshot: {r.ts_as_str()}" )
+
+        _t = DAQT(daq_func=_take, daq_seq=[snp_temp_data])
+        _t.daqStarted.connect(_take_started)
+        _t.resultsReady.connect(_snp_ready)
+        _t.daqFinished.connect(_take_done)
+        _t.start()
 
 
 def get_tag_list():
