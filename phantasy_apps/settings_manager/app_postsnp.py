@@ -42,7 +42,8 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
     """
     snapshotTaken = pyqtSignal(SnapshotData)
 
-    def __init__(self, tag_fontsize: int, template_list: list, current_snpdata_originated: tuple, parent=None):
+    def __init__(self, tag_fontsize: int, template_list: list, current_snpdata_originated: tuple,
+                 check_ms: bool, parent=None):
         super(self.__class__, self).__init__()
         self.parent = parent
         self._tag_fs = tag_fontsize
@@ -51,6 +52,8 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         # current loaded snp originated template, (name, tag_list, snpdata)
         self._loaded_snp_name, self._loaded_snp_tag_list, \
                 self._loaded_snp_data = current_snpdata_originated
+        # if machine state data is to be captured
+        self.snp_ms_chkbox.setChecked(check_ms)
 
         # UI
         self.setupUi(self)
