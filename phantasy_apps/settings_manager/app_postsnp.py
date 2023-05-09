@@ -49,9 +49,8 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         self._tag_fs = tag_fontsize
         # template list: [(name, tag_list, snpdata),...]
         self._template_list = template_list
-        # current loaded snp originated template, (name, tag_list, snpdata)
-        self._loaded_snp_name, self._loaded_snp_tag_list, \
-                self._loaded_snp_data = current_snpdata_originated
+        # current loaded snp originated template, (name(template), tag_list(template), loaded_snpdata)
+        self._loaded_snp_name, self._loaded_snp_tag_list, self._loaded_snp_data = current_snpdata_originated
 
         # UI
         self.setupUi(self)
@@ -179,9 +178,12 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         """
         if is_checked:
             self._snp_temp_name = name
-            self._snp_temp_data = data
             self._snp_temp_tags = tags
             self.__set_isrc_name_meta_cbb(name)
+            if name == self._loaded_snp_name:
+                self._snp_temp_data = self._loaded_snp_data
+            else:
+                self._snp_temp_data = data
         for tag in tags:
             self._tag_btn_sts[tag].setChecked(is_checked)
 

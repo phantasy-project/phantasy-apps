@@ -527,21 +527,27 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._snp_temp_loader.start()
 
     def get_originated_template(self):
-        """Return the name of snapshot template from the currently loaded one.
+        """Get the name of snapshot template from the currently loaded one.
 
         The result could be:
         - The name of a template: loaded one exactly matches that template;
         - The name of a template (subset): the loaded one is a subset of that template;
         - None: the loaded one is not originated from any templates.
+
+        Returns
+        -------
+        r : tuple
+            A tuple of the original snapshot template, name, tag list,
+            and the loaded SnapshotData (for On Loaded option of 'Take Snapshot')
         """
         loaded_settings_name_set = set(self._current_snpdata.data.Name.unique())
         for _tmp_name, _tmp_tags, _tmp_snp_data in self.snp_template_list:
             _name_set = set(_tmp_snp_data.data.Name.unique())
             if _name_set == loaded_settings_name_set:
-                return _tmp_name, _tmp_tags, _tmp_snp_data
+                return _tmp_name, _tmp_tags, self._current_snpdata
             elif loaded_settings_name_set.issubset(_name_set):
-                return _tmp_name + " (subset)", _tmp_tags, _tmp_snp_data
-        return None, None, None
+                return _tmp_name + " (subset)", _tmp_tags, self._current_snpdata
+        return None, None,  self._current_snpdata
 
     @pyqtSlot()
     def on_auto_column_width(self):
