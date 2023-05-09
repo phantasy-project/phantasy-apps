@@ -14,7 +14,7 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(2317, 1467)
+        MainWindow.resize(2317, 1484)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/sm-icons/logo.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -460,9 +460,6 @@ class Ui_MainWindow(object):
             QtWidgets.QLayout.SetDefaultConstraint)
         self.horizontalLayout.setSpacing(2)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.test_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.test_btn.setObjectName("test_btn")
-        self.horizontalLayout.addWidget(self.test_btn)
         self.reload_lattice_btn = QtWidgets.QToolButton(self.centralwidget)
         icon13 = QtGui.QIcon()
         icon13.addPixmap(QtGui.QPixmap(":/sm-icons/reload.png"),
@@ -2021,8 +2018,6 @@ class Ui_MainWindow(object):
             MainWindow.on_purge_reverts)  # type: ignore
         self.actionImport.triggered.connect(
             MainWindow.onImport)  # type: ignore
-        self.test_btn.clicked.connect(
-            MainWindow.onClickTestButton)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
@@ -2112,7 +2107,6 @@ class Ui_MainWindow(object):
             ))
         self.total_show_number_lbl.setText(_translate("MainWindow", "0"))
         self.label_4.setText(_translate("MainWindow", "Items"))
-        self.test_btn.setText(_translate("MainWindow", "Test"))
         self.reload_lattice_btn.setToolTip(
             _translate("MainWindow", "Reload Lattice."))
         self.reload_lattice_btn.setText(_translate("MainWindow", "..."))
