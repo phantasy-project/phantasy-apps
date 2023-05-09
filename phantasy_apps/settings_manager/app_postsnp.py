@@ -61,6 +61,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
     def _post_init(self):
         # hide pb
         self.pb.setVisible(False)
+        self.pb_lbl.setVisible(False)
         # advanced ctrls.
         self.show_adv_ctls_btn.setChecked(False)
         #
@@ -265,7 +266,6 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         _t0 = time.time()
         def _on_update_time():
             t_elapsed = f"{str(timedelta(seconds=int(time.time() - _t0)))}"
-            print(t_elapsed)
             self.pb_lbl.setText(t_elapsed)
 
         ticker = QTimer(self)
@@ -288,6 +288,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         def _take_done():
             self.pb.setVisible(False)
             self.pb_lbl.setVisible(False)
+            self.pb_lbl.setText("0:00:00")
             ticker.stop()
             print("Taking snapshot is done.")
 
