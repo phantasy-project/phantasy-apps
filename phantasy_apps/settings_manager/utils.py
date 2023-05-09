@@ -2151,6 +2151,9 @@ ISRC_INDEX_MAP = {
     'HP-ECR': 'ISRC2',
 }
 
+COLUMN_NAME_LIST = ['Name', 'Field', 'Type', 'Pos', 'Setpoint', 'Readback', 'Last Setpoint',
+       'Tolerance', 'Writable', 'Last Power State']
+
 def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
                   meta_isrc_name: str = "Live", **kws) -> SnapshotData:
     """Take a snapshot for Settings Manager.
@@ -2236,7 +2239,7 @@ def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
         _printlog("Capture device settings...")
     _r = snp_data.data.apply(_f, axis=1)
     new_settings_df = pd.DataFrame.from_records(
-                        _r, columns=snp_data.data.columns)
+                        _r, columns=COLUMN_NAME_LIST) # snp_data.data.columns: for generated one, no last pwr sts!
     if verbose > 0:
         _printlog("Capture ion species info...")
     ion_name, ion_mass, ion_number, ion_charge = BeamSpeciesDisplayWidget.get_species_meta(\
