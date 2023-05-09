@@ -3048,18 +3048,21 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if m is None:
             return
 
+        def _onSnapshotTaken(snp_data: SnapshotData):
+            self._snp_dock_list.append(snp_data)
+            n = len(self._snp_dock_list)
+            self.data_uri_lineEdit.setText(self.data_uri)
+            self.total_snp_lbl.setText(str(n))
+            self.update_snp_dock_view()
+            self.on_load_settings(snp_data)
+            self.snp_filters_updated.emit()
+            self.on_save_settings(snp_data)
+
         # pop up a dialog for tag selection
         postsnp_dlg = PostSnapshotDialog(self.default_font_size, self.snp_template_list,
                                          self._current_snpdata_originated, self)
-        r = postsnp_dlg.exec_()
-        if r == QDialog.Accepted:
-            snp_tags = postsnp_dlg.get_selected_tag_list()
-            snp_note = postsnp_dlg.get_note()
-            snp_temp_data = postsnp_dlg.get_snp_temp_data()
-            isrc_name_meta = postsnp_dlg.get_isrc_name_meta()
-        else:
-            return
-        # self.__new_take_snapshot(snp_note, snp_tags, snp_temp_data, isrc_name_meta)
+        postsnp_dlg.snapshotTaken.connect(_onSnapshotTaken)
+        postsnp_dlg.exec_()
 
     @pyqtSlot()
     def on_show_query_tips(self):
@@ -4227,113 +4230,6 @@ p, li { white-space: pre-wrap; }
         w = self.revert_area.takeWidget()
         w.setParent(None)
         self._init_revert_area()
-
-
-    # test
-    def onClickTestButton(self):
-        snp_data_temp_tuple = self.snp_template_list[0]
-        snp_data, snp_tags = snp_data_temp_tuple[2], snp_data_temp_tuple[1]
-        self.__new_take_snapshot("This is a new way of taking a snapshot",
-                                 snp_tags, snp_data)
-
-    def __new_take_snapshot(self, snp_note: str, snp_tags: list, snp_data: SnapshotData,
-                            meta_isrc_name: str):
-
-        print(meta_isrc_name, snp_note, snp_tags, snp_data.ts_as_str())
-
-        # new way of taking snapshot
-        if self._mp is None:
-            return
-
-        # progressbar
-        _t_pb = QProgressBar()
-        _t_pb.setStyleSheet("""
-        QProgressBar {
-            border: 1px solid gray;
-            border-radius: 1px;
-            text-align: center;
-        }
-        QProgressBar::chunk {
-            background-color: #05B8CC;
-            width: 10px;
-            margin: 0.5px;
-        }""")
-        _t_pb.setWindowTitle("Taking Snapshot")
-        _t_pb.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-        _t_pb.setRange(0, 0)
-        _t_pb.move(
-            int(self.geometry().x() + self.geometry().width() / 2 - _t_pb.geometry().width() / 2),
-            int(self.geometry().y() + self.geometry().height() / 2 - _t_pb.geometry().height() / 2)
-        )
-        _t_pb.setVisible(False)
-
-        def _f(row):
-            ename, fname = row.Name, row.Field
-            elem = self._lat[ename]
-            fld = elem.get_field(fname)
-            return ename, fname, row.Type, row.Pos, \
-                   fld.current_setting(), fld.value, row.Setpoint, \
-                   row.Tolerance, fld.write_access, \
-                   get_pwr_sts(elem, fld.name)[0][1]
-
-        def _take_snapshot(snp_data: SnapshotData):
-            snp_data.extract_blob()
-            _r = snp_data.data.apply(_f, axis=1)
-            new_settings_df = pd.DataFrame.from_records(
-                                _r, columns=snp_data.data.columns)
-            ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species(\
-                                                           meta_isrc_name)
-            new_snp_data = SnapshotData(new_settings_df,
-                                        ion_name=ion_name,
-                                        ion_number=ion_number,
-                                        ion_mass=ion_mass,
-                                        ion_charge=ion_charge,
-                                        machine=self._last_machine_name,
-                                        segment=self._last_lattice_name,
-                                        version=self._version,
-                                        note=snp_note,
-                                        tags=','.join(snp_tags),
-                                        table_version=10)
-
-            # machstate
-            if self.snp_ms_chkbox.isChecked():
-                self.__config_meta_fetcher()
-                loop = QEventLoop()
-                self._meta_fetcher.finished.connect(loop.exit)
-                self._meta_fetcher.start()
-                loop.exec_()
-            else:
-                # reset machine state
-                self._machstate = None
-
-            new_snp_data.machstate = self._machstate
-            return new_snp_data
-
-        def _take_done(res: list):
-            new_snp_data = res[0]
-            self._snp_dock_list.append(new_snp_data)
-            n = len(self._snp_dock_list)
-            self.data_uri_lineEdit.setText(self.data_uri)
-            self.total_snp_lbl.setText(str(n))
-            self.update_snp_dock_view()
-            self.on_load_settings(new_snp_data)
-            self.snp_filters_updated.emit()
-            self.on_save_settings(new_snp_data)
-
-        def _t_started():
-            _t_pb.setVisible(True)
-            self.setEnabled(False)
-
-        def _t_finished():
-            _t_pb.setVisible(False)
-            self.setEnabled(True)
-
-        #
-        self._t = DAQT(daq_func=_take_snapshot, daq_seq=[snp_data])
-        self._t.daqStarted.connect(_t_started)
-        self._t.resultsReady.connect(_take_done)
-        self._t.daqFinished.connect(_t_finished)
-        self._t.start()
 
 
 def get_snapshotdata(query_str: str, uri: str, column_name='datetime'):

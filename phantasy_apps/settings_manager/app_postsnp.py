@@ -40,6 +40,7 @@ ISRC_NAME_MAP = {
 class PostSnapshotDialog(QDialog, Ui_Dialog):
     """ The dialog to show after clicking 'Take Snapshot'.
     """
+    snapshotTaken = pyqtSignal(SnapshotData)
 
     def __init__(self, tag_fontsize: int, template_list: list, current_snpdata_originated: tuple, parent=None):
         super(self.__class__, self).__init__()
@@ -199,7 +200,6 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
                     QMessageBox.Ok, QMessageBox.Ok)
             return
         self.__take_snapshot()
-        # self.close()
         self.setResult(QDialog.Accepted)
 
     @pyqtSlot()
@@ -294,11 +294,13 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
 
         def _snp_ready(r: list):
             print(f"Took snapshot: {r[0].ts_as_str()}" )
+            self.snapshotTaken.emit(r[0])
 
         _t = DAQT(daq_func=_take, daq_seq=[snp_temp_data])
         _t.daqStarted.connect(_take_started)
         _t.resultsReady.connect(_snp_ready)
         _t.daqFinished.connect(_take_done)
+        _t.daqFinished.connect(self.close)
         _t.start()
 
 
