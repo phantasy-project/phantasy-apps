@@ -221,9 +221,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # bool
     init_settings_changed = pyqtSignal(bool)
 
-    # runtime snapshots
-    snapshots_changed = pyqtSignal()
-
     # snp saved, snpdata name, filepath
     snp_saved = pyqtSignal('QString', 'QString')
 
@@ -710,12 +707,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             o = getattr(self, 'total_{}_number_lbl'.format(s))
             o.setText(str(v))
 
-    @pyqtSlot(bool)
-    def on_toggled_ms(self, is_checked):
-        """Machine state capture option is checked or not.
+    @pyqtSlot()
+    def onRestMachState(self):
+        """Reset captured machine state through CaptureMachineState tool.
+        For view differences.
         """
-        if not is_checked:
-            self._machstate = None
+        self._machstate = None
 
     def __post_init_ui(self):
         # add user guide help menu
@@ -747,9 +744,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # total number of checked items
         self.total_number_checked_items_changed.connect(
             self.on_nchecked_changed)
-        # enable machine state with take snapshot or not
-        self.snp_ms_chkbox.toggled.connect(self.on_toggled_ms)
-        self.snp_ms_chkbox.setChecked(MS_ENABLED)
+        # reset machine state (clear captured machine state dset)
+        self.reset_ms_btn.clicked.connect(self.onRestMachState)
         # hide sts info
         self.show_sts_btn.setChecked(False)
 
@@ -909,8 +905,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # snapshot dock
         self._snp_dock_list = []  # for snp_treeView
-        self.snapshots_changed.connect(lambda: self.on_snapshots_changed())
-        self.snapshots_changed.emit()
 
         # apply pb
         self.apply_pb.setVisible(False)
@@ -3060,7 +3054,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # pop up a dialog for tag selection
         postsnp_dlg = PostSnapshotDialog(self.default_font_size, self.snp_template_list,
-                                         self._current_snpdata_originated, self)
+                                         self._current_snpdata_originated, MS_ENABLED, self)
         postsnp_dlg.snapshotTaken.connect(_onSnapshotTaken)
         postsnp_dlg.exec_()
 
@@ -3072,52 +3066,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             ui.setupUi(w)
             w.setWindowTitle("Query Tips")
         self._query_tips_form.show()
-
-    def on_snapshots_changed(self, cast=True, note='', tag_str=''):
-        # New captured snapshot.
-        # update snpdata to snp dock.
-        if self._tv.model() is None:
-            return
-
-        # capture current ion info
-        ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species(
-        )
-
-        # create a new snapshotdata
-        snp_data = SnapshotData(get_settings_data(*self.get_data_models()),
-                                ion_name=ion_name,
-                                ion_number=ion_number,
-                                ion_mass=ion_mass,
-                                ion_charge=ion_charge,
-                                machine=self._last_machine_name,
-                                segment=self._last_lattice_name,
-                                version=self._version,
-                                note=note,
-                                tags=tag_str,
-                                table_version=10)
-        # machstate
-        if self.snp_ms_chkbox.isChecked():
-            self.__config_meta_fetcher()
-            loop = QEventLoop()
-            self._meta_fetcher.finished.connect(loop.exit)
-            self._meta_fetcher.start()
-            loop.exec_()
-        else:
-            # reset machine state
-            self._machstate = None
-        #
-        snp_data.machstate = self._machstate
-        #
-        self._snp_dock_list.append(snp_data)
-        n = len(self._snp_dock_list)
-        self.data_uri_lineEdit.setText(self.data_uri)
-        self.total_snp_lbl.setText(str(n))
-        self.update_snp_dock_view()
-        if cast:
-            self.on_load_settings(snp_data)
-        self.snp_filters_updated.emit()
-        # save by default // to control with preference option.
-        self.on_save_settings(snp_data)
 
     @pyqtSlot()
     def on_copy_snp(self, data):
