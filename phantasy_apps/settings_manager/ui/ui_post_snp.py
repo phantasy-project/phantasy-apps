@@ -14,7 +14,7 @@ class Ui_Dialog(object):
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(988, 665)
+        Dialog.resize(1012, 666)
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setContentsMargins(6, 8, 6, 6)
         self.gridLayout.setSpacing(4)
@@ -40,7 +40,7 @@ class Ui_Dialog(object):
         self.tags_area.setWidgetResizable(True)
         self.tags_area.setObjectName("tags_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 974, 89))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 998, 89))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tags_area.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.tags_area, 8, 0, 1, 4)
@@ -148,6 +148,7 @@ class Ui_Dialog(object):
         sizePolicy.setHeightForWidth(
             self.snp_ms_chkbox.sizePolicy().hasHeightForWidth())
         self.snp_ms_chkbox.setSizePolicy(sizePolicy)
+        self.snp_ms_chkbox.setChecked(True)
         self.snp_ms_chkbox.setObjectName("snp_ms_chkbox")
         self.horizontalLayout_4.addWidget(self.snp_ms_chkbox)
         self.wysiwyc_chkbox = QtWidgets.QCheckBox(self.adv_frame)
@@ -261,7 +262,7 @@ class Ui_Dialog(object):
         self.template_area.setObjectName("template_area")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(
-            QtCore.QRect(0, 0, 710, 129))
+            QtCore.QRect(0, 0, 734, 130))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.template_area.setWidget(self.scrollAreaWidgetContents_2)
