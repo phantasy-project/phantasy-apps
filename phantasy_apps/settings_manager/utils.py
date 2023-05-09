@@ -42,7 +42,6 @@ from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QProgressBar
 from phantasy import get_settings_from_element_list
 from phantasy_ui.widgets import is_item_checked
-from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 from phantasy_apps.utils import find_dconf
 from .data import SnapshotData
@@ -2152,8 +2151,8 @@ ISRC_INDEX_MAP = {
 }
 
 def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
-                  meta_isrc_name: str = "Live", **kws):
-    """Take a snapshot and insert to the database of Settings Manager.
+                  meta_isrc_name: str = "Live", **kws) -> SnapshotData:
+    """Take a snapshot for Settings Manager.
     
     Parameters
     ----------
@@ -2165,17 +2164,14 @@ def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
         SnapshotData instance ==> template
     meta_isrc_name : str
         The name of the ion source name for fetching the ion metadata.
-        "Live", "Artemis", "HP-ECR".
+        "Live" (default), "Artemis", "HP-ECR".
 
     Keyword Arguments
     -----------------
-    with_machine_state : bool
-        Capture machine state data if set.
     mp : MachinePortal
-        MachinePortal instance, if not defined, instantiating from 'machine' and 'segment'
-        arguments.
-    initial_mp : bool
-        If set, instantiating mp with machine and segment if mp is None.
+        MachinePortal instance, if not defined, instantiating from 'machine' and 'segment' arguments.
+    inst_mp : bool
+        If set, instantiating `mp` with `machine` and `segment` if `mp` is not defined.
     machine : str
         The name of the machine for instantiating mp, defaults to 'FRIB'.
     segment : str
@@ -2185,54 +2181,44 @@ def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
     verbose : int
         Verbosity level of the log output, defaults to 0 (no output), 1 (output progress),
         2 (output progress with descriptions).
-    fetch_mach_state_dict : dict
-        The arguments for fetch_mach_state CLI tool: 'config_path', 'rate', 'nshot'.
-    cli : bool
-        If set, run as a CLI app.
+    with_machstate : bool
+        Capture machine state data if set.
+    machstate_conf : dict
+        The arguments for fetch_mach_state CLI tool: `config_path`, `rate`, `nshot`.
+
+    Returns
+    -------
+    r : SnapshotData
+        A new snapshot dataset.
     
     See Also
     --------
     fetch_mach_state
     """
-    print("Take a snapshot: ", meta_isrc_name, note, tags, snp_data.ts_as_str())
+    verbose = kws.get('verbose', 0)
+
+    if verbose > 0:
+        _printlog("Capture a new snapshot... ", meta_isrc_name, note, tags, snp_data.ts_as_str())
 
     machine = kws.get('machine', 'FRIB')
     segment = kws.get('segment', 'LINAC')
-    if kws.get('mp', None) is None and kws.get('initial_mp', False):
-        from phantasy import MachinePortal
-        mp = MachinePortal(machine, segment)
-    else:
-        print("No MachinePortal found.")
-        return
+    mp = kws.get('mp', None)
+    if mp is None:
+        if kws.get('inst_mp', False):
+            from phantasy import MachinePortal
+            mp = MachinePortal(machine, segment)
+        else:
+            _printlog("MachinePortal instance must be defined through `mp` keyword argument.")
+            return
     lat = mp.work_lattice_conf
+
     if kws.get('version', None) is None:
         from phantasy_apps.settings_manager import __version__
         ver = __version__
     else:
         ver = __version__
 
-#    # progressbar
-#    _t_pb = QProgressBar()
-#    _t_pb.setStyleSheet("""
-#    QProgressBar {
-#        border: 1px solid gray;
-#        border-radius: 1px;
-#        text-align: center;
-#    }
-#    QProgressBar::chunk {
-#        background-color: #05B8CC;
-#        width: 10px;
-#        margin: 0.5px;
-#    }""")
-#    _t_pb.setWindowTitle("Taking Snapshot")
-#    _t_pb.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-#    _t_pb.setRange(0, 0)
-#    #_t_pb.move(
-#    #    int(self.geometry().x() + self.geometry().width() / 2 - _t_pb.geometry().width() / 2),
-#    #    int(self.geometry().y() + self.geometry().height() / 2 - _t_pb.geometry().height() / 2)
-#    #)
-#    _t_pb.setVisible(False)
-
+    #
     def _f(row):
         ename, fname = row.Name, row.Field
         elem = lat[ename]
@@ -2242,80 +2228,57 @@ def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
                row.Tolerance, fld.write_access, \
                get_pwr_sts(elem, fld.name)[0][1]
 
-    def _take_snapshot(snp_data: SnapshotData):
-        snp_data.extract_blob()
-        _r = snp_data.data.apply(_f, axis=1)
-        new_settings_df = pd.DataFrame.from_records(
-                            _r, columns=snp_data.data.columns)
-        ion_name, ion_mass, ion_number, ion_charge = BeamSpeciesDisplayWidget.get_species_meta(\
-                                                       ISRC_INDEX_MAP[meta_isrc_name])
-        new_snp_data = SnapshotData(new_settings_df,
-                                    ion_name=ion_name,
-                                    ion_number=ion_number,
-                                    ion_mass=ion_mass,
-                                    ion_charge=ion_charge,
-                                    machine=machine,
-                                    segment=segment,
-                                    version=ver,
-                                    note=note,
-                                    tags=','.join(tags),
-                                    table_version=10)
+    # taking a snapshot
+    snp_data.extract_blob()
+    if verbose > 0:
+        _printlog("Capture device settings...")
+    _r = snp_data.data.apply(_f, axis=1)
+    new_settings_df = pd.DataFrame.from_records(
+                        _r, columns=snp_data.data.columns)
+    if verbose > 0:
+        _printlog("Capture ion species info...")
+    ion_name, ion_mass, ion_number, ion_charge = BeamSpeciesDisplayWidget.get_species_meta(\
+                                                   ISRC_INDEX_MAP[meta_isrc_name])
+    if verbose > 0:
+        _printlog(f"Captured ion species info: {ion_name}, A({ion_mass}), Z({ion_number}), Q({ion_charge})")
+    new_snp_data = SnapshotData(new_settings_df,
+                                ion_name=ion_name,
+                                ion_number=ion_number,
+                                ion_mass=ion_mass,
+                                ion_charge=ion_charge,
+                                machine=machine,
+                                segment=segment,
+                                version=ver,
+                                note=note,
+                                tags=','.join(tags),
+                                table_version=10)
+    # machstate
+    if kws.get('with_machstate', False):
+        if verbose > 0:
+            _printlog("Capture machine state data...")
+        from phantasy_apps.msviz.mach_state import DEFAULT_META_CONF_PATH
+        from phantasy_apps.msviz.mach_state import fetch_data
+        from phantasy_apps.msviz.mach_state import get_meta_conf_dict
+        from phantasy_apps.msviz.mach_state import merge_mach_conf
+        _DEFAULT_MS_DICT = {'config_path': DEFAULT_META_CONF_PATH}
 
-        # machstate
-        if kws.get('with_machine_state', False):
-            from phantasy_apps.msviz.mach_state import DEFAULT_META_CONF_PATH
-            from phantasy_apps.msviz.mach_state import fetch_data
-            from phantasy_apps.msviz.mach_state import get_meta_conf_dict
-            from phantasy_apps.msviz.mach_state import merge_mach_conf
-            _DEFAULT_MS_DICT = {'config_path': DEFAULT_META_CONF_PATH}
-
-            _ms_dict = kws.get('fetch_mach_state_dict', _DEFAULT_MS_DICT)
-            
-            _conf = get_meta_conf_dict(_ms_dict['config_path'])
-            _mach_stat_conf = merge_mach_conf(_conf, _ms_dict.get('rate', None),
-                                              _ms_dict.get('nshot', None))
-            _dset = fetch_data(_mach_stat_conf, verbose=kws.get('verbose', 0))
-        else:
-            # reset machine state
-            _dset = None
-
-        new_snp_data.machstate = _dset
-        return new_snp_data
-
-    def _take_done(res: list):
-        new_snp_data = res[0]
-        # self._snp_dock_list.append(new_snp_data)
-        # n = len(self._snp_dock_list)
-        # self.data_uri_lineEdit.setText(self.data_uri)
-        # self.total_snp_lbl.setText(str(n))
-        # self.update_snp_dock_view()
-        # self.on_load_settings(new_snp_data)
-        # self.snp_filters_updated.emit()
-        # self.on_save_settings(new_snp_data)
-        new_snp_data.write("/tmp/test123.xlsx")
-
-    def _t_started():
-        print("Taking a snapshot...")
-        #_t_pb.setVisible(True)
-        #self.setEnabled(False)
-
-    def _t_finished():
-        print("Taking a snapshot... done!")
-        #_t_pb.setVisible(False)
-        #self.setEnabled(True)
-
-    #
-    _t = DAQT(daq_func=_take_snapshot, daq_seq=[snp_data])
-    _t.daqStarted.connect(_t_started)
-    _t.resultsReady.connect(_take_done)
-    _t.daqFinished.connect(_t_finished)
-    
-    if kws.get('cli', False):
-        from PyQt5.QtCore import QCoreApplication
-        app = QCoreApplication([])
-        _t.daqFinished.connect(app.quit)
-        _t.start()
-        app.exec_()
-        return df
+        _ms_dict = kws.get('machstate_conf', _DEFAULT_MS_DICT)
+        
+        _conf = get_meta_conf_dict(_ms_dict['config_path'])
+        _mach_stat_conf = merge_mach_conf(_conf, _ms_dict.get('rate', None),
+                                          _ms_dict.get('nshot', None))
+        _ms_dset = fetch_data(_mach_stat_conf, verbose=verbose)
     else:
-        _t.start()
+        # no machine state is captured
+        _ms_dset = None
+    new_snp_data.machstate = _ms_dset
+
+    if verbose > 0:
+        _printlog("Captured a new snapshot.")
+
+    return new_snp_data
+
+
+def _printlog(*msg):
+    ts = datetime.now().isoformat(sep='T', timespec="milliseconds")
+    print(f"[{ts}] {', '.join((str(i) for i in msg))}")
