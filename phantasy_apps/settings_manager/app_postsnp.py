@@ -4,12 +4,14 @@
 """Creating a new snapshot.
 """
 
+import time
 from functools import partial
 from datetime import timedelta
 
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
@@ -32,12 +34,6 @@ DEFAULT_TAG_LIST = ["LINAC", "FSEE", "GOLDEN", "SCS1", "SCS2", "TEST"]
 ISRC_NAME_MAP = {
     'ISRC1': 'Artemis',
     'ISRC2': 'HP-ECR'
-}
-
-ISRC_INDEX_MAP = {
-    'Live': 'live',
-    'Artemis': 'ISRC1',
-    'HP-ECR': 'ISRC2'
 }
 
 
@@ -87,8 +83,9 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
     @pyqtSlot('QString')
     def onIsrcNameMetaChanged(self, s: str):
         """The name of ISRC name for meta info is changed.
+        Live, Artemis, HP-ECR.
         """
-        self._isrc_name_meta = ISRC_INDEX_MAP[s]
+        self._isrc_name_meta = s
 
     def __set_isrc_name_meta_cbb(self, temp_name: str):
         # set the option from the given snapshot template name.
@@ -267,7 +264,9 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         #
         _t0 = time.time()
         def _on_update_time():
-            self.pb.setFormat(f"{str(timedelta(seconds=time.time() - _t0))}")
+            t_elapsed = f"{str(timedelta(seconds=int(time.time() - _t0)))}"
+            print(t_elapsed)
+            self.pb.setFormat(t_elapsed)
 
         ticker = QTimer(self)
         ticker.timeout.connect(_on_update_time)
@@ -280,7 +279,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
             return new_snp_data
 
         def _take_started():
-            self.pb.setVisiable(True)
+            self.pb.setVisible(True)
             _t0 = time.time()
             ticker.start(1000)
             print("Taking snapshot is started...")
@@ -291,7 +290,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
             print("Taking snapshot is done.")
 
         def _snp_ready(r: list):
-            print(f"Took snapshot: {r.ts_as_str()}" )
+            print(f"Took snapshot: {r[0].ts_as_str()}" )
 
         _t = DAQT(daq_func=_take, daq_seq=[snp_temp_data])
         _t.daqStarted.connect(_take_started)
