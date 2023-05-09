@@ -166,7 +166,17 @@ class Ui_Dialog(object):
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setContentsMargins(0, -1, -1, -1)
+        self.verticalLayout_2.setSpacing(0)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.pb_lbl = QtWidgets.QLabel(Dialog)
+        self.pb_lbl.setAlignment(QtCore.Qt.AlignCenter)
+        self.pb_lbl.setObjectName("pb_lbl")
+        self.verticalLayout_2.addWidget(self.pb_lbl)
         self.pb = QtWidgets.QProgressBar(Dialog)
+        self.pb.setMinimumSize(QtCore.QSize(0, 9))
+        self.pb.setMaximumSize(QtCore.QSize(16777215, 9))
         self.pb.setStyleSheet("QProgressBar {\n"
                               "    border: 1px solid grayl;\n"
                               "    border-radius: 1px;\n"
@@ -180,7 +190,8 @@ class Ui_Dialog(object):
         self.pb.setMaximum(0)
         self.pb.setProperty("value", -1)
         self.pb.setObjectName("pb")
-        self.horizontalLayout.addWidget(self.pb)
+        self.verticalLayout_2.addWidget(self.pb)
+        self.horizontalLayout.addLayout(self.verticalLayout_2)
         self.pushButton_2 = QtWidgets.QPushButton(Dialog)
         self.pushButton_2.setObjectName("pushButton_2")
         self.horizontalLayout.addWidget(self.pushButton_2)
@@ -247,7 +258,7 @@ class Ui_Dialog(object):
         self.template_area.setObjectName("template_area")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(
-            QtCore.QRect(0, 0, 710, 130))
+            QtCore.QRect(0, 0, 710, 129))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.template_area.setWidget(self.scrollAreaWidgetContents_2)
@@ -328,6 +339,7 @@ class Ui_Dialog(object):
                 "<html><head/><body><p>If checked, take the snapshot in the way of \'What You See Is What You Capture\'.</p></body></html>"
             ))
         self.wysiwyc_chkbox.setText(_translate("Dialog", "WYSIWYC"))
+        self.pb_lbl.setText(_translate("Dialog", "0:00:00"))
         self.pushButton_2.setText(_translate("Dialog", "Cancel"))
         self.pushButton.setText(_translate("Dialog", "OK"))
         self.textEdit.setHtml(
