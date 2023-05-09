@@ -2144,6 +2144,7 @@ def get_pwr_sts(elem, fname: str):
     return (px, tt), (px_role, Qt.ToolTipRole)
 
 
+# postsnp isrc cbb -> beam species display widget pv_conf_map
 ISRC_INDEX_MAP = {
     'Live': 'live',
     'Artemis': 'ISRC1',
@@ -2183,8 +2184,10 @@ def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
         2 (output progress with descriptions).
     with_machstate : bool
         Capture machine state data if set.
-    machstate_conf : dict
-        The arguments for fetch_mach_state CLI tool: `config_path`, `rate`, `nshot`.
+    ms_conf : dict:
+        The configuration dict for machine state data capture, either passing:
+        * The parsed dict object by `conf`.
+        * Or the arguments for fetch_mach_state CLI tool: `config_path`, `rate`, `nshot`
 
     Returns
     -------
@@ -2212,10 +2215,9 @@ def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
             return
     lat = mp.work_lattice_conf
 
-    if kws.get('version', None) is None:
+    ver = kws.get('version', None)
+    if ver is None:
         from phantasy_apps.settings_manager import __version__
-        ver = __version__
-    else:
         ver = __version__
 
     #
@@ -2256,17 +2258,21 @@ def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
     if kws.get('with_machstate', False):
         if verbose > 0:
             _printlog("Capture machine state data...")
-        from phantasy_apps.msviz.mach_state import DEFAULT_META_CONF_PATH
-        from phantasy_apps.msviz.mach_state import fetch_data
-        from phantasy_apps.msviz.mach_state import get_meta_conf_dict
-        from phantasy_apps.msviz.mach_state import merge_mach_conf
-        _DEFAULT_MS_DICT = {'config_path': DEFAULT_META_CONF_PATH}
-
-        _ms_dict = kws.get('machstate_conf', _DEFAULT_MS_DICT)
         
-        _conf = get_meta_conf_dict(_ms_dict['config_path'])
-        _mach_stat_conf = merge_mach_conf(_conf, _ms_dict.get('rate', None),
-                                          _ms_dict.get('nshot', None))
+        ms_conf = kws.get('ms_conf', {})
+        if ms_conf.get('conf', None) is None:
+            from phantasy_apps.msviz.mach_state import DEFAULT_META_CONF_PATH
+            from phantasy_apps.msviz.mach_state import fetch_data
+            from phantasy_apps.msviz.mach_state import get_meta_conf_dict
+            from phantasy_apps.msviz.mach_state import merge_mach_conf
+            if ms_conf.get('config_path', None) is None:
+                config_path = DEFAULT_META_CONF_PATH
+            _conf = get_meta_conf_dict(config_path)
+            _mach_stat_conf = merge_mach_conf(_conf, ms_conf.get('rate', None),
+                                              ms_conf.get('nshot', None))
+        else:
+            # use parsed config dict
+            _mach_stat_conf = ms_conf.get('conf')
         _ms_dset = fetch_data(_mach_stat_conf, verbose=verbose)
     else:
         # no machine state is captured
