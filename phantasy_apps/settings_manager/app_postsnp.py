@@ -52,13 +52,13 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         # current loaded snp originated template, (name, tag_list, snpdata)
         self._loaded_snp_name, self._loaded_snp_tag_list, \
                 self._loaded_snp_data = current_snpdata_originated
-        # if machine state data is to be captured
-        self.snp_ms_chkbox.setChecked(check_ms)
 
         # UI
         self.setupUi(self)
         self.setWindowTitle("Settings Manager: Take Snapshot")
 
+        # if machine state data is to be captured
+        self.snp_ms_chkbox.setChecked(check_ms)
         #
         self._post_init()
 
