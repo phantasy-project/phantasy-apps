@@ -723,6 +723,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._machstate = None
 
     def __post_init_ui(self):
+        # initial updater
+        self.one_updater = None
+
         # add user guide help menu
         self._user_guide_mitem = QAction("User Guide", self)
         self.menu_Help.insertAction(self.actionChangelog, self._user_guide_mitem)
@@ -1936,6 +1939,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.apply_pb.setValue(int(per * 100))
 
     def closeEvent(self, e):
+        self._data_refresh_timer.stop()
+        if self.one_updater is not None and not self.one_updater.isFinished():
+            self.one_updater.abort()
         BaseAppForm.closeEvent(self, e)
 
     def clean_up(self):
@@ -2744,6 +2750,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.one_updater.start()
 
     def on_data_refresh_done(self):
+        # reset updater
+        self.one_updater = None
+        #
         self.set_last_data_refreshed_info_visible(True)
         # Data refreshing is done (before any waiting): update the last updated timestamp.
         ts = datetime.now().strftime("%Y-%m-%d %T")
