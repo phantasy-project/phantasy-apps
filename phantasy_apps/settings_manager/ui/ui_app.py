@@ -302,9 +302,13 @@ class Ui_MainWindow(object):
         self.settingsView.setSizePolicy(sizePolicy)
         self.settingsView.setSelectionMode(
             QtWidgets.QAbstractItemView.ExtendedSelection)
-        self.settingsView.setIndentation(20)
+        self.settingsView.setIndentation(10)
         self.settingsView.setUniformRowHeights(True)
+        self.settingsView.setItemsExpandable(False)
+        self.settingsView.setExpandsOnDoubleClick(False)
         self.settingsView.setObjectName("settingsView")
+        self.settingsView.header().setMinimumSectionSize(30)
+        self.settingsView.header().setStretchLastSection(False)
         self.gridLayout.addWidget(self.settingsView, 3, 1, 1, 3)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSizeConstraint(
