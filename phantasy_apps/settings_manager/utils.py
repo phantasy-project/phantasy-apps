@@ -2157,7 +2157,7 @@ COLUMN_NAME_LIST = ['Name', 'Field', 'Type', 'Pos', 'Setpoint', 'Readback', 'Las
 def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
                   meta_isrc_name: str = "Live", **kws) -> SnapshotData:
     """Take a snapshot for Settings Manager.
-    
+
     Parameters
     ----------
     note : str
@@ -2196,7 +2196,7 @@ def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
     -------
     r : SnapshotData
         A new snapshot dataset.
-    
+
     See Also
     --------
     fetch_mach_state
@@ -2256,12 +2256,13 @@ def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
                                 version=ver,
                                 note=note,
                                 tags=','.join(tags),
-                                table_version=10)
+                                table_version=10,
+                                parent=snp_data.ts_as_str())
     # machstate
     if kws.get('with_machstate', False):
         if verbose > 0:
             _printlog("Capture machine state data...")
-        
+
         ms_conf = kws.get('ms_conf', {})
         if ms_conf.get('conf', None) is None:
             from phantasy_apps.msviz.mach_state import DEFAULT_META_CONF_PATH

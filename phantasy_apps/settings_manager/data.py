@@ -53,7 +53,7 @@ ATTR_KEYS = [
     "timestamp", "datetime", "name", "note", "user",
     "ion_name", "ion_number", "ion_mass", "ion_charge",
     "machine", "segment", "tags", "app", "version",
-    "table_version",
+    "table_version", "parent",
 ]
 
 ATTR_DICT = OrderedDict([(k, None) for k in ATTR_KEYS])
