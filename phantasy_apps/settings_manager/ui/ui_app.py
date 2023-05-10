@@ -2226,13 +2226,13 @@ class Ui_MainWindow(object):
         self.show_warning_dx02_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Show x<span style=\" vertical-align:sub;\">0 </span>!= x<span style=\" vertical-align:sub;\">2</span>, up to number of precision.</p></body></html>"
+                "<html><head/><body><p>Show <span style=\" font-style:italic;\">Saved Set</span><span style=\" vertical-align:sub;\"/>!= <span style=\" font-style:italic;\">Live Set</span>, up to the defined precision.</p></body></html>"
             ))
         self.show_warning_dx02_btn.setText(_translate("MainWindow", "dx02"))
         self.show_warning_dx12_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Show Δ(x<span style=\" vertical-align:sub;\">1</span>, x<span style=\" vertical-align:sub;\">2</span>) &gt; tolerance.</p></body></html>"
+                "<html><head/><body><p>Show Δ(LiveRead, LiveSet) &gt; the tolerance per field setting.</p></body></html>"
             ))
         self.show_warning_dx12_btn.setText(_translate("MainWindow", "dx12"))
         self.show_state_diff_btn.setToolTip(
