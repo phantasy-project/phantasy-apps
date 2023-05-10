@@ -58,9 +58,9 @@ from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QLabel
 
+from phantasy import build_element
 from phantasy import CaField
 from phantasy import Settings
-from phantasy import build_element
 from phantasy import Lattice
 from phantasy_ui import BaseAppForm
 from phantasy_ui import delayed_exec
@@ -620,7 +620,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lat = o.combined_lattice()
         self.lattice_loaded.emit(o)
 
-        self._lat = self.__init_lat + self._lat
+        # deprecated
+        # self._lat = self.__init_lat + self._lat
+
         # show element settings
         if self.init_settings:  # in Preferences
             # if init settings, show settings to the view.
@@ -2165,7 +2167,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # elements from PVs
         self._elem_pvconf = ElementPVConfig(self.elem_confpath)
 
-        self.__init_lat = self.build_lattice()
+        # deprecated
+        # self.__init_lat = self.build_lattice()
 
     @pyqtSlot(bool)
     def on_toggle_init_lattice_settings(self, enabled):
