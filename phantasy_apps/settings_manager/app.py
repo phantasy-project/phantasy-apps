@@ -958,6 +958,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_loaded.connect(self.refresh_filter_btns)
         # post loaded snp info
         self.snp_loaded.connect(self.post_snp_info)
+        # enable take snapshot tool
+        self.snp_loaded.connect(lambda:self.actionTake_Snapshot.setEnabled(True))
         #
         self.snp_saved.connect(self.on_snp_saved)
 
@@ -3504,6 +3506,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # data: SnapshotData
         # settings(data.data): DataFrame
         # self.turn_off_updater_if_necessary()
+        
+        # disable take snapshot tool
+        self.actionTake_Snapshot.setEnabled(False)
+        #
         if self._lat is None or self._last_machine_name != data.machine or \
                 self._last_lattice_name != data.segment:
             self.__load_lattice(data.machine, data.segment)
