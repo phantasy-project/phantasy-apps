@@ -1166,9 +1166,6 @@ class Ui_MainWindow(object):
         self.reset_ms_btn = QtWidgets.QPushButton(self.centralwidget)
         self.reset_ms_btn.setObjectName("reset_ms_btn")
         self.horizontalLayout_2.addWidget(self.reset_ms_btn)
-        self.wysiwyc_chkbox = QtWidgets.QCheckBox(self.centralwidget)
-        self.wysiwyc_chkbox.setObjectName("wysiwyc_chkbox")
-        self.horizontalLayout_2.addWidget(self.wysiwyc_chkbox)
         self.line_4 = QtWidgets.QFrame(self.centralwidget)
         self.line_4.setFrameShape(QtWidgets.QFrame.VLine)
         self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -1982,8 +1979,6 @@ class Ui_MainWindow(object):
             self.init_settings_lbl.setVisible)  # type: ignore
         self.show_disconnected_btn.toggled['bool'].connect(
             MainWindow.on_show_disconnected_items)  # type: ignore
-        self.wysiwyc_chkbox.toggled['bool'].connect(
-            MainWindow.on_toggle_wysiwyc)  # type: ignore
         self.show_state_diff_btn.toggled['bool'].connect(
             MainWindow.on_show_state_diff_items)  # type: ignore
         self.update_ref_btn.clicked.connect(
@@ -2313,12 +2308,6 @@ class Ui_MainWindow(object):
             ))
         self.reset_ms_btn.setText(
             _translate("MainWindow", "Reset Machine State"))
-        self.wysiwyc_chkbox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>If checked, take the snapshot in the way of \'What You See Is What You Capture\'.</p></body></html>"
-            ))
-        self.wysiwyc_chkbox.setText(_translate("MainWindow", "WYSIWYC"))
         self.auto_ndigit_chkbox.setToolTip(
             _translate("MainWindow",
                        "Change data presenting format to \'{n}g\'."))

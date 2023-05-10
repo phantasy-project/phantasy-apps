@@ -5,6 +5,7 @@
 """
 
 import time
+import pandas as pd
 from functools import partial
 from datetime import timedelta
 
@@ -51,6 +52,8 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         self._template_list = template_list
         # current loaded snp originated template, (name(template), tag_list(template), loaded_snpdata)
         self._loaded_snp_name, self._loaded_snp_tag_list, self._loaded_snp_data = current_snpdata_originated
+        # WYSIWYC
+        self._wysiwyc_temp_snpdata = None
 
         # UI
         self.setupUi(self)
@@ -61,7 +64,65 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         #
         self._post_init()
 
+    @pyqtSlot(bool)
+    def onToggleWYSIWYC(self, is_checked: bool):
+        """Enable/disable (W)hat(Y)ou(S)ee(I)s(W)hat(Y)ou(C)apture option.
+        """
+        warn_is_accepted = self.__warn_wysiwyc(is_checked)
+        if not warn_is_accepted:
+            return
+
+        # only allow 'On Currently Loaded'
+        self.on_template_rbtn.setDisabled(is_checked)
+        self._wysiwyc_enabled = is_checked
+        if is_checked:
+            if self._wysiwyc_temp_snpdata is None:
+                m = self.parent._tv.model() # proxy model
+                src_m = m.sourceModel()
+                records = []
+                for i in range(m.rowCount()):
+                    ename = m.data(m.index(i, src_m.i_name))
+                    fname = m.data(m.index(i, src_m.i_field))
+                    ftype = m.data(m.index(i, src_m.i_type))
+                    spos = m.data(m.index(i, src_m.i_pos))
+                    sp = float(m.data(m.index(i, src_m.i_val0))) # as last setpoint
+                    tol = float(m.data(m.index(i, src_m.i_tol)))
+                    records.append((ename, fname, ftype, spos, sp, tol))
+                _temp_df = pd.DataFrame.from_records(records,
+                            columns=['Name', 'Field', 'Type', 'Pos', 'Setpoint', 'Tolerance'])
+                self._wysiwyc_temp_snpdata = SnapshotData(_temp_df)
+                self._wysiwyc_temp_snpdata.timestamp = self._loaded_snp_data.timestamp # inherits the timestamp from the loaded one.
+
+            #
+            self.on_loaded_rbtn.setChecked(True)
+            self._snp_temp_data = self._wysiwyc_temp_snpdata
+        else:
+            self.check_loaded_snp()
+
+    def __warn_wysiwyc(self, is_checked):
+        """If checked, change take snapshot mode to 'What You See Is What You Capture', otherwise
+        take the full settings always.
+        """
+        msg = '''<html><head><meta name="qrichtext" content="1" /><style type="text/css">
+p, li { white-space: pre-wrap; }
+</style></head><body style=" font-family:'Cantarell'; font-size:12pt; font-weight:400; font-style:normal;">
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">The mode of &quot;Take Snapshot&quot; is switched to &quot;<span style=" font-weight:600;">WYSIWYC</span>&quot; (<span style=" font-weight:600;">W</span>hat <span style=" font-weight:600;">Y</span>ou <span style=" font-weight:600;">S</span>ee <span style=" font-weight:600;">I</span>s <span style=" font-weight:600;">W</span>hat <span style=" font-weight:600;">Y</span>ou <span style=" font-weight:600;">C</span>apture), only the device settings listed on the current view will be saved when taking a snapshot by pressing the &quot;Take Snapshot&quot; button in the toolbar.</p>
+<p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><br /></p>
+<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Are you sure to switch the mode?</p></body></html>'''
+        self._wysiwyc_enabled = is_checked
+        if is_checked:
+            r = QMessageBox.warning(self, "Switch Take Snapshot Mode", msg,
+                                    QMessageBox.Yes | QMessageBox.No,
+                                    QMessageBox.No)
+            if r == QMessageBox.Yes:
+                return True
+            else:
+                self.wysiwyc_chkbox.setChecked(False)
+                return False
+
     def _post_init(self):
+        # WYSIWYC
+        self.wysiwyc_chkbox.toggled.connect(self.onToggleWYSIWYC)
         # hide pb
         self.pb.setVisible(False)
         self.pb_lbl.setVisible(False)

@@ -749,9 +749,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # hide keep refreshing button (to be dropped)
         self.update_ctrl_btn.setVisible(False)
 
-        # WYSIWYC flag:
-        self._wysiwyc_enabled = False
-        #
         # total number of checked items
         self.total_number_checked_items_changed.connect(
             self.on_nchecked_changed)
@@ -3876,37 +3873,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.sigApplyReady.emit(True)
         else:
             self.sigApplyReady.emit(False)
-
-    def get_data_models(self):
-        """Get the model for settings data retrieval.
-        """
-        _p_m = self._tv.model()
-        m_src = _p_m.sourceModel()
-        if self._wysiwyc_enabled:
-            return _p_m, m_src
-        else:
-            return m_src, m_src
-
-    @pyqtSlot(bool)
-    def on_toggle_wysiwyc(self, is_checked):
-        """If checked, change take snapshot mode to 'What You See Is What You Capture', otherwise
-        take the full settings always.
-        """
-        msg = '''<html><head><meta name="qrichtext" content="1" /><style type="text/css">
-p, li { white-space: pre-wrap; }
-</style></head><body style=" font-family:'Cantarell'; font-size:12pt; font-weight:400; font-style:normal;">
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">The mode of &quot;Take Snapshot&quot; is switched to &quot;<span style=" font-weight:600;">WYSIWYC</span>&quot; (<span style=" font-weight:600;">W</span>hat <span style=" font-weight:600;">Y</span>ou <span style=" font-weight:600;">S</span>ee <span style=" font-weight:600;">I</span>s <span style=" font-weight:600;">W</span>hat <span style=" font-weight:600;">Y</span>ou <span style=" font-weight:600;">C</span>apture), only the device settings listed on the current view will be saved when taking a snapshot by pressing the &quot;Take Snapshot&quot; button in the toolbar.</p>
-<p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><br /></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Are you sure to switch the mode?</p></body></html>'''
-        self._wysiwyc_enabled = is_checked
-        if is_checked:
-            r = QMessageBox.warning(self, "Switch Take Snapshot Mode", msg,
-                                    QMessageBox.Yes | QMessageBox.No,
-                                    QMessageBox.No)
-            if r == QMessageBox.Yes:
-                pass
-            else:
-                self.wysiwyc_chkbox.setChecked(False)
 
     @pyqtSlot()
     def on_update_ref_values(self):
