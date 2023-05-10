@@ -767,9 +767,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # alarm type for disable/enable actions
         self._alm_type_idx_list = ALM_TYPE_MAP["All"]
 
-        # hide init settings hbox
-        self.show_init_settings_btn.setChecked(False)
-
         # update toolbar
         self.__update_toolbar()
 
@@ -861,6 +858,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # other slots are set in designer.
         self.show_init_settings_btn.toggled.connect(
             self.on_toggle_show_init_settings_btn)
+        # hide init settings hbox
+        self.show_init_settings_btn.setChecked(False)
         #
         # selection, check/uncheck, for settings apply
         self.select_all_btn.clicked.connect(
@@ -1063,10 +1062,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.single_update_btn.clicked.emit()
 
     @pyqtSlot(bool)
-    def on_toggle_show_init_settings_btn(self, toggled):
-        if not toggled:
+    def on_toggle_show_init_settings_btn(self, is_checked: bool):
+        if not is_checked:
             # uncheck init_settings_chkbox when init_settings_btn is unchecked
             self.init_settings_chkbox.setChecked(False)
+        #
+        self.adv_frame.setVisible(is_checked)
 
     def on_update_filter_controls(self, snpdata):
         """Update filter controls
