@@ -119,6 +119,7 @@ p, li { white-space: pre-wrap; }
             else:
                 self.wysiwyc_chkbox.setChecked(False)
                 return False
+        return True
 
     def _post_init(self):
         # WYSIWYC
@@ -294,7 +295,7 @@ p, li { white-space: pre-wrap; }
         # get template snapshot name with beam ops
         isrc_name, bound_name, beam_dest = self.beamSpeciesDisplayWidget.get_bound_info()
         temp_name_in_op = f"{bound_name}_{ISRC_NAME_MAP[isrc_name]}"
-        self._isrc_name_meta = isrc_name # isrc name for meta info capture.
+        self.__set_isrc_name_meta_cbb(temp_name_in_op)
 
         # check if loaded snapshot matches beam ops
         if self._loaded_snp_name == temp_name_in_op:
