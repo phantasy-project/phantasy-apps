@@ -716,7 +716,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             o.setText(str(v))
 
     @pyqtSlot()
-    def onRestMachState(self):
+    def onResetMachState(self):
         """Reset captured machine state through CaptureMachineState tool.
         For view differences.
         """
@@ -752,8 +752,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # total number of checked items
         self.total_number_checked_items_changed.connect(
             self.on_nchecked_changed)
-        # reset machine state (clear captured machine state dset)
-        self.reset_ms_btn.clicked.connect(self.onRestMachState)
+
         # hide sts info
         self.show_sts_btn.setChecked(False)
 
@@ -770,15 +769,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # hide init settings hbox
         self.show_init_settings_btn.setChecked(False)
-        # # hide Add Devices tool
-        # self.actionAdd_Devices.setVisible(False)
-        # add beamSpeciesDisplayWidget
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.toolBar.addWidget(spacer)
-        self.beam_display_widget = BeamSpeciesDisplayWidget()
-        self.beam_display_widget.set_allow_clicking_src_btns(False)
-        self.toolBar.addWidget(self.beam_display_widget)
+
+        # update toolbar
+        self.__update_toolbar()
+
         #
         self._post_info = True  # post info after loading lattice
         #
@@ -942,10 +936,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # take snapshot tool
         self.actionTake_Snapshot.triggered.connect(
             lambda: self.take_snapshot())
-
-        # take machine state tool
-        self.actionCapture_machstate.triggered.connect(
-            self.on_capture_machstate)
 
         self.snp_loaded.connect(self.on_snp_loaded)
         # scaling factor hint
@@ -3506,7 +3496,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # data: SnapshotData
         # settings(data.data): DataFrame
         # self.turn_off_updater_if_necessary()
-        
+
         # disable take snapshot tool
         self.actionTake_Snapshot.setEnabled(False)
         #
@@ -3715,6 +3705,36 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._splash_msg(f"Loaded lattice: {mach}/{segm}.")
         self._splash_msg_undone()
 
+    def __update_toolbar(self):
+        # hide obsoleted tools
+        self.actionFix_Corrector_Names.setVisible(False)
+        # add a submenu to CaptureMachineState tool (QAction)
+        ms_capture_btn = QToolButton(self)
+        ms_capture_btn.setToolTip(
+            "Capture additional data as machine state, to save with a snapshot or for comparison visualization.")
+        ms_capture_btn.setIcon(QIcon(QPixmap(":/sm-icons/machstate.png")))
+        ms_capture_btn.setIconSize(self.toolBar.iconSize())
+        ms_capture_btn.setText("Capture Machine State")
+        ms_capture_btn.setPopupMode(QToolButton.MenuButtonPopup)
+        ms_capture_btn.clicked.connect(self.on_capture_machstate)
+        ms_capture_btn.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        _m = QMenu()
+        # reset machine state (clear captured machine state dset)
+        _act = QAction("Reset Diff", _m)
+        _act.triggered.connect(self.onResetMachState)
+        _m.addAction(_act)
+        ms_capture_btn.setMenu(_m)
+        self.toolBar.insertWidget(self.actionTake_Snapshot, ms_capture_btn)
+
+        # add beamSpeciesDisplayWidget
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.toolBar.addWidget(spacer)
+        self.beam_display_widget = BeamSpeciesDisplayWidget()
+        self.beam_display_widget.set_expanded(True)
+        self.beam_display_widget.set_allow_clicking_src_btns(False)
+        self.toolBar.addWidget(self.beam_display_widget)
+
     def _meta_fetcher_started(self):
         printlog("Start to fetch machine state...")
         self._meta_fetcher_pb = QProgressBar()
@@ -3734,10 +3754,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                              | Qt.WindowTitleHint)
         self._meta_fetcher_pb.setRange(0, 100)
         self._meta_fetcher_pb.move(
-            self.geometry().x() + self.geometry().width() / 2 -
-            self._meta_fetcher_pb.geometry().width() / 2,
-            self.geometry().y() + self.geometry().height() / 2 -
-            self._meta_fetcher_pb.geometry().height() / 2)
+            int(self.geometry().x() + self.geometry().width() / 2 -
+                self._meta_fetcher_pb.geometry().width() / 2),
+            int(self.geometry().y() + self.geometry().height() / 2 -
+                self._meta_fetcher_pb.geometry().height() / 2))
         self._meta_fetcher_pb.show()
         self.setEnabled(False)
 
