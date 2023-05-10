@@ -1194,6 +1194,11 @@ class Ui_MainWindow(object):
         self.ndigit_sbox.setProperty("value", 3)
         self.ndigit_sbox.setObjectName("ndigit_sbox")
         self.horizontalLayout_7.addWidget(self.ndigit_sbox)
+        self.show_change_reason_input_chkbox = QtWidgets.QCheckBox(
+            self.adv_frame)
+        self.show_change_reason_input_chkbox.setObjectName(
+            "show_change_reason_input_chkbox")
+        self.horizontalLayout_7.addWidget(self.show_change_reason_input_chkbox)
         self.init_vline = QtWidgets.QFrame(self.adv_frame)
         self.init_vline.setFrameShape(QtWidgets.QFrame.VLine)
         self.init_vline.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -1995,6 +2000,8 @@ class Ui_MainWindow(object):
             MainWindow.on_purge_reverts)  # type: ignore
         self.actionImport.triggered.connect(
             MainWindow.onImport)  # type: ignore
+        self.show_change_reason_input_chkbox.toggled['bool'].connect(
+            self.apply_reason_lineEdit.setVisible)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
@@ -2268,8 +2275,7 @@ class Ui_MainWindow(object):
         self.n_all_checked_items_lbl.setText(_translate("MainWindow", "0"))
         self.label.setText(_translate("MainWindow", "Checked Items"))
         self.init_settings_lbl.setText(
-            _translate("MainWindow",
-                       "Initialize settings table from loaded lattice"))
+            _translate("MainWindow", "Advanced Options"))
         self.init_settings_chkbox.setToolTip(
             _translate(
                 "MainWindow",
@@ -2289,6 +2295,13 @@ class Ui_MainWindow(object):
                        "Change data presenting format to \'{n}g\'."))
         self.auto_ndigit_chkbox.setText(_translate("MainWindow", "Auto"))
         self.ndigit_lbl.setText(_translate("MainWindow", "Precision number"))
+        self.show_change_reason_input_chkbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "Check to show the input box for \"Change reason\" right besides of the \"Apply\" button."
+            ))
+        self.show_change_reason_input_chkbox.setText(
+            _translate("MainWindow", "Show Change Reason"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menuTools.setTitle(_translate("MainWindow", "&Tools"))
