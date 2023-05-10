@@ -41,7 +41,8 @@ ISRC_NAME_MAP = {
 class PostSnapshotDialog(QDialog, Ui_Dialog):
     """ The dialog to show after clicking 'Take Snapshot'.
     """
-    snapshotTaken = pyqtSignal(SnapshotData)
+    # new snapshot data: SnapshotData, to load?:bool
+    snapshotTaken = pyqtSignal(SnapshotData, bool)
 
     def __init__(self, tag_fontsize: int, template_list: list, current_snpdata_originated: tuple,
                  check_ms: bool, parent=None):
@@ -121,9 +122,25 @@ p, li { white-space: pre-wrap; }
                 return False
         return True
 
+    @pyqtSlot(bool)
+    def onToggleCast(self, is_checked: bool):
+        """If checked, load the captured snapshot, otherwise not.
+        """
+        self._cast_enabled = is_checked
+        if is_checked:
+            # exit the window after "Capture"
+            pass
+        else:
+            # do not exit the window after "Capture", meaning multiple snapshots could be
+            # created, exit the window by clicking the Exit button.
+            pass
+
     def _post_init(self):
         # WYSIWYC
         self.wysiwyc_chkbox.toggled.connect(self.onToggleWYSIWYC)
+        # no case checkbox
+        self.cast_chkbox.toggled.connect(self.onToggleCast)
+        self._cast_enabled = True
         # hide pb
         self.pb.setVisible(False)
         self.pb_lbl.setVisible(False)
@@ -260,7 +277,7 @@ p, li { white-space: pre-wrap; }
         self.selected_tags.setText(self._selected_tag_str)
 
     @pyqtSlot()
-    def on_click_ok(self):
+    def on_click_capture(self):
         if not self.get_note() or not self.get_selected_tag_list():
             QMessageBox.warning(self, "Create a Snapshot",
                     "Tag and Note must be set for the new snapshot.",
@@ -270,7 +287,7 @@ p, li { white-space: pre-wrap; }
         self.setResult(QDialog.Accepted)
 
     @pyqtSlot()
-    def on_click_cancel(self):
+    def on_click_exit(self):
         self.close()
         self.setResult(QDialog.Rejected)
 
@@ -361,13 +378,14 @@ p, li { white-space: pre-wrap; }
 
         def _snp_ready(r: list):
             print(f"Took snapshot: {r[0].ts_as_str()}" )
-            self.snapshotTaken.emit(r[0])
+            self.snapshotTaken.emit(r[0], self._cast_enabled)
 
         _t = DAQT(daq_func=_take, daq_seq=[snp_temp_data])
         _t.daqStarted.connect(_take_started)
         _t.resultsReady.connect(_snp_ready)
         _t.daqFinished.connect(_take_done)
-        _t.daqFinished.connect(self.close)
+        if self._cast_enabled:
+            _t.daqFinished.connect(self.close)
         _t.start()
 
 

@@ -3048,15 +3048,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if m is None:
             return
 
-        def _onSnapshotTaken(snp_data: SnapshotData):
+        def _onSnapshotTaken(snp_data: SnapshotData, to_load: bool):
             self._snp_dock_list.append(snp_data)
             n = len(self._snp_dock_list)
             self.data_uri_lineEdit.setText(self.data_uri)
             self.total_snp_lbl.setText(str(n))
             self.update_snp_dock_view()
-            self.on_load_settings(snp_data)
             self.snp_filters_updated.emit()
             self.on_save_settings(snp_data)
+            if to_load:
+                self.on_load_settings(snp_data)
 
         # pop up a dialog for tag selection
         postsnp_dlg = PostSnapshotDialog(self.default_font_size, self.snp_template_list,
