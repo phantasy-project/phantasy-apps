@@ -57,27 +57,27 @@ X2 = 'x\N{SUBSCRIPT TWO}'
 XREF = 'xref'
 DELTA = '\N{GREEK CAPITAL LETTER DELTA}'
 
-COLUMN_NAMES1 = ['Device', 'Field']
+COLUMN_NAMES1 = ['Device\nName', 'Field\nName']
 
 COLUMN_NAMES2 = [
-    f'Setpoint({X0})',
-    f'Live Readback({X1})',
-    f'Live Setpoint({X2})',
-    f'{DELTA}({X0},{X1})',
+    f'SavedSet\n({X0})',
+    f'LiveRead\n({X1})',
+    f'LiveSet\n({X2})',
+    f'SavedSet-LiveRead\n{DELTA}({X0},{X1})',
 #    f'{DELTA}({X0},{X2})',
-    f'{DELTA}({X2},{X0})',
-    f'{DELTA}({X1},{X2})',
-    'Tolerance', 'Writable', f'{X2}/{X0}',
+    f'LiveSet-SavedSet\n({X2}-{X0})',
+    f'LiveRead-LiveSet\n({X1}-{X2})',
+    'Tolerance', 'Writable?', f'LiveSet/SaveSet\n({X2}/{X0})',
     'Live State',
     'State',
-    f'Reference Set ({XREF})',
-    f'{DELTA}({X2},{XREF})',
-    f'{DELTA}({X0},{XREF})',
-    f'Tune ALM?',  # if tune alarm is activated?
-    f'Read ALM?',  # if read alarm is activated?
+    f'RefSet\n({XREF})',
+    f'LiveSet-RefSet\n({X2}-{XREF})',
+    f'SavedSet-RefSet\n({X0}-{XREF})',
+    f'Tune Alarm\nEnabled?',  # if tune alarm is activated?
+    f'Read Alarm\nEnabled?',  # if read alarm is activated?
 ]
 COLUMN_SFIELD_MAP = OrderedDict((
-    ('Type', 'family'),
+    ('Device\nType', 'family'),
     ('Pos [m]', 'sb'),
 ))
 COLUMN_NAMES_ATTR = list(COLUMN_SFIELD_MAP.keys())
@@ -503,7 +503,9 @@ class SettingsModel(QStandardItemModel):
         tv.model().sort(self.i_pos)
         tv.header().setStyleSheet("""
             QHeaderView {
+                qproperty-defaultAlignment: AlignHCenter AlignVCenter;
                 font-weight: bold;
+                font-size: 15pt;
             }""")
         #
         self.style_view(font=self._font)
@@ -1514,6 +1516,7 @@ class SnapshotDataModel(QStandardItemModel):
         v.header().setStyleSheet("""
             QHeaderView {
                 font-weight: bold;
+                font-size: 15pt;
             }""")
 
         #
