@@ -723,6 +723,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._machstate = None
 
     def __post_init_ui(self):
+        # hide change reason inputbox right of Apply button by default
+        self.show_change_reason_input_chkbox.toggled.emit(False)
+
         # initial updater
         self.one_updater = None
 
