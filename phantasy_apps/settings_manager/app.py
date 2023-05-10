@@ -880,7 +880,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.init_filter()
 
         # stop auto update when lattice is changed
-        self.lattice_loaded.connect(self.stop_auto_update)
         # widget status regarding lattice changed.
         self.lattice_loaded.connect(self.on_update_widgets_status)
         #
@@ -2258,10 +2257,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # _update_mode: 'auto'
         printlog("Executing start_auto_update()...")
 
-    def stop_auto_update(self):
-        # stop auto updating.
-        printlog("Executing stop_auto_update()...")
-
     def start_thread_update(self):
         # Update values every *delt* second(s),
         # _update_mode: 'thread'
@@ -2517,9 +2512,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def stop_update(self):
         if self._update_mode == 'thread':
-            # chances auto update be set after loading settings from file,
-            # so stop it.
-            self.stop_auto_update()
             self._stop_update_thread = True
             try:
                 self.updater.requestInterruption()
@@ -2527,7 +2519,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 pass
             printlog("Stop thread updating.")
         else:
-            self.stop_auto_update()
             printlog("Stop auto updating.")
 
     @pyqtSlot()
