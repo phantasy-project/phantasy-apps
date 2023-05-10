@@ -14,7 +14,7 @@ class Ui_Dialog(object):
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(1012, 666)
+        Dialog.resize(1052, 669)
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setContentsMargins(6, 8, 6, 6)
         self.gridLayout.setSpacing(4)
@@ -40,7 +40,7 @@ class Ui_Dialog(object):
         self.tags_area.setWidgetResizable(True)
         self.tags_area.setObjectName("tags_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 998, 89))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1038, 89))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tags_area.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.tags_area, 8, 0, 1, 4)
@@ -122,7 +122,7 @@ class Ui_Dialog(object):
         icon.addPixmap(QtGui.QPixmap(":/sm-icons/left-arrow.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.show_adv_ctls_btn.setIcon(icon)
-        self.show_adv_ctls_btn.setIconSize(QtCore.QSize(24, 24))
+        self.show_adv_ctls_btn.setIconSize(QtCore.QSize(32, 32))
         self.show_adv_ctls_btn.setCheckable(True)
         self.show_adv_ctls_btn.setChecked(True)
         self.show_adv_ctls_btn.setToolButtonStyle(
@@ -136,8 +136,10 @@ class Ui_Dialog(object):
         self.adv_frame.setObjectName("adv_frame")
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.adv_frame)
         self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_5.setSpacing(4)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setContentsMargins(4, -1, -1, -1)
         self.horizontalLayout_4.setSpacing(4)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.snp_ms_chkbox = QtWidgets.QCheckBox(self.adv_frame)
@@ -148,6 +150,7 @@ class Ui_Dialog(object):
         sizePolicy.setHeightForWidth(
             self.snp_ms_chkbox.sizePolicy().hasHeightForWidth())
         self.snp_ms_chkbox.setSizePolicy(sizePolicy)
+        self.snp_ms_chkbox.setIconSize(QtCore.QSize(32, 32))
         self.snp_ms_chkbox.setChecked(True)
         self.snp_ms_chkbox.setObjectName("snp_ms_chkbox")
         self.horizontalLayout_4.addWidget(self.snp_ms_chkbox)
@@ -159,8 +162,13 @@ class Ui_Dialog(object):
         sizePolicy.setHeightForWidth(
             self.wysiwyc_chkbox.sizePolicy().hasHeightForWidth())
         self.wysiwyc_chkbox.setSizePolicy(sizePolicy)
+        self.wysiwyc_chkbox.setIconSize(QtCore.QSize(32, 32))
         self.wysiwyc_chkbox.setObjectName("wysiwyc_chkbox")
         self.horizontalLayout_4.addWidget(self.wysiwyc_chkbox)
+        self.cast_chkbox = QtWidgets.QCheckBox(self.adv_frame)
+        self.cast_chkbox.setChecked(True)
+        self.cast_chkbox.setObjectName("cast_chkbox")
+        self.horizontalLayout_4.addWidget(self.cast_chkbox)
         self.horizontalLayout_5.addLayout(self.horizontalLayout_4)
         self.horizontalLayout.addWidget(self.adv_frame)
         spacerItem = QtWidgets.QSpacerItem(40, 20,
@@ -179,8 +187,8 @@ class Ui_Dialog(object):
         self.pb_lbl.setObjectName("pb_lbl")
         self.verticalLayout_2.addWidget(self.pb_lbl)
         self.pb = QtWidgets.QProgressBar(Dialog)
-        self.pb.setMinimumSize(QtCore.QSize(145, 9))
-        self.pb.setMaximumSize(QtCore.QSize(145, 9))
+        self.pb.setMinimumSize(QtCore.QSize(145, 12))
+        self.pb.setMaximumSize(QtCore.QSize(145, 12))
         self.pb.setStyleSheet("QProgressBar {\n"
                               "    border: 1px solid grayl;\n"
                               "    border-radius: 1px;\n"
@@ -196,12 +204,22 @@ class Ui_Dialog(object):
         self.pb.setObjectName("pb")
         self.verticalLayout_2.addWidget(self.pb)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
-        self.pushButton_2 = QtWidgets.QPushButton(Dialog)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.horizontalLayout.addWidget(self.pushButton_2)
-        self.pushButton = QtWidgets.QPushButton(Dialog)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout.addWidget(self.pushButton)
+        self.exit_btn = QtWidgets.QPushButton(Dialog)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/sm-icons/exit.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.exit_btn.setIcon(icon1)
+        self.exit_btn.setIconSize(QtCore.QSize(32, 32))
+        self.exit_btn.setObjectName("exit_btn")
+        self.horizontalLayout.addWidget(self.exit_btn)
+        self.capture_btn = QtWidgets.QPushButton(Dialog)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/snapshot.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.capture_btn.setIcon(icon2)
+        self.capture_btn.setIconSize(QtCore.QSize(32, 32))
+        self.capture_btn.setObjectName("capture_btn")
+        self.horizontalLayout.addWidget(self.capture_btn)
         self.gridLayout.addLayout(self.horizontalLayout, 11, 0, 1, 4)
         self.textEdit = QtWidgets.QTextEdit(Dialog)
         self.textEdit.setStyleSheet("QTextEdit {\n"
@@ -262,7 +280,7 @@ class Ui_Dialog(object):
         self.template_area.setObjectName("template_area")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(
-            QtCore.QRect(0, 0, 734, 130))
+            QtCore.QRect(0, 0, 774, 130))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.template_area.setWidget(self.scrollAreaWidgetContents_2)
@@ -295,9 +313,9 @@ class Ui_Dialog(object):
         self.gridLayout.addLayout(self.horizontalLayout_3, 4, 0, 1, 4)
 
         self.retranslateUi(Dialog)
-        self.pushButton.clicked.connect(Dialog.on_click_ok)  # type: ignore
-        self.pushButton_2.clicked.connect(
-            Dialog.on_click_cancel)  # type: ignore
+        self.capture_btn.clicked.connect(
+            Dialog.on_click_capture)  # type: ignore
+        self.exit_btn.clicked.connect(Dialog.on_click_exit)  # type: ignore
         self.on_template_rbtn.toggled['bool'].connect(
             self.template_area.setEnabled)  # type: ignore
         self.on_loaded_rbtn.toggled['bool'].connect(
@@ -309,9 +327,9 @@ class Ui_Dialog(object):
         self.show_adv_ctls_btn.toggled['bool'].connect(
             self.adv_frame.setVisible)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Dialog)
-        Dialog.setTabOrder(self.note_textEdit, self.pushButton)
-        Dialog.setTabOrder(self.pushButton, self.pushButton_2)
-        Dialog.setTabOrder(self.pushButton_2, self.on_loaded_rbtn)
+        Dialog.setTabOrder(self.note_textEdit, self.capture_btn)
+        Dialog.setTabOrder(self.capture_btn, self.exit_btn)
+        Dialog.setTabOrder(self.exit_btn, self.on_loaded_rbtn)
         Dialog.setTabOrder(self.on_loaded_rbtn, self.on_template_rbtn)
         Dialog.setTabOrder(self.on_template_rbtn, self.template_area)
         Dialog.setTabOrder(self.template_area, self.plainTextEdit)
@@ -336,6 +354,11 @@ class Ui_Dialog(object):
                 "<html><head/><body><p>Show/hide advanced controls.</p></body></html>"
             ))
         self.show_adv_ctls_btn.setText(_translate("Dialog", "Advanced"))
+        self.snp_ms_chkbox.setToolTip(
+            _translate(
+                "Dialog",
+                "<html><head/><body><p>Check to capture machine state data with device settings data.</p></body></html>"
+            ))
         self.snp_ms_chkbox.setText(_translate("Dialog", "with Machine State"))
         self.wysiwyc_chkbox.setToolTip(
             _translate(
@@ -343,9 +366,25 @@ class Ui_Dialog(object):
                 "<html><head/><body><p>If checked, take the snapshot in the way of \'What You See Is What You Capture\'.</p></body></html>"
             ))
         self.wysiwyc_chkbox.setText(_translate("Dialog", "WYSIWYC"))
+        self.cast_chkbox.setToolTip(
+            _translate(
+                "Dialog",
+                "<html><head/><body><p>Check to disable cast the captured snapshot to the main interface.</p></body></html>"
+            ))
+        self.cast_chkbox.setText(_translate("Dialog", "Cast"))
         self.pb_lbl.setText(_translate("Dialog", "0:00:00"))
-        self.pushButton_2.setText(_translate("Dialog", "Cancel"))
-        self.pushButton.setText(_translate("Dialog", "OK"))
+        self.exit_btn.setToolTip(
+            _translate(
+                "Dialog",
+                "<html><head/><body><p>Click to exit the window.</p></body></html>"
+            ))
+        self.exit_btn.setText(_translate("Dialog", "Exit"))
+        self.capture_btn.setToolTip(
+            _translate(
+                "Dialog",
+                "<html><head/><body><p>Click to create a new snapshot.</p></body></html>"
+            ))
+        self.capture_btn.setText(_translate("Dialog", "Capture"))
         self.textEdit.setHtml(
             _translate(
                 "Dialog",
