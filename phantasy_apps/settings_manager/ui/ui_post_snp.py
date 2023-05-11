@@ -369,7 +369,7 @@ class Ui_Dialog(object):
         self.cast_chkbox.setToolTip(
             _translate(
                 "Dialog",
-                "<html><head/><body><p>Check to disable cast the captured snapshot to the main interface.</p></body></html>"
+                "<html><head/><body><p>Check to cast the captured snapshot to the main interface.</p></body></html>"
             ))
         self.cast_chkbox.setText(_translate("Dialog", "Cast"))
         self.pb_lbl.setText(_translate("Dialog", "0:00:00"))
