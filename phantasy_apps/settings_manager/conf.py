@@ -49,7 +49,7 @@ DEFAULT_MACHINE = APP_CONF['LATTICE']['DEFAULT_MACHINE']
 DEFAULT_SEGMENT = APP_CONF['LATTICE']['DEFAULT_SEGMENT']
 
 # others not controlled with config file
-N_SNP_MAX = cycle([10, 20, 50, 100, 'All'])
+N_SNP_MAX = cycle([50, 100, 500, 'All'])
 
 
 def init_user_config():

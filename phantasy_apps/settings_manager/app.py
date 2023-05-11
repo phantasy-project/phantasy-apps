@@ -4104,7 +4104,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self.data_uri))  # other DB_ENGINEs to be supported
         self.nsnp_btn.setVisible(True)
         self.nsnp_btn.click()
-        self.nsnp_btn.click()  # n_snp_max -> 20
+        self.nsnp_btn.click()  # n_snp_max -> 100
         self.db_refresh.connect(
             partial(self.on_data_uri_changed, True, self.data_uri))
         self.db_pull.connect(self.on_pull_data)
