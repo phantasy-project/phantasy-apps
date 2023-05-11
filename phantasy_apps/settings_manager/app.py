@@ -4034,6 +4034,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.beam_display_widget.set_expanded(True)
         self.beam_display_widget.set_allow_clicking_src_btns(False)
         self.toolBar.addWidget(self.beam_display_widget)
+        milli_sleep(500)
 
     def _meta_fetcher_started(self):
         printlog("Start to fetch machine state...")
