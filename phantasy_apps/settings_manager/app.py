@@ -947,6 +947,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.refset_pb.setVisible(False)
         # data refresh pb
         self.refresh_pb.setVisible(False)
+        # db pull pb
+        self.db_pull_pb.setVisible(False)
         # almset pb
         self.alm_set_pb.setVisible(False)
 
@@ -2238,6 +2240,41 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if ndigit != self.ndigit:
             self.ndigit_changed.emit(ndigit)
 
+    def __read_data2frame(self, n: int, d: str):
+        # read data from database to dataframe
+        if n == 'All':
+            _q = "SELECT * FROM snapshot"
+        else:
+            _q = f"SELECT * FROM snapshot ORDER BY id DESC LIMIT {n}"
+
+        def _load_df(i):
+            conn = ensure_connect_db(d)
+            _df = pd.read_sql(_q, conn)
+            conn.close()
+            return _df
+
+        def _load_ready(res):
+            self.df_all_row_tuple = list(res[0].iterrows())
+            self.db_pull.emit()
+
+        def _load_started():
+            self._task_list.append('Pulling snapshots from the database...')
+            self._splash_msg_undone()
+
+        def _load_done():
+            task_name = "Pulling snapshots from the database..."
+            self._task_list.remove(task_name)
+            self._splash_msg("Pulled snapshots from the database.")
+            self._splash_msg_undone()
+
+        _df_loader = DAQT(daq_func=_load_df, daq_seq=range(1))
+        _df_loader.daqStarted.connect(lambda:self.db_pull_pb.setVisible(True))
+        _df_loader.daqStarted.connect(_load_started)
+        _df_loader.resultsReady.connect(_load_ready)
+        _df_loader.daqFinished.connect(_load_done)
+        _df_loader.daqFinished.connect(lambda:self.db_pull_pb.setVisible(False))
+        _df_loader.start()
+
     @pyqtSlot('QString')
     def on_data_uri_changed(self, purge, d):
         # reset snp dock with files in d (recursively)
@@ -2245,16 +2282,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             del self._snp_dock_list[:]
         # DB
         self._db_conn = self._db_conn_pool.setdefault(d, ensure_connect_db(d))
-        if self._n_snp_max == 'All':
-            df_all = pd.read_sql(f"SELECT * FROM snapshot", self._db_conn)
-        else:
-            df_all = pd.read_sql(
-                f"SELECT * FROM snapshot ORDER BY id DESC LIMIT {self._n_snp_max}",
-                self._db_conn)
-        #
-        self.df_all_row_tuple = list(df_all.iterrows())
-        self.db_pull.emit()
         self.data_uri = d
+        #
+        self.__read_data2frame(self._n_snp_max, d)
 
     @pyqtSlot(int)
     def on_ndigit_changed(self, n):
@@ -2913,12 +2943,28 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_pull_data(self):
         """Pull data from database.
         """
+        def _on_db_puller_started():
+            self.db_pull_pb.setRange(0, 100)
+            self.db_pull_pb.setVisible(True)
+            self._task_list.append('Presenting snapshots...')
+            self._splash_msg_undone()
+
+        def _on_db_puller_finished():
+            self.db_pull_pb.setRange(0, 0)
+            self.db_pull_pb.setVisible(False)
+            task_name = "Presenting snapshots..."
+            self._task_list.remove(task_name)
+            self._splash_msg("Snapshots are ready to use.")
+            self._splash_msg_undone()
+
         self.db_puller = DAQT(daq_func=self.on_pull_data_one,
                               daq_seq=self.df_all_row_tuple)
         self.db_puller.daqStarted.connect(self._on_db_pull_started)
-        # self.db_puller.progressUpdated.connect(self._on_db_pull_progressed)
+        self.db_puller.daqStarted.connect(_on_db_puller_started)
+        self.db_puller.progressUpdated.connect(self._on_db_pull_progressed)
         self.db_puller.resultsReady.connect(self._on_db_pull_resultsReady)
-        self.db_puller.finished.connect(self._on_db_pull_finished)
+        self.db_puller.daqFinished.connect(self._on_db_pull_finished)
+        self.db_puller.daqFinished.connect(_on_db_puller_finished)
         self.db_puller.start()
 
     def on_pull_data_one(self, iiter):
@@ -2927,6 +2973,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         return snp_data
 
     def _on_db_pull_progressed(self, f, s):
+        self.db_pull_pb.setValue(int(f * 100))
         printlog(f"DB puller is updating... {f * 100:>5.1f}%, {s}")
 
     def _on_db_pull_started(self):
