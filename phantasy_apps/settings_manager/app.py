@@ -1188,7 +1188,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_filter_btn_group_status_changed(self):
         # Do logic 'or', if True, do global refresh when data refresher is on.
         self._filter_btn_enabled = self.show_warning_dx02_btn.isChecked() \
-                or self.show_warning_dx12_btn.isChecked() or self.show_state_diff_btn.isChecked()
+                or self.show_warning_dx12_btn.isChecked() or self.show_state_diff_btn.isChecked() \
+                or self.show_live_sts_on_btn.isChecked() or self.show_live_sts_off_btn.isChecked()
 
     def resizeEvent(self, e):
         self.resizeDocks([self.snp_dock], [int(self.width() * 0.5)], Qt.Horizontal)
@@ -2961,7 +2962,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def refresh_filter_btns(self, snpdata):
         for btn in (self.show_warning_dx02_btn,
                     self.show_warning_dx12_btn,
-                    self.show_state_diff_btn,):
+                    self.show_state_diff_btn,
+                    self.show_live_sts_off_btn,
+                    self.show_live_sts_on_btn):
             btn.toggled.emit(btn.isChecked())
 
     def on_update_pos_filter(self, snpdata):

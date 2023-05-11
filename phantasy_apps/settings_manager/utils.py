@@ -1028,6 +1028,36 @@ class _SortProxyModel(QSortFilterProxyModel):
         if not state_diff_test:
             return False
 
+        # live state on checked
+        try:
+            if self.filter_live_state_on_enabled:
+                v = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['state']),
+                        PWR_STS_U_ROLE)
+                live_sts_on_test = v == 1
+            else:
+                live_sts_on_test = True
+        except AttributeError:
+            live_sts_on_test = True
+        #
+        if not live_sts_on_test:
+            return False
+
+        # live state off checked
+        try:
+            if self.filter_live_state_off_enabled:
+                v = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['state']),
+                        PWR_STS_U_ROLE)
+                live_sts_off_test = v == 0
+            else:
+                live_sts_off_test = True
+        except AttributeError:
+            live_sts_off_test = True
+        #
+        if not live_sts_off_test:
+            return False
+
         # field test
         try:
             if self.filter_field_enabled:
