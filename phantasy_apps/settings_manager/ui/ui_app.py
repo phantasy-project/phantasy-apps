@@ -14,7 +14,7 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1960, 1400)
+        MainWindow.resize(1960, 1364)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/sm-icons/logo.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -1207,7 +1207,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.adv_frame, 6, 1, 1, 3)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1960, 32))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1960, 31))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -1304,58 +1304,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.setContentsMargins(4, 2, 4, 0)
         self.verticalLayout_7.setSpacing(4)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
-        self.snp_info_frame = QtWidgets.QFrame(self.dockWidgetContents)
-        self.snp_info_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.snp_info_frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.snp_info_frame.setObjectName("snp_info_frame")
-        self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.snp_info_frame)
-        self.horizontalLayout_4.setContentsMargins(2, 2, 2, 2)
-        self.horizontalLayout_4.setSpacing(2)
-        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.label_5 = QtWidgets.QLabel(self.snp_info_frame)
-        self.label_5.setObjectName("label_5")
-        self.horizontalLayout_4.addWidget(self.label_5)
-        self.data_uri_lineEdit = QtWidgets.QLineEdit(self.snp_info_frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.data_uri_lineEdit.sizePolicy().hasHeightForWidth())
-        self.data_uri_lineEdit.setSizePolicy(sizePolicy)
-        self.data_uri_lineEdit.setReadOnly(True)
-        self.data_uri_lineEdit.setObjectName("data_uri_lineEdit")
-        self.horizontalLayout_4.addWidget(self.data_uri_lineEdit)
-        self.snp_new_lbl = QtWidgets.QLabel(self.snp_info_frame)
-        self.snp_new_lbl.setObjectName("snp_new_lbl")
-        self.horizontalLayout_4.addWidget(self.snp_new_lbl)
-        spacerItem4 = QtWidgets.QSpacerItem(40, 20,
-                                            QtWidgets.QSizePolicy.Expanding,
-                                            QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem4)
-        self.snp_refresh_btn = QtWidgets.QToolButton(self.snp_info_frame)
-        icon33 = QtGui.QIcon()
-        icon33.addPixmap(QtGui.QPixmap(":/sm-icons/refresh.png"),
-                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.snp_refresh_btn.setIcon(icon33)
-        self.snp_refresh_btn.setIconSize(QtCore.QSize(24, 24))
-        self.snp_refresh_btn.setAutoRaise(True)
-        self.snp_refresh_btn.setObjectName("snp_refresh_btn")
-        self.horizontalLayout_4.addWidget(self.snp_refresh_btn)
-        self.nsnp_btn = QtWidgets.QPushButton(self.snp_info_frame)
-        self.nsnp_btn.setObjectName("nsnp_btn")
-        self.horizontalLayout_4.addWidget(self.nsnp_btn)
-        self.label_10 = QtWidgets.QLabel(self.snp_info_frame)
-        self.label_10.setObjectName("label_10")
-        self.horizontalLayout_4.addWidget(self.label_10)
-        self.total_snp_lbl = QtWidgets.QLabel(self.snp_info_frame)
-        self.total_snp_lbl.setStyleSheet("QLabel {\n"
-                                         "    font-weight: bold;\n"
-                                         "    color: rgb(0, 0, 255);\n"
-                                         "}")
-        self.total_snp_lbl.setObjectName("total_snp_lbl")
-        self.horizontalLayout_4.addWidget(self.total_snp_lbl)
-        self.verticalLayout_7.addWidget(self.snp_info_frame)
         self.splitter_2 = QtWidgets.QSplitter(self.dockWidgetContents)
         self.splitter_2.setOrientation(QtCore.Qt.Vertical)
         self.splitter_2.setObjectName("splitter_2")
@@ -1396,10 +1344,10 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setContentsMargins(2, 0, 2, 2)
         self.gridLayout_2.setSpacing(2)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        spacerItem5 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_2.addItem(spacerItem5, 1, 4, 1, 1)
+        self.gridLayout_2.addItem(spacerItem4, 1, 4, 1, 1)
         self.select_none_tags_btn = QtWidgets.QToolButton(
             self.tag_filter_frame)
         self.select_none_tags_btn.setIcon(icon31)
@@ -1419,7 +1367,7 @@ class Ui_MainWindow(object):
         self.tag_filter_area.setWidgetResizable(True)
         self.tag_filter_area.setObjectName("tag_filter_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1271, 89))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1225, 93))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tag_filter_area.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_2.addWidget(self.tag_filter_area, 0, 0, 1, 6)
@@ -1478,15 +1426,15 @@ class Ui_MainWindow(object):
         self.ion_filter_area.setObjectName("ion_filter_area")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(
-            0, 0, 632, 89))
+            0, 0, 609, 93))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.ion_filter_area.setWidget(self.scrollAreaWidgetContents_2)
         self.gridLayout_4.addWidget(self.ion_filter_area, 0, 0, 1, 6)
-        spacerItem6 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem5 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_4.addItem(spacerItem6, 1, 4, 1, 1)
+        self.gridLayout_4.addItem(spacerItem5, 1, 4, 1, 1)
         self.select_invert_ions_btn = QtWidgets.QToolButton(
             self.ion_filter_frame)
         self.select_invert_ions_btn.setIcon(icon32)
@@ -1495,6 +1443,49 @@ class Ui_MainWindow(object):
         self.select_invert_ions_btn.setObjectName("select_invert_ions_btn")
         self.gridLayout_4.addWidget(self.select_invert_ions_btn, 1, 2, 1, 1)
         self.gridLayout_5.addWidget(self.splitter, 0, 0, 1, 1)
+        self.snp_info_vbox = QtWidgets.QVBoxLayout()
+        self.snp_info_vbox.setContentsMargins(-1, -1, 0, -1)
+        self.snp_info_vbox.setSpacing(2)
+        self.snp_info_vbox.setObjectName("snp_info_vbox")
+        self.total_snp_lbl = QtWidgets.QLabel(self.snp_tag_ion_frame)
+        self.total_snp_lbl.setStyleSheet("QLabel {\n"
+                                         "    font-weight: bold;\n"
+                                         "    color: #2979FF;\n"
+                                         "    font-size: 15pt;\n"
+                                         "    border: 1px solid gray;\n"
+                                         "}")
+        self.total_snp_lbl.setAlignment(QtCore.Qt.AlignCenter)
+        self.total_snp_lbl.setObjectName("total_snp_lbl")
+        self.snp_info_vbox.addWidget(self.total_snp_lbl)
+        self.snp_refresh_btn = QtWidgets.QToolButton(self.snp_tag_ion_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(
+            self.snp_refresh_btn.sizePolicy().hasHeightForWidth())
+        self.snp_refresh_btn.setSizePolicy(sizePolicy)
+        icon33 = QtGui.QIcon()
+        icon33.addPixmap(QtGui.QPixmap(":/sm-icons/refresh.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.snp_refresh_btn.setIcon(icon33)
+        self.snp_refresh_btn.setIconSize(QtCore.QSize(48, 48))
+        self.snp_refresh_btn.setAutoRaise(False)
+        self.snp_refresh_btn.setObjectName("snp_refresh_btn")
+        self.snp_info_vbox.addWidget(self.snp_refresh_btn)
+        self.nsnp_btn = QtWidgets.QToolButton(self.snp_tag_ion_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.nsnp_btn.sizePolicy().hasHeightForWidth())
+        self.nsnp_btn.setSizePolicy(sizePolicy)
+        self.nsnp_btn.setIconSize(QtCore.QSize(24, 24))
+        self.nsnp_btn.setAutoRaise(False)
+        self.nsnp_btn.setObjectName("nsnp_btn")
+        self.snp_info_vbox.addWidget(self.nsnp_btn)
+        self.gridLayout_5.addLayout(self.snp_info_vbox, 0, 1, 1, 1)
         self.snp_view_frame = QtWidgets.QFrame(self.splitter_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -1541,10 +1532,10 @@ class Ui_MainWindow(object):
         self.snp_collapse_btn.setAutoRaise(True)
         self.snp_collapse_btn.setObjectName("snp_collapse_btn")
         self.gridLayout_6.addWidget(self.snp_collapse_btn, 0, 1, 1, 1)
-        spacerItem7 = QtWidgets.QSpacerItem(769, 20,
+        spacerItem6 = QtWidgets.QSpacerItem(769, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_6.addItem(spacerItem7, 0, 2, 1, 1)
+        self.gridLayout_6.addItem(spacerItem6, 0, 2, 1, 1)
         self.filter_date_chkbox = QtWidgets.QToolButton(self.snp_view_frame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -1707,10 +1698,10 @@ class Ui_MainWindow(object):
         self.setlog_count_lbl = QtWidgets.QLabel(self.dockWidgetContents_2)
         self.setlog_count_lbl.setObjectName("setlog_count_lbl")
         self.horizontalLayout_5.addWidget(self.setlog_count_lbl)
-        spacerItem8 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem7 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_5.addItem(spacerItem8)
+        self.horizontalLayout_5.addItem(spacerItem7)
         self.purge_revert_btn = QtWidgets.QPushButton(
             self.dockWidgetContents_2)
         self.purge_revert_btn.setObjectName("purge_revert_btn")
@@ -1735,7 +1726,7 @@ class Ui_MainWindow(object):
         self.revert_area.setObjectName("revert_area")
         self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_3.setGeometry(
-            QtCore.QRect(0, 0, 1923, 89))
+            QtCore.QRect(0, 0, 1924, 93))
         self.scrollAreaWidgetContents_3.setObjectName(
             "scrollAreaWidgetContents_3")
         self.gridLayout_3 = QtWidgets.QGridLayout(
@@ -1960,8 +1951,6 @@ class Ui_MainWindow(object):
             MainWindow.on_snp_filter_date_range_updated)  # type: ignore
         self.snp_note_filter_lineEdit.editingFinished.connect(
             MainWindow.on_snp_filter_note_updated)  # type: ignore
-        self.nsnp_btn.clicked.connect(
-            MainWindow.on_update_nsnp)  # type: ignore
         self.actionManage_Database.triggered.connect(
             MainWindow.onManageDB)  # type: ignore
         self.show_disconnected_btn.toggled['bool'].connect(
@@ -2002,6 +1991,8 @@ class Ui_MainWindow(object):
             MainWindow.onImport)  # type: ignore
         self.show_change_reason_input_chkbox.toggled['bool'].connect(
             self.apply_reason_lineEdit.setVisible)  # type: ignore
+        self.nsnp_btn.clicked.connect(
+            MainWindow.on_update_nsnp)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
@@ -2308,25 +2299,6 @@ class Ui_MainWindow(object):
         self.menu_View.setTitle(_translate("MainWindow", "&View"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.snp_dock.setWindowTitle(_translate("MainWindow", "Snapshots"))
-        self.label_5.setText(_translate("MainWindow", "Working Database"))
-        self.snp_new_lbl.setToolTip(
-            _translate(
-                "MainWindow",
-                "Snapshot files have been updated in the last 1 minute."))
-        self.snp_new_lbl.setText(_translate("MainWindow", "snp_sts"))
-        self.snp_refresh_btn.setToolTip(
-            _translate("MainWindow", "Refresh snapshots."))
-        self.snp_refresh_btn.setText(_translate("MainWindow", "..."))
-        self.nsnp_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Click to update the total number of snapshots to display, press refresh button to update snapshot list.</p></body></html>"
-            ))
-        self.nsnp_btn.setText(_translate("MainWindow", "N-SNP"))
-        self.label_10.setText(_translate("MainWindow", "Total"))
-        self.total_snp_lbl.setText(
-            _translate("MainWindow",
-                       "<html><head/><body><p>0</p></body></html>"))
         self.select_none_tags_btn.setToolTip(
             _translate("MainWindow", "Select none tags."))
         self.select_none_tags_btn.setText(
@@ -2349,6 +2321,21 @@ class Ui_MainWindow(object):
         self.select_invert_ions_btn.setToolTip(
             _translate("MainWindow", "Invert the ion selections."))
         self.select_invert_ions_btn.setText(_translate("MainWindow", "..."))
+        self.total_snp_lbl.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>The total number of fetched snapshots.</p></body></html>"
+            ))
+        self.total_snp_lbl.setText(_translate("MainWindow", "0000"))
+        self.snp_refresh_btn.setToolTip(
+            _translate("MainWindow", "Refresh snapshots."))
+        self.snp_refresh_btn.setText(_translate("MainWindow", "..."))
+        self.nsnp_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Click to update the total number of snapshots to display, press refresh button to update snapshot list.</p></body></html>"
+            ))
+        self.nsnp_btn.setText(_translate("MainWindow", "20"))
         self.snp_expand_btn.setToolTip(
             _translate(
                 "MainWindow",
