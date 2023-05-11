@@ -2241,6 +2241,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.ndigit_changed.emit(ndigit)
 
     def __read_data2frame(self, n: int, d: str):
+        printlog("Machine bound: ", self.beam_display_widget.get_bound_info())
         # read data from database to dataframe
         if n == 'All':
             _q = "SELECT * FROM snapshot"
