@@ -2431,11 +2431,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 worker.meta_signal1.emit((tune_alm_idx, tune_alm_v, Qt.UserRole))
 
         elem = self._lat[o.ename]
-        (_px_name, _tt), (_px_role, _tt_role) = get_pwr_sts(elem, o.name)
         # emit signal to update power status
-        for _i, _r in zip((_px_name, _tt), (_px_role, _tt_role)):
-            if _r == Qt.DecorationRole:
-                _i = QPixmap(_i).scaled(PX_SIZE, PX_SIZE, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+        for _i, _r in get_pwr_sts(elem, o.name):
             worker.meta_signal1.emit((sts_idx, _i, _r))
 
         #
@@ -2911,6 +2908,26 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if m is None:
             return
         m.filter_state_diff_enabled = is_checked
+        self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
+    def on_show_live_state_on_items(self, is_checked: bool):
+        # show all item that live state is on (green)
+        self.filter_btn_group_status_changed.emit()
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_live_state_on_enabled = is_checked
+        self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
+    def on_show_live_state_off_items(self, is_checked: bool):
+        # show all item that live state is off (ref)
+        self.filter_btn_group_status_changed.emit()
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_live_state_off_enabled = is_checked
         self.filter_lineEdit.editingFinished.emit()
 
     @pyqtSlot(bool)

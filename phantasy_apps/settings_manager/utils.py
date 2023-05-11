@@ -194,6 +194,81 @@ QToolButton:checked {{
     border-bottom: 2px solid rgb(50, 105, 255);
 }}
 """
+#
+PWR_STS_U_ROLE = Qt.UserRole + 5
+#
+SM_PX_OFF_PATH = ":/sm-icons/off.png"
+SM_PX_ON_PATH = ":/sm-icons/on.png"
+SM_PX_UNKNOWN_PATH = ":/sm-icons/unknown.png"
+#
+STS_PX_MAP = {
+"nan": (SM_PX_UNKNOWN_PATH, -10), # when first added into the list
+
+"Not a powered device, SRF cavity, nor other blocking devices.": (SM_PX_UNKNOWN_PATH, -10),
+"Power is UNKNOWN": (SM_PX_UNKNOWN_PATH, -10),
+"Non-existing": (SM_PX_UNKNOWN_PATH, -10), # the snapshot that does not saved last device state data (initial version of the data structure)
+
+"Attenuator(s) IN": (SM_PX_OFF_PATH, 0),
+"Attenuator(s) OUT": (SM_PX_ON_PATH, 1),
+"Attenuator device is IN": (SM_PX_OFF_PATH, 0),
+"Attenuator device is OUT": (SM_PX_ON_PATH, 1),
+
+"Aperture device is OUT": (SM_PX_ON_PATH, 1),
+"Aperture device is IN": (SM_PX_OFF_PATH, 0),
+
+"PPAC is OUT": (SM_PX_ON_PATH, 1),
+"PPAC is IN": (SM_PX_OFF_PATH, 0),
+
+"Beam dump is OUT": (SM_PX_ON_PATH, 1),
+"Beam dump is IN": (SM_PX_OFF_PATH, 0),
+
+"Energy loss detector is OUT": (SM_PX_ON_PATH, 1),
+"Energy loss detector is IN": (SM_PX_OFF_PATH, 0),
+
+"Timing detector is OUT": (SM_PX_ON_PATH, 1),
+"Timing detector is IN": (SM_PX_OFF_PATH, 0),
+
+"Slit is OUT": (SM_PX_ON_PATH, 1),
+"Slit is IN": (SM_PX_OFF_PATH, 0),
+
+"DB2 viewer/degrader is OUT": (SM_PX_ON_PATH, 1),
+"DB3 viewer/wedge is OUT": (SM_PX_ON_PATH, 1),
+"DB2 Viewer is IN": (SM_PX_OFF_PATH, 0),
+"DB2 Degrader is IN": (SM_PX_OFF_PATH, 0),
+"DB3 Viewer is IN": (SM_PX_OFF_PATH, 0),
+"DB3 Wedge#1 is IN": (SM_PX_OFF_PATH, 0),
+"DB3 Wedge#2 is IN": (SM_PX_OFF_PATH, 0),
+"DB3 Wedge#3 is IN": (SM_PX_OFF_PATH, 0),
+
+"Cavity phase is LOCKED": (SM_PX_ON_PATH, 1),
+"Device is Locked": (SM_PX_ON_PATH, 1),
+"Cavity phase is UNLOCKED": (SM_PX_OFF_PATH, 0),
+"Device is Unlocked": (SM_PX_OFF_PATH, 0),
+
+"Power is ON": (SM_PX_ON_PATH, 1),
+"Power is OFF": (SM_PX_OFF_PATH, 0),
+
+"Chopper state: Invalid Input": (":/sm-icons/chp_invalid.png", -2),
+"Chopper state: Off": (":/sm-icons/chp_off.png", -1),
+"Chopper state: Blocking": (":/sm-icons/chp_blocking.png", 0),
+"Chopper state: Running": (":/sm-icons/chp_running.png", 1),
+
+"Ion source is active": (SM_PX_ON_PATH, 1),
+"Ion source is inactive": (SM_PX_OFF_PATH, 0)
+}
+_STS_PX_CACHE = {}
+
+def set_device_state_item(sts_str: str):
+    """Return QStandardItem object based on the input device state string (*sts_str*).
+    """
+    item = QStandardItem('')
+    sts_px_path, sts_u = STS_PX_MAP.get(sts_str, (SM_PX_UNKNOWN_PATH, -10))
+    px = _STS_PX_CACHE.setdefault(sts_px_path,
+            QPixmap(sts_px_path).scaled(PX_SIZE, PX_SIZE, Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
+    item.setData(px, Qt.DecorationRole)
+    item.setData(sts_str, Qt.ToolTipRole)
+    item.setData(sts_u, PWR_STS_U_ROLE)
+    return item
 
 
 def get_foi_dict(filepath):
@@ -666,6 +741,10 @@ class _SortProxyModel(QSortFilterProxyModel):
 
         # state diff
         self.filter_state_diff_enabled = False
+        # live state on
+        self.filter_live_state_on_enabled = False
+        # live state off
+        self.filter_live_state_off_enabled = False
 
         #
         self._filter_tuples = None
@@ -1816,69 +1895,6 @@ class _SnpProxyModel(QSortFilterProxyModel):
         return True
 
 
-STS_PX_MAP = {
-"nan": ":/sm-icons/unknown.png", # when first added into the list
-
-"Not a powered device, SRF cavity, nor other blocking devices.": ":/sm-icons/unknown.png",
-"Power is UNKNOWN": ":/sm-icons/unknown.png",
-"Non-existing": ":/sm-icons/unknown.png", # the snapshot that does not saved last device state data (initial version of the data structure)
-
-"Attenuator(s) IN": ":/sm-icons/off.png",
-"Attenuator(s) OUT": ":/sm-icons/on.png",
-"Attenuator device is IN": ":/sm-icons/off.png",
-"Attenuator device is OUT": ":/sm-icons/on.png",
-
-"Aperture device is OUT": ":/sm-icons/on.png",
-"Aperture device is IN": ":/sm-icons/off.png",
-
-"PPAC is OUT": ":/sm-icons/on.png",
-"PPAC is IN": ":/sm-icons/off.png",
-
-"Beam dump is OUT": ":/sm-icons/on.png",
-"Beam dump is IN": ":/sm-icons/off.png",
-
-"Energy loss detector is OUT": ":/sm-icons/on.png",
-"Energy loss detector is IN": ":/sm-icons/off.png",
-
-"Timing detector is OUT": ":/sm-icons/on.png",
-"Timing detector is IN": ":/sm-icons/off.png",
-
-"Slit is OUT": ":/sm-icons/on.png",
-"Slit is IN": ":/sm-icons/off.png",
-
-"DB2 viewer/degrader is OUT": ":/sm-icons/on.png",
-"DB3 viewer/wedge is OUT": ":/sm-icons/on.png",
-
-"Cavity phase is LOCKED": ":/sm-icons/on.png",
-"Device is Locked": ":/sm-icons/on.png",
-"Cavity phase is UNLOCKED": ":/sm-icons/off.png",
-"Device is Unlocked": ":/sm-icons/off.png",
-
-"Power is ON": ":/sm-icons/on.png",
-"Power is OFF": ":/sm-icons/off.png",
-
-"Chopper state: Invalid Input": ":/sm-icons/chp_invalid.png",
-"Chopper state: Off": ":/sm-icons/chp_off.png",
-"Chopper state: Blocking": ":/sm-icons/chp_blocking.png",
-"Chopper state: Running": ":/sm-icons/chp_running.png",
-
-"Ion source is active": ":/sm-icons/on.png",
-"Ion source is inactive": ":/sm-icons/off.png",
-}
-def set_device_state_item(sts_str):
-    """Return QStandardItem object based on the input device state string (*sts_str*).
-    """
-    item = QStandardItem('')
-    sts_px_path = STS_PX_MAP.get(sts_str)
-    if sts_px_path is not None:
-        px = QPixmap(sts_px_path).scaled(PX_SIZE, PX_SIZE)
-        item.setData(px, Qt.DecorationRole)
-    else:
-        item.setData(sts_str, Qt.DisplayRole)
-    item.setData(sts_str, Qt.ToolTipRole)
-    return item
-
-
 TS_FMT = "%Y-%m-%dT%H:%M:%S.%f"
 class SetLogMessager:
     """Message for set log.
@@ -1956,51 +1972,17 @@ class EffSetLogMsgContainer(QObject):
         return len(self._items)
 
 
-_pwr_on_px = ":/sm-icons/on.png"
-_pwr_off_px = ":/sm-icons/off.png"
-_pwr_unknown_px = ":/sm-icons/unknown.png"
-
-# blocking beam or not
-_blocking_px = ":/sm-icons/off.png"
-_non_blocking_px = ":/sm-icons/on.png"
-
-# chopper
-_chp_invalud_px = ":/sm-icons/chp_invalid.png"
-_chp_off_px = ":/sm-icons/chp_off.png"
-_chp_blocking_px = ":/sm-icons/chp_blocking.png"
-_chp_running_px = ":/sm-icons/chp_running.png"
-_chp_px_tuple = (_chp_invalud_px, _chp_off_px, _chp_blocking_px, _chp_running_px)
-
-# aperture
-_ap_in_px, _ap_out_px = _blocking_px, _non_blocking_px
-_ap_in_px_tuple = (_ap_out_px, _ap_in_px)
-
-# position monitor (PPAC)
-_pm_in_px_tuple = (_non_blocking_px, _blocking_px)
-
-# ion active or not
-_ion_inactive_px = ":/sm-icons/off.png"
-_ion_active_px = ":/sm-icons/on.png"
-_ion_act_px_tuple = (_ion_inactive_px, _ion_active_px)
-
-# attenuator
-_att_in_px, _att_out_px = _blocking_px, _non_blocking_px
-_att_out_px_tuple = (_att_in_px, _att_out_px)
-
 def get_pwr_sts(elem, fname: str):
-    """Return a tuple of (pixmap(image path), tooltip) and the roles for each, from a high-level
-    element and field name.
+    """Return a tuple of (QPixmap, tooltip, u_val) and the roles for each, from a high-level
+    element and field name as the device power state.
 
     Returns
     -------
-    r : tuple
-        A tuple of ((px, tt), (px_role, tt_tole)).
+    r : iterable
+        Zipped (px, tt, uu) and (px_role, tt_tole, u_role).
     """
     #
-    pwr_is_on = 'Unknown'
-    px = _pwr_unknown_px
     tt = "Not a powered device, SRF cavity, nor other blocking devices."
-    px_role = Qt.DecorationRole
     if elem.family == 'CAV':
         r = re.match(r".*([1-3]+).*", fname)
         if r is not None:  # D0987
@@ -2011,20 +1993,16 @@ def get_pwr_sts(elem, fname: str):
             pwr_fld = elem.get_field(_fname)
             pwr_is_on = pwr_fld.value
         if pwr_is_on == 1.0:
-            px = _pwr_on_px
             tt = "Cavity phase is LOCKED"
         elif pwr_is_on == 0.0:
-            px = _pwr_off_px
             tt = "Cavity phase is UNLOCKED"
     elif elem.family == "CHP":
         sts = elem.get_field('STATE')
         sts_val_int = sts.value
         sts_val_str = CHP_STS_TUPLE[sts_val_int]
         tt = f"Chopper state: {sts_val_str}"
-        px = _chp_px_tuple[sts_val_int]
     elif elem.family == "AP":
         in_sts = elem.IN_STS
-        px = _ap_in_px_tuple[in_sts]
         if in_sts == 0:
             tt = "Aperture device is OUT"
         else:
@@ -2032,7 +2010,6 @@ def get_pwr_sts(elem, fname: str):
     elif elem.family == "PM":
         if 'IN_STS' in elem.fields:
             in_sts = elem.IN_STS
-            px = _pm_in_px_tuple[in_sts]
             if in_sts == 0:
                 tt = "PPAC is OUT"
             else:
@@ -2040,7 +2017,6 @@ def get_pwr_sts(elem, fname: str):
     elif elem.family == "ION":
         if 'ACT' in elem.fields:
             act_sts = int(elem.ACT)
-            px = _ion_act_px_tuple[act_sts]
             if act_sts == 0:
                 tt = "Ion source is inactive"
             else:
@@ -2048,7 +2024,6 @@ def get_pwr_sts(elem, fname: str):
     elif elem.family == "BD":
         if 'IN_STS' in elem.fields:
             in_sts = elem.IN_STS
-            px = _pm_in_px_tuple[in_sts]
             if in_sts == 0:
                 tt = "Beam dump is OUT"
             else:
@@ -2056,7 +2031,6 @@ def get_pwr_sts(elem, fname: str):
     elif elem.family == "ELD":
         if 'IN_STS' in elem.fields:
             in_sts = elem.IN_STS
-            px = _pm_in_px_tuple[in_sts]
             if in_sts == 0:
                 tt = "Energy loss detector is OUT"
             else:
@@ -2064,7 +2038,6 @@ def get_pwr_sts(elem, fname: str):
     elif elem.family == "TID":
         if 'IN_STS' in elem.fields:
             in_sts = elem.IN_STS
-            px = _pm_in_px_tuple[in_sts]
             if in_sts == 0:
                 tt = "Timing detector is OUT"
             else:
@@ -2074,33 +2047,24 @@ def get_pwr_sts(elem, fname: str):
         if elem.name == "FS_F2S1:PPOT_D1563":
             if pos == 0:
                 tt = "DB2 viewer/degrader is OUT"
-                px = _pwr_on_px  # green
             elif pos == 2:
                 tt = "DB2 Viewer is IN"
-                px = _pwr_off_px # red
             elif pos == 3:
                 tt = "DB2 Degrader is IN"
-                px = _pwr_off_px # red
         elif elem.name == "FS_F2S2:PPOT_D1660":
             if pos == 0:
                 tt = "DB3 viewer/wedge is OUT"
-                px = _pwr_on_px  # green
             elif pos == 2:
                 tt = "DB3 Viewer is IN"
-                px = _pwr_off_px # red
             elif pos == 3:
                 tt = "DB3 Wedge#1 is IN"
-                px = _pwr_off_px # red
             elif pos == 4:
                 tt = "DB3 Wedge#2 is IN"
-                px = _pwr_off_px # red
             elif pos == 5:
                 tt = "DB3 Wedge#3 is IN"
-                px = _pwr_off_px # red
     elif elem.family == "ATT":
         if 'OUT_STS' in elem.fields:
             out_sts = elem.OUT_STS
-            px = _att_out_px_tuple[out_sts]
             if out_sts == 0:
                 tt = "Attenuator device is IN"
             else:
@@ -2108,22 +2072,19 @@ def get_pwr_sts(elem, fname: str):
         elif 'ATT_TOTAL' in elem.fields:
             att_val = elem.ATT_TOTAL
             if att_val > 1:
-                px = _att_out_px_tuple[0]
                 tt = "Attenuator(s) IN"
             else:
-                px = _att_out_px_tuple[1]
                 tt = "Attenuator(s) OUT"
-    elif elem.family == "PTA":
-        sts = elem.get_field('TGT')
-        sts_val_int = sts.value
-        sts_val_str = TGT_STS_TUPLE[sts_val_int]
-        tt = f"Target state: {sts_val_str}"
-        px_role = Qt.DisplayRole
-        px = sts_val_str
+    #elif elem.family == "PTA":
+    #    sts = elem.get_field('TGT')
+    #    sts_val_int = sts.value
+    #    sts_val_str = TGT_STS_TUPLE[sts_val_int]
+    #    tt = f"Target state: {sts_val_str}"
+    #    px_role = Qt.DisplayRole
+    #    px = sts_val_str
     elif elem.family == "SLT":
         if 'IN_STS' in elem.fields:
             in_sts = elem.IN_STS
-            px = _pm_in_px_tuple[in_sts]
             if in_sts == 0:
                 tt = "Slit is OUT"
             else:
@@ -2139,12 +2100,13 @@ def get_pwr_sts(elem, fname: str):
             pwr_is_on = pwr_fld.value
 
             if pwr_is_on == 1.0:
-                px = _pwr_on_px
                 tt = "Power is ON"
             elif pwr_is_on == 0.0:
-                px = _pwr_off_px
                 tt = "Power is OFF"
-    return (px, tt), (px_role, Qt.ToolTipRole)
+    px_path, u = STS_PX_MAP.get(tt)
+    px_obj = _STS_PX_CACHE.setdefault(tt,
+            QPixmap(px_path).scaled(PX_SIZE, PX_SIZE, Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
+    return zip((px_obj, tt, u), (Qt.DecorationRole, Qt.ToolTipRole, PWR_STS_U_ROLE))
 
 
 # postsnp isrc cbb -> beam species display widget pv_conf_map
