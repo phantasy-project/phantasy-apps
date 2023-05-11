@@ -978,11 +978,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for o in (self.findtext_lbl, self.findtext_lineEdit):
             o.setVisible(False)
 
-        # snp wdir new?
-        self.snp_new_lbl.setPixmap(
-            QPixmap(":/sm-icons/new.png").scaled(PX_SIZE, PX_SIZE))
-        self.snp_new_lbl.setVisible(False)
-
         # tag, ions filter buttons
         self.select_all_ions_btn.clicked.connect(
             partial(self.on_check_snp_filters, "ion", "all"))
@@ -3679,17 +3674,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             cnt = doc.lineCount()
         self.setlog_count_lbl.setText(str(cnt))
 
-    def on_wdir_new(self, path):
-        self.snp_new_lbl.setVisible(True)
-        self.on_data_uri_changed(True, self.data_uri)
-        # show new snapshots icon for 1 min
-        delayed_exec(lambda: self.snp_new_lbl.setVisible(False), 60000)
-
     @pyqtSlot()
     def on_refresh_snp(self):
         # refresh snp as wdir is updated.
         self.on_data_uri_changed(True, self.data_uri)
-        self.snp_new_lbl.setVisible(False)
 
     def _splash_msg_undone(self):
         delayed_exec(lambda: self._splash_w.showMessage("\n".join(self._task_list),
