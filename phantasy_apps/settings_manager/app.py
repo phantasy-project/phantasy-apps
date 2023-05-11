@@ -2943,13 +2943,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_pull_data(self):
         """Pull data from database.
         """
-        def _on_db_puller_started():
+        def _on_pull_data_one(iiter):
+            idx, irow = iiter
+            return read_data(irow, 'sql')
+
+        def _on_db_pull_started():
             self.db_pull_pb.setRange(0, 100)
             self.db_pull_pb.setVisible(True)
             self._task_list.append('Presenting snapshots...')
             self._splash_msg_undone()
 
-        def _on_db_puller_finished():
+        def _on_db_pull_progressed(f, s):
+            self.db_pull_pb.setValue(int(f * 100))
+
+        def _on_db_pull_finished():
             self.db_pull_pb.setRange(0, 0)
             self.db_pull_pb.setVisible(False)
             task_name = "Presenting snapshots..."
@@ -2957,40 +2964,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._splash_msg("Snapshots are ready to use.")
             self._splash_msg_undone()
 
-        self.db_puller = DAQT(daq_func=self.on_pull_data_one,
-                              daq_seq=self.df_all_row_tuple)
-        self.db_puller.daqStarted.connect(self._on_db_pull_started)
-        self.db_puller.daqStarted.connect(_on_db_puller_started)
-        self.db_puller.progressUpdated.connect(self._on_db_pull_progressed)
-        self.db_puller.resultsReady.connect(self._on_db_pull_resultsReady)
-        self.db_puller.daqFinished.connect(self._on_db_pull_finished)
-        self.db_puller.daqFinished.connect(_on_db_puller_finished)
-        self.db_puller.start()
+        def _on_db_pull_resultsReady(res):
+            self._snp_dock_list = [i for i in res if i is not None]
+            n = len(self._snp_dock_list)
+            self.total_snp_lbl.setText(str(n))
+            self.update_snp_dock_view()
+            # current snp
+            if self._current_snpdata is not None:
+                self.snp_loaded.emit(self._current_snpdata)
+            self.snp_filters_updated.emit()
+            printlog("DB puller is done...")
 
-    def on_pull_data_one(self, iiter):
-        idx, irow = iiter
-        snp_data = read_data(irow, 'sql')
-        return snp_data
-
-    def _on_db_pull_progressed(self, f, s):
-        self.db_pull_pb.setValue(int(f * 100))
-        printlog(f"DB puller is updating... {f * 100:>5.1f}%, {s}")
-
-    def _on_db_pull_started(self):
-        printlog("DB puller is working...")
-
-    def _on_db_pull_resultsReady(self, res):
-        self._snp_dock_list = [i for i in res if i is not None]
-
-    def _on_db_pull_finished(self):
-        n = len(self._snp_dock_list)
-        self.total_snp_lbl.setText(str(n))
-        self.update_snp_dock_view()
-        # current snp
-        if self._current_snpdata is not None:
-            self.snp_loaded.emit(self._current_snpdata)
-        self.snp_filters_updated.emit()
-        printlog("DB puller is done...")
+        _db_puller = DAQT(daq_func=_on_pull_data_one, daq_seq=self.df_all_row_tuple)
+        _db_puller.daqStarted.connect(_on_db_pull_started)
+        _db_puller.progressUpdated.connect(_on_db_pull_progressed)
+        _db_puller.resultsReady.connect(_on_db_pull_resultsReady)
+        _db_puller.daqFinished.connect(_on_db_pull_finished)
+        _db_puller.start()
 
     @pyqtSlot(float, 'QString')
     def _on_data_refresh_progressed(self, per, str_idx):
