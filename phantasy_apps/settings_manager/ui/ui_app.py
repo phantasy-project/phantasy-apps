@@ -1409,7 +1409,7 @@ class Ui_MainWindow(object):
         self.tag_filter_area.setWidgetResizable(True)
         self.tag_filter_area.setObjectName("tag_filter_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1222, 99))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1222, 89))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tag_filter_area.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_2.addWidget(self.tag_filter_area, 0, 0, 1, 6)
@@ -1468,7 +1468,7 @@ class Ui_MainWindow(object):
         self.ion_filter_area.setObjectName("ion_filter_area")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(
-            0, 0, 607, 99))
+            0, 0, 607, 89))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.ion_filter_area.setWidget(self.scrollAreaWidgetContents_2)
@@ -1527,34 +1527,6 @@ class Ui_MainWindow(object):
         self.nsnp_btn.setAutoRaise(False)
         self.nsnp_btn.setObjectName("nsnp_btn")
         self.snp_info_vbox.addWidget(self.nsnp_btn)
-        self.db_pull_pb = QtWidgets.QProgressBar(self.snp_tag_ion_frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.db_pull_pb.sizePolicy().hasHeightForWidth())
-        self.db_pull_pb.setSizePolicy(sizePolicy)
-        self.db_pull_pb.setMinimumSize(QtCore.QSize(70, 10))
-        self.db_pull_pb.setMaximumSize(QtCore.QSize(70, 10))
-        self.db_pull_pb.setStyleSheet("QProgressBar {\n"
-                                      "    border: 1px solid gray;\n"
-                                      "    border-radius: 1px;\n"
-                                      "    text-align: center;\n"
-                                      "}\n"
-                                      "\n"
-                                      "QProgressBar::chunk {\n"
-                                      "    background-color: #90CAF9;\n"
-                                      "    width: 30px;\n"
-                                      "    margin: 1px;\n"
-                                      "}")
-        self.db_pull_pb.setMaximum(0)
-        self.db_pull_pb.setProperty("value", 0)
-        self.db_pull_pb.setAlignment(QtCore.Qt.AlignBottom
-                                     | QtCore.Qt.AlignLeading
-                                     | QtCore.Qt.AlignLeft)
-        self.db_pull_pb.setObjectName("db_pull_pb")
-        self.snp_info_vbox.addWidget(self.db_pull_pb)
         self.gridLayout_5.addLayout(self.snp_info_vbox, 0, 1, 1, 1)
         self.snp_view_frame = QtWidgets.QFrame(self.splitter_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -1591,39 +1563,6 @@ class Ui_MainWindow(object):
         self.snp_expand_btn.setAutoRaise(True)
         self.snp_expand_btn.setObjectName("snp_expand_btn")
         self.gridLayout_6.addWidget(self.snp_expand_btn, 0, 0, 1, 1)
-        self.snp_collapse_btn = QtWidgets.QToolButton(self.snp_view_frame)
-        icon37 = QtGui.QIcon()
-        icon37.addPixmap(QtGui.QPixmap(":/sm-icons/collapse.png"),
-                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.snp_collapse_btn.setIcon(icon37)
-        self.snp_collapse_btn.setIconSize(QtCore.QSize(24, 24))
-        self.snp_collapse_btn.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon)
-        self.snp_collapse_btn.setAutoRaise(True)
-        self.snp_collapse_btn.setObjectName("snp_collapse_btn")
-        self.gridLayout_6.addWidget(self.snp_collapse_btn, 0, 1, 1, 1)
-        spacerItem6 = QtWidgets.QSpacerItem(769, 20,
-                                            QtWidgets.QSizePolicy.Expanding,
-                                            QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_6.addItem(spacerItem6, 0, 2, 1, 1)
-        self.filter_date_chkbox = QtWidgets.QToolButton(self.snp_view_frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.filter_date_chkbox.sizePolicy().hasHeightForWidth())
-        self.filter_date_chkbox.setSizePolicy(sizePolicy)
-        icon38 = QtGui.QIcon()
-        icon38.addPixmap(QtGui.QPixmap(":/sm-icons/calendar.png"),
-                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.filter_date_chkbox.setIcon(icon38)
-        self.filter_date_chkbox.setIconSize(QtCore.QSize(24, 24))
-        self.filter_date_chkbox.setCheckable(True)
-        self.filter_date_chkbox.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon)
-        self.filter_date_chkbox.setObjectName("filter_date_chkbox")
-        self.gridLayout_6.addWidget(self.filter_date_chkbox, 0, 3, 1, 1)
         self.dateEdit1 = QtWidgets.QDateEdit(self.snp_view_frame)
         self.dateEdit1.setEnabled(True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -1638,32 +1577,7 @@ class Ui_MainWindow(object):
         self.dateEdit1.setMinimumDate(QtCore.QDate(2000, 1, 1))
         self.dateEdit1.setCalendarPopup(False)
         self.dateEdit1.setObjectName("dateEdit1")
-        self.gridLayout_6.addWidget(self.dateEdit1, 0, 4, 1, 1)
-        self.daterange_lbl = QtWidgets.QLabel(self.snp_view_frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.daterange_lbl.sizePolicy().hasHeightForWidth())
-        self.daterange_lbl.setSizePolicy(sizePolicy)
-        self.daterange_lbl.setObjectName("daterange_lbl")
-        self.gridLayout_6.addWidget(self.daterange_lbl, 0, 5, 1, 1)
-        self.dateEdit2 = QtWidgets.QDateEdit(self.snp_view_frame)
-        self.dateEdit2.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.dateEdit2.sizePolicy().hasHeightForWidth())
-        self.dateEdit2.setSizePolicy(sizePolicy)
-        self.dateEdit2.setReadOnly(False)
-        self.dateEdit2.setMaximumDate(QtCore.QDate(2099, 12, 31))
-        self.dateEdit2.setMinimumDate(QtCore.QDate(2000, 1, 1))
-        self.dateEdit2.setCalendarPopup(False)
-        self.dateEdit2.setObjectName("dateEdit2")
-        self.gridLayout_6.addWidget(self.dateEdit2, 0, 6, 1, 1)
+        self.gridLayout_6.addWidget(self.dateEdit1, 0, 5, 1, 1)
         self.daterange_picker_btn = QtWidgets.QToolButton(self.snp_view_frame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -1674,26 +1588,11 @@ class Ui_MainWindow(object):
         self.daterange_picker_btn.setSizePolicy(sizePolicy)
         self.daterange_picker_btn.setCheckable(False)
         self.daterange_picker_btn.setObjectName("daterange_picker_btn")
-        self.gridLayout_6.addWidget(self.daterange_picker_btn, 0, 7, 1, 1)
-        self.filter_note_chkbox = QtWidgets.QToolButton(self.snp_view_frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.filter_note_chkbox.sizePolicy().hasHeightForWidth())
-        self.filter_note_chkbox.setSizePolicy(sizePolicy)
-        icon39 = QtGui.QIcon()
-        icon39.addPixmap(QtGui.QPixmap(":/sm-icons/comment.png"),
-                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.filter_note_chkbox.setIcon(icon39)
-        self.filter_note_chkbox.setIconSize(QtCore.QSize(24, 24))
-        self.filter_note_chkbox.setCheckable(True)
-        self.filter_note_chkbox.setChecked(False)
-        self.filter_note_chkbox.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon)
-        self.filter_note_chkbox.setObjectName("filter_note_chkbox")
-        self.gridLayout_6.addWidget(self.filter_note_chkbox, 0, 8, 1, 1)
+        self.gridLayout_6.addWidget(self.daterange_picker_btn, 0, 8, 1, 1)
+        self.snp_filter_ctrls_hbox = QtWidgets.QHBoxLayout()
+        self.snp_filter_ctrls_hbox.setSpacing(4)
+        self.snp_filter_ctrls_hbox.setObjectName("snp_filter_ctrls_hbox")
+        self.gridLayout_6.addLayout(self.snp_filter_ctrls_hbox, 0, 11, 1, 1)
         self.snp_note_filter_lineEdit = QtWidgets.QLineEdit(
             self.snp_view_frame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
@@ -1704,11 +1603,7 @@ class Ui_MainWindow(object):
             self.snp_note_filter_lineEdit.sizePolicy().hasHeightForWidth())
         self.snp_note_filter_lineEdit.setSizePolicy(sizePolicy)
         self.snp_note_filter_lineEdit.setObjectName("snp_note_filter_lineEdit")
-        self.gridLayout_6.addWidget(self.snp_note_filter_lineEdit, 0, 9, 1, 1)
-        self.snp_filter_ctrls_hbox = QtWidgets.QHBoxLayout()
-        self.snp_filter_ctrls_hbox.setSpacing(4)
-        self.snp_filter_ctrls_hbox.setObjectName("snp_filter_ctrls_hbox")
-        self.gridLayout_6.addLayout(self.snp_filter_ctrls_hbox, 0, 10, 1, 1)
+        self.gridLayout_6.addWidget(self.snp_note_filter_lineEdit, 0, 10, 1, 1)
         self.snp_treeView = QtWidgets.QTreeView(self.snp_view_frame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Expanding)
@@ -1725,7 +1620,112 @@ class Ui_MainWindow(object):
         self.snp_treeView.setSortingEnabled(False)
         self.snp_treeView.setAnimated(False)
         self.snp_treeView.setObjectName("snp_treeView")
-        self.gridLayout_6.addWidget(self.snp_treeView, 1, 0, 1, 11)
+        self.gridLayout_6.addWidget(self.snp_treeView, 1, 0, 1, 12)
+        spacerItem6 = QtWidgets.QSpacerItem(769, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout_6.addItem(spacerItem6, 0, 2, 1, 1)
+        self.filter_date_chkbox = QtWidgets.QToolButton(self.snp_view_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.filter_date_chkbox.sizePolicy().hasHeightForWidth())
+        self.filter_date_chkbox.setSizePolicy(sizePolicy)
+        icon37 = QtGui.QIcon()
+        icon37.addPixmap(QtGui.QPixmap(":/sm-icons/calendar.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.filter_date_chkbox.setIcon(icon37)
+        self.filter_date_chkbox.setIconSize(QtCore.QSize(24, 24))
+        self.filter_date_chkbox.setCheckable(True)
+        self.filter_date_chkbox.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.filter_date_chkbox.setObjectName("filter_date_chkbox")
+        self.gridLayout_6.addWidget(self.filter_date_chkbox, 0, 4, 1, 1)
+        self.filter_note_chkbox = QtWidgets.QToolButton(self.snp_view_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.filter_note_chkbox.sizePolicy().hasHeightForWidth())
+        self.filter_note_chkbox.setSizePolicy(sizePolicy)
+        icon38 = QtGui.QIcon()
+        icon38.addPixmap(QtGui.QPixmap(":/sm-icons/comment.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.filter_note_chkbox.setIcon(icon38)
+        self.filter_note_chkbox.setIconSize(QtCore.QSize(24, 24))
+        self.filter_note_chkbox.setCheckable(True)
+        self.filter_note_chkbox.setChecked(False)
+        self.filter_note_chkbox.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.filter_note_chkbox.setObjectName("filter_note_chkbox")
+        self.gridLayout_6.addWidget(self.filter_note_chkbox, 0, 9, 1, 1)
+        self.daterange_lbl = QtWidgets.QLabel(self.snp_view_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.daterange_lbl.sizePolicy().hasHeightForWidth())
+        self.daterange_lbl.setSizePolicy(sizePolicy)
+        self.daterange_lbl.setObjectName("daterange_lbl")
+        self.gridLayout_6.addWidget(self.daterange_lbl, 0, 6, 1, 1)
+        self.dateEdit2 = QtWidgets.QDateEdit(self.snp_view_frame)
+        self.dateEdit2.setEnabled(True)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.dateEdit2.sizePolicy().hasHeightForWidth())
+        self.dateEdit2.setSizePolicy(sizePolicy)
+        self.dateEdit2.setReadOnly(False)
+        self.dateEdit2.setMaximumDate(QtCore.QDate(2099, 12, 31))
+        self.dateEdit2.setMinimumDate(QtCore.QDate(2000, 1, 1))
+        self.dateEdit2.setCalendarPopup(False)
+        self.dateEdit2.setObjectName("dateEdit2")
+        self.gridLayout_6.addWidget(self.dateEdit2, 0, 7, 1, 1)
+        self.snp_collapse_btn = QtWidgets.QToolButton(self.snp_view_frame)
+        icon39 = QtGui.QIcon()
+        icon39.addPixmap(QtGui.QPixmap(":/sm-icons/collapse.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.snp_collapse_btn.setIcon(icon39)
+        self.snp_collapse_btn.setIconSize(QtCore.QSize(24, 24))
+        self.snp_collapse_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.snp_collapse_btn.setAutoRaise(True)
+        self.snp_collapse_btn.setObjectName("snp_collapse_btn")
+        self.gridLayout_6.addWidget(self.snp_collapse_btn, 0, 1, 1, 1)
+        self.db_pull_pb = QtWidgets.QProgressBar(self.snp_view_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.db_pull_pb.sizePolicy().hasHeightForWidth())
+        self.db_pull_pb.setSizePolicy(sizePolicy)
+        self.db_pull_pb.setMinimumSize(QtCore.QSize(0, 32))
+        self.db_pull_pb.setMaximumSize(QtCore.QSize(16777215, 32))
+        self.db_pull_pb.setStyleSheet("QProgressBar {\n"
+                                      "    border: 1px solid gray;\n"
+                                      "    border-radius: 1px;\n"
+                                      "    text-align: center;\n"
+                                      "}\n"
+                                      "\n"
+                                      "QProgressBar::chunk {\n"
+                                      "    background-color: #64B5F6;\n"
+                                      "    width: 25px;\n"
+                                      "    margin: 2px;\n"
+                                      "}")
+        self.db_pull_pb.setMaximum(0)
+        self.db_pull_pb.setProperty("value", 0)
+        self.db_pull_pb.setAlignment(QtCore.Qt.AlignLeading
+                                     | QtCore.Qt.AlignLeft
+                                     | QtCore.Qt.AlignVCenter)
+        self.db_pull_pb.setObjectName("db_pull_pb")
+        self.gridLayout_6.addWidget(self.db_pull_pb, 0, 3, 1, 1)
         self.verticalLayout_7.addWidget(self.splitter_2)
         self.snp_dock.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(4), self.snp_dock)
@@ -2419,43 +2419,45 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Click to update the total number of snapshots to display, press refresh button to update snapshot list.</p></body></html>"
             ))
         self.nsnp_btn.setText(_translate("MainWindow", "20"))
-        self.db_pull_pb.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Data is pulling from the database...hang tight...</p></body></html>"
-            ))
         self.snp_expand_btn.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Click to expand all snapshots.</p></body></html>"
             ))
         self.snp_expand_btn.setText(_translate("MainWindow", "Expand"))
-        self.snp_collapse_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Click to collapse all snapshots.</p></body></html>"
-            ))
-        self.snp_collapse_btn.setText(_translate("MainWindow", "Collapse"))
+        self.dateEdit1.setDisplayFormat(_translate("MainWindow", "yyyy-MM-dd"))
+        self.daterange_picker_btn.setToolTip(
+            _translate("MainWindow", "Select date range."))
+        self.daterange_picker_btn.setText(_translate("MainWindow", "..."))
+        self.snp_note_filter_lineEdit.setToolTip(
+            _translate("MainWindow", "Ignore cases, loose wildcard match."))
         self.filter_date_chkbox.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Check to enable filtering on date range.</p></body></html>"
             ))
         self.filter_date_chkbox.setText(_translate("MainWindow", "DateRange"))
-        self.dateEdit1.setDisplayFormat(_translate("MainWindow", "yyyy-MM-dd"))
-        self.daterange_lbl.setText(_translate("MainWindow", "To"))
-        self.dateEdit2.setDisplayFormat(_translate("MainWindow", "yyyy-MM-dd"))
-        self.daterange_picker_btn.setToolTip(
-            _translate("MainWindow", "Select date range."))
-        self.daterange_picker_btn.setText(_translate("MainWindow", "..."))
         self.filter_note_chkbox.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Check to enable filtering on note string.</p></body></html>"
             ))
         self.filter_note_chkbox.setText(_translate("MainWindow", "Note"))
-        self.snp_note_filter_lineEdit.setToolTip(
-            _translate("MainWindow", "Ignore cases, loose wildcard match."))
+        self.daterange_lbl.setText(_translate("MainWindow", "To"))
+        self.dateEdit2.setDisplayFormat(_translate("MainWindow", "yyyy-MM-dd"))
+        self.snp_collapse_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Click to collapse all snapshots.</p></body></html>"
+            ))
+        self.snp_collapse_btn.setText(_translate("MainWindow", "Collapse"))
+        self.db_pull_pb.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Data is pulling from the database...hang tight...</p></body></html>"
+            ))
+        self.db_pull_pb.setFormat(
+            _translate("MainWindow", "Pulling data... %p%"))
         self.log_dock.setWindowTitle(_translate("MainWindow", "Setting Logs"))
         self.findtext_lbl.setText(_translate("MainWindow", "Find Text"))
         self.label_11.setText(_translate("MainWindow", "Total log entries:"))
