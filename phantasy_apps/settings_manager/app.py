@@ -119,7 +119,8 @@ from .utils import BG_COLOR_GOLDEN_NO
 from .utils import CHP_STS_TUPLE
 from .utils import TGT_STS_TUPLE
 from .utils import TAG_BTN_STY
-from .utils import get_pwr_sts
+# from .utils import get_pwr_sts
+from .utils import PWR_STS_U_ROLE, STS_PX_MAP
 from .contrib.db.db_utils import ensure_connect_db
 from .config import sym2z
 from .utils import SetLogMessager
@@ -854,6 +855,35 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._chart_icon = QIcon(QPixmap(":/sm-icons/chart.png"))
         self._ext_app_icon = QIcon(QPixmap(":/sm-icons/rocket.png"))
 
+        # pwr sts
+        self._pwr_on_px = QPixmap(":/sm-icons/on.png")
+        self._pwr_off_px = QPixmap(":/sm-icons/off.png")
+        self._pwr_unknown_px = QPixmap(":/sm-icons/unknown.png")
+        # blocking beam or not
+        _blocking_px = QPixmap(":/sm-icons/off.png")
+        _non_blocking_px = QPixmap(":/sm-icons/on.png")
+        # ion active or not
+        _ion_inactive_px = QPixmap(":/sm-icons/off.png")
+        _ion_active_px = QPixmap(":/sm-icons/on.png")
+        # aperture
+        _ap_in_px, _ap_out_px = _blocking_px, _non_blocking_px
+        self._ap_in_px_tuple = (_ap_out_px, _ap_in_px)
+        # attenuator
+        _att_in_px, _att_out_px = _blocking_px, _non_blocking_px
+        self._att_out_px_tuple = (_att_in_px, _att_out_px)
+        # position monitor (PPAC)
+        self._pm_in_px_tuple = (_non_blocking_px, _blocking_px)
+        # ion source active?
+        self._ion_act_px_tuple = (_ion_inactive_px, _ion_active_px)
+        # chopper
+        self._chp_invalud_px = QPixmap(":/sm-icons/chp_invalid.png")
+        self._chp_off_px = QPixmap(":/sm-icons/chp_off.png")
+        self._chp_blocking_px = QPixmap(":/sm-icons/chp_blocking.png")
+        self._chp_running_px = QPixmap(":/sm-icons/chp_running.png")
+        self._chp_px_tuple = (self._chp_invalud_px, self._chp_off_px,
+                              self._chp_blocking_px, self._chp_running_px)	
+        #
+
         # set skip none reachable option as True
         self.skip_none_chkbox.setChecked(True)
 
@@ -916,6 +946,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # refset pb
         self.refset_pb.setVisible(False)
         # data refresh pb
+        self.refresh_pb.setRange(0, 0)
         self.refresh_pb.setVisible(False)
         # almset pb
         self.alm_set_pb.setVisible(False)
@@ -2275,11 +2306,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                              delt, False),
                             daq_seq=np.inf)
         self.updater.meta_signal1.connect(partial(self.on_update_display, m))
-        # self.updater.daqStarted.connect(
-        #     partial(self.set_widgets_status_for_updating, 'START', False))
-        # self.updater.finished.connect(
-        #     partial(self.set_widgets_status_for_updating, 'STOP', False))
-        # self.updater.finished.connect(self.start_thread_update)
         self.updater.start()
 
     def _refresh_single(self, m, m0, viewport_only, iter_param, **kws):
@@ -2431,10 +2457,228 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     worker.meta_signal1.emit((tune_alm_idx, self._alm_disabled_px, Qt.DecorationRole))
                 worker.meta_signal1.emit((tune_alm_idx, tune_alm_v, Qt.UserRole))
 
+        # a little higher time cost?
+        # elem = self._lat[o.ename]
+        # # emit signal to update power status
+        # for _i, _r in get_pwr_sts(elem, o.name):
+        #     worker.meta_signal1.emit((sts_idx, _i, _r))
+        
+        #
+        pwr_is_on = 'Unknown'
+        px = self._pwr_unknown_px
+        tt = "Not a powered device, SRF cavity, nor other blocking devices."
         elem = self._lat[o.ename]
-        # emit signal to update power status
-        for _i, _r in get_pwr_sts(elem, o.name):
-            worker.meta_signal1.emit((sts_idx, _i, _r))
+        if elem.family == 'CAV':
+            r = re.match(r".*([1-3]+).*", o.name)
+            if r is not None:  # D0987
+                _fname = 'LKSTS' + r.group(1)
+            else:
+                _fname = 'LKSTS'
+            if _fname in elem.fields:
+                pwr_fld = elem.get_field(_fname)
+                pwr_is_on = pwr_fld.value
+            if pwr_is_on == 1.0:
+                px = self._pwr_on_px
+                tt = "Cavity phase is LOCKED"
+            elif pwr_is_on == 0.0:
+                px = self._pwr_off_px
+                tt = "Cavity phase is UNLOCKED"
+
+            # emit signal to update power status
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "CHP":
+            sts = elem.get_field('STATE')
+            sts_val_int = sts.value
+            sts_val_str = CHP_STS_TUPLE[sts_val_int]
+            tt = f"Chopper state: {sts_val_str}"
+            px = self._chp_px_tuple[sts_val_int]
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+        elif elem.family == "AP":
+            in_sts = elem.IN_STS
+            px = self._ap_in_px_tuple[in_sts]
+            if in_sts == 0:
+                tt = "Aperture device is OUT"
+            else:
+                tt = "Aperture device is IN"
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "PM":
+            if 'IN_STS' in elem.fields:
+                in_sts = elem.IN_STS
+                px = self._pm_in_px_tuple[in_sts]
+                if in_sts == 0:
+                    tt = "PPAC is OUT"
+                else:
+                    tt = "PPAC is IN"
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "ION":
+            if 'ACT' in elem.fields:
+                act_sts = int(elem.ACT)
+                px = self._ion_act_px_tuple[act_sts]
+                if act_sts == 0:
+                    tt = "Ion source is inactive"
+                else:
+                    tt = "Ion source is active"
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "BD":
+            if 'IN_STS' in elem.fields:
+                in_sts = elem.IN_STS
+                px = self._pm_in_px_tuple[in_sts]
+                if in_sts == 0:
+                    tt = "Beam dump is OUT"
+                else:
+                    tt = "Beam dump is IN"
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "ELD":
+            if 'IN_STS' in elem.fields:
+                in_sts = elem.IN_STS
+                px = self._pm_in_px_tuple[in_sts]
+                if in_sts == 0:
+                    tt = "Energy loss detector is OUT"
+                else:
+                    tt = "Energy loss detector is IN"
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "TID":
+            if 'IN_STS' in elem.fields:
+                in_sts = elem.IN_STS
+                px = self._pm_in_px_tuple[in_sts]
+                if in_sts == 0:
+                    tt = "Timing detector is OUT"
+                else:
+                    tt = "Timing detector is IN"
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "PPOT":
+            pos = elem.get_field('POS').value
+            if elem.name == "FS_F2S1:PPOT_D1563":
+                if pos == 0:
+                    tt = "DB2 viewer/degrader is OUT"
+                    px = self._pwr_on_px  # green
+                elif pos == 2:
+                    tt = "DB2 Viewer is IN"
+                    px = self._pwr_off_px # red
+                elif pos == 3:
+                    tt = "DB2 Degrader is IN"
+                    px = self._pwr_off_px # red
+
+            elif elem.name == "FS_F2S2:PPOT_D1660":
+                if pos == 0:
+                    tt = "DB3 viewer/wedge is OUT"
+                    px = self._pwr_on_px  # green
+                elif pos == 2:
+                    tt = "DB3 Viewer is IN"
+                    px = self._pwr_off_px # red
+                elif pos == 3:
+                    tt = "DB3 Wedge#1 is IN"
+                    px = self._pwr_off_px # red
+                elif pos == 4:
+                    tt = "DB3 Wedge#2 is IN"
+                    px = self._pwr_off_px # red
+                elif pos == 5:
+                    tt = "DB3 Wedge#3 is IN"
+                    px = self._pwr_off_px # red
+
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "ATT":
+            if 'OUT_STS' in elem.fields:
+                out_sts = elem.OUT_STS
+                px = self._att_out_px_tuple[out_sts]
+                if out_sts == 0:
+                    tt = "Attenuator device is IN"
+                else:
+                    tt = "Attenuator device is OUT"
+            elif 'ATT_TOTAL' in elem.fields:
+                att_val = elem.ATT_TOTAL
+                if att_val > 1:
+                    px = self._att_out_px_tuple[0]
+                    tt = "Attenuator(s) IN"
+                else:
+                    px = self._att_out_px_tuple[1]
+                    tt = "Attenuator(s) OUT"
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+        elif elem.family == "PTA":
+            sts = elem.get_field('TGT')
+            sts_val_int = sts.value
+            sts_val_str = TGT_STS_TUPLE[sts_val_int]
+            tt = f"Target state: {sts_val_str}"
+            worker.meta_signal1.emit(
+                (sts_idx, sts_val_str, Qt.DisplayRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "SLT":
+            if 'IN_STS' in elem.fields:
+                in_sts = elem.IN_STS
+                px = self._pm_in_px_tuple[in_sts]
+                if in_sts == 0:
+                    tt = "Slit is OUT"
+                else:
+                    tt = "Slit is IN"
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
+        else:  # others
+            if 'PWRSTS' in elem.fields:
+                if fname == 'I_TC':
+                    pwr_fname = 'PWRSTS_TC'
+                else:
+                    pwr_fname = 'PWRSTS'
+
+                pwr_fld = elem.get_field(pwr_fname)
+                pwr_is_on = pwr_fld.value
+
+                if pwr_is_on == 1.0:
+                    px = self._pwr_on_px
+                    tt = "Power is ON"
+                elif pwr_is_on == 0.0:
+                    px = self._pwr_off_px
+                    tt = "Power is OFF"
+
+            # emit signal to update power status
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
+        
+        # u of pwr sts
+        _, _u = STS_PX_MAP.get(tt)
+        worker.meta_signal1.emit((sts_idx, _u, PWR_STS_U_ROLE))
 
         #
         cnt_fld += 1
@@ -2631,7 +2875,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_update_display(self, m, res):
         """Update variable display variables for one row, when data are ready.
         """
-        m.data_changed.emit(res)
+        # m.data_changed.emit(res)
+        m.update_data(res)
 
     def is_idx_visible(self, idx):
         #
@@ -2721,17 +2966,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.one_updater = DAQT(daq_func=partial(self._refresh_single, m, m0,
                                                  False),
                                 daq_seq=self.obj_it_tuple,
-                                nproc=1) # NPROC) # set NPROC 1 to allow report correct progress
+                                nproc=2) # NPROC) # set NPROC 1 to allow report correct progress
         self.one_updater.meta_signal1.connect(
             partial(self.on_update_display, m))
+        self.one_updater.daqStarted.connect(lambda:printlog("Refreshing data..."))
         self.one_updater.daqStarted.connect(lambda:self.refresh_pb.setVisible(True))
-        # self.one_updater.daqStarted.connect(
-        #     partial(self.set_widgets_status_for_updating, 'START'))
-        self.one_updater.progressUpdated.connect(self._on_data_refresh_progressed)
-        # self.one_updater.finished.connect(
-        #     partial(self.set_widgets_status_for_updating, 'STOP'))
+        self.one_updater.daqStarted.connect(lambda:m.blockSignals(True))
+        # self.one_updater.progressUpdated.connect(self._on_data_refresh_progressed)
         self.one_updater.daqFinished.connect(lambda:self.refresh_pb.setVisible(False))
+        self.one_updater.daqFinished.connect(lambda:m.blockSignals(False))
+        self.one_updater.daqFinished.connect(m._finish_update)
         self.one_updater.daqFinished.connect(self.last_refreshed)
+        self.one_updater.daqFinished.connect(lambda:printlog("Refreshing data...done!"))
         self.one_updater.start()
 
     def on_data_refresh_done(self):

@@ -554,6 +554,9 @@ class SettingsModel(QStandardItemModel):
 
         self.settings_sts.emit(len(ename_set), field_cnt)
 
+    def _finish_update(self):
+        self.dataChanged.emit(self.index(0, 0), self.index(self.rowCount() - 1, self.columnCount() - 1))
+
     def set_model(self):
         # set data
         self.set_data()
