@@ -89,6 +89,7 @@ class PreferencesDialog(QDialog, Ui_Dialog):
 
         # data source type
         dsrc_mode = self.pref_dict['DATA_SOURCE']['TYPE']
+        self.dsrc_mode_cbb.setEnabled(False)
         self.dsrc_mode_cbb.setCurrentText(dsrc_mode)
         self.dsrc_mode_cbb.currentTextChanged.connect(self.on_dsrc_mode_changed)
         self.dsrc_mode_cbb.currentTextChanged.emit(self.dsrc_mode_cbb.currentText())
@@ -138,7 +139,7 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         font = self.pref_dict['font']
         self.font_changed.emit(font)
 
-    def set_uri(self, path, dsrc_mode):
+    def set_uri(self, path: str, dsrc_mode: str):
         if not os.access(os.path.abspath(os.path.expanduser(path)), os.W_OK):
             return
         if dsrc_mode == 'DB':
@@ -146,6 +147,8 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         else:
             self.wdir_lineEdit.setText(path)
         self.data_uri_changed.emit(path)
+        if self.pref_dict['DATA_SOURCE']['URI'] != path:
+            self.pref_dict['DATA_SOURCE']['URI'] = path
 
     @pyqtSlot()
     def on_reset_app_config(self):
