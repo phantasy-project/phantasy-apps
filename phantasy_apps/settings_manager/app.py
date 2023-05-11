@@ -881,7 +881,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._chp_blocking_px = QPixmap(":/sm-icons/chp_blocking.png")
         self._chp_running_px = QPixmap(":/sm-icons/chp_running.png")
         self._chp_px_tuple = (self._chp_invalud_px, self._chp_off_px,
-                              self._chp_blocking_px, self._chp_running_px)	
+                              self._chp_blocking_px, self._chp_running_px)
         #
 
         # set skip none reachable option as True
@@ -946,7 +946,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # refset pb
         self.refset_pb.setVisible(False)
         # data refresh pb
-        self.refresh_pb.setRange(0, 0)
         self.refresh_pb.setVisible(False)
         # almset pb
         self.alm_set_pb.setVisible(False)
@@ -2462,7 +2461,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # # emit signal to update power status
         # for _i, _r in get_pwr_sts(elem, o.name):
         #     worker.meta_signal1.emit((sts_idx, _i, _r))
-        
+
         #
         pwr_is_on = 'Unknown'
         px = self._pwr_unknown_px
@@ -2675,7 +2674,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             worker.meta_signal1.emit(
                 (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
-        
+
         # u of pwr sts
         _, _u = STS_PX_MAP.get(tt)
         worker.meta_signal1.emit((sts_idx, _u, PWR_STS_U_ROLE))
