@@ -2247,6 +2247,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             _q = f"SELECT * FROM snapshot ORDER BY id DESC LIMIT {n}"
 
+        w_list = (self.nsnp_btn, self.snp_refresh_btn)
+
         def _load_df(i):
             conn = ensure_connect_db(d)
             _df = pd.read_sql(_q, conn)
@@ -2258,6 +2260,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.db_pull.emit()
 
         def _load_started():
+            [o.setEnabled(False) for o in w_list]
             self._task_list.append('Pulling snapshots from the database...')
             self._splash_msg_undone()
 
@@ -2266,6 +2269,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._task_list.remove(task_name)
             self._splash_msg("Pulled snapshots from the database.")
             self._splash_msg_undone()
+            [o.setEnabled(True) for o in w_list]
 
         _df_loader = DAQT(daq_func=_load_df, daq_seq=range(1))
         _df_loader.daqStarted.connect(lambda:self.db_pull_pb.setVisible(True))
@@ -2941,13 +2945,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_pull_data(self):
-        """Pull data from database.
+        """Pull data from dataframe.
         """
+        w_list = (self.nsnp_btn, self.snp_refresh_btn)
         def _on_pull_data_one(iiter):
             idx, irow = iiter
             return read_data(irow, 'sql')
 
         def _on_db_pull_started():
+            [o.setEnabled(False) for o in w_list]
             self.db_pull_pb.setRange(0, 100)
             self.db_pull_pb.setVisible(True)
             self._task_list.append('Presenting snapshots...')
@@ -2963,6 +2969,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._task_list.remove(task_name)
             self._splash_msg("Snapshots are ready to use.")
             self._splash_msg_undone()
+            [o.setEnabled(True) for o in w_list]
 
         def _on_db_pull_resultsReady(res):
             self._snp_dock_list = [i for i in res if i is not None]
