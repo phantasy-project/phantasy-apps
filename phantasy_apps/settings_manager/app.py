@@ -2229,7 +2229,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.df_all_row_tuple = list(df_all.iterrows())
         self.db_pull.emit()
         self.data_uri = d
-        self.data_uri_lineEdit.setText(self.data_uri)
 
     @pyqtSlot(int)
     def on_ndigit_changed(self, n):
@@ -3047,7 +3046,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         def _onSnapshotTaken(snp_data: SnapshotData, to_load: bool):
             self._snp_dock_list.append(snp_data)
             n = len(self._snp_dock_list)
-            self.data_uri_lineEdit.setText(self.data_uri)
             self.total_snp_lbl.setText(str(n))
             self.update_snp_dock_view()
             self.snp_filters_updated.emit()
