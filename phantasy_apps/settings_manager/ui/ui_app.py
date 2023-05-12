@@ -129,9 +129,6 @@ class Ui_MainWindow(object):
         self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_4.setObjectName("line_4")
         self.horizontalLayout_9.addWidget(self.line_4)
-        self.orig_template_name_lbl = QtWidgets.QLabel(self.centralwidget)
-        self.orig_template_name_lbl.setObjectName("orig_template_name_lbl")
-        self.horizontalLayout_9.addWidget(self.orig_template_name_lbl)
         self.verticalLayout_6 = QtWidgets.QVBoxLayout()
         self.verticalLayout_6.setContentsMargins(-1, 0, -1, -1)
         self.verticalLayout_6.setSpacing(0)
@@ -192,6 +189,15 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.addWidget(self.loaded_snp_ts_lbl)
         self.verticalLayout_6.addLayout(self.horizontalLayout_6)
         self.horizontalLayout_9.addLayout(self.verticalLayout_6)
+        self.orig_template_name_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.orig_template_name_lbl.setObjectName("orig_template_name_lbl")
+        self.horizontalLayout_9.addWidget(self.orig_template_name_lbl)
+        self.is_match_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.is_match_lbl.setMinimumSize(QtCore.QSize(32, 32))
+        self.is_match_lbl.setMaximumSize(QtCore.QSize(32, 32))
+        self.is_match_lbl.setAlignment(QtCore.Qt.AlignCenter)
+        self.is_match_lbl.setObjectName("is_match_lbl")
+        self.horizontalLayout_9.addWidget(self.is_match_lbl)
         spacerItem = QtWidgets.QSpacerItem(600, 30,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
@@ -2110,7 +2116,6 @@ class Ui_MainWindow(object):
         self.delete_btn.setToolTip(
             _translate("MainWindow", "Delete selected items."))
         self.delete_btn.setText(_translate("MainWindow", "Delete"))
-        self.orig_template_name_lbl.setText(_translate("MainWindow", "orig"))
         self.loaded_snp_info_lbl.setText(
             _translate("MainWindow",
                        "Snapshot: 2022-02-24T08:49:11, 40Ar18(9+)"))
@@ -2118,6 +2123,13 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "snapshot note..."))
         self.loaded_snp_ts_lbl.setText(
             _translate("MainWindow", "Loaded at 2022-08-22 10:47:37"))
+        self.orig_template_name_lbl.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Show the name of originated snapshot template.</p></body></html>"
+            ))
+        self.orig_template_name_lbl.setText(_translate("MainWindow", "orig"))
+        self.is_match_lbl.setText(_translate("MainWindow", "x"))
         self.filter_btn.setToolTip(
             _translate(
                 "MainWindow",
