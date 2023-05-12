@@ -188,6 +188,11 @@ _USERGUIDE_FILE = os.path.join(os.path.dirname(__file__), 'docs/SettingsManager_
 
 # refresh period
 DATA_REFRESH_PERIOD = 10000 # milliseconds
+REFRESH_INTERVAL_MAP = {
+    'Slow': 30000,
+    'Normal': 10000,
+    'Fast': 5000,
+}
 
 # MAX lines of setting logs
 MAX_LOG_LINES = 3000
@@ -967,8 +972,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.abort_apply_btn.setVisible(False)
         # refset pb
         self.refset_pb.setVisible(False)
-        # data refresh pb
-        self.refresh_pb.setVisible(False)
+        # data refresh beat label
+        self.refresh_beat_lbl.setPixmap(QPixmap(":/sm-icons/active.png"))
+        self.refresh_beat_lbl.setVisible(False)
         # db pull pb
         self.db_pull_pb.setVisible(False)
         # almset pb
@@ -1097,7 +1103,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # periodical clicker on single data refresh
         self._data_refresh_timer = QTimer(self)
         self._data_refresh_timer.timeout.connect(self.on_click_refresh_once)
-        self._data_refresh_timer.start(DATA_REFRESH_PERIOD)
+
+        # data refresher speed control
+        self.refresh_speed_cbb.currentTextChanged.connect(self.onDataRefreshSpeedChanged)
+        self.refresh_speed_cbb.currentTextChanged.emit(self.refresh_speed_cbb.currentText())
+
+    @pyqtSlot('QString')
+    def onDataRefreshSpeedChanged(self, s: str):
+        _t_interval = REFRESH_INTERVAL_MAP[s]
+        self._data_refresh_timer.start(_t_interval)
 
     @pyqtSlot()
     def on_logtext_updated(self):
@@ -3024,10 +3038,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._db_puller.daqFinished.connect(_on_db_pull_finished)
         self._db_puller.start()
 
-    @pyqtSlot(float, 'QString')
-    def _on_data_refresh_progressed(self, per, str_idx):
-        self.refresh_pb.setValue(int(per * 100))
-
     @pyqtSlot()
     def on_single_update(self):
         """Update values, indicators for one time."""
@@ -3048,10 +3058,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.one_updater.meta_signal1.connect(
             partial(self.on_update_display, m))
         self.one_updater.daqStarted.connect(lambda:printlog("Refreshing data..."))
-        self.one_updater.daqStarted.connect(lambda:self.refresh_pb.setVisible(True))
+        self.one_updater.daqStarted.connect(lambda:self.refresh_beat_lbl.setVisible(True))
         self.one_updater.daqStarted.connect(lambda:m.blockSignals(True))
-        # self.one_updater.progressUpdated.connect(self._on_data_refresh_progressed)
-        self.one_updater.daqFinished.connect(lambda:self.refresh_pb.setVisible(False))
+        self.one_updater.daqFinished.connect(lambda:self.refresh_beat_lbl.setVisible(False))
         self.one_updater.daqFinished.connect(lambda:m.blockSignals(False))
         self.one_updater.daqFinished.connect(m._finish_update)
         self.one_updater.daqFinished.connect(self.last_refreshed)
@@ -3331,7 +3340,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def set_last_data_refreshed_info_visible(self, visibility):
         [o.setVisible(visibility) for o in (
-                self.settingsdata_lbl,
                 self.last_refreshed_lbl,
                 self.last_refreshed_title_lbl)]
 
