@@ -21,6 +21,7 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QButtonGroup
 
 from phantasy_ui import milli_sleep
+from phantasy_ui import printlog
 from phantasy_ui.widgets import FlowLayout
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 
@@ -197,7 +198,7 @@ p, li { white-space: pre-wrap; }
         """
         self.reset_tag_buttons()
         if is_checked:
-            print("Take a snapshot based on a template.")
+            printlog("A snapshot will be captured based on a template.")
         for w in self.template_area.findChildren(QToolButton):
             if w.isChecked():
                 w.toggled.emit(True)
