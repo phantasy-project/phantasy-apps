@@ -85,14 +85,14 @@ class Ui_MainWindow(object):
         self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
         self.horizontalLayout_9 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_9.setSpacing(4)
+        self.horizontalLayout_9.setSpacing(2)
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.grow_fontsize_btn = QtWidgets.QToolButton(self.centralwidget)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(":/sm-icons/increase-font.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.grow_fontsize_btn.setIcon(icon1)
-        self.grow_fontsize_btn.setIconSize(QtCore.QSize(30, 30))
+        self.grow_fontsize_btn.setIconSize(QtCore.QSize(32, 32))
         self.grow_fontsize_btn.setAutoRaise(True)
         self.grow_fontsize_btn.setObjectName("grow_fontsize_btn")
         self.horizontalLayout_9.addWidget(self.grow_fontsize_btn)
@@ -101,7 +101,7 @@ class Ui_MainWindow(object):
         icon2.addPixmap(QtGui.QPixmap(":/sm-icons/decrease-font.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.shrink_fontsize_btn.setIcon(icon2)
-        self.shrink_fontsize_btn.setIconSize(QtCore.QSize(30, 30))
+        self.shrink_fontsize_btn.setIconSize(QtCore.QSize(32, 32))
         self.shrink_fontsize_btn.setAutoRaise(True)
         self.shrink_fontsize_btn.setObjectName("shrink_fontsize_btn")
         self.horizontalLayout_9.addWidget(self.shrink_fontsize_btn)
@@ -110,7 +110,7 @@ class Ui_MainWindow(object):
         icon3.addPixmap(QtGui.QPixmap(":/sm-icons/resize-horizontal.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.toolButton.setIcon(icon3)
-        self.toolButton.setIconSize(QtCore.QSize(30, 30))
+        self.toolButton.setIconSize(QtCore.QSize(32, 32))
         self.toolButton.setAutoRaise(True)
         self.toolButton.setObjectName("toolButton")
         self.horizontalLayout_9.addWidget(self.toolButton)
@@ -119,7 +119,7 @@ class Ui_MainWindow(object):
         icon4.addPixmap(QtGui.QPixmap(":/sm-icons/delete.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.delete_btn.setIcon(icon4)
-        self.delete_btn.setIconSize(QtCore.QSize(30, 30))
+        self.delete_btn.setIconSize(QtCore.QSize(32, 32))
         self.delete_btn.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
         self.delete_btn.setAutoRaise(True)
         self.delete_btn.setObjectName("delete_btn")
@@ -186,19 +186,29 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.addWidget(self.loaded_snp_ts_lbl)
         self.verticalLayout_6.addLayout(self.horizontalLayout_6)
         self.horizontalLayout_9.addLayout(self.verticalLayout_6)
-        self.orig_template_name_frame = QtWidgets.QFrame(self.centralwidget)
-        self.orig_template_name_frame.setObjectName("orig_template_name_frame")
+        self.orig_template_info_frame = QtWidgets.QFrame(self.centralwidget)
+        self.orig_template_info_frame.setFrameShape(
+            QtWidgets.QFrame.StyledPanel)
+        self.orig_template_info_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.orig_template_info_frame.setObjectName("orig_template_info_frame")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(
-            self.orig_template_name_frame)
-        self.verticalLayout_3.setContentsMargins(1, 1, -1, -1)
-        self.verticalLayout_3.setSpacing(1)
+            self.orig_template_info_frame)
+        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setContentsMargins(-1, 0, 0, -1)
+        self.horizontalLayout_4.setSpacing(1)
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.verticalLayout_8 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_8.setSpacing(0)
+        self.verticalLayout_8.setObjectName("verticalLayout_8")
         self.orig_template_name_title = QtWidgets.QLabel(
-            self.orig_template_name_frame)
+            self.orig_template_info_frame)
         self.orig_template_name_title.setObjectName("orig_template_name_title")
-        self.verticalLayout_3.addWidget(self.orig_template_name_title)
+        self.verticalLayout_8.addWidget(self.orig_template_name_title)
         self.orig_template_name_lbl = QtWidgets.QLabel(
-            self.orig_template_name_frame)
+            self.orig_template_info_frame)
         font = QtGui.QFont()
         font.setPointSize(9)
         font.setBold(True)
@@ -208,21 +218,23 @@ class Ui_MainWindow(object):
                                                  | QtCore.Qt.AlignTrailing
                                                  | QtCore.Qt.AlignVCenter)
         self.orig_template_name_lbl.setObjectName("orig_template_name_lbl")
-        self.verticalLayout_3.addWidget(self.orig_template_name_lbl)
-        self.horizontalLayout_9.addWidget(self.orig_template_name_frame)
-        self.is_match_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.verticalLayout_8.addWidget(self.orig_template_name_lbl)
+        self.horizontalLayout_4.addLayout(self.verticalLayout_8)
+        self.is_match_lbl = QtWidgets.QLabel(self.orig_template_info_frame)
         self.is_match_lbl.setMinimumSize(QtCore.QSize(32, 32))
         self.is_match_lbl.setMaximumSize(QtCore.QSize(32, 32))
         self.is_match_lbl.setAlignment(QtCore.Qt.AlignCenter)
         self.is_match_lbl.setObjectName("is_match_lbl")
-        self.horizontalLayout_9.addWidget(self.is_match_lbl)
+        self.horizontalLayout_4.addWidget(self.is_match_lbl)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_4)
+        self.horizontalLayout_9.addWidget(self.orig_template_info_frame)
         spacerItem = QtWidgets.QSpacerItem(600, 30,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_9.addItem(spacerItem)
         self.filter_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
+                                           QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
@@ -263,7 +275,7 @@ class Ui_MainWindow(object):
             "    background-repeat: no-repeat;\n"
             "}")
         self.filter_btn.setText("")
-        self.filter_btn.setIconSize(QtCore.QSize(30, 30))
+        self.filter_btn.setIconSize(QtCore.QSize(32, 32))
         self.filter_btn.setCheckable(True)
         self.filter_btn.setObjectName("filter_btn")
         self.horizontalLayout_9.addWidget(self.filter_btn)
@@ -279,13 +291,13 @@ class Ui_MainWindow(object):
         icon5.addPixmap(QtGui.QPixmap(":/sm-icons/help.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.filter_tip_btn.setIcon(icon5)
-        self.filter_tip_btn.setIconSize(QtCore.QSize(30, 30))
+        self.filter_tip_btn.setIconSize(QtCore.QSize(32, 32))
         self.filter_tip_btn.setAutoRaise(True)
         self.filter_tip_btn.setObjectName("filter_tip_btn")
         self.horizontalLayout_9.addWidget(self.filter_tip_btn)
         self.total_show_number_lbl = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Preferred)
+                                           QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
@@ -2142,7 +2154,7 @@ class Ui_MainWindow(object):
         self.loaded_snp_ts_lbl.setText(
             _translate("MainWindow", "Loaded at 2022-08-22 10:47:37"))
         self.orig_template_name_title.setText(
-            _translate("MainWindow", "Originated Template:"))
+            _translate("MainWindow", "Originated Template"))
         self.orig_template_name_lbl.setToolTip(
             _translate(
                 "MainWindow",
