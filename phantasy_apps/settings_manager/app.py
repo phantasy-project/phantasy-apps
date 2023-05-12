@@ -973,7 +973,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # refset pb
         self.refset_pb.setVisible(False)
         # data refresh beat label
-        self.refresh_beat_lbl.setPixmap(QPixmap(":/sm-icons/active.png"))
+        self.refresh_beat_lbl.setPixmap(QPixmap(":/sm-icons/active.png").scaled(10, 10))
         self.refresh_beat_lbl.setVisible(False)
         # db pull pb
         self.db_pull_pb.setVisible(False)
@@ -1106,7 +1106,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # data refresher speed control
         self.refresh_speed_cbb.currentTextChanged.connect(self.onDataRefreshSpeedChanged)
-        self.refresh_speed_cbb.currentTextChanged.emit(self.refresh_speed_cbb.currentText())
+        self.refresh_speed_cbb.setCurrentText("Normal")
 
     @pyqtSlot('QString')
     def onDataRefreshSpeedChanged(self, s: str):
@@ -3051,12 +3051,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             is_finished = True
         if not is_finished:
             return
-        self.one_updater = DAQT(daq_func=partial(self._refresh_single, m, m0,
-                                                 False),
+        self.one_updater = DAQT(daq_func=partial(self._refresh_single, m, m0, False),
                                 daq_seq=self.obj_it_tuple,
-                                nproc=2) # NPROC) # set NPROC 1 to allow report correct progress
-        self.one_updater.meta_signal1.connect(
-            partial(self.on_update_display, m))
+                                nproc=2)
+        self.one_updater.meta_signal1.connect(partial(self.on_update_display, m))
         self.one_updater.daqStarted.connect(lambda:printlog("Refreshing data..."))
         self.one_updater.daqStarted.connect(lambda:self.refresh_beat_lbl.setVisible(True))
         self.one_updater.daqStarted.connect(lambda:m.blockSignals(True))
