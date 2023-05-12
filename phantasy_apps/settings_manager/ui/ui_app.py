@@ -2466,7 +2466,7 @@ class Ui_MainWindow(object):
         self.ops_bound_cbb.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Choose the machine bound to filter the snapshots.</p><p>By default, auto-initialized based on beam ops.</p></body></html>"
+                "<html><head/><body><p>Choose the machine bound to pre-filter the snapshots. By default, auto-initialized based on beam ops.</p><p>The saved snapshots must been tagged with proper tags to be picked.</p><p>Current available bound options are &quot;LINAC&quot; and &quot;FSEE&quot;, while the third option &quot;*&quot; is provided to pick all snapshots.</p></body></html>"
             ))
         self.ops_bound_cbb.setItemText(0, _translate("MainWindow", "LINAC"))
         self.ops_bound_cbb.setItemText(1, _translate("MainWindow", "FSEE"))
@@ -2479,7 +2479,8 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Click to collapse all snapshots.</p></body></html>"
             ))
         self.snp_collapse_btn.setText(_translate("MainWindow", "Collapse"))
-        self.label_2.setText(_translate("MainWindow", "Pick on beam bound"))
+        self.label_2.setText(
+            _translate("MainWindow", "Pick based on beam bound"))
         self.log_dock.setWindowTitle(_translate("MainWindow", "Setting Logs"))
         self.findtext_lbl.setText(_translate("MainWindow", "Find Text"))
         self.label_11.setText(_translate("MainWindow", "Total log entries:"))
