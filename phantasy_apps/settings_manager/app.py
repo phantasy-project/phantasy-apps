@@ -724,6 +724,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._machstate = None
 
     def __post_init_ui(self):
+        # update toolbar
+        self.__update_toolbar()
+
         # hide change reason inputbox right of Apply button by default
         self.show_change_reason_input_chkbox.toggled.emit(False)
 
@@ -770,9 +773,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # alarm type for disable/enable actions
         self._alm_type_idx_list = ALM_TYPE_MAP["All"]
-
-        # update toolbar
-        self.__update_toolbar()
 
         #
         self._post_info = True  # post info after loading lattice
@@ -2241,12 +2241,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.ndigit_changed.emit(ndigit)
 
     def __read_data2frame(self, n: int, d: str):
-        printlog("Machine bound: ", self.beam_display_widget.get_bound_info())
         # read data from database to dataframe
+        _bound_tag = self.ops_bound_cbb.currentText()
+        if _bound_tag == 'ALL':
+            _q_cond = ''
+        else: # LINAC, FSEE
+            _q_cond = f"WHERE tags like '%{_bound_tag}%'"
+
         if n == 'All':
-            _q = "SELECT * FROM snapshot"
+            _q = f"SELECT * FROM snapshot {_q_cond}"
         else:
-            _q = f"SELECT * FROM snapshot ORDER BY id DESC LIMIT {n}"
+            _q = f"SELECT * FROM snapshot {_q_cond} ORDER BY id DESC LIMIT {n}"
 
         w_list = (self.nsnp_btn, self.snp_refresh_btn)
 
@@ -4035,6 +4040,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.beam_display_widget.set_allow_clicking_src_btns(False)
         self.toolBar.addWidget(self.beam_display_widget)
         milli_sleep(500)
+        _beam_src, self.ops_bound, _beam_dest = self.beam_display_widget.get_bound_info()
+        self.ops_bound_cbb.setCurrentText(self.ops_bound)
+        printlog("Machine bound: ", _beam_src, self.ops_bound, _beam_dest)
 
     def _meta_fetcher_started(self):
         printlog("Start to fetch machine state...")
