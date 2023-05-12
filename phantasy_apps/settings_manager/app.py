@@ -3319,7 +3319,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self.loaded_snp_info_lbl,
                 self.loaded_snp_ts_lbl,
                 self.loaded_snp_note_lbl,
-                self.orig_template_name_lbl)]
+                self.orig_template_name_lbl,
+                self.orig_template_name_title,
+                self.is_match_lbl)]
 
     def set_last_data_refreshed_info_visible(self, visibility):
         [o.setVisible(visibility) for o in (
