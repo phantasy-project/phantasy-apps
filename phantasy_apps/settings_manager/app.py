@@ -1103,6 +1103,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # periodical clicker on single data refresh
         self._data_refresh_timer = QTimer(self)
         self._data_refresh_timer.timeout.connect(self.on_click_refresh_once)
+        self._data_refresh_timer.start(REFRESH_INTERVAL_MAP["Normal"])
 
         # data refresher speed control
         self.refresh_speed_cbb.currentTextChanged.connect(self.onDataRefreshSpeedChanged)
@@ -1110,8 +1111,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot('QString')
     def onDataRefreshSpeedChanged(self, s: str):
-        _t_interval = REFRESH_INTERVAL_MAP[s]
-        self._data_refresh_timer.start(_t_interval)
+        self._data_refresh_timer.setInterval(REFRESH_INTERVAL_MAP[s])
 
     @pyqtSlot()
     def on_logtext_updated(self):
