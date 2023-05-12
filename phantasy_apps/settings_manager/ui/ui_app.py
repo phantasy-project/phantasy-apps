@@ -2420,7 +2420,10 @@ class Ui_MainWindow(object):
             ))
         self.total_snp_lbl.setText(_translate("MainWindow", "0000"))
         self.snp_refresh_btn.setToolTip(
-            _translate("MainWindow", "Refresh snapshots."))
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Pull the data of snapshots.</p></body></html>"
+            ))
         self.snp_refresh_btn.setText(_translate("MainWindow", "..."))
         self.nsnp_btn.setToolTip(
             _translate(
