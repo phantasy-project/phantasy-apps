@@ -2011,8 +2011,8 @@ def get_pwr_sts(elem, fname: str):
 
     Returns
     -------
-    r : iterable
-        Zipped (px, tt, uu) and (px_role, tt_tole, u_role).
+    r : tuple
+        A tuple of (px, tt, uu) and (px_role, tt_tole, u_role).
     """
     #
     tt = "Not a powered device, SRF cavity, nor other blocking devices."
@@ -2139,7 +2139,7 @@ def get_pwr_sts(elem, fname: str):
     px_path, u = STS_PX_MAP.get(tt)
     px_obj = _STS_PX_CACHE.setdefault(tt,
             QPixmap(px_path).scaled(PX_SIZE, PX_SIZE, Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
-    return zip((px_obj, tt, u), (Qt.DecorationRole, Qt.ToolTipRole, PWR_STS_U_ROLE))
+    return (px_obj, tt, u), (Qt.DecorationRole, Qt.ToolTipRole, PWR_STS_U_ROLE)
 
 
 # postsnp isrc cbb -> beam species display widget pv_conf_map
