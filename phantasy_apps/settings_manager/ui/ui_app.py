@@ -492,9 +492,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.refresh_beat_lbl.sizePolicy().hasHeightForWidth())
         self.refresh_beat_lbl.setSizePolicy(sizePolicy)
-        self.refresh_beat_lbl.setAlignment(QtCore.Qt.AlignRight
-                                           | QtCore.Qt.AlignTrailing
-                                           | QtCore.Qt.AlignVCenter)
+        self.refresh_beat_lbl.setAlignment(QtCore.Qt.AlignCenter)
         self.refresh_beat_lbl.setObjectName("refresh_beat_lbl")
         self.horizontalLayout_8.addWidget(self.refresh_beat_lbl)
         self.verticalLayout_5.addLayout(self.horizontalLayout_8)
@@ -1239,15 +1237,6 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_7.addItem(spacerItem3)
-        self.label_3 = QtWidgets.QLabel(self.adv_frame)
-        self.label_3.setObjectName("label_3")
-        self.horizontalLayout_7.addWidget(self.label_3)
-        self.refresh_speed_cbb = QtWidgets.QComboBox(self.adv_frame)
-        self.refresh_speed_cbb.setObjectName("refresh_speed_cbb")
-        self.refresh_speed_cbb.addItem("")
-        self.refresh_speed_cbb.addItem("")
-        self.refresh_speed_cbb.addItem("")
-        self.horizontalLayout_7.addWidget(self.refresh_speed_cbb)
         self.init_settings_chkbox = QtWidgets.QCheckBox(self.adv_frame)
         self.init_settings_chkbox.setObjectName("init_settings_chkbox")
         self.horizontalLayout_7.addWidget(self.init_settings_chkbox)
@@ -1271,6 +1260,20 @@ class Ui_MainWindow(object):
         self.ndigit_sbox.setProperty("value", 3)
         self.ndigit_sbox.setObjectName("ndigit_sbox")
         self.horizontalLayout_7.addWidget(self.ndigit_sbox)
+        self.line = QtWidgets.QFrame(self.adv_frame)
+        self.line.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.horizontalLayout_7.addWidget(self.line)
+        self.label_3 = QtWidgets.QLabel(self.adv_frame)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_7.addWidget(self.label_3)
+        self.refresh_speed_cbb = QtWidgets.QComboBox(self.adv_frame)
+        self.refresh_speed_cbb.setObjectName("refresh_speed_cbb")
+        self.refresh_speed_cbb.addItem("")
+        self.refresh_speed_cbb.addItem("")
+        self.refresh_speed_cbb.addItem("")
+        self.horizontalLayout_7.addWidget(self.refresh_speed_cbb)
         self.init_vline = QtWidgets.QFrame(self.adv_frame)
         self.init_vline.setFrameShape(QtWidgets.QFrame.VLine)
         self.init_vline.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -2395,12 +2398,6 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "Checked Items"))
         self.init_settings_lbl.setText(
             _translate("MainWindow", "Advanced Options"))
-        self.label_3.setText(_translate("MainWindow", "Refresh Speed"))
-        self.refresh_speed_cbb.setCurrentText(_translate("MainWindow", "Slow"))
-        self.refresh_speed_cbb.setItemText(0, _translate("MainWindow", "Slow"))
-        self.refresh_speed_cbb.setItemText(1,
-                                           _translate("MainWindow", "Normal"))
-        self.refresh_speed_cbb.setItemText(2, _translate("MainWindow", "Fast"))
         self.init_settings_chkbox.setToolTip(
             _translate(
                 "MainWindow",
@@ -2427,6 +2424,12 @@ class Ui_MainWindow(object):
                        "Change data presenting format to \'{n}g\'."))
         self.auto_ndigit_chkbox.setText(_translate("MainWindow", "Auto"))
         self.ndigit_lbl.setText(_translate("MainWindow", "Precision number"))
+        self.label_3.setText(_translate("MainWindow", "Refresh Speed"))
+        self.refresh_speed_cbb.setCurrentText(_translate("MainWindow", "Slow"))
+        self.refresh_speed_cbb.setItemText(0, _translate("MainWindow", "Slow"))
+        self.refresh_speed_cbb.setItemText(1,
+                                           _translate("MainWindow", "Normal"))
+        self.refresh_speed_cbb.setItemText(2, _translate("MainWindow", "Fast"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menuTools.setTitle(_translate("MainWindow", "&Tools"))
