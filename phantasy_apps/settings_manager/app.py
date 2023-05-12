@@ -2253,7 +2253,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         else:
             _q = f"SELECT * FROM snapshot {_q_cond} ORDER BY id DESC LIMIT {n}"
 
-        w_list = (self.nsnp_btn, self.snp_refresh_btn)
+        w_list = (self.nsnp_btn, self.snp_refresh_btn, self.ops_bound_cbb)
 
         def _load_df(i):
             conn = ensure_connect_db(d)
@@ -2953,7 +2953,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_pull_data(self):
         """Pull data from dataframe.
         """
-        w_list = (self.nsnp_btn, self.snp_refresh_btn)
+        w_list = (self.nsnp_btn, self.snp_refresh_btn, self.ops_bound_cbb)
         def _on_pull_data_one(iiter):
             idx, irow = iiter
             return read_data(irow, 'sql')
@@ -4040,9 +4040,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.beam_display_widget.set_allow_clicking_src_btns(False)
         self.toolBar.addWidget(self.beam_display_widget)
         milli_sleep(500)
-        _beam_src, self.ops_bound, _beam_dest = self.beam_display_widget.get_bound_info()
-        self.ops_bound_cbb.setCurrentText(self.ops_bound)
-        printlog("Machine bound: ", _beam_src, self.ops_bound, _beam_dest)
+        #
+        _beam_src, _ops_bound, _beam_dest = self.beam_display_widget.get_bound_info()
+        self.ops_bound_cbb.setCurrentText(_ops_bound)
+        printlog("Machine bound: ", _beam_src, _ops_bound, _beam_dest)
+        self.ops_bound_cbb.currentTextChanged.connect(lambda:self.snp_refresh_btn.clicked.emit())
 
     def _meta_fetcher_started(self):
         printlog("Start to fetch machine state...")
@@ -4157,8 +4159,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.data_uri, ensure_connect_db(
                 self.data_uri))  # other DB_ENGINEs to be supported
         self.nsnp_btn.setVisible(True)
-        self.nsnp_btn.click()
-        self.nsnp_btn.click()  # n_snp_max -> 100
+        for i in range(4):
+            self.nsnp_btn.click()  # n_snp_max -> All
         self.db_refresh.connect(
             partial(self.on_data_uri_changed, True, self.data_uri))
         self.db_pull.connect(self.on_pull_data)
