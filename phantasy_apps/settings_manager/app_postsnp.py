@@ -346,6 +346,8 @@ p, li { white-space: pre-wrap; }
         # mach state?
         with_machstate = self.snp_ms_chkbox.isChecked()
 
+        w_list = (self.capture_btn, self.exit_btn)
+
         #
         _t0 = time.time()
         def _on_update_time():
@@ -363,30 +365,31 @@ p, li { white-space: pre-wrap; }
             return new_snp_data
 
         def _take_started():
+            [o.setEnabled(False) for o in w_list]
             self.pb.setVisible(True)
             self.pb_lbl.setVisible(True)
             _t0 = time.time()
             ticker.start(1000)
-            print("Taking snapshot is started...")
+            printlog("Capturing a snapshot...")
 
         def _take_done():
             self.pb.setVisible(False)
             self.pb_lbl.setVisible(False)
             self.pb_lbl.setText("0:00:00")
             ticker.stop()
-            print("Taking snapshot is done.")
+            printlog("Capturing a snapshot...done!")
+            [o.setEnabled(True) for o in w_list]
 
         def _snp_ready(r: list):
-            print(f"Took snapshot: {r[0].ts_as_str()}" )
             self.snapshotTaken.emit(r[0], self._cast_enabled)
 
-        _t = DAQT(daq_func=_take, daq_seq=[snp_temp_data])
-        _t.daqStarted.connect(_take_started)
-        _t.resultsReady.connect(_snp_ready)
-        _t.daqFinished.connect(_take_done)
+        self._t = DAQT(daq_func=_take, daq_seq=[snp_temp_data])
+        self._t.daqStarted.connect(_take_started)
+        self._t.resultsReady.connect(_snp_ready)
+        self._t.daqFinished.connect(_take_done)
         if self._cast_enabled:
-            _t.daqFinished.connect(self.close)
-        _t.start()
+            self._t.daqFinished.connect(self.close)
+        self._t.start()
 
 
 def get_tag_list():
