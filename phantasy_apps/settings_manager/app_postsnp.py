@@ -40,6 +40,18 @@ ISRC_NAME_MAP = {
     'ISRC2': 'HP-ECR'
 }
 
+MATCH_STY = """
+QLabel {
+    border: 1px solid #28A745;
+    padding: 2px 5px 2px 5px;
+}
+"""
+NOT_MATCH_STY = """
+QLabel {
+    border: 1px solid #DC3545;
+    padding: 2px 5px 2px 5px;
+}
+"""
 
 class PostSnapshotDialog(QDialog, Ui_Dialog):
     """ The dialog to show after clicking 'Take Snapshot'.
@@ -336,9 +348,11 @@ p, li { white-space: pre-wrap; }
         if self._loaded_snp_name == temp_name_in_op:
             self.is_match_lbl.setToolTip("The loaded snapshot MATCHES beam operations.")
             self.is_match_lbl.setPixmap(self._matched_px)
+            self.orig_template_lbl.setStyleSheet(MATCH_STY)
         else:
             self.is_match_lbl.setToolTip("The loaded snapshot does NOT MATCH beam operations!")
             self.is_match_lbl.setPixmap(self._not_matched_px)
+            self.orig_template_lbl.setStyleSheet(NOT_MATCH_STY)
             # check based on template option (default is baed on currently loaded)
             self.on_template_rbtn.setChecked(True)
 
