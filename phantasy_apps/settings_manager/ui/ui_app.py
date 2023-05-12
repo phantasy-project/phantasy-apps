@@ -124,6 +124,14 @@ class Ui_MainWindow(object):
         self.delete_btn.setAutoRaise(True)
         self.delete_btn.setObjectName("delete_btn")
         self.horizontalLayout_9.addWidget(self.delete_btn)
+        self.line_4 = QtWidgets.QFrame(self.centralwidget)
+        self.line_4.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_4.setObjectName("line_4")
+        self.horizontalLayout_9.addWidget(self.line_4)
+        self.orig_template_name_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.orig_template_name_lbl.setObjectName("orig_template_name_lbl")
+        self.horizontalLayout_9.addWidget(self.orig_template_name_lbl)
         self.verticalLayout_6 = QtWidgets.QVBoxLayout()
         self.verticalLayout_6.setContentsMargins(-1, 0, -1, -1)
         self.verticalLayout_6.setSpacing(0)
@@ -2102,6 +2110,7 @@ class Ui_MainWindow(object):
         self.delete_btn.setToolTip(
             _translate("MainWindow", "Delete selected items."))
         self.delete_btn.setText(_translate("MainWindow", "Delete"))
+        self.orig_template_name_lbl.setText(_translate("MainWindow", "orig"))
         self.loaded_snp_info_lbl.setText(
             _translate("MainWindow",
                        "Snapshot: 2022-02-24T08:49:11, 40Ar18(9+)"))
