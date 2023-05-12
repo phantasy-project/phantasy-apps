@@ -1508,7 +1508,7 @@ class Ui_MainWindow(object):
             self.snp_refresh_btn.sizePolicy().hasHeightForWidth())
         self.snp_refresh_btn.setSizePolicy(sizePolicy)
         icon35 = QtGui.QIcon()
-        icon35.addPixmap(QtGui.QPixmap(":/sm-icons/refresh.png"),
+        icon35.addPixmap(QtGui.QPixmap(":/sm-icons/refresh_db.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.snp_refresh_btn.setIcon(icon35)
         self.snp_refresh_btn.setIconSize(QtCore.QSize(48, 48))
@@ -1691,6 +1691,7 @@ class Ui_MainWindow(object):
         self.filter_note_chkbox.setObjectName("filter_note_chkbox")
         self.gridLayout_6.addWidget(self.filter_note_chkbox, 0, 11, 1, 1)
         self.ops_bound_cbb = QtWidgets.QComboBox(self.snp_view_frame)
+        self.ops_bound_cbb.setMinimumSize(QtCore.QSize(110, 0))
         self.ops_bound_cbb.setObjectName("ops_bound_cbb")
         self.ops_bound_cbb.addItem("")
         self.ops_bound_cbb.addItem("")
