@@ -196,14 +196,12 @@ REVERT_TT_REASON = """<html><head/><body><p>Revert <span style=" color:#0055ff;"
 REVERT_TT_NO_REASON = """<html><head/><body><p>Revert <span style=" color:#0055ff;">{n}</span> device settings (<span style=" color:#ff007f;">{op} {ov}</span>) changed at <span style=" color:#0055ff;">{ts}</span>. Original snapshot: {snapshot}.</p></body></html>"""
 
 MATCH_STY = """
-QFrame#orig_template_name_frame {
+QFrame#orig_template_info_frame {
     border: 1px solid #28A745;
-    padding: 2px 2px 2px 2px;
 }"""
 NOT_MATCH_STY = """
-QFrame#orig_template_name_frame {
+QFrame#orig_template_info_frame {
     border: 1px solid #DC3545;
-    padding: 2px 2px 2px 2px;
 }"""
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -3329,8 +3327,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self.loaded_snp_info_lbl,
                 self.loaded_snp_ts_lbl,
                 self.loaded_snp_note_lbl,
-                self.orig_template_name_frame,
-                self.is_match_lbl)]
+                self.orig_template_info_frame)]
 
     def set_last_data_refreshed_info_visible(self, visibility):
         [o.setVisible(visibility) for o in (
@@ -3927,11 +3924,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if name == temp_name_in_op:
             self.is_match_lbl.setToolTip("The loaded snapshot MATCHES beam operations.")
             self.is_match_lbl.setPixmap(self._matched_px)
-            self.orig_template_name_frame.setStyleSheet(MATCH_STY)
+            self.orig_template_info_frame.setStyleSheet(MATCH_STY)
         else:
             self.is_match_lbl.setToolTip("The loaded snapshot does NOT MATCH beam operations!")
             self.is_match_lbl.setPixmap(self._not_matched_px)
-            self.orig_template_name_frame.setStyleSheet(NOT_MATCH_STY)
+            self.orig_template_info_frame.setStyleSheet(NOT_MATCH_STY)
 
     def on_snp_saved(self, name, path):
         m = self.snp_treeView.model()
