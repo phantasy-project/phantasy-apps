@@ -171,6 +171,11 @@ ALM_TYPE_MAP = { # [read, tune]
     'Tune': [False, True],
 }
 
+ISRC_NAME_MAP = {
+    'ISRC1': 'Artemis',
+    'ISRC2': 'HP-ECR'
+}
+
 # SNP PVs
 SNP_NAME_PV = "PHY:SM_SNP_LAST_NAME"
 SNP_NOTE_PV = "PHY:SM_SNP_LAST_NOTE"
@@ -823,6 +828,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.update_rate_cbb.currentIndex())
 
         # icon
+        self._matched_px = QPixmap(":/sm-icons/done.png").scaled(32, 32,
+                Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+        self._not_matched_px = QPixmap(":/sm-icons/fail.png").scaled(32, 32,
+                Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+
         self.done_px = QPixmap(":/sm-icons/done.png")
         self.fail_px = QPixmap(":/sm-icons/fail.png")
         self._warning_px = QPixmap(":/sm-icons/warning.png").scaled(
@@ -972,6 +982,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.actionTake_Snapshot.triggered.connect(
             lambda: self.take_snapshot())
 
+        # originated snapshot template is changed
+        self.sigOrigTemplateChanged.connect(self.onOrigTemplateChanged)
+        #
         self.snp_loaded.connect(self.on_snp_loaded)
         # scaling factor hint
         self.snp_loaded.connect(self.on_hint_scaling_factor)
@@ -3882,13 +3895,27 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # figure out the originated template
         self._current_snpdata_originated = self.get_originated_template()
+
+        # check if loaded snapshot matches beam ops
+        self.sigOrigTemplateChanged.emit(self._current_snpdata_originated[0])
+
+    @pyqtSlot('QString')
+    def onOrigTemplateChanged(self, name: str):
+        """The name of originated snapshot template is changed.
+        """
+        if name is None:
+            name = self._current_snpdata_originated[0]
         # post info
-        self.orig_template_name_lbl.setText(self._current_snpdata_originated[0])
-
-
-        # enable auto data updating in 5 seconds
-        # if not self.update_ctrl_btn.isChecked():
-        #    delayed_exec(lambda: self.update_ctrl_btn.setChecked(True), 5000)
+        self.orig_template_name_lbl.setText(name)
+        isrc_name, bound_name, _ = self.beamSpeciesDisplayWidget.get_bound_info()
+        temp_name_in_op = f"{bound_name}_{ISRC_NAME_MAP[isrc_name]}"
+        # check if loaded snapshot matches beam ops
+        if name == temp_name_in_op:
+            self.is_match_lbl.setToolTip("The loaded snapshot MATCHES beam operations.")
+            self.is_match_lbl.setPixmap(self._matched_px)
+        else:
+            self.is_match_lbl.setToolTip("The loaded snapshot does NOT MATCH beam operations!")
+            self.is_match_lbl.setPixmap(self._not_matched_px)
 
     def on_snp_saved(self, name, path):
         m = self.snp_treeView.model()
@@ -4047,6 +4074,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.beam_display_widget = BeamSpeciesDisplayWidget()
         self.beam_display_widget.set_expanded(True)
         self.beam_display_widget.set_allow_clicking_src_btns(False)
+        self.beam_display_widget.mach_bound_changed.connect(
+                lambda:self.sigOrigTemplateChanged.emit(None))
         self.toolBar.addWidget(self.beam_display_widget)
         milli_sleep(500)
         #
