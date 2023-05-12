@@ -257,6 +257,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     sigSetLogColorSkip = pyqtSignal()
     sigSetLogColorSet = pyqtSignal()
 
+    # name of the originated template of the loaded snapshot is changed
+    sigOrigTemplateChanged = pyqtSignal('QString')
+
     def __init__(self, version, config_dir=None, **kws):
         super(SettingsManagerWindow, self).__init__()
 
@@ -3903,11 +3906,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def onOrigTemplateChanged(self, name: str):
         """The name of originated snapshot template is changed.
         """
-        if name is None:
+        if name in ('LINAC', 'FSEE'): # signal from mach_bound
             name = self._current_snpdata_originated[0]
         # post info
         self.orig_template_name_lbl.setText(name)
-        isrc_name, bound_name, _ = self.beamSpeciesDisplayWidget.get_bound_info()
+        isrc_name, bound_name, _ = self.beam_display_widget.get_bound_info()
         temp_name_in_op = f"{bound_name}_{ISRC_NAME_MAP[isrc_name]}"
         # check if loaded snapshot matches beam ops
         if name == temp_name_in_op:
@@ -4074,8 +4077,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.beam_display_widget = BeamSpeciesDisplayWidget()
         self.beam_display_widget.set_expanded(True)
         self.beam_display_widget.set_allow_clicking_src_btns(False)
-        self.beam_display_widget.mach_bound_changed.connect(
-                lambda:self.sigOrigTemplateChanged.emit(None))
+        self.beam_display_widget.mach_bound_changed.connect(self.sigOrigTemplateChanged)
         self.toolBar.addWidget(self.beam_display_widget)
         milli_sleep(500)
         #
