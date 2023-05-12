@@ -724,6 +724,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._machstate = None
 
     def __post_init_ui(self):
+        self.delete_btn.setVisible(getuser() in ('zhangt', 'tong'))
         # update toolbar
         self.__update_toolbar()
 
