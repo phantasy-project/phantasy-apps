@@ -2277,13 +2277,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._splash_msg_undone()
             [o.setEnabled(True) for o in w_list]
 
-        _df_loader = DAQT(daq_func=_load_df, daq_seq=range(1))
-        _df_loader.daqStarted.connect(lambda:self.db_pull_pb.setVisible(True))
-        _df_loader.daqStarted.connect(_load_started)
-        _df_loader.resultsReady.connect(_load_ready)
-        _df_loader.daqFinished.connect(_load_done)
-        _df_loader.daqFinished.connect(lambda:self.db_pull_pb.setVisible(False))
-        _df_loader.start()
+        self._df_loader = DAQT(daq_func=_load_df, daq_seq=range(1))
+        self._df_loader.daqStarted.connect(lambda:self.db_pull_pb.setVisible(True))
+        self._df_loader.daqStarted.connect(_load_started)
+        self._df_loader.resultsReady.connect(_load_ready)
+        self._df_loader.daqFinished.connect(_load_done)
+        self._df_loader.daqFinished.connect(lambda:self.db_pull_pb.setVisible(False))
+        self._df_loader.start()
 
     @pyqtSlot('QString')
     def on_data_uri_changed(self, purge, d):
@@ -2988,12 +2988,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.snp_filters_updated.emit()
             printlog("DB puller is done...")
 
-        _db_puller = DAQT(daq_func=_on_pull_data_one, daq_seq=self.df_all_row_tuple)
-        _db_puller.daqStarted.connect(_on_db_pull_started)
-        _db_puller.progressUpdated.connect(_on_db_pull_progressed)
-        _db_puller.resultsReady.connect(_on_db_pull_resultsReady)
-        _db_puller.daqFinished.connect(_on_db_pull_finished)
-        _db_puller.start()
+        self._db_puller = DAQT(daq_func=_on_pull_data_one, daq_seq=self.df_all_row_tuple)
+        self._db_puller.daqStarted.connect(_on_db_pull_started)
+        self._db_puller.progressUpdated.connect(_on_db_pull_progressed)
+        self._db_puller.resultsReady.connect(_on_db_pull_resultsReady)
+        self._db_puller.daqFinished.connect(_on_db_pull_finished)
+        self._db_puller.start()
 
     @pyqtSlot(float, 'QString')
     def _on_data_refresh_progressed(self, per, str_idx):
