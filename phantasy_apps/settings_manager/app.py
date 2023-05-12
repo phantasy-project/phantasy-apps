@@ -2243,7 +2243,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def __read_data2frame(self, n: int, d: str):
         # read data from database to dataframe
         _bound_tag = self.ops_bound_cbb.currentText()
-        if _bound_tag == 'ALL':
+        if _bound_tag == '*':
             _q_cond = ''
         else: # LINAC, FSEE
             _q_cond = f"WHERE tags like '%{_bound_tag}%'"
