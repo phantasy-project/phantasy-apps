@@ -4,7 +4,7 @@ import os
 import sys
 import argparse
 from phantasy_ui import QApp as QApplication
-from PyQt5.QtWidgets import QSplashScreen
+from phantasy_ui.widgets import SplashScreen
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 from .app import SettingsManagerWindow
@@ -38,7 +38,7 @@ def run(cli=False):
 
     app = QApplication(sys.argv)
     #
-    splash_w = QSplashScreen(QPixmap(":/sm-icons/sm-splash.png"))
+    splash_w = SplashScreen(QPixmap(":/sm-icons/sm-splash.png"))
     splash_w.show()
     splash_w.showMessage("Starting up Settings Manager...", Qt.AlignBottom | Qt.AlignHCenter)
 
