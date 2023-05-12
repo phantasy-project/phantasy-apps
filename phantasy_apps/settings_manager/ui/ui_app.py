@@ -228,7 +228,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.addWidget(self.is_match_lbl)
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
         self.horizontalLayout_9.addWidget(self.orig_template_info_frame)
-        spacerItem = QtWidgets.QSpacerItem(600, 30,
+        spacerItem = QtWidgets.QSpacerItem(40, 20,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_9.addItem(spacerItem)
@@ -458,49 +458,6 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
-        self.verticalLayout = QtWidgets.QVBoxLayout()
-        self.verticalLayout.setContentsMargins(-1, 0, 0, -1)
-        self.verticalLayout.setSpacing(0)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.settingsdata_lbl = QtWidgets.QLabel(self.centralwidget)
-        self.settingsdata_lbl.setStyleSheet("")
-        self.settingsdata_lbl.setAlignment(QtCore.Qt.AlignRight
-                                           | QtCore.Qt.AlignTop
-                                           | QtCore.Qt.AlignTrailing)
-        self.settingsdata_lbl.setObjectName("settingsdata_lbl")
-        self.verticalLayout.addWidget(self.settingsdata_lbl)
-        self.refresh_pb = QtWidgets.QProgressBar(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.refresh_pb.sizePolicy().hasHeightForWidth())
-        self.refresh_pb.setSizePolicy(sizePolicy)
-        self.refresh_pb.setMinimumSize(QtCore.QSize(90, 10))
-        self.refresh_pb.setMaximumSize(QtCore.QSize(100, 10))
-        self.refresh_pb.setStyleSheet("QProgressBar {\n"
-                                      "    border: 1px solid gray;\n"
-                                      "    border-radius: 1px;\n"
-                                      "    text-align: center;\n"
-                                      "}\n"
-                                      "\n"
-                                      "QProgressBar::chunk {\n"
-                                      "    background-color: #90CAF9;\n"
-                                      "    width: 40px;\n"
-                                      "    margin: 1px;\n"
-                                      "}")
-        self.refresh_pb.setMaximum(0)
-        self.refresh_pb.setProperty("value", 0)
-        self.refresh_pb.setAlignment(QtCore.Qt.AlignBottom
-                                     | QtCore.Qt.AlignLeading
-                                     | QtCore.Qt.AlignLeft)
-        self.refresh_pb.setOrientation(QtCore.Qt.Horizontal)
-        self.refresh_pb.setInvertedAppearance(False)
-        self.refresh_pb.setFormat("")
-        self.refresh_pb.setObjectName("refresh_pb")
-        self.verticalLayout.addWidget(self.refresh_pb)
-        self.horizontalLayout.addLayout(self.verticalLayout)
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setFrameShape(QtWidgets.QFrame.VLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -509,6 +466,10 @@ class Ui_MainWindow(object):
         self.verticalLayout_5 = QtWidgets.QVBoxLayout()
         self.verticalLayout_5.setSpacing(1)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
+        self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_8.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_8.setSpacing(2)
+        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
         self.last_refreshed_title_lbl = QtWidgets.QLabel(self.centralwidget)
         self.last_refreshed_title_lbl.setMinimumSize(QtCore.QSize(0, 15))
         self.last_refreshed_title_lbl.setMaximumSize(QtCore.QSize(
@@ -520,7 +481,14 @@ class Ui_MainWindow(object):
                                                     "    color: #888A85;\n"
                                                     "}")
         self.last_refreshed_title_lbl.setObjectName("last_refreshed_title_lbl")
-        self.verticalLayout_5.addWidget(self.last_refreshed_title_lbl)
+        self.horizontalLayout_8.addWidget(self.last_refreshed_title_lbl)
+        self.refresh_beat_lbl = QtWidgets.QLabel(self.centralwidget)
+        self.refresh_beat_lbl.setAlignment(QtCore.Qt.AlignRight
+                                           | QtCore.Qt.AlignTrailing
+                                           | QtCore.Qt.AlignVCenter)
+        self.refresh_beat_lbl.setObjectName("refresh_beat_lbl")
+        self.horizontalLayout_8.addWidget(self.refresh_beat_lbl)
+        self.verticalLayout_5.addLayout(self.horizontalLayout_8)
         self.last_refreshed_lbl = QtWidgets.QLabel(self.centralwidget)
         font = QtGui.QFont()
         font.setFamily("Monospace")
@@ -1262,6 +1230,15 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_7.addItem(spacerItem3)
+        self.label_3 = QtWidgets.QLabel(self.adv_frame)
+        self.label_3.setObjectName("label_3")
+        self.horizontalLayout_7.addWidget(self.label_3)
+        self.refresh_speed_cbb = QtWidgets.QComboBox(self.adv_frame)
+        self.refresh_speed_cbb.setObjectName("refresh_speed_cbb")
+        self.refresh_speed_cbb.addItem("")
+        self.refresh_speed_cbb.addItem("")
+        self.refresh_speed_cbb.addItem("")
+        self.horizontalLayout_7.addWidget(self.refresh_speed_cbb)
         self.init_settings_chkbox = QtWidgets.QCheckBox(self.adv_frame)
         self.init_settings_chkbox.setObjectName("init_settings_chkbox")
         self.horizontalLayout_7.addWidget(self.init_settings_chkbox)
@@ -2194,14 +2171,9 @@ class Ui_MainWindow(object):
         self.total_field_number_title_lbl.setText(
             _translate("MainWindow", "Fields"))
         self.total_field_number_lbl.setText(_translate("MainWindow", "0"))
-        self.settingsdata_lbl.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Auto : Realtime update</p><p>1-5 : Update every 0.2 to 1 second</p></body></html>"
-            ))
-        self.settingsdata_lbl.setText(_translate("MainWindow", "Live Data"))
         self.last_refreshed_title_lbl.setText(
-            _translate("MainWindow", "Last refreshed at"))
+            _translate("MainWindow", "Live data last refreshed at"))
+        self.refresh_beat_lbl.setText(_translate("MainWindow", "beat"))
         self.update_rate_cbb.setItemText(0, _translate("MainWindow", "1 s"))
         self.update_rate_cbb.setItemText(1, _translate("MainWindow", "2 s"))
         self.update_rate_cbb.setItemText(2, _translate("MainWindow", "5 s"))
@@ -2414,6 +2386,13 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "Checked Items"))
         self.init_settings_lbl.setText(
             _translate("MainWindow", "Advanced Options"))
+        self.label_3.setText(_translate("MainWindow", "Refresh Speed"))
+        self.refresh_speed_cbb.setCurrentText(
+            _translate("MainWindow", "Normal"))
+        self.refresh_speed_cbb.setItemText(0, _translate("MainWindow", "Slow"))
+        self.refresh_speed_cbb.setItemText(1,
+                                           _translate("MainWindow", "Normal"))
+        self.refresh_speed_cbb.setItemText(2, _translate("MainWindow", "Fast"))
         self.init_settings_chkbox.setToolTip(
             _translate(
                 "MainWindow",
