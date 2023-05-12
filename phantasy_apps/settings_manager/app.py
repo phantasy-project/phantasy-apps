@@ -1342,7 +1342,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         read_action = QAction(self._read_icon, "&Read", menu)
         read_action.triggered.connect(partial(self.on_read_snp, snpdata))
         # viz machine state
-        mviz_action = QAction(self._chart_icon, "Machine State", menu)
+        if self._machstate is not None:
+            _mviz_text = "Machine State (diff)"
+        else:
+            _mviz_text = "Machine State"
+        mviz_action = QAction(self._chart_icon, _mviz_text, menu)
         mviz_action.triggered.connect(partial(self.on_mviz, snpdata))
         # del
         del_action = QAction(self._del_icon, "&Delete", menu)
