@@ -2466,7 +2466,7 @@ class Ui_MainWindow(object):
             ))
         self.ops_bound_cbb.setItemText(0, _translate("MainWindow", "LINAC"))
         self.ops_bound_cbb.setItemText(1, _translate("MainWindow", "FSEE"))
-        self.ops_bound_cbb.setItemText(2, _translate("MainWindow", "ALL"))
+        self.ops_bound_cbb.setItemText(2, _translate("MainWindow", "*"))
         self.daterange_lbl.setText(_translate("MainWindow", "To"))
         self.dateEdit2.setDisplayFormat(_translate("MainWindow", "yyyy-MM-dd"))
         self.snp_collapse_btn.setToolTip(
@@ -2475,7 +2475,7 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Click to collapse all snapshots.</p></body></html>"
             ))
         self.snp_collapse_btn.setText(_translate("MainWindow", "Collapse"))
-        self.label_2.setText(_translate("MainWindow", "Pick Based on Bound"))
+        self.label_2.setText(_translate("MainWindow", "Pick on beam bound"))
         self.log_dock.setWindowTitle(_translate("MainWindow", "Setting Logs"))
         self.findtext_lbl.setText(_translate("MainWindow", "Find Text"))
         self.label_11.setText(_translate("MainWindow", "Total log entries:"))
