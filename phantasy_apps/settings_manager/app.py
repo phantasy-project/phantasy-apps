@@ -3880,6 +3880,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # figure out the originated template
         self._current_snpdata_originated = self.get_originated_template()
+        # post info
+        self.orig_template_name_lbl.setText(self._current_snpdata_originated[0])
+
 
         # enable auto data updating in 5 seconds
         # if not self.update_ctrl_btn.isChecked():
