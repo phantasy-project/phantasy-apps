@@ -257,6 +257,15 @@ p, li { white-space: pre-wrap; }
                               _name, _tag_list, _snpdata))
             layout.addWidget(o)
             btn_grp.addButton(o)
+        # add a reset button
+        o = QToolButton(self)
+        o.setText("Reset")
+        o.setToolTip("Click to auto-check the template button to match beam ops.")
+        o.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        # o.setStyleSheet(TAG_BTN_STY.format(fs=self._tag_fs))
+        o.clicked.connect(self.check_loaded_snp)
+        layout.addWidget(o)
+        #
         w.setLayout(layout)
         area.setWidget(w)
 
