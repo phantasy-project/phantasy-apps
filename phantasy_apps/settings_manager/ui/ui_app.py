@@ -466,6 +466,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8.setSpacing(2)
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
         self.last_refreshed_title_lbl = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.last_refreshed_title_lbl.sizePolicy().hasHeightForWidth())
+        self.last_refreshed_title_lbl.setSizePolicy(sizePolicy)
         self.last_refreshed_title_lbl.setMinimumSize(QtCore.QSize(0, 15))
         self.last_refreshed_title_lbl.setMaximumSize(QtCore.QSize(
             16777215, 15))
@@ -478,6 +485,13 @@ class Ui_MainWindow(object):
         self.last_refreshed_title_lbl.setObjectName("last_refreshed_title_lbl")
         self.horizontalLayout_8.addWidget(self.last_refreshed_title_lbl)
         self.refresh_beat_lbl = QtWidgets.QLabel(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.refresh_beat_lbl.sizePolicy().hasHeightForWidth())
+        self.refresh_beat_lbl.setSizePolicy(sizePolicy)
         self.refresh_beat_lbl.setAlignment(QtCore.Qt.AlignRight
                                            | QtCore.Qt.AlignTrailing
                                            | QtCore.Qt.AlignVCenter)
