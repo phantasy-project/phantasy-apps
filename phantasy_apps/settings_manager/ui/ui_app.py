@@ -458,11 +458,6 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
-        self.line = QtWidgets.QFrame(self.centralwidget)
-        self.line.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line.setObjectName("line")
-        self.horizontalLayout.addWidget(self.line)
         self.verticalLayout_5 = QtWidgets.QVBoxLayout()
         self.verticalLayout_5.setSpacing(1)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
@@ -1245,6 +1240,11 @@ class Ui_MainWindow(object):
         self.skip_none_chkbox = QtWidgets.QCheckBox(self.adv_frame)
         self.skip_none_chkbox.setObjectName("skip_none_chkbox")
         self.horizontalLayout_7.addWidget(self.skip_none_chkbox)
+        self.show_change_reason_input_chkbox = QtWidgets.QCheckBox(
+            self.adv_frame)
+        self.show_change_reason_input_chkbox.setObjectName(
+            "show_change_reason_input_chkbox")
+        self.horizontalLayout_7.addWidget(self.show_change_reason_input_chkbox)
         self.auto_ndigit_chkbox = QtWidgets.QCheckBox(self.adv_frame)
         self.auto_ndigit_chkbox.setEnabled(True)
         self.auto_ndigit_chkbox.setObjectName("auto_ndigit_chkbox")
@@ -1257,11 +1257,6 @@ class Ui_MainWindow(object):
         self.ndigit_sbox.setProperty("value", 3)
         self.ndigit_sbox.setObjectName("ndigit_sbox")
         self.horizontalLayout_7.addWidget(self.ndigit_sbox)
-        self.show_change_reason_input_chkbox = QtWidgets.QCheckBox(
-            self.adv_frame)
-        self.show_change_reason_input_chkbox.setObjectName(
-            "show_change_reason_input_chkbox")
-        self.horizontalLayout_7.addWidget(self.show_change_reason_input_chkbox)
         self.init_vline = QtWidgets.QFrame(self.adv_frame)
         self.init_vline.setFrameShape(QtWidgets.QFrame.VLine)
         self.init_vline.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -2387,8 +2382,7 @@ class Ui_MainWindow(object):
         self.init_settings_lbl.setText(
             _translate("MainWindow", "Advanced Options"))
         self.label_3.setText(_translate("MainWindow", "Refresh Speed"))
-        self.refresh_speed_cbb.setCurrentText(
-            _translate("MainWindow", "Normal"))
+        self.refresh_speed_cbb.setCurrentText(_translate("MainWindow", "Slow"))
         self.refresh_speed_cbb.setItemText(0, _translate("MainWindow", "Slow"))
         self.refresh_speed_cbb.setItemText(1,
                                            _translate("MainWindow", "Normal"))
@@ -2407,11 +2401,6 @@ class Ui_MainWindow(object):
             ))
         self.skip_none_chkbox.setText(
             _translate("MainWindow", "Skip Non-reachable Devices"))
-        self.auto_ndigit_chkbox.setToolTip(
-            _translate("MainWindow",
-                       "Change data presenting format to \'{n}g\'."))
-        self.auto_ndigit_chkbox.setText(_translate("MainWindow", "Auto"))
-        self.ndigit_lbl.setText(_translate("MainWindow", "Precision number"))
         self.show_change_reason_input_chkbox.setToolTip(
             _translate(
                 "MainWindow",
@@ -2419,6 +2408,11 @@ class Ui_MainWindow(object):
             ))
         self.show_change_reason_input_chkbox.setText(
             _translate("MainWindow", "Change Reason"))
+        self.auto_ndigit_chkbox.setToolTip(
+            _translate("MainWindow",
+                       "Change data presenting format to \'{n}g\'."))
+        self.auto_ndigit_chkbox.setText(_translate("MainWindow", "Auto"))
+        self.ndigit_lbl.setText(_translate("MainWindow", "Precision number"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menuTools.setTitle(_translate("MainWindow", "&Tools"))
