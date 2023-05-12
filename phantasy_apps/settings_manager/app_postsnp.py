@@ -30,6 +30,8 @@ from .utils import take_snapshot
 from .data import SnapshotData
 from .ui.ui_post_snp import Ui_Dialog
 
+BOUND_EXCL_LIST = ("LINAC", "FSEE")
+ISRC_EXCL_LIST = ("SCS1", "SCS2")
 
 DEFAULT_TAG_LIST = ["LINAC", "FSEE", "GOLDEN", "SCS1", "SCS2", "TEST"]
 
@@ -211,6 +213,8 @@ p, li { white-space: pre-wrap; }
 
     def _build_tags_list(self, area, tags):
         # build a flow list of checkable toolbuttons for tag selection.
+        _bound_grp = QButtonGroup(self)
+        _isrc_grp = QButtonGroup(self)
         w = area.takeWidget()
         w.setParent(None)
         w = QWidget(self)
@@ -226,6 +230,10 @@ p, li { white-space: pre-wrap; }
             o.toggled.connect(partial(self.on_update_tags, tag))
             layout.addWidget(o)
             self._tag_btn_sts[tag] = o
+            if tag in BOUND_EXCL_LIST:
+                _bound_grp.addButton(o)
+            if tag in ISRC_EXCL_LIST:
+                _isrc_grp.addButton(o)
         w.setLayout(layout)
         area.setWidget(w)
 
