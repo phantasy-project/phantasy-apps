@@ -124,11 +124,6 @@ class Ui_MainWindow(object):
         self.delete_btn.setAutoRaise(True)
         self.delete_btn.setObjectName("delete_btn")
         self.horizontalLayout_9.addWidget(self.delete_btn)
-        self.line_4 = QtWidgets.QFrame(self.centralwidget)
-        self.line_4.setFrameShape(QtWidgets.QFrame.VLine)
-        self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_4.setObjectName("line_4")
-        self.horizontalLayout_9.addWidget(self.line_4)
         self.verticalLayout_6 = QtWidgets.QVBoxLayout()
         self.verticalLayout_6.setContentsMargins(-1, 0, -1, -1)
         self.verticalLayout_6.setSpacing(0)
@@ -139,6 +134,7 @@ class Ui_MainWindow(object):
             "    border-top: 0px solid gray;\n"
             "    border-bottom: 2px solid gray;\n"
             "    border-left: 2px solid gray;\n"
+            "    border-right: 2px solid gray;\n"
             "}")
         self.loaded_snp_info_lbl.setAlignment(QtCore.Qt.AlignLeading
                                               | QtCore.Qt.AlignLeft
@@ -181,6 +177,7 @@ class Ui_MainWindow(object):
             "    color: #888A85;\n"
             "    border-top: 0px solid gray;\n"
             "    border-left: 1px solid gray;\n"
+            "    border-right: 2px solid gray;\n"
             "}")
         self.loaded_snp_ts_lbl.setAlignment(QtCore.Qt.AlignRight
                                             | QtCore.Qt.AlignTrailing
@@ -189,9 +186,25 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.addWidget(self.loaded_snp_ts_lbl)
         self.verticalLayout_6.addLayout(self.horizontalLayout_6)
         self.horizontalLayout_9.addLayout(self.verticalLayout_6)
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_3.setContentsMargins(0, 0, -1, -1)
+        self.verticalLayout_3.setSpacing(1)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.orig_template_name_title = QtWidgets.QLabel(self.centralwidget)
+        self.orig_template_name_title.setObjectName("orig_template_name_title")
+        self.verticalLayout_3.addWidget(self.orig_template_name_title)
         self.orig_template_name_lbl = QtWidgets.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        font.setBold(True)
+        font.setWeight(75)
+        self.orig_template_name_lbl.setFont(font)
+        self.orig_template_name_lbl.setAlignment(QtCore.Qt.AlignRight
+                                                 | QtCore.Qt.AlignTrailing
+                                                 | QtCore.Qt.AlignVCenter)
         self.orig_template_name_lbl.setObjectName("orig_template_name_lbl")
-        self.horizontalLayout_9.addWidget(self.orig_template_name_lbl)
+        self.verticalLayout_3.addWidget(self.orig_template_name_lbl)
+        self.horizontalLayout_9.addLayout(self.verticalLayout_3)
         self.is_match_lbl = QtWidgets.QLabel(self.centralwidget)
         self.is_match_lbl.setMinimumSize(QtCore.QSize(32, 32))
         self.is_match_lbl.setMaximumSize(QtCore.QSize(32, 32))
@@ -2123,12 +2136,15 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "snapshot note..."))
         self.loaded_snp_ts_lbl.setText(
             _translate("MainWindow", "Loaded at 2022-08-22 10:47:37"))
+        self.orig_template_name_title.setText(
+            _translate("MainWindow", "Originated Template:"))
         self.orig_template_name_lbl.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Show the name of originated snapshot template.</p></body></html>"
             ))
-        self.orig_template_name_lbl.setText(_translate("MainWindow", "orig"))
+        self.orig_template_name_lbl.setText(
+            _translate("MainWindow", "template name"))
         self.is_match_lbl.setText(_translate("MainWindow", "x"))
         self.filter_btn.setToolTip(
             _translate(
