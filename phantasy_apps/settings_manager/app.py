@@ -2581,6 +2581,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit(
                 (sts_idx, tt, Qt.ToolTipRole))
+
         elif elem.family == "AP":
             in_sts = elem.IN_STS
             px = self._ap_in_px_tuple[in_sts]
@@ -2601,6 +2602,19 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     tt = "PPAC is OUT"
                 else:
                     tt = "PPAC is IN"
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "FOIL":
+            if 'IN_STS' in elem.fields:
+                in_sts = elem.IN_STS
+                px = self._pm_in_px_tuple[in_sts]
+                if in_sts == 0:
+                    tt = "Foil is OUT"
+                else:
+                    tt = "Foil is IN"
             worker.meta_signal1.emit(
                 (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit(
@@ -2713,6 +2727,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit(
                 (sts_idx, tt, Qt.ToolTipRole))
+
         elif elem.family == "PTA":
             sts = elem.get_field('TGT')
             sts_val_int = sts.value

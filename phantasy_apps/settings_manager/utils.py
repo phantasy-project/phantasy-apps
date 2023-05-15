@@ -219,6 +219,9 @@ STS_PX_MAP = {
 "PPAC is OUT": (SM_PX_ON_PATH, 1),
 "PPAC is IN": (SM_PX_OFF_PATH, 0),
 
+"Foil is OUT": (SM_PX_ON_PATH, 1),
+"Foil is IN": (SM_PX_OFF_PATH, 0),
+
 "Beam dump is OUT": (SM_PX_ON_PATH, 1),
 "Beam dump is IN": (SM_PX_OFF_PATH, 0),
 
