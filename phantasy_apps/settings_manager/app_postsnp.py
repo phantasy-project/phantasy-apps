@@ -20,7 +20,6 @@ from PyQt5.QtWidgets import QToolButton
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QButtonGroup
 
-from phantasy_ui import milli_sleep
 from phantasy_ui import printlog
 from phantasy_ui.widgets import FlowLayout
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
@@ -175,7 +174,7 @@ p, li { white-space: pre-wrap; }
         self._build_tags_list(self.tags_area, tag_list)
 
         # check if current loaded snapshot matches beam operation
-        milli_sleep(500)
+        self.beamSpeciesDisplayWidget.set_wait_until_ready(True)
         self.check_loaded_snp()
 
     @pyqtSlot('QString')

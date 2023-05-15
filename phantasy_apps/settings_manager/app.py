@@ -4105,15 +4105,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.toolBar.addWidget(spacer)
         self.beam_display_widget = BeamSpeciesDisplayWidget()
+        self.beam_display_widget.set_wait_until_ready(True)
         self.beam_display_widget.set_expanded(True)
         self.beam_display_widget.set_allow_clicking_src_btns(False)
         self.beam_display_widget.mach_bound_changed.connect(self.sigOrigTemplateChanged)
         self.toolBar.addWidget(self.beam_display_widget)
-        milli_sleep(500)
         #
         _beam_src, _ops_bound, _beam_dest = self.beam_display_widget.get_bound_info()
         self.ops_bound_cbb.setCurrentText(_ops_bound)
-        printlog("Machine bound: ", _beam_src, _ops_bound, _beam_dest)
+        printlog(f"Machine bound: {_ops_bound}, from {_beam_src} to {_beam_dest}")
         self.ops_bound_cbb.currentTextChanged.connect(lambda:self.snp_refresh_btn.clicked.emit())
 
     def _meta_fetcher_started(self):
