@@ -492,6 +492,8 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.refresh_beat_lbl.sizePolicy().hasHeightForWidth())
         self.refresh_beat_lbl.setSizePolicy(sizePolicy)
+        self.refresh_beat_lbl.setMinimumSize(QtCore.QSize(0, 15))
+        self.refresh_beat_lbl.setMaximumSize(QtCore.QSize(16777215, 15))
         self.refresh_beat_lbl.setAlignment(QtCore.Qt.AlignCenter)
         self.refresh_beat_lbl.setObjectName("refresh_beat_lbl")
         self.horizontalLayout_8.addWidget(self.refresh_beat_lbl)
