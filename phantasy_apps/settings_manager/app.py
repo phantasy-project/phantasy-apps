@@ -3816,7 +3816,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         data.extract_blob()
         # add new entry to database
         insert_update_data(self._db_conn_pool.get(self.data_uri), data)
-        # delayed_exec(lambda:self.db_refresh.emit(), 3000)
 
     def on_saveas_settings(self, data):
         # data: SnapshotData
@@ -4232,8 +4231,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.nsnp_btn.setVisible(True)
         for i in range(4):
             self.nsnp_btn.click()  # n_snp_max -> All
-        self.db_refresh.connect(
-            partial(self.on_data_uri_changed, True, self.data_uri))
+        self.db_refresh.connect(self.snp_refresh_btn.click)
         self.db_pull.connect(self.on_pull_data)
 
     @pyqtSlot()
