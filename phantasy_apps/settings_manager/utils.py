@@ -583,7 +583,7 @@ class SettingsModel(QStandardItemModel):
             QHeaderView {
                 qproperty-defaultAlignment: AlignHCenter AlignVCenter;
                 font-weight: bold;
-                font-size: 15pt;
+                font-size: 14pt;
             }""")
         #
         self.style_view(font=self._font)
@@ -1628,7 +1628,7 @@ class SnapshotDataModel(QStandardItemModel):
         v.header().setStyleSheet("""
             QHeaderView {
                 font-weight: bold;
-                font-size: 15pt;
+                font-size: 14pt;
             }""")
 
         #
