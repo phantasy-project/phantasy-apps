@@ -4115,6 +4115,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.ops_bound_cbb.setCurrentText(_ops_bound)
         printlog(f"Machine bound: {_ops_bound}, from {_beam_src} to {_beam_dest}")
         self.ops_bound_cbb.currentTextChanged.connect(lambda:self.snp_refresh_btn.clicked.emit())
+        #
+        self.beam_display_widget.mach_bound_changed.connect(self.ops_bound_cbb.setCurrentText)
 
     def _meta_fetcher_started(self):
         printlog("Start to fetch machine state...")
