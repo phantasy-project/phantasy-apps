@@ -1245,11 +1245,21 @@ class Ui_MainWindow(object):
         self.skip_none_chkbox = QtWidgets.QCheckBox(self.adv_frame)
         self.skip_none_chkbox.setObjectName("skip_none_chkbox")
         self.horizontalLayout_7.addWidget(self.skip_none_chkbox)
+        self.line_4 = QtWidgets.QFrame(self.adv_frame)
+        self.line_4.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_4.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_4.setObjectName("line_4")
+        self.horizontalLayout_7.addWidget(self.line_4)
         self.show_change_reason_input_chkbox = QtWidgets.QCheckBox(
             self.adv_frame)
         self.show_change_reason_input_chkbox.setObjectName(
             "show_change_reason_input_chkbox")
         self.horizontalLayout_7.addWidget(self.show_change_reason_input_chkbox)
+        self.line_6 = QtWidgets.QFrame(self.adv_frame)
+        self.line_6.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_6.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_6.setObjectName("line_6")
+        self.horizontalLayout_7.addWidget(self.line_6)
         self.auto_ndigit_chkbox = QtWidgets.QCheckBox(self.adv_frame)
         self.auto_ndigit_chkbox.setEnabled(True)
         self.auto_ndigit_chkbox.setObjectName("auto_ndigit_chkbox")
@@ -1276,11 +1286,20 @@ class Ui_MainWindow(object):
         self.refresh_speed_cbb.addItem("")
         self.refresh_speed_cbb.addItem("")
         self.horizontalLayout_7.addWidget(self.refresh_speed_cbb)
-        self.init_vline = QtWidgets.QFrame(self.adv_frame)
-        self.init_vline.setFrameShape(QtWidgets.QFrame.VLine)
-        self.init_vline.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.init_vline.setObjectName("init_vline")
-        self.horizontalLayout_7.addWidget(self.init_vline)
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_7.addItem(spacerItem4)
+        self.init_settings_lbl_2 = QtWidgets.QLabel(self.adv_frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.init_settings_lbl_2.sizePolicy().hasHeightForWidth())
+        self.init_settings_lbl_2.setSizePolicy(sizePolicy)
+        self.init_settings_lbl_2.setObjectName("init_settings_lbl_2")
+        self.horizontalLayout_7.addWidget(self.init_settings_lbl_2)
         self.gridLayout.addWidget(self.adv_frame, 6, 1, 1, 3)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -1421,10 +1440,10 @@ class Ui_MainWindow(object):
         self.gridLayout_2.setContentsMargins(2, 0, 2, 2)
         self.gridLayout_2.setSpacing(2)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        spacerItem4 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem5 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_2.addItem(spacerItem4, 1, 4, 1, 1)
+        self.gridLayout_2.addItem(spacerItem5, 1, 4, 1, 1)
         self.select_none_tags_btn = QtWidgets.QToolButton(
             self.tag_filter_frame)
         self.select_none_tags_btn.setIcon(icon33)
@@ -1508,10 +1527,10 @@ class Ui_MainWindow(object):
             "scrollAreaWidgetContents_2")
         self.ion_filter_area.setWidget(self.scrollAreaWidgetContents_2)
         self.gridLayout_4.addWidget(self.ion_filter_area, 0, 0, 1, 6)
-        spacerItem5 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem6 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_4.addItem(spacerItem5, 1, 4, 1, 1)
+        self.gridLayout_4.addItem(spacerItem6, 1, 4, 1, 1)
         self.select_invert_ions_btn = QtWidgets.QToolButton(
             self.ion_filter_frame)
         self.select_invert_ions_btn.setIcon(icon34)
@@ -1684,10 +1703,10 @@ class Ui_MainWindow(object):
                                      | QtCore.Qt.AlignVCenter)
         self.db_pull_pb.setObjectName("db_pull_pb")
         self.gridLayout_6.addWidget(self.db_pull_pb, 0, 3, 1, 1)
-        spacerItem6 = QtWidgets.QSpacerItem(769, 20,
+        spacerItem7 = QtWidgets.QSpacerItem(769, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_6.addItem(spacerItem6, 0, 2, 1, 1)
+        self.gridLayout_6.addItem(spacerItem7, 0, 2, 1, 1)
         self.filter_date_chkbox = QtWidgets.QToolButton(self.snp_view_frame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -1813,10 +1832,10 @@ class Ui_MainWindow(object):
         self.setlog_count_lbl = QtWidgets.QLabel(self.dockWidgetContents_2)
         self.setlog_count_lbl.setObjectName("setlog_count_lbl")
         self.horizontalLayout_5.addWidget(self.setlog_count_lbl)
-        spacerItem7 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem8 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_5.addItem(spacerItem7)
+        self.horizontalLayout_5.addItem(spacerItem8)
         self.purge_revert_btn = QtWidgets.QPushButton(
             self.dockWidgetContents_2)
         self.purge_revert_btn.setObjectName("purge_revert_btn")
@@ -2399,7 +2418,7 @@ class Ui_MainWindow(object):
         self.n_all_checked_items_lbl.setText(_translate("MainWindow", "0"))
         self.label.setText(_translate("MainWindow", "Checked Items"))
         self.init_settings_lbl.setText(
-            _translate("MainWindow", "Advanced Options"))
+            _translate("MainWindow", ">>> Advanced Options"))
         self.init_settings_chkbox.setToolTip(
             _translate(
                 "MainWindow",
@@ -2432,6 +2451,8 @@ class Ui_MainWindow(object):
         self.refresh_speed_cbb.setItemText(1,
                                            _translate("MainWindow", "Normal"))
         self.refresh_speed_cbb.setItemText(2, _translate("MainWindow", "Fast"))
+        self.init_settings_lbl_2.setText(
+            _translate("MainWindow", "Advanced Options <<<"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menuTools.setTitle(_translate("MainWindow", "&Tools"))
