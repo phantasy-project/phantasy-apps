@@ -1233,12 +1233,33 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.init_settings_lbl.sizePolicy().hasHeightForWidth())
         self.init_settings_lbl.setSizePolicy(sizePolicy)
+        self.init_settings_lbl.setStyleSheet(
+            "QLabel {\n"
+            "    border-top: 0px solid gray;\n"
+            "    border-left: 10px solid gray;\n"
+            "}")
+        self.init_settings_lbl.setText("")
         self.init_settings_lbl.setObjectName("init_settings_lbl")
         self.horizontalLayout_7.addWidget(self.init_settings_lbl)
         spacerItem3 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_7.addItem(spacerItem3)
+        self.label_5 = QtWidgets.QLabel(self.adv_frame)
+        self.label_5.setObjectName("label_5")
+        self.horizontalLayout_7.addWidget(self.label_5)
+        self.db_refresh_speed_cbb = QtWidgets.QComboBox(self.adv_frame)
+        self.db_refresh_speed_cbb.setObjectName("db_refresh_speed_cbb")
+        self.db_refresh_speed_cbb.addItem("")
+        self.db_refresh_speed_cbb.addItem("")
+        self.db_refresh_speed_cbb.addItem("")
+        self.db_refresh_speed_cbb.addItem("")
+        self.horizontalLayout_7.addWidget(self.db_refresh_speed_cbb)
+        self.line_7 = QtWidgets.QFrame(self.adv_frame)
+        self.line_7.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_7.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_7.setObjectName("line_7")
+        self.horizontalLayout_7.addWidget(self.line_7)
         self.init_settings_chkbox = QtWidgets.QCheckBox(self.adv_frame)
         self.init_settings_chkbox.setObjectName("init_settings_chkbox")
         self.horizontalLayout_7.addWidget(self.init_settings_chkbox)
@@ -1298,6 +1319,12 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.init_settings_lbl_2.sizePolicy().hasHeightForWidth())
         self.init_settings_lbl_2.setSizePolicy(sizePolicy)
+        self.init_settings_lbl_2.setStyleSheet(
+            "QLabel {\n"
+            "    border-top: 0px solid gray;\n"
+            "    border-right: 10px solid gray;\n"
+            "}")
+        self.init_settings_lbl_2.setText("")
         self.init_settings_lbl_2.setObjectName("init_settings_lbl_2")
         self.horizontalLayout_7.addWidget(self.init_settings_lbl_2)
         self.gridLayout.addWidget(self.adv_frame, 6, 1, 1, 3)
@@ -2342,6 +2369,11 @@ class Ui_MainWindow(object):
         self.alm_type_cbb.setItemText(0, _translate("MainWindow", "All"))
         self.alm_type_cbb.setItemText(1, _translate("MainWindow", "Tune"))
         self.alm_type_cbb.setItemText(2, _translate("MainWindow", "Read"))
+        self.show_init_settings_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Show advanced options.</p></body></html>"
+            ))
         self.show_init_settings_btn.setText(_translate("MainWindow", "..."))
         self.pos_filter_btn.setToolTip(
             _translate(
@@ -2417,22 +2449,29 @@ class Ui_MainWindow(object):
             ))
         self.n_all_checked_items_lbl.setText(_translate("MainWindow", "0"))
         self.label.setText(_translate("MainWindow", "Checked Items"))
-        self.init_settings_lbl.setText(
-            _translate("MainWindow", ">>> Advanced Options"))
+        self.label_5.setText(_translate("MainWindow", "Refresh Database"))
+        self.db_refresh_speed_cbb.setItemText(
+            0, _translate("MainWindow", "Every 15 minutes"))
+        self.db_refresh_speed_cbb.setItemText(
+            1, _translate("MainWindow", "Every 30 minutes"))
+        self.db_refresh_speed_cbb.setItemText(
+            2, _translate("MainWindow", "Every 1 hour"))
+        self.db_refresh_speed_cbb.setItemText(
+            3, _translate("MainWindow", "Every 1 week"))
         self.init_settings_chkbox.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Initialize device settings with the whole loaded lattice, check to generate the settings table.</p></body></html>"
+                "<html><head/><body><p>Initializing device settings with the whole loaded lattice, check to generate the settings table.</p></body></html>"
             ))
         self.init_settings_chkbox.setText(
-            _translate("MainWindow", "Initialize with loaded lattice"))
+            _translate("MainWindow", "Initialize Settings"))
         self.skip_none_chkbox.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Skip devices that are not reachable (when initializing with loaded lattice).</p></body></html>"
             ))
         self.skip_none_chkbox.setText(
-            _translate("MainWindow", "Skip Non-reachable Devices"))
+            _translate("MainWindow", "Skip Non-reachables"))
         self.show_change_reason_input_chkbox.setToolTip(
             _translate(
                 "MainWindow",
@@ -2444,15 +2483,13 @@ class Ui_MainWindow(object):
             _translate("MainWindow",
                        "Change data presenting format to \'{n}g\'."))
         self.auto_ndigit_chkbox.setText(_translate("MainWindow", "Auto"))
-        self.ndigit_lbl.setText(_translate("MainWindow", "Precision number"))
+        self.ndigit_lbl.setText(_translate("MainWindow", "Precisions"))
         self.label_3.setText(_translate("MainWindow", "Refresh Speed"))
         self.refresh_speed_cbb.setCurrentText(_translate("MainWindow", "Slow"))
         self.refresh_speed_cbb.setItemText(0, _translate("MainWindow", "Slow"))
         self.refresh_speed_cbb.setItemText(1,
                                            _translate("MainWindow", "Normal"))
         self.refresh_speed_cbb.setItemText(2, _translate("MainWindow", "Fast"))
-        self.init_settings_lbl_2.setText(
-            _translate("MainWindow", "Advanced Options <<<"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menuTools.setTitle(_translate("MainWindow", "&Tools"))
