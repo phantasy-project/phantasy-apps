@@ -187,11 +187,17 @@ _CHANGELOG_FILE = os.path.join(os.path.dirname(__file__), 'CHANGELOG.pdf')
 _USERGUIDE_FILE = os.path.join(os.path.dirname(__file__), 'docs/SettingsManager_UserGuide.pdf')
 
 # refresh period
-DATA_REFRESH_PERIOD = 10000 # milliseconds
 REFRESH_INTERVAL_MAP = {
-    'Slow': 30000,
+    'Slow': 30000, # milliseconds
     'Normal': 10000,
     'Fast': 5000,
+}
+
+DB_REFRESH_INTERVAL_MAP = {
+    0: 15 * 60 * 1000, # fast, every 15 mins
+    1: 30 * 60 * 1000, # normal, every 30 mins
+    2: 60 * 60 * 1000, # slow, every 1 hour
+    3: 7 * 24 * 60 * 60 * 1000, # slowest, every 1 week
 }
 
 # MAX lines of setting logs
@@ -1104,14 +1110,25 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._data_refresh_timer = QTimer(self)
         self._data_refresh_timer.timeout.connect(self.on_click_refresh_once)
         self._data_refresh_timer.start(REFRESH_INTERVAL_MAP["Normal"])
+        # db refresher
+        self._db_refresh_timer = QTimer(self)
+        self._db_refresh_timer.timeout.connect(self.db_refresh)
+        self._db_refresh_timer.start(DB_REFRESH_INTERVAL_MAP[1])
 
         # data refresher speed control
         self.refresh_speed_cbb.currentTextChanged.connect(self.onDataRefreshSpeedChanged)
         self.refresh_speed_cbb.setCurrentText("Normal")
+        # db refresher speed control
+        self.db_refresh_speed_cbb.currentIndexChanged.connect(self.onDbRefreshSpeedChanged)
+        self.db_refresh_speed_cbb.setCurrentIndex(1)
 
     @pyqtSlot('QString')
     def onDataRefreshSpeedChanged(self, s: str):
         self._data_refresh_timer.setInterval(REFRESH_INTERVAL_MAP[s])
+
+    @pyqtSlot(int)
+    def onDbRefreshSpeedChanged(self, i: int):
+        self._db_refresh_timer.setInterval(DB_REFRESH_INTERVAL_MAP[i])
 
     @pyqtSlot()
     def on_logtext_updated(self):
