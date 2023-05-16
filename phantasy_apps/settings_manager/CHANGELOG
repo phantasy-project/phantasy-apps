@@ -1,4 +1,24 @@
 ========================
+Version 10.5: 2023-02-16
+========================
+
+ - Add support to work with multiple ion source lines, needs phantasy-ui.
+ - Override the write permission as False to all ion source devices.
+ - Fixed tag editting issue when no snapshot is loaded.
+ - Fixed Excel reading issues.
+ - Refactor the settings scaling procedure: only scale scalabled device settings.
+ - Refined the settings Apply procedure:
+   - Only enable the Apply button when items are checked.
+   - Reduced the warning messageboxes before Apply.
+   - Do not ask if snapshot to be taken before Apply (see revert).
+ - Support revert last applied device settings.
+ - Support abort ongoing Apply procedure.
+ - Refactored the set log message system.
+ - Compatibility fixes.
+ - Add menus for reading user guide (PDF).
+ - Updated the UI.
+
+========================
 Version 10.4: 2022-12-02
 ========================
 
