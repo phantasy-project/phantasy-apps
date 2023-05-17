@@ -645,14 +645,15 @@ class Ui_MainWindow(object):
         self.scale_op_cbb.setItemText(1, "")
         self.apply_settings_hbox.addWidget(self.scale_op_cbb)
         self.scaling_factor_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.scaling_factor_lineEdit.sizePolicy().hasHeightForWidth())
         self.scaling_factor_lineEdit.setSizePolicy(sizePolicy)
-        self.scaling_factor_lineEdit.setMaximumSize(QtCore.QSize(80, 16777215))
+        self.scaling_factor_lineEdit.setMaximumSize(QtCore.QSize(
+            110, 16777215))
         self.scaling_factor_lineEdit.setStyleSheet(
             "QLineEdit {\n"
             "    color: blue;\n"
