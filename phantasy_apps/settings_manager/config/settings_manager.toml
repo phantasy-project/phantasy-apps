@@ -3,12 +3,9 @@
 TITLE = "Configurations for Settings Manager"
 
 [DATA_SOURCE]
-  TYPE = 'DB' # FILE, DB
+  TYPE = 'DB'
   DB_ENGINE = 'sqlite'
   URI = '/files/shared/ap/settings_manager/sm.db'
-
-  # TYPE = 'FILE'
-  # URI = '/files/shared/ap/settings_manager'  # where reside all snapshot files
 
 [SETTINGS]
   T_WAIT = 0.05  # Settling time between batch settings apply, second
