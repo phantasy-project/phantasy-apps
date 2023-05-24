@@ -71,6 +71,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         self._post_init()
 
     def _post_init(self):
+        self._auto_width_init_flag = False
         self.diff_help_btn.setVisible(False)
         self._dt_ms = int(1000.0 / self.refresh_rate_dsbox.value())
         self.dtype_lbl.setText(
@@ -79,7 +80,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         self.view.setItemDelegate(MPSBeamLossDataDelegateModel(self.view))
         self.set_data()
         self.hide_columns()
-        delayed_exec(lambda: self.auto_resize_columns(), 2000)
+        delayed_exec(lambda: self.refresh_btn.setChecked(True), 2000)
 
     def hide_columns(self):
         """Hide columns.
@@ -122,6 +123,10 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         delayed_exec(
             lambda: self.refresh_sts_lbl.setPixmap(
                 QPixmap(":/tm-icons/inactive.png")), int(self._dt_ms * 0.6))
+
+        if not self._auto_width_init_flag:
+            self.auto_resize_columns()
+            self._auto_width_init_flag = True
 
     def closeEvent(self, evt):
         self._r_tmr.stop()

@@ -68,6 +68,7 @@ WHITE_COLOR = QColor(255, 255, 255, 255)
 BLACK_COLOR = QColor(0, 0, 0, 255)
 
 MP = MachinePortal("FRIB", "MPS", auto_monitor=True)
+time.sleep(1.0)
 NAME_MAP = {i.name: i for i in MP.get_elements(name='*')}
 DF_ELEM_ND = pd.DataFrame.from_records([[i.name] + 24 * ['-']
                                         for i in MP.get_elements(type='ND')],
@@ -238,7 +239,7 @@ class MPSBeamLossDataModel(QAbstractTableModel):
         self.refDataframeUpdated.connect(self.update_ref_dataframe)
 
         #
-        self.refresh_data()
+        # self.refresh_data()
 
     def __post_init(self):
         #
