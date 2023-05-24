@@ -14,7 +14,7 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1600, 1200)
+        MainWindow.resize(800, 600)
         MainWindow.setStyleSheet("QDockWidget {\n"
                                  "    font-weight: bold;\n"
                                  "    font-size: 14pt;\n"
@@ -26,110 +26,23 @@ class Ui_MainWindow(object):
                                  "    padding-top: 5px;\n"
                                  "    padding-bottom: 5px;\n"
                                  "}")
+        MainWindow.setDockOptions(QtWidgets.QMainWindow.AllowNestedDocks
+                                  | QtWidgets.QMainWindow.AllowTabbedDocks)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setContentsMargins(4, 4, 4, 4)
         self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
-        self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        self.tabWidget.setObjectName("tabWidget")
-        self.nd_tab = QtWidgets.QWidget()
-        self.nd_tab.setObjectName("nd_tab")
-        self.gridLayout_2 = QtWidgets.QGridLayout(self.nd_tab)
-        self.gridLayout_2.setContentsMargins(4, 4, 4, 4)
-        self.gridLayout_2.setSpacing(4)
-        self.gridLayout_2.setObjectName("gridLayout_2")
-        self.nb_frame = QtWidgets.QFrame(self.nd_tab)
-        self.nb_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.nb_frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.nb_frame.setObjectName("nb_frame")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.nb_frame)
-        self.horizontalLayout.setContentsMargins(4, 4, 4, 4)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.nb_hbox = QtWidgets.QHBoxLayout()
-        self.nb_hbox.setSpacing(4)
-        self.nb_hbox.setObjectName("nb_hbox")
-        self.horizontalLayout.addLayout(self.nb_hbox)
-        self.gridLayout_2.addWidget(self.nb_frame, 0, 0, 1, 1)
-        self.tabWidget.addTab(self.nd_tab, "")
-        self.ic_tab = QtWidgets.QWidget()
-        self.ic_tab.setObjectName("ic_tab")
-        self.gridLayout_3 = QtWidgets.QGridLayout(self.ic_tab)
-        self.gridLayout_3.setContentsMargins(4, 4, 4, 4)
-        self.gridLayout_3.setSpacing(4)
-        self.gridLayout_3.setObjectName("gridLayout_3")
-        self.ic_frame = QtWidgets.QFrame(self.ic_tab)
-        self.ic_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.ic_frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.ic_frame.setObjectName("ic_frame")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.ic_frame)
-        self.horizontalLayout_2.setContentsMargins(4, 4, 4, 4)
-        self.horizontalLayout_2.setSpacing(4)
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.ic_hbox = QtWidgets.QHBoxLayout()
-        self.ic_hbox.setSpacing(4)
-        self.ic_hbox.setObjectName("ic_hbox")
-        self.horizontalLayout_2.addLayout(self.ic_hbox)
-        self.gridLayout_3.addWidget(self.ic_frame, 0, 0, 1, 1)
-        self.tabWidget.addTab(self.ic_tab, "")
-        self.hmr_tab = QtWidgets.QWidget()
-        self.hmr_tab.setObjectName("hmr_tab")
-        self.gridLayout_4 = QtWidgets.QGridLayout(self.hmr_tab)
-        self.gridLayout_4.setContentsMargins(4, 4, 4, 4)
-        self.gridLayout_4.setSpacing(4)
-        self.gridLayout_4.setObjectName("gridLayout_4")
-        self.hmr_frame = QtWidgets.QFrame(self.hmr_tab)
-        self.hmr_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.hmr_frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.hmr_frame.setObjectName("hmr_frame")
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.hmr_frame)
-        self.horizontalLayout_3.setContentsMargins(4, 4, 4, 4)
-        self.horizontalLayout_3.setSpacing(4)
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.hmr_hbox = QtWidgets.QHBoxLayout()
-        self.hmr_hbox.setSpacing(4)
-        self.hmr_hbox.setObjectName("hmr_hbox")
-        self.horizontalLayout_3.addLayout(self.hmr_hbox)
-        self.gridLayout_4.addWidget(self.hmr_frame, 0, 0, 1, 1)
-        self.tabWidget.addTab(self.hmr_tab, "")
-        self.gridLayout.addWidget(self.tabWidget, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1600, 32))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
         MainWindow.setMenuBar(self.menubar)
-        self.dockWidget = DockWidget(MainWindow)
-        self.dockWidget.setFeatures(
-            QtWidgets.QDockWidget.DockWidgetClosable
-            | QtWidgets.QDockWidget.DockWidgetMovable
-            | QtWidgets.QDockWidget.DockWidgetVerticalTitleBar)
-        self.dockWidget.setObjectName("dockWidget")
-        self.dockWidgetContents = QtWidgets.QWidget()
-        self.dockWidgetContents.setObjectName("dockWidgetContents")
-        self.gridLayout_5 = QtWidgets.QGridLayout(self.dockWidgetContents)
-        self.gridLayout_5.setContentsMargins(4, 4, 4, 4)
-        self.gridLayout_5.setSpacing(4)
-        self.gridLayout_5.setObjectName("gridLayout_5")
-        self.snp_frame = QtWidgets.QFrame(self.dockWidgetContents)
-        self.snp_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.snp_frame.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.snp_frame.setObjectName("snp_frame")
-        self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.snp_frame)
-        self.horizontalLayout_5.setContentsMargins(4, 4, 4, 4)
-        self.horizontalLayout_5.setSpacing(4)
-        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.snp_hbox = QtWidgets.QHBoxLayout()
-        self.snp_hbox.setSpacing(4)
-        self.snp_hbox.setObjectName("snp_hbox")
-        self.horizontalLayout_5.addLayout(self.snp_hbox)
-        self.gridLayout_5.addWidget(self.snp_frame, 0, 0, 1, 1)
-        self.dockWidget.setWidget(self.dockWidgetContents)
-        MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(4), self.dockWidget)
         self.action_About = QtWidgets.QAction(MainWindow)
         self.action_About.setObjectName("action_About")
         self.actionAboutQt = QtWidgets.QAction(MainWindow)
@@ -140,7 +53,6 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_Help.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
         self.actionAboutQt.triggered.connect(
             MainWindow.onAboutQt)  # type: ignore
         self.action_About.triggered.connect(MainWindow.onAbout)  # type: ignore
@@ -149,20 +61,11 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.nd_tab),
-                                  _translate("MainWindow", "ND"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.ic_tab),
-                                  _translate("MainWindow", "IC"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.hmr_tab),
-                                  _translate("MainWindow", "HMR"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
-        self.dockWidget.setWindowTitle(_translate("MainWindow", "Snapshots"))
         self.action_About.setText(_translate("MainWindow", "&About"))
         self.actionAboutQt.setText(_translate("MainWindow", "About Qt"))
 
-
-from phantasy_ui.widgets import DockWidget
 
 if __name__ == "__main__":
     import sys

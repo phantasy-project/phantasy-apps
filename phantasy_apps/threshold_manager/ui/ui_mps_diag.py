@@ -14,7 +14,7 @@ class Ui_Form(object):
 
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(1600, 1200)
+        Form.resize(1392, 676)
         self.gridLayout = QtWidgets.QGridLayout(Form)
         self.gridLayout.setContentsMargins(4, 4, 4, 4)
         self.gridLayout.setSpacing(4)
@@ -205,7 +205,7 @@ class Ui_Form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
-        self.refresh_sts_lbl.setText(_translate("Form", "sts"))
+        self.refresh_sts_lbl.setText(_translate("Form", "   "))
         self.auto_width_btn.setToolTip(
             _translate("Form", "Auto adjust column width."))
         self.auto_width_btn.setText(_translate("Form", "Auto Width"))
