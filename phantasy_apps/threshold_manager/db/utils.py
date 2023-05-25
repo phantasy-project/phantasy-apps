@@ -48,13 +48,13 @@ def insert_data(conn, snp_data: SnapshotData, table_name: str):
         snp_data.tags, snp_data.note, \
         snp_data.to_blob()
     cursor = conn.cursor()
-    _insert_data(cursor, *data_tuple)
+    _insert_data(cursor, table_name, *data_tuple)
     conn.commit()
 
 
 def update_data(conn, snp_data: SnapshotData, table_name: str):
     cursor = conn.cursor()
-    query = """ UPDATE {table_name} SET
+    query = f""" UPDATE {table_name} SET
     note = ?, tags = ? WHERE timestamp = ? """
     cursor.execute(query, (snp_data.note, snp_data.tags, snp_data.ts))
     conn.commit()
@@ -71,7 +71,7 @@ def get_data(conn, snp_data: SnapshotData, table_name: str) -> list[SnapshotData
 
 
 def _insert_data(cursor, table_name: str, *data):
-    query = ''' INSERT INTO {table_name} (timestamp, user, ion_name, ion_number, ion_mass, ion_charge, ion_charge1, beam_power, beam_energy, beam_dest, tags, note, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); '''
+    query = f''' INSERT INTO {table_name} (timestamp, user, ion_name, ion_number, ion_mass, ion_charge, ion_charge1, beam_power, beam_energy, beam_dest, tags, note, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); '''
     try:
         cursor.execute(query, data)
     except sqlite3.Error as err:
