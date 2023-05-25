@@ -74,7 +74,7 @@ def _insert_data(cursor, table_name: str, *data):
     query = ''' INSERT INTO {table_name} (timestamp, user, ion_name, ion_number, ion_mass, ion_charge, ion_charge1, beam_power, beam_energy, beam_dest, tags, note, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); '''
     try:
         cursor.execute(query, data)
-    except Error as err:
+    except sqlite3.Error as err:
         print(err)
     else:
         cursor.close()
@@ -85,7 +85,7 @@ def delete_data(conn, snp_data: SnapshotData, table_name: str):
     ts = snp_data.ts
     try:
         cursor.execute(f''' DELETE FROM {table_name} WHERE timestamp = '{ts}' ''')
-    except Error as err:
+    except sqlite3.Error as err:
         print(err)
     else:
         cursor.close()
