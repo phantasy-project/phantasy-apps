@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import time
 import sqlite3
 import os
 import pandas as pd
 from datetime import datetime
+from getpass import getuser
 
 from PyQt5.QtWidgets import (
     QWidget,
@@ -33,6 +35,7 @@ from phantasy_ui import (
     delayed_exec,
     get_open_filename,
 )
+from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 
 from phantasy_apps.threshold_manager.ui.ui_mps_diag import Ui_Form as MPSDiagWidgetForm
 from phantasy_apps.threshold_manager.ui.ui_snp_widget import Ui_Form as SnapshotWidgetForm
@@ -42,7 +45,11 @@ from phantasy_apps.threshold_manager._model import (
     SnapshotModel,
     SnapshotDelegateModel,
 )
-from phantasy_apps.threshold_manager.db.utils import ensure_connect_db
+from phantasy_apps.threshold_manager.db.utils import (
+    ensure_connect_db,
+    insert_update_data
+)
+from phantasy_apps.threshold_manager.data import SnapshotData
 
 DEVICE_TYPE_FULLNAME_MAP = {
     'ND': 'Neutron Detector',
@@ -55,6 +62,11 @@ NOW_YEAR = NOW_DT.year
 NOW_MONTH = NOW_DT.month
 NOW_DAY = NOW_DT.day
 
+ISRC_INDEX_MAP = {
+    'Live': 'live',
+    'Artemis': 'ISRC1',
+    'HP-ECR': 'ISRC2',
+}
 
 class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
 
@@ -69,6 +81,13 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
             f"MPS Configurtions: Beam Loss Threshold ({self.device_type})")
 
         self._post_init()
+
+    def set_snp_parent(self, w):
+        # w: SnapshotWidget
+        self.snp_parent = w
+
+    def set_db_con(self, con):
+        self.__db_con = con
 
     def _post_init(self):
         self._auto_width_init_flag = False
@@ -142,6 +161,21 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         QMessageBox.information(self, "MPS Diagnostics Threshold Configs",
                                 f"Saved data to {outfilepath}", QMessageBox.Ok,
                                 QMessageBox.Ok)
+        self.saveToDatabase('testing', 'test1,test2')
+    
+    def saveToDatabase(self, note: str, tags: list, meta_isrc_name: str = 'Live', conn: sqlite3.Connection = None):
+        # save data to the database.
+        ts = time.time()
+        user = getuser()
+        ion_name, ion_num, ion_mass, ion_charge, ion_charge1, \
+            beam_power, beam_energy, beam_dest = BeamSpeciesDisplayWidget.get_species_meta_full(ISRC_INDEX_MAP[meta_isrc_name])
+        data = self.__model.get_dataframe()
+        snp_data = SnapshotData((ts, user, ion_name, ion_num, ion_mass, ion_charge, ion_charge1,
+                                beam_power, beam_energy, beam_dest, ','.join(tags), note, data))
+        if conn is None:
+            conn = self.snp_parent.get_db_con()
+        table_name = TABLE_NAME_MAP[self.device_type]
+        insert_update_data(conn, snp_data, table_name)
 
     @pyqtSlot()
     def compareData(self):
@@ -328,6 +362,9 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
 
     def __set_up_post_init_1(self):
         pass
+
+    def get_db_con(self):
+        return self.__db_con
 
     def hide_columns(self):
         """Hide columns.

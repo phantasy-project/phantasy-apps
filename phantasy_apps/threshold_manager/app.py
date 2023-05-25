@@ -75,10 +75,14 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_dock.setWidget(self.snp_widget)
         self.addDockWidget(Qt.TopDockWidgetArea, self.snp_dock)
 
+        #
+        for i in (self.nd_widget, self.ic_widget, self.hmr_widget):
+            i.set_snp_parent(self.snp_widget)
 
         # test:
         test_db_path = os.path.join(_CDIR, "tests/mps_model/test.db")
         self.snp_widget.db_path_lineEdit.setText(test_db_path)
+        self.snp_widget.db_open_btn.click()
 
 
     def resizeEvent(self, e):
