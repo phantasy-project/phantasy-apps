@@ -4,14 +4,17 @@ import os
 import sys
 import argparse
 from phantasy_ui import QApp as QApplication
+from phantasy_ui.widgets import SplashScreen
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
 from .app import SettingsManagerWindow
 
 __authors__ = "Tong Zhang"
-__copyright__ = "(c) 2019-2022, Facility for Rare Isotope beams," \
+__copyright__ = "(c) 2019-2023, Facility for Rare Isotope Beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
 __title__ = "Settings Manager: Manage Physics Configurations of Accelerator System"
-__version__ = '10.5'
+__version__ = '11.0'
 
 
 def run(cli=False):
@@ -35,8 +38,14 @@ def run(cli=False):
 
     app = QApplication(sys.argv)
     #
-    w = SettingsManagerWindow(version=__version__, config_dir=args.config)
-    w.setWindowTitle(__title__)
+    splash_w = SplashScreen(QPixmap(":/sm-icons/sm-splash.png"))
+    splash_w.show()
+    splash_w.showMessage("Starting up Settings Manager...", Qt.AlignBottom | Qt.AlignHCenter)
+
+    w = SettingsManagerWindow(version=__version__, config_dir=args.config,
+                              title=__title__, splash=splash_w)
+    w.show()
+    splash_w.finish(w)
     if args.snapshot_window_off:
         w.snp_dock.close()
 

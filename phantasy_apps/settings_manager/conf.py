@@ -34,7 +34,7 @@ MS_DAQ_NSHOT = APP_CONF['MACH_STATE']['DAQ_NSHOT']
 # data source and path
 DATA_SOURCE_MODE = APP_CONF['DATA_SOURCE']['TYPE']
 DB_ENGINE = APP_CONF['DATA_SOURCE']['DB_ENGINE']
-DATA_URI = APP_CONF['DATA_SOURCE']['URI']
+DATA_URI = os.path.expanduser(APP_CONF['DATA_SOURCE']['URI'])
 
 # pref
 FIELD_INIT_MODE = APP_CONF['SETTINGS']['FIELD_INIT_MODE']
@@ -49,7 +49,7 @@ DEFAULT_MACHINE = APP_CONF['LATTICE']['DEFAULT_MACHINE']
 DEFAULT_SEGMENT = APP_CONF['LATTICE']['DEFAULT_SEGMENT']
 
 # others not controlled with config file
-N_SNP_MAX = cycle([10, 20, 50, 100, 'All'])
+N_SNP_MAX = cycle([50, 100, 500, 'All'])
 
 
 def init_user_config():

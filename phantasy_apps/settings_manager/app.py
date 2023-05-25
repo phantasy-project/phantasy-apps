@@ -58,9 +58,9 @@ from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QLabel
 
+from phantasy import build_element
 from phantasy import CaField
 from phantasy import Settings
-from phantasy import build_element
 from phantasy import Lattice
 from phantasy_ui import BaseAppForm
 from phantasy_ui import delayed_exec
@@ -119,6 +119,8 @@ from .utils import BG_COLOR_GOLDEN_NO
 from .utils import CHP_STS_TUPLE
 from .utils import TGT_STS_TUPLE
 from .utils import TAG_BTN_STY
+# from .utils import get_pwr_sts
+from .utils import PWR_STS_U_ROLE, STS_PX_MAP
 from .contrib.db.db_utils import ensure_connect_db
 from .config import sym2z
 from .utils import SetLogMessager
@@ -169,6 +171,11 @@ ALM_TYPE_MAP = { # [read, tune]
     'Tune': [False, True],
 }
 
+ISRC_NAME_MAP = {
+    'ISRC1': 'Artemis',
+    'ISRC2': 'HP-ECR'
+}
+
 # SNP PVs
 SNP_NAME_PV = "PHY:SM_SNP_LAST_NAME"
 SNP_NOTE_PV = "PHY:SM_SNP_LAST_NOTE"
@@ -180,7 +187,18 @@ _CHANGELOG_FILE = os.path.join(os.path.dirname(__file__), 'CHANGELOG.pdf')
 _USERGUIDE_FILE = os.path.join(os.path.dirname(__file__), 'docs/SettingsManager_UserGuide.pdf')
 
 # refresh period
-DATA_REFRESH_PERIOD = 10000 # milliseconds
+REFRESH_INTERVAL_MAP = {
+    'Slow': 30000, # milliseconds
+    'Normal': 10000,
+    'Fast': 5000,
+}
+
+DB_REFRESH_INTERVAL_MAP = {
+    0: 15 * 60 * 1000, # fast, every 15 mins
+    1: 30 * 60 * 1000, # normal, every 30 mins
+    2: 60 * 60 * 1000, # slow, every 1 hour
+    3: 7 * 24 * 60 * 60 * 1000, # slowest, every 1 week
+}
 
 # MAX lines of setting logs
 MAX_LOG_LINES = 3000
@@ -188,6 +206,14 @@ MAX_LOG_LINES = 3000
 REVERT_TT_REASON = """<html><head/><body><p>Revert <span style=" color:#0055ff;">{n}</span> device settings (<span style=" color:#ff007f;">{op} {ov}</span>) changed at <span style=" color:#0055ff;">{ts} </span>for <span style=" color:#aa00ff;">{reason}</span>. Original snapshot: {snapshot}.</p></body></html>"""
 REVERT_TT_NO_REASON = """<html><head/><body><p>Revert <span style=" color:#0055ff;">{n}</span> device settings (<span style=" color:#ff007f;">{op} {ov}</span>) changed at <span style=" color:#0055ff;">{ts}</span>. Original snapshot: {snapshot}.</p></body></html>"""
 
+MATCH_STY = """
+QFrame#orig_template_info_frame {
+    border: 1px solid #28A745;
+}"""
+NOT_MATCH_STY = """
+QFrame#orig_template_info_frame {
+    border: 1px solid #DC3545;
+}"""
 
 class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # settings view filter button group status (or) changed --> update
@@ -220,9 +246,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # bool
     init_settings_changed = pyqtSignal(bool)
 
-    # runtime snapshots
-    snapshots_changed = pyqtSignal()
-
     # snp saved, snpdata name, filepath
     snp_saved = pyqtSignal('QString', 'QString')
 
@@ -253,14 +276,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     sigSetLogColorSkip = pyqtSignal()
     sigSetLogColorSet = pyqtSignal()
 
-    def __init__(self, version, config_dir=None):
+    # name of the originated template of the loaded snapshot is changed
+    sigOrigTemplateChanged = pyqtSignal('QString')
+
+    def __init__(self, version, config_dir=None, **kws):
         super(SettingsManagerWindow, self).__init__()
+
+        self._splash_w = kws.get('splash', None)
+        self._task_list = [] # a list of tasks (also msg str) to be done before show
 
         # app version
         self._version = version
-
-        # window title/icon
-        self.setWindowTitle("Settings Manager")
 
         # set app properties
         self.setAppTitle("Settings Manager")
@@ -289,14 +315,19 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # config
         self.init_config(config_dir)
 
+        # ms config
+        self._mach_state_config = self.get_ms_config()
+
         self.nsnp_btn.setVisible(False)
         self.__init_dsrc(self.dsrc_dict)
 
         # post init ui
         self.__post_init_ui()
 
-        #
-        self.show()
+        # window title/icon
+        self.setWindowTitle(kws.get("title", "Settings Manager"))
+        # self.show()
+
         self.preload_lattice(self.pref_dict['LATTICE']['DEFAULT_MACHINE'],
                              self.pref_dict['LATTICE']['DEFAULT_SEGMENT'])
 
@@ -489,6 +520,63 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.init_settings_changed.connect(
             self.init_settings_chkbox.setChecked)
 
+        # preload templates
+        self.__preload_templates(self.pref_dict.get('SNAPSHOT_TEMPLATES'))
+
+    def __preload_templates(self, temp_conf: dict):
+        if temp_conf is None:
+            return
+
+        def _load_single(t: tuple):
+            _itemp_name, _itemp_conf = t
+            _isnp_data = get_snapshotdata(_itemp_conf['DB_ENTRY'], self.data_uri)
+            if _isnp_data is not None:
+                _isnp_data.extract_blob()
+            return (_itemp_conf['NAME'], _itemp_conf['DB_TAGS'], _isnp_data)
+
+        def _load_ready(res):
+            # a list of snapshot templates, with expanded tabular data
+            self.snp_template_list = res
+
+        def _load_started():
+            self._task_list.append('Loading the snapshot templates...')
+            self._splash_msg_undone()
+
+        def _load_done():
+            task_name = "Loading the snapshot templates..."
+            self._task_list.remove(task_name)
+            self._splash_msg("Loaded the snapshot templates.")
+            self._splash_msg_undone()
+
+        self._snp_temp_loader = DAQT(daq_func=_load_single, daq_seq=temp_conf.items())
+        self._snp_temp_loader.daqStarted.connect(_load_started)
+        self._snp_temp_loader.resultsReady.connect(_load_ready)
+        self._snp_temp_loader.daqFinished.connect(_load_done)
+        self._snp_temp_loader.start()
+
+    def get_originated_template(self):
+        """Get the name of snapshot template from the currently loaded one.
+
+        The result could be:
+        - The name of a template: loaded one exactly matches that template;
+        - The name of a template (subset): the loaded one is a subset of that template;
+        - None: the loaded one is not originated from any templates.
+
+        Returns
+        -------
+        r : tuple
+            A tuple of the original snapshot template, name, tag list,
+            and the loaded SnapshotData (for On Loaded option of 'Take Snapshot')
+        """
+        loaded_settings_name_set = set(self._current_snpdata.data.Name.unique())
+        for _tmp_name, _tmp_tags, _tmp_snp_data in self.snp_template_list:
+            _name_set = set(_tmp_snp_data.data.Name.unique())
+            if _name_set == loaded_settings_name_set:
+                return _tmp_name, _tmp_tags, self._current_snpdata
+            elif loaded_settings_name_set.issubset(_name_set):
+                return _tmp_name + " (subset)", _tmp_tags, self._current_snpdata
+        return None, None,  self._current_snpdata
+
     @pyqtSlot()
     def on_auto_column_width(self):
         # auto adjust column width
@@ -560,7 +648,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lat = o.combined_lattice()
         self.lattice_loaded.emit(o)
 
-        self._lat = self.__init_lat + self._lat
+        # deprecated
+        # self._lat = self.__init_lat + self._lat
+
         # show element settings
         if self.init_settings:  # in Preferences
             # if init settings, show settings to the view.
@@ -653,14 +743,24 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             o = getattr(self, 'total_{}_number_lbl'.format(s))
             o.setText(str(v))
 
-    @pyqtSlot(bool)
-    def on_toggled_ms(self, is_checked):
-        """Machine state capture option is checked or not.
+    @pyqtSlot()
+    def onResetMachState(self):
+        """Reset captured machine state through CaptureMachineState tool.
+        For view differences.
         """
-        if not is_checked:
-            self._machstate = None
+        self._machstate = None
 
     def __post_init_ui(self):
+        self.delete_btn.setVisible(getuser() in ('zhangt', 'tong'))
+        # update toolbar
+        self.__update_toolbar()
+
+        # hide change reason inputbox right of Apply button by default
+        self.show_change_reason_input_chkbox.toggled.emit(False)
+
+        # initial updater
+        self.one_updater = None
+
         # add user guide help menu
         self._user_guide_mitem = QAction("User Guide", self)
         self.menu_Help.insertAction(self.actionChangelog, self._user_guide_mitem)
@@ -684,15 +784,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # hide keep refreshing button (to be dropped)
         self.update_ctrl_btn.setVisible(False)
 
-        # WYSIWYC flag:
-        self._wysiwyc_enabled = False
-        #
         # total number of checked items
         self.total_number_checked_items_changed.connect(
             self.on_nchecked_changed)
-        # enable machine state with take snapshot or not
-        self.snp_ms_chkbox.toggled.connect(self.on_toggled_ms)
-        self.snp_ms_chkbox.setChecked(MS_ENABLED)
+
         # hide sts info
         self.show_sts_btn.setChecked(False)
 
@@ -707,18 +802,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # alarm type for disable/enable actions
         self._alm_type_idx_list = ALM_TYPE_MAP["All"]
 
-        # hide init settings hbox
-        self.show_init_settings_btn.setChecked(False)
-        # # hide Add Devices tool
-        # self.actionAdd_Devices.setVisible(False)
-        # add beamSpeciesDisplayWidget
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.toolBar.addWidget(spacer)
-        self.beam_display_widget = BeamSpeciesDisplayWidget()
-        self.beam_display_widget.isrc1_btn.setEnabled(False)
-        self.beam_display_widget.isrc2_btn.setEnabled(False)
-        self.toolBar.addWidget(self.beam_display_widget)
         #
         self._post_info = True  # post info after loading lattice
         #
@@ -767,6 +850,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.update_rate_cbb.currentIndex())
 
         # icon
+        self._matched_px = QPixmap(":/sm-icons/done.png").scaled(32, 32,
+                Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+        self._not_matched_px = QPixmap(":/sm-icons/fail.png").scaled(32, 32,
+                Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+
         self.done_px = QPixmap(":/sm-icons/done.png")
         self.fail_px = QPixmap(":/sm-icons/fail.png")
         self._warning_px = QPixmap(":/sm-icons/warning.png").scaled(
@@ -787,40 +875,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._del_icon = QIcon(QPixmap(":/sm-icons/delete.png"))
         self._load_icon = QIcon(QPixmap(":/sm-icons/cast.png"))
         self._recommand_icon = QIcon(QPixmap(":/sm-icons/recommend.png"))
-        self._pwr_on_px = QPixmap(":/sm-icons/on.png")
-        self._pwr_off_px = QPixmap(":/sm-icons/off.png")
-        self._pwr_unknown_px = QPixmap(":/sm-icons/unknown.png")
         # enabled/disabled alarms
         self._alm_enabled_px = QPixmap(":/sm-icons/alarm_on_green.png").scaled(PX_SIZE, PX_SIZE)
         self._alm_disabled_px = QPixmap(":/sm-icons/alarm_off_red.png").scaled(PX_SIZE, PX_SIZE)
-        # blocking beam or not
-        _blocking_px = QPixmap(":/sm-icons/off.png")
-        _non_blocking_px = QPixmap(":/sm-icons/on.png")
-        # ion active or not
-        _ion_inactive_px = QPixmap(":/sm-icons/off.png")
-        _ion_active_px = QPixmap(":/sm-icons/on.png")
 
-        # aperture
-        _ap_in_px, _ap_out_px = _blocking_px, _non_blocking_px
-        self._ap_in_px_tuple = (_ap_out_px, _ap_in_px)
-
-        # attenuator
-        _att_in_px, _att_out_px = _blocking_px, _non_blocking_px
-        self._att_out_px_tuple = (_att_in_px, _att_out_px)
-
-        # position monitor (PPAC)
-        self._pm_in_px_tuple = (_non_blocking_px, _blocking_px)
-
-        # ion source active?
-        self._ion_act_px_tuple = (_ion_inactive_px, _ion_active_px)
-
-        # chopper
-        self._chp_invalud_px = QPixmap(":/sm-icons/chp_invalid.png")
-        self._chp_off_px = QPixmap(":/sm-icons/chp_off.png")
-        self._chp_blocking_px = QPixmap(":/sm-icons/chp_blocking.png")
-        self._chp_running_px = QPixmap(":/sm-icons/chp_running.png")
-        self._chp_px_tuple = (self._chp_invalud_px, self._chp_off_px,
-                              self._chp_blocking_px, self._chp_running_px)
         #
         self._turn_on_icon = QIcon(QPixmap(":/sm-icons/bolt_on.png"))
         self._turn_off_icon = QIcon(QPixmap(":/sm-icons/bolt_off.png"))
@@ -830,6 +888,35 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._chart_icon = QIcon(QPixmap(":/sm-icons/chart.png"))
         self._ext_app_icon = QIcon(QPixmap(":/sm-icons/rocket.png"))
 
+        # pwr sts
+        self._pwr_on_px = QPixmap(":/sm-icons/on.png")
+        self._pwr_off_px = QPixmap(":/sm-icons/off.png")
+        self._pwr_unknown_px = QPixmap(":/sm-icons/unknown.png")
+        # blocking beam or not
+        _blocking_px = QPixmap(":/sm-icons/off.png")
+        _non_blocking_px = QPixmap(":/sm-icons/on.png")
+        # ion active or not
+        _ion_inactive_px = QPixmap(":/sm-icons/off.png")
+        _ion_active_px = QPixmap(":/sm-icons/on.png")
+        # aperture
+        _ap_in_px, _ap_out_px = _blocking_px, _non_blocking_px
+        self._ap_in_px_tuple = (_ap_out_px, _ap_in_px)
+        # attenuator
+        _att_in_px, _att_out_px = _blocking_px, _non_blocking_px
+        self._att_out_px_tuple = (_att_in_px, _att_out_px)
+        # position monitor (PPAC)
+        self._pm_in_px_tuple = (_non_blocking_px, _blocking_px)
+        # ion source active?
+        self._ion_act_px_tuple = (_ion_inactive_px, _ion_active_px)
+        # chopper
+        self._chp_invalud_px = QPixmap(":/sm-icons/chp_invalid.png")
+        self._chp_off_px = QPixmap(":/sm-icons/chp_off.png")
+        self._chp_blocking_px = QPixmap(":/sm-icons/chp_blocking.png")
+        self._chp_running_px = QPixmap(":/sm-icons/chp_running.png")
+        self._chp_px_tuple = (self._chp_invalud_px, self._chp_off_px,
+                              self._chp_blocking_px, self._chp_running_px)
+        #
+
         # set skip none reachable option as True
         self.skip_none_chkbox.setChecked(True)
 
@@ -837,6 +924,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # other slots are set in designer.
         self.show_init_settings_btn.toggled.connect(
             self.on_toggle_show_init_settings_btn)
+        # hide init settings hbox
+        self.show_init_settings_btn.setChecked(False)
         #
         # selection, check/uncheck, for settings apply
         self.select_all_btn.clicked.connect(
@@ -850,7 +939,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.init_filter()
 
         # stop auto update when lattice is changed
-        self.lattice_loaded.connect(self.stop_auto_update)
         # widget status regarding lattice changed.
         self.lattice_loaded.connect(self.on_update_widgets_status)
         #
@@ -883,8 +971,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # snapshot dock
         self._snp_dock_list = []  # for snp_treeView
-        self.snapshots_changed.connect(lambda: self.on_snapshots_changed())
-        self.snapshots_changed.emit()
 
         # apply pb
         self.apply_pb.setVisible(False)
@@ -892,13 +978,21 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.abort_apply_btn.setVisible(False)
         # refset pb
         self.refset_pb.setVisible(False)
-        # data refresh pb
-        self.refresh_pb.setVisible(False)
+        # data refresh beat label
+        self.refresh_beat_lbl.setPixmap(QPixmap(":/sm-icons/active.png").scaled(10, 10))
+        self.refresh_beat_lbl.setVisible(False)
+        # db pull pb
+        self.db_pull_pb.setVisible(False)
         # almset pb
         self.alm_set_pb.setVisible(False)
 
         # current snp
         self._current_snpdata = None
+        # originated template tuple: (name, taglist, snpdata_temp)
+        self._current_snpdata_originated = (None, [], None)
+
+        # template list, [(name, tag_list, snpdata),...]
+        self.snp_template_list = []
 
         # snp filters, {btn_text (elemt, tag):ischecked?}
         self._current_btn_filter = dict()
@@ -911,10 +1005,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.actionTake_Snapshot.triggered.connect(
             lambda: self.take_snapshot())
 
-        # take machine state tool
-        self.actionCapture_machstate.triggered.connect(
-            self.on_capture_machstate)
-
+        # originated snapshot template is changed
+        self.sigOrigTemplateChanged.connect(self.onOrigTemplateChanged)
+        #
         self.snp_loaded.connect(self.on_snp_loaded)
         # scaling factor hint
         self.snp_loaded.connect(self.on_hint_scaling_factor)
@@ -926,6 +1019,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_loaded.connect(self.refresh_filter_btns)
         # post loaded snp info
         self.snp_loaded.connect(self.post_snp_info)
+        # enable take snapshot tool
+        self.snp_loaded.connect(lambda:self.actionTake_Snapshot.setEnabled(True))
         #
         self.snp_saved.connect(self.on_snp_saved)
 
@@ -951,11 +1046,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # hide findtext_lbl and findtext_lineEdit
         for o in (self.findtext_lbl, self.findtext_lineEdit):
             o.setVisible(False)
-
-        # snp wdir new?
-        self.snp_new_lbl.setPixmap(
-            QPixmap(":/sm-icons/new.png").scaled(PX_SIZE, PX_SIZE))
-        self.snp_new_lbl.setVisible(False)
 
         # tag, ions filter buttons
         self.select_all_ions_btn.clicked.connect(
@@ -1019,7 +1109,26 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # periodical clicker on single data refresh
         self._data_refresh_timer = QTimer(self)
         self._data_refresh_timer.timeout.connect(self.on_click_refresh_once)
-        self._data_refresh_timer.start(DATA_REFRESH_PERIOD)
+        self._data_refresh_timer.start(REFRESH_INTERVAL_MAP["Normal"])
+        # db refresher
+        self._db_refresh_timer = QTimer(self)
+        self._db_refresh_timer.timeout.connect(self.db_refresh)
+        self._db_refresh_timer.start(DB_REFRESH_INTERVAL_MAP[1])
+
+        # data refresher speed control
+        self.refresh_speed_cbb.currentTextChanged.connect(self.onDataRefreshSpeedChanged)
+        self.refresh_speed_cbb.setCurrentText("Normal")
+        # db refresher speed control
+        self.db_refresh_speed_cbb.currentIndexChanged.connect(self.onDbRefreshSpeedChanged)
+        self.db_refresh_speed_cbb.setCurrentIndex(1)
+
+    @pyqtSlot('QString')
+    def onDataRefreshSpeedChanged(self, s: str):
+        self._data_refresh_timer.setInterval(REFRESH_INTERVAL_MAP[s])
+
+    @pyqtSlot(int)
+    def onDbRefreshSpeedChanged(self, i: int):
+        self._db_refresh_timer.setInterval(DB_REFRESH_INTERVAL_MAP[i])
 
     @pyqtSlot()
     def on_logtext_updated(self):
@@ -1039,10 +1148,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.single_update_btn.clicked.emit()
 
     @pyqtSlot(bool)
-    def on_toggle_show_init_settings_btn(self, toggled):
-        if not toggled:
+    def on_toggle_show_init_settings_btn(self, is_checked: bool):
+        if not is_checked:
             # uncheck init_settings_chkbox when init_settings_btn is unchecked
             self.init_settings_chkbox.setChecked(False)
+        #
+        self.adv_frame.setVisible(is_checked)
 
     def on_update_filter_controls(self, snpdata):
         """Update filter controls
@@ -1165,7 +1276,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_filter_btn_group_status_changed(self):
         # Do logic 'or', if True, do global refresh when data refresher is on.
         self._filter_btn_enabled = self.show_warning_dx02_btn.isChecked() \
-                or self.show_warning_dx12_btn.isChecked() or self.show_state_diff_btn.isChecked()
+                or self.show_warning_dx12_btn.isChecked() or self.show_state_diff_btn.isChecked() \
+                or self.show_live_sts_on_btn.isChecked() or self.show_live_sts_off_btn.isChecked()
 
     def resizeEvent(self, e):
         self.resizeDocks([self.snp_dock], [int(self.width() * 0.5)], Qt.Horizontal)
@@ -1286,7 +1398,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         read_action = QAction(self._read_icon, "&Read", menu)
         read_action.triggered.connect(partial(self.on_read_snp, snpdata))
         # viz machine state
-        mviz_action = QAction(self._chart_icon, "Machine State", menu)
+        if self._machstate is not None:
+            _mviz_text = "Machine State (diff)"
+        else:
+            _mviz_text = "Machine State"
+        mviz_action = QAction(self._chart_icon, _mviz_text, menu)
         mviz_action.triggered.connect(partial(self.on_mviz, snpdata))
         # del
         del_action = QAction(self._del_icon, "&Delete", menu)
@@ -1904,6 +2020,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.apply_pb.setValue(int(per * 100))
 
     def closeEvent(self, e):
+        self._data_refresh_timer.stop()
+        if self.one_updater is not None and not self.one_updater.isFinished():
+            self.one_updater.abort()
         BaseAppForm.closeEvent(self, e)
 
     def clean_up(self):
@@ -2111,6 +2230,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def __load_lattice(self, mach, segm, post_info=True):
         self._post_info = post_info
         self.actionLoad_Lattice.triggered.emit()
+        self._lattice_load_window.setVisible(False)
         self._lattice_load_window.mach_cbb.setCurrentText(mach)
         self._lattice_load_window.seg_cbb.setCurrentText(segm)
         self._lattice_load_window.auto_monitor_chkbox.setChecked(False)
@@ -2133,7 +2253,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # elements from PVs
         self._elem_pvconf = ElementPVConfig(self.elem_confpath)
 
-        self.__init_lat = self.build_lattice()
+        # deprecated
+        # self.__init_lat = self.build_lattice()
 
     @pyqtSlot(bool)
     def on_toggle_init_lattice_settings(self, enabled):
@@ -2179,6 +2300,51 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if ndigit != self.ndigit:
             self.ndigit_changed.emit(ndigit)
 
+    def __read_data2frame(self, n: int, d: str):
+        # read data from database to dataframe
+        _bound_tag = self.ops_bound_cbb.currentText()
+        if _bound_tag == '*':
+            _q_cond = ''
+        else: # LINAC, FSEE
+            _q_cond = f"WHERE tags like '%{_bound_tag}%'"
+
+        if n == 'All':
+            _q = f"SELECT * FROM snapshot {_q_cond}"
+        else:
+            _q = f"SELECT * FROM snapshot {_q_cond} ORDER BY id DESC LIMIT {n}"
+
+        w_list = (self.nsnp_btn, self.snp_refresh_btn, self.ops_bound_cbb)
+
+        def _load_df(i):
+            conn = ensure_connect_db(d)
+            _df = pd.read_sql(_q, conn)
+            conn.close()
+            return _df
+
+        def _load_ready(res):
+            self.df_all_row_tuple = list(res[0].iterrows())
+            self.db_pull.emit()
+
+        def _load_started():
+            [o.setEnabled(False) for o in w_list]
+            self._task_list.append('Pulling snapshots from the database...')
+            self._splash_msg_undone()
+
+        def _load_done():
+            task_name = "Pulling snapshots from the database..."
+            self._task_list.remove(task_name)
+            self._splash_msg("Pulled snapshots from the database.")
+            self._splash_msg_undone()
+            [o.setEnabled(True) for o in w_list]
+
+        self._df_loader = DAQT(daq_func=_load_df, daq_seq=range(1))
+        self._df_loader.daqStarted.connect(lambda:self.db_pull_pb.setVisible(True))
+        self._df_loader.daqStarted.connect(_load_started)
+        self._df_loader.resultsReady.connect(_load_ready)
+        self._df_loader.daqFinished.connect(_load_done)
+        self._df_loader.daqFinished.connect(lambda:self.db_pull_pb.setVisible(False))
+        self._df_loader.start()
+
     @pyqtSlot('QString')
     def on_data_uri_changed(self, purge, d):
         # reset snp dock with files in d (recursively)
@@ -2186,17 +2352,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             del self._snp_dock_list[:]
         # DB
         self._db_conn = self._db_conn_pool.setdefault(d, ensure_connect_db(d))
-        if self._n_snp_max == 'All':
-            df_all = pd.read_sql(f"SELECT * FROM snapshot", self._db_conn)
-        else:
-            df_all = pd.read_sql(
-                f"SELECT * FROM snapshot ORDER BY id DESC LIMIT {self._n_snp_max}",
-                self._db_conn)
-        #
-        self.df_all_row_tuple = list(df_all.iterrows())
-        self.db_pull.emit()
         self.data_uri = d
-        self.data_uri_lineEdit.setText(self.data_uri)
+        #
+        self.__read_data2frame(self._n_snp_max, d)
 
     @pyqtSlot(int)
     def on_ndigit_changed(self, n):
@@ -2223,10 +2381,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # _update_mode: 'auto'
         printlog("Executing start_auto_update()...")
 
-    def stop_auto_update(self):
-        # stop auto updating.
-        printlog("Executing stop_auto_update()...")
-
     def start_thread_update(self):
         # Update values every *delt* second(s),
         # _update_mode: 'thread'
@@ -2251,11 +2405,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                              delt, False),
                             daq_seq=np.inf)
         self.updater.meta_signal1.connect(partial(self.on_update_display, m))
-        # self.updater.daqStarted.connect(
-        #     partial(self.set_widgets_status_for_updating, 'START', False))
-        # self.updater.finished.connect(
-        #     partial(self.set_widgets_status_for_updating, 'STOP', False))
-        # self.updater.finished.connect(self.start_thread_update)
         self.updater.start()
 
     def _refresh_single(self, m, m0, viewport_only, iter_param, **kws):
@@ -2407,6 +2556,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     worker.meta_signal1.emit((tune_alm_idx, self._alm_disabled_px, Qt.DecorationRole))
                 worker.meta_signal1.emit((tune_alm_idx, tune_alm_v, Qt.UserRole))
 
+        # a little higher time cost?
+        # elem = self._lat[o.ename]
+        # # emit signal to update power status
+        # for _i, _r in get_pwr_sts(elem, o.name):
+        #     worker.meta_signal1.emit((sts_idx, _i, _r))
+
         #
         pwr_is_on = 'Unknown'
         px = self._pwr_unknown_px
@@ -2443,6 +2598,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit(
                 (sts_idx, tt, Qt.ToolTipRole))
+
         elif elem.family == "AP":
             in_sts = elem.IN_STS
             px = self._ap_in_px_tuple[in_sts]
@@ -2463,6 +2619,19 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     tt = "PPAC is OUT"
                 else:
                     tt = "PPAC is IN"
+            worker.meta_signal1.emit(
+                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+            worker.meta_signal1.emit(
+                (sts_idx, tt, Qt.ToolTipRole))
+
+        elif elem.family == "FOIL":
+            if 'IN_STS' in elem.fields:
+                in_sts = elem.IN_STS
+                px = self._pm_in_px_tuple[in_sts]
+                if in_sts == 0:
+                    tt = "Foil is OUT"
+                else:
+                    tt = "Foil is IN"
             worker.meta_signal1.emit(
                 (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit(
@@ -2575,6 +2744,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit(
                 (sts_idx, tt, Qt.ToolTipRole))
+
         elif elem.family == "PTA":
             sts = elem.get_field('TGT')
             sts_val_int = sts.value
@@ -2619,6 +2789,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             worker.meta_signal1.emit(
                 (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
+
+        # u of pwr sts
+        _, _u = STS_PX_MAP.get(tt)
+        worker.meta_signal1.emit((sts_idx, _u, PWR_STS_U_ROLE))
+
         #
         cnt_fld += 1
         return cnt_fld
@@ -2686,9 +2861,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def stop_update(self):
         if self._update_mode == 'thread':
-            # chances auto update be set after loading settings from file,
-            # so stop it.
-            self.stop_auto_update()
             self._stop_update_thread = True
             try:
                 self.updater.requestInterruption()
@@ -2696,7 +2868,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 pass
             printlog("Stop thread updating.")
         else:
-            self.stop_auto_update()
             printlog("Stop auto updating.")
 
     @pyqtSlot()
@@ -2818,7 +2989,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_update_display(self, m, res):
         """Update variable display variables for one row, when data are ready.
         """
-        m.data_changed.emit(res)
+        # m.data_changed.emit(res)
+        m.update_data(res)
 
     def is_idx_visible(self, idx):
         #
@@ -2854,43 +3026,49 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_pull_data(self):
-        """Pull data from database.
+        """Pull data from dataframe.
         """
-        self.db_puller = DAQT(daq_func=self.on_pull_data_one,
-                              daq_seq=self.df_all_row_tuple)
-        self.db_puller.daqStarted.connect(self._on_db_pull_started)
-        # self.db_puller.progressUpdated.connect(self._on_db_pull_progressed)
-        self.db_puller.resultsReady.connect(self._on_db_pull_resultsReady)
-        self.db_puller.finished.connect(self._on_db_pull_finished)
-        self.db_puller.start()
+        w_list = (self.nsnp_btn, self.snp_refresh_btn, self.ops_bound_cbb)
+        def _on_pull_data_one(iiter):
+            idx, irow = iiter
+            return read_data(irow, 'sql')
 
-    def on_pull_data_one(self, iiter):
-        idx, irow = iiter
-        snp_data = read_data(irow, 'sql')
-        return snp_data
+        def _on_db_pull_started():
+            [o.setEnabled(False) for o in w_list]
+            self.db_pull_pb.setRange(0, 100)
+            self.db_pull_pb.setVisible(True)
+            self._task_list.append('Presenting snapshots...')
+            self._splash_msg_undone()
 
-    def _on_db_pull_progressed(self, f, s):
-        printlog(f"DB puller is updating... {f * 100:>5.1f}%, {s}")
+        def _on_db_pull_progressed(f, s):
+            self.db_pull_pb.setValue(int(f * 100))
 
-    def _on_db_pull_started(self):
-        printlog("DB puller is working...")
+        def _on_db_pull_finished():
+            self.db_pull_pb.setRange(0, 0)
+            self.db_pull_pb.setVisible(False)
+            task_name = "Presenting snapshots..."
+            self._task_list.remove(task_name)
+            self._splash_msg("Snapshots are ready to use.")
+            self._splash_msg_undone()
+            [o.setEnabled(True) for o in w_list]
 
-    def _on_db_pull_resultsReady(self, res):
-        self._snp_dock_list = [i for i in res if i is not None]
+        def _on_db_pull_resultsReady(res):
+            self._snp_dock_list = [i for i in res if i is not None]
+            n = len(self._snp_dock_list)
+            self.total_snp_lbl.setText(str(n))
+            self.update_snp_dock_view()
+            # current snp
+            if self._current_snpdata is not None:
+                self.snp_loaded.emit(self._current_snpdata)
+            self.snp_filters_updated.emit()
+            printlog("DB puller is done...")
 
-    def _on_db_pull_finished(self):
-        n = len(self._snp_dock_list)
-        self.total_snp_lbl.setText(str(n))
-        self.update_snp_dock_view()
-        # current snp
-        if self._current_snpdata is not None:
-            self.snp_loaded.emit(self._current_snpdata)
-        self.snp_filters_updated.emit()
-        printlog("DB puller is done...")
-
-    @pyqtSlot(float, 'QString')
-    def _on_data_refresh_progressed(self, per, str_idx):
-        self.refresh_pb.setValue(int(per * 100))
+        self._db_puller = DAQT(daq_func=_on_pull_data_one, daq_seq=self.df_all_row_tuple)
+        self._db_puller.daqStarted.connect(_on_db_pull_started)
+        self._db_puller.progressUpdated.connect(_on_db_pull_progressed)
+        self._db_puller.resultsReady.connect(_on_db_pull_resultsReady)
+        self._db_puller.daqFinished.connect(_on_db_pull_finished)
+        self._db_puller.start()
 
     @pyqtSlot()
     def on_single_update(self):
@@ -2905,23 +3083,24 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             is_finished = True
         if not is_finished:
             return
-        self.one_updater = DAQT(daq_func=partial(self._refresh_single, m, m0,
-                                                 False),
+        self.one_updater = DAQT(daq_func=partial(self._refresh_single, m, m0, False),
                                 daq_seq=self.obj_it_tuple,
-                                nproc=1) # NPROC) # set NPROC 1 to allow report correct progress
-        self.one_updater.meta_signal1.connect(
-            partial(self.on_update_display, m))
-        self.one_updater.daqStarted.connect(lambda:self.refresh_pb.setVisible(True))
-        # self.one_updater.daqStarted.connect(
-        #     partial(self.set_widgets_status_for_updating, 'START'))
-        self.one_updater.progressUpdated.connect(self._on_data_refresh_progressed)
-        # self.one_updater.finished.connect(
-        #     partial(self.set_widgets_status_for_updating, 'STOP'))
-        self.one_updater.daqFinished.connect(lambda:self.refresh_pb.setVisible(False))
+                                nproc=2)
+        self.one_updater.meta_signal1.connect(partial(self.on_update_display, m))
+        self.one_updater.daqStarted.connect(lambda:printlog("Refreshing data..."))
+        self.one_updater.daqStarted.connect(lambda:self.refresh_beat_lbl.setVisible(True))
+        self.one_updater.daqStarted.connect(lambda:m.blockSignals(True))
+        self.one_updater.daqFinished.connect(lambda:self.refresh_beat_lbl.setVisible(False))
+        self.one_updater.daqFinished.connect(lambda:m.blockSignals(False))
+        self.one_updater.daqFinished.connect(m._finish_update)
         self.one_updater.daqFinished.connect(self.last_refreshed)
+        self.one_updater.daqFinished.connect(lambda:printlog("Refreshing data...done!"))
         self.one_updater.start()
 
     def on_data_refresh_done(self):
+        # reset updater
+        self.one_updater = None
+        #
         self.set_last_data_refreshed_info_visible(True)
         # Data refreshing is done (before any waiting): update the last updated timestamp.
         ts = datetime.now().strftime("%Y-%m-%d %T")
@@ -3096,6 +3275,26 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.filter_lineEdit.editingFinished.emit()
 
     @pyqtSlot(bool)
+    def on_show_live_state_on_items(self, is_checked: bool):
+        # show all item that live state is on (green)
+        self.filter_btn_group_status_changed.emit()
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_live_state_on_enabled = is_checked
+        self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
+    def on_show_live_state_off_items(self, is_checked: bool):
+        # show all item that live state is off (ref)
+        self.filter_btn_group_status_changed.emit()
+        m = self._tv.model()
+        if m is None:
+            return
+        m.filter_live_state_off_enabled = is_checked
+        self.filter_lineEdit.editingFinished.emit()
+
+    @pyqtSlot(bool)
     def on_toggle_pos1_filter_btn(self, is_checked):
         # show all item sb <= pos
         #
@@ -3126,7 +3325,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def refresh_filter_btns(self, snpdata):
         for btn in (self.show_warning_dx02_btn,
                     self.show_warning_dx12_btn,
-                    self.show_state_diff_btn,):
+                    self.show_state_diff_btn,
+                    self.show_live_sts_off_btn,
+                    self.show_live_sts_on_btn):
             btn.toggled.emit(btn.isChecked())
 
     def on_update_pos_filter(self, snpdata):
@@ -3164,11 +3365,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         [o.setVisible(visibility) for o in (
                 self.loaded_snp_info_lbl,
                 self.loaded_snp_ts_lbl,
-                self.loaded_snp_note_lbl)]
+                self.loaded_snp_note_lbl,
+                self.orig_template_info_frame)]
 
     def set_last_data_refreshed_info_visible(self, visibility):
         [o.setVisible(visibility) for o in (
-                self.settingsdata_lbl,
                 self.last_refreshed_lbl,
                 self.last_refreshed_title_lbl)]
 
@@ -3220,39 +3421,21 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if m is None:
             return
 
-        # pop up a dialog for tag selection
-        postsnp_dlg = PostSnapshotDialog(self.default_font_size, self)
-        r = postsnp_dlg.exec_()
-        if r == QDialog.Accepted:
-            tag_str = ','.join(postsnp_dlg.get_selected_tag_list())
-            note = postsnp_dlg.get_note()
-        else:
-            QMessageBox.warning(self, "Take Snapshot",
-                                "Tag and Note must be set for making a new snapshot.",
-                                QMessageBox.Ok, QMessageBox.Ok)
-            return
+        def _onSnapshotTaken(snp_data: SnapshotData, to_load: bool):
+            self._snp_dock_list.append(snp_data)
+            n = len(self._snp_dock_list)
+            self.total_snp_lbl.setText(str(n))
+            self.update_snp_dock_view()
+            self.snp_filters_updated.emit()
+            self.on_save_settings(snp_data)
+            if to_load:
+                self.on_load_settings(snp_data)
 
-        # self.turn_off_updater_if_necessary()
-        src_m = m.sourceModel()
-        # single update
-        self._updater = DAQT(daq_func=partial(self.update_value_single, src_m,
-                                              m, -1, False),
-                             daq_seq=range(1))
-        self._updater.meta_signal1.connect(
-            partial(self.on_update_display, src_m))
-        loop = QEventLoop()
-        self._updater.finished.connect(loop.exit)
-        self._updater.start()
-        loop.exec_()
-        #
-        if post_current_sp:
-            current_sp_idx = src_m.i_cset
-            stored_sp_idx = src_m.i_val0
-            for i in range(m.rowCount()):
-                sp_val_str = m.data(m.index(i, current_sp_idx))
-                m.setData(m.index(i, stored_sp_idx), sp_val_str)
-        #
-        self.on_snapshots_changed(cast, note, tag_str)
+        # pop up a dialog for tag selection
+        postsnp_dlg = PostSnapshotDialog(self.default_font_size, self.snp_template_list,
+                                         self._current_snpdata_originated, MS_ENABLED, self)
+        postsnp_dlg.snapshotTaken.connect(_onSnapshotTaken)
+        postsnp_dlg.exec_()
 
     @pyqtSlot()
     def on_show_query_tips(self):
@@ -3262,52 +3445,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             ui.setupUi(w)
             w.setWindowTitle("Query Tips")
         self._query_tips_form.show()
-
-    def on_snapshots_changed(self, cast=True, note='', tag_str=''):
-        # New captured snapshot.
-        # update snpdata to snp dock.
-        if self._tv.model() is None:
-            return
-
-        # capture current ion info
-        ion_name, ion_mass, ion_number, ion_charge = self.beam_display_widget.get_species(
-        )
-
-        # create a new snapshotdata
-        snp_data = SnapshotData(get_settings_data(*self.get_data_models()),
-                                ion_name=ion_name,
-                                ion_number=ion_number,
-                                ion_mass=ion_mass,
-                                ion_charge=ion_charge,
-                                machine=self._last_machine_name,
-                                segment=self._last_lattice_name,
-                                version=self._version,
-                                note=note,
-                                tags=tag_str,
-                                table_version=10)
-        # machstate
-        if self.snp_ms_chkbox.isChecked():
-            self.__config_meta_fetcher()
-            loop = QEventLoop()
-            self._meta_fetcher.finished.connect(loop.exit)
-            self._meta_fetcher.start()
-            loop.exec_()
-        else:
-            # reset machine state
-            self._machstate = None
-        #
-        snp_data.machstate = self._machstate
-        #
-        self._snp_dock_list.append(snp_data)
-        n = len(self._snp_dock_list)
-        self.data_uri_lineEdit.setText(self.data_uri)
-        self.total_snp_lbl.setText(str(n))
-        self.update_snp_dock_view()
-        if cast:
-            self.on_load_settings(snp_data)
-        self.snp_filters_updated.emit()
-        # save by default // to control with preference option.
-        self.on_save_settings(snp_data)
 
     @pyqtSlot()
     def on_copy_snp(self, data):
@@ -3696,7 +3833,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         data.extract_blob()
         # add new entry to database
         insert_update_data(self._db_conn_pool.get(self.data_uri), data)
-        # delayed_exec(lambda:self.db_refresh.emit(), 3000)
 
     def on_saveas_settings(self, data):
         # data: SnapshotData
@@ -3739,6 +3875,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # data: SnapshotData
         # settings(data.data): DataFrame
         # self.turn_off_updater_if_necessary()
+
+        # disable take snapshot tool
+        self.actionTake_Snapshot.setEnabled(False)
+        #
         if self._lat is None or self._last_machine_name != data.machine or \
                 self._last_lattice_name != data.segment:
             self.__load_lattice(data.machine, data.segment)
@@ -3800,9 +3940,32 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             return
         m.m_src.on_snp_loaded(data)
         self._current_snpdata = data
-        # enable auto data updating in 5 seconds
-        # if not self.update_ctrl_btn.isChecked():
-        #    delayed_exec(lambda: self.update_ctrl_btn.setChecked(True), 5000)
+
+        # figure out the originated template
+        self._current_snpdata_originated = self.get_originated_template()
+
+        # check if loaded snapshot matches beam ops
+        self.sigOrigTemplateChanged.emit(self._current_snpdata_originated[0])
+
+    @pyqtSlot('QString')
+    def onOrigTemplateChanged(self, name: str):
+        """The name of originated snapshot template is changed.
+        """
+        if name in ('LINAC', 'FSEE'): # signal from mach_bound
+            name = self._current_snpdata_originated[0]
+        # post info
+        self.orig_template_name_lbl.setText(name)
+        isrc_name, bound_name, _ = self.beam_display_widget.get_bound_info()
+        temp_name_in_op = f"{bound_name}_{ISRC_NAME_MAP[isrc_name]}"
+        # check if loaded snapshot matches beam ops
+        if name == temp_name_in_op:
+            self.is_match_lbl.setToolTip("The loaded snapshot MATCHES beam operations.")
+            self.is_match_lbl.setPixmap(self._matched_px)
+            self.orig_template_info_frame.setStyleSheet(MATCH_STY)
+        else:
+            self.is_match_lbl.setToolTip("The loaded snapshot does NOT MATCH beam operations!")
+            self.is_match_lbl.setPixmap(self._not_matched_px)
+            self.orig_template_info_frame.setStyleSheet(NOT_MATCH_STY)
 
     def on_snp_saved(self, name, path):
         m = self.snp_treeView.model()
@@ -3912,38 +4075,95 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             cnt = doc.lineCount()
         self.setlog_count_lbl.setText(str(cnt))
 
-    def on_wdir_new(self, path):
-        self.snp_new_lbl.setVisible(True)
-        self.on_data_uri_changed(True, self.data_uri)
-        # show new snapshots icon for 1 min
-        delayed_exec(lambda: self.snp_new_lbl.setVisible(False), 60000)
-
     @pyqtSlot()
     def on_refresh_snp(self):
         # refresh snp as wdir is updated.
         self.on_data_uri_changed(True, self.data_uri)
-        self.snp_new_lbl.setVisible(False)
+
+    def _splash_msg_undone(self):
+        delayed_exec(lambda: self._splash_w.showMessage("\n".join(self._task_list),
+                     Qt.AlignBottom | Qt.AlignHCenter), 500)
+
+    def _splash_msg(self, msg: str):
+        self._splash_w.showMessage(msg, Qt.AlignBottom | Qt.AlignHCenter)
 
     def preload_lattice(self, mach, segm):
-        return self.__load_lattice(mach, segm, False)
+        task_name = f'Loading lattice: {mach}/{segm}...'
+        self._task_list.append(task_name)
+        self._splash_msg_undone()
+        self.__load_lattice(mach, segm, False)
+        self._task_list.remove(task_name)
+        self._splash_msg(f"Loaded lattice: {mach}/{segm}.")
+        self._splash_msg_undone()
+
+    def __update_toolbar(self):
+        # hide obsoleted tools
+        self.actionFix_Corrector_Names.setVisible(False)
+        # add a submenu to CaptureMachineState tool (QAction)
+        ms_capture_btn = QToolButton(self)
+        ms_capture_btn.setToolTip(
+            "Capture additional data as machine state, to save with a snapshot or for comparison visualization.")
+        ms_capture_btn.setIcon(QIcon(QPixmap(":/sm-icons/machstate.png")))
+        ms_capture_btn.setIconSize(self.toolBar.iconSize())
+        ms_capture_btn.setText("Fetch Machine State")
+        ms_capture_btn.setPopupMode(QToolButton.MenuButtonPopup)
+        ms_capture_btn.clicked.connect(self.on_capture_machstate)
+        ms_capture_btn.setToolButtonStyle(Qt.ToolButtonTextUnderIcon)
+        _m = QMenu()
+        # reset machine state (clear captured machine state dset)
+        _act = QAction(QIcon(QPixmap(":/sm-icons/clear_ms.png")), "Reset Diff", _m)
+        _act.triggered.connect(self.onResetMachState)
+        _m.addAction(_act)
+        ms_capture_btn.setMenu(_m)
+        self.toolBar.insertWidget(self.actionTake_Snapshot, ms_capture_btn)
+
+        # add beamSpeciesDisplayWidget
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.toolBar.addWidget(spacer)
+        self.beam_display_widget = BeamSpeciesDisplayWidget()
+        self.beam_display_widget.set_wait_until_ready(True)
+        self.beam_display_widget.set_expanded(True)
+        self.beam_display_widget.set_allow_clicking_src_btns(False)
+        self.beam_display_widget.mach_bound_changed.connect(self.sigOrigTemplateChanged)
+        self.toolBar.addWidget(self.beam_display_widget)
+        #
+        _beam_src, _ops_bound, _beam_dest = self.beam_display_widget.get_bound_info()
+        self.ops_bound_cbb.setCurrentText(_ops_bound)
+        printlog(f"Machine bound: {_ops_bound}, from {_beam_src} to {_beam_dest}")
+        self.ops_bound_cbb.currentTextChanged.connect(lambda:self.snp_refresh_btn.clicked.emit())
+        #
+        self.beam_display_widget.mach_bound_changed.connect(self.ops_bound_cbb.setCurrentText)
 
     def _meta_fetcher_started(self):
         printlog("Start to fetch machine state...")
         self._meta_fetcher_pb = QProgressBar()
+        self._meta_fetcher_pb.setStyleSheet("""
+        QProgressBar {
+            border: 1px solid gray;
+            border-radius: 1px;
+            text-align: center;
+        }
+        QProgressBar::chunk {
+            background-color: #7AAFF4;
+            width: 10px;
+            margin: 0.5px;
+        }""")
         self._meta_fetcher_pb.setWindowTitle("Capturing Machine State")
         self._meta_fetcher_pb.setWindowFlags(Qt.CustomizeWindowHint
                                              | Qt.WindowTitleHint)
         self._meta_fetcher_pb.setRange(0, 100)
         self._meta_fetcher_pb.move(
-            self.geometry().x() + self.geometry().width() / 2 -
-            self._meta_fetcher_pb.geometry().width() / 2,
-            self.geometry().y() + self.geometry().height() / 2 -
-            self._meta_fetcher_pb.geometry().height() / 2)
+            int(self.geometry().x() + self.geometry().width() / 2 -
+                self._meta_fetcher_pb.geometry().width() / 2),
+            int(self.geometry().y() + self.geometry().height() / 2 -
+                self._meta_fetcher_pb.geometry().height() / 2))
         self._meta_fetcher_pb.show()
         self.setEnabled(False)
 
     def _meta_fetcher_stopped(self):
         printlog("Stopped fetching machine state.")
+        self._meta_fetcher_pb.setVisible(False)
 
     def _meta_fetcher_progressed(self, f, s):
         printlog(f"Fetching machine state: {f * 100:>5.1f}%, {s}")
@@ -3992,13 +4212,19 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     f"Saved machine state data to {os.path.abspath(filename)}.",
                     QMessageBox.Ok, QMessageBox.Ok)
 
-    def __config_meta_fetcher(self):
-        # init mach state retriever
+    def get_ms_config(self):
+        """Return the configurations for machine state capture.
+        """
         conf = get_meta_conf_dict(MS_CONF_PATH)
         _rate = self.pref_dict['MACH_STATE'].get('DAQ_RATE', None)
         _nshot = self.pref_dict['MACH_STATE'].get('DAQ_NSHOT', None)
         mach_state_conf = merge_mach_conf(
             conf, nshot=_nshot, rate=_rate)  # redefine nshot, rate here
+        return mach_state_conf
+
+    def __config_meta_fetcher(self):
+        # init mach state retriever
+        self._mach_state_config = mach_state_conf = self.get_ms_config()
         pv_list = mach_state_conf['pv_list']
         grp_list = mach_state_conf['grp_list']
         daq_rate = mach_state_conf['daq_rate']
@@ -4022,10 +4248,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.data_uri, ensure_connect_db(
                 self.data_uri))  # other DB_ENGINEs to be supported
         self.nsnp_btn.setVisible(True)
-        self.nsnp_btn.click()
-        self.nsnp_btn.click()  # n_snp_max -> 20
-        self.db_refresh.connect(
-            partial(self.on_data_uri_changed, True, self.data_uri))
+        for i in range(4):
+            self.nsnp_btn.click()  # n_snp_max -> All
+        self.db_refresh.connect(self.snp_refresh_btn.click)
         self.db_pull.connect(self.on_pull_data)
 
     @pyqtSlot()
@@ -4074,37 +4299,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.sigApplyReady.emit(True)
         else:
             self.sigApplyReady.emit(False)
-
-    def get_data_models(self):
-        """Get the model for settings data retrieval.
-        """
-        _p_m = self._tv.model()
-        m_src = _p_m.sourceModel()
-        if self._wysiwyc_enabled:
-            return _p_m, m_src
-        else:
-            return m_src, m_src
-
-    @pyqtSlot(bool)
-    def on_toggle_wysiwyc(self, is_checked):
-        """If checked, change take snapshot mode to 'What You See Is What You Capture', otherwise
-        take the full settings always.
-        """
-        msg = '''<html><head><meta name="qrichtext" content="1" /><style type="text/css">
-p, li { white-space: pre-wrap; }
-</style></head><body style=" font-family:'Cantarell'; font-size:12pt; font-weight:400; font-style:normal;">
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">The mode of &quot;Take Snapshot&quot; is switched to &quot;<span style=" font-weight:600;">WYSIWYC</span>&quot; (<span style=" font-weight:600;">W</span>hat <span style=" font-weight:600;">Y</span>ou <span style=" font-weight:600;">S</span>ee <span style=" font-weight:600;">I</span>s <span style=" font-weight:600;">W</span>hat <span style=" font-weight:600;">Y</span>ou <span style=" font-weight:600;">C</span>apture), only the device settings listed on the current view will be saved when taking a snapshot by pressing the &quot;Take Snapshot&quot; button in the toolbar.</p>
-<p style="-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><br /></p>
-<p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Are you sure to switch the mode?</p></body></html>'''
-        self._wysiwyc_enabled = is_checked
-        if is_checked:
-            r = QMessageBox.warning(self, "Switch Take Snapshot Mode", msg,
-                                    QMessageBox.Yes | QMessageBox.No,
-                                    QMessageBox.No)
-            if r == QMessageBox.Yes:
-                pass
-            else:
-                self.wysiwyc_chkbox.setChecked(False)
 
     @pyqtSlot()
     def on_update_ref_values(self):

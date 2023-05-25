@@ -7,6 +7,7 @@ import os
 import re
 import time
 import shutil
+import pandas as pd
 from collections import Counter
 from collections import OrderedDict
 from datetime import datetime
@@ -38,8 +39,10 @@ from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtWidgets import QToolButton
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtWidgets import QProgressBar
 from phantasy import get_settings_from_element_list
 from phantasy_ui.widgets import is_item_checked
+from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 from phantasy_apps.utils import find_dconf
 from .data import SnapshotData
 
@@ -54,27 +57,27 @@ X2 = 'x\N{SUBSCRIPT TWO}'
 XREF = 'xref'
 DELTA = '\N{GREEK CAPITAL LETTER DELTA}'
 
-COLUMN_NAMES1 = ['Device', 'Field']
+COLUMN_NAMES1 = ['Device\nName', 'Field\nName']
 
 COLUMN_NAMES2 = [
-    f'Setpoint({X0})',
-    f'Live Readback({X1})',
-    f'Live Setpoint({X2})',
-    f'{DELTA}({X0},{X1})',
+    f'SavedSet\n({X0})',
+    f'LiveRead\n({X1})',
+    f'LiveSet\n({X2})',
+    f'SavedSet-LiveRead\n{DELTA}({X0},{X1})',
 #    f'{DELTA}({X0},{X2})',
-    f'{DELTA}({X2},{X0})',
-    f'{DELTA}({X1},{X2})',
-    'Tolerance', 'Writable', f'{X2}/{X0}',
+    f'LiveSet-SavedSet\n({X2}-{X0})',
+    f'LiveRead-LiveSet\n({X1}-{X2})',
+    'Tolerance', 'Writable?', f'LiveSet/SaveSet\n({X2}/{X0})',
     'Live State',
     'State',
-    f'Reference Set ({XREF})',
-    f'{DELTA}({X2},{XREF})',
-    f'{DELTA}({X0},{XREF})',
-    f'Tune ALM?',  # if tune alarm is activated?
-    f'Read ALM?',  # if read alarm is activated?
+    f'RefSet\n({XREF})',
+    f'LiveSet-RefSet\n({X2}-{XREF})',
+    f'SavedSet-RefSet\n({X0}-{XREF})',
+    f'Tune Alarm\nEnabled?',  # if tune alarm is activated?
+    f'Read Alarm\nEnabled?',  # if read alarm is activated?
 ]
 COLUMN_SFIELD_MAP = OrderedDict((
-    ('Type', 'family'),
+    ('Device\nType', 'family'),
     ('Pos [m]', 'sb'),
 ))
 COLUMN_NAMES_ATTR = list(COLUMN_SFIELD_MAP.keys())
@@ -148,17 +151,23 @@ TAG_BTN_STY = """
 QToolButton {{
     font-size: {fs}pt;
     padding: 3px 3px 3px 3px;
-    background-color: rgb(255, 133, 170);
-    border: none;
-    border-radius: 6px;
-    color: rgb(255, 255, 255);
+    background-color: #F5F5F5;
+    border: 0.5px solid #9E9E9E;
+    border-radius: 5px;
+    color: #424242;
     qproperty-icon: url(":/sm-icons/plus-white.png") off, url(":/sm-icons/checkmark-white.png") on;
 }}
-QToolButton:hover {{
-    background-color: rgb(255, 158, 195);
+QToolButton:hover:!checked {{
+    color: #424242;
+    background-color: #E0E0E0;
+}}
+QToolButton:hover:checked {{
+    background-color: #90CAF9;
 }}
 QToolButton:checked {{
-    background-color: rgb(0, 123, 255);
+    color: #FFFFFF;
+    border: 0.5px solid #2979FF;
+    background-color: #448AFF;
 }}
 """
 
@@ -185,6 +194,84 @@ QToolButton:checked {{
     border-bottom: 2px solid rgb(50, 105, 255);
 }}
 """
+#
+PWR_STS_U_ROLE = Qt.UserRole + 5
+#
+SM_PX_OFF_PATH = ":/sm-icons/off.png"
+SM_PX_ON_PATH = ":/sm-icons/on.png"
+SM_PX_UNKNOWN_PATH = ":/sm-icons/unknown.png"
+#
+STS_PX_MAP = {
+"nan": (SM_PX_UNKNOWN_PATH, -10), # when first added into the list
+
+"Not a powered device, SRF cavity, nor other blocking devices.": (SM_PX_UNKNOWN_PATH, -10),
+"Power is UNKNOWN": (SM_PX_UNKNOWN_PATH, -10),
+"Non-existing": (SM_PX_UNKNOWN_PATH, -10), # the snapshot that does not saved last device state data (initial version of the data structure)
+
+"Attenuator(s) IN": (SM_PX_OFF_PATH, 0),
+"Attenuator(s) OUT": (SM_PX_ON_PATH, 1),
+"Attenuator device is IN": (SM_PX_OFF_PATH, 0),
+"Attenuator device is OUT": (SM_PX_ON_PATH, 1),
+
+"Aperture device is OUT": (SM_PX_ON_PATH, 1),
+"Aperture device is IN": (SM_PX_OFF_PATH, 0),
+
+"PPAC is OUT": (SM_PX_ON_PATH, 1),
+"PPAC is IN": (SM_PX_OFF_PATH, 0),
+
+"Foil is OUT": (SM_PX_ON_PATH, 1),
+"Foil is IN": (SM_PX_OFF_PATH, 0),
+
+"Beam dump is OUT": (SM_PX_ON_PATH, 1),
+"Beam dump is IN": (SM_PX_OFF_PATH, 0),
+
+"Energy loss detector is OUT": (SM_PX_ON_PATH, 1),
+"Energy loss detector is IN": (SM_PX_OFF_PATH, 0),
+
+"Timing detector is OUT": (SM_PX_ON_PATH, 1),
+"Timing detector is IN": (SM_PX_OFF_PATH, 0),
+
+"Slit is OUT": (SM_PX_ON_PATH, 1),
+"Slit is IN": (SM_PX_OFF_PATH, 0),
+
+"DB2 viewer/degrader is OUT": (SM_PX_ON_PATH, 1),
+"DB3 viewer/wedge is OUT": (SM_PX_ON_PATH, 1),
+"DB2 Viewer is IN": (SM_PX_OFF_PATH, 0),
+"DB2 Degrader is IN": (SM_PX_OFF_PATH, 0),
+"DB3 Viewer is IN": (SM_PX_OFF_PATH, 0),
+"DB3 Wedge#1 is IN": (SM_PX_OFF_PATH, 0),
+"DB3 Wedge#2 is IN": (SM_PX_OFF_PATH, 0),
+"DB3 Wedge#3 is IN": (SM_PX_OFF_PATH, 0),
+
+"Cavity phase is LOCKED": (SM_PX_ON_PATH, 1),
+"Device is Locked": (SM_PX_ON_PATH, 1),
+"Cavity phase is UNLOCKED": (SM_PX_OFF_PATH, 0),
+"Device is Unlocked": (SM_PX_OFF_PATH, 0),
+
+"Power is ON": (SM_PX_ON_PATH, 1),
+"Power is OFF": (SM_PX_OFF_PATH, 0),
+
+"Chopper state: Invalid Input": (":/sm-icons/chp_invalid.png", -2),
+"Chopper state: Off": (":/sm-icons/chp_off.png", -1),
+"Chopper state: Blocking": (":/sm-icons/chp_blocking.png", 0),
+"Chopper state: Running": (":/sm-icons/chp_running.png", 1),
+
+"Ion source is active": (SM_PX_ON_PATH, 1),
+"Ion source is inactive": (SM_PX_OFF_PATH, 0)
+}
+_STS_PX_CACHE = {}
+
+def set_device_state_item(sts_str: str):
+    """Return QStandardItem object based on the input device state string (*sts_str*).
+    """
+    item = QStandardItem('')
+    sts_px_path, sts_u = STS_PX_MAP.get(sts_str, (SM_PX_UNKNOWN_PATH, -10))
+    px = _STS_PX_CACHE.setdefault(sts_px_path,
+            QPixmap(sts_px_path).scaled(PX_SIZE, PX_SIZE, Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
+    item.setData(px, Qt.DecorationRole)
+    item.setData(sts_str, Qt.ToolTipRole)
+    item.setData(sts_u, PWR_STS_U_ROLE)
+    return item
 
 
 def get_foi_dict(filepath):
@@ -470,6 +557,9 @@ class SettingsModel(QStandardItemModel):
 
         self.settings_sts.emit(len(ename_set), field_cnt)
 
+    def _finish_update(self):
+        self.dataChanged.emit(self.index(0, 0), self.index(self.rowCount() - 1, self.columnCount() - 1))
+
     def set_model(self):
         # set data
         self.set_data()
@@ -494,7 +584,9 @@ class SettingsModel(QStandardItemModel):
         tv.model().sort(self.i_pos)
         tv.header().setStyleSheet("""
             QHeaderView {
+                qproperty-defaultAlignment: AlignHCenter AlignVCenter;
                 font-weight: bold;
+                font-size: 14pt;
             }""")
         #
         self.style_view(font=self._font)
@@ -655,6 +747,10 @@ class _SortProxyModel(QSortFilterProxyModel):
 
         # state diff
         self.filter_state_diff_enabled = False
+        # live state on
+        self.filter_live_state_on_enabled = False
+        # live state off
+        self.filter_live_state_off_enabled = False
 
         #
         self._filter_tuples = None
@@ -936,6 +1032,36 @@ class _SortProxyModel(QSortFilterProxyModel):
             state_diff_test = True
         #
         if not state_diff_test:
+            return False
+
+        # live state on checked
+        try:
+            if self.filter_live_state_on_enabled:
+                v = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['state']),
+                        PWR_STS_U_ROLE)
+                live_sts_on_test = v == 1
+            else:
+                live_sts_on_test = True
+        except AttributeError:
+            live_sts_on_test = True
+        #
+        if not live_sts_on_test:
+            return False
+
+        # live state off checked
+        try:
+            if self.filter_live_state_off_enabled:
+                v = src_model.data(
+                        src_model.index(src_row, self.filter_col_index['state']),
+                        PWR_STS_U_ROLE)
+                live_sts_off_test = v == 0
+            else:
+                live_sts_off_test = True
+        except AttributeError:
+            live_sts_off_test = True
+        #
+        if not live_sts_off_test:
             return False
 
         # field test
@@ -1505,6 +1631,7 @@ class SnapshotDataModel(QStandardItemModel):
         v.header().setStyleSheet("""
             QHeaderView {
                 font-weight: bold;
+                font-size: 14pt;
             }""")
 
         #
@@ -1804,69 +1931,6 @@ class _SnpProxyModel(QSortFilterProxyModel):
         return True
 
 
-STS_PX_MAP = {
-"nan": ":/sm-icons/unknown.png", # when first added into the list
-
-"Not a powered device, SRF cavity, nor other blocking devices.": ":/sm-icons/unknown.png",
-"Power is UNKNOWN": ":/sm-icons/unknown.png",
-"Non-existing": ":/sm-icons/unknown.png", # the snapshot that does not saved last device state data (initial version of the data structure)
-
-"Attenuator(s) IN": ":/sm-icons/off.png",
-"Attenuator(s) OUT": ":/sm-icons/on.png",
-"Attenuator device is IN": ":/sm-icons/off.png",
-"Attenuator device is OUT": ":/sm-icons/on.png",
-
-"Aperture device is OUT": ":/sm-icons/on.png",
-"Aperture device is IN": ":/sm-icons/off.png",
-
-"PPAC is OUT": ":/sm-icons/on.png",
-"PPAC is IN": ":/sm-icons/off.png",
-
-"Beam dump is OUT": ":/sm-icons/on.png",
-"Beam dump is IN": ":/sm-icons/off.png",
-
-"Energy loss detector is OUT": ":/sm-icons/on.png",
-"Energy loss detector is IN": ":/sm-icons/off.png",
-
-"Timing detector is OUT": ":/sm-icons/on.png",
-"Timing detector is IN": ":/sm-icons/off.png",
-
-"Slit is OUT": ":/sm-icons/on.png",
-"Slit is IN": ":/sm-icons/off.png",
-
-"DB2 viewer/degrader is OUT": ":/sm-icons/on.png",
-"DB3 viewer/wedge is OUT": ":/sm-icons/on.png",
-
-"Cavity phase is LOCKED": ":/sm-icons/on.png",
-"Device is Locked": ":/sm-icons/on.png",
-"Cavity phase is UNLOCKED": ":/sm-icons/off.png",
-"Device is Unlocked": ":/sm-icons/off.png",
-
-"Power is ON": ":/sm-icons/on.png",
-"Power is OFF": ":/sm-icons/off.png",
-
-"Chopper state: Invalid Input": ":/sm-icons/chp_invalid.png",
-"Chopper state: Off": ":/sm-icons/chp_off.png",
-"Chopper state: Blocking": ":/sm-icons/chp_blocking.png",
-"Chopper state: Running": ":/sm-icons/chp_running.png",
-
-"Ion source is active": ":/sm-icons/on.png",
-"Ion source is inactive": ":/sm-icons/off.png",
-}
-def set_device_state_item(sts_str):
-    """Return QStandardItem object based on the input device state string (*sts_str*).
-    """
-    item = QStandardItem('')
-    sts_px_path = STS_PX_MAP.get(sts_str)
-    if sts_px_path is not None:
-        px = QPixmap(sts_px_path).scaled(PX_SIZE, PX_SIZE)
-        item.setData(px, Qt.DecorationRole)
-    else:
-        item.setData(sts_str, Qt.DisplayRole)
-    item.setData(sts_str, Qt.ToolTipRole)
-    return item
-
-
 TS_FMT = "%Y-%m-%dT%H:%M:%S.%f"
 class SetLogMessager:
     """Message for set log.
@@ -1942,3 +2006,290 @@ class EffSetLogMsgContainer(QObject):
 
     def count_items(self):
         return len(self._items)
+
+
+def get_pwr_sts(elem, fname: str):
+    """Return a tuple of (QPixmap, tooltip, u_val) and the roles for each, from a high-level
+    element and field name as the device power state.
+
+    Returns
+    -------
+    r : tuple
+        A tuple of (px, tt, uu) and (px_role, tt_tole, u_role).
+    """
+    #
+    tt = "Not a powered device, SRF cavity, nor other blocking devices."
+    if elem.family == 'CAV':
+        r = re.match(r".*([1-3]+).*", fname)
+        if r is not None:  # D0987
+            _fname = 'LKSTS' + r.group(1)
+        else:
+            _fname = 'LKSTS'
+        if _fname in elem.fields:
+            pwr_fld = elem.get_field(_fname)
+            pwr_is_on = pwr_fld.value
+        if pwr_is_on == 1.0:
+            tt = "Cavity phase is LOCKED"
+        elif pwr_is_on == 0.0:
+            tt = "Cavity phase is UNLOCKED"
+    elif elem.family == "CHP":
+        sts = elem.get_field('STATE')
+        sts_val_int = sts.value
+        sts_val_str = CHP_STS_TUPLE[sts_val_int]
+        tt = f"Chopper state: {sts_val_str}"
+    elif elem.family == "AP":
+        in_sts = elem.IN_STS
+        if in_sts == 0:
+            tt = "Aperture device is OUT"
+        else:
+            tt = "Aperture device is IN"
+    elif elem.family == "PM":
+        if 'IN_STS' in elem.fields:
+            in_sts = elem.IN_STS
+            if in_sts == 0:
+                tt = "PPAC is OUT"
+            else:
+                tt = "PPAC is IN"
+    elif elem.family == "ION":
+        if 'ACT' in elem.fields:
+            act_sts = int(elem.ACT)
+            if act_sts == 0:
+                tt = "Ion source is inactive"
+            else:
+                tt = "Ion source is active"
+    elif elem.family == "BD":
+        if 'IN_STS' in elem.fields:
+            in_sts = elem.IN_STS
+            if in_sts == 0:
+                tt = "Beam dump is OUT"
+            else:
+                tt = "Beam dump is IN"
+    elif elem.family == "ELD":
+        if 'IN_STS' in elem.fields:
+            in_sts = elem.IN_STS
+            if in_sts == 0:
+                tt = "Energy loss detector is OUT"
+            else:
+                tt = "Energy loss detector is IN"
+    elif elem.family == "TID":
+        if 'IN_STS' in elem.fields:
+            in_sts = elem.IN_STS
+            if in_sts == 0:
+                tt = "Timing detector is OUT"
+            else:
+                tt = "Timing detector is IN"
+    elif elem.family == "PPOT":
+        pos = elem.get_field('POS').value
+        if elem.name == "FS_F2S1:PPOT_D1563":
+            if pos == 0:
+                tt = "DB2 viewer/degrader is OUT"
+            elif pos == 2:
+                tt = "DB2 Viewer is IN"
+            elif pos == 3:
+                tt = "DB2 Degrader is IN"
+        elif elem.name == "FS_F2S2:PPOT_D1660":
+            if pos == 0:
+                tt = "DB3 viewer/wedge is OUT"
+            elif pos == 2:
+                tt = "DB3 Viewer is IN"
+            elif pos == 3:
+                tt = "DB3 Wedge#1 is IN"
+            elif pos == 4:
+                tt = "DB3 Wedge#2 is IN"
+            elif pos == 5:
+                tt = "DB3 Wedge#3 is IN"
+    elif elem.family == "ATT":
+        if 'OUT_STS' in elem.fields:
+            out_sts = elem.OUT_STS
+            if out_sts == 0:
+                tt = "Attenuator device is IN"
+            else:
+                tt = "Attenuator device is OUT"
+        elif 'ATT_TOTAL' in elem.fields:
+            att_val = elem.ATT_TOTAL
+            if att_val > 1:
+                tt = "Attenuator(s) IN"
+            else:
+                tt = "Attenuator(s) OUT"
+    #elif elem.family == "PTA":
+    #    sts = elem.get_field('TGT')
+    #    sts_val_int = sts.value
+    #    sts_val_str = TGT_STS_TUPLE[sts_val_int]
+    #    tt = f"Target state: {sts_val_str}"
+    #    px_role = Qt.DisplayRole
+    #    px = sts_val_str
+    elif elem.family == "SLT":
+        if 'IN_STS' in elem.fields:
+            in_sts = elem.IN_STS
+            if in_sts == 0:
+                tt = "Slit is OUT"
+            else:
+                tt = "Slit is IN"
+    else:  # others
+        if 'PWRSTS' in elem.fields:
+            if fname == 'I_TC':
+                pwr_fname = 'PWRSTS_TC'
+            else:
+                pwr_fname = 'PWRSTS'
+
+            pwr_fld = elem.get_field(pwr_fname)
+            pwr_is_on = pwr_fld.value
+
+            if pwr_is_on == 1.0:
+                tt = "Power is ON"
+            elif pwr_is_on == 0.0:
+                tt = "Power is OFF"
+    px_path, u = STS_PX_MAP.get(tt)
+    px_obj = _STS_PX_CACHE.setdefault(tt,
+            QPixmap(px_path).scaled(PX_SIZE, PX_SIZE, Qt.IgnoreAspectRatio, Qt.SmoothTransformation))
+    return (px_obj, tt, u), (Qt.DecorationRole, Qt.ToolTipRole, PWR_STS_U_ROLE)
+
+
+# postsnp isrc cbb -> beam species display widget pv_conf_map
+ISRC_INDEX_MAP = {
+    'Live': 'live',
+    'Artemis': 'ISRC1',
+    'HP-ECR': 'ISRC2',
+}
+
+COLUMN_NAME_LIST = ['Name', 'Field', 'Type', 'Pos', 'Setpoint', 'Readback', 'Last Setpoint',
+       'Tolerance', 'Writable', 'Last Power State']
+
+def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
+                  meta_isrc_name: str = "Live", **kws) -> SnapshotData:
+    """Take a snapshot for Settings Manager.
+
+    Parameters
+    ----------
+    note : str
+        Note of the snapshot.
+    tags : list
+        A list of tag string of the snapshot.
+    snp_data : SnapshotData
+        SnapshotData instance ==> template
+    meta_isrc_name : str
+        The name of the ion source name for fetching the ion metadata.
+        "Live" (default), "Artemis", "HP-ECR".
+
+    Keyword Arguments
+    -----------------
+    mp : MachinePortal
+        MachinePortal instance, if not defined, instantiating from 'machine' and 'segment' arguments.
+    inst_mp : bool
+        If set, instantiating `mp` with `machine` and `segment` if `mp` is not defined.
+    machine : str
+        The name of the machine for instantiating mp, defaults to 'FRIB'.
+    segment : str
+        The name of the segment for instantiating mp, defaults to 'LINAC'.
+    version : str
+        Version string of Settings Manager.
+    verbose : int
+        Verbosity level of the log output, defaults to 0 (no output), 1 (output progress),
+        2 (output progress with descriptions).
+    with_machstate : bool
+        Capture machine state data if set.
+    ms_conf : dict:
+        The configuration dict for machine state data capture, either passing:
+        * The parsed dict object by `conf`.
+        * Or the arguments for fetch_mach_state CLI tool: `config_path`, `rate`, `nshot`
+
+    Returns
+    -------
+    r : SnapshotData
+        A new snapshot dataset.
+
+    See Also
+    --------
+    fetch_mach_state
+    """
+    verbose = kws.get('verbose', 0)
+
+    if verbose > 0:
+        _printlog("Capture a new snapshot... ", meta_isrc_name, note, tags, snp_data.ts_as_str())
+
+    machine = kws.get('machine', 'FRIB')
+    segment = kws.get('segment', 'LINAC')
+    mp = kws.get('mp', None)
+    if mp is None:
+        if kws.get('inst_mp', False):
+            from phantasy import MachinePortal
+            mp = MachinePortal(machine, segment)
+        else:
+            _printlog("MachinePortal instance must be defined through `mp` keyword argument.")
+            return
+    lat = mp.work_lattice_conf
+
+    ver = kws.get('version', None)
+    if ver is None:
+        from phantasy_apps.settings_manager import __version__
+        ver = __version__
+
+    #
+    def _f(row):
+        ename, fname = row.Name, row.Field
+        elem = lat[ename]
+        fld = elem.get_field(fname)
+        return ename, fname, row.Type, row.Pos, \
+               fld.current_setting(), fld.value, row.Setpoint, \
+               row.Tolerance, fld.write_access, \
+               get_pwr_sts(elem, fld.name)[0][1]
+
+    # taking a snapshot
+    snp_data.extract_blob()
+    if verbose > 0:
+        _printlog("Capture device settings...")
+    _r = snp_data.data.apply(_f, axis=1)
+    new_settings_df = pd.DataFrame.from_records(
+                        _r, columns=COLUMN_NAME_LIST) # snp_data.data.columns: for generated one, no last pwr sts!
+    if verbose > 0:
+        _printlog("Capture ion species info...")
+    ion_name, ion_mass, ion_number, ion_charge = BeamSpeciesDisplayWidget.get_species_meta(\
+                                                   ISRC_INDEX_MAP[meta_isrc_name])
+    if verbose > 0:
+        _printlog(f"Captured ion species info: {ion_name}, A({ion_mass}), Z({ion_number}), Q({ion_charge})")
+    new_snp_data = SnapshotData(new_settings_df,
+                                ion_name=ion_name,
+                                ion_number=ion_number,
+                                ion_mass=ion_mass,
+                                ion_charge=ion_charge,
+                                machine=machine,
+                                segment=segment,
+                                version=ver,
+                                note=note,
+                                tags=','.join(tags),
+                                table_version=10,
+                                parent=snp_data.ts_as_str())
+    # machstate
+    if kws.get('with_machstate', False):
+        if verbose > 0:
+            _printlog("Capture machine state data...")
+
+        ms_conf = kws.get('ms_conf', {})
+        if ms_conf.get('conf', None) is None:
+            from phantasy_apps.msviz.mach_state import DEFAULT_META_CONF_PATH
+            from phantasy_apps.msviz.mach_state import fetch_data
+            from phantasy_apps.msviz.mach_state import get_meta_conf_dict
+            from phantasy_apps.msviz.mach_state import merge_mach_conf
+            if ms_conf.get('config_path', None) is None:
+                config_path = DEFAULT_META_CONF_PATH
+            _conf = get_meta_conf_dict(config_path)
+            _mach_stat_conf = merge_mach_conf(_conf, ms_conf.get('rate', None),
+                                              ms_conf.get('nshot', None))
+        else:
+            # use parsed config dict
+            _mach_stat_conf = ms_conf.get('conf')
+        _ms_dset = fetch_data(_mach_stat_conf, verbose=verbose)
+    else:
+        # no machine state is captured
+        _ms_dset = None
+    new_snp_data.machstate = _ms_dset
+
+    if verbose > 0:
+        _printlog("Captured a new snapshot.")
+
+    return new_snp_data
+
+
+def _printlog(*msg):
+    ts = datetime.now().isoformat(sep='T', timespec="milliseconds")
+    print(f"[{ts}] {', '.join((str(i) for i in msg))}")

@@ -3,12 +3,9 @@
 TITLE = "Configurations for Settings Manager"
 
 [DATA_SOURCE]
-  TYPE = 'DB' # FILE, DB
+  TYPE = 'DB'
   DB_ENGINE = 'sqlite'
   URI = '/files/shared/ap/settings_manager/sm.db'
-
-  # TYPE = 'FILE'
-  # URI = '/files/shared/ap/settings_manager'  # where reside all snapshot files
 
 [SETTINGS]
   T_WAIT = 0.05  # Settling time between batch settings apply, second
@@ -36,6 +33,27 @@ TITLE = "Configurations for Settings Manager"
 [ARCHIVER_APPLIANCE]
   [ARCHIVER_APPLIANCE.DATA_CLIENT]
     URL = "http://epicsarchiver1.ftc:17668"
+
+[SNAPSHOT_TEMPLATES]
+  [SNAPSHOT_TEMPLATES."LINAC_Artemis"]
+    NAME = "LINAC_Artemis"
+    DB_ENTRY = "2023-05-15T09:57:41"
+    DB_TAGS = ["LINAC", "SCS1"]
+
+  [SNAPSHOT_TEMPLATES."FSEE_Artemis"]
+    NAME = "FSEE_Artemis"
+    DB_ENTRY = "2023-05-15T10:18:02"
+    DB_TAGS = ["FSEE", "SCS1"]
+
+  [SNAPSHOT_TEMPLATES."LINAC_HP-ECR"]
+    NAME = "LINAC_HP-ECR"
+    DB_ENTRY = "2023-05-15T10:00:59"
+    DB_TAGS = ["LINAC", "SCS2"]
+
+  [SNAPSHOT_TEMPLATES."FSEE_HP-ECR"]
+    NAME = "FSEE_HP-ECR"
+    DB_ENTRY = "2023-05-15T10:17:15"
+    DB_TAGS = ["FSEE", "SCS2"]
 
 [EXTERNAL_APPS]
   [EXTERNAL_APPS.APP1]

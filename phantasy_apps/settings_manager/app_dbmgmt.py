@@ -156,7 +156,7 @@ class DBManagerDialog(QDialog, Ui_Dialog):
         """
         from phantasy_apps.settings_manager.contrib.db.db_utils import create_connection, ensure_connect_db, insert_data
         backdb_path = self.backdb_path_lineEdit.text()
-        db_path = self.parent.data_uri_lineEdit.text()
+        db_path = self.parent.data_uri
 
         try:
             conn = create_connection(db_path)

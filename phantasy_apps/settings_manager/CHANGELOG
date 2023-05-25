@@ -1,4 +1,61 @@
 ========================
+Version 11.0: 2023-05-16
+========================
+
+ - Support multi-staged Revert of settings apply procedures.
+ - Fixed "Set As Reference" menu.
+ - Add a new tool for importing snapshots from user-prepared csv/xlsx files.
+ - Refine the field-of-interest for Settings View:
+   - Do not show PHA_CREST, AMP_COEF for all SRF cavities.
+ - Improved the live data refreshing speed by ~50%.
+   - Now has three speed options: Fast, Normal (default) and Slow.
+ - Improved the header names for SettingsView.
+ - Added two new filter buttons for "Live State": Live On and Live Off.
+ - Adopted the new updates of beam info display widget to show:
+   - Beam bound, beam destination
+ - Re-designed the widget for snapshot taking procedure:
+   - Improved the speed for capturing settings data.
+   - Improved the speed for capturing the machine state data.
+   - Support the diagnosis of the originated snapshot template from a loaded one.
+   - Support to take a new snapshot based on a snapshot template.
+   - Automatically check the right options for creating a new snapshot that matches the current beam operations.
+   - Refactored WhatYouSeeIsWhatYouCapture option.
+   - Refactored taking snapshot with machine state data option.
+   - Set exclusive relationship to tag selection, e.g. LINAC and FSEE cannot check one, the same to SCS1 and SCS2.
+   - Now a standalone function is available for taking a snasphot.
+ - Introduced a splashscreen to guide the app starting up process:
+   - Adopted multi-threaded approached to speed up required data loading.
+   - e.g. loading lattice, pulling data from the database, establishing network connections, etc.
+ - Enhanced the database management:
+   - Pre-pull the snapshots that match current beam operations.
+   - By default pull all the snapshots, but users can select how many to pull.
+   - Added new controls for easy pulling data and indicating the status.
+   - Keep tracking of the snapshot generation history by introducing a new property to each snapshot data.
+   - Add support to auto-pulling data at defined frequency, at every 30 mins by default.
+   - Auto pull snapshots if the beam bound is changed.
+ - Other fixes and enhancements, including UI refinements.
+
+========================
+Version 10.5: 2023-02-16
+========================
+
+ - Add support to work with multiple ion source lines, needs phantasy-ui.
+ - Override the write permission as False to all ion source devices.
+ - Fixed tag editting issue when no snapshot is loaded.
+ - Fixed Excel reading issues.
+ - Refactor the settings scaling procedure: only scale scalabled device settings.
+ - Refined the settings Apply procedure:
+   - Only enable the Apply button when items are checked.
+   - Reduced the warning messageboxes before Apply.
+   - Do not ask if snapshot to be taken before Apply (see revert).
+ - Support revert last applied device settings.
+ - Support abort ongoing Apply procedure.
+ - Refactored the set log message system.
+ - Compatibility fixes.
+ - Add menus for reading user guide (PDF).
+ - Updated the UI.
+
+========================
 Version 10.4: 2022-12-02
 ========================
 
