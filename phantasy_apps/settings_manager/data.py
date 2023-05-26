@@ -691,6 +691,7 @@ class SnapshotData:
         if self._blob is None: # already extracted
             return
         _df_data, _df_info, _df_machstate = read_sql(self._blob)
+        self.info = _df_info
         self.data = _df_data
         self.machstate = _df_machstate
         self._blob = None
