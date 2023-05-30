@@ -549,13 +549,12 @@ class SnapshotModel(QAbstractTableModel):
     def fetch_items(self, nitems: int):
         # return number of fetched items.
         cur = self.db_con.cursor()
-        r = cur.execute(
-            f"SELECT * FROM {self.table_name} LIMIT {nitems} OFFSET {self.snpCount}"
-        )
+        _q = f"SELECT rowid,* FROM {self.table_name} ORDER BY rowid DESC LIMIT {nitems} OFFSET {self.snpCount}"
+        r = cur.execute(_q)
         cnt = 0
         for item in r.fetchall():
             cnt += 1
-            self.snpList.append(SnapshotData(item[1:]))
+            self.snpList.append(SnapshotData(item[2:]))
         cur.close()
         return cnt
 
