@@ -161,8 +161,8 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         QMessageBox.information(self, "MPS Diagnostics Threshold Configs",
                                 f"Saved data to {outfilepath}", QMessageBox.Ok,
                                 QMessageBox.Ok)
-        self.saveToDatabase('testing', 'test1,test2')
-    
+        self.saveToDatabase('testing', ['test1', 'test2'])
+
     def saveToDatabase(self, note: str, tags: list, meta_isrc_name: str = 'Live', conn: sqlite3.Connection = None):
         # save data to the database.
         ts = time.time()
@@ -170,12 +170,15 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         ion_name, ion_num, ion_mass, ion_charge, ion_charge1, \
             beam_power, beam_energy, beam_dest = BeamSpeciesDisplayWidget.get_species_meta_full(ISRC_INDEX_MAP[meta_isrc_name])
         data = self.__model.get_dataframe()
-        snp_data = SnapshotData((ts, user, ion_name, ion_num, ion_mass, ion_charge, ion_charge1,
-                                beam_power, beam_energy, beam_dest, ','.join(tags), note, data))
+        _row_data = (ts, user, ion_name, ion_num, ion_mass, ion_charge, ion_charge1,
+                     beam_power, beam_energy, beam_dest, ','.join(tags), note, data)
+        print(_row_data[:-1])
+        snp_data = SnapshotData(_row_data)
         if conn is None:
             conn = self.snp_parent.get_db_con()
         table_name = TABLE_NAME_MAP[self.device_type]
         insert_update_data(conn, snp_data, table_name)
+        print(f"Saved data {snp_data} to the databse.")
 
     @pyqtSlot()
     def compareData(self):
