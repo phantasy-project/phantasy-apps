@@ -2311,7 +2311,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if n == 'All':
             _q = f"SELECT * FROM snapshot {_q_cond}"
         else:
-            _q = f"SELECT * FROM snapshot {_q_cond} ORDER BY id DESC LIMIT {n}"
+            _q = f"SELECT rowid,* FROM snapshot {_q_cond} ORDER BY rowid DESC LIMIT {n}"
 
         w_list = (self.nsnp_btn, self.snp_refresh_btn, self.ops_bound_cbb)
 
