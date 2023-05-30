@@ -68,6 +68,7 @@ ISRC_INDEX_MAP = {
     'HP-ECR': 'ISRC2',
 }
 
+
 class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
 
     def __init__(self, device_type: str, outdata_dir: str, parent=None):
@@ -168,7 +169,8 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         ts = time.time()
         user = getuser()
         ion_name, ion_num, ion_mass, ion_charge, ion_charge1, \
-            beam_power, beam_energy, beam_dest = BeamSpeciesDisplayWidget.get_species_meta_full(ISRC_INDEX_MAP[meta_isrc_name])
+            beam_power, beam_energy, beam_dest = BeamSpeciesDisplayWidget.get_species_meta_full(
+                ISRC_INDEX_MAP[meta_isrc_name])
         data = self.__model.get_dataframe()
         _row_data = (ts, user, ion_name, ion_num, ion_mass, ion_charge, ion_charge1,
                      beam_power, beam_energy, beam_dest, ','.join(tags), note, data)
@@ -316,44 +318,44 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
             f"{__date2.toString()} 23:59:59")
 
     def __set_up_events(self):
-        #        # note filter
-        #        self.filter_note_btn.toggled.connect(
-        #            self.filter_note_lineEdit.setVisible)
-        #        self.filter_note_lineEdit.returnPressed.connect(self.activate_filters)
-        #        # daterange filter
-        #        self.filter_daterange_btn.toggled.connect(
-        #            self.on_enable_daterange_filter)
-        #        self.filter_daterange_dateEdit1.dateChanged.connect(
-        #            self.onFilterDateRangeUpdated1)
-        #        self.filter_daterange_dateEdit2.dateChanged.connect(
-        #            self.onFilterDateRangeUpdated2)
-        #        [
-        #            self.filter_daterange_btn.toggled.connect(o.setVisible) for o in (
-        #                self.filter_daterange_dateEdit1,
-        #                self.daterange_lbl,
-        #                self.filter_daterange_dateEdit2,
-        #            )
-        #        ]
+        # note filter
+        self.filter_note_btn.toggled.connect(
+            self.filter_note_lineEdit.setVisible)
+        self.filter_note_lineEdit.returnPressed.connect(self.activate_filters)
+        # daterange filter
+        self.filter_daterange_btn.toggled.connect(
+            self.on_enable_daterange_filter)
+        self.filter_daterange_dateEdit1.dateChanged.connect(
+            self.onFilterDateRangeUpdated1)
+        self.filter_daterange_dateEdit2.dateChanged.connect(
+            self.onFilterDateRangeUpdated2)
+        [
+            self.filter_daterange_btn.toggled.connect(o.setVisible) for o in (
+                self.filter_daterange_dateEdit1,
+                self.daterange_lbl,
+                self.filter_daterange_dateEdit2,
+            )
+        ]
         # initial max nitems
         self.init_nitem_sbox.valueChanged.connect(
             self.onInitialMaxNItemsChanged)
         # open db file
         self.db_open_btn.clicked.connect(self.onOpenDatabase)
-        #        # check ion/tag filter buttons
-        #        self.select_all_ions_btn.clicked.connect(
-        #            partial(self.on_check_snp_filters, "ion", "all"))
-        #        self.select_none_ions_btn.clicked.connect(
-        #            partial(self.on_check_snp_filters, "ion", "none"))
-        #        self.select_invert_ions_btn.clicked.connect(
-        #            partial(self.on_check_snp_filters, "ion", "invert"))
-        #        self.select_all_tags_btn.clicked.connect(
-        #            partial(self.on_check_snp_filters, "tag", "all"))
-        #        self.select_none_tags_btn.clicked.connect(
-        #            partial(self.on_check_snp_filters, "tag", "none"))
-        #        self.select_invert_tags_btn.clicked.connect(
-        #            partial(self.on_check_snp_filters, "tag", "invert"))
-        #        # note filter button
-        #        self.filter_note_btn.toggled.connect(self.on_enable_note_filter)
+        # check ion/tag filter buttons
+        self.select_all_ions_btn.clicked.connect(
+            partial(self.on_check_snp_filters, "ion", "all"))
+        self.select_none_ions_btn.clicked.connect(
+            partial(self.on_check_snp_filters, "ion", "none"))
+        self.select_invert_ions_btn.clicked.connect(
+            partial(self.on_check_snp_filters, "ion", "invert"))
+        self.select_all_tags_btn.clicked.connect(
+            partial(self.on_check_snp_filters, "tag", "all"))
+        self.select_none_tags_btn.clicked.connect(
+            partial(self.on_check_snp_filters, "tag", "none"))
+        self.select_invert_tags_btn.clicked.connect(
+            partial(self.on_check_snp_filters, "tag", "invert"))
+        # note filter button
+        self.filter_note_btn.toggled.connect(self.on_enable_note_filter)
 
         # dblclick row
         self.view.doubleClicked.connect(self.onDblClickedItem)
@@ -530,7 +532,7 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
 
     @pyqtSlot()
     def onOpenDatabase(self):
-        ## Open and read data from a database file.
+        # Open and read data from a database file.
         # 1. Read data from a database file as a dataframe
         # 2. Update the model and view
         ##
@@ -560,6 +562,7 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
 #        # apply ion/tag filter buttons
 #        self.on_check_snp_filters('ion', 'apply')
 #        self.on_check_snp_filters('tag', 'apply')
+
 
     def __get_tag_list(self):
         # Return a list of sorted unique tag list, replace empty to 'NOTAG'.
@@ -710,7 +713,7 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
         # style the view after set model.
         #
         # expand the first row
-        #if v.model().rowCount(QModelIndex()) == 0:
+        # if v.model().rowCount(QModelIndex()) == 0:
         #    return
         #[v.resizeColumnToContents(i) for i in range(len(COLUMN_NAME_LIST))]
 
@@ -722,12 +725,12 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
         #
         self.__model = SnapshotModel(self.__db_con, self.__table_name)
         self.view.setModel(self.__model)
-        #self.__model.fetchedItemNumChanged.connect(self.onFetchedNItemsChanged)
-        #self.__model.dataChanged.connect(self.onDataChanged)
+        # self.__model.fetchedItemNumChanged.connect(self.onFetchedNItemsChanged)
+        # self.__model.dataChanged.connect(self.onDataChanged)
         self.post_style_view(self.view)
 
     def __refresh_model(self):
-        #self.total_nitem_lbl.setText(f"{self.__df.shape[0]}")
+        # self.total_nitem_lbl.setText(f"{self.__df.shape[0]}")
         #self.__total_item_cnt = 0
         #self.__irow = 0
         #self.__max_init_nitems = self.init_nitem_sbox.value()
