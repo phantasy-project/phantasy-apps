@@ -7,15 +7,19 @@ import os
 import pandas as pd
 from datetime import datetime
 from getpass import getuser
+from functools import partial
+from typing import Literal
 
 from PyQt5.QtWidgets import (
     QWidget,
     QMessageBox,
     QLayout,
     QScrollArea,
+    QToolButton,
 )
 
 from PyQt5.QtCore import (
+    pyqtSignal,
     pyqtSlot,
     QTimer,
     Qt,
@@ -36,6 +40,7 @@ from phantasy_ui import (
     get_open_filename,
 )
 from phantasy_ui.widgets import BeamSpeciesDisplayWidget
+from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 
 from phantasy_apps.threshold_manager.ui.ui_mps_diag import Ui_Form as MPSDiagWidgetForm
 from phantasy_apps.threshold_manager.ui.ui_snp_widget import Ui_Form as SnapshotWidgetForm
@@ -43,6 +48,7 @@ from phantasy_apps.threshold_manager._model import (
     MPSBeamLossDataModel,
     MPSBeamLossDataDelegateModel,
     SnapshotModel,
+    SnapshotProxyModel,
     SnapshotDelegateModel,
 )
 from phantasy_apps.threshold_manager.db.utils import (
@@ -100,7 +106,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         self.view.setItemDelegate(MPSBeamLossDataDelegateModel(self.view))
         self.set_data()
         self.hide_columns()
-        delayed_exec(lambda: self.refresh_btn.setChecked(True), 2000)
+        # delayed_exec(lambda: self.refresh_btn.setChecked(True), 2000)
 
     def hide_columns(self):
         """Hide columns.
@@ -253,6 +259,8 @@ TABLE_NAME_MAP = {
 
 class SnapshotWidget(QWidget, SnapshotWidgetForm):
 
+    totalNItemsChanged = pyqtSignal(int)
+
     def __init__(self, device_type, parent=None):
         super(self.__class__, self).__init__()
         self.parent = parent
@@ -274,9 +282,11 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
         self.__default_font_size: int = self.__default_font.pointSize()
         self.__model: SnapshotModel = None
         self.__db_con: sqlite3.Connection = None
-        self.__df: pd.Dataframe = None
-        self.__max_init_nitems: int = None
-        self.__total_item_cnt: int = 0
+        self.__df: pd.Dataframe = pd.DataFrame(
+            columns=['timestamp', 'ion_name', 'ion_number','ion_mass',' ion_charge', 
+                     'ion_charge1', 'user', 'beam_power', 'beam_energy', 'beam_dest',
+                     'tags', 'note']
+        )
         self.__irow: int = 0
         self.__current_tag_filter_dict: dict = dict(
         )  # {tag_name (str): is_checked? (bool)}
@@ -291,6 +301,8 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
         self.__daterange_filter_enabled: bool = False
         self.__daterange_date1_s: float = None
         self.__daterange_date2_s: float = None
+        self.__n_tot_th = None
+        self.__n_tmr: QTimer = QTimer(self)
 
     def __set_up_post_init_0(self):
         # prior events setup
@@ -321,7 +333,7 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
         # note filter
         self.filter_note_btn.toggled.connect(
             self.filter_note_lineEdit.setVisible)
-        self.filter_note_lineEdit.returnPressed.connect(self.activate_filters)
+        self.filter_note_lineEdit.returnPressed.connect(self.on_note_filter_content_updated)
         # daterange filter
         self.filter_daterange_btn.toggled.connect(
             self.on_enable_daterange_filter)
@@ -336,9 +348,8 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
                 self.filter_daterange_dateEdit2,
             )
         ]
-        # initial max nitems
-        self.init_nitem_sbox.valueChanged.connect(
-            self.onInitialMaxNItemsChanged)
+        # total number of items (database query)
+        self.totalNItemsChanged.connect(self.onTotalNItemsChanged)
         # open db file
         self.db_open_btn.clicked.connect(self.onOpenDatabase)
         # check ion/tag filter buttons
@@ -362,11 +373,12 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
 
     @pyqtSlot()
     def auto_resize_columns(self):
-        for c in range(self.view.model().columnCount()):
+        for c in range(self.view.model().sourceModel().columnCount()):
             self.view.resizeColumnToContents(c)
 
     def __set_up_post_init_1(self):
-        pass
+        self.__n_tmr.timeout.connect(self.__on_n_tmr_timeout)
+        self.__n_tmr.start(1000)
 
     def get_db_con(self):
         return self.__db_con
@@ -386,24 +398,44 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
 #                idx.column() not in (COLUMN_IDX_TAGS, COLUMN_IDX_NOTE):
 #            self.onLoadData(item._itemData[-1])
 #
-#    @pyqtSlot(bool)
-#    def on_enable_note_filter(self, is_checked: bool):
-#        """Enable note filter if checked.
-#        """
-#        self.__note_filter_enabled = is_checked
-#        self.activate_filters()
-#
-#    @pyqtSlot(bool)
-#    def on_enable_daterange_filter(self, is_checked: bool):
-#        """Enable daterange filter if checked.
-#        """
-#        self.__daterange_filter_enabled = is_checked
-#        self.activate_filters()
-#
-#    @pyqtSlot()
-#    def on_check_snp_filters(self, filter_type: Literal['ion', 'tag'],
-#                             check_type: Literal['all', 'none', 'invert',
-#                                                 'apply']):
+    @pyqtSlot()
+    def on_note_filter_content_updated(self):
+        # filter snapshot by note string.
+        if not self.__note_filter_enabled:
+            return
+        m = self.view.model()
+        if m is None:
+            return
+        m.filter_note_enabled = self.__note_filter_enabled
+        m.filter_note_string = f"*{self.filter_note_lineEdit.text().strip()}*"
+        m.invalidate()
+
+    @pyqtSlot(bool)
+    def on_enable_note_filter(self, is_checked: bool):
+        """Enable note filter if checked.
+        """
+        self.__note_filter_enabled = is_checked
+        if is_checked:
+            self.on_note_filter_content_updated()
+        else:
+            m = self.view.model()
+            if m is None:
+                return
+            m.filter_note_enabled = is_checked
+            m.invalidate()
+
+    @pyqtSlot(bool)
+    def on_enable_daterange_filter(self, is_checked: bool):
+        """Enable daterange filter if checked.
+        """
+        self.__daterange_filter_enabled = is_checked
+        self.activate_filters()
+
+    @pyqtSlot()
+    def on_check_snp_filters(self, filter_type: Literal['ion', 'tag'],
+                             check_type: Literal['all', 'none', 'invert',
+                                                 'apply']):
+        pass
 #        area = getattr(self, f"{filter_type}_filter_area")
 #        _slot = getattr(self, f"on_update_{filter_type}_filters")
 #        btn_list = area.findChildren(QToolButton)
@@ -428,107 +460,98 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
 #        #
 #        self.activate_filters()
 #
-#    def activate_filters(self):
-#        # activate filters
-#        df = self.filter_dataframe()
-#        #
-#        self.total_nitem_lbl.setText(f"{df.shape[0]}")
+    def activate_filters(self):
+        # activate filters
+        df = self.filter_dataframe()
+        #
 #        self.fetched_nitem_lbl.setText("0")
-#        self.__total_item_cnt = 0
 #        self.__irow = 0
-#        self.__max_init_nitems = self.init_nitem_sbox.value()
 #        self.__model.setDataSource(df)
 #        self.post_style_view(self.view)
 #
-#    def filter_dataframe(self):
-#        # refresh the internal dataframe as the response of all filter changes.
-#        # tag
-#        _idx_by_tag = self.__filter_df_by_tag()
-#        self.tag_filter_nitem_lbl.setText(f"{_idx_by_tag.size}")
-#
-#        # ion
-#        _idx_by_ion = self.__filter_df_by_ion()
-#        self.ion_filter_nitem_lbl.setText(f"{_idx_by_ion.size}")
-#
-#        idx = _idx_by_tag.intersection(_idx_by_ion)
-#
-#        # user
-#        btn = self.findChild(QToolButton, 'user_filter_btn')
-#        if btn is not None and btn.isChecked():
-#            _idx_by_user = self.__filter_df_by_user()
-#            btn.setToolTip(
-#                f"Filter by User, reset when reloading data.\nHit {_idx_by_user.size} snapshots."
-#            )
-#            idx = idx.intersection(_idx_by_user)
-#
-#        # note
-#        if self.__note_filter_enabled:
-#            s = self.filter_note_lineEdit.text()
-#            if s != '':
-#                _idx_by_note = self.__filter_df_by_note(s)
-#                idx = idx.intersection(_idx_by_note)
-#
-#        # daterange
-#        if self.__daterange_filter_enabled:
-#            _idx_by_daterange = self.__filter_df_by_daterange()
-#            idx = idx.intersection(_idx_by_daterange)
-#        #
-#        return self.__df.loc[idx].sort_values('timestamp', ascending=False)
-#
-#    def __filter_df_by_tag(self):
-#        checked_tag_list = [
-#            f'\\b{k}\\b' for k, v in self.__current_tag_filter_dict.items()
-#            if v
-#        ]
-#        _notag_idx = pd.Int64Index([])
-#        if '\\bNOTAG\\b' in checked_tag_list:
-#            r = self.__df.tags == ''
-#            _notag_idx = r[r].index
-#            checked_tag_list.remove('\\bNOTAG\\b')
-#        re_str = '|'.join(checked_tag_list)
-#        if re_str == '':
-#            return pd.Int64Index([]).union(_notag_idx)
-#        else:
-#            r = self.__df.tags.str.contains(fr'{re_str}', case=False)
-#            return r[r].index.union(_notag_idx)
-#
-#    def __filter_df_by_ion(self):
-#        checked_ion_list = [
-#            k for k, v in self.__current_ion_filter_dict.items() if v
-#        ]
-#        re_str = '|'.join(checked_ion_list)
-#        if re_str == '':
-#            return pd.Int64Index([])
-#        else:
-#            r = self.__df.ion_name.str.contains(fr'{re_str}', case=False)
-#        return r[r].index
-#
-#    def __filter_df_by_user(self):
-#        checked_user_list = [
-#            f'\\b{k}\\b' for k, v in self.__current_user_filter_dict.items()
-#            if v
-#        ]
-#        re_str = '|'.join(checked_user_list)
-#        if re_str == '':
-#            return pd.Int64Index([])
-#        else:
-#            r = self.__df.user.str.contains(fr'{re_str}', case=False)
-#        return r[r].index
-#
-#    def __filter_df_by_note(self, s: str):
-#        r = self.__df.note.str.contains(fr'{s}', case=False)
-#        return r[r].index
-#
-#    def __filter_df_by_daterange(self):
-#        r = (self.__df.timestamp >= self.__daterange_date1_s) & \
-#                (self.__df.timestamp <= self.__daterange_date2_s)
-#        return r[r].index
-#
+    def filter_dataframe(self):
+        # refresh the internal dataframe as the response of all filter changes.
+        # tag
+        _idx_by_tag = self.__filter_df_by_tag()
+        self.tag_filter_nitem_lbl.setText(f"{_idx_by_tag.size}")
 
-    @pyqtSlot(int)
-    def onInitialMaxNItemsChanged(self, i: int):
-        # Max initial number of SnapshotItems is changed.
-        self.__max_init_nitems = i
+        # ion
+        _idx_by_ion = self.__filter_df_by_ion()
+        self.ion_filter_nitem_lbl.setText(f"{_idx_by_ion.size}")
+
+        idx = _idx_by_tag.intersection(_idx_by_ion)
+
+        # user
+        btn = self.findChild(QToolButton, 'user_filter_btn')
+        if btn is not None and btn.isChecked():
+            _idx_by_user = self.__filter_df_by_user()
+            btn.setToolTip(
+                f"Filter by User, reset when reloading data.\nHit {_idx_by_user.size} snapshots."
+            )
+            idx = idx.intersection(_idx_by_user)
+
+        # note
+        if self.__note_filter_enabled:
+            s = self.filter_note_lineEdit.text()
+            if s != '':
+                _idx_by_note = self.__filter_df_by_note(s)
+                idx = idx.intersection(_idx_by_note)
+
+        # daterange
+        if self.__daterange_filter_enabled:
+            _idx_by_daterange = self.__filter_df_by_daterange()
+            idx = idx.intersection(_idx_by_daterange)
+        #
+        return self.__df.loc[idx].sort_values('timestamp', ascending=False)
+
+    def __filter_df_by_tag(self):
+        checked_tag_list = [
+            f'\\b{k}\\b' for k, v in self.__current_tag_filter_dict.items()
+            if v
+        ]
+        _notag_idx = pd.Int64Index([])
+        if '\\bNOTAG\\b' in checked_tag_list:
+            r = self.__df.tags == ''
+            _notag_idx = r[r].index
+            checked_tag_list.remove('\\bNOTAG\\b')
+        re_str = '|'.join(checked_tag_list)
+        if re_str == '':
+            return pd.Int64Index([]).union(_notag_idx)
+        else:
+            r = self.__df.tags.str.contains(fr'{re_str}', case=False)
+            return r[r].index.union(_notag_idx)
+
+    def __filter_df_by_ion(self):
+        checked_ion_list = [
+            k for k, v in self.__current_ion_filter_dict.items() if v
+        ]
+        re_str = '|'.join(checked_ion_list)
+        if re_str == '':
+            return pd.Int64Index([])
+        else:
+            r = self.__df.ion_name.str.contains(fr'{re_str}', case=False)
+        return r[r].index
+
+    def __filter_df_by_user(self):
+        checked_user_list = [
+            f'\\b{k}\\b' for k, v in self.__current_user_filter_dict.items()
+            if v
+        ]
+        re_str = '|'.join(checked_user_list)
+        if re_str == '':
+            return pd.Int64Index([])
+        else:
+            r = self.__df.user.str.contains(fr'{re_str}', case=False)
+        return r[r].index
+
+    def __filter_df_by_note(self, s: str):
+        r = self.__df.note.str.contains(fr'{s}', case=False)
+        return r[r].index
+
+    def __filter_df_by_daterange(self):
+        r = (self.__df.timestamp >= self.__daterange_date1_s) & \
+                (self.__df.timestamp <= self.__daterange_date2_s)
+        return r[r].index
 
     @pyqtSlot()
     def onOpenDatabase(self):
@@ -540,9 +563,9 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
         if self.__db_con is not None:
             self.__db_con.close()
         # get the database file path
-        _db_path = self.db_path_lineEdit.text()
+        self.__db_path = self.db_path_lineEdit.text()
         # self.__df, self.__db_con = read_dataframe(_db_path)
-        self.__db_con = ensure_connect_db(_db_path)
+        self.__db_con = ensure_connect_db(self.__db_path)
         if self.__model is None:
             self.__initial_model()
         else:
@@ -563,6 +586,35 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
 #        self.on_check_snp_filters('ion', 'apply')
 #        self.on_check_snp_filters('tag', 'apply')
 
+    @pyqtSlot(int)
+    def onTotalNItemsChanged(self, i: int):
+        # total count of database items is changed.
+        self.total_nitem_lbl.setText(str(i))
+
+    @pyqtSlot()
+    def __on_n_tmr_timeout(self):
+        # query the total number of entries periodically.
+        try:
+            _is_finished = self.__n_tot_th.isFinished()
+        except:
+            _is_finished = True
+        if not _is_finished:
+            return
+        
+        def _on_poll_ntot(db_path: str, table: str, _):
+            con = sqlite3.connect(db_path)
+            with con:
+                r = con.execute(f"SELECT COUNT(rowid) FROM {table}")
+                ntot = r.fetchone()[0]
+            con.close()
+            return ntot
+        
+        def _on_update_ntot(res: list):
+            self.totalNItemsChanged.emit(res[0])
+
+        self.__n_tot_th = DAQT(daq_func=partial(_on_poll_ntot, self.__db_path, self.__table_name), daq_seq=range(1))
+        self.__n_tot_th.resultsReady.connect(_on_update_ntot)
+        self.__n_tot_th.start()
 
     def __get_tag_list(self):
         # Return a list of sorted unique tag list, replace empty to 'NOTAG'.
@@ -681,10 +733,13 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
 
     @pyqtSlot(int)
     def onFetchedNItemsChanged(self, i: int):
-        self.__total_item_cnt = i
         self.fetched_nitem_lbl.setText(str(i))
-        if self.__total_item_cnt < self.__max_init_nitems:
-            self.expand_view()
+    
+    @pyqtSlot(list)
+    def onFetchedSnpChanged(self, snps: list):
+        # newly fetch a list of tuple of meta info
+        df_new = pd.DataFrame.from_records(snps, columns=self.__df.columns)
+        self.__df = self.__df.append(df_new)
 
     def onDataChanged(self, tl: QModelIndex, br: QModelIndex, roles: list):
         """The data of SnapshotModel is changed via editting.
@@ -709,31 +764,21 @@ class SnapshotWidget(QWidget, SnapshotWidgetForm):
 
     def post_style_view(self, v):
         self.hide_columns()
-        delayed_exec(lambda: self.auto_resize_columns(), 500)
-        # style the view after set model.
-        #
-        # expand the first row
-        # if v.model().rowCount(QModelIndex()) == 0:
-        #    return
-        #[v.resizeColumnToContents(i) for i in range(len(COLUMN_NAME_LIST))]
+        delayed_exec(lambda: self.auto_resize_columns(), 1000)
 
     def __initial_model(self):
-        # self.total_nitem_lbl.setText(f"{self.__df.shape[0]}")
-        # self.__total_item_cnt = 0
+
         # self.__irow = 0
-        # self.__max_init_nitems = self.init_nitem_sbox.value()
         #
         self.__model = SnapshotModel(self.__db_con, self.__table_name)
-        self.view.setModel(self.__model)
-        # self.__model.fetchedItemNumChanged.connect(self.onFetchedNItemsChanged)
+        self.view.setModel(SnapshotProxyModel(self.__model))
+        self.__model.fetchedItemNumChanged.connect(self.onFetchedNItemsChanged)
+        self.__model.fetchedSnapshotItems.connect(self.onFetchedSnpChanged)
         # self.__model.dataChanged.connect(self.onDataChanged)
         self.post_style_view(self.view)
 
     def __refresh_model(self):
-        # self.total_nitem_lbl.setText(f"{self.__df.shape[0]}")
-        #self.__total_item_cnt = 0
         #self.__irow = 0
-        #self.__max_init_nitems = self.init_nitem_sbox.value()
         #
         self.__model.setDataSource(self.__db_con, self.__table_name)
         self.post_style_view(self.view)

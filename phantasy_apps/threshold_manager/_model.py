@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import re
 import sqlite3
 import time
 import pandas as pd
 import numpy as np
+from fnmatch import translate
 from phantasy import MachinePortal
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from PyQt5.QtWidgets import (
@@ -23,6 +25,7 @@ from PyQt5.QtGui import QBrush
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QAbstractTableModel
+from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QModelIndex
 from phantasy_apps.threshold_manager.data import SnapshotData
@@ -431,6 +434,12 @@ class MPSBeamLossDataDelegateModel(QStyledItemDelegate):
 
 class SnapshotModel(QAbstractTableModel):
 
+    # total number of fetched SnapshotItems
+    fetchedItemNumChanged = pyqtSignal(int)
+
+    # a list of fetched snapshotdata items
+    fetchedSnapshotItems = pyqtSignal(list)
+
     # column ids
     ColumnTime, ColumnIonName, ColumnIonNumber, ColumnIonMass, ColumnIonCharge, ColumnIonCharge1, \
     ColumnUser, ColumnBeamPower, ColumnBeamEnergy, ColumnBeamDest, ColumnTags, ColumnNote, \
@@ -538,13 +547,14 @@ class SnapshotModel(QAbstractTableModel):
 
     def fetchMore(self, index: QModelIndex):
         n_remainder = self.snpCountMax - self.snpCount
-        itemsToFetch = min(100, n_remainder)
+        itemsToFetch = min(1000, n_remainder)
         self.beginInsertRows(QModelIndex(), self.snpCount,
                              self.snpCount + itemsToFetch)
 
         nitems_fetched = self.fetch_items(itemsToFetch)
         self.snpCount += nitems_fetched
         self.endInsertRows()
+        self.fetchedItemNumChanged.emit(self.snpCount)
 
     def fetch_items(self, nitems: int):
         # return number of fetched items.
@@ -552,10 +562,13 @@ class SnapshotModel(QAbstractTableModel):
         _q = f"SELECT rowid,* FROM {self.table_name} ORDER BY rowid DESC LIMIT {nitems} OFFSET {self.snpCount}"
         r = cur.execute(_q)
         cnt = 0
+        _fetched_snps = [] # tuple of timestamp,ion_name..., except last blob, for meta info only
         for item in r.fetchall():
             cnt += 1
             self.snpList.append(SnapshotData(item[2:]))
+            _fetched_snps.append(item[2:-1])
         cur.close()
+        self.fetchedSnapshotItems.emit(_fetched_snps)
         return cnt
 
     def setDataSource(self, db_con: sqlite3.Connection, table_name: str):
@@ -676,11 +689,46 @@ class SnapshotDelegateModel(QStyledItemDelegate):
             QStyledItemDelegate.paint(self, painter, option, index)
 
 
+class SnapshotProxyModel(QSortFilterProxyModel):
+
+    def __init__(self, model):
+        super(SnapshotProxyModel, self).__init__()
+        self.m_src = model
+        self.setSourceModel(model)
+
+        # note filter
+        self.filter_note_enabled = False
+        self.filter_note_string = None
+
+    def filterAcceptsRow(self, source_row: int, source_parent: QModelIndex) -> bool:
+        m = self.sourceModel()
+
+        # note
+        try:
+            src_idx = m.index(source_row, m.ColumnNote, source_parent)
+            note_str = m.data(src_idx).lower()
+            if self.filter_note_enabled:
+                # ignore case, loose wild card match
+                note_test = re.match(translate(self.filter_note_string.lower()),
+                        note_str) is not None
+                # print(f"Note test: '{note_str}' with '{translate(self.filter_note_string.lower())}' => {note_test}")
+            else:
+                note_test = True
+        except AttributeError:
+            note_test = True
+
+        if not note_test:
+            return False
+
+        return super().filterAcceptsRow(source_row, source_parent)
+        
+
+
 def get_nrow(db_con: sqlite3.Connection, table_name: str):
     """Return the total number of rows for *table_name*.
     """
     cur = db_con.cursor()
-    r = cur.execute(f"SELECT COUNT(*) FROM {table_name}")
+    r = cur.execute(f"SELECT COUNT(rowid) FROM {table_name}")
     n = r.fetchone()[0]
     cur.close()
     return n
