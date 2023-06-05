@@ -40,6 +40,7 @@ from phantasy_ui import (
     get_open_filename,
 )
 from phantasy_ui.widgets import BeamSpeciesDisplayWidget
+from phantasy_ui.widgets import SnapshotWidget as _SnapshotWidget
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 
 from phantasy_apps.threshold_manager.ui.ui_mps_diag import Ui_Form as MPSDiagWidgetForm
@@ -51,7 +52,11 @@ from phantasy_apps.threshold_manager.db.utils import (
     ensure_connect_db,
     insert_update_data
 )
-from phantasy_apps.threshold_manager.data import SnapshotData
+from phantasy_apps.threshold_manager.data import (
+    SnapshotData,
+    ISRC_INDEX_MAP
+)
+from phantasy_apps.threshold_manager.tools import take_snapshot
 
 DEVICE_TYPE_FULLNAME_MAP = {
     'ND': 'Neutron Detector',
@@ -59,11 +64,37 @@ DEVICE_TYPE_FULLNAME_MAP = {
     'HMR': 'Halo Monitor Ring',
 }
 
-ISRC_INDEX_MAP = {
-    'Live': 'live',
-    'Artemis': 'ISRC1',
-    'HP-ECR': 'ISRC2',
-}
+
+def read_dataframe(db_path: str, table_name: str):
+    """ Read all data as a dataframe from a database file.
+    """
+    t0 = time.perf_counter()
+    print("Reading database...")
+    con = ensure_connect_db(db_path)
+    query = f'''
+        SELECT timestamp,
+               ion_name, ion_number, ion_mass, ion_charge, ion_charge1,
+               user, beam_power, beam_energy, beam_dest, tags, note,
+               data
+               FROM {table_name} '''
+    df = pd.read_sql(query, con).sort_values('timestamp', ascending=False)
+    # generate date column:
+    df['date'] = df['timestamp'].apply(lambda i:datetime.fromtimestamp(i).strftime("%Y-%m-%d %A"))
+    df['datetime'] = df['timestamp'].apply(lambda i:datetime.fromtimestamp(i).strftime("%Y-%m-%dT%H:%M:%S"))
+    print(f"Reading database...done {time.perf_counter() - t0:.1f}s")
+    return df, con, table_name
+
+
+class SnapshotWidget(_SnapshotWidget):
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.set_admin_names(('zhangt', 'tong'))
+        self.set_ctx_bit(COPY_DATA=False, MS=False)
+
+    def read_data(self):
+        db_path = self.get_db_path()
+        return read_dataframe(db_path, "mps_threshold")
 
 
 class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
@@ -83,9 +114,6 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
     def set_snp_parent(self, w):
         # w: SnapshotWidget
         self.snp_parent = w
-
-    def set_db_con(self, con):
-        self.__db_con = con
 
     def _post_init(self):
         self._auto_width_init_flag = False
@@ -159,25 +187,10 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         QMessageBox.information(self, "MPS Diagnostics Threshold Configs",
                                 f"Saved data to {outfilepath}", QMessageBox.Ok,
                                 QMessageBox.Ok)
-        self.saveToDatabase('testing', ['test1', 'test2'])
 
-    def saveToDatabase(self, note: str, tags: list, meta_isrc_name: str = 'Live', conn: sqlite3.Connection = None):
-        # save data to the database.
-        ts = time.time()
-        user = getuser()
-        ion_name, ion_num, ion_mass, ion_charge, ion_charge1, \
-            beam_power, beam_energy, beam_dest = BeamSpeciesDisplayWidget.get_species_meta_full(
-                ISRC_INDEX_MAP[meta_isrc_name])
-        data = self.__model.get_dataframe()
-        _row_data = (ts, user, ion_name, ion_num, ion_mass, ion_charge, ion_charge1,
-                     beam_power, beam_energy, beam_dest, ','.join(tags), note, data)
-        print(_row_data[:-1])
-        snp_data = SnapshotData(_row_data)
-        if conn is None:
-            conn = self.snp_parent.get_db_con()
-        table_name = TABLE_NAME_MAP[self.device_type]
-        insert_update_data(conn, snp_data, table_name)
-        print(f"Saved data {snp_data} to the databse.")
+        take_snapshot([self.device_type,], note=f'Snapshot only for {self.device_type}',
+                      tags=[self.device_type],
+                      conn=self.snp_parent.get_db_conn())
 
     @pyqtSlot()
     def compareData(self):
@@ -239,13 +252,6 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         '''
         QMessageBox.information(self, "Diff Mode Help", _help_text,
                                 QMessageBox.Ok, QMessageBox.Ok)
-
-
-TABLE_NAME_MAP = {
-    'ND': 'mps_threshold_nd',
-    'IC': 'mps_threshold_ic',
-    'HMR': 'mps_threshold_hmr',
-}
 
 
 if __name__ == '__main__':
