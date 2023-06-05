@@ -24,13 +24,15 @@ ATTR_KEYS = [
 
 ATTR_DICT = OrderedDict([(k, None) for k in ATTR_KEYS])
 
+ISRC_INDEX_MAP = {
+    'Live': 'live',
+    'Artemis': 'ISRC1',
+    'HP-ECR': 'ISRC2',
+}
 
 class SnapshotData:
     """Table node for snapshot data
     """
-    INFO_SHEET_NAME = "info"
-    DATA_SHEET_NAME = "data"
-
     def __init__(self, row_data: list):
         # row_data is a list of data for:
         # * timestamp: float
@@ -45,11 +47,11 @@ class SnapshotData:
         # * beam_dest: str
         # * tags: str (sep ',')
         # * note: str
-        # * data: dataframe (threshold data table)
+        # * data_dict: {device_type: dataframe (threshold data table)}
         self._row_data = row_data
         self.ts, self.user, self.ion_name, self.ion_num, self.ion_mass, self.ion_charge, \
           self.ion_charge1, self.beam_power, self.beam_energy, self.beam_dest, self.tags, \
-          self.note, self.data = row_data
+          self.note, self.data_dict = row_data
 
         #
         self.__writer_map = {
@@ -83,13 +85,14 @@ class SnapshotData:
         df_info = self.df_info.copy(deep=True)
         with pd.ExcelWriter(filepath) as fp:
             df_info.T.to_excel(fp,
-                               sheet_name=SnapshotData.INFO_SHEET_NAME,
+                               sheet_name='info',
                                header=False,
                                **kws)
-            self.data.to_excel(fp,
-                               sheet_name=SnapshotData.DATA_SHEET_NAME,
-                               index=False,
-                               **kws)
+            for dtype, data in self.data_dict.items():
+                data.to_excel(fp,
+                              sheet_name=dtype,
+                              index=False,
+                              **kws)
 
     def to_blob(self):
         # output self to a binary blob, see also write()
