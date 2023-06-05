@@ -3,6 +3,8 @@
 
 import os
 import toml
+from functools import partial
+from PyQt5.QtWidgets import QAction
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
@@ -42,11 +44,15 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         self.setupUi(self)
         self.postInitUi()
 
-        self._post_init()
         # resizing
         self.resize(1920, 1440)
 
-    def _post_init(self):
+        self.__set_up_post_0()
+        self.__set_up_events()
+        self.__set_up_post_1()
+
+    def __set_up_post_0(self):
+        # prior events binding
         self.nd_widget = MPSDiagWidget("ND", OUT_DATA_DIR)
         self.ic_widget = MPSDiagWidget("IC", OUT_DATA_DIR)
         self.hmr_widget = MPSDiagWidget("HMR", OUT_DATA_DIR)
@@ -66,7 +72,6 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.ic_dock)
         self.tabifyDockWidget(self.nd_dock, self.ic_dock)
         self.tabifyDockWidget(self.ic_dock, self.hmr_dock)
-        QTimer.singleShot(50, lambda:self.nd_dock.raise_())
 
         # snapshot dock
         self.snp_widget = SnapshotWidget("ND")
@@ -79,11 +84,51 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         for i in (self.nd_widget, self.ic_widget, self.hmr_widget):
             i.set_snp_parent(self.snp_widget)
 
+    def __set_up_events(self):
+        # menu actions, dock widgets
+        for act, dock in zip(
+                (self.actionViewSNP, self.actionViewND, self.actionViewIC, self.actionViewHMR),
+                (self.snp_dock, self.nd_dock, self.ic_dock, self.hmr_dock)):
+            act.toggled.connect(partial(self.onToggleDock, dock))
+            dock.closed.connect(partial(self.onCloseDock, act))
+            dock.topLevelChanged.connect(self.onDockTopLevelChanged)
+        # snapshot widget
+        self.snp_widget.textCopied.connect(self.statusInfoChanged)
+
+    @pyqtSlot(bool)
+    def onDockTopLevelChanged(self, is_floating: bool):
+        dock = self.sender()
+        if is_floating:
+            dock.setWindowFlags(Qt.CustomizeWindowHint | Qt.Window
+                                         | Qt.WindowMinimizeButtonHint
+                                         | Qt.WindowMaximizeButtonHint
+                                         | Qt.WindowCloseButtonHint)
+
+            dock.show()
+
+    @pyqtSlot(bool)
+    def onToggleDock(self, dock: DockWidget, is_checked: bool):
+        if is_checked:
+            dock.show()
+        else:
+            dock.close()
+
+    @pyqtSlot()
+    def onCloseDock(self, act: QAction):
+        """Sync View/dock menu when dock is closed.
+        """
+        act.setChecked(False)
+
+    def __set_up_post_1(self):
+        # post events binding
+        #
+        # show and raise nd dock tab
+        QTimer.singleShot(50, lambda:self.nd_dock.raise_())
+
         # test:
         test_db_path = os.path.join(_CDIR, "tests/mps_model/test.db")
         self.snp_widget.db_path_lineEdit.setText(test_db_path)
         self.snp_widget.db_open_btn.click()
-
 
     def resizeEvent(self, e):
         # resize dock widget
