@@ -9,9 +9,10 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
 from phantasy_ui import BaseAppForm
-from phantasy_ui.widgets import DockWidget, SnapshotWidget
-from phantasy_apps.threshold_manager._widget import MPSDiagWidget
+from phantasy_ui.widgets import DockWidget
+from phantasy_apps.threshold_manager._widget import MPSDiagWidget, SnapshotWidget
 from phantasy_apps.threshold_manager.ui.ui_app import Ui_MainWindow
+from phantasy_apps.threshold_manager.tools import take_snapshot
 
 OUT_DATA_DIR = "/tmp"
 
@@ -19,6 +20,7 @@ _CDIR = os.path.dirname(__file__)
 
 def read_config(configpath: str):
     _c = toml.load(configpath)
+
 
 
 class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -126,7 +128,7 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         QTimer.singleShot(50, lambda:self.nd_dock.raise_())
 
         # test:
-        test_db_path = os.path.join(_CDIR, "tests/mps_model/test.db")
+        test_db_path = os.path.join(_CDIR, "tests/mps_model/test1.db")
         self.snp_widget.db_path_lineEdit.setText(test_db_path)
         self.snp_widget.db_open_btn.click()
 
@@ -141,4 +143,7 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
     def onTakeSnapshot(self):
         """Take snapshots for all pages.
         """
-        print("Take a new snapshot.")
+        take_snapshot(['ND', 'IC', 'HMR'], note='Full snapshot for ND,IC,HMR', tags=['ND','IC','HMR'],
+                      conn=self.snp_widget.get_db_conn())
+        self.snp_widget.db_open_btn.click()
+
