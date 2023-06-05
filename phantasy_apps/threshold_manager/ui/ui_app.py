@@ -36,26 +36,40 @@ class Ui_MainWindow(object):
         self.gridLayout.setObjectName("gridLayout")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 32))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
         MainWindow.setMenuBar(self.menubar)
+        self.toolBar = QtWidgets.QToolBar(MainWindow)
+        self.toolBar.setIconSize(QtCore.QSize(36, 36))
+        self.toolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.toolBar.setObjectName("toolBar")
+        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.action_About = QtWidgets.QAction(MainWindow)
         self.action_About.setObjectName("action_About")
         self.actionAboutQt = QtWidgets.QAction(MainWindow)
         self.actionAboutQt.setObjectName("actionAboutQt")
+        self.actionTake_Snapshot = QtWidgets.QAction(MainWindow)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/tm-icons/snapshot.png"),
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionTake_Snapshot.setIcon(icon)
+        self.actionTake_Snapshot.setObjectName("actionTake_Snapshot")
         self.menu_Help.addAction(self.action_About)
         self.menu_Help.addAction(self.actionAboutQt)
         self.menubar.addAction(self.menu_File.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
+        self.toolBar.addAction(self.actionTake_Snapshot)
 
         self.retranslateUi(MainWindow)
         self.actionAboutQt.triggered.connect(
             MainWindow.onAboutQt)  # type: ignore
         self.action_About.triggered.connect(MainWindow.onAbout)  # type: ignore
+        self.actionTake_Snapshot.triggered.connect(
+            MainWindow.onTakeSnapshot)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -63,9 +77,14 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.menu_Help.setTitle(_translate("MainWindow", "&Help"))
         self.menu_File.setTitle(_translate("MainWindow", "&File"))
+        self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.action_About.setText(_translate("MainWindow", "&About"))
         self.actionAboutQt.setText(_translate("MainWindow", "About Qt"))
+        self.actionTake_Snapshot.setText(
+            _translate("MainWindow", "Take Snapshot"))
 
+
+from . import resources_rc
 
 if __name__ == "__main__":
     import sys
