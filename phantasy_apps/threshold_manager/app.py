@@ -3,12 +3,12 @@
 
 import os
 import toml
+from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
 from phantasy_ui import BaseAppForm
-from phantasy_ui.widgets import DockWidget
+from phantasy_ui.widgets import DockWidget, SnapshotWidget
 from phantasy_apps.threshold_manager._widget import MPSDiagWidget
-from phantasy_apps.threshold_manager._widget import SnapshotWidget
 from phantasy_apps.threshold_manager.ui.ui_app import Ui_MainWindow
 
 OUT_DATA_DIR = "/tmp"
@@ -90,3 +90,10 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         self.resizeDocks([self.nd_dock, self.ic_dock, self.hmr_dock],
                 [self.width(), self.width(), self.width()], Qt.Horizontal)
         BaseAppForm.resizeEvent(self, e)
+
+
+    @pyqtSlot()
+    def onTakeSnapshot(self):
+        """Take snapshots for all pages.
+        """
+        print("Take a new snapshot.")
