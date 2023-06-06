@@ -87,10 +87,10 @@ def read_dataframe(db_path: str, table_name: str):
 
 class SnapshotWidget(_SnapshotWidget):
 
-    # info df, ref df
-    ndDataLoaded = pyqtSignal(pd.DataFrame, pd.DataFrame)
-    icDataLoaded = pyqtSignal(pd.DataFrame, pd.DataFrame)
-    hmrDataLoaded = pyqtSignal(pd.DataFrame, pd.DataFrame)
+    # index, info df, ref df
+    ndDataLoaded = pyqtSignal(QModelIndex, pd.DataFrame, pd.DataFrame)
+    icDataLoaded = pyqtSignal(QModelIndex, pd.DataFrame, pd.DataFrame)
+    hmrDataLoaded = pyqtSignal(QModelIndex, pd.DataFrame, pd.DataFrame)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -101,7 +101,7 @@ class SnapshotWidget(_SnapshotWidget):
         db_path = self.get_db_path()
         return read_dataframe(db_path, "mps_threshold")
 
-    def onLoadData(self, dat: bytes):
+    def onLoadData(self, idx: QModelIndex, dat: bytes):
         """Load the data blob
         """
         df_dict = SnapshotData.read_blob(dat)
@@ -110,17 +110,20 @@ class SnapshotWidget(_SnapshotWidget):
         df_ic = df_dict.get('IC')
         df_hmr = df_dict.get('HMR')
         if df_nd is not None:
-            self.ndDataLoaded.emit(df_info, df_nd)
+            self.ndDataLoaded.emit(idx, df_info, df_nd)
         if df_ic is not None:
-            self.icDataLoaded.emit(df_info, df_ic)
+            self.icDataLoaded.emit(idx, df_info, df_ic)
         if df_hmr is not None:
-            self.hmrDataLoaded.emit(df_info, df_hmr)
+            self.hmrDataLoaded.emit(idx, df_info, df_hmr)
 
 
 class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
 
     # data saved to database
     dataSaved = pyqtSignal()
+
+    # QModelIndex
+    snapshotToLocate = pyqtSignal(QModelIndex)
 
     def __init__(self, device_type: str, parent=None):
         super(self.__class__, self).__init__()
@@ -148,6 +151,9 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         self.set_data()
         self.hide_columns()
         # self.refresh_data()
+        # the timestamp value for the loaded snpashot
+        self._diff_snp_ts = None
+        self._loadSnpIdx = None
 
     def hide_columns(self):
         """Hide columns.
@@ -214,16 +220,18 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
                       conn=self.snp_parent.get_db_conn())
         self.dataSaved.emit()
 
-    @pyqtSlot(pd.DataFrame, pd.DataFrame)
-    def onDataLoaded(self, df_info: pd.DataFrame, df_data: pd.DataFrame):
+    @pyqtSlot(QModelIndex, pd.DataFrame, pd.DataFrame)
+    def onDataLoaded(self, idx: QModelIndex, df_info: pd.DataFrame, df_data: pd.DataFrame):
         # set new ref_df
         self._post_ref_snp_info(df_info)
         self.__model.highlight_diff(df_data)
         self.diff_help_btn.setVisible(True)
+        self._loadSnpIdx = idx
 
     def _post_ref_snp_info(self, df: pd.DataFrame):
         # snapshot info data is loaded
         ts = df.columns[1] # float timestamp
+        self._diff_snp_ts = ts
         _datetime = datetime.fromtimestamp(ts).isoformat()[:-3]
         _df = df.set_index('timestamp').T
         ion_name = _df.ion_name[0]
@@ -266,6 +274,12 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         '''
         QMessageBox.information(self, "Diff Mode Help", _help_text,
                                 QMessageBox.Ok, QMessageBox.Ok)
+
+    @pyqtSlot()
+    def onLocateSnp(self):
+        """Find and highlight the snapshot.
+        """
+        self.snapshotToLocate.emit(self._loadSnpIdx)
 
 
 if __name__ == '__main__':
