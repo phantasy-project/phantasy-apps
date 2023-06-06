@@ -99,6 +99,12 @@ class SnapshotData:
         s = io.BytesIO()
         self.write(s)
         return s.getvalue()
+    
+    @staticmethod
+    def read_blob(dat: bytes):
+        """Read the given bytes blob to a dict of dataframes.
+        """
+        return pd.read_excel(dat, sheet_name=None)
 
     def __repr__(self):
         return f"MPS {self.__class__.__name__}: [{self.ts_as_str()}] {self.ion_mass}{self.ion_name}{self.ion_charge}({self.ion_charge1})+"

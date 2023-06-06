@@ -87,6 +87,11 @@ def read_dataframe(db_path: str, table_name: str):
 
 class SnapshotWidget(_SnapshotWidget):
 
+    infoDataLoaded = pyqtSignal(pd.DataFrame)
+    ndDataLoaded = pyqtSignal(pd.DataFrame)
+    icDataLoaded = pyqtSignal(pd.DataFrame)
+    hmrDataLoaded = pyqtSignal(pd.DataFrame)
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.set_admin_names(('zhangt', 'tong'))
@@ -95,6 +100,23 @@ class SnapshotWidget(_SnapshotWidget):
     def read_data(self):
         db_path = self.get_db_path()
         return read_dataframe(db_path, "mps_threshold")
+
+    def onLoadData(self, dat: bytes):
+        """Load the data blob
+        """
+        df_dict = SnapshotData.read_blob(dat)
+        df_info = df_dict.get('info')
+        df_nd = df_dict.get('ND')
+        df_ic = df_dict.get('IC')
+        df_hmr = df_dict.get('HMR')
+        if df_info is not None:
+            self.infoDataLoaded.emit(df_info)
+        if df_nd is not None:
+            self.ndDataLoaded.emit(df_nd)
+        if df_ic is not None:
+            self.icDataLoaded.emit(df_ic)
+        if df_hmr is not None:
+            self.hmrDataLoaded.emit(df_hmr)
 
 
 class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
@@ -125,7 +147,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         self.view.setItemDelegate(MPSBeamLossDataDelegateModel(self.view))
         self.set_data()
         self.hide_columns()
-        # delayed_exec(lambda: self.refresh_btn.setChecked(True), 2000)
+        # self.refresh_data()
 
     def hide_columns(self):
         """Hide columns.
@@ -140,6 +162,13 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         self.__model.dataRefreshStopped.connect(self.onDataRefreshStopped)
         self._r_tmr = QTimer(self)
         self._r_tmr.timeout.connect(self.__model.refresh_data)
+
+    def refresh_data(self, auto=False, delay_ms=1000):
+        # refresh data for one time.
+        if not auto:
+            delayed_exec(lambda: self.__model.refresh_data(), delay_ms)
+        else:
+            delayed_exec(lambda: self.refresh_btn.setChecked(True), delay_ms)
 
     @pyqtSlot()
     def auto_resize_columns(self):
@@ -192,23 +221,50 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
                       tags=[self.device_type],
                       conn=self.snp_parent.get_db_conn())
 
+    @pyqtSlot(pd.DataFrame)
+    def onDataLoaded(self, df: pd.DataFrame):
+        # set new ref_df
+        self.__model.highlight_diff(df)
+        self.diff_help_btn.setVisible(True)
+
+    @pyqtSlot(pd.DataFrame)
+    def onInfoDataLoaded(self, df: pd.DataFrame):
+        # snapshot info data is loaded
+        ts = df.columns[1] # float timestamp
+        _df = df.set_index('timestamp').T
+        ion_name = _df.ion_name[0]
+        ion_mass = _df.ion_mass[0]
+        ion_charge = _df.ion_charge[0]
+        beam_dest = _df.beam_destination[0]
+
+        msg = f"{ion_mass}{ion_name}{ion_charge}+ ({beam_dest})"
+
+        self.diff_type_lbl.setText(
+            '<p><span style="font-weight:600;color:#007BFF;">[DB]</span></p>'
+        )
+        _fulltext = f'''<p><span style="font-weight:600;color:#007BFF;">[DB]</span> {msg}</p>'''
+        _intext = QFontMetrics(self.ref_datafilepath_lbl.font()).elidedText(
+            msg, Qt.ElideRight, self.ref_datafilepath_lbl.width())
+        self.ref_datafilepath_lbl.setText(_intext)
+        self.ref_datafilepath_lbl.setToolTip(_fulltext)
+
     @pyqtSlot()
     def compareData(self):
         """Compare data, highlight the differences.
         """
-        filepath, ext = get_open_filename(self, type_filter='CSV File (*.csv)')
-        if filepath is None:
-            return None
-        ref_df = pd.read_csv(filepath)
-
-        self.diff_type_lbl.setText(
-            '<p><span style="font-weight:600;color:#007BFF;">[FILE]</span></p>'
-        )
-        _fulltext = f'''<p><span style="font-weight:600;color:#007BFF;">[FILE]</span> {filepath}</p>'''
-        _intext = QFontMetrics(self.ref_datafilepath_lbl.font()).elidedText(
-            filepath, Qt.ElideRight, self.ref_datafilepath_lbl.width())
-        self.ref_datafilepath_lbl.setText(_intext)
-        self.ref_datafilepath_lbl.setToolTip(_fulltext)
+        #filepath, ext = get_open_filename(self, type_filter='CSV File (*.csv)')
+        #if filepath is None:
+        #    return None
+        #ref_df = pd.read_csv(filepath)
+        #
+        #self.diff_type_lbl.setText(
+        #    '<p><span style="font-weight:600;color:#007BFF;">[FILE]</span></p>'
+        #)
+        #_fulltext = f'''<p><span style="font-weight:600;color:#007BFF;">[FILE]</span> {filepath}</p>'''
+        #_intext = QFontMetrics(self.ref_datafilepath_lbl.font()).elidedText(
+        #    filepath, Qt.ElideRight, self.ref_datafilepath_lbl.width())
+        #self.ref_datafilepath_lbl.setText(_intext)
+        #self.ref_datafilepath_lbl.setToolTip(_fulltext)
         self.__model.highlight_diff(ref_df)
         self.diff_help_btn.setVisible(True)
 

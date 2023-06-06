@@ -9,6 +9,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
 from phantasy_ui import BaseAppForm
+from phantasy_ui import delayed_exec
 from phantasy_ui.widgets import DockWidget
 from phantasy_apps.threshold_manager._widget import MPSDiagWidget, SnapshotWidget
 from phantasy_apps.threshold_manager.ui.ui_app import Ui_MainWindow
@@ -97,6 +98,14 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         # snapshot widget
         self.snp_widget.textCopied.connect(self.statusInfoChanged)
 
+        # dataloaded connection
+        self.snp_widget.infoDataLoaded.connect(self.nd_widget.onInfoDataLoaded)
+        self.snp_widget.infoDataLoaded.connect(self.ic_widget.onInfoDataLoaded)
+        self.snp_widget.infoDataLoaded.connect(self.hmr_widget.onInfoDataLoaded)
+        self.snp_widget.ndDataLoaded.connect(self.nd_widget.onDataLoaded)
+        self.snp_widget.icDataLoaded.connect(self.ic_widget.onDataLoaded)
+        self.snp_widget.hmrDataLoaded.connect(self.hmr_widget.onDataLoaded)
+
     @pyqtSlot(bool)
     def onDockTopLevelChanged(self, is_floating: bool):
         dock = self.sender()
@@ -125,7 +134,12 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         # post events binding
         #
         # show and raise nd dock tab
-        QTimer.singleShot(50, lambda:self.nd_dock.raise_())
+        delayed_exec(lambda:self.nd_dock.raise_(), 50)
+
+        # start nd and ic, pause hmr
+        self.nd_widget.refresh_data(auto=True)
+        self.ic_widget.refresh_data(auto=True)
+        self.hmr_widget.refresh_data(auto=False)
 
         # test:
         test_db_path = os.path.join(_CDIR, "tests/mps_model/test1.db")
