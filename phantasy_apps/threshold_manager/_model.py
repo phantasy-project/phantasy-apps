@@ -369,13 +369,13 @@ class MPSBeamLossDataModel(QAbstractTableModel):
     def refresh_data(self):
 
         def _onUpdateData(i):
-            t0 = time.time()
+            # t0 = time.time()
             # update data
             self._data = _get_dataframe(self.device_type)
             self.dataframeUpdated.emit(self._data)
-            print(
-                f"[{self.device_type}] Data Refreshed: {(time.time() - t0) * 1e3:.1f} ms"
-            )
+            # print(
+            #     f"[{self.device_type}] Data Refreshed: {(time.time() - t0) * 1e3:.1f} ms"
+            # )
 
         #
         self._th = DAQT(daq_func=_onUpdateData, daq_seq=range(1))
@@ -398,7 +398,8 @@ class MPSBeamLossDataModel(QAbstractTableModel):
             self.refDataframeUpdated.emit(ref_df)
 
         #
-        DAQT(daq_func=_onUpdateData, daq_seq=range(1)).start()
+        self._t = DAQT(daq_func=_onUpdateData, daq_seq=range(1))
+        self._t.start()
 
 
 class MPSBeamLossDataDelegateModel(QStyledItemDelegate):
