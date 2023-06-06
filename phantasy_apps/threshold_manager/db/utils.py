@@ -80,9 +80,8 @@ def _insert_data(cursor, table_name: str, *data):
         cursor.close()
 
 
-def delete_data(conn, snp_data: SnapshotData, table_name: str):
+def delete_data(conn, ts: str, table_name: str):
     cursor = conn.cursor()
-    ts = snp_data.ts
     try:
         cursor.execute(f''' DELETE FROM {table_name} WHERE timestamp = '{ts}' ''')
     except sqlite3.Error as err:

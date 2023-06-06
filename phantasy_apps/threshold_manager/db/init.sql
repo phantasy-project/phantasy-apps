@@ -1,5 +1,5 @@
-CREATE TABLE IF NOT EXISTS mps_threshold_nd (
-    id INTEGER PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS mps_threshold (
+    id INTEGER PRIMARY KEY NOT NULL,
     timestamp REAL NOT NULL,
     user TEXT NOT NULL,
     ion_name TEXT NOT NULL,
