@@ -15,7 +15,6 @@ from phantasy_apps.threshold_manager._widget import MPSDiagWidget, SnapshotWidge
 from phantasy_apps.threshold_manager.ui.ui_app import Ui_MainWindow
 from phantasy_apps.threshold_manager.tools import take_snapshot
 
-OUT_DATA_DIR = "/tmp"
 
 _CDIR = os.path.dirname(__file__)
 
@@ -56,9 +55,9 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def __set_up_post_0(self):
         # prior events binding
-        self.nd_widget = MPSDiagWidget("ND", OUT_DATA_DIR)
-        self.ic_widget = MPSDiagWidget("IC", OUT_DATA_DIR)
-        self.hmr_widget = MPSDiagWidget("HMR", OUT_DATA_DIR)
+        self.nd_widget = MPSDiagWidget("ND")
+        self.ic_widget = MPSDiagWidget("IC")
+        self.hmr_widget = MPSDiagWidget("HMR")
 
         self.nd_dock = DockWidget(self)
         self.nd_dock.setWindowTitle("Neutron Detectors")
@@ -98,10 +97,10 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         # snapshot widget
         self.snp_widget.textCopied.connect(self.statusInfoChanged)
 
+        for w in (self.nd_widget, self.ic_widget, self.hmr_widget):
+            w.dataSaved.connect(self.snp_widget.db_open_btn.click)
+
         # dataloaded connection
-        self.snp_widget.infoDataLoaded.connect(self.nd_widget.onInfoDataLoaded)
-        self.snp_widget.infoDataLoaded.connect(self.ic_widget.onInfoDataLoaded)
-        self.snp_widget.infoDataLoaded.connect(self.hmr_widget.onInfoDataLoaded)
         self.snp_widget.ndDataLoaded.connect(self.nd_widget.onDataLoaded)
         self.snp_widget.icDataLoaded.connect(self.ic_widget.onDataLoaded)
         self.snp_widget.hmrDataLoaded.connect(self.hmr_widget.onDataLoaded)

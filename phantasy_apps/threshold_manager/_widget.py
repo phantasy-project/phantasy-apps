@@ -87,10 +87,10 @@ def read_dataframe(db_path: str, table_name: str):
 
 class SnapshotWidget(_SnapshotWidget):
 
-    infoDataLoaded = pyqtSignal(pd.DataFrame)
-    ndDataLoaded = pyqtSignal(pd.DataFrame)
-    icDataLoaded = pyqtSignal(pd.DataFrame)
-    hmrDataLoaded = pyqtSignal(pd.DataFrame)
+    # info df, ref df
+    ndDataLoaded = pyqtSignal(pd.DataFrame, pd.DataFrame)
+    icDataLoaded = pyqtSignal(pd.DataFrame, pd.DataFrame)
+    hmrDataLoaded = pyqtSignal(pd.DataFrame, pd.DataFrame)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -109,25 +109,25 @@ class SnapshotWidget(_SnapshotWidget):
         df_nd = df_dict.get('ND')
         df_ic = df_dict.get('IC')
         df_hmr = df_dict.get('HMR')
-        if df_info is not None:
-            self.infoDataLoaded.emit(df_info)
         if df_nd is not None:
-            self.ndDataLoaded.emit(df_nd)
+            self.ndDataLoaded.emit(df_info, df_nd)
         if df_ic is not None:
-            self.icDataLoaded.emit(df_ic)
+            self.icDataLoaded.emit(df_info, df_ic)
         if df_hmr is not None:
-            self.hmrDataLoaded.emit(df_hmr)
+            self.hmrDataLoaded.emit(df_info, df_hmr)
 
 
 class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
 
-    def __init__(self, device_type: str, outdata_dir: str, parent=None):
+    # data saved to database
+    dataSaved = pyqtSignal()
+
+    def __init__(self, device_type: str, parent=None):
         super(self.__class__, self).__init__()
         self.parent = parent
 
         self.setupUi(self)
         self.device_type = device_type
-        self.outdata_dir = outdata_dir
         self.setWindowTitle(
             f"MPS Configurtions: Beam Loss Threshold ({self.device_type})")
 
@@ -209,64 +209,38 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
     def saveData(self):
         """Save data into a file.
         """
-        _auto_filename = datetime.now().strftime(
-            "%Y%m%dT%H%M%S") + f"_{self.device_type}.csv"
-        outfilepath = os.path.join(self.outdata_dir, _auto_filename)
-        self.__model.get_dataframe().to_csv(outfilepath, index=False)
-        QMessageBox.information(self, "MPS Diagnostics Threshold Configs",
-                                f"Saved data to {outfilepath}", QMessageBox.Ok,
-                                QMessageBox.Ok)
-
         take_snapshot([self.device_type,], note=f'Snapshot only for {self.device_type}',
                       tags=[self.device_type],
                       conn=self.snp_parent.get_db_conn())
+        self.dataSaved.emit()
 
-    @pyqtSlot(pd.DataFrame)
-    def onDataLoaded(self, df: pd.DataFrame):
+    @pyqtSlot(pd.DataFrame, pd.DataFrame)
+    def onDataLoaded(self, df_info: pd.DataFrame, df_data: pd.DataFrame):
         # set new ref_df
-        self.__model.highlight_diff(df)
+        self._post_ref_snp_info(df_info)
+        self.__model.highlight_diff(df_data)
         self.diff_help_btn.setVisible(True)
 
-    @pyqtSlot(pd.DataFrame)
-    def onInfoDataLoaded(self, df: pd.DataFrame):
+    def _post_ref_snp_info(self, df: pd.DataFrame):
         # snapshot info data is loaded
         ts = df.columns[1] # float timestamp
+        _datetime = datetime.fromtimestamp(ts).isoformat()[:-3]
         _df = df.set_index('timestamp').T
         ion_name = _df.ion_name[0]
         ion_mass = _df.ion_mass[0]
         ion_charge = _df.ion_charge[0]
         beam_dest = _df.beam_destination[0]
 
-        msg = f"{ion_mass}{ion_name}{ion_charge}+ ({beam_dest})"
+        msg = f"[{_datetime}] {ion_mass}{ion_name}{ion_charge}+ ({beam_dest})"
 
         self.diff_type_lbl.setText(
-            '<p><span style="font-weight:600;color:#007BFF;">[DB]</span></p>'
+            '<p><span style="font-weight:600;color:#007BFF;">[Snapshot]</span></p>'
         )
-        _fulltext = f'''<p><span style="font-weight:600;color:#007BFF;">[DB]</span> {msg}</p>'''
+        _fulltext = f'''<p><span style="font-weight:600;color:#007BFF;">[Snapshot]</span> {msg}</p>'''
         _intext = QFontMetrics(self.ref_datafilepath_lbl.font()).elidedText(
             msg, Qt.ElideRight, self.ref_datafilepath_lbl.width())
         self.ref_datafilepath_lbl.setText(_intext)
         self.ref_datafilepath_lbl.setToolTip(_fulltext)
-
-    @pyqtSlot()
-    def compareData(self):
-        """Compare data, highlight the differences.
-        """
-        #filepath, ext = get_open_filename(self, type_filter='CSV File (*.csv)')
-        #if filepath is None:
-        #    return None
-        #ref_df = pd.read_csv(filepath)
-        #
-        #self.diff_type_lbl.setText(
-        #    '<p><span style="font-weight:600;color:#007BFF;">[FILE]</span></p>'
-        #)
-        #_fulltext = f'''<p><span style="font-weight:600;color:#007BFF;">[FILE]</span> {filepath}</p>'''
-        #_intext = QFontMetrics(self.ref_datafilepath_lbl.font()).elidedText(
-        #    filepath, Qt.ElideRight, self.ref_datafilepath_lbl.width())
-        #self.ref_datafilepath_lbl.setText(_intext)
-        #self.ref_datafilepath_lbl.setToolTip(_fulltext)
-        self.__model.highlight_diff(ref_df)
-        self.diff_help_btn.setVisible(True)
 
     @pyqtSlot()
     def clearDiff(self):
@@ -276,22 +250,6 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         self.diff_type_lbl.clear()
         self.__model.update_ref_dataframe(None)
         self.diff_help_btn.setVisible(False)
-
-    @pyqtSlot()
-    def takeDiff(self):
-        """Take a snapshot of current live readings for diff.
-        """
-        auto_name = datetime.now().strftime(
-            "%Y%m%dT%H%M%S") + f"_{self.device_type}"
-        self.__model.highlight_diff(self.__model.get_dataframe())
-        self.diff_type_lbl.setText(
-            '<p><span style="font-weight:600;color:#DC3545;">[MEM]</span></p>')
-        _fulltext = f'''<p><span style="font-weight:600;color:#DC3545;">[MEM]</span> {auto_name}</p>'''
-        _intext = QFontMetrics(self.ref_datafilepath_lbl.font()).elidedText(
-            auto_name, Qt.ElideRight, self.ref_datafilepath_lbl.width())
-        self.ref_datafilepath_lbl.setText(_intext)
-        self.ref_datafilepath_lbl.setToolTip(_fulltext)
-        self.diff_help_btn.setVisible(True)
 
     @pyqtSlot()
     def onHelpDiffMode(self):
