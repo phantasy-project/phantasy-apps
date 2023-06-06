@@ -5,12 +5,13 @@ import os
 import toml
 from functools import partial
 from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QWidget, QSizePolicy
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
 from phantasy_ui import BaseAppForm
 from phantasy_ui import delayed_exec
-from phantasy_ui.widgets import DockWidget
+from phantasy_ui.widgets import DockWidget, BeamSpeciesDisplayWidget
 from phantasy_apps.threshold_manager._widget import MPSDiagWidget, SnapshotWidget
 from phantasy_apps.threshold_manager.ui.ui_app import Ui_MainWindow
 from phantasy_apps.threshold_manager.tools import take_snapshot
@@ -55,6 +56,18 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def __set_up_post_0(self):
         # prior events binding
+
+        # add beamSpeciesDisplayWidget
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.toolBar.addWidget(spacer)
+        self.beam_display_widget = BeamSpeciesDisplayWidget()
+        self.beam_display_widget.set_wait_until_ready(True)
+        self.beam_display_widget.set_expanded(True)
+        self.beam_display_widget.set_allow_clicking_src_btns(False)
+        self.toolBar.addWidget(self.beam_display_widget)
+
+        #
         self.nd_widget = MPSDiagWidget("ND")
         self.ic_widget = MPSDiagWidget("IC")
         self.hmr_widget = MPSDiagWidget("HMR")
@@ -99,11 +112,14 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
 
         for w in (self.nd_widget, self.ic_widget, self.hmr_widget):
             w.dataSaved.connect(self.snp_widget.db_open_btn.click)
+            # locate snapshot for diff
+            w.snapshotToLocate.connect(self.snp_widget.onHighlightSnapshot)
 
         # dataloaded connection
         self.snp_widget.ndDataLoaded.connect(self.nd_widget.onDataLoaded)
         self.snp_widget.icDataLoaded.connect(self.ic_widget.onDataLoaded)
         self.snp_widget.hmrDataLoaded.connect(self.hmr_widget.onDataLoaded)
+
 
     @pyqtSlot(bool)
     def onDockTopLevelChanged(self, is_floating: bool):
@@ -159,4 +175,3 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         take_snapshot(['ND', 'IC', 'HMR'], note='Full snapshot for ND,IC,HMR', tags=['ND','IC','HMR'],
                       conn=self.snp_widget.get_db_conn())
         self.snp_widget.db_open_btn.click()
-
