@@ -280,7 +280,8 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
     def onLocateSnp(self):
         """Find and highlight the snapshot.
         """
-        self.snapshotToLocate.emit(self._loadSnpIdx)
+        if self._loadSnpIdx is not None:
+            self.snapshotToLocate.emit(self._loadSnpIdx)
 
 
 if __name__ == '__main__':
