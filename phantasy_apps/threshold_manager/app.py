@@ -21,7 +21,9 @@ _CDIR = os.path.dirname(__file__)
 
 def read_config(configpath: str):
     _c = toml.load(configpath)
-
+    _use_name = _c['default']['use']
+    db_uri = _c[_use_name]['database_uri']
+    return {'db_uri': db_uri}
 
 
 class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
@@ -30,6 +32,7 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         super().__init__()
 
         self._version = version
+        self.config_dict = read_config(configpath)
         self.setWindowTitle("MPS Threshold Data Manager")
         self.setAppTitle("MPS Threshold Data Manager")
         self.setAppVersion(self._version)
@@ -91,6 +94,10 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         # snapshot dock
         self.snp_widget = SnapshotWidget("ND")
         self.snp_dock = DockWidget(self)
+        self.snp_dock.setStyleSheet("""
+            QDockWidget::title {
+                background: #8AE234;
+        }""")
         self.snp_dock.setWindowTitle("Snapshots")
         self.snp_dock.setWidget(self.snp_widget)
         self.addDockWidget(Qt.TopDockWidgetArea, self.snp_dock)
@@ -156,9 +163,9 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         self.ic_widget.refresh_data(auto=True)
         self.hmr_widget.refresh_data(auto=False)
 
-        # test:
-        test_db_path = os.path.join(_CDIR, "tests/mps_model/test1.db")
-        self.snp_widget.db_path_lineEdit.setText(test_db_path)
+        # open the database
+        db_path = self.config_dict['db_uri']
+        self.snp_widget.db_path_lineEdit.setText(db_path)
         self.snp_widget.db_open_btn.click()
 
     def resizeEvent(self, e):
