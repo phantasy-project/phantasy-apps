@@ -112,15 +112,23 @@ class Ui_Form(object):
             QtCore.Qt.LinksAccessibleByMouse | QtCore.Qt.TextSelectableByMouse)
         self.ref_datafilepath_lbl.setObjectName("ref_datafilepath_lbl")
         self.horizontalLayout.addWidget(self.ref_datafilepath_lbl)
+        self.toolButton = QtWidgets.QToolButton(Form)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/tm-icons/locate.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.toolButton.setIcon(icon3)
+        self.toolButton.setIconSize(QtCore.QSize(32, 32))
+        self.toolButton.setObjectName("toolButton")
+        self.horizontalLayout.addWidget(self.toolButton)
         spacerItem = QtWidgets.QSpacerItem(40, 20,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.refresh_btn = QtWidgets.QPushButton(Form)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/tm-icons/start.png"),
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/tm-icons/start.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.refresh_btn.setIcon(icon3)
+        self.refresh_btn.setIcon(icon4)
         self.refresh_btn.setIconSize(QtCore.QSize(24, 24))
         self.refresh_btn.setCheckable(True)
         self.refresh_btn.setObjectName("refresh_btn")
@@ -165,10 +173,10 @@ class Ui_Form(object):
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
         self.diff_help_btn = QtWidgets.QToolButton(Form)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/tm-icons/new.png"),
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/tm-icons/new.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.diff_help_btn.setIcon(icon4)
+        self.diff_help_btn.setIcon(icon5)
         self.diff_help_btn.setIconSize(QtCore.QSize(40, 40))
         self.diff_help_btn.setAutoRaise(True)
         self.diff_help_btn.setObjectName("diff_help_btn")
@@ -183,6 +191,7 @@ class Ui_Form(object):
         self.reset_diff_btn.clicked.connect(Form.clearDiff)  # type: ignore
         self.diff_help_btn.clicked.connect(Form.onHelpDiffMode)  # type: ignore
         self.saveas_btn.clicked.connect(Form.saveData)  # type: ignore
+        self.toolButton.clicked.connect(Form.onLocateSnp)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -202,6 +211,12 @@ class Ui_Form(object):
                 "Form",
                 "<html><head/><body><p>Reset comparison.</p></body></html>"))
         self.reset_diff_btn.setText(_translate("Form", "Reset-Diff"))
+        self.toolButton.setToolTip(
+            _translate(
+                "Form",
+                "<html><head/><body><p>Click to locate the loaded snapshot in the Snapshot Window.</p></body></html>"
+            ))
+        self.toolButton.setText(_translate("Form", "..."))
         self.refresh_btn.setToolTip(
             _translate(
                 "Form",
