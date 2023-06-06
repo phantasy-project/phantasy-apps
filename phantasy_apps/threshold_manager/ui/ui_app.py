@@ -106,10 +106,10 @@ class Ui_MainWindow(object):
         self.actionAboutQt.setText(_translate("MainWindow", "About Qt"))
         self.actionTake_Snapshot.setText(
             _translate("MainWindow", "Take Snapshot"))
-        self.actionViewSNP.setText(_translate("MainWindow", "Snapshots"))
-        self.actionViewND.setText(_translate("MainWindow", "ND"))
-        self.actionViewIC.setText(_translate("MainWindow", "IC"))
-        self.actionViewHMR.setText(_translate("MainWindow", "HMR"))
+        self.actionViewSNP.setText(_translate("MainWindow", "Snapshot Data"))
+        self.actionViewND.setText(_translate("MainWindow", "ND Data"))
+        self.actionViewIC.setText(_translate("MainWindow", "IC Data"))
+        self.actionViewHMR.setText(_translate("MainWindow", "HMR Data"))
 
 
 from . import resources_rc

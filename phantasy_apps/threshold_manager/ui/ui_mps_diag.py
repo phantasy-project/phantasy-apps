@@ -203,9 +203,9 @@ class Ui_Form(object):
         self.saveas_btn.setToolTip(
             _translate(
                 "Form",
-                "<html><head/><body><p>Save data into a CSV file.</p></body></html>"
+                "<html><head/><body><p>Capture the snasphot to the database.</p></body></html>"
             ))
-        self.saveas_btn.setText(_translate("Form", "SaveAs"))
+        self.saveas_btn.setText(_translate("Form", "Save"))
         self.reset_diff_btn.setToolTip(
             _translate(
                 "Form",
