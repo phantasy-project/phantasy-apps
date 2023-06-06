@@ -96,6 +96,7 @@ class SnapshotWidget(_SnapshotWidget):
         super().__init__(parent)
         self.set_admin_names(('zhangt', 'tong'))
         self.set_ctx_bit(COPY_DATA=False, MS=False)
+        self.db_path_lineEdit.setVisible(False)
         self.db_path_lineEdit.setReadOnly(True)
 
     def read_data(self):
