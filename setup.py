@@ -44,6 +44,7 @@ def set_entry_points():
         'pm_dat2json=phantasy_apps.wire_scanner.converter:main',
         'as_out2json=phantasy_apps.allison_scanner.out2json:main',
         'fetch_mach_state=phantasy_apps.msviz.tools:main',
+        'mps_take_snapshot=phantasy_apps.threshold_manager:take_snapshot_tool',
     ]
 
     r['gui_scripts'] = [

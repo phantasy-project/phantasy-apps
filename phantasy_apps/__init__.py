@@ -24,3 +24,5 @@ __doc__ = \
 
 k = "PHANTASY_CONFIG_DIR"
 os.environ.setdefault(k, "/usr/lib/phantasy-machines")
+
+from .threshold_manager import mps_take_snapshot
