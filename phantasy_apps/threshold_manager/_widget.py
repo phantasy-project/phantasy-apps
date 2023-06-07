@@ -77,6 +77,8 @@ class SnapshotWidget(_SnapshotWidget):
         self.set_ctx_bit(COPY_DATA=False, MS=False)
         self.db_path_lineEdit.setVisible(False)
         self.db_path_lineEdit.setReadOnly(True)
+        # close the top part (tag,ion filter buttons)
+        self.vsplitter.setSizes([0, 100])
 
     def read_data(self):
         db_path = self.get_db_path()
