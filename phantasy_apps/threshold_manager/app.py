@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import toml
 from functools import partial
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QWidget, QSizePolicy
@@ -14,13 +13,7 @@ from phantasy_ui.widgets import DockWidget, BeamSpeciesDisplayWidget
 from phantasy_apps.threshold_manager._widget import MPSDiagWidget, SnapshotWidget
 from phantasy_apps.threshold_manager.ui.ui_app import Ui_MainWindow
 from phantasy_apps.threshold_manager.tools import take_snapshot
-
-
-def read_config(configpath: str):
-    _c = toml.load(configpath)
-    _use_name = _c['default']['use']
-    db_uri = _c[_use_name]['database_uri']
-    return {'db_uri': db_uri}
+from phantasy_apps.threshold_manager.data import read_config
 
 
 class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import io
+import toml
 import pandas as pd
 from datetime import datetime
 from collections import OrderedDict
@@ -32,6 +33,13 @@ ISRC_INDEX_MAP = {
     'Artemis': 'ISRC1',
     'HP-ECR': 'ISRC2',
 }
+
+
+def read_config(configpath: str):
+    _c = toml.load(configpath)
+    _use_name = _c['default']['use']
+    db_uri = _c[_use_name]['database_uri']
+    return {'db_uri': db_uri}
 
 
 class SnapshotData:
