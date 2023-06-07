@@ -41,12 +41,12 @@ def insert_update_data(conn, snp_data: SnapshotData, table_name: str):
 
 
 def insert_data(conn, snp_data: SnapshotData, table_name: str):
-    data_tuple = snp_data.ts, snp_data.user, \
-        snp_data.ion_name, snp_data.ion_num, \
-        snp_data.ion_mass, snp_data.ion_charge, snp_data.ion_charge1, \
-        snp_data.beam_power, snp_data.beam_energy, snp_data.beam_dest, \
-        snp_data.tags, snp_data.note, \
-        snp_data.to_blob()
+    data_tuple = snp_data.timestamp, snp_data.datetime, snp_data.user, \
+        snp_data.isrc_name, snp_data.ion_name, snp_data.ion_number, \
+        snp_data.ion_mass, snp_data.ion_charge, snp_data.ion_charge_state, \
+        snp_data.beam_power, snp_data.beam_energy, \
+        snp_data.beam_bound, snp_data.beam_dest, \
+        snp_data.tags, snp_data.note, snp_data.to_blob()
     cursor = conn.cursor()
     _insert_data(cursor, table_name, *data_tuple)
     conn.commit()
@@ -56,14 +56,14 @@ def update_data(conn, snp_data: SnapshotData, table_name: str):
     cursor = conn.cursor()
     query = f""" UPDATE {table_name} SET
     note = ?, tags = ? WHERE timestamp = ? """
-    cursor.execute(query, (snp_data.note, snp_data.tags, snp_data.ts))
+    cursor.execute(query, (snp_data.note, snp_data.tags, snp_data.timestamp))
     conn.commit()
     cursor.close()
 
 
 def get_data(conn, snp_data: SnapshotData, table_name: str) -> list[SnapshotData]:
     cursor = conn.cursor()
-    ts = snp_data.ts
+    ts = snp_data.timestamp
     r = cursor.execute(f" SELECT * FROM {table_name} WHERE timestamp = '{ts}' ")
     data = r.fetchall()
     cursor.close()
@@ -71,7 +71,7 @@ def get_data(conn, snp_data: SnapshotData, table_name: str) -> list[SnapshotData
 
 
 def _insert_data(cursor, table_name: str, *data):
-    query = f''' INSERT INTO {table_name} (timestamp, user, ion_name, ion_number, ion_mass, ion_charge, ion_charge1, beam_power, beam_energy, beam_dest, tags, note, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); '''
+    query = f''' INSERT INTO {table_name} (timestamp, datetime, user, isrc_name, ion_name, ion_number, ion_mass, ion_charge, ion_charge_state, beam_power, beam_energy, beam_bound, beam_dest, tags, note, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); '''
     try:
         cursor.execute(query, data)
     except sqlite3.Error as err:

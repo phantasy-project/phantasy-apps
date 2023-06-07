@@ -49,17 +49,17 @@ def read_dataframe(db_path: str, table_name: str):
     print("Reading database...")
     con = ensure_connect_db(db_path)
     query = f'''
-        SELECT timestamp,
-               ion_name, ion_number, ion_mass, ion_charge, ion_charge1,
-               user, beam_power, beam_energy, beam_dest, tags, note,
+        SELECT timestamp, datetime,
+               isrc_name, ion_name, ion_number, ion_mass, ion_charge, ion_charge_state,
+               user, beam_power, beam_energy, beam_bound, beam_dest, tags, note,
                data
                FROM {table_name} '''
     df = pd.read_sql(query, con).sort_values('timestamp', ascending=False)
     # generate date column:
     df['date'] = df['timestamp'].apply(
         lambda i: datetime.fromtimestamp(i).strftime("%Y-%m-%d %A"))
-    df['datetime'] = df['timestamp'].apply(
-        lambda i: datetime.fromtimestamp(i).strftime("%Y-%m-%dT%H:%M:%S"))
+#    df['datetime'] = df['timestamp'].apply(
+#        lambda i: datetime.fromtimestamp(i).strftime("%Y-%m-%dT%H:%M:%S"))
     print(f"Reading database...done {time.perf_counter() - t0:.1f}s")
     return df, con, table_name
 
@@ -224,7 +224,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         ion_name = _df.ion_name[0]
         ion_mass = _df.ion_mass[0]
         ion_charge = _df.ion_charge[0]
-        beam_dest = _df.beam_destination[0]
+        beam_dest = _df.beam_dest[0]
 
         msg = f"[{_datetime}] {ion_mass}{ion_name}{ion_charge}+ ({beam_dest})"
 
