@@ -2,20 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import time
-import sqlite3
-import os
 import pandas as pd
 from datetime import datetime
-from getpass import getuser
-from functools import partial
-from typing import Literal
 
 from PyQt5.QtWidgets import (
     QWidget,
     QMessageBox,
-    QLayout,
-    QScrollArea,
-    QToolButton,
 )
 
 from PyQt5.QtCore import (
@@ -23,39 +15,24 @@ from PyQt5.QtCore import (
     pyqtSlot,
     QTimer,
     Qt,
-    QDate,
-    QDateTime,
     QModelIndex,
 )
 
 from PyQt5.QtGui import (
-    QFont,
-    QFontDatabase,
     QPixmap,
     QFontMetrics,
 )
 
-from phantasy_ui import (
-    delayed_exec,
-    get_open_filename,
-)
-from phantasy_ui.widgets import BeamSpeciesDisplayWidget
+from phantasy_ui import delayed_exec
 from phantasy_ui.widgets import SnapshotWidget as _SnapshotWidget
-from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 
 from phantasy_apps.threshold_manager.ui.ui_mps_diag import Ui_Form as MPSDiagWidgetForm
 from phantasy_apps.threshold_manager._model import (
     MPSBeamLossDataModel,
     MPSBeamLossDataDelegateModel,
 )
-from phantasy_apps.threshold_manager.db.utils import (
-    ensure_connect_db,
-    insert_update_data
-)
-from phantasy_apps.threshold_manager.data import (
-    SnapshotData,
-    ISRC_INDEX_MAP
-)
+from phantasy_apps.threshold_manager.db.utils import ensure_connect_db
+from phantasy_apps.threshold_manager.data import SnapshotData
 from phantasy_apps.threshold_manager.tools import take_snapshot
 
 DEVICE_TYPE_FULLNAME_MAP = {
@@ -79,8 +56,10 @@ def read_dataframe(db_path: str, table_name: str):
                FROM {table_name} '''
     df = pd.read_sql(query, con).sort_values('timestamp', ascending=False)
     # generate date column:
-    df['date'] = df['timestamp'].apply(lambda i:datetime.fromtimestamp(i).strftime("%Y-%m-%d %A"))
-    df['datetime'] = df['timestamp'].apply(lambda i:datetime.fromtimestamp(i).strftime("%Y-%m-%dT%H:%M:%S"))
+    df['date'] = df['timestamp'].apply(
+        lambda i: datetime.fromtimestamp(i).strftime("%Y-%m-%d %A"))
+    df['datetime'] = df['timestamp'].apply(
+        lambda i: datetime.fromtimestamp(i).strftime("%Y-%m-%dT%H:%M:%S"))
     print(f"Reading database...done {time.perf_counter() - t0:.1f}s")
     return df, con, table_name
 
@@ -217,13 +196,17 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
     def saveData(self):
         """Save data into a file.
         """
-        take_snapshot([self.device_type,], note=f'Snapshot only for {self.device_type}',
+        take_snapshot([
+            self.device_type,
+        ],
+                      note=f'Snapshot only for {self.device_type}',
                       tags=[self.device_type],
                       conn=self.snp_parent.get_db_conn())
         self.dataSaved.emit()
 
     @pyqtSlot(QModelIndex, pd.DataFrame, pd.DataFrame)
-    def onDataLoaded(self, idx: QModelIndex, df_info: pd.DataFrame, df_data: pd.DataFrame):
+    def onDataLoaded(self, idx: QModelIndex, df_info: pd.DataFrame,
+                     df_data: pd.DataFrame):
         # set new ref_df
         self._post_ref_snp_info(df_info)
         self.__model.highlight_diff(df_data)
@@ -232,7 +215,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
 
     def _post_ref_snp_info(self, df: pd.DataFrame):
         # snapshot info data is loaded
-        ts = df.columns[1] # float timestamp
+        ts = df.columns[1]  # float timestamp
         self._diff_snp_ts = ts
         _datetime = datetime.fromtimestamp(ts).isoformat()[:-3]
         _df = df.set_index('timestamp').T
@@ -267,8 +250,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         """
         _help_text = '''<html>
         <p>Diff mode is enabled: Colored cells indicate diff from the reference,
-        reference could be loaded from saved data ("Load-Diff") or set through
-        "Take-Diff".</p>
+        reference could be loaded from the Snapshot Data Management window.</p>
         <p><span style="color:#28a745;">Green</span> color indicates the live
         reading is lower than the reference; <span style="color:#dc3545;">red</span>
         color is higher, hover on the cell gives the reference reading and the relative
@@ -290,7 +272,7 @@ if __name__ == '__main__':
     import sys
 
     app = QApplication(sys.argv)
-    w1 = MPSDiagWidget('ND', '/tmp/')
+    w1 = MPSDiagWidget('ND')
     # w2 = MPSDiagWidget('IC')
     # w3 = MPSDiagWidget('HMR')
     w1.show()

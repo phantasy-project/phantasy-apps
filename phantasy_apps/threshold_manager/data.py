@@ -30,9 +30,11 @@ ISRC_INDEX_MAP = {
     'HP-ECR': 'ISRC2',
 }
 
+
 class SnapshotData:
     """Table node for snapshot data
     """
+
     def __init__(self, row_data: list):
         # row_data is a list of data for:
         # * timestamp: float
@@ -84,22 +86,16 @@ class SnapshotData:
         # xlsx
         df_info = self.df_info.copy(deep=True)
         with pd.ExcelWriter(filepath) as fp:
-            df_info.T.to_excel(fp,
-                               sheet_name='info',
-                               header=False,
-                               **kws)
+            df_info.T.to_excel(fp, sheet_name='info', header=False, **kws)
             for dtype, data in self.data_dict.items():
-                data.to_excel(fp,
-                              sheet_name=dtype,
-                              index=False,
-                              **kws)
+                data.to_excel(fp, sheet_name=dtype, index=False, **kws)
 
     def to_blob(self):
         # output self to a binary blob, see also write()
         s = io.BytesIO()
         self.write(s)
         return s.getvalue()
-    
+
     @staticmethod
     def read_blob(dat: bytes):
         """Read the given bytes blob to a dict of dataframes.

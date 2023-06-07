@@ -8,7 +8,6 @@ from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QWidget, QSizePolicy
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QTimer
 from phantasy_ui import BaseAppForm
 from phantasy_ui import delayed_exec
 from phantasy_ui.widgets import DockWidget, BeamSpeciesDisplayWidget
@@ -16,8 +15,6 @@ from phantasy_apps.threshold_manager._widget import MPSDiagWidget, SnapshotWidge
 from phantasy_apps.threshold_manager.ui.ui_app import Ui_MainWindow
 from phantasy_apps.threshold_manager.tools import take_snapshot
 
-
-_CDIR = os.path.dirname(__file__)
 
 def read_config(configpath: str):
     _c = toml.load(configpath)
@@ -33,14 +30,14 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
 
         self._version = version
         self.config_dict = read_config(configpath)
-        self.setWindowTitle("MPS Threshold Data Manager")
-        self.setAppTitle("MPS Threshold Data Manager")
+        self.setWindowTitle("MPS Data Manager")
+        self.setAppTitle("MPS Data Manager")
         self.setAppVersion(self._version)
 
         self.app_about_info = """
             <html>
-            <h4>About Threshold Data Manager</h4>
-            <p>This app is created to manage the diagostics threshold data for MPS configuration, current version is {}.
+            <h4>About MPS Data Manager</h4>
+            <p>This app is created to manage the diagostic threshold data for MPS configurations, current version is {}.
             </p>
             <p>Copyright (C) 2023 Facility for Rare Isotope Beams and other contributors.</p>
             </html>
@@ -109,8 +106,9 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
     def __set_up_events(self):
         # menu actions, dock widgets
         for act, dock in zip(
-                (self.actionViewSNP, self.actionViewND, self.actionViewIC, self.actionViewHMR),
-                (self.snp_dock, self.nd_dock, self.ic_dock, self.hmr_dock)):
+            (self.actionViewSNP, self.actionViewND, self.actionViewIC,
+             self.actionViewHMR),
+            (self.snp_dock, self.nd_dock, self.ic_dock, self.hmr_dock)):
             act.toggled.connect(partial(self.onToggleDock, dock))
             dock.closed.connect(partial(self.onCloseDock, act))
             dock.topLevelChanged.connect(self.onDockTopLevelChanged)
@@ -127,15 +125,14 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_widget.icDataLoaded.connect(self.ic_widget.onDataLoaded)
         self.snp_widget.hmrDataLoaded.connect(self.hmr_widget.onDataLoaded)
 
-
     @pyqtSlot(bool)
     def onDockTopLevelChanged(self, is_floating: bool):
         dock = self.sender()
         if is_floating:
             dock.setWindowFlags(Qt.CustomizeWindowHint | Qt.Window
-                                         | Qt.WindowMinimizeButtonHint
-                                         | Qt.WindowMaximizeButtonHint
-                                         | Qt.WindowCloseButtonHint)
+                                | Qt.WindowMinimizeButtonHint
+                                | Qt.WindowMaximizeButtonHint
+                                | Qt.WindowCloseButtonHint)
 
             dock.show()
 
@@ -156,7 +153,7 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         # post events binding
         #
         # show and raise nd dock tab
-        delayed_exec(lambda:self.nd_dock.raise_(), 50)
+        delayed_exec(lambda: self.nd_dock.raise_(), 50)
 
         # start nd and ic, pause hmr
         self.nd_widget.refresh_data(auto=True)
@@ -170,15 +167,18 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def resizeEvent(self, e):
         # resize dock widget
-        self.resizeDocks([self.nd_dock, self.ic_dock, self.hmr_dock],
-                [self.width(), self.width(), self.width()], Qt.Horizontal)
+        self.resizeDocks(
+            [self.nd_dock, self.ic_dock, self.hmr_dock],
+            [self.width(), self.width(),
+             self.width()], Qt.Horizontal)
         BaseAppForm.resizeEvent(self, e)
-
 
     @pyqtSlot()
     def onTakeSnapshot(self):
         """Take snapshots for all pages.
         """
-        take_snapshot(['ND', 'IC', 'HMR'], note='Full snapshot for ND,IC,HMR', tags=['ND','IC','HMR'],
+        take_snapshot(['ND', 'IC', 'HMR'],
+                      note='Full snapshot for ND,IC,HMR',
+                      tags=['ND', 'IC', 'HMR'],
                       conn=self.snp_widget.get_db_conn())
         self.snp_widget.db_open_btn.click()

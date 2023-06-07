@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import re
-import sqlite3
 import time
 import pandas as pd
 import numpy as np
@@ -11,12 +9,7 @@ from phantasy import MachinePortal
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from PyQt5.QtWidgets import (
     QStyledItemDelegate,
-    QStyle,
     QWidget,
-    QGraphicsDropShadowEffect,
-    QHBoxLayout,
-    QSizePolicy,
-    QLabel,
 )
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QPixmap
@@ -25,7 +18,6 @@ from PyQt5.QtGui import QBrush
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QAbstractTableModel
-from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import QModelIndex
 
