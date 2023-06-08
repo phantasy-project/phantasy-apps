@@ -112,14 +112,14 @@ class Ui_Form(object):
             QtCore.Qt.LinksAccessibleByMouse | QtCore.Qt.TextSelectableByMouse)
         self.ref_datafilepath_lbl.setObjectName("ref_datafilepath_lbl")
         self.horizontalLayout.addWidget(self.ref_datafilepath_lbl)
-        self.toolButton = QtWidgets.QToolButton(Form)
+        self.snp_locate_btn = QtWidgets.QToolButton(Form)
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap(":/tm-icons/locate.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.toolButton.setIcon(icon3)
-        self.toolButton.setIconSize(QtCore.QSize(32, 32))
-        self.toolButton.setObjectName("toolButton")
-        self.horizontalLayout.addWidget(self.toolButton)
+        self.snp_locate_btn.setIcon(icon3)
+        self.snp_locate_btn.setIconSize(QtCore.QSize(32, 32))
+        self.snp_locate_btn.setObjectName("snp_locate_btn")
+        self.horizontalLayout.addWidget(self.snp_locate_btn)
         spacerItem = QtWidgets.QSpacerItem(40, 20,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
@@ -191,7 +191,7 @@ class Ui_Form(object):
         self.reset_diff_btn.clicked.connect(Form.clearDiff)  # type: ignore
         self.diff_help_btn.clicked.connect(Form.onHelpDiffMode)  # type: ignore
         self.saveas_btn.clicked.connect(Form.saveData)  # type: ignore
-        self.toolButton.clicked.connect(Form.onLocateSnp)  # type: ignore
+        self.snp_locate_btn.clicked.connect(Form.onLocateSnp)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -211,12 +211,12 @@ class Ui_Form(object):
                 "Form",
                 "<html><head/><body><p>Reset comparison.</p></body></html>"))
         self.reset_diff_btn.setText(_translate("Form", "Reset-Diff"))
-        self.toolButton.setToolTip(
+        self.snp_locate_btn.setToolTip(
             _translate(
                 "Form",
                 "<html><head/><body><p>Click to locate the loaded snapshot in the Snapshot Window.</p></body></html>"
             ))
-        self.toolButton.setText(_translate("Form", "..."))
+        self.snp_locate_btn.setText(_translate("Form", "..."))
         self.refresh_btn.setToolTip(
             _translate(
                 "Form",
