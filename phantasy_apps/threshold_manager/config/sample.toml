@@ -1,0 +1,11 @@
+# Configuration file for MPS Threshold Data Manager.
+
+[default]
+use = "dev"
+
+[dev]
+database_uri = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/threshold_manager/tests/mps_model/test2.db"
+
+[ftc]
+database_uri = "/files/shared/ap/settings_manager/mps_tm.db"
+
