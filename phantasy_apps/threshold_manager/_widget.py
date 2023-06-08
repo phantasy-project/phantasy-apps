@@ -58,8 +58,6 @@ def read_dataframe(db_path: str, table_name: str):
     # generate date column:
     df['date'] = df['timestamp'].apply(
         lambda i: datetime.fromtimestamp(i).strftime("%Y-%m-%d %A"))
-#    df['datetime'] = df['timestamp'].apply(
-#        lambda i: datetime.fromtimestamp(i).strftime("%Y-%m-%dT%H:%M:%S"))
     print(f"Reading database...done {time.perf_counter() - t0:.1f}s")
     return df, con, table_name
 
@@ -105,8 +103,8 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
     # data saved to database
     dataSaved = pyqtSignal()
 
-    # QModelIndex
-    snapshotToLocate = pyqtSignal(QModelIndex)
+    # str: timestamp of the loaded snapshot entry
+    snapshotToLocate = pyqtSignal(str)
 
     def __init__(self, device_type: str, parent=None):
         super(self.__class__, self).__init__()
@@ -126,6 +124,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
     def _post_init(self):
         self._auto_width_init_flag = False
         self.diff_help_btn.setVisible(False)
+        self.snp_locate_btn.setVisible(False)
         self._dt_ms = int(1000.0 / self.refresh_rate_dsbox.value())
         self.dtype_lbl.setText(
             '<html><head/><body><p><span style=" font-size:18pt; font-weight:600; color:#0055ff;">{dtype}</span></p></body></html>'
@@ -135,7 +134,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         self.hide_columns()
         # self.refresh_data()
         # the timestamp value for the loaded snpashot
-        self._diff_snp_ts = None
+        self._diff_snp_ts: float = None
         self._loadSnpIdx = None
 
     def hide_columns(self):
@@ -213,6 +212,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         self._post_ref_snp_info(df_info)
         self.__model.highlight_diff(df_data)
         self.diff_help_btn.setVisible(True)
+        self.snp_locate_btn.setVisible(True)
         self._loadSnpIdx = idx
 
     def _post_ref_snp_info(self, df: pd.DataFrame):
@@ -245,6 +245,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         self.diff_type_lbl.clear()
         self.__model.update_ref_dataframe(None)
         self.diff_help_btn.setVisible(False)
+        self.snp_locate_btn.setVisible(False)
 
     @pyqtSlot()
     def onHelpDiffMode(self):
@@ -265,8 +266,8 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
     def onLocateSnp(self):
         """Find and highlight the snapshot.
         """
-        if self._loadSnpIdx is not None:
-            self.snapshotToLocate.emit(self._loadSnpIdx)
+        if self._diff_snp_ts is not None:
+            self.snapshotToLocate.emit(f"{self._diff_snp_ts:.6f}")
 
 
 if __name__ == '__main__':
