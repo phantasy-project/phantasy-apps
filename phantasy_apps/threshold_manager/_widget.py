@@ -45,8 +45,8 @@ DEVICE_TYPE_FULLNAME_MAP = {
 def read_dataframe(db_path: str, table_name: str):
     """ Read all data as a dataframe from a database file.
     """
-    t0 = time.perf_counter()
-    print("Reading database...")
+    # t0 = time.perf_counter()
+    # print("Reading database...")
     con = ensure_connect_db(db_path)
     query = f'''
         SELECT timestamp, datetime,
@@ -58,7 +58,7 @@ def read_dataframe(db_path: str, table_name: str):
     # generate date column:
     df['date'] = df['timestamp'].apply(
         lambda i: datetime.fromtimestamp(i).strftime("%Y-%m-%d %A"))
-    print(f"Reading database...done {time.perf_counter() - t0:.1f}s")
+    # print(f"Reading database...done {time.perf_counter() - t0:.1f}s")
     return df, con, table_name
 
 

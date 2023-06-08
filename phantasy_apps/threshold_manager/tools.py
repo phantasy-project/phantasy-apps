@@ -44,4 +44,4 @@ def take_snapshot(dtypes: list[str],
                  ','.join(tags), note, data_dict)
     snp_data = SnapshotData(_row_data)
     insert_update_data(conn, snp_data, TABLE_NAME)
-    print(f"Saved data {snp_data} to the database.")
+    # print(f"Saved data {snp_data} to the database.")
