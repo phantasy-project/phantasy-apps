@@ -17,3 +17,4 @@ CREATE TABLE IF NOT EXISTS mps_threshold (
     note TEXT,
     data BLOB NOT NULL
 );
+CREATE INDEX IF NOT EXISTS timestamp_idx ON mps_threshold ( timestamp );
