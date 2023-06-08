@@ -52,8 +52,8 @@ class Ui_MainWindow(object):
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.action_About = QtWidgets.QAction(MainWindow)
         self.action_About.setObjectName("action_About")
-        self.actionAboutQt = QtWidgets.QAction(MainWindow)
-        self.actionAboutQt.setObjectName("actionAboutQt")
+        self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
+        self.actionAbout_Qt.setObjectName("actionAbout_Qt")
         self.actionTake_Snapshot = QtWidgets.QAction(MainWindow)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/tm-icons/snapshot.png"),
@@ -77,7 +77,7 @@ class Ui_MainWindow(object):
         self.actionViewHMR.setChecked(True)
         self.actionViewHMR.setObjectName("actionViewHMR")
         self.menu_Help.addAction(self.action_About)
-        self.menu_Help.addAction(self.actionAboutQt)
+        self.menu_Help.addAction(self.actionAbout_Qt)
         self.menu_View.addAction(self.actionViewSNP)
         self.menu_View.addAction(self.actionViewND)
         self.menu_View.addAction(self.actionViewIC)
@@ -88,7 +88,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionTake_Snapshot)
 
         self.retranslateUi(MainWindow)
-        self.actionAboutQt.triggered.connect(
+        self.actionAbout_Qt.triggered.connect(
             MainWindow.onAboutQt)  # type: ignore
         self.action_About.triggered.connect(MainWindow.onAbout)  # type: ignore
         self.actionTake_Snapshot.triggered.connect(
@@ -103,7 +103,7 @@ class Ui_MainWindow(object):
         self.menu_View.setTitle(_translate("MainWindow", "&View"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.action_About.setText(_translate("MainWindow", "&About"))
-        self.actionAboutQt.setText(_translate("MainWindow", "About Qt"))
+        self.actionAbout_Qt.setText(_translate("MainWindow", "About Qt"))
         self.actionTake_Snapshot.setText(
             _translate("MainWindow", "Take Snapshot"))
         self.actionViewSNP.setText(_translate("MainWindow", "Snapshot Data"))
