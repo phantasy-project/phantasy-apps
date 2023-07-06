@@ -606,6 +606,11 @@ class SnapshotData:
         # xlsx
         df_info = self.info.copy(deep=True)
         df_info['tags'] = self.tags_as_str()
+    
+        parent_node = self.get_parent_node()
+        if parent_node is not None:
+            df_info['parent'] = parent_node
+
         with pd.ExcelWriter(filepath) as fp:
             # df_info.drop(columns=['data_path']).T.to_excel(fp,
             #         sheet_name=SnapshotData.INFO_SHEET_NAME, header=False, **kws)
@@ -685,13 +690,23 @@ class SnapshotData:
             machstate.to_csv(filepath, **kws)
         return True
 
+    def get_parent_node(self):
+        """Return the parent node if available."""
+        self.extract_blob()
+        if not hasattr(self, '_extracted_df_info'):
+            return None
+        if 'parent' in self._extracted_df_info:
+            return self._extracted_df_info['parent'][0]
+        else:
+            return None
+
     def extract_blob(self):
         # update .data and .machstate with _blob if _blob is not None
         # only needed when work with DB
         if self._blob is None: # already extracted
             return
         _df_data, _df_info, _df_machstate = read_sql(self._blob)
-        self.info = _df_info
+        self._extracted_df_info = _df_info
         self.data = _df_data
         self.machstate = _df_machstate
         self._blob = None
@@ -699,7 +714,9 @@ class SnapshotData:
     def clone(self):
         """Return a deepcopy.
         """
-        _cp = SnapshotData(self.data.copy(deep=True), self.info.copy(deep=True))
+        _info = self.info.copy(deep=True)
+        _info['parent'] = self.ts_as_str() # pass the datetime string as parent node
+        _cp = SnapshotData(self.data.copy(deep=True), _info)
         if self.machstate is not None:
             _cp.machstate = self.machstate.copy(deep=True)
         return _cp
