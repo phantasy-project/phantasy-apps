@@ -447,11 +447,17 @@ class SettingsModel(QStandardItemModel):
                 wa = False
             else:
                 wa = p[1] == 'True'
+        
+            # if saved setpoint is nan, override wa as False -> make it not selectable and checkable.
+            if self.item(i, self.i_val0).text().strip() == 'nan':
+                wa = False
+            #
+
             # disable/enable name item.
             self.item(i, 0).setEnabled(wa)
             #
-            for j in self.ids:
-                it = self.item(i, j)
+            for k in self.ids:
+                it = self.item(i, k)
                 it.setSelectable(wa)
                 it.setData(QBrush(QColor(FG_COLOR_MAP[wa])), Qt.ForegroundRole)
             #
