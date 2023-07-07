@@ -1,4 +1,12 @@
 ========================
+Version 11.1: 2023-07-07
+========================
+
+ - Fix: Make items with 'nan' saved set values are not checkable.
+ - Fix: Handle parent node info for reading/exporting a snapshot.
+  - Bug: unexpected behavior for tag/note editting of an unloaded snapshot.
+
+========================
 Version 11.0: 2023-05-16
 ========================
 
