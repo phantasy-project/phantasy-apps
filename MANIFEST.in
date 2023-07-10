@@ -24,3 +24,4 @@ recursive-include phantasy_apps/permission_manager/config *
 recursive-include phantasy_apps/autoship/config *
 recursive-include phantasy_apps/allison_scanner/docs *
 recursive-include phantasy_apps/threshold_manager/db *.sql
+recursive-include phantasy_apps/threshold_manager/config *.toml
