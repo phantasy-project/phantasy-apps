@@ -57,6 +57,7 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         self.beam_display_widget = BeamSpeciesDisplayWidget()
         self.beam_display_widget.set_wait_until_ready(True)
         self.beam_display_widget.set_expanded(True)
+        self.beam_display_widget.set_power_panel(True)
         self.beam_display_widget.set_allow_clicking_src_btns(False)
         self.toolBar.addWidget(self.beam_display_widget)
 
