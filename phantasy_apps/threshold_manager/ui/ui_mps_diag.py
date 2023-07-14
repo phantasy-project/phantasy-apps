@@ -227,7 +227,7 @@ class Ui_Form(object):
         self.label.setText(
             _translate(
                 "Form",
-                "<html><head/><body><p><span style=\" font-size:18pt;\">Read-Only Diagnostics MPS Threshold Configurtions</span></p></body></html>"
+                "<html><head/><body><p><span style=\" font-size:18pt;\">Read-Only Diagnostic MPS Threshold Configurations</span></p></body></html>"
             ))
         self.dtype_lbl.setText(
             _translate(
