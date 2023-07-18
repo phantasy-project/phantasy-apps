@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import itertools
 import time
 import pandas as pd
 import numpy as np
+from functools import partial
 from fnmatch import translate
 from phantasy import MachinePortal
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
@@ -116,6 +118,82 @@ def _gen_data(irow: pd.Series):
         _1500us_th_h, _1500us_h, _1500us_th_l, _1500us_l, \
         _150us_th_h, _150us_h, _150us_th_l, _150us_l, \
         _15us_th_h, _15us_h, _15us_th_l, _15us_l
+
+
+def _gen_pv(irow: pd.Series):
+    name = irow.Device
+    elem = NAME_MAP[name]
+    # long avg
+    _lavg_pv = elem.pv('LAVG', 'readback')[0]
+    _lavg_t_pv = elem.pv('MPS_LAVG_T', 'readback')[0]
+    # peak avg
+    _pkavg_pv = elem.pv('PKAVG', 'readback')[0]
+    # std
+    _std_pv = elem.pv('STD', 'readback')[0]
+    # long avg th
+    _lavg_h_pv, _lavg_l_pv = elem.pv('MPS_EN_CMD_LAVGHI', 'readback')[0], elem.pv('MPS_EN_CMD_LAVGLO', 'readback')[0]
+    _lavg_th_h_pv, _lavg_th_l_pv = elem.pv('MPS_LAVGHI_TH', 'readback')[0], elem.pv('MPS_LAVGLO_TH', 'readback')[0]
+    # switches
+    mps_trip_bits_pv = elem.pv('MPS_EN_CMD', 'readback')[0]
+    # thresholds
+    _10ms_th_h_pv, _10ms_th_l_pv = elem.pv('MPS_10MSHI_TH', 'readback')[0], elem.pv('MPS_10MSLO_TH', 'readback')[0]
+    _1500us_th_h_pv, _1500us_th_l_pv = elem.pv('MPS_1500USHI_TH', 'readback')[0], elem.pv('MPS_1500USLO_TH', 'readback')[0]
+    _150us_th_h_pv, _150us_th_l_pv = elem.pv('MPS_150USHI_TH', 'readback')[0], elem.pv('MPS_150USLO_TH', 'readback')[0]
+    _15us_th_h_pv, _15us_th_l_pv = elem.pv('MPS_15USHI_TH', 'readback')[0], elem.pv('MPS_15USLO_TH', 'readback')[0]
+    return _lavg_pv, _pkavg_pv, _std_pv, _lavg_t_pv, \
+           _lavg_th_h_pv, _lavg_h_pv, _lavg_th_l_pv, _lavg_l_pv, \
+           mps_trip_bits_pv, \
+           _10ms_th_h_pv, _10ms_th_l_pv, \
+           _1500us_th_h_pv, _1500us_th_l_pv, \
+           _150us_th_h_pv, _150us_th_l_pv, \
+           _15us_th_h_pv, _15us_th_l_pv
+
+
+def get_pv(dtype: str):
+    """Return an iterate object for all the PVs.
+    """
+    _s = DF_MAP[dtype].apply(_gen_pv, axis=1)
+    pvlist_it = itertools.chain(*_s.tolist())
+    return pvlist_it
+
+
+def _get_cell_value(data_dict: dict, irow: pd.Series):
+    """Return a list of tuple of cell values as diag snapshot dataset.
+    """
+    _lavg_pv, _pkavg_pv, _std_pv, _lavg_t_pv, \
+     _lavg_th_h_pv, _lavg_h_pv, _lavg_th_l_pv, _lavg_l_pv, \
+     mps_trip_bits_pv, \
+     _10ms_th_h_pv, _10ms_th_l_pv, \
+     _1500us_th_h_pv, _1500us_th_l_pv, \
+     _150us_th_h_pv, _150us_th_l_pv, \
+     _15us_th_h_pv, _15us_th_l_pv = _gen_pv(irow)
+    mps_trip_bits = format(int(data_dict.get(mps_trip_bits_pv)), "08b")
+    _10ms_h, _10ms_l, _1500us_h, _1500us_l, _150us_h, _150us_l, _15us_h, _15us_l = \
+        [int(i) for i in list(mps_trip_bits)]
+    _10ms_th_h, _10ms_th_l = data_dict.get(_10ms_th_h_pv), data_dict.get(_10ms_th_l_pv)
+    _1500us_th_h, _1500us_th_l = data_dict.get(_1500us_th_h_pv), data_dict.get(_1500us_th_l_pv)
+    _150us_th_h, _150us_th_l = data_dict.get(_150us_th_h_pv), data_dict.get(_150us_th_l_pv)
+    _15us_th_h, _15us_th_l = data_dict.get(_15us_th_h_pv), data_dict.get(_15us_th_l_pv)
+    # long average
+    _lavg_h, _lavg_l = data_dict.get(_lavg_h_pv), data_dict.get(_lavg_l_pv)
+    _lavg_th_h, _lavg_th_l = data_dict.get(_lavg_th_h_pv), data_dict.get(_lavg_th_l_pv)
+    _lavg, _lavg_t = data_dict.get(_lavg_pv), data_dict.get(_lavg_t_pv)
+    _pkavg = data_dict.get(_pkavg_pv)
+    _std = data_dict.get(_std_pv)
+    return irow.Device, _lavg, _pkavg, _std, _lavg_t, \
+           _lavg_th_h, _lavg_h, _lavg_th_l, _lavg_l, \
+           _10ms_th_h, _10ms_h, _10ms_th_l, _10ms_l, \
+           _1500us_th_h, _1500us_h, _1500us_th_l, _1500us_l, \
+           _150us_th_h, _150us_h, _150us_th_l, _150us_l, \
+           _15us_th_h, _15us_h, _15us_th_l, _15us_l
+
+def _get_dataframe_(dtype: str, data_dict: dict):
+    """return a dataframe for the diag snapshot from data_dict (archived data)
+    """
+    # with live data
+    _s = DF_MAP[dtype].apply(partial(_get_cell_value, data_dict), axis=1)
+    df = pd.DataFrame.from_records(_s.to_list(), columns=COLUMNS)
+    return df
 
 
 def _get_dataframe(dtype: str):

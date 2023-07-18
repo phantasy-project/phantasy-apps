@@ -221,10 +221,10 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         self._diff_snp_ts = ts
         _datetime = datetime.fromtimestamp(ts).isoformat()[:-3]
         _df = df.set_index('timestamp').T
-        ion_name = _df.ion_name[0]
-        ion_mass = _df.ion_mass[0]
-        ion_charge = _df.ion_charge[0]
-        beam_dest = _df.beam_dest[0]
+        ion_name = _df.ion_name.to_list()[0]
+        ion_mass = _df.ion_mass.to_list()[0]
+        ion_charge = _df.ion_charge.to_list()[0]
+        beam_dest = _df.beam_dest.to_list()[0]
 
         msg = f"[{_datetime}] {ion_mass}{ion_name}{ion_charge}+ ({beam_dest})"
 
