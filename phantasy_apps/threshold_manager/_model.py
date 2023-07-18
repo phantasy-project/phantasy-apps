@@ -167,7 +167,13 @@ def _get_cell_value(data_dict: dict, irow: pd.Series):
      _1500us_th_h_pv, _1500us_th_l_pv, \
      _150us_th_h_pv, _150us_th_l_pv, \
      _15us_th_h_pv, _15us_th_l_pv = _gen_pv(irow)
-    mps_trip_bits = format(int(data_dict.get(mps_trip_bits_pv)), "08b")
+
+    mps_bit_v = data_dict.get(mps_trip_bits_pv)
+    if mps_bit_v is None:
+        return irow.Device, *[None] * 24
+    else:
+        mps_trip_bits = format(int(mps_bit_v), "08b")
+
     _10ms_h, _10ms_l, _1500us_h, _1500us_l, _150us_h, _150us_l, _15us_h, _15us_l = \
         [int(i) for i in list(mps_trip_bits)]
     _10ms_th_h, _10ms_th_l = data_dict.get(_10ms_th_h_pv), data_dict.get(_10ms_th_l_pv)
@@ -187,10 +193,11 @@ def _get_cell_value(data_dict: dict, irow: pd.Series):
            _150us_th_h, _150us_h, _150us_th_l, _150us_l, \
            _15us_th_h, _15us_h, _15us_th_l, _15us_l
 
+
 def _get_dataframe_(dtype: str, data_dict: dict):
     """return a dataframe for the diag snapshot from data_dict (archived data)
     """
-    # with live data
+    # with archived data
     _s = DF_MAP[dtype].apply(partial(_get_cell_value, data_dict), axis=1)
     df = pd.DataFrame.from_records(_s.to_list(), columns=COLUMNS)
     return df
