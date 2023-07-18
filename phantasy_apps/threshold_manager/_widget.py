@@ -219,7 +219,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         # snapshot info data is loaded
         ts = df.columns[1]  # float timestamp
         self._diff_snp_ts = ts
-        _datetime = datetime.fromtimestamp(ts).isoformat()[:-3]
+        _datetime = datetime.fromtimestamp(ts).strftime("%y-%m-%dT%H:%M:%S")
         _df = df.set_index('timestamp').T
         ion_name = _df.ion_name.to_list()[0]
         ion_mass = _df.ion_mass.to_list()[0]
