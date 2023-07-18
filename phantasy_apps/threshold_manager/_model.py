@@ -51,7 +51,7 @@ COLUMNS = [
     '15us Th(L)?',
 ]
 
-ROW_HEIGHT = 48
+ROW_HEIGHT = 36
 PX_SIZE = 20
 RED_COLOR = QColor(220, 53, 69, 240)
 GREEN_COLOR = QColor(40, 167, 69, 240)
@@ -74,9 +74,9 @@ DF_ELEM_HMR = pd.DataFrame.from_records([[i.name] + 24 * ['-']
 
 GREEK_MU = u'\N{GREEK SMALL LETTER MU}'
 UNIT_MAP = {
-    'ND': f'{GREEK_MU}A',
-    'IC': f'{GREEK_MU}A',
-    'HMR': f'{GREEK_MU}A',
+    'ND': f' {GREEK_MU}A',
+    'IC': f' {GREEK_MU}A',
+    'HMR': f' {GREEK_MU}A',
 }
 
 DF_MAP = {
@@ -260,20 +260,20 @@ class MPSBeamLossDataModel(QAbstractTableModel):
     STR_COLUMNS = (ColumnDevice, )
 
     columnFormat = {
-        ColumnLongAvg: "{value:.6f} {unit}",
-        ColumnPeakAvg: "{value:.6f} {unit}",
-        ColumnStd: "{value:.6f} {unit}",
-        ColumnLongAvgTime: "{value:.1f} s",
-        ColumnLAvgThHi: "{value:.4e} {unit}",
-        ColumnLAvgThLo: "{value:.4e} {unit}",
-        Column10msThHi: "{value:.4e} {unit}",
-        Column10msThLo: "{value:.4e} {unit}",
-        Column1500usThHi: "{value:.4e} {unit}",
-        Column1500usThLo: "{value:.4e} {unit}",
-        Column150usThHi: "{value:.4e} {unit}",
-        Column150usThLo: "{value:.4e} {unit}",
-        Column15usThHi: "{value:.4e} {unit}",
-        Column15usThLo: "{value:.4e} {unit}",
+        ColumnLongAvg: "{value:.6f}{unit}",
+        ColumnPeakAvg: "{value:.6f}{unit}",
+        ColumnStd: "{value:.6f}{unit}",
+        ColumnLongAvgTime: "{value:.1f}s",
+        ColumnLAvgThHi: "{value:.4e}{unit}",
+        ColumnLAvgThLo: "{value:.4e}{unit}",
+        Column10msThHi: "{value:.4e}{unit}",
+        Column10msThLo: "{value:.4e}{unit}",
+        Column1500usThHi: "{value:.4e}{unit}",
+        Column1500usThLo: "{value:.4e}{unit}",
+        Column150usThHi: "{value:.4e}{unit}",
+        Column150usThLo: "{value:.4e}{unit}",
+        Column15usThHi: "{value:.4e}{unit}",
+        Column15usThLo: "{value:.4e}{unit}",
     }
 
     columnHiddenMap = {
@@ -323,7 +323,7 @@ class MPSBeamLossDataModel(QAbstractTableModel):
     def columnCount(self, parent=None):
         return self.ColumnCount
 
-    def rowCount(self, parent):
+    def rowCount(self, parent=QModelIndex()):
         if parent.isValid():
             return 0
         return self._data.shape[0]
@@ -338,10 +338,19 @@ class MPSBeamLossDataModel(QAbstractTableModel):
         is_diff = v_ref is not None and not is_equal(v_ref, v)
         if role == Qt.DisplayRole and column not in MPSBeamLossDataModel.CHK_COLUMNS:
             if v != '-' and column in MPSBeamLossDataModel.columnFormat:
-                return MPSBeamLossDataModel.columnFormat[column].format(
+                _disp_val = MPSBeamLossDataModel.columnFormat[column].format(
                     value=float(v), unit=self._unit)
             else:
-                return v
+                _disp_val = v
+            if is_diff:
+                if column not in MPSBeamLossDataModel.CHK_COLUMNS:
+                    v_ref_fmted = MPSBeamLossDataModel.columnFormat[
+                        column].format(value=float(v_ref), unit='')
+                    return f"{_disp_val}\nRef {v_ref_fmted}"
+                else:
+                    return _disp_val
+            else:
+                return _disp_val
 
         if role == Qt.DecorationRole:
             if column in MPSBeamLossDataModel.CHK_COLUMNS:
@@ -485,17 +494,21 @@ class MPSBeamLossDataDelegateModel(QStyledItemDelegate):
         super(self.__class__, self).__init__()
         self.default_font_size = QFontDatabase.systemFont(
             QFontDatabase.FixedFont).pointSize()
+        self._row_height = ROW_HEIGHT
+
+    def setRowHeight(self, i: int):
+        self._row_height = i
 
     def sizeHint(self, option, index):
         size = QStyledItemDelegate.sizeHint(self, option, index)
-        size.setHeight(int(ROW_HEIGHT * 0.8))
+        size.setHeight(self._row_height)
         return size
 
-    def displayText(self, value, locale):
-        if isinstance(value, (float, int)):
-            return f"{value:.6f}"
-        else:
-            return str(value)
+    #def displayText(self, value, locale):
+    #    if isinstance(value, (float, int)):
+    #        return f"{value:.6f}"
+    #    else:
+    #        return str(value)
 
     def paint(self, painter, option, index):
         if index.column() in MPSBeamLossDataModel.STR_COLUMNS:

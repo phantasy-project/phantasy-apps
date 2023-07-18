@@ -136,7 +136,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         # the timestamp value for the loaded snpashot
         self._diff_snp_ts: float = None
         self._loadSnpIdx = None
-
+        
     def hide_columns(self):
         """Hide columns.
         """
@@ -162,6 +162,11 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
     def auto_resize_columns(self):
         for c in range(self.view.model().columnCount()):
             self.view.resizeColumnToContents(c)
+        # adjust row height
+        if self.diff_help_btn.isVisible():
+            self.view.itemDelegate().setRowHeight(58)
+        else:
+            self.view.itemDelegate().setRowHeight(36)
 
     @pyqtSlot(bool)
     def refreshData(self, is_checked: bool):
