@@ -73,7 +73,7 @@ def make_snapshot(dtypes: list[str],
     isrc_name, ion_name, ion_mass, ion_number, ion_charge, ion_charge_state, \
         beam_power, beam_energy, beam_bound, beam_dest = data['isrc_name'], data['ion_name'], \
             data['ion_mass'], data['ion_number'], data['ion_charge'], data['ion_charge_state'], \
-            data['power'], data['energy'], data['bound'], 'N/A'
+            data['power'], data['energy'], data['bound'], data['dest']
     data_dict = {_dtype: _get_dataframe_(_dtype, data) for _dtype in dtypes}
     _row_data = (ts, user, isrc_name, ion_name, ion_number, ion_mass, ion_charge,
                  ion_charge_state, beam_power, beam_energy, beam_bound, beam_dest,
