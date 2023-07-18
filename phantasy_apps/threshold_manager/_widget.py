@@ -251,6 +251,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         self.__model.update_ref_dataframe(None)
         self.diff_help_btn.setVisible(False)
         self.snp_locate_btn.setVisible(False)
+        self.auto_resize_columns()
 
     @pyqtSlot()
     def onHelpDiffMode(self):
