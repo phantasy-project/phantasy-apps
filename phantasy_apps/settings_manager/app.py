@@ -3087,14 +3087,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                 daq_seq=self.obj_it_tuple,
                                 nproc=2)
         self.one_updater.meta_signal1.connect(partial(self.on_update_display, m))
-        self.one_updater.daqStarted.connect(lambda:printlog("Refreshing data..."))
+#        self.one_updater.daqStarted.connect(lambda:printlog("Refreshing data..."))
         self.one_updater.daqStarted.connect(lambda:self.refresh_beat_lbl.setVisible(True))
         self.one_updater.daqStarted.connect(lambda:m.blockSignals(True))
         self.one_updater.daqFinished.connect(lambda:self.refresh_beat_lbl.setVisible(False))
         self.one_updater.daqFinished.connect(lambda:m.blockSignals(False))
         self.one_updater.daqFinished.connect(m._finish_update)
         self.one_updater.daqFinished.connect(self.last_refreshed)
-        self.one_updater.daqFinished.connect(lambda:printlog("Refreshing data...done!"))
+#        self.one_updater.daqFinished.connect(lambda:printlog("Refreshing data...done!"))
         self.one_updater.start()
 
     def on_data_refresh_done(self):
