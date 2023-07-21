@@ -4,6 +4,7 @@
 import os
 from functools import partial
 from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QTabWidget
 from PyQt5.QtWidgets import QWidget, QSizePolicy
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
@@ -68,10 +69,13 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
 
         self.nd_dock = DockWidget(self)
         self.nd_dock.setWindowTitle("Neutron Detectors")
+        self.nd_dock.setTitleText("Read-Only MPS Threshold Configurations (ND)")
         self.ic_dock = DockWidget(self)
         self.ic_dock.setWindowTitle("Ionization Chambers")
+        self.ic_dock.setTitleText("Read-Only MPS Threshold Configurations (IC)")
         self.hmr_dock = DockWidget(self)
         self.hmr_dock.setWindowTitle("Halo Monitor Rings")
+        self.hmr_dock.setTitleText("Read-Only MPS Threshold Configurations (HMR)")
 
         self.nd_dock.setWidget(self.nd_widget)
         self.ic_dock.setWidget(self.ic_widget)
@@ -81,6 +85,8 @@ class MPSThresholdManagerWindow(BaseAppForm, Ui_MainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.ic_dock)
         self.tabifyDockWidget(self.nd_dock, self.ic_dock)
         self.tabifyDockWidget(self.ic_dock, self.hmr_dock)
+        #
+        self.setTabPosition(Qt.LeftDockWidgetArea, QTabWidget.North);
 
         # snapshot dock
         self.snp_widget = SnapshotWidget("ND")
