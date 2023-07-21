@@ -68,7 +68,7 @@ class Ui_Form(object):
         icon.addPixmap(QtGui.QPixmap(":/tm-icons/resize-horizontal.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.auto_width_btn.setIcon(icon)
-        self.auto_width_btn.setIconSize(QtCore.QSize(24, 24))
+        self.auto_width_btn.setIconSize(QtCore.QSize(32, 32))
         self.auto_width_btn.setAutoRaise(True)
         self.auto_width_btn.setObjectName("auto_width_btn")
         self.horizontalLayout.addWidget(self.auto_width_btn)
@@ -77,7 +77,7 @@ class Ui_Form(object):
         icon1.addPixmap(QtGui.QPixmap(":/tm-icons/save.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.saveas_btn.setIcon(icon1)
-        self.saveas_btn.setIconSize(QtCore.QSize(24, 24))
+        self.saveas_btn.setIconSize(QtCore.QSize(32, 32))
         self.saveas_btn.setObjectName("saveas_btn")
         self.horizontalLayout.addWidget(self.saveas_btn)
         self.reset_diff_btn = QtWidgets.QPushButton(Form)
@@ -85,7 +85,7 @@ class Ui_Form(object):
         icon2.addPixmap(QtGui.QPixmap(":/tm-icons/clear.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.reset_diff_btn.setIcon(icon2)
-        self.reset_diff_btn.setIconSize(QtCore.QSize(24, 24))
+        self.reset_diff_btn.setIconSize(QtCore.QSize(32, 32))
         self.reset_diff_btn.setObjectName("reset_diff_btn")
         self.horizontalLayout.addWidget(self.reset_diff_btn)
         self.diff_type_lbl = QtWidgets.QLabel(Form)
@@ -120,20 +120,36 @@ class Ui_Form(object):
         self.snp_locate_btn.setIconSize(QtCore.QSize(32, 32))
         self.snp_locate_btn.setObjectName("snp_locate_btn")
         self.horizontalLayout.addWidget(self.snp_locate_btn)
+        self.diff_help_btn = QtWidgets.QToolButton(Form)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/tm-icons/new.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.diff_help_btn.setIcon(icon4)
+        self.diff_help_btn.setIconSize(QtCore.QSize(32, 32))
+        self.diff_help_btn.setAutoRaise(True)
+        self.diff_help_btn.setObjectName("diff_help_btn")
+        self.horizontalLayout.addWidget(self.diff_help_btn)
         spacerItem = QtWidgets.QSpacerItem(40, 20,
                                            QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.refresh_btn = QtWidgets.QPushButton(Form)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/tm-icons/start.png"),
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/tm-icons/start.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.refresh_btn.setIcon(icon4)
-        self.refresh_btn.setIconSize(QtCore.QSize(24, 24))
+        self.refresh_btn.setIcon(icon5)
+        self.refresh_btn.setIconSize(QtCore.QSize(32, 32))
         self.refresh_btn.setCheckable(True)
         self.refresh_btn.setObjectName("refresh_btn")
         self.horizontalLayout.addWidget(self.refresh_btn)
         self.refresh_rate_dsbox = QtWidgets.QDoubleSpinBox(Form)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.refresh_rate_dsbox.sizePolicy().hasHeightForWidth())
+        self.refresh_rate_dsbox.setSizePolicy(sizePolicy)
         self.refresh_rate_dsbox.setDecimals(0)
         self.refresh_rate_dsbox.setMinimum(1.0)
         self.refresh_rate_dsbox.setMaximum(5.0)
@@ -172,15 +188,6 @@ class Ui_Form(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
-        self.diff_help_btn = QtWidgets.QToolButton(Form)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/tm-icons/new.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.diff_help_btn.setIcon(icon5)
-        self.diff_help_btn.setIconSize(QtCore.QSize(40, 40))
-        self.diff_help_btn.setAutoRaise(True)
-        self.diff_help_btn.setObjectName("diff_help_btn")
-        self.horizontalLayout_2.addWidget(self.diff_help_btn)
         self.gridLayout.addLayout(self.horizontalLayout_2, 1, 0, 1, 2)
 
         self.retranslateUi(Form)
@@ -217,6 +224,12 @@ class Ui_Form(object):
                 "<html><head/><body><p>Click to locate the loaded snapshot in the Snapshot Window.</p></body></html>"
             ))
         self.snp_locate_btn.setText(_translate("Form", "..."))
+        self.diff_help_btn.setToolTip(
+            _translate(
+                "Form",
+                "<html><head/><body><p>Click to see the details for diff mode.</p></body></html>"
+            ))
+        self.diff_help_btn.setText(_translate("Form", "..."))
         self.refresh_btn.setToolTip(
             _translate(
                 "Form",
@@ -234,12 +247,6 @@ class Ui_Form(object):
                 "Form",
                 "<html><head/><body><p><span style=\" font-size:18pt; font-weight:600; color:#0055ff;\">Device Type</span></p></body></html>"
             ))
-        self.diff_help_btn.setToolTip(
-            _translate(
-                "Form",
-                "<html><head/><body><p>Click to see the details for diff mode.</p></body></html>"
-            ))
-        self.diff_help_btn.setText(_translate("Form", "..."))
 
 
 from . import resources_rc
