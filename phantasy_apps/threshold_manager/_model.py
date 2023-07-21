@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import (
     QStyledItemDelegate,
     QWidget,
 )
+from PyQt5.QtGui import QFont
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QColor
@@ -58,6 +59,10 @@ GREEN_COLOR = QColor(40, 167, 69, 240)
 BLUE_COLOR = QColor(0, 123, 255, 240)
 WHITE_COLOR = QColor(255, 255, 255, 255)
 BLACK_COLOR = QColor(0, 0, 0, 255)
+GRAY_COLOR = QColor(243, 243, 243, 200)
+FONT_NO_DIFF = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+FONT_DIFF = QFont(FONT_NO_DIFF)
+FONT_DIFF.setBold(True)
 
 MP = MachinePortal("FRIB", "MPS", auto_monitor=True)
 time.sleep(1.0)
@@ -376,12 +381,17 @@ class MPSBeamLossDataModel(QAbstractTableModel):
                             PX_SIZE, PX_SIZE, Qt.KeepAspectRatio,
                             Qt.SmoothTransformation)
 
+        if role == Qt.FontRole:
+            if is_diff:
+                if v != v_ref:
+                    return FONT_DIFF
+            else:
+                return FONT_NO_DIFF
+
         if role == Qt.ForegroundRole:
             if is_diff:
-                if v > v_ref:
+                if v != v_ref:
                     return QBrush(RED_COLOR)
-                else:
-                    return QBrush(GREEN_COLOR)
             else:
                 return QBrush(BLACK_COLOR)
 
