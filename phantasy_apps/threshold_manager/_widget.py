@@ -262,12 +262,13 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         """Show the help message for diff mode.
         """
         _help_text = '''<html>
-        <p>Diff mode is enabled: Colored cells indicate diff from the reference,
+        <p>Diff mode is enabled: Bolded cells indicate diff from the reference,
         reference could be loaded from the Snapshot Data Management window.</p>
-        <p><span style="color:#28a745;">Green</span> color indicates the live
+        <p>Hover on the cell gives the reference reading and the relative
+        difference in percentage.
+        <span style="color:#28a745;">Green</span> color indicates the live
         reading is lower than the reference; <span style="color:#dc3545;">red</span>
-        color is higher, hover on the cell gives the reference reading and the relative
-        difference in percentage.</p></html>
+        color is higher.</p></html>
         '''
         QMessageBox.information(self, "Diff Mode Help", _help_text,
                                 QMessageBox.Ok, QMessageBox.Ok)
