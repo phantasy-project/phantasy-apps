@@ -31,6 +31,7 @@ from phantasy_apps.threshold_manager.ui.ui_mps_diag import Ui_Form as MPSDiagWid
 from phantasy_apps.threshold_manager._model import (
     MPSBeamLossDataModel,
     MPSBeamLossDataDelegateModel,
+    ROW_HEIGHT,
 )
 from phantasy_apps.threshold_manager.db.utils import ensure_connect_db
 from phantasy_apps.threshold_manager.data import SnapshotData
@@ -175,9 +176,9 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
             self.view.resizeColumnToContents(c)
         # adjust row height
         if self.diff_help_btn.isVisible():
-            self.view.itemDelegate().setRowHeight(72)
+            self.view.itemDelegate().setRowHeight(ROW_HEIGHT * 2)
         else:
-            self.view.itemDelegate().setRowHeight(36)
+            self.view.itemDelegate().setRowHeight(ROW_HEIGHT)
 
     @pyqtSlot(bool)
     def refreshData(self, is_checked: bool):
