@@ -59,10 +59,10 @@ GREEN_COLOR = QColor(40, 167, 69, 240)
 BLUE_COLOR = QColor(0, 123, 255, 240)
 WHITE_COLOR = QColor(255, 255, 255, 255)
 BLACK_COLOR = QColor(0, 0, 0, 255)
-GRAY_COLOR = QColor(243, 243, 243, 200)
+DIM_COLOR = QColor(0, 0, 0, 200)
 FONT_NO_DIFF = QFontDatabase.systemFont(QFontDatabase.FixedFont)
 FONT_DIFF = QFont(FONT_NO_DIFF)
-FONT_DIFF.setBold(True)
+FONT_DIFF.setWeight(QFont.DemiBold)
 
 MP = MachinePortal("FRIB", "MPS", auto_monitor=True)
 time.sleep(1.0)
@@ -391,9 +391,9 @@ class MPSBeamLossDataModel(QAbstractTableModel):
         if role == Qt.ForegroundRole:
             if is_diff:
                 if v != v_ref:
-                    return QBrush(RED_COLOR)
+                    return QBrush(BLACK_COLOR)
             else:
-                return QBrush(BLACK_COLOR)
+                return QBrush(DIM_COLOR)
 
         if role == Qt.ToolTipRole:
             if is_diff:
