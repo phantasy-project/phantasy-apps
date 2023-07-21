@@ -265,20 +265,20 @@ class MPSBeamLossDataModel(QAbstractTableModel):
     STR_COLUMNS = (ColumnDevice, )
 
     columnFormat = {
-        ColumnLongAvg: "{value:.6f}{unit}",
-        ColumnPeakAvg: "{value:.6f}{unit}",
-        ColumnStd: "{value:.6f}{unit}",
+        ColumnLongAvg: "{value:.3g}{unit}",
+        ColumnPeakAvg: "{value:.3g}{unit}",
+        ColumnStd: "{value:.3g}{unit}",
         ColumnLongAvgTime: "{value:.1f}s",
-        ColumnLAvgThHi: "{value:.4e}{unit}",
-        ColumnLAvgThLo: "{value:.4e}{unit}",
-        Column10msThHi: "{value:.4e}{unit}",
-        Column10msThLo: "{value:.4e}{unit}",
-        Column1500usThHi: "{value:.4e}{unit}",
-        Column1500usThLo: "{value:.4e}{unit}",
-        Column150usThHi: "{value:.4e}{unit}",
-        Column150usThLo: "{value:.4e}{unit}",
-        Column15usThHi: "{value:.4e}{unit}",
-        Column15usThLo: "{value:.4e}{unit}",
+        ColumnLAvgThHi: "{value:.3g}{unit}",
+        ColumnLAvgThLo: "{value:.3g}{unit}",
+        Column10msThHi: "{value:.3g}{unit}",
+        Column10msThLo: "{value:.3g}{unit}",
+        Column1500usThHi: "{value:.3g}{unit}",
+        Column1500usThLo: "{value:.3g}{unit}",
+        Column150usThHi: "{value:.3g}{unit}",
+        Column150usThLo: "{value:.3g}{unit}",
+        Column15usThHi: "{value:.3g}{unit}",
+        Column15usThLo: "{value:.3g}{unit}",
     }
 
     columnHiddenMap = {
