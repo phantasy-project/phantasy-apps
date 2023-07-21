@@ -168,7 +168,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
             self.view.resizeColumnToContents(c)
         # adjust row height
         if self.diff_help_btn.isVisible():
-            self.view.itemDelegate().setRowHeight(58)
+            self.view.itemDelegate().setRowHeight(72)
         else:
             self.view.itemDelegate().setRowHeight(36)
 
