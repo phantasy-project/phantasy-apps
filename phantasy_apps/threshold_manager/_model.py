@@ -26,7 +26,8 @@ from PyQt5.QtCore import QModelIndex
 
 COLUMNS = [
     'Device',
-    'Average',
+    'Average', # LAVG, long average
+    'ShortAvg', # FAVG, short average
     'Peak Avg.',
     '1 MHz Std.',
     'Avg. Time',
@@ -67,13 +68,13 @@ FONT_DIFF.setWeight(QFont.DemiBold)
 MP = MachinePortal("FRIB", "MPS", auto_monitor=True)
 time.sleep(1.0)
 NAME_MAP = {i.name: i for i in MP.get_elements(name='*')}
-DF_ELEM_ND = pd.DataFrame.from_records([[i.name] + 24 * ['-']
+DF_ELEM_ND = pd.DataFrame.from_records([[i.name] + 25 * ['-']
                                         for i in MP.get_elements(type='ND')],
                                        columns=COLUMNS)
-DF_ELEM_IC = pd.DataFrame.from_records([[i.name] + 24 * ['-']
+DF_ELEM_IC = pd.DataFrame.from_records([[i.name] + 25 * ['-']
                                         for i in MP.get_elements(type='IC')],
                                        columns=COLUMNS)
-DF_ELEM_HMR = pd.DataFrame.from_records([[i.name] + 24 * ['-']
+DF_ELEM_HMR = pd.DataFrame.from_records([[i.name] + 25 * ['-']
                                          for i in MP.get_elements(type='HMR')],
                                         columns=COLUMNS)
 
@@ -117,7 +118,8 @@ def _gen_data(irow: pd.Series):
     _lavg, _lavg_t = elem.LAVG, elem.MPS_LAVG_T
     _pkavg = elem.PKAVG
     _std = elem.STD
-    return name, _lavg, _pkavg, _std, _lavg_t, \
+    _favg = elem.FAVG
+    return name, _lavg, _favg, _pkavg, _std, _lavg_t, \
         _lavg_th_h, _lavg_h, _lavg_th_l, _lavg_l, \
         _10ms_th_h, _10ms_h, _10ms_th_l, _10ms_l, \
         _1500us_th_h, _1500us_h, _1500us_th_l, _1500us_l, \
@@ -126,6 +128,7 @@ def _gen_data(irow: pd.Series):
 
 
 def _gen_pv(irow: pd.Series):
+    # AA
     name = irow.Device
     elem = NAME_MAP[name]
     # long avg
@@ -155,6 +158,7 @@ def _gen_pv(irow: pd.Series):
 
 
 def get_pv(dtype: str):
+    # AA
     """Return an iterate object for all the PVs.
     """
     _s = DF_MAP[dtype].apply(_gen_pv, axis=1)
@@ -163,6 +167,7 @@ def get_pv(dtype: str):
 
 
 def _get_cell_value(data_dict: dict, irow: pd.Series):
+    # AA
     """Return a list of tuple of cell values as diag snapshot dataset.
     """
     _lavg_pv, _pkavg_pv, _std_pv, _lavg_t_pv, \
@@ -200,6 +205,7 @@ def _get_cell_value(data_dict: dict, irow: pd.Series):
 
 
 def _get_dataframe_(dtype: str, data_dict: dict):
+    # AA
     """return a dataframe for the diag snapshot from data_dict (archived data)
     """
     # with archived data
@@ -209,9 +215,6 @@ def _get_dataframe_(dtype: str, data_dict: dict):
 
 
 def _get_dataframe(dtype: str):
-    # test with local data
-    # df = pd.read_csv('tests/mps_model/test.csv', index_col=0)
-
     # with live data
     _s = DF_MAP[dtype].apply(_gen_data, axis=1)
     df = pd.DataFrame.from_records(_s.to_list(), columns=COLUMNS)
@@ -221,18 +224,19 @@ def _get_dataframe(dtype: str):
 class MPSBeamLossDataModel(QAbstractTableModel):
 
     # column ids
-    ColumnDevice, ColumnLongAvg, ColumnPeakAvg, ColumnStd, ColumnLongAvgTime, \
+    ColumnDevice, ColumnLongAvg, ColumnShortAvg, ColumnPeakAvg, ColumnStd, ColumnLongAvgTime, \
         ColumnLAvgThHi, ColumnLAvgThHi_E, ColumnLAvgThLo, ColumnLAvgThLo_E, \
         Column10msThHi, Column10msThHi_E, Column10msThLo, Column10msThLo_E, \
         Column1500usThHi, Column1500usThHi_E, Column1500usThLo, Column1500usThLo_E, \
         Column150usThHi, Column150usThHi_E, Column150usThLo, Column150usThLo_E, \
         Column15usThHi, Column15usThHi_E, Column15usThLo, Column15usThLo_E, \
-        ColumnCount = range(26)
+        ColumnCount = range(27)
 
     # column names
     columnNameMap = {
         ColumnDevice: "Device\nName",
         ColumnLongAvg: "Long\nAverage",
+        ColumnShortAvg: "Short (10 ms)\nAverage",
         ColumnPeakAvg: "Peak\nAverage",
         ColumnStd: "1 MHz\nStd.",
         ColumnLongAvgTime: "Long Avg.\nTime",
@@ -266,6 +270,7 @@ class MPSBeamLossDataModel(QAbstractTableModel):
 
     columnFormat = {
         ColumnLongAvg: "{value:.3g}{unit}",
+        ColumnShortAvg: "{value:.3g}{unit}",
         ColumnPeakAvg: "{value:.3g}{unit}",
         ColumnStd: "{value:.3g}{unit}",
         ColumnLongAvgTime: "{value:.1f}s",

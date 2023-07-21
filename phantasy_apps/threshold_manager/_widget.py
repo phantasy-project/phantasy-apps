@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import time
+import numpy as np
 import pandas as pd
 from datetime import datetime
 
@@ -91,10 +92,16 @@ class SnapshotWidget(_SnapshotWidget):
         df_ic = df_dict.get('IC')
         df_hmr = df_dict.get('HMR')
         if df_nd is not None:
+            if 'ShortAvg' not in df_nd.columns:
+                df_nd.insert(2, 'ShortAvg', [np.nan] * len(df_nd.index))
             self.ndDataLoaded.emit(idx, df_info, df_nd)
         if df_ic is not None:
+            if 'ShortAvg' not in df_ic.columns:
+                df_ic.insert(2, 'ShortAvg', [np.nan] * len(df_ic.index))
             self.icDataLoaded.emit(idx, df_info, df_ic)
         if df_hmr is not None:
+            if 'ShortAvg' not in df_hmr.columns:
+                df_hmr.insert(2, 'ShortAvg', [np.nan] * len(df_hmr.index))
             self.hmrDataLoaded.emit(idx, df_info, df_hmr)
 
 
