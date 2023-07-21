@@ -126,9 +126,13 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         self.diff_help_btn.setVisible(False)
         self.snp_locate_btn.setVisible(False)
         self._dt_ms = int(1000.0 / self.refresh_rate_dsbox.value())
+
         self.dtype_lbl.setText(
             '<html><head/><body><p><span style=" font-size:18pt; font-weight:600; color:#0055ff;">{dtype}</span></p></body></html>'
             .format(dtype=DEVICE_TYPE_FULLNAME_MAP[self.device_type]))
+        # hide the top banner
+        [w.setVisible(False) for w in (self.label, self.dtype_lbl)]
+
         self.view.setItemDelegate(MPSBeamLossDataDelegateModel(self.view))
         self.set_data()
         self.hide_columns()
@@ -136,7 +140,7 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         # the timestamp value for the loaded snpashot
         self._diff_snp_ts: float = None
         self._loadSnpIdx = None
-        
+
     def hide_columns(self):
         """Hide columns.
         """
