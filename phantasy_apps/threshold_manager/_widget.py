@@ -231,6 +231,8 @@ class MPSDiagWidget(QWidget, MPSDiagWidgetForm):
         self.diff_help_btn.setVisible(True)
         self.snp_locate_btn.setVisible(True)
         self._loadSnpIdx = idx
+        # click the auto column width adjusting
+        delayed_exec(lambda:self.auto_width_btn.clicked.emit(), 500)
 
     def _post_ref_snp_info(self, df: pd.DataFrame):
         # snapshot info data is loaded
