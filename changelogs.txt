@@ -1,3 +1,44 @@
+Version 5.6.2
+-------------
+2023-08-07
+
+- TM:
+  - Auto-adjust the column width and row height for diff-mode.
+  - Adjust the tab position for the tabified dockwidgets.
+  - Adjust the data format.
+  - Add code for creating snapshots from archived data.
+  - Add a new column of data to the MPS data view.
+- SM:
+  - v11.2
+  - Show power panel by default for beam info widget.
+  - Suppress log messages.
+  - Update changelog.
+
+Version 5.6.1
+-------------
+2023-07-10
+
+- SM:
+  - Make item with 'nan' saved set not writable
+  - Handle parent node info for reading/exporting a snapshot.
+- TM:
+  - Add missing files for packaging.
+
+Version 5.6.0
+-------------
+2023-07-05
+
+- SM:
+  - See changelog in Settings Manager v11.0
+- MV:
+  - Improve DAQ efficiency.
+- TM:
+  - Add a new app: MPS Threshold Data Manager, brief for 'TM'
+  - TM can take the snapshot of beam loss monitors' threshold data for MPS.
+  - Manage the threshold data in database, present the data in readonly.
+  - Support integration to any Python program and CLI tool:
+  'mps_take_snapshot'
+
 Version 5.5.0
 -------------
 2023-04-13
