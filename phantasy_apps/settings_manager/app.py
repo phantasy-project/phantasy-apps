@@ -2639,12 +2639,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         elif elem.family == "ION":
             if 'ACT' in elem.fields:
-                act_sts = int(elem.ACT)
-                px = self._ion_act_px_tuple[act_sts]
-                if act_sts == 0:
-                    tt = "Ion source is inactive"
+                act_sts = elem.ACT
+                if act_sts is not None:
+                    px = self._ion_act_px_tuple[int(act_sts)]
+                    if act_sts == 0:
+                        tt = "Ion source is inactive"
+                    else:
+                        tt = "Ion source is active"
                 else:
-                    tt = "Ion source is active"
+                    tt = "Ion source is unknown"
             worker.meta_signal1.emit(
                 (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
             worker.meta_signal1.emit(

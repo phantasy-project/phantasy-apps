@@ -257,7 +257,8 @@ STS_PX_MAP = {
 "Chopper state: Running": (":/sm-icons/chp_running.png", 1),
 
 "Ion source is active": (SM_PX_ON_PATH, 1),
-"Ion source is inactive": (SM_PX_OFF_PATH, 0)
+"Ion source is inactive": (SM_PX_OFF_PATH, 0),
+"Ion source is unknown": (SM_PX_UNKNOWN_PATH, -10)
 }
 _STS_PX_CACHE = {}
 
@@ -447,7 +448,7 @@ class SettingsModel(QStandardItemModel):
                 wa = False
             else:
                 wa = p[1] == 'True'
-        
+
             # if saved setpoint is nan, override wa as False -> make it not selectable and checkable.
             if self.item(i, self.i_val0).text().strip() == 'nan':
                 wa = False
