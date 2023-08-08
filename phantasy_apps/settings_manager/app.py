@@ -2590,7 +2590,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         elif elem.family == "CHP":
             sts = elem.get_field('STATE')
-            sts_val_int = sts.value
+            sts_val_int = int(sts.value)
             sts_val_str = CHP_STS_TUPLE[sts_val_int]
             tt = f"Chopper state: {sts_val_str}"
             px = self._chp_px_tuple[sts_val_int]
