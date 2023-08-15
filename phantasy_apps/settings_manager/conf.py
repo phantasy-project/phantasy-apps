@@ -9,6 +9,24 @@ import toml
 from itertools import cycle
 from phantasy_apps.utils import find_dconf
 
+def read_app_config(config_file: str = None):
+    """Read the app configuration from *config_file*, if it is None,
+    follow the search rules defined in *find_dconf*.
+
+    Returns
+    -------
+    r : dict
+        A dict as the app configurations.
+    """
+    if config_file is None:
+        config_file = find_dconf("settings_manager", "settings_manager.toml")
+    print(f"Settings Manager: loading configurations from '{config_file}'.")
+    # app conf
+    app_conf = toml.load(config_file)
+    return app_conf
+
+
+
 
 # user configurations
 USER_APP_CONF_DIR = "~/.phantasy"
@@ -16,33 +34,27 @@ USER_APP_CONF_DIR = "~/.phantasy"
 # distributed with app
 DEFAULT_APP_CONF_PATH = find_dconf("settings_manager", "sm_default.toml")
 
-# app config
-# ~/.phantasy/settings_manager.toml or
-# <app-dir>/config/settings_manager.toml
-APP_CONF_PATH = find_dconf("settings_manager", "settings_manager.toml")
-APP_CONF = toml.load(APP_CONF_PATH)
+# APP_CONF = toml.load(APP_CONF_PATH)
 
 # data refresher
-NPROC = APP_CONF['DATA_REFRESH']['NCORE']
+# NPROC = APP_CONF['DATA_REFRESH']['NCORE']
 
 # machine state capture
-MS_CONF_PATH = APP_CONF['MACH_STATE']['CONFIG_PATH']
-MS_ENABLED = APP_CONF['MACH_STATE']['ENABLED']
-MS_DAQ_RATE = APP_CONF['MACH_STATE']['DAQ_RATE']
-MS_DAQ_NSHOT = APP_CONF['MACH_STATE']['DAQ_NSHOT']
+# MS_CONF_PATH = APP_CONF['MACH_STATE']['CONFIG_PATH']
+# MS_ENABLED = APP_CONF['MACH_STATE']['ENABLED']
+# MS_DAQ_RATE = APP_CONF['MACH_STATE']['DAQ_RATE']
+# MS_DAQ_NSHOT = APP_CONF['MACH_STATE']['DAQ_NSHOT']
 
 # data source and path
-DATA_SOURCE_MODE = APP_CONF['DATA_SOURCE']['TYPE']
-DB_ENGINE = APP_CONF['DATA_SOURCE']['DB_ENGINE']
-DATA_URI = os.path.expanduser(APP_CONF['DATA_SOURCE']['URI'])
+# DATA_SOURCE_MODE = APP_CONF['DATA_SOURCE']['TYPE']
+# DB_ENGINE = APP_CONF['DATA_SOURCE']['DB_ENGINE']
+# DATA_URI = os.path.expanduser(APP_CONF['DATA_SOURCE']['URI'])
 
 # pref
-FIELD_INIT_MODE = APP_CONF['SETTINGS']['FIELD_INIT_MODE']
-INIT_SETTINGS = APP_CONF['SETTINGS']['INIT_SETTINGS']
-T_WAIT = APP_CONF['SETTINGS']['T_WAIT']
-N_DIGIT = APP_CONF['SETTINGS']['PRECISION']
-# for elements,settings,files
-SUPPORT_CONFIG_PATH = APP_CONF['SETTINGS']['SUPPORT_CONFIG_PATH']
+# FIELD_INIT_MODE = APP_CONF['SETTINGS']['FIELD_INIT_MODE']
+# INIT_SETTINGS = APP_CONF['SETTINGS']['INIT_SETTINGS']
+# T_WAIT = APP_CONF['SETTINGS']['T_WAIT']
+# N_DIGIT = APP_CONF['SETTINGS']['PRECISION']
 
 # default machine/segment
 DEFAULT_MACHINE = APP_CONF['LATTICE']['DEFAULT_MACHINE']

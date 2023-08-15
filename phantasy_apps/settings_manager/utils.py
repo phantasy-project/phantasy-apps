@@ -1349,24 +1349,6 @@ def is_equal(a, b, decimal=6):
         return False
 
 
-def init_config_dir(confdir):
-    # initialize configuration directory
-    # return the fullpaths of root path, ts, ms, elem paths.
-    confdir = os.path.expanduser(confdir)
-    if not os.path.exists(confdir):
-        os.makedirs(confdir)
-        reset_config(confdir)
-
-    ts_confpath = os.path.join(confdir, 'tolerance.json')
-    ms_confpath = os.path.join(confdir, 'settings.json')
-    elem_confpath = os.path.join(confdir, 'elements.json')
-
-    if not os.path.exists(elem_confpath):
-        shutil.copy2(DEFAULT_ELEM_PATH, elem_confpath)
-
-    return confdir, ts_confpath, ms_confpath, elem_confpath
-
-
 def reset_config(current_config_path):
     ts_path = os.path.join(current_config_path, 'tolerance.json')
     ms_path = os.path.join(current_config_path, 'settings.json')

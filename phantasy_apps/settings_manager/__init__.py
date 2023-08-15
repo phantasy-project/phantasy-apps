@@ -35,6 +35,8 @@ def run(cli=False):
             print("Invalid configuration file passed.")
             parser.print_help()
             sys.exit(1)
+    else:
+        config_file = None # search per app's rules.
 
     app = QApplication(sys.argv)
     #
@@ -42,7 +44,7 @@ def run(cli=False):
     splash_w.show()
     splash_w.showMessage("Starting up Settings Manager...", Qt.AlignBottom | Qt.AlignHCenter)
 
-    w = SettingsManagerWindow(version=__version__, config_dir=args.config,
+    w = SettingsManagerWindow(version=__version__, config_file=config_file,
                               title=__title__, splash=splash_w)
     w.show()
     splash_w.finish(w)
