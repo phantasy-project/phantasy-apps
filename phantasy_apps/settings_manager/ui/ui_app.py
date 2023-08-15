@@ -14,7 +14,7 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1960, 1400)
+        MainWindow.resize(2153, 1400)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/sm-icons/logo.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -1331,7 +1331,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.adv_frame, 6, 1, 1, 3)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1960, 32))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 2153, 37))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -1491,7 +1491,8 @@ class Ui_MainWindow(object):
         self.tag_filter_area.setWidgetResizable(True)
         self.tag_filter_area.setObjectName("tag_filter_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1222, 89))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(
+            0, 0, 1333, 117))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tag_filter_area.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_2.addWidget(self.tag_filter_area, 0, 0, 1, 6)
@@ -1549,8 +1550,8 @@ class Ui_MainWindow(object):
         self.ion_filter_area.setWidgetResizable(True)
         self.ion_filter_area.setObjectName("ion_filter_area")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(
-            0, 0, 607, 89))
+        self.scrollAreaWidgetContents_2.setGeometry(
+            QtCore.QRect(0, 0, 663, 117))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.ion_filter_area.setWidget(self.scrollAreaWidgetContents_2)
@@ -1822,7 +1823,7 @@ class Ui_MainWindow(object):
         self.snp_dock.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(4), self.snp_dock)
         self.log_dock = DockWidget(MainWindow)
-        self.log_dock.setMinimumSize(QtCore.QSize(901, 246))
+        self.log_dock.setMinimumSize(QtCore.QSize(944, 300))
         self.log_dock.setStyleSheet("QDockWidget {\n"
                                     "    font-weight: normal;\n"
                                     "}\n"
@@ -1888,7 +1889,7 @@ class Ui_MainWindow(object):
         self.revert_area.setObjectName("revert_area")
         self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_3.setGeometry(
-            QtCore.QRect(0, 0, 1923, 89))
+            QtCore.QRect(0, 0, 2111, 117))
         self.scrollAreaWidgetContents_3.setObjectName(
             "scrollAreaWidgetContents_3")
         self.gridLayout_3 = QtWidgets.QGridLayout(
@@ -1995,9 +1996,12 @@ class Ui_MainWindow(object):
         self.actionImport = QtWidgets.QAction(MainWindow)
         self.actionImport.setIcon(icon45)
         self.actionImport.setObjectName("actionImport")
+        self.actionUser_Guide = QtWidgets.QAction(MainWindow)
+        self.actionUser_Guide.setObjectName("actionUser_Guide")
         self.menu_File.addAction(self.actionE_xit)
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
+        self.menu_Help.addAction(self.actionUser_Guide)
         self.menu_Help.addAction(self.actionChangelog)
         self.menu_Help.addAction(self.action_About)
         self.menu_Help.addAction(self.actionAbout_Qt)
@@ -2159,6 +2163,8 @@ class Ui_MainWindow(object):
             MainWindow.on_show_live_state_on_items)  # type: ignore
         self.show_live_sts_off_btn.toggled['bool'].connect(
             MainWindow.on_show_live_state_off_items)  # type: ignore
+        self.actionUser_Guide.triggered.connect(
+            MainWindow.onShowUserGuide)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.settingsView, self.reload_lattice_btn)
         MainWindow.setTabOrder(self.reload_lattice_btn, self.lv_view_btn)
@@ -2671,6 +2677,7 @@ class Ui_MainWindow(object):
         self.actionImport.setText(_translate("MainWindow", "Import"))
         self.actionImport.setToolTip(
             _translate("MainWindow", "Import Snapshots from Files."))
+        self.actionUser_Guide.setText(_translate("MainWindow", "User Guide"))
 
 
 from phantasy_ui.widgets import DockWidget

@@ -695,20 +695,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # the button for deleting rows from settings view
         self.delete_btn.setVisible(getuser() in ('zhangt', 'tong'))
 
-        # update toolbar
-        self.__update_toolbar()
-
         # hide change reason inputbox right of Apply button by default
         self.show_change_reason_input_chkbox.toggled.emit(False)
 
+        # update toolbar
+        self.__update_toolbar()
+
         # initial updater
         self.one_updater = None
-
-        # add user guide help menu
-        self._user_guide_mitem = QAction("User Guide", self)
-        self.menu_Help.insertAction(self.actionChangelog,
-                                    self._user_guide_mitem)
-        self._user_guide_mitem.triggered.connect(self.onShowUserGuide)
 
         # apply ready?
         self.sigApplyReady.connect(self.apply_btn.setEnabled)
