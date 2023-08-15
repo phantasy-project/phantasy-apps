@@ -14,10 +14,10 @@ class Ui_Dialog(object):
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(872, 473)
+        Dialog.resize(872, 518)
         self.gridLayout_9 = QtWidgets.QGridLayout(Dialog)
-        self.gridLayout_9.setContentsMargins(6, 12, 6, 6)
-        self.gridLayout_9.setSpacing(6)
+        self.gridLayout_9.setContentsMargins(4, 10, 4, 4)
+        self.gridLayout_9.setSpacing(4)
         self.gridLayout_9.setObjectName("gridLayout_9")
         self.tabWidget = QtWidgets.QTabWidget(Dialog)
         self.tabWidget.setObjectName("tabWidget")
@@ -45,6 +45,7 @@ class Ui_Dialog(object):
         self.dsrc_mode_cbb.addItem("")
         self.gridLayout.addWidget(self.dsrc_mode_cbb, 7, 1, 1, 1)
         self.tol_dsbox = QtWidgets.QDoubleSpinBox(self.data_tab)
+        self.tol_dsbox.setEnabled(False)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -161,6 +162,8 @@ class Ui_Dialog(object):
         self.ms_tab = QtWidgets.QWidget()
         self.ms_tab.setObjectName("ms_tab")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.ms_tab)
+        self.verticalLayout.setContentsMargins(4, 10, 4, 4)
+        self.verticalLayout.setSpacing(4)
         self.verticalLayout.setObjectName("verticalLayout")
         self.plainTextEdit = QtWidgets.QPlainTextEdit(self.ms_tab)
         self.plainTextEdit.setStyleSheet(
@@ -171,7 +174,11 @@ class Ui_Dialog(object):
         self.plainTextEdit.setObjectName("plainTextEdit")
         self.verticalLayout.addWidget(self.plainTextEdit)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_6.setSpacing(4)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
+        self.label_11 = QtWidgets.QLabel(self.ms_tab)
+        self.label_11.setObjectName("label_11")
+        self.horizontalLayout_6.addWidget(self.label_11)
         self.msconf_path_lineEdit = QtWidgets.QLineEdit(self.ms_tab)
         self.msconf_path_lineEdit.setReadOnly(True)
         self.msconf_path_lineEdit.setObjectName("msconf_path_lineEdit")
@@ -186,6 +193,7 @@ class Ui_Dialog(object):
         self.gridLayout_4.setContentsMargins(4, 4, 4, 4)
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setSpacing(4)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.label_8 = QtWidgets.QLabel(self.groupBox)
         self.label_8.setObjectName("label_8")
@@ -196,6 +204,9 @@ class Ui_Dialog(object):
         self.msconf_rate_cbb.addItem("")
         self.msconf_rate_cbb.addItem("")
         self.horizontalLayout_4.addWidget(self.msconf_rate_cbb)
+        self.label_9 = QtWidgets.QLabel(self.groupBox)
+        self.label_9.setObjectName("label_9")
+        self.horizontalLayout_4.addWidget(self.label_9)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
@@ -283,41 +294,28 @@ class Ui_Dialog(object):
         self.gridLayout_3.setContentsMargins(4, 10, 4, 4)
         self.gridLayout_3.setSpacing(4)
         self.gridLayout_3.setObjectName("gridLayout_3")
+        self.label_7 = QtWidgets.QLabel(self.config_tab)
+        self.label_7.setObjectName("label_7")
+        self.gridLayout_3.addWidget(self.label_7, 1, 0, 1, 1)
+        self.reset_app_config_btn = QtWidgets.QPushButton(self.config_tab)
+        self.reset_app_config_btn.setObjectName("reset_app_config_btn")
+        self.gridLayout_3.addWidget(self.reset_app_config_btn, 1, 3, 1, 1)
         self.config_btns_hbox = QtWidgets.QHBoxLayout()
         self.config_btns_hbox.setContentsMargins(-1, 0, -1, -1)
         self.config_btns_hbox.setSpacing(4)
         self.config_btns_hbox.setObjectName("config_btns_hbox")
         self.gridLayout_3.addLayout(self.config_btns_hbox, 4, 0, 1, 5)
-        self.purge_config_btn = QtWidgets.QPushButton(self.config_tab)
-        self.purge_config_btn.setObjectName("purge_config_btn")
-        self.gridLayout_3.addWidget(self.purge_config_btn, 3, 3, 1, 1)
         spacerItem4 = QtWidgets.QSpacerItem(20, 40,
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
         self.gridLayout_3.addItem(spacerItem4, 5, 0, 1, 1)
-        self.label_7 = QtWidgets.QLabel(self.config_tab)
-        self.label_7.setObjectName("label_7")
-        self.gridLayout_3.addWidget(self.label_7, 1, 0, 1, 1)
-        self.change_config_path_btn = QtWidgets.QPushButton(self.config_tab)
-        self.change_config_path_btn.setEnabled(False)
-        self.change_config_path_btn.setObjectName("change_config_path_btn")
-        self.gridLayout_3.addWidget(self.change_config_path_btn, 3, 1, 1, 1)
-        self.config_path_lineEdit = QtWidgets.QLineEdit(self.config_tab)
-        self.config_path_lineEdit.setReadOnly(True)
-        self.config_path_lineEdit.setObjectName("config_path_lineEdit")
-        self.gridLayout_3.addWidget(self.config_path_lineEdit, 3, 0, 1, 1)
-        self.reset_config_btn = QtWidgets.QPushButton(self.config_tab)
-        self.reset_config_btn.setObjectName("reset_config_btn")
-        self.gridLayout_3.addWidget(self.reset_config_btn, 3, 2, 1, 1)
-        self.label_9 = QtWidgets.QLabel(self.config_tab)
-        self.label_9.setObjectName("label_9")
-        self.gridLayout_3.addWidget(self.label_9, 2, 0, 1, 1)
-        self.edit_app_config_btn = QtWidgets.QPushButton(self.config_tab)
-        self.edit_app_config_btn.setObjectName("edit_app_config_btn")
-        self.gridLayout_3.addWidget(self.edit_app_config_btn, 1, 1, 1, 1)
-        self.reset_app_config_btn = QtWidgets.QPushButton(self.config_tab)
-        self.reset_app_config_btn.setObjectName("reset_app_config_btn")
-        self.gridLayout_3.addWidget(self.reset_app_config_btn, 1, 2, 1, 1)
+        self.view_app_config_btn = QtWidgets.QPushButton(self.config_tab)
+        self.view_app_config_btn.setObjectName("view_app_config_btn")
+        self.gridLayout_3.addWidget(self.view_app_config_btn, 1, 2, 1, 1)
+        self.appconf_path_lineEdit = QtWidgets.QLineEdit(self.config_tab)
+        self.appconf_path_lineEdit.setReadOnly(True)
+        self.appconf_path_lineEdit.setObjectName("appconf_path_lineEdit")
+        self.gridLayout_3.addWidget(self.appconf_path_lineEdit, 1, 1, 1, 1)
         self.tabWidget.addTab(self.config_tab, "")
         self.gridLayout_9.addWidget(self.tabWidget, 0, 0, 1, 1)
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
@@ -360,6 +358,11 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.dsrc_mode_cbb.setItemText(0, _translate("Dialog", "DB"))
         self.dsrc_mode_cbb.setItemText(1, _translate("Dialog", "FILE"))
+        self.tol_dsbox.setToolTip(
+            _translate(
+                "Dialog",
+                "<html><head/><body><p>Use <span style=\" font-style:italic;\">Tolerance</span> column to adjust the values, they are being managed with PVs now.</p></body></html>"
+            ))
         self.label_3.setText(_translate("Dialog", "Data source type"))
         self.wdir_btn.setText(_translate("Dialog", "Browse"))
         self.model_rbtn.setToolTip(
@@ -408,12 +411,15 @@ class Ui_Dialog(object):
                 "\n"
                 "If you\'d like to use a customized version, just copy and modify this file, and edit it in your Settings Manager configuration file, which is located at ~/.phantasy/settings_manager.toml, if it does exist, push Reset button in Configurations -> App Configuration File."
             ))
+        self.label_11.setText(_translate("Dialog", "Configfile in use"))
         self.msconf_open_btn.setText(_translate("Dialog", "Read"))
-        self.groupBox.setTitle(_translate("Dialog", "DAQ"))
+        self.groupBox.setTitle(
+            _translate("Dialog", "DAQ (Runtime Configurable)"))
         self.label_8.setText(_translate("Dialog", "Rate"))
         self.msconf_rate_cbb.setItemText(0, _translate("Dialog", "1"))
         self.msconf_rate_cbb.setItemText(1, _translate("Dialog", "5"))
-        self.label_10.setText(_translate("Dialog", "Total Shot"))
+        self.label_9.setText(_translate("Dialog", "Hz"))
+        self.label_10.setText(_translate("Dialog", "Total # of Shots"))
         self.msconf_nshot_cbb.setItemText(0, _translate("Dialog", "5"))
         self.msconf_nshot_cbb.setItemText(1, _translate("Dialog", "10"))
         self.msconf_nshot_cbb.setItemText(2, _translate("Dialog", "20"))
@@ -431,22 +437,15 @@ class Ui_Dialog(object):
         self.select_font_btn.setText(_translate("Dialog", "Select"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.view_tab),
                                   _translate("Dialog", "View"))
-        self.purge_config_btn.setText(_translate("Dialog", "Purge"))
-        self.label_7.setText(_translate("Dialog", "App Configuration File"))
-        self.change_config_path_btn.setText(_translate("Dialog", "Change"))
-        self.reset_config_btn.setToolTip(
-            _translate("Dialog", "Reset with default configurations"))
-        self.reset_config_btn.setText(_translate("Dialog", "Reset"))
-        self.label_9.setText(
-            _translate("Dialog", "Directory for Support Configuration Files"))
-        self.edit_app_config_btn.setToolTip(
-            _translate("Dialog", "Update with a Text Editor."))
-        self.edit_app_config_btn.setText(_translate("Dialog", "Edit"))
+        self.label_7.setText(_translate("Dialog", "Configfile in use"))
         self.reset_app_config_btn.setToolTip(
             _translate("Dialog", "Reset with default configurations."))
         self.reset_app_config_btn.setText(_translate("Dialog", "Reset"))
+        self.view_app_config_btn.setToolTip(
+            _translate("Dialog", "Update with a Text Editor."))
+        self.view_app_config_btn.setText(_translate("Dialog", "Read"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.config_tab),
-                                  _translate("Dialog", "Configurations"))
+                                  _translate("Dialog", "App Configs"))
         self.cancel_btn.setText(_translate("Dialog", "Cancel"))
         self.ok_btn.setText(_translate("Dialog", "OK"))
 

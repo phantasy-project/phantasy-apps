@@ -1326,17 +1326,6 @@ def is_equal(a, b, decimal=6):
         return False
 
 
-def reset_config(current_config_path):
-    ts_path = os.path.join(current_config_path, 'tolerance.json')
-    ms_path = os.path.join(current_config_path, 'settings.json')
-    elem_path = os.path.join(current_config_path, 'elements.json')
-
-    for default_path, path in zip(
-            (DEFAULT_TS_PATH, DEFAULT_MS_PATH, DEFAULT_ELEM_PATH),
-            (ts_path, ms_path, elem_path)):
-        shutil.copy2(default_path, path)
-
-
 def str2float(s):
     """Convert string to float, if s is an valid expression, return
     the evaluated result, otherwise return None.
