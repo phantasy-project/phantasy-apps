@@ -37,7 +37,6 @@ from phantasy_ui.widgets import (is_item_checked, BeamSpeciesDisplayWidget,
                                  DataAcquisitionThread as DAQT,
                                  ElementSelectDialog, FlowLayout,
                                  LatticeWidget, ProbeWidget, DataTrendWidget)
-from phantasy_apps.utils import find_dconf
 from phantasy_apps.msviz.mach_state import (get_meta_conf_dict,
                                             merge_mach_conf, _build_dataframe,
                                             _daq_func)
@@ -117,8 +116,7 @@ NOW_DT = datetime.now()
 NOW_YEAR = NOW_DT.year
 NOW_MONTH = NOW_DT.month
 NOW_DAY = NOW_DT.day
-from .conf import N_SNP_MAX,
-from .conf import N_DIGIT
+from .conf import N_SNP_MAX
 
 # Alarm types to control, disable/enable.
 ALM_TYPE_MAP = { # [read, tune]
@@ -185,9 +183,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     # the list of element list is changed --> update settings model
     element_list_changed = pyqtSignal()
-
-    # model settings is changed --> update settings snapshot
-    model_settings_changed = pyqtSignal(Settings)
 
     # ndigit
     ndigit_changed = pyqtSignal(int)
@@ -279,6 +274,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         self.__init_dsrc(self.dsrc_dict)
 
+        # post init ui
+        self.__post_init_ui()
+
         # preload lattice (splashing)
         self.__preload_lattice(self.pref_dict['LATTICE']['DEFAULT_MACHINE'],
                                self.pref_dict['LATTICE']['DEFAULT_SEGMENT'])
@@ -296,8 +294,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # init filter string buttons
         self.__init_filter_str_ctls()
 
-        # post init ui
-        self.__post_init_ui()
 
     def __init_filter_str_ctls(self):
         """Create convenient buttons for load filter strings.
@@ -475,7 +471,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.pref_dict['font'] = self.font
         self.font_changed.connect(self.on_font_changed)
 
-        self.model_settings_changed.connect(self.on_model_settings_changed)
         self.ndigit_changed.connect(self.on_ndigit_changed)
         # init settings boolean
         self.init_settings_changed.connect(
@@ -1832,7 +1827,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             only_physics=False,
             skip_none=self.skip_none_chkbox.isChecked())
         self.settingsLoaded.emit(flat_settings, settings)
-        self.model_settings_changed.emit(settings)
 
     def init_filter(self):
         """Initial filter.
@@ -2249,7 +2243,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_launch_preferences(self):
         """Launch preferences dialog.
         """
-        pref_dlg = PreferencesDialog(self, self.pref_dict)
+        pref_dlg = PreferencesDialog(self.pref_dict, self)
         pref_dlg.pref_changed.connect(self.on_update_pref)
         pref_dlg.visibility_changed.connect(self.on_update_visibility)
         # pref_dlg.config_changed.connect(self.on_config_updated)
@@ -3077,15 +3071,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             if elem in self._elem_list:
                 self._elem_list.remove(elem)
         self.element_list_changed.emit()
-
-    @pyqtSlot(Settings)
-    def on_model_settings_changed(self, settings):
-        """Update and dump model settings.
-        """
-        if settings != self._model_settings:
-            self._model_settings.update(settings)
-            self._model_settings.write(self.ms_confpath)
-            printlog("Update model settings snapshot.")
 
     @pyqtSlot(bool)
     def on_toggle_all_selected(self, selected):

@@ -23,6 +23,7 @@ def read_app_config(config_file: str = None):
     print(f"Settings Manager: loading configurations from '{config_file}'.")
     # app conf
     app_conf = toml.load(config_file)
+    app_conf['_FILEPATH'] = os.path.abspath(config_file)
     return app_conf
 
 
@@ -57,8 +58,8 @@ DEFAULT_APP_CONF_PATH = find_dconf("settings_manager", "sm_default.toml")
 # N_DIGIT = APP_CONF['SETTINGS']['PRECISION']
 
 # default machine/segment
-DEFAULT_MACHINE = APP_CONF['LATTICE']['DEFAULT_MACHINE']
-DEFAULT_SEGMENT = APP_CONF['LATTICE']['DEFAULT_SEGMENT']
+DEFAULT_MACHINE = "FRIB"
+DEFAULT_SEGMENT = "LINAC"
 
 # others not controlled with config file
 N_SNP_MAX = cycle([50, 100, 500, 'All'])
