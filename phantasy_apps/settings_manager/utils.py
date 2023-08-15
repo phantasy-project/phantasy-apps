@@ -46,6 +46,7 @@ from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 from phantasy_apps.utils import find_dconf
 from .data import SnapshotData
 
+
 AVAILABLE_IONS = ('He', 'Ne', 'Ar', 'Kr', 'Xe', 'U', 'Se', 'Ca', 'Pb',
                   'O', 'Bi', 'Zn', 'Tm', 'Pt')
 
@@ -171,29 +172,6 @@ QToolButton:checked {{
 }}
 """
 
-TAG_BTN_STY1 = """
-QToolButton {{
-    font-size: {fs}pt;
-    border-radius: 6px;
-    padding: 3px 3px 3px 3px;
-    color: rgb(18, 18, 18);
-    border-top: 2px solid rgb(139, 139, 139);
-    border-left: 2px solid rgb(139, 139, 139);
-    border-right: 2px solid rgb(139, 139, 139);
-    border-bottom: 2px solid rgb(139, 139, 139);
-    qproperty-icon: url("none") off, url(":/sm-icons/checkmark-blue.png") on;
-}}
-QToolButton:hover {{
-    background-color: rgb(224, 238, 255);
-}}
-QToolButton:checked {{
-    color: rgb(45, 91, 227);
-    border-top: 2px solid rgb(50, 105, 255);
-    border-left: 2px solid rgb(50, 105, 255);
-    border-right: 2px solid rgb(50, 105, 255);
-    border-bottom: 2px solid rgb(50, 105, 255);
-}}
-"""
 #
 PWR_STS_U_ROLE = Qt.UserRole + 5
 #
@@ -593,7 +571,6 @@ class SettingsModel(QStandardItemModel):
             QHeaderView {
                 qproperty-defaultAlignment: AlignHCenter AlignVCenter;
                 font-weight: bold;
-                font-size: 14pt;
             }""")
         #
         self.style_view(font=self._font)
@@ -1620,7 +1597,6 @@ class SnapshotDataModel(QStandardItemModel):
         v.header().setStyleSheet("""
             QHeaderView {
                 font-weight: bold;
-                font-size: 14pt;
             }""")
 
         #
