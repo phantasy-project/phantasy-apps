@@ -348,22 +348,18 @@ class SettingsModel(QStandardItemModel):
     checked_items_inc_dec_updated = pyqtSignal(int)
 
     def __init__(self, parent, flat_settings, **kws):
-        # kw: ndigit, font, auto_fmt, device_states
+        # kw: ndigit, font, device_states
         # pv_map: dict of additional pv data
         super(self.__class__, self).__init__(parent)
         self._ndigit = kws.get('ndigit', 6)
         self._font = kws.get('font', None)
-        self._auto_fmt = kws.get('auto_fmt', False)
         self._last_sts_dict = kws.get('device_states', {})
         self._pv_map = kws.get('pv_map', {})
         self.ref_st_pv_map = self._pv_map.get('refset', {})
         self.tol_pv_map = self._pv_map.get('tol', {})
         self.alm_act_pv_map = self._pv_map.get('almact', {})
 
-        if self._auto_fmt:
-            self.fmt = '{{0:{0}g}}'.format(self._ndigit)
-        else:
-            self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self._ndigit)
+        self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self._ndigit)
 
         # for field NMR, HALL
         self.fmt_nmr = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, 5)

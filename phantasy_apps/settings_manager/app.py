@@ -646,7 +646,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             device_states=self._last_sts_dict,
             ndigit=self.ndigit,
             font=self.font,
-            auto_fmt=self.auto_ndigit_chkbox.isChecked(),
             pv_map=self._pv_map,
         )
         model.settings_sts.connect(self.on_settings_sts)
@@ -708,11 +707,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # data is refreshed
         self.last_refreshed.connect(self.on_data_refresh_done)
 
-        # disable the ndigit sbox on the main UI
-        self.ndigit_sbox.setEnabled(False)
-        self.ndigit_sbox.setToolTip(
-            "Go to 'Preferences -> Float number precision' to change the value."
-        )
         # hide update_rate_cbb,
         self.update_rate_cbb.setCurrentText("20 s")  # 0.05 Hz
         self.update_rate_cbb.setVisible(False)
@@ -2249,7 +2243,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # pref_dlg.config_changed.connect(self.on_config_updated)
         pref_dlg.font_changed.connect(self.font_changed)
         pref_dlg.init_settings_changed.connect(self.init_settings_changed)
-        pref_dlg.ndigit_sbox.valueChanged.connect(self.ndigit_sbox.setValue)
         pref_dlg.data_uri_changed.connect(
             partial(self.on_data_uri_changed, True))
         r = pref_dlg.exec_()
@@ -2329,15 +2322,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_ndigit_changed(self, n):
         self.ndigit = n
         self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, n)
-        self.element_list_changed.emit()
-
-    @pyqtSlot(bool)
-    def on_auto_ndigit(self, enabled):
-        # if enabled, use .g format
-        if enabled:
-            self.fmt = '{{0:{0}g}}'.format(self.ndigit)
-        else:
-            self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self.ndigit)
         self.element_list_changed.emit()
 
     @pyqtSlot(int)
@@ -3035,16 +3019,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         w1 = [
             self.update_rate_cbb, self.apply_btn, self.select_all_btn,
             self.deselect_all_btn, self.invert_selection_btn,
-            self.single_update_btn, self.auto_ndigit_chkbox
+            self.single_update_btn
         ]
         if is_single:
             w1.append(self.update_ctrl_btn)
             w1.append(self.snp_dock)
         [i.setDisabled(status == 'START') for i in w1]
-        # auto ndigit
-        for o in (self.ndigit_sbox, self.ndigit_lbl):
-            o.setDisabled(status == 'START'
-                          or self.auto_ndigit_chkbox.isChecked())
 
     def set_widgets_status_for_applying(self, status):
         """Set widgets status for applying.
