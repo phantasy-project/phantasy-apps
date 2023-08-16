@@ -18,6 +18,7 @@ def read_app_config(config_file: str = None):
     r : dict
         A dict as the app configurations.
     """
+    # all keys startwith _ will not be persistent
     if config_file is None:
         config_file = find_dconf("settings_manager", "settings_manager.toml")
     print(f"Settings Manager: loading configurations from '{config_file}'.")

@@ -64,7 +64,7 @@ COLUMN_NAMES2 = [
     f'SavedSet\n({X0})',
     f'LiveRead\n({X1})',
     f'LiveSet\n({X2})',
-    f'SavedSet-LiveRead\n{DELTA}({X0},{X1})',
+    f'SavedSet-LiveRead\n({X0}-{X1})',
 #    f'{DELTA}({X0},{X2})',
     f'LiveSet-SavedSet\n({X2}-{X0})',
     f'LiveRead-LiveSet\n({X1}-{X2})',
@@ -547,12 +547,6 @@ class SettingsModel(QStandardItemModel):
         # set model
         proxy_model = _SortProxyModel(self)
         self._tv.setModel(proxy_model)
-        #
-        # hide columns: pos, dx01, tolerance, writable
-        for i in (self.i_pos, self.i_val0_rd, self.i_tol, self.i_writable,
-                  self.i_ref_st, self.i_dstref, self.i_dval0ref,
-                  self.i_read_alm, self.i_tune_alm):
-            self._tv.setColumnHidden(i, True)
         #
         self.__post_init_ui()
 

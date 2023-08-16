@@ -65,6 +65,7 @@ from .utils import TBTN_STY_REGULAR
 from .utils import TBTN_STY_GOLDEN
 from .utils import SettingsModel
 from .utils import pack_settings
+from .utils import COLUMN_NAMES
 from .utils import str2float
 from .utils import get_ratio_as_string
 from .utils import VALID_FILTER_KEYS
@@ -189,9 +190,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     # font
     font_changed = pyqtSignal(QFont)
-
-    # bool
-    init_settings_changed = pyqtSignal(bool)
 
     # snp saved, snpdata name, filepath
     snp_saved = pyqtSignal('QString', 'QString')
@@ -445,8 +443,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._ui_height = self.pref_dict['UI'].get('HEIGHT', 1440)
 
         self.field_init_mode = self.pref_dict['SETTINGS']['FIELD_INIT_MODE']
+        self.skip_none = self.pref_dict['SETTINGS']['SKIP_NONE']
         self.t_wait = self.pref_dict['SETTINGS']['T_WAIT']
-        self.init_settings = self.pref_dict['SETTINGS']['INIT_SETTINGS']
         self.ndigit = self.pref_dict['SETTINGS']['PRECISION']
 
         self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self.ndigit)
@@ -462,19 +460,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             'engine': self.db_engine,
             'uri': self.data_uri
         }
-        #
+
+        # hidden columns for settings view
+        hidden_col_name_list = self.pref_dict['SETTINGS']['HIDDEN_COLUMNS']
+        hidden_col_idx_list = [COLUMN_NAMES.index(i) for i in hidden_col_name_list]
+        self.pref_dict['_HIDDEN_COLUMNS_IDX'] = hidden_col_idx_list
 
         # font
         self.default_font, self.default_font_size = self.get_default_font_config(
         )
         self.font = self.default_font
-        self.pref_dict['font'] = self.font
+        self.pref_dict['_FONT'] = self.font
         self.font_changed.connect(self.on_font_changed)
 
         self.ndigit_changed.connect(self.on_ndigit_changed)
-        # init settings boolean
-        self.init_settings_changed.connect(
-            self.init_settings_chkbox.setChecked)
 
     def __preload_templates(self, temp_conf: dict):
         # preload snapshot templates.
@@ -548,7 +547,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Update font config for settings view.
         """
         self.font = font
-        self.pref_dict['font'] = font
+        self.pref_dict['_FONT'] = font
         m = self._tv.model()
         if m is None:
             return
@@ -586,30 +585,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lat = o.combined_lattice()
         self.lattice_loaded.emit(o)
 
-        # show element settings
-        if self.init_settings:  # in Preferences
-            # if init settings, show settings to the view.
-            self._elem_list = self._lat[:]
-            self.element_list_changed.emit()
-        else:
-            # WIP
-            # otherwise, user needs to 'Add Devices' to the view.
-            # self._lat.reset_settings()
-            # self._lat._elements = []
-            pass
-
-    def show_init_settings_info(self):
+    def on_notify_lattice_loaded(self):
+        # show info after a new lattice is loaded.
         if not self._post_info:
             return
-        if not self.init_settings:
-            QMessageBox.information(
-                self, "Loaded Lattice",
-                '<html><head/><body><p>Lattice is loaded, add device settings '
-                'via <span style=" font-style:italic;">Add Devices</span> or '
-                '<span style=" font-style:italic;">Load Settings </span>tools,'
-                ' or check <span style=" font-style:italic;">Initialize with '
-                'loaded lattice</span> in the right bottom window area to '
-                'list all the devices.</p></body></html>', QMessageBox.Ok)
+        QMessageBox.information(
+            self, "Loaded Lattice",
+            '<html><head/><body><p>Lattice is loaded, add device settings '
+            'via <span style=" font-style:italic;">Add Devices</span> or '
+            '<span style=" font-style:italic;">Load Settings </span>tools,'
+            ' or check <span style=" font-style:italic;">Initialize with '
+            'loaded lattice</span> in the right bottom window area to '
+            'list all the devices.</p></body></html>', QMessageBox.Ok)
 
     def _enable_widgets(self, enabled):
         for w in (self.lv_lbl, self.lv_mach_lbl, self.lv_segm_lbl,
@@ -653,6 +640,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         model.checked_items_inc_dec_updated.connect(
             self.total_number_checked_items_changed)
         model.set_model()
+        self.set_col_visibility(self.pref_dict['_HIDDEN_COLUMNS_IDX'])
         self._fld_obj = model._fld_obj
         self._fld_it = model._fld_it
 
@@ -671,6 +659,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.one_updater.finished.connect(self.on_auto_column_width)
         self.one_updater.finished.connect(loop.exit)
         loop.exec_()
+
+    def set_col_visibility(self, hidden_idx_list: list):
+        """Hide the columns for given list of column index.
+        """
+        for i in hidden_idx_list:
+            self._tv.setColumnHidden(i, True)
 
     @pyqtSlot(int, int)
     def on_settings_sts(self, i, j):
@@ -848,15 +842,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                               self._chp_blocking_px, self._chp_running_px)
         #
 
-        # set skip none reachable option as True
-        self.skip_none_chkbox.setChecked(True)
-
-        # uncheck init_settings_chkbox when init_settings_btn is unchecked
         # other slots are set in designer.
-        self.show_init_settings_btn.toggled.connect(
-            self.on_toggle_show_init_settings_btn)
-        # hide init settings hbox
-        self.show_init_settings_btn.setChecked(False)
+        self.show_adv_frame_btn.toggled.connect(
+            self.on_toggle_show_adv_frame_btn)
+        # hide adv_frame by default.
+        self.show_adv_frame_btn.setChecked(False)
         #
         # selection, check/uncheck, for settings apply
         self.select_all_btn.clicked.connect(
@@ -1090,11 +1080,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.single_update_btn.clicked.emit()
 
     @pyqtSlot(bool)
-    def on_toggle_show_init_settings_btn(self, is_checked: bool):
-        if not is_checked:
-            # uncheck init_settings_chkbox when init_settings_btn is unchecked
-            self.init_settings_chkbox.setChecked(False)
-        #
+    def on_toggle_show_adv_frame_btn(self, is_checked: bool):
         self.adv_frame.setVisible(is_checked)
 
     def on_update_filter_controls(self, snpdata):
@@ -1819,7 +1805,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             settings=self._lat.settings,
             data_source=DATA_SRC_MAP[self.field_init_mode],
             only_physics=False,
-            skip_none=self.skip_none_chkbox.isChecked())
+            skip_none=self.skip_none)
         self.settingsLoaded.emit(flat_settings, settings)
 
     def init_filter(self):
@@ -2048,7 +2034,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._lattice_load_window.latticeChanged.connect(
                 self._lattice_load_window.close)
             self._lattice_load_window.latticeChanged.connect(
-                self.show_init_settings_info)
+                self.on_notify_lattice_loaded)
         self._lattice_load_window.show()
 
     @pyqtSlot()
@@ -2217,13 +2203,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lattice_load_window.load_btn.clicked.emit()
         loop.exec_()
 
-    @pyqtSlot(bool)
-    def on_toggle_init_lattice_settings(self, enabled):
-        """If checked, to initialize device settings with entire loaded lattice.
+    @pyqtSlot()
+    def on_init_lattice_settings(self):
+        """Initialize device settings with the entire loaded lattice.
         """
-        self.init_settings = enabled
-        self.pref_dict['SETTINGS']['INIT_SETTINGS'] = enabled
-        if enabled and self._mp is not None:
+        if self._mp is not None:
             self._elem_list[:] = self._lat[:]
             self.element_list_changed.emit()
 
@@ -2240,22 +2224,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         pref_dlg = PreferencesDialog(self.pref_dict, self)
         pref_dlg.pref_changed.connect(self.on_update_pref)
         pref_dlg.visibility_changed.connect(self.on_update_visibility)
-        # pref_dlg.config_changed.connect(self.on_config_updated)
         pref_dlg.font_changed.connect(self.font_changed)
-        pref_dlg.init_settings_changed.connect(self.init_settings_changed)
+
         pref_dlg.data_uri_changed.connect(
             partial(self.on_data_uri_changed, True))
         r = pref_dlg.exec_()
 
-    @pyqtSlot(dict)
-    def on_update_pref(self, d):
-        """Update app preferences.
+    @pyqtSlot()
+    def on_update_pref(self):
+        """App config is updated.
         """
-        for k, v in d.items():
-            self.pref_dict[k].update(v)
         self.field_init_mode = self.pref_dict['SETTINGS']['FIELD_INIT_MODE']
         self.t_wait = self.pref_dict['SETTINGS']['T_WAIT']
-        self.init_settings = self.pref_dict['SETTINGS']['INIT_SETTINGS']
         ndigit = self.pref_dict['SETTINGS']['PRECISION']
         if ndigit != self.ndigit:
             self.ndigit_changed.emit(ndigit)
@@ -3288,8 +3268,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.on_save_settings(snp_data)
 
     @pyqtSlot(int, bool)
-    def on_update_visibility(self, idx, f):
-        self._tv.setColumnHidden(idx, f)
+    def on_update_visibility(self, idx: int, is_hidden: bool):
+        self._tv.setColumnHidden(idx, is_hidden)
 
     def turn_off_updater_if_necessary(self):
         # obsoleted.

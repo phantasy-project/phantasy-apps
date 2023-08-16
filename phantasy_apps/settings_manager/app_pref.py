@@ -37,17 +37,11 @@ def _read_data_in_tmp_file(data: str):
 
 class PreferencesDialog(QDialog, Ui_Dialog):
 
-    pref_changed = pyqtSignal(dict)
+    pref_changed = pyqtSignal()
     visibility_changed = pyqtSignal(int, bool)
-
-    # config, ts, ms, elem pv
-    config_changed = pyqtSignal()
 
     # font
     font_changed = pyqtSignal(QFont)
-
-    # bool
-    init_settings_changed = pyqtSignal(bool)
 
     # data uri changed
     data_uri_changed = pyqtSignal('QString')
@@ -56,6 +50,8 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         super(self.__class__, self).__init__()
         self.parent = parent
 
+        # point to original one in parent
+        # all changes reflect in parent
         self.pref_dict = preference_dict
 
         # UI
@@ -76,18 +72,22 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         # t_wait in second
         t_wait = self.pref_dict['SETTINGS']['T_WAIT']
         self.apply_delt_dsbox.setValue(t_wait)
+        self.apply_delt_dsbox.valueChanged.connect(self.on_apply_delt_changed)
 
-        # init_settings bool
-        init_settings = self.pref_dict['SETTINGS']['INIT_SETTINGS']
-        self.init_settings_chkbox.setChecked(init_settings)
+        # init snapshot
+        skip_none = self.pref_dict['SETTINGS']['SKIP_NONE']
+        self.init_snp_btn.clicked.connect(self.parent.on_init_lattice_settings)
+        self.skip_none_chkbox.toggled.connect(self.on_toggle_skip_none)
 
         # tolerance
         tol = self.pref_dict['SETTINGS']['TOLERANCE']
         self.tol_dsbox.setValue(tol)
+        self.tol_dsbox.valueChanged.connect(self.on_tol_changed)
 
         # ndigits
         ndigit = self.pref_dict['SETTINGS']['PRECISION']
         self.ndigit_sbox.setValue(ndigit)
+        self.ndigit_sbox.valueChanged.connect(self.on_ndigit_changed)
 
         # data source type
         dsrc_mode = self.pref_dict['DATA_SOURCE']['TYPE']
@@ -100,7 +100,7 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         dsrc_uri = self.pref_dict['DATA_SOURCE']['URI']
         self.set_uri(dsrc_uri, dsrc_mode)
 
-        # machstate
+        # machine state
         msconf_path = self.pref_dict['MACH_STATE']['CONFIG_PATH']
         self.msconf_path_lineEdit.setText(msconf_path)
         msconf_daq_rate = self.pref_dict['MACH_STATE']['DAQ_RATE']
@@ -108,14 +108,18 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         msconf_daq_nshot = self.pref_dict['MACH_STATE']['DAQ_NSHOT']
         self.msconf_nshot_cbb.setCurrentText(str(msconf_daq_nshot))
         self.msconf_open_btn.clicked.connect(self.on_read_ms_config)
+        self.msconf_nshot_cbb.currentTextChanged.connect(self.on_daq_nshot_changed)
+        self.msconf_rate_cbb.currentTextChanged.connect(self.on_daq_rate_changed)
 
         # column visibility
+        hidden_col_idx_list = self.pref_dict['_HIDDEN_COLUMNS_IDX']
         tv = self.parent._tv
         layout = self.col_visibility_gbox
         for idx, name in enumerate(COLUMN_NAMES):
             btn = QPushButton(name, self)
+            btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
             btn.setCheckable(True)
-            btn.setChecked(tv.isColumnHidden(idx))
+            btn.setChecked(idx in hidden_col_idx_list)
             btn.toggled.connect(partial(self.on_toggle_visibility, idx))
             i = idx // 4
             j = idx - 4 * i
@@ -131,19 +135,19 @@ class PreferencesDialog(QDialog, Ui_Dialog):
 
         # font
         self.font_changed.connect(self.on_font_changed)
-        font = self.pref_dict['font']
+        font = self.pref_dict['_FONT']
         self.font_changed.emit(font)
 
     def set_uri(self, path: str, dsrc_mode: str):
         if not os.access(os.path.abspath(os.path.expanduser(path)), os.W_OK):
             return
         if dsrc_mode == 'DB':
-            self.dbpath_lineEdit.setText(path)
+            self.dbpath_lbl.setText(path)
         else:
-            self.wdir_lineEdit.setText(path)
-        self.data_uri_changed.emit(path)
+            self.wdir_lbl.setText(path)
         if self.pref_dict['DATA_SOURCE']['URI'] != path:
             self.pref_dict['DATA_SOURCE']['URI'] = path
+            self.data_uri_changed.emit(path)
 
     @pyqtSlot()
     def on_reset_app_config(self):
@@ -176,41 +180,49 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         hide, otherwise show.
         """
         self.visibility_changed.emit(idx, f)
+        if f: # hidden
+            self.pref_dict['_HIDDEN_COLUMNS_IDX'].append(idx)
+            self.pref_dict['SETTINGS']['HIDDEN_COLUMNS'].append(COLUMN_NAMES[idx])
+        else: # shown
+            self.pref_dict['_HIDDEN_COLUMNS_IDX'].remove(idx)
+            self.pref_dict['SETTINGS']['HIDDEN_COLUMNS'].remove(COLUMN_NAMES[idx])
 
     @pyqtSlot(bool)
     def on_toggle_mode(self, f):
         if f:
             self.mode = self.sender().text().lower()
+            self.pref_dict['SETTINGS']['FIELD_INIT_MODE'] = self.mode
+
+    @pyqtSlot(float)
+    def on_tol_changed(self, tol: float):
+        """Tolerance is changed.
+        """
+        # change tolerance via PVs.
+        pass
+
+    @pyqtSlot(int)
+    def on_ndigit_changed(self, n: int):
+        """Float Precision is changed.
+        """
+        self.pref_dict['SETTINGS']['PRECISION'] = n
 
     @pyqtSlot()
     def on_click_ok(self):
-        self.pref_changed.emit(self.get_config())
+        self.pref_changed.emit()
         self.close()
         self.setResult(QDialog.Accepted)
 
-    def get_config(self):
-        return {
-                'SETTINGS':
-                    {'FIELD_INIT_MODE': self.mode,
-                     'T_WAIT': self.apply_delt_dsbox.value(),
-                     'INIT_SETTINGS': self.init_settings_chkbox.isChecked(),
-                     'TOLERANCE': self.tol_dsbox.value(),
-                     'PRECISION': self.ndigit_sbox.value(),
-                     },
-                'MACH_STATE':
-                    {
-                        'DAQ_RATE': int(self.msconf_rate_cbb.currentText()),
-                        'DAQ_NSHOT': int(self.msconf_nshot_cbb.currentText()),
-                    }
-                }
-
-    @pyqtSlot(bool)
-    def on_init_settings(self, f):
-        """If toggled, initialize settings view with the whole loaded
-        lattice, otherwise the user should add elements into view.
+    @pyqtSlot('QString')
+    def on_daq_nshot_changed(self, s: str):
+        """DAQ nshot is changed.
         """
-        self.init_settings = f
-        self.init_settings_changed.emit(f)
+        self.pref_dict['MACH_STATE']['DAQ_NSHOT'] = int(s)
+
+    @pyqtSlot('QString')
+    def on_daq_rate_changed(self, s: str):
+        """DAQ rate is changed.
+        """
+        self.pref_dict['MACH_STATE']['DAQ_RATE'] = int(s)
 
     @pyqtSlot()
     def on_select_font(self):
@@ -224,13 +236,13 @@ class PreferencesDialog(QDialog, Ui_Dialog):
     def on_font_changed(self, font):
         self.font = font
         self.font_sample_lbl.setText('{},{}pt'.format(font.family(),
-                                                    font.pointSize()))
+                                                      font.pointSize()))
         self.font_sample_lbl.setFont(font)
 
     @pyqtSlot('QString')
     def on_dsrc_mode_changed(self, s):
-        objs_file = (self.wdir_lbl, self.wdir_lineEdit, self.wdir_btn)
-        objs_db = (self.dbpath_lbl, self.dbpath_lineEdit, self.dbpath_btn)
+        objs_file = (self.wdir_title_lbl, self.wdir_lbl, self.wdir_btn)
+        objs_db = (self.dbpath_title_lbl, self.dbpath_lbl, self.dbpath_btn)
         [o.setVisible(s=='DB') for o in objs_db]
         [o.setVisible(s!='DB') for o in objs_file]
 
@@ -249,3 +261,16 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         if filepath is None:
             return
         self.set_uri(filepath, 'DB')
+
+    @pyqtSlot(bool)
+    def on_toggle_skip_none(self, is_skip_none: bool):
+        """If skip the non-reachable device settings or not.
+        """
+        self.pref_dict['SETTINGS']['SKIP_NONE'] = is_skip_none
+
+    @pyqtSlot(float)
+    def on_apply_delt_changed(self, t: float):
+        """Delta t in seconds for settings apply.
+        """
+        self.pref_dict['SETTINGS']['T_WAIT'] = t
+
