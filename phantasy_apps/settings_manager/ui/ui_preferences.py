@@ -14,7 +14,7 @@ class Ui_Dialog(object):
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(872, 518)
+        Dialog.resize(941, 518)
         self.gridLayout_9 = QtWidgets.QGridLayout(Dialog)
         self.gridLayout_9.setContentsMargins(4, 10, 4, 4)
         self.gridLayout_9.setSpacing(4)
@@ -27,117 +27,6 @@ class Ui_Dialog(object):
         self.gridLayout.setContentsMargins(4, 10, 4, 4)
         self.gridLayout.setSpacing(4)
         self.gridLayout.setObjectName("gridLayout")
-        self.ndigit_sbox = QtWidgets.QSpinBox(self.data_tab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.ndigit_sbox.sizePolicy().hasHeightForWidth())
-        self.ndigit_sbox.setSizePolicy(sizePolicy)
-        self.ndigit_sbox.setMaximum(20)
-        self.ndigit_sbox.setProperty("value", 3)
-        self.ndigit_sbox.setObjectName("ndigit_sbox")
-        self.gridLayout.addWidget(self.ndigit_sbox, 6, 1, 1, 1)
-        self.dsrc_mode_cbb = QtWidgets.QComboBox(self.data_tab)
-        self.dsrc_mode_cbb.setObjectName("dsrc_mode_cbb")
-        self.dsrc_mode_cbb.addItem("")
-        self.dsrc_mode_cbb.addItem("")
-        self.gridLayout.addWidget(self.dsrc_mode_cbb, 7, 1, 1, 1)
-        self.tol_dsbox = QtWidgets.QDoubleSpinBox(self.data_tab)
-        self.tol_dsbox.setEnabled(False)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.tol_dsbox.sizePolicy().hasHeightForWidth())
-        self.tol_dsbox.setSizePolicy(sizePolicy)
-        self.tol_dsbox.setSingleStep(0.1)
-        self.tol_dsbox.setProperty("value", 0.1)
-        self.tol_dsbox.setObjectName("tol_dsbox")
-        self.gridLayout.addWidget(self.tol_dsbox, 5, 1, 1, 1)
-        self.label_3 = QtWidgets.QLabel(self.data_tab)
-        self.label_3.setObjectName("label_3")
-        self.gridLayout.addWidget(self.label_3, 7, 0, 1, 1)
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.wdir_lineEdit = QtWidgets.QLineEdit(self.data_tab)
-        self.wdir_lineEdit.setObjectName("wdir_lineEdit")
-        self.horizontalLayout_3.addWidget(self.wdir_lineEdit)
-        self.wdir_btn = QtWidgets.QPushButton(self.data_tab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.wdir_btn.sizePolicy().hasHeightForWidth())
-        self.wdir_btn.setSizePolicy(sizePolicy)
-        self.wdir_btn.setObjectName("wdir_btn")
-        self.horizontalLayout_3.addWidget(self.wdir_btn)
-        self.gridLayout.addLayout(self.horizontalLayout_3, 10, 1, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(20, 40,
-                                           QtWidgets.QSizePolicy.Minimum,
-                                           QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem, 11, 0, 1, 1)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setSpacing(4)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.model_rbtn = QtWidgets.QRadioButton(self.data_tab)
-        self.model_rbtn.setChecked(False)
-        self.model_rbtn.setObjectName("model_rbtn")
-        self.field_init_mode = QtWidgets.QButtonGroup(Dialog)
-        self.field_init_mode.setObjectName("field_init_mode")
-        self.field_init_mode.addButton(self.model_rbtn)
-        self.horizontalLayout.addWidget(self.model_rbtn)
-        self.live_rbtn = QtWidgets.QRadioButton(self.data_tab)
-        self.live_rbtn.setChecked(True)
-        self.live_rbtn.setObjectName("live_rbtn")
-        self.field_init_mode.addButton(self.live_rbtn)
-        self.horizontalLayout.addWidget(self.live_rbtn)
-        self.gridLayout.addLayout(self.horizontalLayout, 3, 1, 1, 1)
-        self.wdir_lbl = QtWidgets.QLabel(self.data_tab)
-        self.wdir_lbl.setObjectName("wdir_lbl")
-        self.gridLayout.addWidget(self.wdir_lbl, 10, 0, 1, 1)
-        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.dbpath_lineEdit = QtWidgets.QLineEdit(self.data_tab)
-        self.dbpath_lineEdit.setObjectName("dbpath_lineEdit")
-        self.horizontalLayout_5.addWidget(self.dbpath_lineEdit)
-        self.dbpath_btn = QtWidgets.QPushButton(self.data_tab)
-        self.dbpath_btn.setObjectName("dbpath_btn")
-        self.horizontalLayout_5.addWidget(self.dbpath_btn)
-        self.gridLayout.addLayout(self.horizontalLayout_5, 8, 1, 1, 1)
-        self.dbpath_lbl = QtWidgets.QLabel(self.data_tab)
-        self.dbpath_lbl.setObjectName("dbpath_lbl")
-        self.gridLayout.addWidget(self.dbpath_lbl, 8, 0, 1, 1)
-        self.init_settings_chkbox = QtWidgets.QCheckBox(self.data_tab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.init_settings_chkbox.sizePolicy().hasHeightForWidth())
-        self.init_settings_chkbox.setSizePolicy(sizePolicy)
-        self.init_settings_chkbox.setObjectName("init_settings_chkbox")
-        self.gridLayout.addWidget(self.init_settings_chkbox, 0, 0, 1, 2)
-        self.label_72 = QtWidgets.QLabel(self.data_tab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_72.sizePolicy().hasHeightForWidth())
-        self.label_72.setSizePolicy(sizePolicy)
-        self.label_72.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft
-                                   | QtCore.Qt.AlignVCenter)
-        self.label_72.setObjectName("label_72")
-        self.gridLayout.addWidget(self.label_72, 3, 0, 1, 1)
-        self.label = QtWidgets.QLabel(self.data_tab)
-        self.label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft
-                                | QtCore.Qt.AlignVCenter)
-        self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 4, 0, 1, 1)
         self.apply_delt_dsbox = QtWidgets.QDoubleSpinBox(self.data_tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -151,13 +40,113 @@ class Ui_Dialog(object):
         self.apply_delt_dsbox.setSingleStep(0.05)
         self.apply_delt_dsbox.setProperty("value", 0.05)
         self.apply_delt_dsbox.setObjectName("apply_delt_dsbox")
-        self.gridLayout.addWidget(self.apply_delt_dsbox, 4, 1, 1, 1)
-        self.label_4 = QtWidgets.QLabel(self.data_tab)
-        self.label_4.setObjectName("label_4")
-        self.gridLayout.addWidget(self.label_4, 6, 0, 1, 1)
+        self.gridLayout.addWidget(self.apply_delt_dsbox, 2, 1, 1, 1)
+        self.label_3 = QtWidgets.QLabel(self.data_tab)
+        self.label_3.setObjectName("label_3")
+        self.gridLayout.addWidget(self.label_3, 5, 0, 1, 1)
         self.label_2 = QtWidgets.QLabel(self.data_tab)
         self.label_2.setObjectName("label_2")
-        self.gridLayout.addWidget(self.label_2, 5, 0, 1, 1)
+        self.gridLayout.addWidget(self.label_2, 3, 0, 1, 1)
+        self.dbpath_title_lbl = QtWidgets.QLabel(self.data_tab)
+        self.dbpath_title_lbl.setObjectName("dbpath_title_lbl")
+        self.gridLayout.addWidget(self.dbpath_title_lbl, 6, 0, 1, 1)
+        self.ndigit_sbox = QtWidgets.QSpinBox(self.data_tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.ndigit_sbox.sizePolicy().hasHeightForWidth())
+        self.ndigit_sbox.setSizePolicy(sizePolicy)
+        self.ndigit_sbox.setMaximum(20)
+        self.ndigit_sbox.setProperty("value", 3)
+        self.ndigit_sbox.setObjectName("ndigit_sbox")
+        self.gridLayout.addWidget(self.ndigit_sbox, 4, 1, 1, 1)
+        self.tol_dsbox = QtWidgets.QDoubleSpinBox(self.data_tab)
+        self.tol_dsbox.setEnabled(False)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.tol_dsbox.sizePolicy().hasHeightForWidth())
+        self.tol_dsbox.setSizePolicy(sizePolicy)
+        self.tol_dsbox.setSingleStep(0.1)
+        self.tol_dsbox.setProperty("value", 0.1)
+        self.tol_dsbox.setObjectName("tol_dsbox")
+        self.gridLayout.addWidget(self.tol_dsbox, 3, 1, 1, 1)
+        spacerItem = QtWidgets.QSpacerItem(20, 40,
+                                           QtWidgets.QSizePolicy.Minimum,
+                                           QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem, 9, 0, 1, 1)
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_5.setSpacing(4)
+        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
+        self.dbpath_lbl = QtWidgets.QLabel(self.data_tab)
+        self.dbpath_lbl.setStyleSheet("QLabel {\n"
+                                      "    border: 1px solid gray;\n"
+                                      "    background-color: #FFFFFF;\n"
+                                      "}")
+        self.dbpath_lbl.setText("")
+        self.dbpath_lbl.setScaledContents(False)
+        self.dbpath_lbl.setWordWrap(True)
+        self.dbpath_lbl.setOpenExternalLinks(False)
+        self.dbpath_lbl.setTextInteractionFlags(
+            QtCore.Qt.LinksAccessibleByMouse | QtCore.Qt.TextSelectableByMouse)
+        self.dbpath_lbl.setObjectName("dbpath_lbl")
+        self.horizontalLayout_5.addWidget(self.dbpath_lbl)
+        self.dbpath_btn = QtWidgets.QPushButton(self.data_tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.dbpath_btn.sizePolicy().hasHeightForWidth())
+        self.dbpath_btn.setSizePolicy(sizePolicy)
+        self.dbpath_btn.setObjectName("dbpath_btn")
+        self.horizontalLayout_5.addWidget(self.dbpath_btn)
+        self.gridLayout.addLayout(self.horizontalLayout_5, 6, 1, 1, 1)
+        self.dsrc_mode_cbb = QtWidgets.QComboBox(self.data_tab)
+        self.dsrc_mode_cbb.setObjectName("dsrc_mode_cbb")
+        self.dsrc_mode_cbb.addItem("")
+        self.dsrc_mode_cbb.addItem("")
+        self.gridLayout.addWidget(self.dsrc_mode_cbb, 5, 1, 1, 1)
+        self.label = QtWidgets.QLabel(self.data_tab)
+        self.label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft
+                                | QtCore.Qt.AlignVCenter)
+        self.label.setObjectName("label")
+        self.gridLayout.addWidget(self.label, 2, 0, 1, 1)
+        self.wdir_title_lbl = QtWidgets.QLabel(self.data_tab)
+        self.wdir_title_lbl.setObjectName("wdir_title_lbl")
+        self.gridLayout.addWidget(self.wdir_title_lbl, 8, 0, 1, 1)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setSpacing(4)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.wdir_lbl = QtWidgets.QLabel(self.data_tab)
+        self.wdir_lbl.setStyleSheet("QLabel {\n"
+                                    "    border: 1px solid gray;\n"
+                                    "    background-color: #FFFFFF;\n"
+                                    "}")
+        self.wdir_lbl.setText("")
+        self.wdir_lbl.setWordWrap(True)
+        self.wdir_lbl.setTextInteractionFlags(
+            QtCore.Qt.LinksAccessibleByMouse | QtCore.Qt.TextSelectableByMouse)
+        self.wdir_lbl.setObjectName("wdir_lbl")
+        self.horizontalLayout_3.addWidget(self.wdir_lbl)
+        self.wdir_btn = QtWidgets.QPushButton(self.data_tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.wdir_btn.sizePolicy().hasHeightForWidth())
+        self.wdir_btn.setSizePolicy(sizePolicy)
+        self.wdir_btn.setObjectName("wdir_btn")
+        self.horizontalLayout_3.addWidget(self.wdir_btn)
+        self.gridLayout.addLayout(self.horizontalLayout_3, 8, 1, 1, 1)
+        self.label_4 = QtWidgets.QLabel(self.data_tab)
+        self.label_4.setObjectName("label_4")
+        self.gridLayout.addWidget(self.label_4, 4, 0, 1, 1)
         self.tabWidget.addTab(self.data_tab, "")
         self.ms_tab = QtWidgets.QWidget()
         self.ms_tab.setObjectName("ms_tab")
@@ -171,6 +160,7 @@ class Ui_Dialog(object):
             "    border:none;\n"
             "    background-color: rgb(239, 239, 239);\n"
             "}")
+        self.plainTextEdit.setReadOnly(True)
         self.plainTextEdit.setObjectName("plainTextEdit")
         self.verticalLayout.addWidget(self.plainTextEdit)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
@@ -317,17 +307,68 @@ class Ui_Dialog(object):
         self.appconf_path_lineEdit.setObjectName("appconf_path_lineEdit")
         self.gridLayout_3.addWidget(self.appconf_path_lineEdit, 1, 1, 1, 1)
         self.tabWidget.addTab(self.config_tab, "")
+        self.adv_tab = QtWidgets.QWidget()
+        self.adv_tab.setObjectName("adv_tab")
+        self.gridLayout_6 = QtWidgets.QGridLayout(self.adv_tab)
+        self.gridLayout_6.setObjectName("gridLayout_6")
+        spacerItem5 = QtWidgets.QSpacerItem(20, 40,
+                                            QtWidgets.QSizePolicy.Minimum,
+                                            QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_6.addItem(spacerItem5, 2, 0, 1, 1)
+        spacerItem6 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout_6.addItem(spacerItem6, 0, 1, 1, 1)
+        self.groupBox_2 = QtWidgets.QGroupBox(self.adv_tab)
+        self.groupBox_2.setObjectName("groupBox_2")
+        self.gridLayout_5 = QtWidgets.QGridLayout(self.groupBox_2)
+        self.gridLayout_5.setContentsMargins(4, 10, 4, 4)
+        self.gridLayout_5.setSpacing(4)
+        self.gridLayout_5.setObjectName("gridLayout_5")
+        self.label_73 = QtWidgets.QLabel(self.groupBox_2)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_73.sizePolicy().hasHeightForWidth())
+        self.label_73.setSizePolicy(sizePolicy)
+        self.label_73.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft
+                                   | QtCore.Qt.AlignVCenter)
+        self.label_73.setObjectName("label_73")
+        self.gridLayout_5.addWidget(self.label_73, 0, 0, 1, 1)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.model_rbtn = QtWidgets.QRadioButton(self.groupBox_2)
+        self.model_rbtn.setEnabled(False)
+        self.model_rbtn.setChecked(True)
+        self.model_rbtn.setObjectName("model_rbtn")
+        self.horizontalLayout.addWidget(self.model_rbtn)
+        self.live_rbtn = QtWidgets.QRadioButton(self.groupBox_2)
+        self.live_rbtn.setEnabled(False)
+        self.live_rbtn.setChecked(False)
+        self.live_rbtn.setObjectName("live_rbtn")
+        self.horizontalLayout.addWidget(self.live_rbtn)
+        self.gridLayout_5.addLayout(self.horizontalLayout, 0, 1, 1, 1)
+        self.init_snp_btn = QtWidgets.QPushButton(self.groupBox_2)
+        self.init_snp_btn.setObjectName("init_snp_btn")
+        self.gridLayout_5.addWidget(self.init_snp_btn, 0, 2, 1, 1)
+        self.gridLayout_6.addWidget(self.groupBox_2, 0, 0, 1, 1)
+        self.label_12 = QtWidgets.QLabel(self.adv_tab)
+        self.label_12.setObjectName("label_12")
+        self.gridLayout_6.addWidget(self.label_12, 1, 0, 1, 1)
+        self.skip_none_chkbox = QtWidgets.QCheckBox(self.adv_tab)
+        self.skip_none_chkbox.setObjectName("skip_none_chkbox")
+        self.gridLayout_6.addWidget(self.skip_none_chkbox, 1, 1, 1, 1)
+        self.tabWidget.addTab(self.adv_tab, "")
         self.gridLayout_9.addWidget(self.tabWidget, 0, 0, 1, 1)
         self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_12.setSpacing(4)
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
-        spacerItem5 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem7 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_12.addItem(spacerItem5)
-        self.cancel_btn = QtWidgets.QPushButton(Dialog)
-        self.cancel_btn.setObjectName("cancel_btn")
-        self.horizontalLayout_12.addWidget(self.cancel_btn)
+        self.horizontalLayout_12.addItem(spacerItem7)
         self.ok_btn = QtWidgets.QPushButton(Dialog)
         self.ok_btn.setObjectName("ok_btn")
         self.horizontalLayout_12.addWidget(self.ok_btn)
@@ -336,65 +377,22 @@ class Ui_Dialog(object):
         self.retranslateUi(Dialog)
         self.tabWidget.setCurrentIndex(0)
         self.ok_btn.clicked.connect(Dialog.on_click_ok)  # type: ignore
-        self.cancel_btn.clicked.connect(Dialog.reject)  # type: ignore
-        self.live_rbtn.toggled['bool'].connect(
-            Dialog.on_toggle_mode)  # type: ignore
-        self.model_rbtn.toggled['bool'].connect(
-            Dialog.on_toggle_mode)  # type: ignore
-        self.init_settings_chkbox.toggled['bool'].connect(
-            Dialog.on_init_settings)  # type: ignore
         self.select_font_btn.clicked.connect(
             Dialog.on_select_font)  # type: ignore
         self.wdir_btn.clicked.connect(Dialog.on_choose_wdir)  # type: ignore
         self.dbpath_btn.clicked.connect(
             Dialog.on_choose_dbfile)  # type: ignore
+        self.model_rbtn.toggled['bool'].connect(
+            Dialog.on_toggle_mode)  # type: ignore
+        self.live_rbtn.toggled['bool'].connect(
+            Dialog.on_toggle_mode)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Dialog)
-        Dialog.setTabOrder(self.ok_btn, self.cancel_btn)
-        Dialog.setTabOrder(self.cancel_btn, self.model_rbtn)
-        Dialog.setTabOrder(self.model_rbtn, self.live_rbtn)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.dsrc_mode_cbb.setItemText(0, _translate("Dialog", "DB"))
-        self.dsrc_mode_cbb.setItemText(1, _translate("Dialog", "FILE"))
-        self.tol_dsbox.setToolTip(
-            _translate(
-                "Dialog",
-                "<html><head/><body><p>Use <span style=\" font-style:italic;\">Tolerance</span> column to adjust the values, they are being managed with PVs now.</p></body></html>"
-            ))
-        self.label_3.setText(_translate("Dialog", "Data source type"))
-        self.wdir_btn.setText(_translate("Dialog", "Browse"))
-        self.model_rbtn.setToolTip(
-            _translate(
-                "Dialog",
-                "<html><head/><body><p>Initialize field set value from pre-defined \'model\' environment, which is maintained by \'phantasy-machines\' package.</p></body></html>"
-            ))
-        self.model_rbtn.setText(_translate("Dialog", "Model"))
-        self.live_rbtn.setToolTip(
-            _translate(
-                "Dialog",
-                "<html><head/><body><p>Initialize field set value by pulling the live device settings from controls network.</p></body></html>"
-            ))
-        self.live_rbtn.setText(_translate("Dialog", "Live"))
-        self.wdir_lbl.setText(_translate("Dialog", "Working directory"))
-        self.dbpath_btn.setText(_translate("Dialog", "Browse"))
-        self.dbpath_lbl.setText(_translate("Dialog", "Database path"))
-        self.init_settings_chkbox.setToolTip(
-            _translate(
-                "Dialog",
-                "<html><head/><body><p>If this option is enabled, settings will be listed after loading lattice.</p></body></html>"
-            ))
-        self.init_settings_chkbox.setText(
-            _translate(
-                "Dialog",
-                "Initialize device settings with the whole loaded lattice"))
-        self.label_72.setText(
-            _translate("Dialog", "Initial current field set value mode"))
-        self.label.setText(
-            _translate("Dialog", "Time wait for batch settings apply"))
         self.apply_delt_dsbox.setSuffix(_translate("Dialog", " second"))
-        self.label_4.setText(_translate("Dialog", "Float number precision"))
+        self.label_3.setText(_translate("Dialog", "Data source type"))
         self.label_2.setToolTip(
             _translate(
                 "Dialog",
@@ -402,6 +400,20 @@ class Ui_Dialog(object):
             ))
         self.label_2.setText(
             _translate("Dialog", "Allowed absolute discrepancy"))
+        self.dbpath_title_lbl.setText(_translate("Dialog", "Database path"))
+        self.tol_dsbox.setToolTip(
+            _translate(
+                "Dialog",
+                "<html><head/><body><p>Use <span style=\" font-style:italic;\">Tolerance</span> column to adjust the values, they are being managed with PVs now.</p></body></html>"
+            ))
+        self.dbpath_btn.setText(_translate("Dialog", "Browse"))
+        self.dsrc_mode_cbb.setItemText(0, _translate("Dialog", "DB"))
+        self.dsrc_mode_cbb.setItemText(1, _translate("Dialog", "FILE"))
+        self.label.setText(
+            _translate("Dialog", "Time wait for batch settings apply"))
+        self.wdir_title_lbl.setText(_translate("Dialog", "Working directory"))
+        self.wdir_btn.setText(_translate("Dialog", "Browse"))
+        self.label_4.setText(_translate("Dialog", "Float number precision"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.data_tab),
                                   _translate("Dialog", "Data"))
         self.plainTextEdit.setPlainText(
@@ -409,7 +421,7 @@ class Ui_Dialog(object):
                 "Dialog",
                 "The configuration file for machine state capturing is maintained at one single location, changing it will affect all machine state fetching thereafter.\n"
                 "\n"
-                "If you\'d like to use a customized version, just copy and modify this file, and edit it in your Settings Manager configuration file, which is located at ~/.phantasy/settings_manager.toml, if it does exist, push Reset button in Configurations -> App Configuration File."
+                "If you\'d like to use a customized version, just copy and modify this file, and edit it in the app configuration file of Settings Manager."
             ))
         self.label_11.setText(_translate("Dialog", "Configfile in use"))
         self.msconf_open_btn.setText(_translate("Dialog", "Read"))
@@ -446,7 +458,34 @@ class Ui_Dialog(object):
         self.view_app_config_btn.setText(_translate("Dialog", "Read"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.config_tab),
                                   _translate("Dialog", "App Configs"))
-        self.cancel_btn.setText(_translate("Dialog", "Cancel"))
+        self.groupBox_2.setTitle(
+            _translate("Dialog", "Snapshot Initialization and Loading"))
+        self.label_73.setText(_translate("Dialog",
+                                         "Initial field values from"))
+        self.model_rbtn.setToolTip(
+            _translate(
+                "Dialog",
+                "<html><head/><body><p>Initialize field set value from pre-defined \'model\' environment, which is maintained by \'phantasy-machines\' package.</p></body></html>"
+            ))
+        self.model_rbtn.setText(_translate("Dialog", "Model"))
+        self.live_rbtn.setToolTip(
+            _translate(
+                "Dialog",
+                "<html><head/><body><p>Initialize field set value by pulling the live device settings from controls network.</p></body></html>"
+            ))
+        self.live_rbtn.setText(_translate("Dialog", "Live"))
+        self.init_snp_btn.setText(_translate("Dialog", "Initialize"))
+        self.label_12.setText(
+            _translate("Dialog", "Whether show non-reachable device settings"))
+        self.skip_none_chkbox.setToolTip(
+            _translate(
+                "Dialog",
+                "<html><head/><body><p>Skip devices that are not reachable (when initializing with loaded lattice).</p></body></html>"
+            ))
+        self.skip_none_chkbox.setText(
+            _translate("Dialog", "Skip Non-Reachables"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.adv_tab),
+                                  _translate("Dialog", "Advanced"))
         self.ok_btn.setText(_translate("Dialog", "OK"))
 
 
