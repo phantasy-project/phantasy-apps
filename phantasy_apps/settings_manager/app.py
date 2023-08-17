@@ -85,15 +85,8 @@ from .config import sym2z
 from .utils import SetLogMessager
 from .utils import EffSetLogMsgContainer
 
-# scaling eligible field names:
-SCALABLE_FIELD_NAMES = ('I', 'V', 'AMP', 'AMP1', 'AMP2', 'AMP3', 'I_TC')
 # scaling op
 SCALE_OP_MAP = ('x', '+')  # simple form for {0: 'x', 1: '+'}
-#
-SUPPORT_FTYPES = ("xlsx", "csv", "h5")
-
-# sb pos of stripper (carbon) [m]
-STRIPPER_POS = 224.903684519998
 
 PX_SIZE = 24
 ION_ICON_SIZE = 48
@@ -999,7 +992,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # pos filter button, apply logic OR for pos1 and pos2 filter
         self.pos_filter_btn.clicked.connect(
-            lambda: self.pos_dspin.setValue(STRIPPER_POS))
+            lambda: self.pos_dspin.setValue(self.pref_dict['SETTINGS']['STRIPPER_POS']))
         self.pos_filter_btn.clicked.emit()
         self.pos_filter_btn.clicked.connect(
             self.filter_lineEdit.editingFinished)
@@ -1938,12 +1931,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         idx_src, settings, new_fval0 = tuple_idx_settings
         elem, fname, fld, fval0 = settings
         ename = elem.name
-        # print("New fval: {}, fval0: {}".format(new_fval0, fval0))
         if sop == 'x':
-            if fname in SCALABLE_FIELD_NAMES:
+            if fname in self.pref_dict['SETTINGS']['SCALABLE_FIELD_NAMES']:
                 fval_to_set = new_fval0 * sf
             else:
                 fval_to_set = new_fval0
+                sf = 1.0
         elif sop == '+':
             fval_to_set = new_fval0 + sf
         #
