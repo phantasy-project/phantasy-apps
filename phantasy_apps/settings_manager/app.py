@@ -440,8 +440,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._ui_width = self.pref_dict['UI'].get('WIDTH', 1920)
         self._ui_height = self.pref_dict['UI'].get('HEIGHT', 1440)
 
-        self.field_init_mode = self.pref_dict['SETTINGS']['FIELD_INIT_MODE']
-        self.skip_none = self.pref_dict['SETTINGS']['SKIP_NONE']
         self.t_wait = self.pref_dict['SETTINGS']['T_WAIT']
         self.ndigit = self.pref_dict['SETTINGS']['PRECISION']
 
@@ -1811,9 +1809,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self._elem_list,
             self._lat,
             settings=self._lat.settings,
-            data_source=DATA_SRC_MAP[self.field_init_mode],
+            data_source=DATA_SRC_MAP[self.pref_dict['SETTINGS']['FIELD_INIT_MODE']],
             only_physics=False,
-            skip_none=self.skip_none)
+            skip_none=self.pref_dict['SETTINGS']['SKIP_NONE'])
         self.settingsLoaded.emit(flat_settings, settings)
 
     def init_filter(self):
@@ -2242,7 +2240,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_update_pref(self):
         """App config is updated.
         """
-        self.field_init_mode = self.pref_dict['SETTINGS']['FIELD_INIT_MODE']
         self.t_wait = self.pref_dict['SETTINGS']['T_WAIT']
         ndigit = self.pref_dict['SETTINGS']['PRECISION']
         if ndigit != self.ndigit:

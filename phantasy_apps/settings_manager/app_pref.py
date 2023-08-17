@@ -78,6 +78,7 @@ class PreferencesDialog(QDialog, Ui_Dialog):
 
         # init snapshot
         skip_none = self.pref_dict['SETTINGS']['SKIP_NONE']
+        self.skip_none_chkbox.setChecked(skip_none)
         self.init_snp_btn.clicked.connect(self.parent.on_init_lattice_settings)
         self.skip_none_chkbox.toggled.connect(self.on_toggle_skip_none)
 
