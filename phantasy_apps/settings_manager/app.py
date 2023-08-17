@@ -11,6 +11,7 @@ import pandas as pd
 import tempfile
 import time
 import toml
+from itertools import cycle
 from collections import OrderedDict
 from datetime import datetime
 from epics import caget, caput, ca, get_pv
@@ -71,7 +72,6 @@ from .utils import get_ratio_as_string
 from .utils import VALID_FILTER_KEYS
 from .utils import VALID_FILTER_KEYS_NUM
 from .utils import SnapshotDataModel
-from .data import DEFAULT_MACHINE, DEFAULT_SEGMENT
 from .utils import ELEM_WRITE_PERM
 from .utils import NUM_LENGTH
 from .utils import BG_COLOR_GOLDEN_NO
@@ -87,6 +87,9 @@ from .utils import EffSetLogMsgContainer
 
 # scaling op
 SCALE_OP_MAP = ('x', '+')  # simple form for {0: 'x', 1: '+'}
+
+# snapshot max limit to show
+N_SNP_MAX = cycle([50, 100, 500, 'All'])
 
 PX_SIZE = 24
 ION_ICON_SIZE = 48
@@ -110,7 +113,6 @@ NOW_DT = datetime.now()
 NOW_YEAR = NOW_DT.year
 NOW_MONTH = NOW_DT.month
 NOW_DAY = NOW_DT.day
-from .conf import N_SNP_MAX
 
 # Alarm types to control, disable/enable.
 ALM_TYPE_MAP = { # [read, tune]
@@ -429,18 +431,26 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # preferences
         self.pref_dict = read_app_config(config_file)
 
-        # UI
+        # UI (runtime change not supported)
         self._ui_width = self.pref_dict['UI'].get('WIDTH', 1920)
         self._ui_height = self.pref_dict['UI'].get('HEIGHT', 1440)
 
+        #
         self.t_wait = self.pref_dict['SETTINGS']['T_WAIT']
         self.ndigit = self.pref_dict['SETTINGS']['PRECISION']
+
+        # PVs for SM IOC (runtime change not supported)
+        self.snp_name_pv = self.pref_dict['OPI']['SNP_NAME_PV']
+        self.snp_note_pv = self.pref_dict['OPI']['SNP_NOTE_PV']
+        self.snp_ion_pv = self.pref_dict['OPI']['SNP_ION_PV']
+        self.snp_author_pv = self.pref_dict['OPI']['SNP_AUTHOR_PV']
+        self.snp_publisher_pv = self.pref_dict['OPI']['SNP_PUBLISHER_PV']
 
         self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self.ndigit)
         # for field NMR, HALL probe
         self.fmt_nmr = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, 5)
 
-        # data source
+        # data source (support runtime change for uri only)
         self.dsrc_mode = self.pref_dict['DATA_SOURCE']['TYPE']
         self.db_engine = self.pref_dict['DATA_SOURCE']['DB_ENGINE']
         self.data_uri = self.pref_dict['DATA_SOURCE']['URI']
@@ -3803,12 +3813,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         snp_ion_str = data.ion_as_str()
         snp_author = data.user
         snp_note = '' if data.note == "Input note ..." else data.note
-        if snp_name != caget(SNP_NAME_PV):
-            caput(SNP_NAME_PV, snp_name, wait=False)
-            caput(SNP_NOTE_PV, snp_note, wait=False)
-            caput(SNP_ION_PV, snp_ion_str, wait=False)
-            caput(SNP_AUTHOR_PV, snp_author, wait=False)
-            caput(SNP_PUBLISHER_PV, getuser(), wait=False)
+        if snp_name != caget(self.snp_name_pv):
+            caput(self.snp_name_pv, snp_name, wait=False)
+            caput(self.snp_note_pv, snp_note, wait=False)
+            caput(self.snp_ion_pv, snp_ion_str, wait=False)
+            caput(self.snp_author_pv, snp_author, wait=False)
+            caput(self.snp_publisher_pv, getuser(), wait=False)
 
     def on_snp_loaded(self, data):
         m = self.snp_treeView.model()
