@@ -1953,8 +1953,15 @@ class EffSetLogMsgContainer(QObject):
 
 
 def get_pwr_sts(elem, fname: str):
-    """Return a tuple of (QPixmap, tooltip, u_val) and the roles for each, from a high-level
-    element and field name as the device power state.
+    """Return a tuple of (QPixmap, tooltip, u_val) and a tuple of the roles for each, from a
+    high-level element and field name as the device power state.
+
+    Parameters
+    ----------
+    elem : CaElement
+        High-level element instance.
+    fname : str
+        One field name of *elem*.
 
     Returns
     -------
@@ -1972,10 +1979,11 @@ def get_pwr_sts(elem, fname: str):
         if _fname in elem.fields:
             pwr_fld = elem.get_field(_fname)
             pwr_is_on = pwr_fld.value
-        if pwr_is_on == 1.0:
-            tt = "Cavity phase is LOCKED"
-        elif pwr_is_on == 0.0:
-            tt = "Cavity phase is UNLOCKED"
+
+            if pwr_is_on == 1.0:
+                tt = "Cavity phase is LOCKED"
+            elif pwr_is_on == 0.0:
+                tt = "Cavity phase is UNLOCKED"
     elif elem.family == "CHP":
         sts = elem.get_field('STATE')
         sts_val_int = sts.value
