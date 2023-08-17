@@ -29,15 +29,6 @@ from .utils import take_snapshot
 from .data import SnapshotData
 from .ui.ui_post_snp import Ui_Dialog
 
-BOUND_EXCL_LIST = ("LINAC", "FSEE")
-ISRC_EXCL_LIST = ("SCS1", "SCS2")
-
-DEFAULT_TAG_LIST = ["LINAC", "FSEE", "GOLDEN", "SCS1", "SCS2", "TEST"]
-
-ISRC_NAME_MAP = {
-    'ISRC1': 'Artemis',
-    'ISRC2': 'HP-ECR'
-}
 
 MATCH_STY = """
 QLabel {
@@ -59,7 +50,8 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
     snapshotTaken = pyqtSignal(SnapshotData, bool)
 
     def __init__(self, tag_fontsize: int, template_list: list, current_snpdata_originated: tuple,
-                 check_ms: bool, parent=None):
+                 check_ms: bool, isrc_name_map: dict, default_tag_list: list,
+                 excl_tag_groups: list, parent=None):
         super(self.__class__, self).__init__()
         self.parent = parent
         self._tag_fs = tag_fontsize
@@ -70,9 +62,19 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         # WYSIWYC
         self._wysiwyc_temp_snpdata = None
 
+        # ion source name map
+        self.isrc_name_map = isrc_name_map
+
+        # default tag list to click
+        self.default_tag_list = default_tag_list
+
+        # exclusive tag groups
+        self.excl_tag_groups = excl_tag_groups
+        self.excl_tag_btn_grps = [QButtonGroup(self) for i in excl_tag_groups]
+
         # UI
         self.setupUi(self)
-        self.setWindowTitle("Settings Manager: Take Snapshot")
+        self.setWindowTitle("Settings Manager: Take a Snapshot")
 
         # if machine state data is to be captured
         self.snp_ms_chkbox.setChecked(check_ms)
@@ -168,7 +170,7 @@ p, li { white-space: pre-wrap; }
         # template area
         self._build_template_area()
         # build multi-select tag list
-        tag_list = get_tag_list()
+        tag_list = self.__get_tag_list()
         self._selected_tag_list = []
         self._tag_btn_sts = {} # tag button dict: {tag-name: tag-btn-obj,...}
         self._build_tags_list(self.tags_area, tag_list)
@@ -222,10 +224,8 @@ p, li { white-space: pre-wrap; }
         """
         [o.setChecked(False) for o in self._tag_btn_sts.values()]
 
-    def _build_tags_list(self, area, tags):
+    def _build_tags_list(self, area, tags: list):
         # build a flow list of checkable toolbuttons for tag selection.
-        _bound_grp = QButtonGroup(self)
-        _isrc_grp = QButtonGroup(self)
         w = area.takeWidget()
         w.setParent(None)
         w = QWidget(self)
@@ -241,10 +241,10 @@ p, li { white-space: pre-wrap; }
             o.toggled.connect(partial(self.on_update_tags, tag))
             layout.addWidget(o)
             self._tag_btn_sts[tag] = o
-            if tag in BOUND_EXCL_LIST:
-                _bound_grp.addButton(o)
-            if tag in ISRC_EXCL_LIST:
-                _isrc_grp.addButton(o)
+            for excl_grp, excl_btn_grp in zip(self.excl_tag_groups,
+                                              self.excl_tag_btn_grps):
+                if tag in excl_grp:
+                    excl_btn_grp.addButton(o)
         w.setLayout(layout)
         area.setWidget(w)
 
@@ -340,7 +340,7 @@ p, li { white-space: pre-wrap; }
         """
         # get template snapshot name with beam ops
         isrc_name, bound_name, beam_dest = self.beamSpeciesDisplayWidget.get_bound_info()
-        temp_name_in_op = f"{bound_name}_{ISRC_NAME_MAP[isrc_name]}"
+        temp_name_in_op = f"{bound_name}_{self.isrc_name_map[isrc_name]}"
         self.__set_isrc_name_meta_cbb(temp_name_in_op)
 
         # check if loaded snapshot matches beam ops
@@ -390,6 +390,8 @@ p, li { white-space: pre-wrap; }
 
         def _take(snp_data: SnapshotData):
             new_snp_data = take_snapshot(note, tag_list, snp_data, isrc_name_meta,
+                                         machine=self.parent._last_machine_name,
+                                         segment=self.parent._last_lattice_name,
                                          mp=self.parent._mp, version=self.parent._version,
                                          with_machstate=with_machstate,
                                          machstate_conf=self.parent.get_ms_config())
@@ -422,11 +424,11 @@ p, li { white-space: pre-wrap; }
             self._t.daqFinished.connect(self.close)
         self._t.start()
 
-
-def get_tag_list():
-    """Return a list of tags.
-    """
-    return DEFAULT_TAG_LIST
+    def __get_tag_list(self):
+        """Return a list of tags to use.
+        """
+        # to be controlled via PVs.
+        return self.default_tag_list
 
 
 if __name__ == "__main__":

@@ -126,8 +126,6 @@ ALM_TYPE_MAP = { # [read, tune]
     'Tune': [False, True],
 }
 
-ISRC_NAME_MAP = {'ISRC1': 'Artemis', 'ISRC2': 'HP-ECR'}
-
 # SNP PVs
 SNP_NAME_PV = "PHY:SM_SNP_LAST_NAME"
 SNP_NOTE_PV = "PHY:SM_SNP_LAST_NOTE"
@@ -264,9 +262,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # resizing
         self.resize(self._ui_width, self._ui_height)
 
-        # preload snapshot templates (splashing)
-        self.__preload_templates(self.pref_dict.get('SNAPSHOT_TEMPLATES'))
-
         # config for machine state data capture
         self._mach_state_config = self.get_ms_config()
 
@@ -278,6 +273,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # preload lattice (splashing)
         self.__preload_lattice(self.pref_dict['LATTICE']['DEFAULT_MACHINE'],
                                self.pref_dict['LATTICE']['DEFAULT_SEGMENT'])
+
+        # preload snapshot templates (splashing)
+        self.__preload_templates(self.pref_dict.get('SNAPSHOT_TEMPLATES'))
 
         # init AA
         self.__init_aa()
@@ -460,6 +458,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             'engine': self.db_engine,
             'uri': self.data_uri
         }
+
+        # isrc name map: alias -> name
+        self.isrc_name_map = dict(zip(
+                    self.pref_dict['BEAM']['ISRC_ALIAS'],
+                    self.pref_dict['BEAM']['ISRC_NAMES']))
+
+        # default tag list
+        self.default_tag_list = self.pref_dict['SNAPSHOT_TAKE']['TAGS']
+        # exclusive tag groups
+        self.excl_tag_groups = self.pref_dict['SNAPSHOT_TAKE']['EXCL_TAG_GROUPS']
 
         # hidden columns for settings view
         hidden_col_name_list = self.pref_dict['SETTINGS']['HIDDEN_COLUMNS']
@@ -3300,11 +3308,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             if to_load:
                 self.on_load_settings(snp_data)
 
-        # pop up a dialog for tag selection
+        # pop up a dialog for take a snapshot
         postsnp_dlg = PostSnapshotDialog(
             self.default_font_size, self.snp_template_list,
             self._current_snpdata_originated,
-            self.pref_dict['MACH_STATE']['ENABLED'], self)
+            self.pref_dict['MACH_STATE']['ENABLED'],
+            self.isrc_name_map,
+            self.default_tag_list,
+            self.excl_tag_groups,
+            self)
         postsnp_dlg.snapshotTaken.connect(_onSnapshotTaken)
         postsnp_dlg.exec_()
 
@@ -3825,12 +3837,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def onOrigTemplateChanged(self, name: str):
         """The name of originated snapshot template is changed.
         """
-        if name in ('LINAC', 'FSEE'):  # signal from mach_bound
+        if name in self.pref_dict['BEAM']['MACHINE_BOUNDS']:  # signal from mach_bound
             name = self._current_snpdata_originated[0]
         # post info
         self.orig_template_name_lbl.setText(name)
         isrc_name, bound_name, _ = self.beam_display_widget.get_bound_info()
-        temp_name_in_op = f"{bound_name}_{ISRC_NAME_MAP[isrc_name]}"
+        temp_name_in_op = f"{bound_name}_{self.isrc_name_map[isrc_name]}"
         # check if loaded snapshot matches beam ops
         if name == temp_name_in_op:
             self.is_match_lbl.setToolTip(
