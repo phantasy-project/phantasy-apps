@@ -14,7 +14,7 @@ class Ui_Dialog(object):
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(1052, 669)
+        Dialog.resize(1258, 826)
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setContentsMargins(6, 8, 6, 6)
         self.gridLayout.setSpacing(4)
@@ -40,7 +40,8 @@ class Ui_Dialog(object):
         self.tags_area.setWidgetResizable(True)
         self.tags_area.setObjectName("tags_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1038, 89))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(
+            0, 0, 1244, 117))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tags_area.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout.addWidget(self.tags_area, 8, 0, 1, 4)
@@ -99,7 +100,9 @@ class Ui_Dialog(object):
         sizePolicy.setHeightForWidth(
             self.beamSpeciesDisplayWidget.sizePolicy().hasHeightForWidth())
         self.beamSpeciesDisplayWidget.setSizePolicy(sizePolicy)
+        self.beamSpeciesDisplayWidget.setProperty("waitUntilReady", True)
         self.beamSpeciesDisplayWidget.setProperty("expanded", True)
+        self.beamSpeciesDisplayWidget.setProperty("showPowerPanel", False)
         self.beamSpeciesDisplayWidget.setProperty(
             "allowClickingIonSourceButtons", False)
         self.beamSpeciesDisplayWidget.setObjectName("beamSpeciesDisplayWidget")
@@ -280,7 +283,7 @@ class Ui_Dialog(object):
         self.template_area.setObjectName("template_area")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(
-            QtCore.QRect(0, 0, 774, 130))
+            QtCore.QRect(0, 0, 980, 163))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.template_area.setWidget(self.scrollAreaWidgetContents_2)
@@ -391,10 +394,10 @@ class Ui_Dialog(object):
                 "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
                 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
                 "p, li { white-space: pre-wrap; }\n"
-                "</style></head><body style=\" font-family:\'Cantarell\'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
-                "<ul style=\"margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;\"><li style=\"\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">This option will be enabled if the unmatched symbol <img src=\":/sm-icons/fail.png\" width=\"24\" style=\"vertical-align: middle;\" /> is showing.</li>\n"
-                "<li style=\"\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">By default, the template button matches the machine operations is checked. </li>\n"
-                "<li style=\"\" style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">It\'s the user\'s decision to choose other templates or re-check <span style=\" font-style:italic;\">On Currently Loaded</span> option.</li></ul></body></html>"
+                "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                "<ul style=\"margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;\"><li style=\" font-size:12pt;\" style=\" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">This option will be enabled if the unmatched symbol <img src=\":/sm-icons/fail.png\" width=\"24\" style=\"vertical-align: middle;\" /> is showing.</li>\n"
+                "<li style=\" font-size:12pt;\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">By default, the template button matches the machine operations is checked. </li>\n"
+                "<li style=\" font-size:12pt;\" style=\" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">It\'s the user\'s decision to choose other templates or re-check <span style=\" font-style:italic;\">On Currently Loaded</span> option.</li></ul></body></html>"
             ))
         self.orig_template_lbl.setToolTip(
             _translate(

@@ -25,7 +25,8 @@ class Ui_Dialog(object):
         self.data_tab.setObjectName("data_tab")
         self.gridLayout = QtWidgets.QGridLayout(self.data_tab)
         self.gridLayout.setContentsMargins(4, 10, 4, 4)
-        self.gridLayout.setSpacing(4)
+        self.gridLayout.setHorizontalSpacing(4)
+        self.gridLayout.setVerticalSpacing(8)
         self.gridLayout.setObjectName("gridLayout")
         self.apply_delt_dsbox = QtWidgets.QDoubleSpinBox(self.data_tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -167,9 +168,27 @@ class Ui_Dialog(object):
         self.ms_tab.setObjectName("ms_tab")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.ms_tab)
         self.verticalLayout.setContentsMargins(4, 10, 4, 4)
-        self.verticalLayout.setSpacing(4)
+        self.verticalLayout.setSpacing(8)
         self.verticalLayout.setObjectName("verticalLayout")
-        self.plainTextEdit = QtWidgets.QPlainTextEdit(self.ms_tab)
+        self.groupBox_3 = QtWidgets.QGroupBox(self.ms_tab)
+        self.groupBox_3.setObjectName("groupBox_3")
+        self.gridLayout_7 = QtWidgets.QGridLayout(self.groupBox_3)
+        self.gridLayout_7.setContentsMargins(4, 16, 4, 4)
+        self.gridLayout_7.setHorizontalSpacing(4)
+        self.gridLayout_7.setVerticalSpacing(8)
+        self.gridLayout_7.setObjectName("gridLayout_7")
+        self.msconf_path_lineEdit = QtWidgets.QLineEdit(self.groupBox_3)
+        self.msconf_path_lineEdit.setReadOnly(True)
+        self.msconf_path_lineEdit.setObjectName("msconf_path_lineEdit")
+        self.gridLayout_7.addWidget(self.msconf_path_lineEdit, 0, 0, 1, 1)
+        self.msconf_open_btn = QtWidgets.QPushButton(self.groupBox_3)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/sm-icons/readfile.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.msconf_open_btn.setIcon(icon1)
+        self.msconf_open_btn.setObjectName("msconf_open_btn")
+        self.gridLayout_7.addWidget(self.msconf_open_btn, 0, 1, 1, 1)
+        self.plainTextEdit = QtWidgets.QPlainTextEdit(self.groupBox_3)
         self.plainTextEdit.setStyleSheet(
             "QPlainTextEdit {\n"
             "    border:none;\n"
@@ -177,29 +196,14 @@ class Ui_Dialog(object):
             "}")
         self.plainTextEdit.setReadOnly(True)
         self.plainTextEdit.setObjectName("plainTextEdit")
-        self.verticalLayout.addWidget(self.plainTextEdit)
-        self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_6.setSpacing(4)
-        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
-        self.label_11 = QtWidgets.QLabel(self.ms_tab)
-        self.label_11.setObjectName("label_11")
-        self.horizontalLayout_6.addWidget(self.label_11)
-        self.msconf_path_lineEdit = QtWidgets.QLineEdit(self.ms_tab)
-        self.msconf_path_lineEdit.setReadOnly(True)
-        self.msconf_path_lineEdit.setObjectName("msconf_path_lineEdit")
-        self.horizontalLayout_6.addWidget(self.msconf_path_lineEdit)
-        self.msconf_open_btn = QtWidgets.QPushButton(self.ms_tab)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/sm-icons/readfile.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.msconf_open_btn.setIcon(icon1)
-        self.msconf_open_btn.setObjectName("msconf_open_btn")
-        self.horizontalLayout_6.addWidget(self.msconf_open_btn)
-        self.verticalLayout.addLayout(self.horizontalLayout_6)
+        self.gridLayout_7.addWidget(self.plainTextEdit, 1, 0, 1, 2)
+        self.verticalLayout.addWidget(self.groupBox_3)
         self.groupBox = QtWidgets.QGroupBox(self.ms_tab)
         self.groupBox.setObjectName("groupBox")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.groupBox)
-        self.gridLayout_4.setContentsMargins(4, 4, 4, 4)
+        self.gridLayout_4.setContentsMargins(4, 16, 4, 4)
+        self.gridLayout_4.setHorizontalSpacing(4)
+        self.gridLayout_4.setVerticalSpacing(8)
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setSpacing(4)
@@ -241,7 +245,8 @@ class Ui_Dialog(object):
         self.view_tab.setObjectName("view_tab")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.view_tab)
         self.gridLayout_2.setContentsMargins(4, 10, 4, 4)
-        self.gridLayout_2.setSpacing(4)
+        self.gridLayout_2.setHorizontalSpacing(4)
+        self.gridLayout_2.setVerticalSpacing(8)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.label_5 = QtWidgets.QLabel(self.view_tab)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -305,7 +310,8 @@ class Ui_Dialog(object):
         self.config_tab.setObjectName("config_tab")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.config_tab)
         self.gridLayout_3.setContentsMargins(4, 10, 4, 4)
-        self.gridLayout_3.setSpacing(4)
+        self.gridLayout_3.setHorizontalSpacing(4)
+        self.gridLayout_3.setVerticalSpacing(8)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.label_7 = QtWidgets.QLabel(self.config_tab)
         self.label_7.setObjectName("label_7")
@@ -346,13 +352,15 @@ class Ui_Dialog(object):
         self.adv_tab.setObjectName("adv_tab")
         self.gridLayout_6 = QtWidgets.QGridLayout(self.adv_tab)
         self.gridLayout_6.setContentsMargins(4, 10, 4, 4)
-        self.gridLayout_6.setSpacing(4)
+        self.gridLayout_6.setHorizontalSpacing(4)
+        self.gridLayout_6.setVerticalSpacing(8)
         self.gridLayout_6.setObjectName("gridLayout_6")
         self.groupBox_2 = QtWidgets.QGroupBox(self.adv_tab)
         self.groupBox_2.setObjectName("groupBox_2")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.groupBox_2)
-        self.gridLayout_5.setContentsMargins(4, 10, 4, 4)
-        self.gridLayout_5.setSpacing(4)
+        self.gridLayout_5.setContentsMargins(4, 16, 4, 4)
+        self.gridLayout_5.setHorizontalSpacing(4)
+        self.gridLayout_5.setVerticalSpacing(8)
         self.gridLayout_5.setObjectName("gridLayout_5")
         self.label_73 = QtWidgets.QLabel(self.groupBox_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -369,12 +377,14 @@ class Ui_Dialog(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.model_rbtn = QtWidgets.QRadioButton(self.groupBox_2)
-        self.model_rbtn.setEnabled(False)
+        self.model_rbtn.setEnabled(True)
+        self.model_rbtn.setCursor(QtGui.QCursor(QtCore.Qt.WhatsThisCursor))
         self.model_rbtn.setChecked(True)
         self.model_rbtn.setObjectName("model_rbtn")
         self.horizontalLayout.addWidget(self.model_rbtn)
         self.live_rbtn = QtWidgets.QRadioButton(self.groupBox_2)
-        self.live_rbtn.setEnabled(False)
+        self.live_rbtn.setEnabled(True)
+        self.live_rbtn.setCursor(QtGui.QCursor(QtCore.Qt.WhatsThisCursor))
         self.live_rbtn.setChecked(False)
         self.live_rbtn.setObjectName("live_rbtn")
         self.horizontalLayout.addWidget(self.live_rbtn)
@@ -457,6 +467,8 @@ class Ui_Dialog(object):
         self.label_4.setText(_translate("Dialog", "Float number precision"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.data_tab),
                                   _translate("Dialog", "Data"))
+        self.groupBox_3.setTitle(_translate("Dialog", "Configuration File"))
+        self.msconf_open_btn.setText(_translate("Dialog", "Read"))
         self.plainTextEdit.setPlainText(
             _translate(
                 "Dialog",
@@ -464,8 +476,6 @@ class Ui_Dialog(object):
                 "\n"
                 "If you\'d like to use a customized version, just copy and modify this file, and edit it in the app configuration file of Settings Manager."
             ))
-        self.label_11.setText(_translate("Dialog", "Configfile in use"))
-        self.msconf_open_btn.setText(_translate("Dialog", "Read"))
         self.groupBox.setTitle(
             _translate("Dialog", "DAQ (Runtime Configurable)"))
         self.label_8.setText(_translate("Dialog", "Rate"))
@@ -489,7 +499,7 @@ class Ui_Dialog(object):
         self.select_font_btn.setText(_translate("Dialog", "Select"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.view_tab),
                                   _translate("Dialog", "Settings View"))
-        self.label_7.setText(_translate("Dialog", "Configfile in use"))
+        self.label_7.setText(_translate("Dialog", "File in use"))
         self.reset_app_config_btn.setToolTip(
             _translate(
                 "Dialog",
@@ -517,18 +527,18 @@ class Ui_Dialog(object):
             ))
         self.label_73.setText(_translate("Dialog",
                                          "Initial field values from"))
-        self.model_rbtn.setToolTip(
+        self.model_rbtn.setWhatsThis(
             _translate(
                 "Dialog",
-                "<html><head/><body><p>Initialize field set value from pre-defined \'model\' environment, which is maintained by \'phantasy-machines\' package.</p></body></html>"
+                "<html><head/><body><p>If enabled, saved set data is always pulled from pre-defined lattice configurations or snapshots.</p></body></html>"
             ))
-        self.model_rbtn.setText(_translate("Dialog", "Model"))
-        self.live_rbtn.setToolTip(
+        self.model_rbtn.setText(_translate("Dialog", "Model/Snapshot"))
+        self.live_rbtn.setWhatsThis(
             _translate(
                 "Dialog",
-                "<html><head/><body><p>Initialize field set value by pulling the live device settings from controls network.</p></body></html>"
+                "<html><head/><body><p>If enabled, saved set data is always pulled from live environment. Be sure to disable it when loading a snapshot. Enabled it when initializing a snapshot from the loaded lattice.</p></body></html>"
             ))
-        self.live_rbtn.setText(_translate("Dialog", "Live"))
+        self.live_rbtn.setText(_translate("Dialog", "Live/Control"))
         self.init_snp_btn.setText(_translate("Dialog", "Initialize"))
         self.label_12.setText(
             _translate("Dialog", "Whether show non-reachable device settings"))
