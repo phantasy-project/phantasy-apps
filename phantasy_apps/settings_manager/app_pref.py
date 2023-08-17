@@ -36,6 +36,10 @@ def _read_data_in_tmp_file(data: str):
     QDesktopServices.openUrl(QUrl(f1.name))
     delayed_exec(lambda: os.unlink(f1.name), 10000)
 
+_DATA_MODE_MAP = {
+    'Model/Snapshot': 'model',
+    'Live/Control': 'live'
+}
 
 class PreferencesDialog(QDialog, Ui_Dialog):
 
@@ -211,7 +215,7 @@ class PreferencesDialog(QDialog, Ui_Dialog):
     @pyqtSlot(bool)
     def on_toggle_mode(self, f):
         if f:
-            self.mode = self.sender().text().lower()
+            self.mode = _DATA_MODE_MAP[self.sender().text()]
             self.pref_dict['SETTINGS']['FIELD_INIT_MODE'] = self.mode
 
     @pyqtSlot(float)
