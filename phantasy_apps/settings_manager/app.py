@@ -2292,7 +2292,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # reset snp dock with files in d (recursively)
         if purge:
             del self._snp_dock_list[:]
-        # DB
+        # database
         self._db_conn = self._db_conn_pool.setdefault(d, ensure_connect_db(d))
         self.data_uri = d
         #
@@ -2939,7 +2939,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             if self._current_snpdata is not None:
                 self.snp_loaded.emit(self._current_snpdata)
             self.snp_filters_updated.emit()
-            printlog("DB puller is done...")
+            printlog("Database puller is done...")
 
         self._db_puller = DAQT(daq_func=_on_pull_data_one,
                                daq_seq=self.df_all_row_tuple)
@@ -3695,7 +3695,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m = self.snp_treeView.model().m_src
         m.remove_data(data_to_del)
 
-        # delete from DB
+        # delete from database
         delete_data(self._db_conn_pool.get(self.data_uri), data)
         self.total_snp_lbl.setText(str(len(self._snp_dock_list)))
         del data_to_del

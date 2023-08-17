@@ -450,7 +450,7 @@ class SnapshotData:
         self.data_path = None
         # machine state data
         self.machstate = None
-        # placeholder for df row (DB)
+        # placeholder for df row (database)
         self._blob = None
 
     @property
@@ -606,7 +606,7 @@ class SnapshotData:
         # xlsx
         df_info = self.info.copy(deep=True)
         df_info['tags'] = self.tags_as_str()
-    
+
         parent_node = self.get_parent_node()
         if parent_node is not None:
             df_info['parent'] = parent_node
@@ -702,7 +702,7 @@ class SnapshotData:
 
     def extract_blob(self):
         # update .data and .machstate with _blob if _blob is not None
-        # only needed when work with DB
+        # only needed when work with database
         if self._blob is None: # already extracted
             return
         _df_data, _df_info, _df_machstate = read_sql(self._blob)
