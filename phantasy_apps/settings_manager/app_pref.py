@@ -27,7 +27,7 @@ from phantasy_ui import delayed_exec
 from .utils import COLUMN_NAMES
 from .ui.ui_preferences import Ui_Dialog
 
-from .conf import reset_app_config, init_user_config
+from .conf import reset_app_config
 
 
 def _read_data_in_tmp_file(data: str):
@@ -132,9 +132,9 @@ class PreferencesDialog(QDialog, Ui_Dialog):
             j = idx - 4 * i
             layout.addWidget(btn, i, j)
 
-        # reset app config
+        # reset app config (disable)
         self.reset_app_config_btn.clicked.connect(self.on_reset_app_config)
-        self.reset_app_config_btn.setVisible(False)
+        self.reset_app_config_btn.setEnabled(False)
 
         # read app config
         self.view_app_config_btn.clicked.connect(self.on_read_app_config)
@@ -169,7 +169,10 @@ class PreferencesDialog(QDialog, Ui_Dialog):
                 QMessageBox.Yes | QMessageBox.No)
         if r == QMessageBox.No:
             return
-        reset_app_config() # reset the config file to ~/.phantasy/settings_manager.toml
+        user_confpath = reset_app_config() # reset the config file to ~/.phantasy/settings_manager.toml
+        QMessageBox.information(self, "Reset App Config",
+                f"Reset app configurations to '{user_confpath}', modify it and restart 'Settings Manager'.\n'Settings Manager' recommends to work with configuration file with --config option.",
+                QMessageBox.Ok, QMessageBox.Ok)
 
     @pyqtSlot()
     def on_read_app_config(self):
