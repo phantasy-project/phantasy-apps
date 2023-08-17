@@ -72,7 +72,6 @@ from .utils import get_ratio_as_string
 from .utils import VALID_FILTER_KEYS
 from .utils import VALID_FILTER_KEYS_NUM
 from .utils import SnapshotDataModel
-from .utils import ELEM_WRITE_PERM
 from .utils import NUM_LENGTH
 from .utils import BG_COLOR_GOLDEN_NO
 from .utils import CHP_STS_TUPLE
@@ -445,6 +444,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_ion_pv = self.pref_dict['OPI']['SNP_ION_PV']
         self.snp_author_pv = self.pref_dict['OPI']['SNP_AUTHOR_PV']
         self.snp_publisher_pv = self.pref_dict['OPI']['SNP_PUBLISHER_PV']
+
+        # readonly device list
+        self.elem_write_perm_dict = {k: False for k in self.pref_dict["SETTINGS"]["READONLY_DEVICE_LIST"]}
+
 
         self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self.ndigit)
         # for field NMR, HALL probe
@@ -2367,7 +2370,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # write access
         wa_idx = m.index(irow, m.i_writable)
-        wa = ELEM_WRITE_PERM.get(o.ename, o.write_access)
+        wa = self.elem_write_perm_dict.get(o.ename, o.write_access)
         worker.meta_signal1.emit((wa_idx, str(wa), Qt.DisplayRole))
 
         name_idx = m.index(irow, m.i_name)
