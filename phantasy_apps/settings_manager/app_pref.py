@@ -3,6 +3,7 @@
 
 import tempfile
 from functools import partial
+import toml
 import os
 import shutil
 
@@ -19,6 +20,7 @@ from PyQt5.QtWidgets import QSpacerItem
 
 from phantasy_ui import get_open_directory
 from phantasy_ui import get_open_filename
+from phantasy_ui import get_save_filename
 from phantasy_ui import select_font
 from phantasy_ui import delayed_exec
 
@@ -128,10 +130,14 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         # reset app config
         self.reset_app_config_btn.clicked.connect(self.on_reset_app_config)
         self.reset_app_config_btn.setVisible(False)
+
         # read app config
         self.view_app_config_btn.clicked.connect(self.on_read_app_config)
         # app config path
         self.appconf_path_lineEdit.setText(self.pref_dict['_FILEPATH'])
+
+        # export app config (with all runtime changes through Preferences dialog)
+        self.export_app_config_btn.clicked.connect(self.on_export_app_config)
 
         # font
         self.font_changed.connect(self.on_font_changed)
@@ -167,6 +173,20 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         with open(self.pref_dict['_FILEPATH'], "r") as f0:
             data = f0.read()
         _read_data_in_tmp_file(data)
+
+    @pyqtSlot()
+    def on_export_app_config(self):
+        """Export app configurations to a file.
+        """
+        filepath, ext = get_save_filename(self,
+                    type_filter='Config File (*.toml);;Other Files (*.*)',
+                    cdir=os.path.expanduser("~"))
+        if filepath is None:
+            return
+        with open(filepath, "w") as fp:
+            pref_dict_copy = self.pref_dict.copy()
+            [pref_dict_copy.pop(k) for k in self.pref_dict.keys() if k.startswith("_")]
+            toml.dump(pref_dict_copy, fp)
 
     @pyqtSlot()
     def on_read_ms_config(self):
