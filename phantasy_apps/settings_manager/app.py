@@ -216,6 +216,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     # name of the originated template of the loaded snapshot is changed
     sigOrigTemplateChanged = pyqtSignal('QString')
 
+    # the overall state of revert buttons changed (added/clicked)
+    sigRevertButtonStateChanged = pyqtSignal()
+
     def __init__(self, version: str, config_file: str = None, **kws):
         # kws: title, splash
         super(SettingsManagerWindow, self).__init__()
@@ -892,6 +895,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # snapshot dock
         self._snp_dock_list = []  # for snp_treeView
 
+        # revert button
+        self.revert_btn.setVisible(False)
+        self.revert_btn.clicked.connect(lambda:print("Dummy slot for the main Revert button"))
+
         # apply pb
         self.apply_pb.setVisible(False)
         # abort apply button
@@ -952,6 +959,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # key: timestamp of apply, value: EffSetLogMsgContainer
         self.effSetLogMsgContainer_dict = {}
         self._init_revert_area()
+        self.sigRevertButtonStateChanged.connect(self.on_revert_button_state_changed)
 
         #
         self.log_dock.closed.connect(
@@ -3006,7 +3014,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def set_widgets_status_for_applying(self, status):
         """Set widgets status for applying.
         """
-        w1 = (self.apply_btn, )
+        w1 = (self.apply_btn, self.revert_btn)
         [i.setDisabled(status == 'START') for i in w1]
 
     def set_widgets_status_for_ref_set(self, status):
@@ -4495,14 +4503,17 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         btn.clicked.connect(partial(self.on_revert_apply, apply_ts, btn))
         self.effSetLogMsgContainer_dict.get(apply_ts).sigHasItems.connect(
-            partial(self.delete_revert_btn, btn))
+            partial(self.on_revert_enablility_changed, btn))
+
         return btn
 
     @pyqtSlot(bool)
-    def delete_revert_btn(self, btn, has_items: bool):
-        if not has_items:
-            btn.setParent(None)
-            btn.deleteLater()
+    def on_revert_enablility_changed(self, btn, has_items: bool):
+        if has_items:
+            return
+        # disable button
+        btn.setEnabled(has_items)
+        self.sigRevertButtonStateChanged.emit()
 
     def add_new_revert(self, apply_ts: str, apply_reason: str):
         """Build a new toolbutton for revert apply.
@@ -4511,6 +4522,24 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         btn = self.build_revert_button(apply_ts, apply_reason)
         if btn is not None:
             layout.addWidget(btn)
+            self.sigRevertButtonStateChanged.emit()
+
+    @pyqtSlot()
+    def on_revert_button_state_changed(self):
+        # The overall state of revert buttons is changed after added/clicked
+        # Connect the click signal of main revert button (next Apply) to the last revert btn's.
+        layout = self.revert_area.findChildren(FlowLayout)[0]
+        for i in range(layout.count())[::-1]:
+            btn = layout.itemAt(i).widget()
+            if not btn.isEnabled():
+                continue
+            self.revert_btn.setVisible(True)
+            self.revert_btn.clicked.disconnect()
+            self.revert_btn.clicked.connect(btn.clicked)
+            self.revert_btn.setToolTip(btn.toolTip())
+            break
+        else:
+            self.revert_btn.setVisible(False)
 
     @pyqtSlot()
     def on_purge_reverts(self):
