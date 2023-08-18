@@ -191,10 +191,19 @@ class PreferencesDialog(QDialog, Ui_Dialog):
                     cdir=os.path.expanduser("~"))
         if filepath is None:
             return
-        with open(filepath, "w") as fp:
-            pref_dict_copy = self.pref_dict.copy()
-            [pref_dict_copy.pop(k) for k in self.pref_dict.keys() if k.startswith("_")]
-            toml.dump(pref_dict_copy, fp)
+        try:
+            with open(filepath, "w") as fp:
+                pref_dict_copy = self.pref_dict.copy()
+                [pref_dict_copy.pop(k) for k in self.pref_dict.keys() if k.startswith("_")]
+                toml.dump(pref_dict_copy, fp)
+        except Exception as err:
+            QMessageBox.critical(self, "Export App Config",
+                    f"Failed exporting app configurations to '{filepath}'!\n{str(err)}",
+                    QMessageBox.Ok, QMessageBox.Ok)
+        else:
+            QMessageBox.information(self, "Export App Config",
+                    f"Exported app configurations to '{filepath}'.",
+                    QMessageBox.Ok, QMessageBox.Ok)
 
     @pyqtSlot()
     def on_read_ms_config(self):
