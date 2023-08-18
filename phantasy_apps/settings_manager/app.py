@@ -4060,10 +4060,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         printlog(f"Fetching machine state: {f * 100:>5.1f}%, {s}")
         self._meta_fetcher_pb.setValue(int(100 * f))
         self._meta_fetcher_pb.move(
-            self.geometry().x() + self.geometry().width() / 2 -
-            self._meta_fetcher_pb.geometry().width() / 2,
-            self.geometry().y() + self.geometry().height() / 2 -
-            self._meta_fetcher_pb.geometry().height() / 2)
+            int(self.geometry().x() + self.geometry().width() / 2 -
+                self._meta_fetcher_pb.geometry().width() / 2),
+            int(self.geometry().y() + self.geometry().height() / 2 -
+                self._meta_fetcher_pb.geometry().height() / 2))
 
     def _meta_fetcher_got_results(self, pv_list, grp_list, res):
         self._machstate = _build_dataframe(res, pv_list, grp_list)
