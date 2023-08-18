@@ -762,6 +762,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._machstate = None
 
         # snp dock
+        self.snp_dock.setWindowTitle("Snapshots")
+        self.snp_dock.setTitleText("View/load saved snapshots")
         self.snp_dock.closed.connect(
             lambda: self.actionSnapshots.setChecked(False))
         self.actionSnapshots.setChecked(True)
@@ -962,9 +964,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.sigRevertButtonStateChanged.connect(self.on_revert_button_state_changed)
 
         #
+        self.log_dock.setWindowTitle("Setting Logs")
+        self.log_dock.setTitleText("Setting logs, Revert actions...")
         self.log_dock.closed.connect(
             lambda: self.actionShow_Device_Settings_Log.setChecked(False))
-        self.actionShow_Device_Settings_Log.setChecked(False)
+        self.actionShow_Device_Settings_Log.setChecked(True)
         self.sigSetLogColorChanged.connect(self.log_textEdit.setTextColor)
         self.sigSetLogColorReset.connect(
             lambda: self.log_textEdit.setTextColor(SetLogMessager.
@@ -977,6 +981,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # hide findtext_lbl and findtext_lineEdit
         for o in (self.findtext_lbl, self.findtext_lineEdit):
             o.setVisible(False)
+
+        #
+        self.tabifyDockWidget(self.snp_dock, self.log_dock)
+        delayed_exec(self.snp_dock.raise_(), 50)
 
         # tag, ions filter buttons
         self.select_all_ions_btn.clicked.connect(
