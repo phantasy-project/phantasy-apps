@@ -2087,11 +2087,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self.statusInfoChanged.emit(msg)
                 self._reset_status_info()
 
-    def on_snpdock_top_level_changed(self, is_floating):
+    @pyqtSlot(bool)
+    def on_dock_top_level_changed(self, is_floating: bool):
         if is_floating:
             self.sender().setWindowFlags(Qt.CustomizeWindowHint | Qt.Window
                                          | Qt.WindowMinimizeButtonHint
-                                         | Qt.WindowMaximizeButtonHint)
+                                         | Qt.WindowMaximizeButtonHint
+                                         | Qt.WindowCloseButtonHint)
             self.sender().show()
 
     def on_click_snpview(self, idx):
