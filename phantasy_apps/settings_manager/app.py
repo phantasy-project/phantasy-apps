@@ -1817,7 +1817,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             settings=self._lat.settings,
             data_source=DATA_SRC_MAP[self.pref_dict['SETTINGS']['FIELD_INIT_MODE']],
             only_physics=False,
-            skip_none=self.pref_dict['SETTINGS']['SKIP_NONE'])
+            skip_none=self.pref_dict['SETTINGS']['SKIP_NONE'],
+            field_of_interest=self.pref_dict['_FOI'])
         self.settingsLoaded.emit(flat_settings, settings)
 
     def init_filter(self):

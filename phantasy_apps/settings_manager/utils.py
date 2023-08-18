@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import json
-import toml
 import os
 import re
 import time
@@ -120,10 +119,6 @@ ACT_BTN_CONF = {}
 
 ELEMT_PX_MAP = {i: [f':/elements/elements/{i}{s}.png' for s in ('', '-off')]
                 for i in AVAILABLE_IONS}
-
-DEFAULT_TS_PATH = find_dconf("settings_manager", "tolerance.json")
-DEFAULT_MS_PATH = find_dconf("settings_manager", "settings.json")
-DEFAULT_ELEM_PATH = find_dconf("settings_manager", "elements.json")
 
 TBTN_STY_COLOR_TUPLE = ('#EEEEEC', '#F7F7F7', '#90B5F0', '#6EA1F1', '#E7EFFD', '#CBDAF1')
 TBTN_STY_COLOR_TUPLE_GOLDEN = ('#FFF7B3', '#F5E345', '#FFCD03', '#FFC503', '#FAED11', '#FAE111')
@@ -252,57 +247,6 @@ def set_device_state_item(sts_str: str):
     item.setData(sts_u, PWR_STS_U_ROLE)
     return item
 
-
-def get_foi_dict(filepath):
-    """Return a dict of field of interest per element type.
-    """
-    conf = toml.load(filepath)
-    return {k: v['fields'] for k, v in conf.items()}
-
-DEFAULT_FOI_PATH = find_dconf("settings_manager", "fields.toml")
-DEFAULT_FOI_DICT = get_foi_dict(DEFAULT_FOI_PATH)
-
-# override write permission (for those does not have correct ACF)
-ELEM_WRITE_PERM = {
- 'FE_ISRC1:BEAM': False,
- 'FE_ISRC2:BEAM': False,
- 'FE_RFQ:CAV_D1005': False,
- 'FE_ISRC1:DRV_D0686:POS': False,
- 'FE_ISRC1:DRV_D0686': False,
- 'FS1_CSS:STRIP_D2249': False,
- 'FE_LEBT:BEAM': False,
- 'FE_LEBT:ATT_D0957-1': False,
- 'FE_LEBT:ATT_D0957-2': False,
- 'FE_LEBT:ATT_D0974-1': False,
- 'FE_LEBT:ATT_D0974-2': False,
- 'FE_LEBT:AP_D0796': False,
- 'FE_LEBT:AP_D0807': False,
-
- 'FE_ISRC1:HVP_D0679': False,
- 'FE_ISRC1:PSEL_D0679': False,
- 'FE_ISRC1:PSX_D0679': False,
- 'FE_ISRC1:PSB_D0679': False,
- 'FE_ISRC1:SOLR_D0682': False,
- 'FE_ISRC1:SOLR_D0685': False,
- 'FE_ISRC1:PSE_D0686': False,
- 'FE_ISRC1:DRV_D0686': False,
- 'FE_ISRC1:PSEL_D0698': False,
- 'FE_ISRC1:HVP_D0698': False,
-
- 'FE_SRC2:PSEL_D0651': False,
- 'FE_SRC2:HVP_D0652': False,
- 'FE_SRC2:PSB_D0659': False,
- 'FE_SRC2:SOLS_D0659': False,
- 'FE_SRC2:S_D0661': False,
- 'FE_SRC2:SOLS_D0662': False,
- 'FE_SRC2:SOLS_D0664': False,
- 'FE_SRC2:PSE_D0665': False,
- 'FE_SRC2:HVP_D0677': False,
- 'FE_SRC2:PSEL_D0678': False,
- 'FE_SRC2:PSX_N0003': False,
- 'FE_SRC2:PSX_N0002': False,
- 'FE_SRC2:PSX_N0001': False,
-}
 
 # default length for number display
 NUM_LENGTH = 9
@@ -492,11 +436,9 @@ class SettingsModel(QStandardItemModel):
             row.append(item_tol)
 
             # writable
-            write_access = ELEM_WRITE_PERM.get(fld.ename, fld.write_access)
-            item_wa = QStandardItem(str(write_access))
+            item_wa = QStandardItem('-')
             item_wa.setEditable(False)
             row.append(item_wa)
-            # item_ename.setEnabled(write_access)
 
             # x2/x0
             item_ratio_x20 = QStandardItem('-')
@@ -1283,9 +1225,7 @@ def pack_settings(elem_list, lat, **kws):
         Tuple of (flat_s[list], s[Settings]), element of flat_s:
         (CaElement, field_name, CaField, field_value)
     """
-    foi = kws.pop('field_of_interest', DEFAULT_FOI_DICT)
     settings = get_settings_from_element_list(elem_list,
-                                              field_of_interest=foi,
                                               **kws)
     flat_settings = convert_settings(settings, lat)
     return flat_settings, settings

@@ -14,6 +14,13 @@ DEFAULT_MACHINE = "FRIB"
 DEFAULT_SEGMENT = "LINAC"
 
 
+def get_foi_dict(filepath: str):
+    """Return a dict of field of interest per element type.
+    """
+    conf = toml.load(filepath)
+    return {k: v['fields'] for k, v in conf.items()}
+
+
 def read_app_config(config_file: str = None):
     """Read the app configuration from *config_file*, if it is None,
     follow the search rules defined in *find_dconf*.
@@ -30,6 +37,18 @@ def read_app_config(config_file: str = None):
     # app conf
     app_conf = toml.load(config_file)
     app_conf["_FILEPATH"] = os.path.abspath(config_file)
+
+    # field-of-interest config, if not defined, use default one.
+    try:
+        foi_filepath = os.path.expanduser(app_conf['FIELD_OF_INTEREST']['FILEPATH'])
+        if not os.path.isabs(foi_filepath):
+            foi_filepath = os.path.abspath(
+                    os.path.join(os.path.dirname(app_conf['_FILEPATH']), foi_filepath))
+    except:
+        foi_filepath = find_dconf("settings_manager", "fields.toml")
+    finally:
+        foi_conf = get_foi_dict(foi_filepath)
+        app_conf['_FOI'] = foi_conf
     return app_conf
 
 
