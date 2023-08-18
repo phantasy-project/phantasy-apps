@@ -4542,16 +4542,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # The overall state of revert buttons is changed after added/clicked
         # Connect the click signal of main revert button (next Apply) to the last revert btn's.
         layout = self.revert_area.findChildren(FlowLayout)[0]
+        btn_found = False
         for i in range(layout.count())[::-1]:
             btn = layout.itemAt(i).widget()
+            btn.setIcon(QIcon(QPixmap(":/sm-icons/revert.png")))
             if not btn.isEnabled():
                 continue
-            self.revert_btn.setVisible(True)
-            self.revert_btn.clicked.disconnect()
-            self.revert_btn.clicked.connect(btn.clicked)
-            self.revert_btn.setToolTip(btn.toolTip())
-            break
-        else:
+            if not btn_found:
+                self.revert_btn.setVisible(True)
+                self.revert_btn.clicked.disconnect()
+                self.revert_btn.clicked.connect(btn.clicked)
+                self.revert_btn.setToolTip(btn.toolTip())
+                btn.setIcon(QIcon(QPixmap(":/sm-icons/revert_act.png")))
+                btn_found = True
+        if not btn_found:
             self.revert_btn.setVisible(False)
 
     @pyqtSlot()
