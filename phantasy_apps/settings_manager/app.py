@@ -4495,8 +4495,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         btn.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         btn.clicked.connect(partial(self.on_revert_apply, apply_ts, btn))
         self.effSetLogMsgContainer_dict.get(apply_ts).sigHasItems.connect(
-            btn.setVisible)
+            partial(self.delete_revert_btn, btn))
         return btn
+
+    @pyqtSlot(bool)
+    def delete_revert_btn(self, btn, has_items: bool):
+        if not has_items:
+            btn.setParent(None)
+            btn.deleteLater()
 
     def add_new_revert(self, apply_ts: str, apply_reason: str):
         """Build a new toolbutton for revert apply.
