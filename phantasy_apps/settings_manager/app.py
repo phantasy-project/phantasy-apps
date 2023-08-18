@@ -4469,6 +4469,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             lambda: self.effSetLogMsgContainer_dict.get(apply_ts).clear())
         self._reverter.daqFinished.connect(
             lambda: self.single_update_btn.clicked.emit())
+        self._reverter.daqFinished.connect(lambda:delayed_exec(self.on_clean_revert_buttons, 200))
         self._reverter.start()
 
     def _init_revert_area(self):
@@ -4478,6 +4479,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         layout = FlowLayout()
         w.setLayout(layout)
         self.revert_area.setWidget(w)
+        self.revert_area.setStyleSheet(f"""QToolButton {{
+            font-family: monospace;
+            font-size: {self.default_font_size * 0.8}
+        }}""")
 
     def build_revert_button(self, apply_ts: str, apply_reason: str):
         # Build a button for revert after Apply is triggered.
@@ -4548,6 +4553,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             break
         else:
             self.revert_btn.setVisible(False)
+
+    @pyqtSlot()
+    def on_clean_revert_buttons(self):
+        """Delete disabled revert button (clicked).
+        """
+        layout = self.revert_area.findChildren(FlowLayout)[0]
+        self.revert_btn.setEnabled(False)
+        btns = [layout.itemAt(i).widget() for i in range(layout.count())]
+        for btn in btns:
+            if not btn.isEnabled():
+                btn.setParent(None)
+        self.revert_btn.setEnabled(True)
 
     @pyqtSlot()
     def on_purge_reverts(self):
