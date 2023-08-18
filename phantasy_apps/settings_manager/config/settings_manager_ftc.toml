@@ -9,8 +9,7 @@ WIDTH = 1920
 [DATA_SOURCE]
 DB_ENGINE = "sqlite"
 TYPE = "database"
-URI = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm.db"
-
+URI = '/files/shared/ap/settings_manager/sm.db'
 [SETTINGS]
 FIELD_INIT_MODE = "model" # initial settings with model or live data, if live is enabled, saved set will be overridden
 HIDDEN_COLUMNS = [
@@ -83,50 +82,51 @@ SNP_NOTE_PV = "PHY:SM_SNP_LAST_NOTE"
 SNP_PUBLISHER_PV = "PHY:SM_SNP_LAST_PUBLISHER"
 
 [MACH_STATE]
-CONFIG_PATH = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/msviz/config/metadata_va.toml"
+CONFIG_PATH = "/files/shared/ap/settings_manager/metadata.toml"
 DAQ_NSHOT = 20
 DAQ_RATE = 5
-ENABLED = false
+ENABLED = true
 
 [DATA_REFRESH]
 NCORE = 4 # max CPU cores to use
 
 [LATTICE]
-DEFAULT_MACHINE = "FRIB_VA"
-DEFAULT_SEGMENT = "LS1FS1"
+DEFAULT_MACHINE = 'FRIB'
+DEFAULT_SEGMENT = 'LINAC'
 
 [ARCHIVER_APPLIANCE]
 [ARCHIVER_APPLIANCE.DATA_CLIENT]
-URL = "http://127.0.0.1:17665"
+URL = "http://epicsarchiver1.ftc:17668"
 
 # Apps that could be launched from the context menu of the first column
 # of settings view.
 # args: ename (element name) machine (machine name), segment (segment name)
 [EXTERNAL_APPS]
 [EXTERNAL_APPS.APP1]
-ARGS = "--config {ename}.json"
+ARGS = "--setting {ename}.json"
+CWD = "/files/shared/ap/OnlineViewerApp/devices"
+EXEC = "python3 /files/shared/ap/OnlineViewerApp/viola.py"
+NAME = "Viola"
+[EXTERNAL_APPS.APP2]
 EXEC = "correlation_visualizer"
 NAME = "Correlation Visualizer"
+#   ARGS = ""
+#   CWD = ""
 
 [FILTER_BUTTONS]
 [FILTER_BUTTONS.BTN1]
-FILEPATH = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/filters/01_scaling.flt"
+FILEPATH = "/files/shared/ap/settings_manager/filters/01_scaling.flt"
 
 [FILTER_GROUPS]
 [FILTER_GROUPS.GRP1]
 DESC = "Choose predefined filters..."
-DIRPATH = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/filters"
+DIRPATH = "/files/shared/ap/settings_manager/filters"
 NAME = "Filters"
-
-# EPICS : do not use
-#[EPICS]
-#  CA_AUTO_ADDR_LIST = "NO"
-#  CA_ADDR_LIST = ["localhost", "controlgw1.nscl.msu.edu:6064", "controlgw2.nscl.msu.edu:6064"]
 
 [SNAPSHOT_TAKE]
 # predefined tag list to use when take a snapshot.
 EXCL_TAG_GROUPS = [["LINAC", "FSEE"], ["SCS1", "SCS2"]]
-TAGS = ["GOLDEN", "FSEE", "LINAC", "SCS1", "SCS2", "TEST", "VA"]
+TAGS = ["GOLDEN", "FSEE", "LINAC", "SCS1", "SCS2", "TEST"]
 
 [BEAM]
 # machine bound list
@@ -136,38 +136,32 @@ ISRC_ALIAS = ["ISRC1", "ISRC2"]
 ISRC_NAMES = ["Artemis", "HP-ECR"]
 
 [SNAPSHOT_TEMPLATES]
+
 [SNAPSHOT_TEMPLATES."LINAC_Artemis"]
-DB_ENTRY = "2023-03-15T15:37:19"
+DB_ENTRY = "2023-05-15T09:57:41"
 DB_TAGS = ["LINAC", "SCS1"]
 NAME = "LINAC_Artemis"
 
-#  [SNAPSHOT_TEMPLATES."FSEE_Artemis"]
-#    NAME = "FSEE_Artemis"
-#    DB_ENTRY = "2023-05-15T10:18:02"
-#    DB_TAGS = ["FSEE", "SCS1"]
+[SNAPSHOT_TEMPLATES."FSEE_Artemis"]
+DB_ENTRY = "2023-05-15T10:18:02"
+DB_TAGS = ["FSEE", "SCS1"]
+NAME = "FSEE_Artemis"
 
-#  [SNAPSHOT_TEMPLATES."LINAC_HP-ECR"]
-#    NAME = "LINAC_HP-ECR"
-#    DB_ENTRY = "2023-05-15T10:00:59"
-#    DB_TAGS = ["LINAC", "SCS2"]
-#
-#  [SNAPSHOT_TEMPLATES."FSEE_HP-ECR"]
-#    NAME = "FSEE_HP-ECR"
-#    DB_ENTRY = "2023-05-15T10:17:15"
-#    DB_TAGS = ["FSEE", "SCS2"]
-#
+[SNAPSHOT_TEMPLATES."LINAC_HP-ECR"]
+DB_ENTRY = "2023-05-15T10:00:59"
+DB_TAGS = ["LINAC", "SCS2"]
+NAME = "LINAC_HP-ECR"
+
+[SNAPSHOT_TEMPLATES."FSEE_HP-ECR"]
+DB_ENTRY = "2023-05-15T10:17:15"
+DB_TAGS = ["FSEE", "SCS2"]
+NAME = "FSEE_HP-ECR"
 
 # other configuration data
 [DATA]
 # tolerance PVs
-#  TOL_PVFILE = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/tolpv.json"
+TOL_PVFILE = "/files/shared/ap/HLA/.phyapps/phantasy-apps/phantasy_apps/settings_manager/config/tolpv.json"
 # reference set PVs
-#  REFST_PVFILE = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/refstpv.json"
+REFST_PVFILE = "/files/shared/ap/HLA/.phyapps/phantasy-apps/phantasy_apps/settings_manager/config/refstpv.json"
 # alarm switch PVs
-#  ALMACT_PVFILE = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/almactpv.json"
-
-[ATTACHMENT]
-  ROOT_DIR = "/tmp/sm-attach"
-  [ATTACHMENT.FILE_TYPE_EXEC]
-    csv = 'libreoffice --calc'
-    txt = 'xed'
+ALMACT_PVFILE = "/files/shared/ap/HLA/.phyapps/phantasy-apps/phantasy_apps/settings_manager/config/almactpv.json"

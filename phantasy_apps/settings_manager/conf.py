@@ -56,7 +56,7 @@ def reset_app_config():
     """Copy default app configuration file to user's home directory (~/.phantasy)
     """
     # distributed with app
-    default_app_conf_path = find_dconf("settings_manager", "sm_default.toml")
+    default_app_conf_path = find_dconf("settings_manager", "settings_manager.toml")
     target_path = os.path.abspath(os.path.expanduser("~/.phantasy"))
     if not os.path.exists(target_path):
         os.makedirs(target_path)
