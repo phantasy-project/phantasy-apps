@@ -597,19 +597,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._lat = o.combined_lattice()
         self.lattice_loaded.emit(o)
 
-    def on_notify_lattice_loaded(self):
-        # show info after a new lattice is loaded.
-        if not self._post_info:
-            return
-        QMessageBox.information(
-            self, "Loaded Lattice",
-            '<html><head/><body><p>Lattice is loaded, add device settings '
-            'via <span style=" font-style:italic;">Add Devices</span> or '
-            '<span style=" font-style:italic;">Load Settings </span>tools,'
-            ' or check <span style=" font-style:italic;">Initialize with '
-            'loaded lattice</span> in the right bottom window area to '
-            'list all the devices.</p></body></html>', QMessageBox.Ok)
-
     def _enable_widgets(self, enabled):
         for w in (self.lv_lbl, self.lv_mach_lbl, self.lv_segm_lbl,
                   self.lv_view_btn, self.reload_lattice_btn):
@@ -2046,8 +2033,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 self.on_lattice_changed)
             self._lattice_load_window.latticeChanged.connect(
                 self._lattice_load_window.close)
-            self._lattice_load_window.latticeChanged.connect(
-                self.on_notify_lattice_loaded)
         self._lattice_load_window.show()
 
     @pyqtSlot()
