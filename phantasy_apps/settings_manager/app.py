@@ -984,7 +984,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         #
         self.tabifyDockWidget(self.snp_dock, self.log_dock)
-        delayed_exec(self.snp_dock.raise_(), 50)
+        delayed_exec(lambda: self.snp_dock.raise_(), 50)
 
         # tag, ions filter buttons
         self.select_all_ions_btn.clicked.connect(
