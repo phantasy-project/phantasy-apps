@@ -4124,7 +4124,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def get_ms_config(self):
         """Return the configurations for machine state capture.
         """
-        conf = get_meta_conf_dict(self.pref_dict['MACH_STATE']['CONFIG_PATH'])
+        conf = get_meta_conf_dict(os.path.abspath(
+            os.path.expanduser(self.pref_dict['MACH_STATE']['CONFIG_PATH']
+            )))
         _rate = self.pref_dict['MACH_STATE'].get('DAQ_RATE', None)
         _nshot = self.pref_dict['MACH_STATE'].get('DAQ_NSHOT', None)
         mach_state_conf = merge_mach_conf(
