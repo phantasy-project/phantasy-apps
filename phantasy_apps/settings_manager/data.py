@@ -253,8 +253,9 @@ def read_data(data_path, file_type=None):
 
     try:
         r = SnapshotData.read(data_src, ftype=file_type)
-    except:
+    except Exception as err:
         r = None
+        print(f"Failed to read '{data_src}': {err}")
     finally:
         return r
 
@@ -444,8 +445,6 @@ class SnapshotData:
         self.data = df_data
         self.info = df_info
         self.__update_info(**kws)
-        # update tags : str -> list
-        self.__update_tags()
         # by default data_path is None, only be updated when saving/loading to/from file.
         self.data_path = None
         # machine state data
@@ -494,6 +493,8 @@ class SnapshotData:
                 raise AttributeError(f"Readonly attribute cannot be changed")
             else:
                 v = self.__setter_map.get(k, lambda v:v)(v)
+            if k == 'tags':
+                v = ','.join(v) # join tag list with ','
             self._df_info.loc['attribute', k] = v
             if k == 'timestamp':
                 self._df_info['datetime'] = self.ts_as_str()
@@ -501,15 +502,13 @@ class SnapshotData:
             super(SnapshotData, self).__setattr__(k, v)
 
     def __getattr__(self, k):
+        if k == 'tags':
+            return self._df_info[k][0].split(",")
+
         if k in self._df_info:
             return self._df_info[k][0]
         else:
             raise AttributeError(f"Invalid attribute '{k}'")
-
-    def __update_tags(self):
-        tags = self.info['tags'][0]
-        # update tags to list from str (after read from data file)
-        self.info.loc['attribute', 'tags'] = self.__get_tags(tags)
 
     def __update_info(self, **kws):
         """Initial and update (with keyword arguments) info table.
@@ -525,21 +524,16 @@ class SnapshotData:
         return dir(__class__) + list(self.__dict__.keys()) \
                 + self._df_info.keys().tolist()
 
-    def __get_tags(self, v):
-        # get a list of tags from input *v* (str)  to set .tags attribute
+    def __get_tags(self, v: str):
+        # get a list of sorted unique tags from input *s* (str)  to set .tags attribute
         if v is None:
-            v = []
+            tag_list = []
         else:
-            # input: str separated by ',', delete whitespace if any, or list of strings.
-            # ignore empty str ''.
-            if isinstance(v, str):
-                _tags = v.split(',')
-            elif isinstance(v, (list, tuple)):
-                _tags = v
-            else:
-                _tags = [str(v),]
-            v = [i.upper() for i in [re.sub(r'\s+', '', s) for s in _tags] if i not in ('', 'nan')]
-        return v
+            # input: str separated by ',', ';', or white spaces, delete whitespace if any
+            # ignore empty str '', e.g. ',,'.
+            _tags = set(re.split(r"[,;\s+]", v.strip(",; ")))
+            tag_list = [i.upper() for i in _tags]
+        return sorted(tag_list)
 
     def ts_as_str(self):
         # string
