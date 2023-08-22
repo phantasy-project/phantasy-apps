@@ -79,6 +79,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.centralwidget.sizePolicy().hasHeightForWidth())
         self.centralwidget.setSizePolicy(sizePolicy)
+        self.centralwidget.setStyleSheet("QWidget#centralwidget {\n"
+                                         "    border-top: 1px solid gray;\n"
+                                         "    border-bottom: 0px solid gray;\n"
+                                         "}")
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setContentsMargins(4, 4, 4, 4)
