@@ -1373,6 +1373,9 @@ class SnapshotDataModel(QStandardItemModel):
                 # ts
                 it_ts = QStandardItem(snp_data.ts_as_str())
                 it_ts.setEditable(False)
+                it_ts.setData(
+                    f"Snapshot created at '{snp_data.ts_as_str()}' by '{snp_data.user}' for '{snp_data.ion_as_str()}'",
+                    Qt.ToolTipRole)
                 it_ts.snp_data = snp_data
 
                 # name (invisible)
