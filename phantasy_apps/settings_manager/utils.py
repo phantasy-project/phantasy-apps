@@ -24,16 +24,17 @@ from PyQt5.QtCore import QItemSelectionModel
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import QVariant
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QRect
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QBrush
+from PyQt5.QtGui import QBrush, QPainter
 from PyQt5.QtGui import QColor
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
+from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QGraphicsDropShadowEffect, QLabel,)
 from PyQt5.QtWidgets import QStyle
 from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtWidgets import QToolButton
@@ -541,10 +542,8 @@ class SettingsModel(QStandardItemModel):
 
     def fit_view(self):
         tv = self._tv
-        #tv.expandAll()
         for i in self.ids:
             tv.resizeColumnToContents(i)
-        #tv.collapseAll()
 
     @pyqtSlot()
     def on_delete_selected_items(self):
@@ -1314,6 +1313,7 @@ class SnapshotDataModel(QStandardItemModel):
         self.load_px = QPixmap(":/sm-icons/cast.png").scaled(PX_SIZE, PX_SIZE)
         self.note_px = QPixmap(":/sm-icons/comment.png").scaled(PX_SIZE, PX_SIZE)
         self.tags_px = QPixmap(":/sm-icons/label.png").scaled(PX_SIZE, PX_SIZE)
+        self.user_px = QPixmap(":/sm-icons/person.png").scaled(PX_SIZE, PX_SIZE)
 
         self.header = self.h_ts, self.h_name, \
                       self.h_ion, self.h_ion_number, self.h_ion_mass, self.h_ion_charge, \
@@ -1379,9 +1379,12 @@ class SnapshotDataModel(QStandardItemModel):
                 it_name = QStandardItem(snp_data.name)
 
                 # ion: name
-                it_ion_name = QStandardItem(snp_data.ion_name)
+                it_ion_name = QStandardItem('' * (len(snp_data.ion_name) + 1))
                 it_ion_name.setEditable(False)
+                it_ion_name.setData(get_ion_px(snp_data.ion_name), Qt.DecorationRole)
+                it_ion_name.setData(snp_data.ion_name, Qt.UserRole)
                 _z, _a, _q = snp_data.ion_number, snp_data.ion_mass, snp_data.ion_charge
+                it_ion_name.setData(f"{snp_data.ion_name} (Z: {_z}, A: {_a}, Q: {_q})", Qt.ToolTipRole)
                 # ion: Z (str)
                 it_ion_number = QStandardItem(_z)
                 it_ion_number.setData(int(_z), Qt.UserRole)
@@ -1396,6 +1399,7 @@ class SnapshotDataModel(QStandardItemModel):
                 it_ion_charge.setEditable(False)
                 # user
                 it_user = QStandardItem(snp_data.user)
+                it_user.setData(self.user_px, Qt.DecorationRole)
                 it_user.setEditable(False)
 
                 # tags (list), editable
@@ -1547,6 +1551,7 @@ class SnapshotDataModel(QStandardItemModel):
 
         # hide name col
         v.setColumnHidden(self.i_name, True)
+        v.setColumnHidden(self.i_ion_number, True)
         #
         v.setSortingEnabled(True)
 
@@ -2193,3 +2198,22 @@ def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
 def _printlog(*msg):
     ts = datetime.now().isoformat(sep='T', timespec="milliseconds")
     print(f"[{ts}] {', '.join((str(i) for i in msg))}")
+
+
+def get_ion_px(ion_name: str, px_size: int = 48):
+    px_path = ELEMT_PX_MAP.get(ion_name, (None, None))[0]
+    if px_path is None:
+        size = QSize(px_size, px_size)
+        px = QPixmap(size)
+        px.fill(QColor(255, 255, 255, 0))
+        pt = QPainter(px)
+        ft = pt.font()
+        ft.setPointSize(ft.pointSize() + 1)
+        pt.setFont(ft)
+        pt.drawText(QRect(0, 0, px_size, px_size),
+                    Qt.AlignCenter, ion_name)
+        pt.end()
+    else:
+        px = QPixmap(px_path).scaled(px_size, px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+    return px
+
