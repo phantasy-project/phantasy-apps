@@ -207,7 +207,9 @@ class PreferencesDialog(QDialog, Ui_Dialog):
 
     @pyqtSlot()
     def on_read_ms_config(self):
-        with open(self.pref_dict['MACH_STATE']['CONFIG_PATH'], "r") as f0:
+        confpath = os.path.abspath(os.path.expanduser(
+                self.pref_dict['MACH_STATE']['CONFIG_PATH']))
+        with open(confpath, "r") as f0:
             data = f0.read()
         _read_data_in_tmp_file(data)
 
