@@ -296,6 +296,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 filepath = v.get('FILEPATH', None)
                 if filepath is None:
                     continue
+                filepath = os.path.abspath(os.path.expanduser(filepath))
                 if not os.path.isfile(filepath):
                     continue
                 _conf = toml.load(filepath)
@@ -318,7 +319,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 if grp_name is None:
                     continue
                 grp_tt = v.get('DESC', grp_name)
-                grp_dir = v.get('DIRPATH')
+                grp_dir = os.path.abspath(os.path.expanduser(v.get('DIRPATH')))
                 btn = QToolButton()
                 menu = QMenu()
                 for f in pathlib.Path(grp_dir).glob("**/*.flt"):
