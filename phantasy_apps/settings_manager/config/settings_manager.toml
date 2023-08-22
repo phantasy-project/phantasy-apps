@@ -1,4 +1,4 @@
-# Configuration file for Settings Manager
+# Configuration file for Settings Manager development with VA
 #
 TITLE = "App Configurations for Settings Manager, passing with --config"
 
@@ -9,7 +9,7 @@ WIDTH = 1920
 [DATA_SOURCE]
 DB_ENGINE = "sqlite"
 TYPE = "database"
-URI = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm.db"
+URI = "~/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm.db"
 
 [SETTINGS]
 FIELD_INIT_MODE = "model" # initial settings with model or live data, if live is enabled, saved set will be overridden
@@ -27,11 +27,11 @@ HIDDEN_COLUMNS = [
 PRECISION = 3 # float number precision
 SKIP_NONE = true # whether skip device settings with none returned
 TOLERANCE = 0.10 # defalut absolute discrepancy tolerance
-T_WAIT = 0.05 # Settling time between batch settings apply, second
+T_WAIT = 10 # Settling time between batch settings apply, milliseconds
 # machine specific
 SCALABLE_FIELD_NAMES = ["I", "V", "AMP", "AMP1", "AMP2", "AMP3", "I_TC"] 
 STRIPPER_POS = 224.90368452 # meter, carbon stripper location
-# for those write allowed per ACF but intended to be readonly.
+# for those write permission allowed per ACF but intended to be readonly.
 READONLY_DEVICE_LIST = [
   'FE_ISRC1:BEAM',
   'FE_ISRC1:DRV_D0686',
@@ -83,7 +83,7 @@ SNP_NOTE_PV = "PHY:SM_SNP_LAST_NOTE"
 SNP_PUBLISHER_PV = "PHY:SM_SNP_LAST_PUBLISHER"
 
 [MACH_STATE]
-CONFIG_PATH = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/msviz/config/metadata_va.toml"
+CONFIG_PATH = "~/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/msviz/config/metadata_va.toml"
 DAQ_NSHOT = 20
 DAQ_RATE = 5
 ENABLED = false
@@ -110,12 +110,12 @@ NAME = "Correlation Visualizer"
 
 [FILTER_BUTTONS]
 [FILTER_BUTTONS.BTN1]
-FILEPATH = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/filters/01_scaling.flt"
+FILEPATH = "~/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/filters/01_scaling.flt"
 
 [FILTER_GROUPS]
 [FILTER_GROUPS.GRP1]
 DESC = "Choose predefined filters..."
-DIRPATH = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/filters"
+DIRPATH = "~/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/filters"
 NAME = "Filters"
 
 # EPICS : do not use
