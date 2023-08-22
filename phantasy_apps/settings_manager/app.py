@@ -29,7 +29,7 @@ from PyQt5.QtWidgets import (QCompleter, QCheckBox, QDialog, QLabel,
                              QMessageBox, QMenu, QAction, QWidgetAction,
                              QToolButton, QPushButton, QSizePolicy, QShortcut,
                              QWidget, QProgressBar, QHBoxLayout, QLineEdit,
-                             QLabel)
+                             QLabel, QTabWidget)
 
 from phantasy import (build_element, CaField, Settings)
 from phantasy_ui import (BaseAppForm, delayed_exec, get_open_filename,
@@ -985,6 +985,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         #
         self.tabifyDockWidget(self.snp_dock, self.log_dock)
+        self.setTabPosition(Qt.TopDockWidgetArea, QTabWidget.East)
         delayed_exec(lambda: self.snp_dock.raise_(), 50)
 
         # tag, ions filter buttons
