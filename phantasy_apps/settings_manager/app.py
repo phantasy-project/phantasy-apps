@@ -438,7 +438,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._ui_height = self.pref_dict['UI'].get('HEIGHT', 1440)
 
         #
-        self.t_wait = self.pref_dict['SETTINGS']['T_WAIT']
+        self.t_wait = self.pref_dict['SETTINGS']['T_WAIT'] / 1000.0 # ms -> s
+        print(self.t_wait)
         self.ndigit = self.pref_dict['SETTINGS']['PRECISION']
 
         # PVs for SM IOC (runtime change not supported)
@@ -2250,7 +2251,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_update_pref(self):
         """App config is updated.
         """
-        self.t_wait = self.pref_dict['SETTINGS']['T_WAIT']
+        self.t_wait = self.pref_dict['SETTINGS']['T_WAIT'] / 1000.0
         ndigit = self.pref_dict['SETTINGS']['PRECISION']
         if ndigit != self.ndigit:
             self.ndigit_changed.emit(ndigit)

@@ -75,10 +75,10 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         for o in (self.model_rbtn, self.live_rbtn):
             o.toggled.emit(o.isChecked())
 
-        # t_wait in second
+        # t_wait in milliseconds
         t_wait = self.pref_dict['SETTINGS']['T_WAIT']
-        self.apply_delt_dsbox.setValue(t_wait)
-        self.apply_delt_dsbox.valueChanged.connect(self.on_apply_delt_changed)
+        self.apply_delt_sbox.setValue(t_wait)
+        self.apply_delt_sbox.valueChanged.connect(self.on_apply_delt_changed)
 
         # init snapshot
         skip_none = self.pref_dict['SETTINGS']['SKIP_NONE']
@@ -307,9 +307,9 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         """
         self.pref_dict['SETTINGS']['SKIP_NONE'] = is_skip_none
 
-    @pyqtSlot(float)
-    def on_apply_delt_changed(self, t: float):
-        """Delta t in seconds for settings apply.
+    @pyqtSlot(int)
+    def on_apply_delt_changed(self, t: int):
+        """Delta t in milliseconds for settings apply.
         """
         self.pref_dict['SETTINGS']['T_WAIT'] = t
 
