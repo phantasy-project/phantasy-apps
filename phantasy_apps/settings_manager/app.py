@@ -3320,6 +3320,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             self.default_font_size, self.snp_template_list,
             self._current_snpdata_originated,
             self.pref_dict['MACH_STATE']['ENABLED'],
+            self.get_ms_config(),
             self.isrc_name_map,
             self.default_tag_list,
             self.excl_tag_groups,

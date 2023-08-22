@@ -44,6 +44,7 @@ from phantasy_ui.widgets import is_item_checked
 from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 from phantasy_apps.utils import find_dconf
 from .data import SnapshotData
+from phantasy_apps.msviz.mach_state import fetch_data
 
 
 AVAILABLE_IONS = ('He', 'Ne', 'Ar', 'Kr', 'Xe', 'U', 'Se', 'Ca', 'Pb',
@@ -2080,10 +2081,8 @@ def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
         2 (output progress with descriptions).
     with_machstate : bool
         Capture machine state data if set.
-    ms_conf : dict:
-        The configuration dict for machine state data capture, either passing:
-        * The parsed dict object by `conf`.
-        * Or the arguments for fetch_mach_state CLI tool: `config_path`, `rate`, `nshot`
+    ms_conf : dict
+        The configuration dict for machine state data capture.
 
     Returns
     -------
@@ -2156,21 +2155,13 @@ def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
         if verbose > 0:
             _printlog("Capture machine state data...")
 
-        ms_conf = kws.get('ms_conf', {})
-        if ms_conf.get('conf', None) is None:
+        ms_conf = kws.get('ms_conf', None)
+        if ms_conf is None:
             from phantasy_apps.msviz.mach_state import DEFAULT_META_CONF_PATH
-            from phantasy_apps.msviz.mach_state import fetch_data
             from phantasy_apps.msviz.mach_state import get_meta_conf_dict
             from phantasy_apps.msviz.mach_state import merge_mach_conf
-            if ms_conf.get('config_path', None) is None:
-                config_path = DEFAULT_META_CONF_PATH
-            _conf = get_meta_conf_dict(config_path)
-            _mach_stat_conf = merge_mach_conf(_conf, ms_conf.get('rate', None),
-                                              ms_conf.get('nshot', None))
-        else:
-            # use parsed config dict
-            _mach_stat_conf = ms_conf.get('conf')
-        _ms_dset = fetch_data(_mach_stat_conf, verbose=verbose)
+            ms_conf = merge_mach_conf(get_meta_conf_dict(DEFAULT_META_CONF_PATH))
+        _ms_dset = fetch_data(ms_conf, verbose=verbose)
     else:
         # no machine state is captured
         _ms_dset = None

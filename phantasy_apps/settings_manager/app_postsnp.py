@@ -50,7 +50,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
     snapshotTaken = pyqtSignal(SnapshotData, bool)
 
     def __init__(self, tag_fontsize: int, template_list: list, current_snpdata_originated: tuple,
-                 check_ms: bool, isrc_name_map: dict, default_tag_list: list,
+                 check_ms: bool, ms_conf: dict, isrc_name_map: dict, default_tag_list: list,
                  excl_tag_groups: list, parent=None):
         super(self.__class__, self).__init__()
         self.parent = parent
@@ -78,6 +78,7 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
 
         # if machine state data is to be captured
         self.snp_ms_chkbox.setChecked(check_ms)
+        self.ms_conf = ms_conf
         #
         self._post_init()
 
@@ -394,7 +395,8 @@ p, li { white-space: pre-wrap; }
                                          segment=self.parent._last_lattice_name,
                                          mp=self.parent._mp, version=self.parent._version,
                                          with_machstate=with_machstate,
-                                         machstate_conf=self.parent.get_ms_config())
+                                         ms_conf=self.ms_conf,
+                                         verbose=1)
             return new_snp_data
 
         def _take_started():
