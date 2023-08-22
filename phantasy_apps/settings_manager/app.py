@@ -29,7 +29,7 @@ from PyQt5.QtWidgets import (QCompleter, QCheckBox, QDialog, QLabel,
                              QMessageBox, QMenu, QAction, QWidgetAction,
                              QToolButton, QPushButton, QSizePolicy, QShortcut,
                              QWidget, QProgressBar, QHBoxLayout, QLineEdit,
-                             QLabel, QTabWidget)
+                             QLabel, QTabWidget, QGraphicsDropShadowEffect)
 
 from phantasy import (build_element, CaField, Settings)
 from phantasy_ui import (BaseAppForm, delayed_exec, get_open_filename,
@@ -3498,6 +3498,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for tag in _filters:
             o = QToolButton(self.snp_dock)
             o.setText(tag)
+            shadow = QGraphicsDropShadowEffect()
+            shadow.setBlurRadius(5)
+            shadow.setOffset(2)
+            o.setGraphicsEffect(shadow)
             o.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             o.setStyleSheet(TAG_BTN_STY.format(fs=self.default_font_size - 1))
             o.setCheckable(True)
@@ -3545,7 +3549,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 pt.end()
                 btn.setIcon(QIcon(px))
                 btn.setIconSize(size)
-
+            shadow = QGraphicsDropShadowEffect()
+            shadow.setBlurRadius(5)
+            shadow.setOffset(2)
+            btn.setGraphicsEffect(shadow)
             btn.setCheckable(True)
             btn.toggled.connect(partial(self.on_update_snp_filters, k))
             layout.addWidget(btn)
