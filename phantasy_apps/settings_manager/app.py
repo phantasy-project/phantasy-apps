@@ -4555,11 +4555,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 continue
             if not btn_found:
                 self.revert_btn.setVisible(True)
-                self.revert_btn.clicked.disconnect()
-                self.revert_btn.clicked.connect(btn.clicked)
-                self.revert_btn.setToolTip(btn.toolTip())
-                btn.setIcon(QIcon(QPixmap(":/sm-icons/revert_act.png")))
-                btn_found = True
+                try:
+                    self.revert_btn.clicked.disconnect()
+                except:
+                    pass
+                finally:
+                    self.revert_btn.clicked.connect(btn.clicked)
+                    self.revert_btn.setToolTip(btn.toolTip())
+                    btn.setIcon(QIcon(QPixmap(":/sm-icons/revert_act.png")))
+                    btn_found = True
         if not btn_found:
             self.revert_btn.setVisible(False)
 
