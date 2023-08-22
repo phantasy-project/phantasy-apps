@@ -72,7 +72,6 @@ from .utils import get_ratio_as_string
 from .utils import VALID_FILTER_KEYS
 from .utils import VALID_FILTER_KEYS_NUM
 from .utils import SnapshotDataModel
-from .utils import NUM_LENGTH
 from .utils import BG_COLOR_GOLDEN_NO
 from .utils import CHP_STS_TUPLE
 from .utils import TGT_STS_TUPLE
@@ -453,9 +452,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.elem_write_perm_dict = {k: False for k in self.pref_dict["SETTINGS"]["READONLY_DEVICE_LIST"]}
 
 
-        self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self.ndigit)
+        self.fmt = '{{0:.{}f}}'.format(self.ndigit)
         # for field NMR, HALL probe
-        self.fmt_nmr = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, 5)
+        self.fmt_nmr = '{{0:.{}f}}'.format(5)
 
         # data source (support runtime change for uri only)
         self.dsrc_mode = self.pref_dict['DATA_SOURCE']['TYPE']
@@ -2318,7 +2317,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(int)
     def on_ndigit_changed(self, n):
         self.ndigit = n
-        self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, n)
+        self.fmt = '{{0:.{}f}}'.format(n)
         self.element_list_changed.emit()
 
     @pyqtSlot(int)

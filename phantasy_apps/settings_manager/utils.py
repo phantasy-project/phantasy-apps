@@ -7,6 +7,7 @@ import re
 import time
 import shutil
 import pandas as pd
+import numpy as np
 from collections import Counter
 from collections import OrderedDict
 from datetime import datetime
@@ -16,7 +17,7 @@ from functools import partial
 from numpy.testing import assert_almost_equal
 
 from PyQt5.QtCore import QObject
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QSize, QPoint
 from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtCore import QPersistentModelIndex
 from PyQt5.QtCore import QItemSelectionModel
@@ -249,10 +250,6 @@ def set_device_state_item(sts_str: str):
     return item
 
 
-# default length for number display
-NUM_LENGTH = 9
-
-
 # Chopper state map
 # CHP_STS_TUPLE = PV("ACS_DIAG:CHP:STATE_RD").enum_strs
 CHP_STS_TUPLE = ("Invalid Input", "Off", "Blocking", "Running")
@@ -304,10 +301,10 @@ class SettingsModel(QStandardItemModel):
         self.tol_pv_map = self._pv_map.get('tol', {})
         self.alm_act_pv_map = self._pv_map.get('almact', {})
 
-        self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self._ndigit)
+        self.fmt = '{{0:.{}f}}'.format(self._ndigit)
 
         # for field NMR, HALL
-        self.fmt_nmr = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, 5)
+        self.fmt_nmr = '{{0:.{}f}}'.format(5)
 
         if self._font is None:
             self._font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
@@ -1162,6 +1159,26 @@ class _Delegate(QStyledItemDelegate):
                 option.font.setFamily(self.font_family)
         QStyledItemDelegate.initStyleOption(self, option, index)
 
+    def paint(self, painter, option, index):
+        m = index.model().m_src
+        if index.column() in (m.i_field, m.i_type):
+            option.displayAlignment = Qt.AlignHCenter | Qt.AlignVCenter
+        elif index.column() in (m.i_name,):
+            option.displayAlignment = Qt.AlignLeft | Qt.AlignVCenter
+        else:
+            option.displayAlignment = Qt.AlignRight | Qt.AlignVCenter
+
+        if index.column() in (m.i_sts, m.i_last_sts, m.i_tune_alm, m.i_read_alm):
+            px = index.data(Qt.DecorationRole)
+            if px is not None:
+                item_rect = option.rect
+                x = int(item_rect.center().x() - px.rect().width() / 2)
+                y = int(item_rect.center().y() - px.rect().height() / 2)
+                # Draw the pixmap at the calculated position
+                painter.drawPixmap(QPoint(x, y), px)
+        else:
+            QStyledItemDelegate.paint(self, painter, option, index)
+
     def sizeHint(self, option, index):
         size = QStyledItemDelegate.sizeHint(self, option, index)
         size.setHeight(int(size.height() * 1.3))
@@ -1275,11 +1292,11 @@ def str2float(s):
 def get_ratio_as_string(a, b, fmt):
     # return a/b, if b is zero, return -
     try:
-        r = fmt.format(a / b)
+        r = a / b
     except ZeroDivisionError:
-        r = 'inf'
-    finally:
-        return r
+        return fmt.format(np.inf)
+    else:
+        return fmt.format(r)
 
 
 class SnapshotDataModel(QStandardItemModel):
