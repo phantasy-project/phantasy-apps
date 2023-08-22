@@ -28,23 +28,6 @@ class Ui_Dialog(object):
         self.gridLayout.setHorizontalSpacing(4)
         self.gridLayout.setVerticalSpacing(8)
         self.gridLayout.setObjectName("gridLayout")
-        self.apply_delt_dsbox = QtWidgets.QDoubleSpinBox(self.data_tab)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.apply_delt_dsbox.sizePolicy().hasHeightForWidth())
-        self.apply_delt_dsbox.setSizePolicy(sizePolicy)
-        self.apply_delt_dsbox.setStyleSheet("QDoubleSpinBox {\n"
-                                            "    padding-left: 5px;\n"
-                                            "}")
-        self.apply_delt_dsbox.setDecimals(3)
-        self.apply_delt_dsbox.setMaximum(5.0)
-        self.apply_delt_dsbox.setSingleStep(0.05)
-        self.apply_delt_dsbox.setProperty("value", 0.05)
-        self.apply_delt_dsbox.setObjectName("apply_delt_dsbox")
-        self.gridLayout.addWidget(self.apply_delt_dsbox, 2, 1, 1, 1)
         self.label_3 = QtWidgets.QLabel(self.data_tab)
         self.label_3.setObjectName("label_3")
         self.gridLayout.addWidget(self.label_3, 5, 0, 1, 1)
@@ -163,6 +146,22 @@ class Ui_Dialog(object):
         self.label_4 = QtWidgets.QLabel(self.data_tab)
         self.label_4.setObjectName("label_4")
         self.gridLayout.addWidget(self.label_4, 4, 0, 1, 1)
+        self.apply_delt_sbox = QtWidgets.QSpinBox(self.data_tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.apply_delt_sbox.sizePolicy().hasHeightForWidth())
+        self.apply_delt_sbox.setSizePolicy(sizePolicy)
+        self.apply_delt_sbox.setStyleSheet("QSpinBox {\n"
+                                           "    padding-left: 5px;\n"
+                                           "}")
+        self.apply_delt_sbox.setMaximum(5000)
+        self.apply_delt_sbox.setSingleStep(10)
+        self.apply_delt_sbox.setProperty("value", 50)
+        self.apply_delt_sbox.setObjectName("apply_delt_sbox")
+        self.gridLayout.addWidget(self.apply_delt_sbox, 2, 1, 1, 1)
         self.tabWidget.addTab(self.data_tab, "")
         self.ms_tab = QtWidgets.QWidget()
         self.ms_tab.setObjectName("ms_tab")
@@ -438,11 +437,33 @@ class Ui_Dialog(object):
         self.live_rbtn.toggled['bool'].connect(
             Dialog.on_toggle_mode)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+        Dialog.setTabOrder(self.tabWidget, self.apply_delt_sbox)
+        Dialog.setTabOrder(self.apply_delt_sbox, self.tol_dsbox)
+        Dialog.setTabOrder(self.tol_dsbox, self.ndigit_sbox)
+        Dialog.setTabOrder(self.ndigit_sbox, self.dsrc_mode_cbb)
+        Dialog.setTabOrder(self.dsrc_mode_cbb, self.dbpath_btn)
+        Dialog.setTabOrder(self.dbpath_btn, self.wdir_btn)
+        Dialog.setTabOrder(self.wdir_btn, self.ok_btn)
+        Dialog.setTabOrder(self.ok_btn, self.msconf_path_lineEdit)
+        Dialog.setTabOrder(self.msconf_path_lineEdit, self.msconf_open_btn)
+        Dialog.setTabOrder(self.msconf_open_btn, self.plainTextEdit)
+        Dialog.setTabOrder(self.plainTextEdit, self.msconf_rate_cbb)
+        Dialog.setTabOrder(self.msconf_rate_cbb, self.msconf_nshot_cbb)
+        Dialog.setTabOrder(self.msconf_nshot_cbb, self.select_font_btn)
+        Dialog.setTabOrder(self.select_font_btn, self.appconf_path_lineEdit)
+        Dialog.setTabOrder(self.appconf_path_lineEdit,
+                           self.view_app_config_btn)
+        Dialog.setTabOrder(self.view_app_config_btn, self.reset_app_config_btn)
+        Dialog.setTabOrder(self.reset_app_config_btn,
+                           self.export_app_config_btn)
+        Dialog.setTabOrder(self.export_app_config_btn, self.model_rbtn)
+        Dialog.setTabOrder(self.model_rbtn, self.live_rbtn)
+        Dialog.setTabOrder(self.live_rbtn, self.init_snp_btn)
+        Dialog.setTabOrder(self.init_snp_btn, self.skip_none_chkbox)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.apply_delt_dsbox.setSuffix(_translate("Dialog", " seconds"))
         self.label_3.setText(_translate("Dialog", "Data source type"))
         self.label_2.setToolTip(
             _translate(
@@ -465,6 +486,7 @@ class Ui_Dialog(object):
         self.wdir_title_lbl.setText(_translate("Dialog", "Working directory"))
         self.wdir_btn.setText(_translate("Dialog", "Browse"))
         self.label_4.setText(_translate("Dialog", "Float number precision"))
+        self.apply_delt_sbox.setSuffix(_translate("Dialog", " milliseconds"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.data_tab),
                                   _translate("Dialog", "Data"))
         self.groupBox_3.setTitle(_translate("Dialog", "Configuration File"))
