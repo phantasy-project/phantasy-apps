@@ -1678,6 +1678,12 @@ class _DelegateSnapshot(QStyledItemDelegate):
             return QStyledItemDelegate.createEditor(self, parent, option, index)
 
     def paint(self, painter, option, index):
+        m = index.model().m_src
+        if index.column() in (m.i_ion_mass, m.i_ion_charge):
+            option.displayAlignment = Qt.AlignRight | Qt.AlignVCenter
+        else:
+            option.displayAlignment = Qt.AlignLeft | Qt.AlignVCenter
+
         op = index.model().data(index, Qt.UserRole + 1)
         if op in ACT_BTN_CONF:
             tt, text, px_path = ACT_BTN_CONF[op]
