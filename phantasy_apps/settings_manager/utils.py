@@ -1309,11 +1309,17 @@ class SnapshotDataModel(QStandardItemModel):
         # [
         #  SnapshotData,
         # ]
-        self.loaded_px = QPixmap(":/sm-icons/cast_connected.png").scaled(PX_SIZE, PX_SIZE)
-        self.load_px = QPixmap(":/sm-icons/cast.png").scaled(PX_SIZE, PX_SIZE)
-        self.note_px = QPixmap(":/sm-icons/comment.png").scaled(PX_SIZE, PX_SIZE)
-        self.tags_px = QPixmap(":/sm-icons/label.png").scaled(PX_SIZE, PX_SIZE)
-        self.user_px = QPixmap(":/sm-icons/person.png").scaled(PX_SIZE, PX_SIZE)
+        _px_size = int(PX_SIZE * 1.5)
+        self.loaded_px = QPixmap(":/sm-icons/cast_connected.png").scaled(
+                _px_size, _px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.load_px = QPixmap(":/sm-icons/cast.png").scaled(
+                _px_size, _px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.note_px = QPixmap(":/sm-icons/comment.png").scaled(
+                _px_size, _px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.tags_px = QPixmap(":/sm-icons/label.png").scaled(
+                _px_size, _px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.user_px = QPixmap(":/sm-icons/person.png").scaled(
+                _px_size, _px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
         self.header = self.h_ts, self.h_name, \
                       self.h_ion, self.h_ion_number, self.h_ion_mass, self.h_ion_charge, \
@@ -1382,9 +1388,9 @@ class SnapshotDataModel(QStandardItemModel):
                 it_name = QStandardItem(snp_data.name)
 
                 # ion: name
-                it_ion_name = QStandardItem('' * (len(snp_data.ion_name) + 1))
+                it_ion_name = QStandardItem()
                 it_ion_name.setEditable(False)
-                it_ion_name.setData(get_ion_px(snp_data.ion_name), Qt.DecorationRole)
+                it_ion_name.setData(get_ion_px(snp_data.ion_name, 44), Qt.DecorationRole)
                 it_ion_name.setData(snp_data.ion_name, Qt.UserRole)
                 _z, _a, _q = snp_data.ion_number, snp_data.ion_mass, snp_data.ion_charge
                 it_ion_name.setData(f"{snp_data.ion_name} (Z: {_z}, A: {_a}, Q: {_q})", Qt.ToolTipRole)
@@ -1583,7 +1589,7 @@ class SnapshotDataModel(QStandardItemModel):
         pass
 
     def set_golden_status(self, is_golden: bool, it: QStandardItem) -> None:
-        px = QPixmap(QSize(PX_SIZE, PX_SIZE))
+        px = QPixmap(QSize(int(PX_SIZE * 1.5), int(PX_SIZE * 1.5)))
         if is_golden:
             bgc = BG_COLOR_GOLDEN_YES
             tt = TT_GOLDEN
