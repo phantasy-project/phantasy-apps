@@ -505,12 +505,29 @@ class SnapshotData:
     def archive(self):
         """Add 'ARCHIVE' into the tag list.
         """
+        self.append_tag('ARCHIVE')
+
+    def append_tag(self, tag: str):
+        """Add a new tag to the tag list.
+        """
         tag_list = self.tags
-        if 'ARCHIVE' not in tag_list:
-            tag_list.append('ARCHIVE')
+        _tag = tag.upper()
+        if _tag not in tag_list:
+            tag_list.append(_tag)
             self._df_info.loc['attribute']['tags'] = ','.join(tag_list)
         else:
-            print("Already been archived.")
+            print(f"{_tag} exists, skip adding.")
+
+    def set_timestamp(self, ts: float = None):
+        """Update timestamp, along with datetime, date.
+        """
+        if ts is None:
+            ts = time.time()
+        self._df_info.loc["attribute"]["timestamp"] = ts
+        self._df_info.loc["attribute"]["datetime"] = \
+            datetime.fromtimestamp(ts).strftime("%Y-%m-%dT%H:%M:%S")
+        self._df_info.loc["attribute"]["date"] = \
+            datetime.fromtimestamp(ts).strftime("%Y-%m-%d %A")
 
 #    def __str__(self):
 #        # str(self.data)
@@ -621,7 +638,7 @@ class SnapshotData:
         """Return a deepcopy.
         """
         _info = self.info.copy(deep=True)
-        _info['parent'] = self.ts_as_str() # pass the datetime string as parent node
+        _info.loc['attribute']['parent'] = self.ts_as_str() # pass the datetime string as parent node
         _cp = SnapshotData(self.data.copy(deep=True), _info)
         if self.machstate is not None:
             _cp.machstate = self.machstate.copy(deep=True)

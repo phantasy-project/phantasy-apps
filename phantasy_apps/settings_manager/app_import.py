@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QMessageBox
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 from .contrib.db.db_utils import ensure_connect_db
 
-from .data import read_data
+from .data import read_excel, SnapshotData
 from .db_utils import insert_update_data
 
 from .ui.ui_import import Ui_Dialog
@@ -61,11 +61,10 @@ class ImportSNPDialog(QDialog, Ui_Dialog):
         """
         def _import_file(filepath):
             conn = ensure_connect_db(self.parent.data_uri)
-            snp_data = read_data(filepath)
-            snp_data.extract_blob()
+            _data, _info, _ = read_excel(filepath)
+            snp_data = SnapshotData(_data, _info)
             for _tag in tag_list:
-                if _tag not in snp_data.tags:
-                    snp_data.tags.append(_tag)
+                snp_data.append_tag(_tag)
             insert_update_data(conn, snp_data)
             return filepath
 

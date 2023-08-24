@@ -48,12 +48,10 @@ from .app_import import ImportSNPDialog
 from .app_pref import PreferencesDialog
 from .app_bpmviz import BPMVizWidget
 from .app_postsnp import PostSnapshotDialog
-from .data import CSV_HEADER
-from .data import DEFAULT_DATA_FMT
 from .data import SnapshotData
 from .data import get_settings_data
 from .data import make_physics_settings
-from .data import read_data
+from .data import read_data, read_excel
 from .db_utils import insert_update_data
 from .db_utils import delete_data
 from .ui.ui_app import Ui_MainWindow
@@ -3268,7 +3266,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         urls = e.mimeData().urls()
         for url in urls:
             path = url.toLocalFile()
-            snp_data = read_data(pathlib.Path(path))
+            _data, _info, _ = read_excel(pathlib.Path(path))
+            snp_data = SnapshotData(_data, _info)
             if snp_data is None:
                 QMessageBox.warning(self, "Load Snapshot",
                                     "Cannot load the file.", QMessageBox.Ok,
@@ -3737,9 +3736,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # settings(data.data): DataFrame
         # !add 'copy' into tag list!
         data.extract_blob()
-
         data1 = data.clone()
-
+        data1.set_timestamp()
         filename, ext = get_save_filename(
             self,
             caption="Save Settings to a File",
@@ -3748,11 +3746,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             "XLSX Files (*.xlsx);;HDF5 Files (*.h5);;CSV Files (*.csv)")
         if filename is None:
             return
-        # data1.name = re.sub(r"(.*)_[0-9]+\.[0-9]+",r"\1_{}".format(time.time()), data1.name)
-        if 'copy' not in data.tags:
-            data1.tags.append('copy')
+        data1.append_tag('EXPORT')
         # update timestamp
-        data1.timestamp = time.time()
         self._save_settings(data1, filename, ext)
 
     def _save_settings(self, data, filename, ftype='xlsx'):
