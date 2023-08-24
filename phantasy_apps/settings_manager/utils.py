@@ -1454,7 +1454,7 @@ class SnapshotDataModel(QStandardItemModel):
         if j == self.i_note:
             snp_data.note = s
         elif j == self.i_tags:
-            snp_data.tags = s
+            snp_data.tags = SnapshotData.str2tags(s)
             it = self.itemFromIndex(self.index(i, self.i_is_golden, pindex))
             self.set_golden_status(snp_data.is_golden(), it)
         self.dataChanged.disconnect()

@@ -419,7 +419,7 @@ class SnapshotData:
 
     def __getattr__(self, k: str):
         if k == 'tags':
-            return self._df_info.loc['attribute'][k].split(",")
+            return SnapshotData.str2tags(self._df_info.loc['attribute'][k])
         if k in self._df_info:
             return self._df_info.loc['attribute'][k]
         if k == 'name': # snapshot name (unique)
@@ -454,30 +454,33 @@ class SnapshotData:
         return dir(__class__) + list(self.__dict__.keys()) \
                 + self._df_info.keys().tolist()
 
-    def __get_tags(self, v: str):
-        # get a list of sorted unique tags from input *s* (str)  to set .tags attribute
-        if v is None:
+    @staticmethod
+    def str2tags(s: str):
+        # get a list of sorted unique tags from input *s* (str).
+        if s is None:
             tag_list = []
         else:
-            # input: str separated by ',', ';', or white spaces, delete whitespace if any
-            # ignore empty str '', e.g. ',,'.
-            _tags = set(re.split(r"[,;\s+]", v.strip(",; ")))
-            tag_list = [i.upper() for i in _tags]
+            s = s.strip(",; ")
+            if s == "":
+                tag_list = []
+            else:
+                # input: str separated by ',', ';', or white spaces, delete whitespace if any
+                # ignore empty str '', e.g. ',,'.
+                _tags = set(re.split(r"[,;\s+]", s))
+                tag_list = [i.upper() for i in _tags]
         return sorted(tag_list)
 
     def ts_as_str(self):
+        # datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%dT%H:%M:%S')
         return self.datetime
-        # string
-        # return datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%dT%H:%M:%S')
 
     def ts_as_fn(self):
         # filename: e.g. 20230823T093700
         return datetime.fromtimestamp(self.timestamp).strftime('%Y%m%dT%H%M%S')
 
     def ts_as_date(self):
+        # datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%d %A')
         return self.date
-        # datetime str
-        # return datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%d %A')
 
     def ts_as_datetime(self):
         # datetime object
