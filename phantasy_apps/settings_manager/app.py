@@ -2152,14 +2152,19 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         src_m = m.sourceModel()
         src_idx = m.mapToSource(idx)
         item = src_m.itemFromIndex(src_idx)
+        if src_idx.column() == src_m.i_datetime:
+            item0 = src_m.itemFromIndex(
+                src_m.index(src_idx.row(), 0,
+                            item.parent().index()))
+            self.on_load_settings(item0.snp_data)
+            return
         if item.parent() is None:
             return
         if src_idx.column() in (src_m.i_tags, src_m.i_note):
             return
-        item0 = src_m.itemFromIndex(
-            src_m.index(src_idx.row(), 0,
-                        item.parent().index()))
-        self.on_load_settings(item0.snp_data)
+        if src_idx.column() == src_m.i_parent:
+            print("Jump to the parent entry.")
+            return
 
     @pyqtSlot()
     def on_filter_changed(self):
