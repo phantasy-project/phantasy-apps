@@ -17,8 +17,6 @@ from PyQt5.QtCore import Qt
 
 from phantasy import Settings
 
-from .conf import DEFAULT_MACHINE, DEFAULT_SEGMENT
-
 # default data format to save
 DEFAULT_DATA_FMT = "xlsx"
 
@@ -45,10 +43,10 @@ CSV_HEADER_10 = (
 
 # default attr keys of snapshotdata
 ATTR_KEYS = [
-    "timestamp", "note", "user",
+    "timestamp", "datetime", "date", "note", "user",
     "ion_name", "ion_number", "ion_mass", "ion_charge",
-    "machine", "segment", "tags", "app", "version",
-    "table_version", "parent",
+    "machine", "segment", "tags", "app", "version", "data_format",
+    "parent",
 ]
 
 ATTR_DICT = OrderedDict([(k, None) for k in ATTR_KEYS])
@@ -376,23 +374,6 @@ class SnapshotData:
         'info': read_info, # unextracted
     }
     def __init__(self, df_data, df_info=None, **kws):
-        # setter dict: default/special values
-        from phantasy_apps.settings_manager import __version__
-        self.__setter_map = {
-            'user': lambda v: getuser() if v is None else v,
-            'timestamp': lambda v: time.time() if v is None else v,
-            'note': lambda v: 'Input note ...' if v is None else v,
-            'machine': lambda v: DEFAULT_MACHINE if v is None else v,
-            'segment': lambda v: DEFAULT_SEGMENT if v is None else v,
-            'ion_name': lambda v: '' if v is None else str(v),
-            'ion_mass': lambda v: '' if v is None else str(v),
-            'ion_charge': lambda v: '' if v is None else str(v),
-            'ion_number': lambda v: '' if v is None else str(v),
-            'table_version': lambda v: 9 if v is None else v,
-            'version': lambda v: __version__ if v is None else v,
-            'app': lambda v: 'Settings Manager' if v is None else v,
-            'tags': self.__get_tags,
-        }
         self.__writer_map = {
              'xlsx': self.__write_to_excel,
              'hdf': self.__write_to_hdf,
@@ -402,7 +383,12 @@ class SnapshotData:
         #
         self.data = df_data
         self.info = df_info
-        self.__update_info(**kws)
+        #
+        # update the info table
+        # (for creating new instance of SnapshotData)
+        if kws:
+            self.update_info(**kws)
+        #
         # machine state data
         self.machstate = None
         # placeholder for df row (database)
@@ -431,36 +417,38 @@ class SnapshotData:
         else:
             self._df_info = df
 
-    def __setattr__(self, k, v):
-        if k in ATTR_KEYS:
-            v = self.__setter_map.get(k, lambda v:v)(v)
-            if k == 'tags':
-                v = ','.join(v) # join tag list with ','
-            self._df_info.loc['attribute', k] = v
-            if k == 'timestamp':
-                self._df_info['datetime'] = self.ts_as_str()
-                self._df_info['date'] = self.ts_as_date()
-        else:
-            super(SnapshotData, self).__setattr__(k, v)
-
-    def __getattr__(self, k):
+    def __getattr__(self, k: str):
         if k == 'tags':
-            return self._df_info[k].item().split(",")
+            return self._df_info.loc['attribute'][k].split(",")
         if k in self._df_info:
-            return self._df_info[k].item()
+            return self._df_info.loc['attribute'][k]
         if k == 'name': # snapshot name (unique)
             return self.ts_as_str()
         raise AttributeError(f"Invalid attribute '{k}'")
 
-    def __update_info(self, **kws):
-        """Initial and update (with keyword arguments) info table.
+    def update_info(self, **kws):
+        """Update info table with keyword arguments.
         """
-        d = self._df_info.T['attribute'].to_dict()
-        d.update(kws)
-        for k, v in d.items():
-            if k == 'datetime':
-                continue  # present timestamp in another way
-            setattr(self, k, v)
+        # timestamp
+        ts = kws.pop("timestamp", time.time())
+        self._df_info.loc["attribute"]["timestamp"] = ts
+        self._df_info.loc["attribute"]["datetime"] = \
+            datetime.fromtimestamp(ts).strftime("%Y-%m-%dT%H:%M:%S")
+        self._df_info.loc["attribute"]["date"] = \
+            datetime.fromtimestamp(ts).strftime("%Y-%m-%d %A")
+        # user
+        user = kws.pop("user", getuser())
+        self._df_info.loc["attribute"]["user"] = user
+        # app name
+        app_name = kws.pop("app", "Settings Manager")
+        self._df_info.loc["attribute"]["app"] = app_name
+        # blob data format
+        data_fmt = kws.pop("data_format", "xlsx")
+        self._df_info.loc["attribute"]["data_format"] = data_fmt
+
+        #
+        for k, v in kws.items():
+            self._df_info.loc['attribute'][k] = v
 
     def __dir__(self):
         return dir(__class__) + list(self.__dict__.keys()) \
@@ -478,16 +466,18 @@ class SnapshotData:
         return sorted(tag_list)
 
     def ts_as_str(self):
+        return self.datetime
         # string
-        return datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%dT%H:%M:%S')
+        # return datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%dT%H:%M:%S')
 
     def ts_as_fn(self):
-        # filename
+        # filename: e.g. 20230823T093700
         return datetime.fromtimestamp(self.timestamp).strftime('%Y%m%dT%H%M%S')
 
     def ts_as_date(self):
+        return self.date
         # datetime str
-        return datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%d %A')
+        # return datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%d %A')
 
     def ts_as_datetime(self):
         # datetime object
