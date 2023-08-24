@@ -1333,7 +1333,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
         #
         item0 = src_m.itemFromIndex(
-            src_m.index(src_idx.row(), src_m.i_ts, pindex))
+            src_m.index(src_idx.row(), src_m.i_datetime, pindex))
         #
         if not hasattr(item0, 'snp_data'):
             return menu
@@ -2924,7 +2924,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         def _on_pull_data_one(iiter):
             idx, irow = iiter
-            return read_data(irow, 'sql')
+            return read_data(irow)
 
         def _on_db_pull_started():
             [o.setEnabled(False) for o in w_list]
@@ -4603,8 +4603,7 @@ def get_snapshotdata(query_str: str, uri: str, column_name='datetime'):
         print(f"Invalid snapshot named '{query_str}'")
         o = None
     else:
-        o = read_data(list(df.iterrows())[0][1],
-                      'sql')  # see df_all.iterrows()
+        o = read_data(list(df.iterrows())[0][1])  # see df_all.iterrows()
     db_conn.close()
     return o
 

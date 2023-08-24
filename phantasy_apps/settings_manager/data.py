@@ -303,10 +303,10 @@ def read_info(df):
          'ion_name': df.ion_name, 'ion_number': df.ion_number,
          'ion_mass': df.ion_mass, 'ion_charge': df.ion_charge,
          'machine': df.machine, 'segment': df.segment,
-         'app': df.app, 'version': df.version, 'tags': df.tags}
+         'app': df.app, 'version': df.version, 'tags': df.tags,
+         'data_format': df.data_format, 'parent': df.parent}
     r = pd.DataFrame.from_dict(d, orient='index')
     r.rename(columns={0: 'attribute'}, inplace=True)
-    print(r)
     return r.T
 
 
@@ -445,12 +445,12 @@ class SnapshotData:
 
     def __getattr__(self, k):
         if k == 'tags':
-            return self._df_info[k][0].split(",")
-
+            return self._df_info[k].item().split(",")
         if k in self._df_info:
-            return self._df_info[k][0]
-        else:
-            raise AttributeError(f"Invalid attribute '{k}'")
+            return self._df_info[k].item()
+        if k == 'name': # snapshot name (unique)
+            return self.ts_as_str()
+        raise AttributeError(f"Invalid attribute '{k}'")
 
     def __update_info(self, **kws):
         """Initial and update (with keyword arguments) info table.
@@ -600,21 +600,16 @@ class SnapshotData:
 
     def get_parent_node(self):
         """Return the parent node if available."""
-        self.extract_blob()
-        if not hasattr(self, '_extracted_df_info'):
-            return None
-        if 'parent' in self._extracted_df_info:
-            return self._extracted_df_info['parent'][0]
-        else:
-            return None
+        if 'parent' in self.info:
+            return self.info['parent'].item()
+        return None
 
     def extract_blob(self):
         # update .data and .machstate with _blob if _blob is not None
-        # only needed when work with database
+        # .info is managed in read_info()
         if self._blob is None: # already extracted
             return
-        _df_data, _df_info, _df_machstate = read_sql(self._blob)
-        self._extracted_df_info = _df_info
+        _df_data, _, _df_machstate = read_sql(self._blob)
         self.data = _df_data
         self.machstate = _df_machstate
         self._blob = None

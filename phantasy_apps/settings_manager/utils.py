@@ -1321,15 +1321,15 @@ class SnapshotDataModel(QStandardItemModel):
         self.user_px = QPixmap(":/sm-icons/person.png").scaled(
                 _px_size, _px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
-        self.header = self.h_ts, self.h_name, \
+        self.header = self.h_datetime, \
                       self.h_ion, self.h_ion_number, self.h_ion_mass, self.h_ion_charge, \
                       self.h_load_status, self.h_user, \
                       self.h_is_golden, self.h_tags, self.h_note \
-                    = "Timestamp", "Name", \
+                    = "Datetime", \
                       "Ion", "Z", "A", "Q", \
                       "", "User", \
                       "", "Tags", "Note"
-        self.ids = self.i_ts, self.i_name, \
+        self.ids = self.i_datetime, \
                    self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge, \
                    self.i_load_status, self.i_user, \
                    self.i_is_golden, self.i_tags, self.i_note \
@@ -1365,9 +1365,11 @@ class SnapshotDataModel(QStandardItemModel):
 
     def set_data(self):
         data = {}  # root-i: [snp-1, snp-2, ...]
+        t0 = time.perf_counter()
         for i in self._snp_list:
-            data.setdefault(i.ts_as_date(), []).append(i)
+            data.setdefault(i.date, []).append(i)
         self._data = data
+        print(f"{time.perf_counter() - t0:.3f}s")
 
         for ts_date in sorted(data):
             #
@@ -1376,16 +1378,13 @@ class SnapshotDataModel(QStandardItemModel):
             it_root.setEditable(False)
 
             for snp_data in ts_snp_data_list:
-                # ts
-                it_ts = QStandardItem(snp_data.ts_as_str())
-                it_ts.setEditable(False)
-                it_ts.setData(
-                    f"Snapshot created at '{snp_data.ts_as_str()}' by '{snp_data.user}' for '{snp_data.ion_as_str()}'",
+                # datetime
+                it_datetime = QStandardItem(snp_data.datetime)
+                it_datetime.setEditable(False)
+                it_datetime.setData(
+                    f"Snapshot created at '{snp_data.datetime}' by '{snp_data.user}' for '{snp_data.ion_as_str()}'",
                     Qt.ToolTipRole)
-                it_ts.snp_data = snp_data
-
-                # name (invisible)
-                it_name = QStandardItem(snp_data.name)
+                it_datetime.snp_data = snp_data
 
                 # ion: name
                 it_ion_name = QStandardItem()
@@ -1435,7 +1434,7 @@ class SnapshotDataModel(QStandardItemModel):
                 it_load_status.setToolTip("Load snapshot by double-clicking")
 
                 row = (
-                    it_ts, it_name,
+                    it_datetime,
                     it_ion_name, it_ion_number, it_ion_mass, it_ion_charge,
                     it_load_status,
                     it_user, it_is_golden, it_tags, it_note
@@ -1456,11 +1455,9 @@ class SnapshotDataModel(QStandardItemModel):
         s = idx1.data(Qt.DisplayRole)
         i, j = idx1.row(), idx1.column()
         pindex = idx1.parent()
-        snp_data = self.itemFromIndex(self.index(i, self.i_ts, pindex)).snp_data
+        snp_data = self.itemFromIndex(self.index(i, self.i_datetime, pindex)).snp_data
         if j == self.i_note:
             snp_data.note = s
-        elif j == self.i_name:
-            snp_data.name = s
         elif j == self.i_tags:
             snp_data.tags = s
             it = self.itemFromIndex(self.index(i, self.i_is_golden, pindex))
@@ -1551,7 +1548,7 @@ class SnapshotDataModel(QStandardItemModel):
 
         #
         v.expandAll()
-        for i in (self.i_ts, self.i_name,
+        for i in (self.i_datetime,
                   self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge,
                   self.i_load_status, self.i_user, self.i_is_golden,
                   self.i_tags):
@@ -1559,7 +1556,6 @@ class SnapshotDataModel(QStandardItemModel):
         v.collapseAll()
 
         # hide name col
-        v.setColumnHidden(self.i_name, True)
         v.setColumnHidden(self.i_ion_number, True)
         #
         v.setSortingEnabled(True)
@@ -1611,7 +1607,7 @@ class SnapshotDataModel(QStandardItemModel):
             if not self.hasChildren(ridx):
                 continue
             for i in range(self.rowCount(ridx)):
-                if self.itemFromIndex(self.index(i, self.i_name, ridx)).text() == snp_name:
+                if self.itemFromIndex(self.index(i, self.i_datetime, ridx)).text() == snp_name:
                     loaded = True
                 else:
                     loaded = False
@@ -1706,7 +1702,7 @@ class _DelegateSnapshot(QStyledItemDelegate):
         m = index.model()
         src_m = m.sourceModel()
         src_idx = m.mapToSource(index)
-        data = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_ts, src_idx.parent())).snp_data
+        data = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_datetime, src_idx.parent())).snp_data
 
     def setEditorData(self, editor, index):
         QStyledItemDelegate.setEditorData(self, editor, index)
@@ -1777,7 +1773,7 @@ class _SnpProxyModel(QSortFilterProxyModel):
         m = self.sourceModel()
         ion_filter_list = m.get_ion_filters()
         tag_filter_list = m.get_tag_filters()
-        snp_data = m.itemFromIndex(m.index(src_row, m.i_ts, src_parent)).snp_data
+        snp_data = m.itemFromIndex(m.index(src_row, m.i_datetime, src_parent)).snp_data
         if ion_filter_list is None:
             ion_test = True
         else:
