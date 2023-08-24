@@ -1320,17 +1320,19 @@ class SnapshotDataModel(QStandardItemModel):
                 _px_size, _px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.user_px = QPixmap(":/sm-icons/person.png").scaled(
                 _px_size, _px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.parent_on_px = QPixmap(":/sm-icons/path.png").scaled(
+                _px_size, _px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
-        self.header = self.h_datetime, \
-                      self.h_ion, self.h_ion_number, self.h_ion_mass, self.h_ion_charge, \
+        self.header = self.h_datetime, self.h_parent, \
+                      self.h_ion_name, self.h_ion_number, self.h_ion_mass, self.h_ion_charge, \
                       self.h_load_status, self.h_user, \
                       self.h_is_golden, self.h_tags, self.h_note \
-                    = "Datetime", \
+                    = "Datetime", "", \
                       "Ion", "Z", "A", "Q", \
                       "", "User", \
                       "", "Tags", "Note"
-        self.ids = self.i_datetime, \
-                   self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge, \
+        self.ids = self.i_datetime, self.i_parent, \
+                   self.i_ion_name, self.i_ion_number, self.i_ion_mass, self.i_ion_charge, \
                    self.i_load_status, self.i_user, \
                    self.i_is_golden, self.i_tags, self.i_note \
                  = range(len(self.header))
@@ -1384,6 +1386,16 @@ class SnapshotDataModel(QStandardItemModel):
                     Qt.ToolTipRole)
                 it_datetime.snp_data = snp_data
 
+                # parent
+                _parent = snp_data.parent
+                it_parent = QStandardItem()
+                if _parent is None:
+                    it_parent.setData(f"Unknown originated snasphot.", Qt.ToolTipRole)
+                else:
+                    it_parent.setData(_parent, Qt.UserRole)
+                    it_parent.setData(f"Originated snapshot: '{_parent}'", Qt.ToolTipRole)
+                    it_parent.setData(self.parent_on_px, Qt.DecorationRole)
+
                 # ion: name
                 it_ion_name = QStandardItem()
                 it_ion_name.setData(get_ion_px(snp_data.ion_name, 44), Qt.DecorationRole)
@@ -1427,7 +1439,7 @@ class SnapshotDataModel(QStandardItemModel):
                 it_load_status.setToolTip("Load snapshot by double-clicking")
 
                 row = (
-                    it_datetime,
+                    it_datetime, it_parent,
                     it_ion_name, it_ion_number, it_ion_mass, it_ion_charge,
                     it_load_status,
                     it_user, it_is_golden, it_tags, it_note
@@ -1543,8 +1555,8 @@ class SnapshotDataModel(QStandardItemModel):
 
         #
         v.expandAll()
-        for i in (self.i_datetime,
-                  self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge,
+        for i in (self.i_datetime, self.i_parent,
+                  self.i_ion_name, self.i_ion_number, self.i_ion_mass, self.i_ion_charge,
                   self.i_load_status, self.i_user, self.i_is_golden,
                   self.i_tags):
             v.resizeColumnToContents(i)
