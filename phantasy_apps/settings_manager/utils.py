@@ -1365,14 +1365,13 @@ class SnapshotDataModel(QStandardItemModel):
 
     def set_data(self):
         data = {}  # root-i: [snp-1, snp-2, ...]
-        t0 = time.perf_counter()
         for i in self._snp_list:
             data.setdefault(i.date, []).append(i)
         self._data = data
-        print(f"{time.perf_counter() - t0:.3f}s")
 
         for ts_date in sorted(data):
-            #
+
+            # date node
             ts_snp_data_list = data[ts_date]  # snp data under ts_date root
             it_root = QStandardItem(ts_date)
             it_root.setEditable(False)
@@ -1380,7 +1379,6 @@ class SnapshotDataModel(QStandardItemModel):
             for snp_data in ts_snp_data_list:
                 # datetime
                 it_datetime = QStandardItem(snp_data.datetime)
-                it_datetime.setEditable(False)
                 it_datetime.setData(
                     f"Snapshot created at '{snp_data.datetime}' by '{snp_data.user}' for '{snp_data.ion_as_str()}'",
                     Qt.ToolTipRole)
@@ -1388,27 +1386,22 @@ class SnapshotDataModel(QStandardItemModel):
 
                 # ion: name
                 it_ion_name = QStandardItem()
-                it_ion_name.setEditable(False)
                 it_ion_name.setData(get_ion_px(snp_data.ion_name, 44), Qt.DecorationRole)
                 it_ion_name.setData(snp_data.ion_name, Qt.UserRole)
                 _z, _a, _q = snp_data.ion_number, snp_data.ion_mass, snp_data.ion_charge
                 it_ion_name.setData(f"{snp_data.ion_name} (Z: {_z}, A: {_a}, Q: {_q})", Qt.ToolTipRole)
-                # ion: Z (str)
-                it_ion_number = QStandardItem(_z)
-                it_ion_number.setData(int(_z), Qt.UserRole)
-                it_ion_number.setEditable(False)
-                # ion: A (str)
-                it_ion_mass = QStandardItem(_a)
-                it_ion_mass.setData(int(_a), Qt.UserRole)
-                it_ion_mass.setEditable(False)
-                # ion: Q (str)
-                it_ion_charge = QStandardItem(_q)
-                it_ion_charge.setData(int(_q), Qt.UserRole)
-                it_ion_charge.setEditable(False)
+                # ion: Z (int)
+                it_ion_number = QStandardItem(str(_z))
+                it_ion_number.setData(_z, Qt.UserRole)
+                # ion: A (int)
+                it_ion_mass = QStandardItem(str(_a))
+                it_ion_mass.setData(_a, Qt.UserRole)
+                # ion: Q (int)
+                it_ion_charge = QStandardItem(str(_q))
+                it_ion_charge.setData(_q, Qt.UserRole)
                 # user
                 it_user = QStandardItem(snp_data.user)
                 it_user.setData(self.user_px, Qt.DecorationRole)
-                it_user.setEditable(False)
 
                 # tags (list), editable
                 tags_as_str = snp_data.tags_as_str()
@@ -1439,6 +1432,8 @@ class SnapshotDataModel(QStandardItemModel):
                     it_load_status,
                     it_user, it_is_golden, it_tags, it_note
                 )
+                [it.setEditable(False) for it in row]
+                [it.setEditable(True) for it in (it_note, it_tags)]
                 it_root.appendRow(row)
 
             #
@@ -2181,7 +2176,6 @@ def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
                                 version=ver,
                                 note=note,
                                 tags=','.join(tags),
-                                table_version=10,
                                 parent=snp_data.ts_as_str())
     # machstate
     if kws.get('with_machstate', False):
