@@ -798,6 +798,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._saveas_icon = QIcon(QPixmap(":/sm-icons/save.png"))
         self._read_icon = QIcon(QPixmap(":/sm-icons/readfile.png"))
         self._reveal_icon = QIcon(QPixmap(":/sm-icons/openfolder.png"))
+        self._archive_icon = QIcon(QPixmap(":/sm-icons/archive.png"))
         self._del_icon = QIcon(QPixmap(":/sm-icons/delete.png"))
         self._load_icon = QIcon(QPixmap(":/sm-icons/cast.png"))
         self._recommand_icon = QIcon(QPixmap(":/sm-icons/recommend.png"))
@@ -1356,8 +1357,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         mviz_action = QAction(self._chart_icon, _mviz_text, menu)
         mviz_action.triggered.connect(partial(self.on_mviz, snpdata))
         # del
-        del_action = QAction(self._del_icon, "&Delete", menu)
-        del_action.triggered.connect(partial(self.on_del_settings, snpdata))
+        archive_action = QAction(self._archive_icon, "&Archive", menu)
+        archive_action.triggered.connect(partial(self.on_archive_settings, snpdata))
 
         # del admin
         del_admin_action = QAction(self._del_icon, "&Delete (Admin)", menu)
@@ -1383,7 +1384,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.addAction(mviz_action)
         menu.addSeparator()
         menu.addAction(saveas_action)
-        menu.addAction(del_action)
+        menu.addAction(archive_action)
         if getuser() in ('zhangt', 'tong'):  # Admin
             menu.addAction(del_admin_action)
         return menu
@@ -3683,11 +3684,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             m.filter_note_enabled = is_checked
             m.invalidate()
 
-    def on_del_settings(self, data):
-        # delete from MEM (done), and model, and datafile (if exists)
+    def on_archive_settings(self, data):
         r = QMessageBox.warning(
-            None, "Delete Snapshot",
-            f"Are you sure to delete the snapshot created at {data.ts_as_str()}?",
+            None, "Archive Snapshot",
+            f"Are you sure to archive the snapshot created at {data.ts_as_str()}?",
             QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if r == QMessageBox.No:
             return
@@ -3700,7 +3700,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         m.remove_data(data_to_del)
 
         # override tags with 'ARCHIVE'
-        data_to_del.tags = 'ARCHIVE'
+        data_to_del.archive()
         self.on_save_settings(data_to_del)
 
         self.total_snp_lbl.setText(str(len(self._snp_dock_list)))

@@ -1563,7 +1563,7 @@ class SnapshotDataModel(QStandardItemModel):
             if not self.hasChildren(ridx):
                 continue
             for i in range(self.rowCount(ridx)):
-                it = self.itemFromIndex(self.index(i, self.i_name, ridx))
+                it = self.itemFromIndex(self.index(i, self.i_datetime, ridx))
                 if it.text() == data.name:
                     irow = i
                     iidx = ridx
@@ -1789,8 +1789,14 @@ class _SnpProxyModel(QSortFilterProxyModel):
             else:
                 tags = snp_data.tags
             tag_test = False
+            #
+            archive_set = False
+            if 'ARCHIVE' not in tag_filter_list and 'ARCHIVE' in tags:
+                tag_test = False
+                archive_set = True
+            #
             for tag in tags:
-                if not tag_test and tag in tag_filter_list:
+                if not tag_test and tag in tag_filter_list and not archive_set:
                     tag_test = True
                 is_cnted = self._tag_hit_cache.setdefault(snp_data.name, False)
                 if not is_cnted:

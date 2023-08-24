@@ -502,6 +502,16 @@ class SnapshotData:
     def is_golden(self):
         return 'GOLDEN' in self.tags
 
+    def archive(self):
+        """Add 'ARCHIVE' into the tag list.
+        """
+        tag_list = self.tags
+        if 'ARCHIVE' not in tag_list:
+            tag_list.append('ARCHIVE')
+            self._df_info.loc['attribute']['tags'] = ','.join(tag_list)
+        else:
+            print("Already been archived.")
+
 #    def __str__(self):
 #        # str(self.data)
 #        sio = io.StringIO()
