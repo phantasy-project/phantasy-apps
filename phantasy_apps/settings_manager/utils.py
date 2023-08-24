@@ -1662,6 +1662,8 @@ class _DelegateSnapshot(QStyledItemDelegate):
         self.v.entered.connect(self.on_item_entered)
         self.is_item_in_edit_mode = False
         self.current_edited_item_index = QPersistentModelIndex()
+        self.font = QFontDatabase.systemFont(QFontDatabase.GeneralFont)
+        self.font_size = self.font.pointSize()
 
     def createEditor(self, parent, option, index):
         op = index.model().data(index, Qt.UserRole + 1)
@@ -1737,6 +1739,8 @@ class _DelegateSnapshot(QStyledItemDelegate):
                 self.v.closePersistentEditor(self.current_edited_item_index)
 
     def initStyleOption(self, option, index):
+        if index.column() == index.model().m_src.i_tags:
+            option.font.setPointSize(self.font_size - 2)
         QStyledItemDelegate.initStyleOption(self, option, index)
 
     def sizeHint(self, option, index):
