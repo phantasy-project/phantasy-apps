@@ -14,7 +14,7 @@ class Ui_Dialog(object):
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(611, 412)
+        Dialog.resize(684, 412)
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setContentsMargins(4, 4, 4, 4)
         self.gridLayout.setSpacing(4)
@@ -51,6 +51,7 @@ class Ui_Dialog(object):
                                          "    color: blue;\n"
                                          "    padding: 5px 5px 5px 5px;\n"
                                          "}")
+        self.tags_lineEdit.setText("")
         self.tags_lineEdit.setObjectName("tags_lineEdit")
         self.gridLayout.addWidget(self.tags_lineEdit, 3, 0, 1, 4)
         self.label = QtWidgets.QLabel(Dialog)
@@ -127,7 +128,6 @@ class Ui_Dialog(object):
                 "Dialog",
                 "<html><head/><body><p>Additional tags that added to every snapshot.</p></body></html>"
             ))
-        self.tags_lineEdit.setText(_translate("Dialog", "Import,"))
         self.label.setText(
             _translate("Dialog", "Additional Tags (separated with ,)"))
         self.cancel_btn.setText(_translate("Dialog", "Cancel"))
