@@ -50,7 +50,6 @@ from .app_bpmviz import BPMVizWidget
 from .app_postsnp import PostSnapshotDialog
 from .data import CSV_HEADER
 from .data import DEFAULT_DATA_FMT
-from .data import ElementPVConfig
 from .data import SnapshotData
 from .data import get_settings_data
 from .data import make_physics_settings
@@ -439,7 +438,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         #
         self.t_wait = self.pref_dict['SETTINGS']['T_WAIT'] / 1000.0 # ms -> s
-        print(self.t_wait)
         self.ndigit = self.pref_dict['SETTINGS']['PRECISION']
 
         # PVs for SM IOC (runtime change not supported)
@@ -3729,30 +3727,23 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.total_snp_lbl.setText(str(len(self._snp_dock_list)))
         del data_to_del
 
-    def on_save_settings(self, data):
-        # in-place save data to data_path.
+    def on_save_settings(self, data: SnapshotData):
         data.extract_blob()
         # add new entry to database
         insert_update_data(self._db_conn_pool.get(self.data_uri), data)
 
-    def on_saveas_settings(self, data):
+    def on_saveas_settings(self, data: SnapshotData):
         # data: SnapshotData
         # settings(data.data): DataFrame
-        # !won't update data_path attr!
-        # !update name attr to be uniqe!
         # !add 'copy' into tag list!
         data.extract_blob()
 
         data1 = data.clone()
 
-        if data1.data_path is None or not os.path.exists(data1.data_path):
-            cdir = data1.get_default_data_path(self.data_uri, DEFAULT_DATA_FMT)
-        else:
-            cdir = data1.data_path
         filename, ext = get_save_filename(
             self,
             caption="Save Settings to a File",
-            cdir=cdir,
+            cdir=f"./{data1.ion_as_str()}_{data1.ts_as_fn()}",
             type_filter=
             "XLSX Files (*.xlsx);;HDF5 Files (*.h5);;CSV Files (*.csv)")
         if filename is None:
@@ -3760,8 +3751,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # data1.name = re.sub(r"(.*)_[0-9]+\.[0-9]+",r"\1_{}".format(time.time()), data1.name)
         if 'copy' not in data.tags:
             data1.tags.append('copy')
-        # update timestamp, datetime, name
-        data1.update_name()
+        # update timestamp
+        data1.timestamp = time.time()
         self._save_settings(data1, filename, ext)
 
     def _save_settings(self, data, filename, ftype='xlsx'):

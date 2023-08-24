@@ -43,14 +43,9 @@ CSV_HEADER_10 = (
 # CSV_HEADER: 9
 # CSV_HEADER, LAST_DEVICE_STATUS: 10
 
-#
-ELEMT_PATH = os.path.join(os.path.dirname(__file__), 'config', 'elements.json')
-DEFAULT_SETTINGS = Settings(ELEMT_PATH)
-#
-
 # default attr keys of snapshotdata
 ATTR_KEYS = [
-    "timestamp", "datetime", "name", "note", "user",
+    "timestamp", "note", "user",
     "ion_name", "ion_number", "ion_mass", "ion_charge",
     "machine", "segment", "tags", "app", "version",
     "table_version", "parent",
@@ -206,56 +201,23 @@ def get_settings_data(m, src_m):
     return pd.DataFrame(data, columns=CSV_HEADER_10)
 
 
-class ElementPVConfig(Settings):
-    """PV configurations for element from setpoint/readback PVs.
-    e.g. {ename: {setpoint: sppv, readback: rdpv}}
-    """
-
-    def __init__(self, settings_path=None):
-        if settings_path is not None and os.path.isfile(settings_path):
-            settingsPath = settings_path
-        else:
-            settingsPath = None
-        super(self.__class__, self).__init__(settingsPath)
-        self.settings_path = settings_path
-        self.update(DEFAULT_SETTINGS)
-
-
-def read_data(data_path, file_type=None):
+def read_data(dataframe: pd.DataFrame):
     """Read settings data with attribute values from data source.
-
-    Supported data source: .csv, .xls, .h5 files.
 
     Parameters
     ----------
-    data_path : Path
-        Path of the data source, or dataframe for 'sql' file_type.
-    file_type : str
-        File type.
+    dataframe : pd.DataFrame
+        Data source to read as a SnapshotData
 
     Returns
     -------
     r : SnapshotData
     """
-    if isinstance(data_path, (pathlib.Path, str)):
-        # filepath
-        data_path = pathlib.Path(data_path)
-        if file_type is None:
-            file_type = data_path.suffix.lower()[1:]
-        if file_type not in SUPPORT_FTYPES:
-            print(f"Non-support file type: {file_type}.")
-            return None
-        data_src = data_path.resolve()
-    else:
-        # DATABASE, --> _sql, df
-        file_type = '_sql'
-        data_src = data_path
-
     try:
-        r = SnapshotData.read(data_src, ftype=file_type)
+        r = SnapshotData.read(dataframe)
     except Exception as err:
         r = None
-        print(f"Failed to read '{data_src}': {err}")
+        print(f"Failed read_data(): {err}")
     finally:
         return r
 
@@ -306,10 +268,6 @@ def read_excel(filepath, **kws):
         _df = pd.read_excel(fp, sheet_name=SnapshotData.INFO_SHEET_NAME, header=None, index_col=0)
         _df.rename(columns={1: 'attribute'}, inplace=True)
         _df.index.name = None
-#        if _df.T.tags[0] == ['nan']:  # reset tags to []
-#            _df.loc['attribute', 'tags'] = []
-        #df_info = _df.T
-        #df_info.insert(0, "data_path", os.path.abspath(filepath))
         _df_data = pd.read_excel(fp, sheet_name=SnapshotData.SETTINGS_SHEET_NAME)
         df_data = _df_data[~_df_data.Name.isna()]
         if SnapshotData.MACHSTATE_SHEET_NAME in fp.sheet_names:
@@ -323,6 +281,7 @@ def read_sql(df):
     """Read a row of data into SnapshotData. The row of data is originated from a DataFrame
     from a sqlite database.
     """
+    # extract blob: slow
     data_format = df.data_format
     if data_format == 'xlsx':
         return read_excel(io.BytesIO(df.data))
@@ -337,18 +296,18 @@ def read_sql(df):
         return r
 
 
-def _read_sql(df):
-    def _df_info_from_df(df):
-        # return df_info part for SnapshotData, df <-- irow
-        d = {'timestamp': df.timestamp, 'datetime': df.datetime,
-             'name': df['name'], 'note': df.note, 'user': df.user,
-             'ion_name': df.ion_name, 'ion_number': df.ion_number, 'ion_mass': df.ion_mass,
-             'ion_charge': df.ion_charge, 'machine': df.machine, 'segment': df.segment,
-             'app': df.app, 'version': df.version, 'tags': df.tags}
-        r = pd.DataFrame.from_dict(d, orient='index')
-        r.rename(columns={0: 'attribute'}, inplace=True)
-        return r.T
-    return None, _df_info_from_df(df), df
+def read_info(df):
+    # return df_info part for SnapshotData, df <-- irow
+    d = {'timestamp': df.timestamp, 'datetime': df.datetime, 'date': df.date,
+         'note': df.note, 'user': df.user,
+         'ion_name': df.ion_name, 'ion_number': df.ion_number,
+         'ion_mass': df.ion_mass, 'ion_charge': df.ion_charge,
+         'machine': df.machine, 'segment': df.segment,
+         'app': df.app, 'version': df.version, 'tags': df.tags}
+    r = pd.DataFrame.from_dict(d, orient='index')
+    r.rename(columns={0: 'attribute'}, inplace=True)
+    print(r)
+    return r.T
 
 
 def read_csv(filepath, delimiter=','):
@@ -413,14 +372,13 @@ class SnapshotData:
         'hdf': read_hdf,
         'h5': read_hdf,
         'csv': read_csv,
-        'sql': read_sql,
-        '_sql': _read_sql,
+        'sql': read_sql, # extracted
+        'info': read_info, # unextracted
     }
     def __init__(self, df_data, df_info=None, **kws):
         # setter dict: default/special values
         from phantasy_apps.settings_manager import __version__
         self.__setter_map = {
-            'name': lambda v: get_sha1()[0] if v is None else v,
             'user': lambda v: getuser() if v is None else v,
             'timestamp': lambda v: time.time() if v is None else v,
             'note': lambda v: 'Input note ...' if v is None else v,
@@ -445,20 +403,10 @@ class SnapshotData:
         self.data = df_data
         self.info = df_info
         self.__update_info(**kws)
-        # by default data_path is None, only be updated when saving/loading to/from file.
-        self.data_path = None
         # machine state data
         self.machstate = None
         # placeholder for df row (database)
         self._blob = None
-
-    @property
-    def data_path(self):
-        return self._data_path
-
-    @data_path.setter
-    def data_path(self, s):
-        self._data_path = s
 
     @property
     def machstate(self):
@@ -468,10 +416,7 @@ class SnapshotData:
     def machstate(self, df):
         """Set machine state with a dataframe.
         """
-        if df is None:
-            self._machstate = None
-        else:
-            self._machstate = df
+        self._machstate = df
 
     @property
     def info(self):
@@ -488,16 +433,13 @@ class SnapshotData:
 
     def __setattr__(self, k, v):
         if k in ATTR_KEYS:
-            if k == 'datetime':
-                # alias attribute for timestamp, cannot be set
-                raise AttributeError(f"Readonly attribute cannot be changed")
-            else:
-                v = self.__setter_map.get(k, lambda v:v)(v)
+            v = self.__setter_map.get(k, lambda v:v)(v)
             if k == 'tags':
                 v = ','.join(v) # join tag list with ','
             self._df_info.loc['attribute', k] = v
             if k == 'timestamp':
                 self._df_info['datetime'] = self.ts_as_str()
+                self._df_info['date'] = self.ts_as_date()
         else:
             super(SnapshotData, self).__setattr__(k, v)
 
@@ -564,23 +506,6 @@ class SnapshotData:
     def tags_as_str(self):
         return ",".join(self.tags)
 
-    def get_default_data_path(self, working_directory=None, data_type=None):
-        """Return full data path for saving by naming convention,
-        the data directory by default is ., e.g. ./40Ar+9_20200929T104317.csv.
-        """
-        if working_directory is None:
-            wdir = '.'
-        else:
-            wdir = os.path.expanduser(working_directory)
-        ftype = DEFAULT_DATA_FMT if data_type is None else data_type
-        fn = f"{self.ion_mass}{self.ion_name}+{self.ion_charge}_{self.ts_as_fn()}.{ftype}"
-        return os.path.abspath(os.path.join(wdir, fn))
-
-    def update_name(self):
-        """Update timestamp with current time, update name and datetime as well.
-        """
-        self.name, self.timestamp = get_sha1()
-
     def is_golden(self):
         return 'GOLDEN' in self.tags
 
@@ -606,8 +531,6 @@ class SnapshotData:
             df_info['parent'] = parent_node
 
         with pd.ExcelWriter(filepath) as fp:
-            # df_info.drop(columns=['data_path']).T.to_excel(fp,
-            #         sheet_name=SnapshotData.INFO_SHEET_NAME, header=False, **kws)
             df_info.T.to_excel(fp,
                     sheet_name=SnapshotData.INFO_SHEET_NAME, header=False, **kws)
             self.data.to_excel(fp, sheet_name=SnapshotData.SETTINGS_SHEET_NAME, index=False, **kws)
@@ -627,8 +550,6 @@ class SnapshotData:
             storer = store.get_storer(SnapshotData.SETTINGS_SHEET_NAME)
             attr_dict = []
             for k, v in df_info.items():
-                #if k == 'data_path':
-                #    continue
                 attr_dict.append((k, v[0]))
             attr_dict = OrderedDict(attr_dict)
             storer.attrs.info = str(attr_dict)
@@ -657,19 +578,12 @@ class SnapshotData:
         self.__writer_map[ftype](filepath, **kws)
 
     @classmethod
-    def read(cls, filepath, ftype='xlsx', **kws):
-        # filepath: full path of data file
-        # for ftype 'sql', filepath argument should be dataframe.
-        if ftype not in cls._READER_MAP:
-            print(f"Data source of type '{ftype}' is not supported.")
-            return None
-        df_data, df_info, df_machstate = cls._READER_MAP[ftype](filepath, **kws)
-        o = cls(df_data, df_info)
-        o.machstate = df_machstate
-        if ftype == '_sql':
-            o._blob = df_machstate
-        if isinstance(filepath, (pathlib.Path, str)):
-            o.data_path = str(filepath)
+    def read(cls, df: pd.DataFrame, **kws):
+        # read as a SnasphotData with info sheet only (metadata),
+        # with _blob unextracted.
+        df_info = cls._READER_MAP['info'](df, **kws)
+        o = cls(None, df_info)
+        o._blob = df
         return o
 
     @staticmethod
@@ -720,13 +634,3 @@ class SnapshotData:
         s = io.BytesIO()
         self.write(s)
         return s.getvalue()
-
-    #def __eq__(self, other):
-    #    return all(self.info.drop(columns=["data_path"]) == other.info.drop(columns=["data_path"])) \
-    #            and all(self.data == other.data)
-
-
-def get_sha1():
-    t0 = time.time()
-    s = str(t0).encode('utf-8')
-    return hashlib.sha1(s).hexdigest(), t0
