@@ -116,13 +116,6 @@ ALM_TYPE_MAP = { # [read, tune]
     'Tune': [False, True],
 }
 
-# SNP PVs
-SNP_NAME_PV = "PHY:SM_SNP_LAST_NAME"
-SNP_NOTE_PV = "PHY:SM_SNP_LAST_NOTE"
-SNP_ION_PV = "PHY:SM_SNP_LAST_ION"
-SNP_AUTHOR_PV = "PHY:SM_SNP_LAST_AUTHOR"
-SNP_PUBLISHER_PV = "PHY:SM_SNP_LAST_PUBLISHER"
-
 _CHANGELOG_FILE = os.path.join(os.path.dirname(__file__), 'CHANGELOG.pdf')
 _USERGUIDE_FILE = os.path.join(os.path.dirname(__file__),
                                'docs/SettingsManager_UserGuide.pdf')
@@ -3968,7 +3961,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_refresh_snp(self):
-        # refresh snp as wdir is updated.
+        # refresh snp
         self.on_data_uri_changed(True, self.data_uri)
 
     def _splash_msg_undone(self):

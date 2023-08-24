@@ -18,7 +18,6 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QSpacerItem
 
-from phantasy_ui import get_open_directory
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
 from phantasy_ui import select_font
@@ -152,10 +151,7 @@ class PreferencesDialog(QDialog, Ui_Dialog):
     def set_uri(self, path: str, dsrc_mode: str):
         if not os.access(os.path.abspath(os.path.expanduser(path)), os.W_OK):
             return
-        if dsrc_mode == 'database':
-            self.dbpath_lbl.setText(path)
-        else:
-            self.wdir_lbl.setText(path)
+        self.dbpath_lbl.setText(path)
         if self.pref_dict['DATA_SOURCE']['URI'] != path:
             self.pref_dict['DATA_SOURCE']['URI'] = path
             self.data_uri_changed.emit(path)
@@ -280,17 +276,8 @@ class PreferencesDialog(QDialog, Ui_Dialog):
 
     @pyqtSlot('QString')
     def on_dsrc_mode_changed(self, s):
-        objs_file = (self.wdir_title_lbl, self.wdir_lbl, self.wdir_btn)
         objs_db = (self.dbpath_title_lbl, self.dbpath_lbl, self.dbpath_btn)
         [o.setVisible(s=='database') for o in objs_db]
-        [o.setVisible(s!='database') for o in objs_file]
-
-    @pyqtSlot()
-    def on_choose_wdir(self):
-        """Select working directory.
-        """
-        d = get_open_directory(self)
-        self.set_uri(d, 'file')
 
     @pyqtSlot()
     def on_choose_dbfile(self):
