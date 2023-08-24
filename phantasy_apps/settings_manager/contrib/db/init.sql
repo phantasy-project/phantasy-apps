@@ -14,7 +14,6 @@ CREATE TABLE IF NOT EXISTS snapshot (
     id INTEGER PRIMARY KEY,
     timestamp REAL NOT NULL,
     datetime TEXT NOT NULL,
-    name TEXT NOT NULL,
     note TEXT,
     user TEXT NOT NULL,
     ion_name TEXT NOT NULL,
@@ -27,5 +26,7 @@ CREATE TABLE IF NOT EXISTS snapshot (
     app TEXT NOT NULL,
     version TEXT NOT NULL,
     data_format TEXT NOT NULL,
-    data BLOB NOT NULL
+    data BLOB NOT NULL,
+    date TEXT NOT NULL,
+    parent TEXT
 );
