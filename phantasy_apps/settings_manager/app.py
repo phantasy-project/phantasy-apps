@@ -809,15 +809,22 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._ext_app_icon = QIcon(QPixmap(":/sm-icons/rocket.png"))
 
         # pwr sts
-        self._pwr_on_px = QPixmap(":/sm-icons/on.png")
-        self._pwr_off_px = QPixmap(":/sm-icons/off.png")
-        self._pwr_unknown_px = QPixmap(":/sm-icons/unknown.png")
+        self._pwr_on_px = QPixmap(":/sm-icons/on.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self._pwr_off_px = QPixmap(":/sm-icons/off.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self._pwr_unknown_px = QPixmap(":/sm-icons/unknown.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         # blocking beam or not
-        _blocking_px = QPixmap(":/sm-icons/off.png")
-        _non_blocking_px = QPixmap(":/sm-icons/on.png")
+        _blocking_px = QPixmap(":/sm-icons/off.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        _non_blocking_px = QPixmap(":/sm-icons/on.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         # ion active or not
-        _ion_inactive_px = QPixmap(":/sm-icons/off.png")
-        _ion_active_px = QPixmap(":/sm-icons/on.png")
+        _ion_inactive_px = QPixmap(":/sm-icons/off.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        _ion_active_px = QPixmap(":/sm-icons/on.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         # aperture
         _ap_in_px, _ap_out_px = _blocking_px, _non_blocking_px
         self._ap_in_px_tuple = (_ap_out_px, _ap_in_px)
@@ -829,10 +836,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # ion source active?
         self._ion_act_px_tuple = (_ion_inactive_px, _ion_active_px)
         # chopper
-        self._chp_invalud_px = QPixmap(":/sm-icons/chp_invalid.png")
-        self._chp_off_px = QPixmap(":/sm-icons/chp_off.png")
-        self._chp_blocking_px = QPixmap(":/sm-icons/chp_blocking.png")
-        self._chp_running_px = QPixmap(":/sm-icons/chp_running.png")
+        self._chp_invalud_px = QPixmap(":/sm-icons/chp_invalid.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self._chp_off_px = QPixmap(":/sm-icons/chp_off.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self._chp_blocking_px = QPixmap(":/sm-icons/chp_blocking.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self._chp_running_px = QPixmap(":/sm-icons/chp_running.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self._chp_px_tuple = (self._chp_invalud_px, self._chp_off_px,
                               self._chp_blocking_px, self._chp_running_px)
         #
@@ -2533,7 +2544,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
             # emit signal to update power status
             worker.meta_signal1.emit(
-                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                (sts_idx, px, Qt.DecorationRole))
             worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
 
         elif elem.family == "CHP":
@@ -2543,7 +2554,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             tt = f"Chopper state: {sts_val_str}"
             px = self._chp_px_tuple[sts_val_int]
             worker.meta_signal1.emit(
-                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                (sts_idx, px, Qt.DecorationRole))
             worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
 
         elif elem.family == "AP":
@@ -2554,7 +2565,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             else:
                 tt = "Aperture device is IN"
             worker.meta_signal1.emit(
-                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                (sts_idx, px, Qt.DecorationRole))
             worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
 
         elif elem.family == "PM":
@@ -2566,7 +2577,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 else:
                     tt = "PPAC is IN"
             worker.meta_signal1.emit(
-                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                (sts_idx, px, Qt.DecorationRole))
             worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
 
         elif elem.family == "FOIL":
@@ -2578,7 +2589,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 else:
                     tt = "Foil is IN"
             worker.meta_signal1.emit(
-                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                (sts_idx, px, Qt.DecorationRole))
             worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
 
         elif elem.family == "ION":
@@ -2593,7 +2604,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 else:
                     tt = "Ion source is unknown"
             worker.meta_signal1.emit(
-                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                (sts_idx, px, Qt.DecorationRole))
             worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
 
         elif elem.family == "BD":
@@ -2605,7 +2616,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 else:
                     tt = "Beam dump is IN"
             worker.meta_signal1.emit(
-                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                (sts_idx, px, Qt.DecorationRole))
             worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
 
         elif elem.family == "ELD":
@@ -2617,7 +2628,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 else:
                     tt = "Energy loss detector is IN"
             worker.meta_signal1.emit(
-                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                (sts_idx, px, Qt.DecorationRole))
             worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
 
         elif elem.family == "TID":
@@ -2629,7 +2640,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 else:
                     tt = "Timing detector is IN"
             worker.meta_signal1.emit(
-                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                (sts_idx, px, Qt.DecorationRole))
             worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
 
         elif elem.family == "PPOT":
@@ -2663,7 +2674,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     px = self._pwr_off_px  # red
 
             worker.meta_signal1.emit(
-                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                (sts_idx, px, Qt.DecorationRole))
             worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
 
         elif elem.family == "ATT":
@@ -2683,7 +2694,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                     px = self._att_out_px_tuple[1]
                     tt = "Attenuator(s) OUT"
             worker.meta_signal1.emit(
-                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                (sts_idx, px, Qt.DecorationRole))
             worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
 
         elif elem.family == "PTA":
@@ -2703,7 +2714,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 else:
                     tt = "Slit is IN"
             worker.meta_signal1.emit(
-                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                (sts_idx, px, Qt.DecorationRole))
             worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
 
         else:  # others
@@ -2725,7 +2736,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
             # emit signal to update power status
             worker.meta_signal1.emit(
-                (sts_idx, px.scaled(PX_SIZE, PX_SIZE), Qt.DecorationRole))
+                (sts_idx, px, Qt.DecorationRole))
             worker.meta_signal1.emit((sts_idx, tt, Qt.ToolTipRole))
 
         # u of pwr sts
