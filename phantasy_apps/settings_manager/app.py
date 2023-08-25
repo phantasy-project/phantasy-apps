@@ -86,9 +86,6 @@ SCALE_OP_MAP = ('x', '+')  # simple form for {0: 'x', 1: '+'}
 # snapshot max limit to show
 N_SNP_MAX = cycle([50, 100, 500, 'All'])
 
-# tag filter logic
-TAG_FILTER_LOGIC = cycle(['OR', 'AND'])
-
 PX_SIZE = 24
 ION_ICON_SIZE = 48
 DATA_SRC_MAP = {'model': 'model', 'live': 'control'}
@@ -679,8 +676,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.delete_btn.setVisible(getuser() in ('zhangt', 'tong'))
 
         # and/or logic button for filter tag filters
-        self.tag_filter_logic_btn.clicked.connect(self.on_update_tag_filter_logic)
-        self.tag_filter_logic_btn.click()
+        self.tag_filter_act_and_logic_btn.toggled.connect(self.on_act_and_logic_tag_filter)
 
         # hide change reason inputbox right of Apply button by default
         self.show_change_reason_input_chkbox.toggled.emit(False)
@@ -1075,6 +1071,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.db_refresh_speed_cbb.currentIndexChanged.connect(
             self.onDbRefreshSpeedChanged)
         self.db_refresh_speed_cbb.setCurrentIndex(1)
+
+        # uncheck tag filter logic AND button by default
+        self.tag_filter_act_and_logic_btn.setChecked(False)
+        self.tag_filter_act_and_logic_btn.toggled.emit(False)
 
     @pyqtSlot('QString')
     def onDataRefreshSpeedChanged(self, s: str):
@@ -3581,9 +3581,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def apply_snp_btn_filters(self):
         # ion, tag
         m = self.snp_treeView.model()
-        is_or_logic_tag_filter = self._tag_filter_logic_op == 'OR'
         m.m_src.set_ion_filters(self._current_btn_filter)
-        m.m_src.set_tag_filters(self._current_tag_filter, is_or_logic_tag_filter)
+        m.m_src.set_tag_filters(self._current_tag_filter, self._is_or_logic_tag_filter)
         m.reset_cache()
         m.invalidate()
         self.snp_expand_btn.clicked.emit()
@@ -4185,13 +4184,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.db_refresh.connect(self.snp_refresh_btn.click)
         self.db_pull.connect(self.on_pull_data)
 
-    @pyqtSlot()
-    def on_update_tag_filter_logic(self):
+    @pyqtSlot(bool)
+    def on_act_and_logic_tag_filter(self, is_and: bool):
         """Cycle the logic operation for tag filter buttons.
         """
-        self._tag_filter_logic_op = next(TAG_FILTER_LOGIC)
-        self.sender().setText(self._tag_filter_logic_op)
-        self.sender().setToolTip("Apply '{self._tag_filter_logic_op}' logic for multi-tag filters")
+        self._is_or_logic_tag_filter = not is_and
+        if is_and:
+            self.sender().setToolTip("Now applying 'AND' logic for multi-tag filters")
+        else:
+            self.sender().setToolTip("Check to apply 'AND' logic for multi-tag filters")
         self.apply_snp_btn_filters()
 
     @pyqtSlot()
