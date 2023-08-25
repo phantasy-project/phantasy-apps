@@ -1344,6 +1344,7 @@ class SnapshotDataModel(QStandardItemModel):
         self._ion_filter_cnt = Counter()
         #
         self._tag_filter_list = None
+        self._tag_filter_is_or = True
         self._tag_filter_cnt = Counter()
 
     def set_ion_filters(self, d):
@@ -1353,9 +1354,10 @@ class SnapshotDataModel(QStandardItemModel):
     def get_ion_filters(self):
         return self._ion_filter_list
 
-    def set_tag_filters(self, d):
+    def set_tag_filters(self, d, is_or: bool = True):
         self._tag_filter_cnt = Counter()
         self._tag_filter_list = [k for k, v in d.items() if v]
+        self._tag_filter_is_or = is_or
 
     def get_tag_filters(self):
         return self._tag_filter_list
@@ -1846,6 +1848,9 @@ class _SnpProxyModel(QSortFilterProxyModel):
                     for i in tags:
                         m._tag_filter_cnt[i] += 1 # +1 for all tags of this snp
                     self._tag_hit_cache[snp_data.name] = True
+            # for AND
+            if not self.m_src._tag_filter_is_or:
+                tag_test = set(tag_filter_list).issubset(tags)
 
         if not tag_test:
             return False
