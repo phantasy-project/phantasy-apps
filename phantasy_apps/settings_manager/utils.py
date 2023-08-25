@@ -1621,10 +1621,25 @@ class SnapshotDataModel(QStandardItemModel):
                 idx = self.index(i, self.i_load_status, ridx)
                 self.set_loaded(idx, loaded)
                 if loaded:
-                    idx = self._v.model().mapFromSource(idx)
-                    self._v.scrollTo(idx)
-                    self._v.selectionModel().select(idx,
-                            QItemSelectionModel.Select | QItemSelectionModel.Rows)
+                    self.hlrow(idx)
+
+    def hlrow(self, idx_src):
+         idx = self._v.model().mapFromSource(idx_src)
+         self._v.scrollTo(idx)
+         self._v.selectionModel().select(idx,
+                 QItemSelectionModel.Select | QItemSelectionModel.Rows)
+
+    def locateByName(self, name: str):
+        """Return the index of entry (datetime column) based on snapshot name (datetime value).
+        """
+        for ii in range(self.rowCount()):
+            ridx = self.index(ii, 0)
+            if not self.hasChildren(ridx):
+                continue
+            for i in range(self.rowCount(ridx)):
+                if self.itemFromIndex(self.index(i, self.i_datetime, ridx)).text() == name:
+                    return self.index(i, self.i_datetime, ridx)
+        return QModelIndex()
 
     def clear_load_status(self):
         for ii in range(self.rowCount()):
