@@ -2162,10 +2162,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             if parent_idx.isValid():
                 src_m.hlrow(parent_idx)
             return
-        item0 = src_m.itemFromIndex(
-            src_m.index(src_idx.row(), 0,
-                        item.parent().index()))
-        self.on_load_settings(item0.snp_data)
+        if src_idx.column() == src_m.i_datetime:
+            item0 = src_m.itemFromIndex(
+                src_m.index(src_idx.row(), 0,
+                            item.parent().index()))
+            self.on_load_settings(item0.snp_data)
+            return
 
     @pyqtSlot()
     def on_filter_changed(self):
