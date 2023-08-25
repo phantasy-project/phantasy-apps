@@ -1741,6 +1741,18 @@ class _DelegateSnapshot(QStyledItemDelegate):
             QStyledItemDelegate.updateEditorGeometry(self, editor, option, index)
 
     def on_item_entered(self, index):
+        m_src = index.model().m_src
+        if not index.parent().isValid():
+            self.v.setCursor(Qt.ForbiddenCursor)
+        elif index.column() == m_src.i_parent:
+            self.v.setCursor(Qt.PointingHandCursor)
+        elif index.column() in (m_src.i_tags, m_src.i_note):
+            self.v.setCursor(Qt.IBeamCursor)
+        elif index.column() == m_src.i_datetime:
+            self.v.setCursor(Qt.ArrowCursor)
+        else:
+            self.v.setCursor(Qt.ForbiddenCursor)
+
         op = index.model().data(index, Qt.UserRole + 1)
         if op in ACT_BTN_CONF:
             if self.is_item_in_edit_mode:
