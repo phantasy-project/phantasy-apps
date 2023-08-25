@@ -1507,6 +1507,13 @@ class Ui_MainWindow(object):
         self.select_invert_tags_btn.setAutoRaise(True)
         self.select_invert_tags_btn.setObjectName("select_invert_tags_btn")
         self.gridLayout_2.addWidget(self.select_invert_tags_btn, 1, 2, 1, 1)
+        self.tag_filter_act_and_logic_btn = QtWidgets.QToolButton(
+            self.tag_filter_frame)
+        self.tag_filter_act_and_logic_btn.setCheckable(True)
+        self.tag_filter_act_and_logic_btn.setObjectName(
+            "tag_filter_act_and_logic_btn")
+        self.gridLayout_2.addWidget(self.tag_filter_act_and_logic_btn, 1, 5, 1,
+                                    1)
         self.ion_filter_frame = QtWidgets.QFrame(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -1549,7 +1556,7 @@ class Ui_MainWindow(object):
         self.ion_filter_area.setObjectName("ion_filter_area")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(
-            QtCore.QRect(0, 0, 663, 117))
+            QtCore.QRect(0, 0, 663, 121))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.ion_filter_area.setWidget(self.scrollAreaWidgetContents_2)
@@ -2495,6 +2502,8 @@ class Ui_MainWindow(object):
         self.select_invert_tags_btn.setToolTip(
             _translate("MainWindow", "Invert the tag selection."))
         self.select_invert_tags_btn.setText(_translate("MainWindow", "..."))
+        self.tag_filter_act_and_logic_btn.setText(
+            _translate("MainWindow", "AND"))
         self.select_none_ions_btn.setToolTip(
             _translate("MainWindow", "Select none ions."))
         self.select_none_ions_btn.setText(
