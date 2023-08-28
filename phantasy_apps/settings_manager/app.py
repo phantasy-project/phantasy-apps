@@ -30,7 +30,7 @@ from PyQt5.QtWidgets import (QCompleter, QCheckBox, QDialog, QLabel,
                              QMessageBox, QMenu, QAction, QWidgetAction,
                              QToolButton, QPushButton, QSizePolicy, QShortcut,
                              QWidget, QProgressBar, QHBoxLayout, QLineEdit,
-                             QLabel, QTabWidget, QGraphicsDropShadowEffect)
+                             QLabel, QTabWidget, QGraphicsDropShadowEffect, QTreeView)
 
 from phantasy import (build_element, CaField, Settings)
 from phantasy_ui import (BaseAppForm, delayed_exec, get_open_filename,
@@ -783,6 +783,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._no_warning_px = QPixmap(QSize(PX_SIZE, PX_SIZE))
         self._no_warning_px.fill(QColor(*BG_COLOR_GOLDEN_NO))
         self._ok_px = QPixmap(":/sm-icons/ok.png")
+        self._jump_icon = QIcon(QPixmap(":/sm-icons/jump.png"))
+        self._path_icon = QIcon(QPixmap(":/sm-icons/path.png"))
         self._copy_text_icon = QIcon(QPixmap(":/sm-icons/copy_text.png"))
         self._copy_data_icon = QIcon(QPixmap(":/sm-icons/copy_data.png"))
         self._probe_icon = QIcon(QPixmap(":/sm-icons/probe.png"))
@@ -1304,8 +1306,22 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 partial(self.on_custom_context_menu, o))
 
     @pyqtSlot()
-    def on_copy_text(self, m, idx):
-        text = m.data(idx)
+    def on_show_chain_snp(self, m, idx):
+        """Show the full creation chain of the snapshot.
+        """
+        # involve the whole database search
+        # print(self.df_all_row_tuple)
+        pass
+
+    @pyqtSlot()
+    def on_goto_snp(self, m, idx):
+        """Go to and highlight the snapshot entry (parent of the selected snapshot).
+        """
+        self.__hl_parent_snp(m, idx)
+
+    @pyqtSlot()
+    def on_copy_text(self, role, m, idx):
+        text = m.data(idx, role)
         cb = QGuiApplication.clipboard()
         cb.setText(text)
         printlog('copied text: {}'.format(text))
@@ -1333,20 +1349,78 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         w.show()
 
     @pyqtSlot(QPoint)
-    def on_custom_context_menu(self, view, pos):
+    def on_custom_context_menu(self, view: QTreeView, pos: QPoint):
         m = view.model()
         if m is None:
             return
         idx = view.indexAt(pos)
         if view == self._tv:
-            menu = self._build_settings_context_menu(idx, m)
+            menu = self.__build_settings_context_menu(idx, m)
         else:
-            menu = self._build_snp_context_menu(idx, m)
+            if idx.column() == m.sourceModel().i_parent:
+                menu = self.__build_snp_context_menu_parent_column(idx, m)
+            else:
+                menu = self.__build_snp_context_menu(idx, m)
         #
         if menu is not None:
             menu.exec_(view.viewport().mapToGlobal(pos))
 
-    def _build_snp_context_menu(self, idx, m):
+    def __build_snp_context_menu_parent_column(self, idx, m):
+        # build menu on parent column only.
+        src_m = m.sourceModel()
+        #
+        parent_name = m.data(idx, Qt.UserRole)
+        if parent_name is None:
+            return
+        #
+        src_idx = m.mapToSource(idx)
+        menu = QMenu(self)
+        menu.setStyleSheet('QMenu {margin: 2px;}')
+        #
+        _title_w = QLabel("Parent Info")
+        _title_w.setStyleSheet(f"""
+            QLabel{{
+                background: #BBDEFB;
+                font-weight: bold;
+                padding: 2px 2px 2px {PX_SIZE+2}px;
+            }}""")
+        _title_act = QWidgetAction(self)
+        _title_act.setDefaultWidget(_title_w)
+        #
+        menu.addAction(_title_act)
+
+        # copy text
+        copy_action = QAction(self._copy_text_icon, "Copy Text", menu)
+        copy_action.triggered.connect(partial(self.on_copy_text, Qt.UserRole, m, idx))
+        menu.addAction(copy_action)
+        # goto
+        goto_action = QAction(self._jump_icon, "Go To", menu)
+        goto_action.triggered.connect(partial(self.on_goto_snp, m, idx))
+        menu.addAction(goto_action)
+        # read
+        read_action = QAction(self._read_icon, "&Read", menu)
+        # snpdata = self.__get_snpdata_ctx(src_m, src_idx, src_m.itemFromIndex(src_idx).parent().index())
+        snpdata = get_snapshotdata(parent_name, self.data_uri)
+        if snpdata is not None:
+            read_action.triggered.connect(partial(self.on_read_snp, snpdata))
+            menu.addAction(read_action)
+        # chain
+        chain_action = QAction(self._path_icon, "Chain", menu)
+        chain_action.triggered.connect(partial(self.on_show_chain_snp, m, idx))
+        # menu.addAction(chain_action)
+        #
+        return menu
+
+    def __get_snpdata_ctx(self, src_m, src_idx, pindex):
+        # get the SnapshotData attached to the current right-clicking context menu.
+        item0 = src_m.itemFromIndex(
+            src_m.index(src_idx.row(), src_m.i_datetime, pindex))
+        #
+        if not hasattr(item0, 'snp_data'):
+            return None
+        return item0.snp_data
+
+    def __build_snp_context_menu(self, idx, m):
         src_m = m.sourceModel()
         src_idx = m.mapToSource(idx)
         item = src_m.itemFromIndex(src_idx)
@@ -1358,15 +1432,26 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu = QMenu(self)
         menu.setStyleSheet('QMenu {margin: 2px;}')
         #
+        name = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_datetime, pindex)).text()
+        _title_w = QLabel(name)
+        _title_w.setStyleSheet(f"""
+            QLabel{{
+                background: #BBDEFB;
+                font-weight: bold;
+                padding: 2px 2px 2px {PX_SIZE+2}px;
+            }}""")
+        _title_act = QWidgetAction(self)
+        _title_act.setDefaultWidget(_title_w)
+        #
+        menu.addAction(_title_act)
+        #
         copy_action = QAction(self._copy_text_icon, "Copy Text", menu)
-        copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
+        copy_action.triggered.connect(partial(self.on_copy_text, Qt.DisplayRole, m, idx))
         #
-        item0 = src_m.itemFromIndex(
-            src_m.index(src_idx.row(), src_m.i_datetime, pindex))
-        #
-        if not hasattr(item0, 'snp_data'):
+        snpdata = self.__get_snpdata_ctx(src_m, src_idx, pindex)
+        if snpdata is None:
             return menu
-        snpdata = item0.snp_data
+        #
         # copy data
         dcopy_action = QAction(self._copy_data_icon, "Copy Data", menu)
         dcopy_action.triggered.connect(partial(self.on_copy_snp, snpdata))
@@ -1542,7 +1627,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         x2 = fld.current_setting()
         self.ref_val_lineEdit.setText(str(x2))
 
-    def _build_settings_context_menu(self, idx, m):
+    def __build_settings_context_menu(self, idx, m):
         src_m = m.sourceModel()
         src_idx = m.mapToSource(idx)
         item = src_m.itemFromIndex(src_idx)
@@ -1556,7 +1641,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             margin: 2px;
         }
         """)
-
         _title_w = QLabel(text)
         _title_w.setStyleSheet(f"""
             QLabel{{
@@ -1571,7 +1655,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         #
         copy_action = QAction(self._copy_text_icon, "Copy Text", menu)
-        copy_action.triggered.connect(partial(self.on_copy_text, m, idx))
+        copy_action.triggered.connect(partial(self.on_copy_text, Qt.DisplayRole, m, idx))
         menu.addAction(copy_action)
 
         # tolerance column? add action for new value setting.
@@ -2183,10 +2267,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if src_idx.column() in (src_m.i_tags, src_m.i_note):
             return
         if src_idx.column() == src_m.i_parent:
-            parent_name = m.data(idx, Qt.UserRole)
-            parent_idx = src_m.locateByName(parent_name)
-            if parent_idx.isValid():
-                src_m.hlrow(parent_idx)
+            self.__hl_parent_snp(m, idx)
             return
         if src_idx.column() == src_m.i_datetime:
             item0 = src_m.itemFromIndex(
@@ -2194,6 +2275,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                             item.parent().index()))
             self.on_load_settings(item0.snp_data)
             return
+
+    def __hl_parent_snp(self, m, idx):
+        parent_name = m.data(idx, Qt.UserRole)
+        parent_idx = m.sourceModel().locateByName(parent_name)
+        if parent_idx.isValid():
+            m.sourceModel().hlrow(parent_idx)
 
     @pyqtSlot()
     def on_filter_changed(self):
