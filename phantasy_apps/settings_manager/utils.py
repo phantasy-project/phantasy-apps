@@ -1395,7 +1395,7 @@ class SnapshotDataModel(QStandardItemModel):
                     it_parent.setData(f"Unknown originated snasphot.", Qt.ToolTipRole)
                 else:
                     it_parent.setData(_parent, Qt.UserRole)
-                    it_parent.setData(f"Originated snapshot: '{_parent}'", Qt.ToolTipRole)
+                    it_parent.setData(f"Double-clicking to highlight\nOriginated snapshot: '{_parent}'", Qt.ToolTipRole)
                     it_parent.setData(self.parent_on_px, Qt.DecorationRole)
 
                 # ion: name
