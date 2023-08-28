@@ -1747,7 +1747,10 @@ class _DelegateSnapshot(QStyledItemDelegate):
         if not index.parent().isValid():
             self.v.setCursor(Qt.ForbiddenCursor)
         elif index.column() == m_src.i_parent:
-            self.v.setCursor(Qt.PointingHandCursor)
+            if index.model().data(index, Qt.UserRole) is None:
+                self.v.setCursor(Qt.ForbiddenCursor)
+            else:
+                self.v.setCursor(Qt.PointingHandCursor)
         elif index.column() in (m_src.i_tags, m_src.i_note):
             self.v.setCursor(Qt.IBeamCursor)
         elif index.column() == m_src.i_datetime:
