@@ -11,6 +11,7 @@ import pandas as pd
 import tempfile
 import time
 import toml
+from typing import Literal
 from itertools import cycle
 from collections import OrderedDict
 from datetime import datetime
@@ -930,7 +931,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.snp_template_list = []
 
         # snp filters, {btn_text (elemt, tag):ischecked?}
-        self._current_btn_filter = dict()
+        self._current_ion_filter = dict()
         self._current_tag_filter = dict()
         self.snp_filters_updated.connect(self.on_snp_filters_updated)
         # URI for data source
@@ -1241,17 +1242,37 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                          Qt.Horizontal)
         BaseAppForm.resizeEvent(self, e)
 
-    def on_check_snp_filters(self, filter_type, check_type):
+    @pyqtSlot()
+    def on_check_snp_filters(self, filter_type: Literal['ion', 'tag'],
+                             check_type: Literal['all', 'none', 'invert', 'apply']):
+        """Checkable button for tag and ion filters: Select All/None and Invert selection.
+        """
         area = getattr(self, f"{filter_type}_filter_area")
+        slot = getattr(self, f"on_update_{filter_type}_filters")
+        prop_name = f"{filter_type}_name"
+        btn_list = area.findChildren(QToolButton)
+
+        # rewire
+        for btn in btn_list:
+            btn.toggled.disconnect()
+            btn.toggled.connect(partial(slot, btn.property(prop_name), False))
+        #
         if check_type == 'all':
-            [i.setChecked(True) for i in area.findChildren(QToolButton)]
+            [i.setChecked(True) for i in btn_list]
         elif check_type == 'none':
-            [i.setChecked(False) for i in area.findChildren(QToolButton)]
-        else:  # invert
-            [
-                i.setChecked(not i.isChecked())
-                for i in area.findChildren(QToolButton)
-            ]
+            [i.setChecked(False) for i in btn_list]
+        elif check_type == 'invert':
+            [i.setChecked(not i.isChecked()) for i in btn_list]
+        else:
+            pass
+            # apply filters
+
+        # rewire
+        for btn in btn_list:
+            btn.toggled.disconnect()
+            btn.toggled.connect(partial(slot, btn.property(prop_name), True))
+        #
+        self.apply_snp_btn_filters()
 
     @pyqtSlot(bool)
     def on_enable_search(self, auto_collapse, enabled):
@@ -3413,10 +3434,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         del d
         _ion_btn_filters = OrderedDict(
             sorted(ion_btn_filters.items(), key=lambda i: _sym2z(i[0])))
-        self._build_btn_filters(self.ion_filter_area, _ion_btn_filters)
+        self._build_ion_filters(self.ion_filter_area, _ion_btn_filters)
         self._build_tag_filters(self.tag_filter_area, tag_btn_filters)
         # dropdown menu for checkable user names.
         self._build_user_filters(self.snp_filter_ctrls_hbox, user_filters)
+
+        # apply ion/tag filters
+        self.on_check_snp_filters('ion', 'apply')
+        self.on_check_snp_filters('tag', 'apply')
 
     def _build_user_filters(self, container, filters):
         # dropdown menu with checkable user names
@@ -3516,6 +3541,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         for tag in _filters:
             o = QToolButton(self.snp_dock)
             o.setText(tag)
+            o.setProperty('tag_name', tag)
             shadow = QGraphicsDropShadowEffect()
             shadow.setBlurRadius(5)
             shadow.setOffset(2)
@@ -3523,7 +3549,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             o.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
             o.setStyleSheet(TAG_BTN_STY.format(fs=self.default_font_size - 1))
             o.setCheckable(True)
-            o.toggled.connect(partial(self.on_update_tag_filters, tag))
+            o.toggled.connect(partial(self.on_update_tag_filters, tag, False))
             layout.addWidget(o)
             o.setChecked(self._current_tag_filter.get(tag, True))
             if tag == 'ARCHIVE':  # not show ARCHIVEd snapshots
@@ -3532,12 +3558,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         area.setWidget(w)
 
     @pyqtSlot(bool)
-    def on_update_tag_filters(self, tag, is_checked):
+    def on_update_tag_filters(self, tag: str, activate_filter: bool, is_checked: bool):
         # printlog(f"{tag} button filter is {is_checked}")
         self._current_tag_filter[tag] = is_checked
-        self.apply_snp_btn_filters()
+        if activate_filter:
+            self.apply_snp_btn_filters()
 
-    def _build_btn_filters(self, area, filters):
+    def _build_ion_filters(self, area, filters):
+        # ion filter buttons
         w = area.takeWidget()
         w.setParent(None)
         w = QWidget(self)
@@ -3547,6 +3575,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             # k: ion name, v: {A: {Q...}}
             btn = QToolButton(self.snp_dock)
             btn.setText(k)
+            btn.setProperty('ion_name', k)
             px_tuple = ELEMT_PX_MAP.get(k, None)
             if px_tuple is not None:
                 icon = QIcon()
@@ -3572,16 +3601,18 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             shadow.setOffset(2)
             btn.setGraphicsEffect(shadow)
             btn.setCheckable(True)
-            btn.toggled.connect(partial(self.on_update_snp_filters, k))
+            btn.toggled.connect(partial(self.on_update_ion_filters, k, False))
             layout.addWidget(btn)
-            btn.setChecked(self._current_btn_filter.get(k, True))
+            btn.setChecked(self._current_ion_filter.get(k, True))
         w.setLayout(layout)
         area.setWidget(w)
 
     def apply_snp_btn_filters(self):
         # ion, tag
         m = self.snp_treeView.model()
-        m.m_src.set_ion_filters(self._current_btn_filter)
+        if m is None:
+            return
+        m.m_src.set_ion_filters(self._current_ion_filter)
         m.m_src.set_tag_filters(self._current_tag_filter, self._is_or_logic_tag_filter)
         m.reset_cache()
         m.invalidate()
@@ -3615,9 +3646,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             w.setText(f"{k} ({tag_cnt[k]})")
 
     @pyqtSlot(bool)
-    def on_update_snp_filters(self, text, is_checked):
-        self._current_btn_filter[text] = is_checked
-        self.apply_snp_btn_filters()
+    def on_update_ion_filters(self, text: str, activate_filter: bool, is_checked: bool):
+        # ion filter buttons
+        self._current_ion_filter[text] = is_checked
+        if activate_filter:
+            self.apply_snp_btn_filters()
 
     def update_snp_dock_view(self):
         m = SnapshotDataModel(self.snp_treeView, self._snp_dock_list)
