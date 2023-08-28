@@ -930,9 +930,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # template list, [(name, tag_list, snpdata),...]
         self.snp_template_list = []
 
-        # snp filters, {btn_text (elemt, tag):ischecked?}
-        self._current_ion_filter = dict()
-        self._current_tag_filter = dict()
+        # snp filters, {btn_text (elemt, tag):ischecked?} (reset in on_data_uri_changed.)
         self.snp_filters_updated.connect(self.on_snp_filters_updated)
         # URI for data source
         self.on_data_uri_changed(True, self.data_uri)
@@ -2349,6 +2347,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # database
         self._db_conn = self._db_conn_pool.setdefault(d, ensure_connect_db(d))
         self.data_uri = d
+        # reset tag/ion filter dict
+        # snp filters, {btn_text (elemt, tag):ischecked?}
+        self._current_ion_filter = dict()
+        self._current_tag_filter = dict()
         #
         self.__read_data2frame(self._n_snp_max, d)
 
