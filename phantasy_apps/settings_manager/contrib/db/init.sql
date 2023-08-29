@@ -30,3 +30,5 @@ CREATE TABLE IF NOT EXISTS snapshot (
     date TEXT NOT NULL,
     parent TEXT
 );
+
+CREATE INDEX IF NOT EXISTS datetime_idx ON snapshot (datetime);
