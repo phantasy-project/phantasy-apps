@@ -55,10 +55,11 @@ class PostSnapshotDialog(QDialog, Ui_Dialog):
         super(self.__class__, self).__init__()
         self.parent = parent
         self._tag_fs = tag_fontsize
-        # template list: [(name, tag_list, snpdata),...]
+        # template list: [(name, tag_list, snpdata),...] or [('', [], None), ...]
         self._template_list = template_list
         # current loaded snp originated template, (name(template), tag_list(template), loaded_snpdata)
         self._loaded_snp_name, self._loaded_snp_tag_list, self._loaded_snp_data = current_snpdata_originated
+
         # WYSIWYC
         self._wysiwyc_temp_snpdata = None
 
@@ -193,6 +194,8 @@ p, li { white-space: pre-wrap; }
             self.isrc_name_meta_cbb.setCurrentText('Artemis')
         elif 'HP-ECR' in temp_name:
             self.isrc_name_meta_cbb.setCurrentText('HP-ECR')
+        else:
+            self.isrc_name_meta_cbb.setCurrentText('Live')
 
     @pyqtSlot(bool)
     def onCheckOnLoaded(self, is_checked: bool):
@@ -260,6 +263,8 @@ p, li { white-space: pre-wrap; }
         layout = FlowLayout()
         btn_grp = QButtonGroup(self)
         for _name, _tag_list, _snpdata in self._template_list:
+            if _name == '':
+                continue
             o = QToolButton(self)
             o.setText(_name)
             o.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
@@ -362,6 +367,9 @@ p, li { white-space: pre-wrap; }
             if w.text() == temp_name_in_op:
                 w.setChecked(True)
                 break
+        else:
+            # no template to check, check on loaded
+            self.on_loaded_rbtn.setChecked(True)
 
     def get_snp_temp_data(self):
         """Return the snapshot data template for capturing a new snapshot.

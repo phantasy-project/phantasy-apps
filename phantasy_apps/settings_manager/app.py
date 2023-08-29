@@ -44,6 +44,7 @@ from phantasy_apps.msviz.mach_state import (get_meta_conf_dict,
                                             _daq_func)
 from archappl.client import (ArchiverDataClient, ArchiverMgmtClient)
 
+from .app_attach import AttachDialog
 from .app_date_range import DateRangeDialog
 from .app_import import ImportSNPDialog
 from .app_pref import PreferencesDialog
@@ -472,6 +473,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         hidden_col_idx_list = [COLUMN_NAMES.index(i) for i in hidden_col_name_list]
         self.pref_dict['_HIDDEN_COLUMNS_IDX'] = hidden_col_idx_list
 
+        # attachment support
+        try:
+            self.attach_root_dir = self.pref_dict['ATTACHMENT']
+            self.attach_file_type_exec_dict = self.pref_dict['ATTACHMENT']['FILE_TYPE_EXEC']
+        except:
+            self.attach_root_dir = None
+            self.attach_file_type_exec_dict = None
+
         # font
         self.default_font, self.default_font_size = self.get_default_font_config(
         )
@@ -493,7 +502,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                           self.data_uri)
             if _isnp_data is not None:
                 _isnp_data.extract_blob()
-            return (_itemp_conf['NAME'], _itemp_conf['DB_TAGS'], _isnp_data)
+                return (_itemp_conf['NAME'], _itemp_conf['DB_TAGS'], _isnp_data)
+            else:
+                return ('', [], None)
+
 
         def _load_ready(res):
             # a list of snapshot templates, with expanded tabular data
@@ -533,12 +545,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         loaded_settings_name_set = set(
             self._current_snpdata.data.Name.unique())
         for _tmp_name, _tmp_tags, _tmp_snp_data in self.snp_template_list:
+            if _tmp_snp_data is None:
+                continue
             _name_set = set(_tmp_snp_data.data.Name.unique())
             if _name_set == loaded_settings_name_set:
                 return _tmp_name, _tmp_tags, self._current_snpdata
             elif loaded_settings_name_set.issubset(_name_set):
                 return _tmp_name + " (subset)", _tmp_tags, self._current_snpdata
-        return None, None, self._current_snpdata
+        return '', [], self._current_snpdata
 
     @pyqtSlot()
     def on_auto_column_width(self):
@@ -799,6 +813,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._del_icon = QIcon(QPixmap(":/sm-icons/delete.png"))
         self._load_icon = QIcon(QPixmap(":/sm-icons/cast.png"))
         self._recommand_icon = QIcon(QPixmap(":/sm-icons/recommend.png"))
+        self._attach_icon = QIcon(QPixmap(":/sm-icons/attach.png"))
         # enabled/disabled alarms
         self._alm_enabled_px = QPixmap(":/sm-icons/alarm_on_green.png").scaled(
             PX_SIZE, PX_SIZE)
@@ -927,7 +942,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # current snp
         self._current_snpdata = None
         # originated template tuple: (name, taglist, snpdata_temp)
-        self._current_snpdata_originated = (None, [], None)
+        self._current_snpdata_originated = ('', [], None)
 
         # template list, [(name, tag_list, snpdata),...]
         self.snp_template_list = []
@@ -1451,17 +1466,19 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         snpdata = self.__get_snpdata_ctx(src_m, src_idx, pindex)
         if snpdata is None:
             return menu
-        #
+
         # copy data
         dcopy_action = QAction(self._copy_data_icon, "Copy Data", menu)
         dcopy_action.triggered.connect(partial(self.on_copy_snp, snpdata))
+
         # save-as
         saveas_action = QAction(self._saveas_icon, "E&xport", menu)
-        saveas_action.triggered.connect(
-            partial(self.on_saveas_settings, snpdata))
+        saveas_action.triggered.connect(partial(self.on_saveas_settings, snpdata))
+
         # read
         read_action = QAction(self._read_icon, "&Read", menu)
         read_action.triggered.connect(partial(self.on_read_snp, snpdata))
+
         # viz machine state
         if self._machstate is not None:
             _mviz_text = "Machine State (diff)"
@@ -1469,23 +1486,27 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             _mviz_text = "Machine State"
         mviz_action = QAction(self._chart_icon, _mviz_text, menu)
         mviz_action.triggered.connect(partial(self.on_mviz, snpdata))
-        # del
+
+        # archive
         archive_action = QAction(self._archive_icon, "&Archive", menu)
         archive_action.triggered.connect(partial(self.on_archive_settings, snpdata))
 
         # del admin
         del_admin_action = QAction(self._del_icon, "&Delete (Admin)", menu)
-        del_admin_action.triggered.connect(
-            partial(self.on_del_settings_admin, snpdata))
+        del_admin_action.triggered.connect(partial(self.on_del_settings_admin, snpdata))
+
         # load
         load_action = QAction(self._load_icon, "&Load", menu)
         load_action.triggered.connect(partial(self.on_load_settings, snpdata))
-        #
+
         # Set the snapshot as reference
-        refpush_action = QAction(self._recommand_icon, "&Set As Reference",
-                                 menu)
-        refpush_action.triggered.connect(
-            partial(self.on_push_ref_settings, snpdata))
+        refpush_action = QAction(self._recommand_icon, "&Set As Reference", menu)
+        refpush_action.triggered.connect(partial(self.on_push_ref_settings, snpdata))
+
+        # attach
+        attach_action = QAction(self._attach_icon, "Attach", menu)
+        attach_action.triggered.connect(partial(self.on_attach_file, snpdata.name))
+
         #
         menu.addAction(load_action)
         menu.addAction(refpush_action)
@@ -1500,6 +1521,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         menu.addAction(archive_action)
         if getuser() in ('zhangt', 'tong'):  # Admin
             menu.addAction(del_admin_action)
+        menu.addAction(attach_action)
         return menu
 
     @pyqtSlot()
@@ -2347,9 +2369,26 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_init_lattice_settings(self):
         """Initialize device settings with the entire loaded lattice.
         """
-        if self._mp is not None:
-            self._elem_list[:] = self._lat[:]
-            self.element_list_changed.emit()
+        if self._mp is None:
+            return
+        self._elem_list[:] = self._lat[:]
+        self.element_list_changed.emit()
+        # create SnapshotData based on current loaded lattice
+        ion_name, ion_mass, ion_number, ion_charge = BeamSpeciesDisplayWidget.get_species_meta('live')
+        self._current_snpdata = SnapshotData(
+                get_settings_data(self._tv.model(), self._tv.model().sourceModel()),
+                ion_name=ion_name,
+                ion_number=ion_number,
+                ion_mass=ion_mass,
+                ion_charge=ion_charge,
+                machine=self._last_machine_name,
+                segment=self._last_lattice_name,
+                version=self._version,
+                note='Initialized from loaded lattice, from no template.',
+                tags='',
+                parent=None)
+        # figure out the originated template
+        self._current_snpdata_originated = '', [], self._current_snpdata
 
     @pyqtSlot(int)
     def on_ndigit_valueChanged(self, i):
@@ -3465,6 +3504,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             ui.setupUi(w)
             w.setWindowTitle("Query Tips")
         self._query_tips_form.show()
+
+    @pyqtSlot()
+    def on_attach_file(self, name: str):
+        """Attach a file to a snapshot with name defined by *name*.
+        """
+        dlg = AttachDialog(self)
+        dlg.exec_()
 
     @pyqtSlot()
     def on_copy_snp(self, data):
