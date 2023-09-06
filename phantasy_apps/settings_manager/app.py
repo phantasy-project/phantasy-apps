@@ -2919,7 +2919,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if m0 is None:
             return
         m = m0.sourceModel()
-        print(len(self.obj_it_tuple))
         #
 
         if delt == -1:
@@ -3509,7 +3508,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_attach_file(self, name: str):
         """Attach a file to a snapshot with name defined by *name*.
         """
-        dlg = AttachDialog(self)
+        dlg = AttachDialog(self._db_conn_pool.get(self.data_uri), self)
         dlg.exec_()
 
     @pyqtSlot()
