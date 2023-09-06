@@ -81,7 +81,7 @@ def insert_attach_data(conn, attach_data: AttachmentData):
     cursor = conn.cursor()
     query = ''' INSERT INTO attachment (name, uri, ftyp) VALUES (?, ?, ?); '''
     try:
-        cursor.execute(query, (attach_data.name, attach_data.uri, attach_data.ftype))
+        cursor.execute(query, (attach_data.name, attach_data.uri, attach_data.ftyp))
     except sqlite3.Error as err:
         print(err)
     else:
