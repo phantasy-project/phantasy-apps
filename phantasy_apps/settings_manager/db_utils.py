@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from sqlite3 import Error
+import sqlite3
+from .data import SnapshotData
+from .data import AttachmentData
 
 
-def insert_update_data(conn, snp_data):
+# Snapshot data
+
+def insert_update_data(conn, snp_data: SnapshotData):
     if get_data(conn, snp_data) == []:
         insert_data(conn, snp_data)
     else:
         update_data(conn, snp_data)
 
 
-def insert_data(conn, snp_data):
+def insert_data(conn, snp_data: SnapshotData):
     data_tuple = snp_data.timestamp, snp_data.datetime, \
          snp_data.note, snp_data.user, snp_data.ion_name, \
          snp_data.ion_number, snp_data.ion_mass, \
@@ -25,7 +29,7 @@ def insert_data(conn, snp_data):
     conn.commit()
 
 
-def update_data(conn, snp_data):
+def update_data(conn, snp_data: SnapshotData):
     cursor = conn.cursor()
     query = """ UPDATE snapshot SET
     note = ?, tags = ? WHERE datetime = ? """
@@ -34,7 +38,7 @@ def update_data(conn, snp_data):
     cursor.close()
 
 
-def get_data(conn, snp_data):
+def get_data(conn, snp_data: SnapshotData):
     cursor = conn.cursor()
     datetime = snp_data.name
     r = cursor.execute(f" SELECT * FROM snapshot WHERE datetime = '{datetime}' ")
@@ -47,19 +51,70 @@ def _insert_data(cursor, *data):
     query = ''' INSERT INTO snapshot (timestamp, datetime, note, user, ion_name, ion_number, ion_mass, ion_charge, machine, segment, tags, app, version, data_format, data, date, parent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); '''
     try:
         cursor.execute(query, data)
-    except Error as err:
+    except sqlite3.Error as err:
         print(err)
     else:
         cursor.close()
 
 
-def delete_data(conn, snp_data):
+def delete_data(conn, snp_data: SnapshotData):
     cursor = conn.cursor()
     datetime = snp_data.datetime
     try:
         cursor.execute(f''' DELETE FROM snapshot WHERE datetime = '{datetime}' ''')
-    except Error as err:
+    except sqlite3.Error as err:
         print(err)
     else:
         cursor.close()
         conn.commit()
+
+
+# attachment data
+def insert_update_attach(conn, attach_data: AttachmentData):
+    if get_attach_data(conn, attach_data) == []:
+        insert_attach_data(conn, attach_data)
+    else:
+        update_attach_data(conn, attach_data)
+
+
+def insert_attach_data(conn, attach_data: AttachmentData):
+    cursor = conn.cursor()
+    query = ''' INSERT INTO attachment (name, uri, ftyp) VALUES (?, ?, ?); '''
+    try:
+        cursor.execute(query, (attach_data.name, attach_data.uri, attach_data.ftype))
+    except sqlite3.Error as err:
+        print(err)
+    else:
+        cursor.close()
+    conn.commit()
+
+
+def update_attach_data(conn, attach_data: AttachmentData):
+    cursor = conn.cursor()
+    query = """ UPDATE attachment SET uri = ?, ftyp = ? WHERE name = ? """
+    cursor.execute(query, (attach_data.uri, attach_data.ftyp, attach_data.name))
+    conn.commit()
+    cursor.close()
+
+
+def get_attach_data(conn, attach_data: AttachmentData):
+    cursor = conn.cursor()
+    name = attach_data.name
+    r = cursor.execute(f" SELECT * FROM attachment WHERE name = '{name}' ")
+    data = r.fetchall()
+    cursor.close()
+    return data
+
+
+# snp <--> attach
+def get_attachments(conn, snp_data: SnapshotData):
+    """Return a list of attachment data associated with the given snapshot data.
+    """
+    cursor = conn.cursor()
+    r = cursor.execute(f"""
+        SELECT attachment.name, attachment.uri, attachment.ftyp FROM attachment
+        JOIN snp_attach ON snp_attach.attachment_name = attachment.name
+        WHERE snp_attach.snapshot_name = '{snp_data.name}';""")
+    data = r.fetchall()
+    cursor.close()
+    return [AttachmentData(*i) for i in data]
