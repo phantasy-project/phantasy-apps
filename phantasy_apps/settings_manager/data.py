@@ -654,3 +654,49 @@ class SnapshotData:
 
 AttachmentData = namedtuple('AttachmentData', ['name', 'uri', 'ftyp'])
 
+class AttachmentData:
+
+    _ATTR_MAP = {'name': 0, 'uri': 1, 'ftyp': 2}
+
+    def __init__(self, name, uri, ftyp):
+        self._data = [name, uri, ftyp]
+
+    def __getitem__(self, index):
+       if isinstance(index, str):
+           return self._data[AttachmentData._ATTR_MAP[index]]
+       else:
+           return self._data[index]
+
+    def __setitem__(self, index, value):
+        if isinstance(index, str):
+            self._data[AttachmentData._ATTR_MAP[index]] = value
+        else:
+            self._data[index] = value
+
+    @property
+    def name(self):
+        return self._data[0]
+
+    @name.setter
+    def name(self, s):
+        self._data[0] = s
+
+    @property
+    def uri(self):
+        return self._data[1]
+
+    @uri.setter
+    def uri(self, s):
+        self._data[1] = s
+
+    @property
+    def ftyp(self):
+        return self._data[2]
+
+    @ftyp.setter
+    def ftyp(self, s):
+        self._data[2] = s
+
+    def __repr__(self):
+        return f"AttachmentData('{self.name}', '{self.uri}', '{self.ftyp}')"
+
