@@ -1,13 +1,5 @@
 /*
-CREATE TABLE IF NOT EXISTS software (
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
-    price REAL NOT NULL
-);
-*/
-
-/*
-Table for snapshot data model
+Snapshot table
 */
 
 CREATE TABLE IF NOT EXISTS snapshot (
@@ -31,4 +23,40 @@ CREATE TABLE IF NOT EXISTS snapshot (
     parent TEXT
 );
 
-CREATE INDEX IF NOT EXISTS datetime_idx ON snapshot (datetime);
+
+/*
+Attachment table
+*/
+
+CREATE TABLE IF NOT EXISTS attachment (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    uri TEXT NOT NULL,
+    ftyp TEXT NOT NULL,
+    UNIQUE (name)
+);
+
+
+/*
+Snapshot_Attachment table
+*/
+
+CREATE TABLE IF NOT EXISTS snp_attach (
+    id INTEGER PRIMARY KEY,
+    snapshot_name INTEGER,
+    attachment_name INTEGER,
+    UNIQUE (snapshot_name, attachment_name),
+    FOREIGN KEY (snapshot_name) REFERENCES snapshot (datetime)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (attachment_name) REFERENCES attachment (name)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+
+/*
+Index: datetime_idx on datetime column
+*/
+
+CREATE UNIQUE INDEX IF NOT EXISTS datetime_idx ON snapshot (datetime);
