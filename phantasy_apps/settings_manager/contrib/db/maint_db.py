@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Database Maintenance
+# Database Maintenance, run process_db() to update the database scheme 2023/08.
 
 import pandas as pd
 import random
@@ -10,6 +10,7 @@ from datetime import timedelta
 import sqlite3
 import numpy as np
 from phantasy_apps.settings_manager.data import read_sql
+from phantasy_apps.settings_manager.contrib.db.db_utils import init_db
 
 
 def process_db(input_dbpath: str, output_dbpath: str):
@@ -50,5 +51,6 @@ if __name__ == "__main__":
     output_db = "/home/tong/Downloads/20230816T000001_SM_new.db"
     # input_db = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm1.db"
     # output_db = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm1_new.db"
-
     process_db(input_db, output_db)
+    init_db(output_db)
+
