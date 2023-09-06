@@ -67,8 +67,12 @@ def file2db(db_file, sm_path):
     return cnt
 
 
-def ensure_connect_db(db_file):
+def ensure_connect_db(db_file: str,
+                      constraint_foreign_keys: bool = True):
     """Connect a db file, otherwise create a new one then connect.
     """
     init_db(db_file) # ensure db_file is ready to use.
-    return sqlite3.connect(db_file)
+    conn = sqlite3.connect(db_file)
+    if constraint_foreign_keys:
+        conn.execute('PRAGMA foreign_keys = ON;')
+    return conn
