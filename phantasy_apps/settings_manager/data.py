@@ -10,6 +10,7 @@ import tempfile
 import time
 import pandas as pd
 from collections import OrderedDict
+from collections import namedtuple
 from datetime import datetime
 from getpass import getuser
 
@@ -649,3 +650,7 @@ class SnapshotData:
         s = io.BytesIO()
         self.write(s)
         return s.getvalue()
+
+
+AttachmentData = namedtuple('AttachmentData', ['name', 'uri', 'ftyp'])
+
