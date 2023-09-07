@@ -1504,7 +1504,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         refpush_action.triggered.connect(partial(self.on_push_ref_settings, snpdata))
 
         # attach
-        attach_action = QAction(self._attach_icon, "Attach", menu)
+        attach_action = QAction(self._attach_icon, "Attachments", menu)
         attach_action.triggered.connect(partial(self.on_attach_file, snpdata.name,
                                                 snpdata.get_long_name()))
 
