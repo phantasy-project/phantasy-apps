@@ -174,8 +174,10 @@ class AttachDialog(QDialog, Ui_Dialog):
         ftype = m.data(m.index(row, AttachDataModel.ColumnFtype))
         uri = m.data(m.index(row, AttachDataModel.ColumnUri))
         if ftype == 'LINK':
-            QMessageBox.warning(self, "Open an Attachment", "Does not support open a LINK.",
+            r = QMessageBox.warning(self, "Open an Attachment", "Does not support LINK, but try to open it...",
                     QMessageBox.Ok, QMessageBox.Ok)
+            if r == QMessageBox.Ok:
+                QDesktopServices.openUrl(QUrl(uri))
         else:
             QDesktopServices.openUrl(QUrl(uri))
 
