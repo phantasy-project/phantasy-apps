@@ -427,6 +427,11 @@ class SnapshotData:
             return self.ts_as_str()
         raise AttributeError(f"Invalid attribute '{k}'")
 
+    def get_long_name(self):
+        """Return a long string as the snapshot name.
+        """
+        return f"{self.ts_as_str()} - {self.ion_as_str()}"
+
     def update_info(self, **kws):
         """Update info table with keyword arguments.
         """
