@@ -656,10 +656,11 @@ AttachmentData = namedtuple('AttachmentData', ['name', 'uri', 'ftyp'])
 
 class AttachmentData:
 
-    _ATTR_MAP = {'name': 0, 'uri': 1, 'ftyp': 2}
+    _ATTR_MAP = {'name': 0, 'uri': 1, 'ftyp': 2, 'created': 3}
 
-    def __init__(self, name, uri, ftyp):
-        self._data = [name, uri, ftyp]
+    def __init__(self, name, uri, ftyp, created):
+        self._data = [name, uri, ftyp, created]
+        self.created = created
 
     def __getitem__(self, index):
        if isinstance(index, str):
@@ -697,6 +698,17 @@ class AttachmentData:
     def ftyp(self, s):
         self._data[2] = s
 
-    def __repr__(self):
-        return f"AttachmentData('{self.name}', '{self.uri}', '{self.ftyp}')"
+    @property
+    def created(self):
+        return self._data[3]
 
+    @created.setter
+    def created(self, s):
+        # with the format of "2023-09-07 16:09:43"
+        if s is None:
+            self._data[3] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            self._data[3] = s
+
+    def __repr__(self):
+        return f"AttachmentData('{self.name}', '{self.uri}', '{self.ftyp}', '{self.created}')"

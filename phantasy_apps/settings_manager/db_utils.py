@@ -72,9 +72,9 @@ def delete_data(conn, snp_data: SnapshotData):
 # attachment data
 def insert_attach_data(conn, attach_data: AttachmentData):
     cursor = conn.cursor()
-    query = ''' INSERT INTO attachment (name, uri, ftyp) VALUES (?, ?, ?); '''
+    query = ''' INSERT INTO attachment (name, uri, ftyp, created) VALUES (?, ?, ?, ?); '''
     try:
-        cursor.execute(query, (attach_data.name, attach_data.uri, attach_data.ftyp))
+        cursor.execute(query, (attach_data.name, attach_data.uri, attach_data.ftyp, attach_data.created))
     except sqlite3.Error as err:
         print(err)
     else:
@@ -115,8 +115,8 @@ def get_attachments(conn, snp_name: str):
     """
     cursor = conn.cursor()
     r = cursor.execute(f"""
-        SELECT attachment.name, attachment.uri, attachment.ftyp FROM attachment
-        JOIN snp_attach ON snp_attach.attachment_name = attachment.name
+        SELECT attachment.name, attachment.uri, attachment.ftyp, attachment.created
+        FROM attachment JOIN snp_attach ON snp_attach.attachment_name = attachment.name
         WHERE snp_attach.snapshot_name = '{snp_name}';""")
     data = r.fetchall()
     cursor.close()

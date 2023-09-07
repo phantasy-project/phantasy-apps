@@ -30,6 +30,7 @@ Attachment table
 
 CREATE TABLE IF NOT EXISTS attachment (
     id INTEGER PRIMARY KEY,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
     name TEXT NOT NULL,
     uri TEXT NOT NULL,
     ftyp TEXT NOT NULL,
