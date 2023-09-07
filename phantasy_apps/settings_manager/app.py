@@ -475,10 +475,10 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # attachment support
         try:
-            self.attach_root_dir = self.pref_dict['ATTACHMENT']
+            self.attach_data_dir = self.pref_dict['ATTACHMENT']['DATA_DIR']
             self.attach_file_type_exec_dict = self.pref_dict['ATTACHMENT']['FILE_TYPE_EXEC']
         except:
-            self.attach_root_dir = None
+            self.attach_data_dir = None
             self.attach_file_type_exec_dict = None
 
         # font
@@ -813,7 +813,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._del_icon = QIcon(QPixmap(":/sm-icons/delete.png"))
         self._load_icon = QIcon(QPixmap(":/sm-icons/cast.png"))
         self._recommand_icon = QIcon(QPixmap(":/sm-icons/recommend.png"))
-        self._attach_icon = QIcon(QPixmap(":/sm-icons/attach.png"))
+        self._attach_icon = QIcon(QPixmap(":/sm-icons/attachment.png"))
         # enabled/disabled alarms
         self._alm_enabled_px = QPixmap(":/sm-icons/alarm_on_green.png").scaled(
             PX_SIZE, PX_SIZE)
@@ -3508,7 +3508,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     def on_attach_file(self, name: str):
         """Attach a file to a snapshot with name defined by *name*.
         """
-        dlg = AttachDialog(self._db_conn_pool.get(self.data_uri), self)
+        dlg = AttachDialog(name, self._db_conn_pool.get(self.data_uri), self.attach_data_dir, self)
         dlg.exec_()
 
     @pyqtSlot()
