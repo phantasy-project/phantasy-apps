@@ -17,12 +17,125 @@ class Ui_Dialog(object):
         Dialog.resize(1075, 839)
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setObjectName("gridLayout")
-        self.browse_btn = QtWidgets.QPushButton(Dialog)
-        self.browse_btn.setObjectName("browse_btn")
-        self.gridLayout.addWidget(self.browse_btn, 0, 7, 1, 1)
         self.label = QtWidgets.QLabel(Dialog)
         self.label.setObjectName("label")
-        self.gridLayout.addWidget(self.label, 0, 1, 1, 1)
+        self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
+        self.uri_path_lineEdit = QtWidgets.QLineEdit(Dialog)
+        self.uri_path_lineEdit.setReadOnly(False)
+        self.uri_path_lineEdit.setObjectName("uri_path_lineEdit")
+        self.gridLayout.addWidget(self.uri_path_lineEdit, 0, 1, 1, 1)
+        self.browse_btn = QtWidgets.QPushButton(Dialog)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/sm-icons/browse.png"),
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.browse_btn.setIcon(icon)
+        self.browse_btn.setIconSize(QtCore.QSize(32, 32))
+        self.browse_btn.setObjectName("browse_btn")
+        self.gridLayout.addWidget(self.browse_btn, 0, 2, 1, 1)
+        self.label_2 = QtWidgets.QLabel(Dialog)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setContentsMargins(0, -1, -1, -1)
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.uri_type_cbb = QtWidgets.QComboBox(Dialog)
+        self.uri_type_cbb.setIconSize(QtCore.QSize(32, 32))
+        self.uri_type_cbb.setObjectName("uri_type_cbb")
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/sm-icons/file.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.uri_type_cbb.addItem(icon1, "")
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/sm-icons/hyperlink.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.uri_type_cbb.addItem(icon2, "")
+        self.horizontalLayout_3.addWidget(self.uri_type_cbb)
+        spacerItem = QtWidgets.QSpacerItem(40, 20,
+                                           QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_3.addItem(spacerItem)
+        self.label_4 = QtWidgets.QLabel(Dialog)
+        self.label_4.setObjectName("label_4")
+        self.horizontalLayout_3.addWidget(self.label_4)
+        self.uri_name_lineEdit = QtWidgets.QLineEdit(Dialog)
+        self.uri_name_lineEdit.setObjectName("uri_name_lineEdit")
+        self.horizontalLayout_3.addWidget(self.uri_name_lineEdit)
+        self.gridLayout.addLayout(self.horizontalLayout_3, 1, 1, 1, 1)
+        self.upload_btn = QtWidgets.QPushButton(Dialog)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/sm-icons/expand.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.upload_btn.setIcon(icon3)
+        self.upload_btn.setIconSize(QtCore.QSize(32, 32))
+        self.upload_btn.setObjectName("upload_btn")
+        self.gridLayout.addWidget(self.upload_btn, 1, 2, 1, 1)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label_5 = QtWidgets.QLabel(Dialog)
+        self.label_5.setObjectName("label_5")
+        self.horizontalLayout_2.addWidget(self.label_5)
+        self.search_lineEdit = QtWidgets.QLineEdit(Dialog)
+        self.search_lineEdit.setObjectName("search_lineEdit")
+        self.horizontalLayout_2.addWidget(self.search_lineEdit)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 2, 0, 1, 2)
+        self.search_btn = QtWidgets.QPushButton(Dialog)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/search.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.search_btn.setIcon(icon4)
+        self.search_btn.setIconSize(QtCore.QSize(32, 32))
+        self.search_btn.setObjectName("search_btn")
+        self.gridLayout.addWidget(self.search_btn, 2, 2, 1, 1)
+        self.attach_view = QtWidgets.QTableView(Dialog)
+        self.attach_view.setStyleSheet(
+            "QHeaderView {\n"
+            "    font-weight: bold;\n"
+            "}\n"
+            "\n"
+            "QTableView {\n"
+            "    font-family: monospace;\n"
+            "    show-decoration-selected: 1;\n"
+            "    /*alternate-background-color: #D3D7CF;*/\n"
+            "}\n"
+            "\n"
+            "QTableView::item {\n"
+            "    /*color: black;*/\n"
+            "    border: 1px solid #D9D9D9;\n"
+            "    border-top-color: transparent;\n"
+            "    border-bottom-color: transparent;\n"
+            "}\n"
+            "\n"
+            "QTableView::item:hover {\n"
+            "    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);\n"
+            "    border: 1px solid #bfcde4;\n"
+            "}\n"
+            "\n"
+            "QTableView::item:selected {\n"
+            "    border: 1px solid #567DBC;\n"
+            "    background-color: #D3D7CF;\n"
+            "}\n"
+            "\n"
+            "QTableView::item:selected:active{\n"
+            "    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);\n"
+            "}\n"
+            "\n"
+            "")
+        self.attach_view.setAlternatingRowColors(True)
+        self.attach_view.setSelectionBehavior(
+            QtWidgets.QAbstractItemView.SelectRows)
+        self.attach_view.setObjectName("attach_view")
+        self.gridLayout.addWidget(self.attach_view, 3, 0, 1, 3)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.show_checked_btn = QtWidgets.QToolButton(Dialog)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/check-square-fill.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.show_checked_btn.setIcon(icon5)
+        self.show_checked_btn.setIconSize(QtCore.QSize(32, 32))
+        self.show_checked_btn.setAutoRaise(True)
+        self.show_checked_btn.setObjectName("show_checked_btn")
+        self.horizontalLayout.addWidget(self.show_checked_btn)
         self.label_3 = QtWidgets.QLabel(Dialog)
         font = QtGui.QFont()
         font.setItalic(True)
@@ -31,50 +144,20 @@ class Ui_Dialog(object):
                                    "    color: rgb(137, 137, 137);\n"
                                    "}")
         self.label_3.setObjectName("label_3")
-        self.gridLayout.addWidget(self.label_3, 5, 1, 1, 4)
-        self.uritype_cbb = QtWidgets.QComboBox(Dialog)
-        self.uritype_cbb.setObjectName("uritype_cbb")
-        self.uritype_cbb.addItem("")
-        self.uritype_cbb.addItem("")
-        self.gridLayout.addWidget(self.uritype_cbb, 2, 2, 1, 1)
-        self.filetype_lineEdit = QtWidgets.QLineEdit(Dialog)
-        self.filetype_lineEdit.setObjectName("filetype_lineEdit")
-        self.gridLayout.addWidget(self.filetype_lineEdit, 2, 3, 1, 1)
-        self.attach_view = QtWidgets.QTableView(Dialog)
-        self.attach_view.setAlternatingRowColors(True)
-        self.attach_view.setSelectionBehavior(
-            QtWidgets.QAbstractItemView.SelectRows)
-        self.attach_view.setObjectName("attach_view")
-        self.gridLayout.addWidget(self.attach_view, 4, 1, 1, 7)
-        self.label_2 = QtWidgets.QLabel(Dialog)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout.addWidget(self.label_2, 2, 1, 1, 1)
-        self.upload_btn = QtWidgets.QPushButton(Dialog)
-        self.upload_btn.setObjectName("upload_btn")
-        self.gridLayout.addWidget(self.upload_btn, 2, 7, 1, 1)
-        self.label_4 = QtWidgets.QLabel(Dialog)
-        self.label_4.setObjectName("label_4")
-        self.gridLayout.addWidget(self.label_4, 2, 5, 1, 1)
+        self.horizontalLayout.addWidget(self.label_3)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem1)
         self.attach_btn = QtWidgets.QPushButton(Dialog)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/sm-icons/attach.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.attach_btn.setIcon(icon6)
+        self.attach_btn.setIconSize(QtCore.QSize(32, 32))
         self.attach_btn.setObjectName("attach_btn")
-        self.gridLayout.addWidget(self.attach_btn, 5, 7, 1, 1)
-        self.search_btn = QtWidgets.QPushButton(Dialog)
-        self.search_btn.setObjectName("search_btn")
-        self.gridLayout.addWidget(self.search_btn, 3, 7, 1, 1)
-        self.filename_lineEdit = QtWidgets.QLineEdit(Dialog)
-        self.filename_lineEdit.setObjectName("filename_lineEdit")
-        self.gridLayout.addWidget(self.filename_lineEdit, 2, 6, 1, 1)
-        self.filepath_lineEdit = QtWidgets.QLineEdit(Dialog)
-        self.filepath_lineEdit.setReadOnly(False)
-        self.filepath_lineEdit.setObjectName("filepath_lineEdit")
-        self.gridLayout.addWidget(self.filepath_lineEdit, 0, 2, 1, 5)
-        self.search_lineEdit = QtWidgets.QLineEdit(Dialog)
-        self.search_lineEdit.setObjectName("search_lineEdit")
-        self.gridLayout.addWidget(self.search_lineEdit, 3, 1, 1, 6)
-        spacerItem = QtWidgets.QSpacerItem(40, 20,
-                                           QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem, 2, 4, 1, 1)
+        self.horizontalLayout.addWidget(self.attach_btn)
+        self.gridLayout.addLayout(self.horizontalLayout, 4, 0, 1, 3)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -82,17 +165,33 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.browse_btn.setText(_translate("Dialog", "Browse"))
         self.label.setText(_translate("Dialog", "Path"))
-        self.label_3.setText(_translate("Dialog", "Check and click Attach"))
-        self.uritype_cbb.setItemText(0, _translate("Dialog", "File"))
-        self.uritype_cbb.setItemText(1, _translate("Dialog", "URL"))
+        self.browse_btn.setText(_translate("Dialog", "Browse"))
         self.label_2.setText(_translate("Dialog", "Type"))
-        self.upload_btn.setText(_translate("Dialog", "Upload"))
+        self.uri_type_cbb.setItemText(0, _translate("Dialog", "File"))
+        self.uri_type_cbb.setItemText(1, _translate("Dialog", "URL"))
         self.label_4.setText(_translate("Dialog", "Name"))
-        self.attach_btn.setText(_translate("Dialog", "Attach"))
+        self.upload_btn.setText(_translate("Dialog", "Upload"))
+        self.label_5.setText(
+            _translate("Dialog", "Search the inventory to attach"))
         self.search_btn.setText(_translate("Dialog", "Search"))
+        self.show_checked_btn.setToolTip(
+            _translate(
+                "Dialog",
+                "<html><head/><body><p>Click to show only checked (attached) items.</p></body></html>"
+            ))
+        self.show_checked_btn.setText(_translate("Dialog", "Checked"))
+        self.label_3.setText(
+            _translate("Dialog", "Check the attachment(s) for batch attach"))
+        self.attach_btn.setToolTip(
+            _translate(
+                "Dialog",
+                "<html><head/><body><p>Attach all checked attachments.</p></body></html>"
+            ))
+        self.attach_btn.setText(_translate("Dialog", "Batch Attach"))
 
+
+from . import resources_rc
 
 if __name__ == "__main__":
     import sys
