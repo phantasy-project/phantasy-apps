@@ -31,12 +31,14 @@ class AttachDialog(QDialog, Ui_Dialog):
     sigDataModelShown = pyqtSignal()
     sigAttachmentUpdated = pyqtSignal()
 
-    def __init__(self, snp_name: str, conn: sqlite3.Connection, data_dir: str, parent):
+    def __init__(self, snp_name: str, snp_longname: str, conn: sqlite3.Connection,
+                 data_dir: str, parent):
         super(self.__class__, self).__init__()
         self.parent = parent
         self.conn = conn
         self.data_dir = data_dir
         self.snp_name = snp_name
+        self.snp_longname = snp_longname
 
         self.setupUi(self)
         self.setWindowTitle("Attachments")
@@ -60,6 +62,8 @@ class AttachDialog(QDialog, Ui_Dialog):
             return data
 
     def _post_init(self):
+        # set title line
+        self.snp_name_lbl.setText(self.snp_longname)
         # context menu
         self._attach_icon = QIcon(QPixmap(":/sm-icons/attach.png"))
         self._detach_icon = QIcon(QPixmap(":/sm-icons/detach.png"))

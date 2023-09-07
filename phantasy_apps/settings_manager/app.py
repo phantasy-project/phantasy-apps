@@ -1505,7 +1505,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
         # attach
         attach_action = QAction(self._attach_icon, "Attach", menu)
-        attach_action.triggered.connect(partial(self.on_attach_file, snpdata.name))
+        attach_action.triggered.connect(partial(self.on_attach_file, snpdata.name,
+                                                snpdata.get_long_name()))
 
         #
         menu.addAction(load_action)
@@ -3505,10 +3506,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._query_tips_form.show()
 
     @pyqtSlot()
-    def on_attach_file(self, name: str):
+    def on_attach_file(self, name: str, long_name: str):
         """Attach a file to a snapshot with name defined by *name*.
         """
-        dlg = AttachDialog(name, self._db_conn_pool.get(self.data_uri), self.attach_data_dir, self)
+        dlg = AttachDialog(name, long_name, self._db_conn_pool.get(self.data_uri),
+                           self.attach_data_dir, self)
         dlg.exec_()
 
     @pyqtSlot()
