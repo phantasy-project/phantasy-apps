@@ -70,13 +70,6 @@ def delete_data(conn, snp_data: SnapshotData):
 
 
 # attachment data
-def insert_update_attach(conn, attach_data: AttachmentData):
-    if get_attach_data(conn, attach_data) == []:
-        insert_attach_data(conn, attach_data)
-    else:
-        update_attach_data(conn, attach_data)
-
-
 def insert_attach_data(conn, attach_data: AttachmentData):
     cursor = conn.cursor()
     query = ''' INSERT INTO attachment (name, uri, ftyp) VALUES (?, ?, ?); '''
@@ -88,13 +81,23 @@ def insert_attach_data(conn, attach_data: AttachmentData):
         cursor.close()
     conn.commit()
 
-
-def update_attach_data(conn, attach_data: AttachmentData):
+def update_attach_data(conn, attach_name: str, new_attach_ftyp: str):
     cursor = conn.cursor()
-    query = """ UPDATE attachment SET uri = ?, ftyp = ? WHERE name = ? """
-    cursor.execute(query, (attach_data.uri, attach_data.ftyp, attach_data.name))
+    query = """ UPDATE attachment SET ftyp = ? WHERE name = ? """
+    cursor.execute(query, (new_attach_ftyp, attach_name))
     conn.commit()
     cursor.close()
+
+
+def delete_attach_data(conn, attach_name: str):
+    cursor = conn.cursor()
+    try:
+        cursor.execute(f''' DELETE FROM attachment WHERE name = '{attach_name}' ''')
+    except sqlite3.Error as err:
+        print(err)
+    else:
+        cursor.close()
+        conn.commit()
 
 
 def get_attach_data(conn, attach_data: AttachmentData):
@@ -107,14 +110,46 @@ def get_attach_data(conn, attach_data: AttachmentData):
 
 
 # snp <--> attach
-def get_attachments(conn, snp_data: SnapshotData):
+def get_attachments(conn, snp_name: str):
     """Return a list of attachment data associated with the given snapshot data.
     """
     cursor = conn.cursor()
     r = cursor.execute(f"""
         SELECT attachment.name, attachment.uri, attachment.ftyp FROM attachment
         JOIN snp_attach ON snp_attach.attachment_name = attachment.name
-        WHERE snp_attach.snapshot_name = '{snp_data.name}';""")
+        WHERE snp_attach.snapshot_name = '{snp_name}';""")
     data = r.fetchall()
     cursor.close()
     return [AttachmentData(*i) for i in data]
+
+
+def insert_snp_attach(conn, snp_name: str, attach_name: str):
+    """Add attachment of *attach_name* to snapshot with *snp_name*.
+    """
+    new_attached = False
+    with conn:
+        try:
+            conn.execute("""INSERT INTO snp_attach (snapshot_name, attachment_name)
+            VALUES (?, ?)""", (snp_name, attach_name))
+        except sqlite3.IntegrityError as err:
+            print(f"Attaching '{attach_name}' to '{snp_name}'\n{err}")
+        else:
+            print(f"Attached '{attach_name}' to '{snp_name}'")
+            new_attached = True
+    return new_attached
+
+
+def delete_snp_attach(conn, snp_name: str, attach_name: str):
+    """Delete attachment of *attach_name* from snapshot with *snp_name*.
+    """
+    new_detached = False
+    with conn:
+        try:
+            conn.execute(f"""DELETE FROM snp_attach WHERE snapshot_name = '{snp_name}'
+            AND attachment_name = '{attach_name}';""")
+        except Exception as err:
+            print(f"Detaching '{attach_name}' from '{snp_name}'\n{err}")
+        else:
+            print(f"Detached '{attach_name}' from '{snp_name}'")
+            new_detached = True
+    return new_detached
