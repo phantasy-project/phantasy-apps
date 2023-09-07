@@ -51,7 +51,7 @@ class AttachDialog(QDialog, Ui_Dialog):
             q_cond = f"WHERE name like '%{q_str}%'"
         try:
             with self.conn:
-                r = self.conn.execute(f"SELECT name, uri, ftyp FROM attachment {q_cond}")
+                r = self.conn.execute(f"SELECT name, uri, ftyp, created FROM attachment {q_cond}")
                 data = [AttachmentData(*i) for i in r.fetchall()]
         except Exception as err:
             print(err)
@@ -73,11 +73,13 @@ class AttachDialog(QDialog, Ui_Dialog):
         self.uri_name = ''
         self.ftype = ''  # file type, ext, or 'LINK' for uri_type of 'URL'
         # signals and slots
+        self.dataModelShown = False
         self.attach_btn.clicked.connect(self.on_click_attach)
         self.browse_btn.clicked.connect(self.on_click_browse)
         self.upload_btn.clicked.connect(self.on_click_upload)
         self.search_btn.clicked.connect(self.on_click_search)
         self.show_checked_btn.clicked.connect(self.on_filter_checked_items)
+        self.show_all_btn.clicked.connect(self.on_show_all_items)
         self.uri_type_cbb.currentTextChanged.connect(self.on_uri_type_changed)
         self.sigDataModelShown.connect(self.on_dataModelShown)
         self.sigAttachmentUpdated.connect(self.on_attachmentUpdated)
@@ -88,12 +90,21 @@ class AttachDialog(QDialog, Ui_Dialog):
 
     @pyqtSlot()
     def on_dataModelShown(self):
-        self.show_checked_btn.clicked.emit()
-        self.sigDataModelShown.disconnect()
+        self.dataModelShown = True
+        if self.m.get_checked_items():
+            self.show_checked_btn.clicked.emit()
+        else:
+            self.show_all_btn.clicked.emit()
 
     @pyqtSlot()
     def on_attachmentUpdated(self):
         """Add or delete an attachment.
+        """
+        self.search_btn.clicked.emit()
+
+    @pyqtSlot()
+    def on_show_all_items(self):
+        """Show all items for attach view.
         """
         self.search_btn.clicked.emit()
 
@@ -213,7 +224,8 @@ class AttachDialog(QDialog, Ui_Dialog):
         self.m.dataChanged.connect(self.on_attachment_dataChanged)
         self.attach_view.setModel(self.m)
         self.attach_view.resizeColumnsToContents()
-        self.sigDataModelShown.emit()
+        if not self.dataModelShown:
+            self.sigDataModelShown.emit()
 
     def on_attachment_dataChanged(self, tl: QModelIndex, br: QModelIndex, roles: list):
         if Qt.CheckStateRole in roles:
@@ -275,7 +287,7 @@ class AttachDialog(QDialog, Ui_Dialog):
             link_name = self.uri_name_lineEdit.text()
             link_url = self.uri_path_lineEdit.text()
             self.ftype = 'LINK'
-            attach_data = AttachmentData(link_name, link_url, self.ftype)
+            attach_data = AttachmentData(link_name, link_url, self.ftype, None)
         else:
             _src_filepath = self.uri_path
             _dst_filename = self.uri_name_lineEdit.text()
@@ -289,7 +301,7 @@ class AttachDialog(QDialog, Ui_Dialog):
                 QMessageBox.critical(self, "Upload Attachment", f"Failed uploading.\n{err}",
                         QMessageBox.Ok, QMessageBox.Ok)
                 return
-            attach_data = AttachmentData(_dst_filename, _dst_filename, self.ftype)
+            attach_data = AttachmentData(_dst_filename, _dst_filename, self.ftype, None)
         insert_attach_data(self.conn, attach_data)
         print(f"Uploading {self.uri_path}...done")
         self.sigAttachmentUpdated.emit()
@@ -310,12 +322,13 @@ class AttachDialog(QDialog, Ui_Dialog):
 
 class AttachDataModel(QAbstractTableModel):
 
-    ColumnName, ColumnUri, ColumnFtype, ColumnCount = range(4)
+    ColumnName, ColumnUri, ColumnFtype, ColumnCreated, ColumnCount = range(5)
 
     columnNameMap = {
         ColumnName: "Name",
         ColumnUri: "URI",
         ColumnFtype: "Type",
+        ColumnCreated: "Created"
     }
 
     def __init__(self, data: list[AttachmentData], attached_namelist: list[str],
