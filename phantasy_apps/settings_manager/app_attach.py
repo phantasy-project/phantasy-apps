@@ -497,6 +497,7 @@ class AttachDataModel(QAbstractTableModel):
             return False
         row, column = index.row(), index.column()
         if role == Qt.EditRole:
+            value = value.upper()
             o_val = self._data[row][AttachDataModel.columnListIndexMap[column]]
             if value != o_val:
                 self._data[row][AttachDataModel.columnListIndexMap[column]] = value
