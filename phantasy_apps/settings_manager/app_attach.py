@@ -78,6 +78,10 @@ class AttachDialog(QDialog, Ui_Dialog):
             return data
 
     def _post_init(self):
+        #
+        self.uri_name_lbl.setToolTip(
+                f"""Set the relative path under '{self.data_dir}' as the destination filepath.\ne.g.:'f1/f2/file.txt' uploads the source file to '{self.data_dir}/f1/f2/file.txt'.""")
+        self.uri_name_lineEdit.textChanged.connect(self.on_uri_name_textChanged)
         # set title line
         self.snp_name_lbl.setText(self.snp_longname)
         # context menu
@@ -111,6 +115,19 @@ class AttachDialog(QDialog, Ui_Dialog):
         self.attach_view.setItemDelegate(AttachDataDelegateModel(self.attach_view))
         # pull db
         self.search_btn.click()
+
+    @pyqtSlot('QString')
+    def on_uri_name_textChanged(self, s: str):
+        """URI name is changed, update the tooltip, test dest path name collision.
+        """
+        destpath = os.path.join(self.data_dir, s)
+        if os.path.exists(destpath):
+            self.upload_btn.setDisabled(True)
+            tt = "The destination path exists, rename it or delete the existing one."
+        else:
+            self.upload_btn.setDisabled(False)
+            tt = f"Click Upload button to upload source filepath to '{destpath}'."
+        self.uri_name_lineEdit.setToolTip(tt)
 
     @pyqtSlot()
     def on_dataModelShown(self):
