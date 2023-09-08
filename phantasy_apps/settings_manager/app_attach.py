@@ -179,8 +179,10 @@ class AttachDialog(QDialog, Ui_Dialog):
         delete_act.triggered.connect(partial(self.on_delete, idx, m))
         #
         menu.addAction(title_act)
-        menu.addAction(attach_act)
-        menu.addAction(detach_act)
+        if m.data(idx, Qt.CheckStateRole) == Qt.Checked:
+            menu.addAction(detach_act)
+        else:
+            menu.addAction(attach_act)
         menu.addSeparator()
         menu.addAction(open_act)
         menu.addAction(delete_act)
@@ -208,11 +210,11 @@ class AttachDialog(QDialog, Ui_Dialog):
         new_attached = insert_snp_attach(self.conn, self.snp_name, name)
         if new_attached:
             QMessageBox.information(self, "Attach an Attachment",
-                    f"Attached '{name}' to '{self.snp_name}'",
+                    f"Attached attachment '{name}' to snasphot '{self.snp_name}'.",
                     QMessageBox.Ok, QMessageBox.Ok)
         else:
             QMessageBox.warning(self, "Attach an Attachment",
-                    "Attachment '{name} has already been attached to '{self.snp_name}'",
+                    f"Attachment '{name} has already been attached to snapshot '{self.snp_name}'.",
                     QMessageBox.Ok, QMessageBox.Ok)
 
     @pyqtSlot()
@@ -226,7 +228,7 @@ class AttachDialog(QDialog, Ui_Dialog):
                     QMessageBox.Ok, QMessageBox.Ok)
         else:
             QMessageBox.warning(self, "Detach an Attachment",
-                    "Attachment '{name} has already been detached from '{self.snp_name}'",
+                    f"Attachment '{name} has already been detached from '{self.snp_name}'",
                     QMessageBox.Ok, QMessageBox.Ok)
 
     @pyqtSlot()
@@ -428,7 +430,7 @@ class AttachDataModel(QAbstractTableModel):
                 return get_px_note()
         if role == Qt.EditRole:
             return v
-        if column == 0 and role == Qt.CheckStateRole:
+        if column == AttachDataModel.ColumnName and role == Qt.CheckStateRole:
             return Qt.Checked if self._checkstate_list[row] else Qt.Unchecked
         if role == Qt.ToolTipRole:
             return v
@@ -460,8 +462,6 @@ class AttachDataModel(QAbstractTableModel):
     def flags(self, index: QModelIndex):
         if not index.isValid():
             return Qt.NoItemFlags
-        if index.column() == self.ColumnName:
-            return Qt.ItemIsUserCheckable | QAbstractTableModel.flags(self, index)
         if index.column() in (self.ColumnFtype, self.ColumnNote):
             return Qt.ItemIsEditable | QAbstractTableModel.flags(self, index)
         return QAbstractTableModel.flags(self, index)
