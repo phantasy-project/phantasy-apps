@@ -21,7 +21,8 @@ from PyQt5.QtCore import (
         pyqtSignal, pyqtSlot,
         QAbstractTableModel,
         QSortFilterProxyModel,
-        QModelIndex, Qt, QPoint, QUrl
+        QModelIndex, Qt, QPoint, QUrl,
+        QMimeDatabase
 )
 from phantasy_ui import get_open_filename
 from phantasy_apps.settings_manager.data import AttachmentData
@@ -33,11 +34,32 @@ from .ui.ui_attach import Ui_Dialog
 
 
 FTYP_COLOR_MAP = {
-    'TXT': '#5988E6',
-    'CSV': '#ED9800',
-    'JSON': '#54ED00',
-    'JPG': '#E8ED00',
-    'LINK': '#ED1700',
+    'TXT': '#EED405',
+    'JSON': '#4B7F6C',
+    'PY': '#306998',
+
+    'LINK': '#F72D69',
+
+    'PNG': '#F4B1AE',
+    'BMP': '#F4B1AE',
+    'JPEG': '#F4B1AE',
+    'JPG': '#F4B1AE',
+    'TIFF': '#F4B1AE',
+
+    'PDF': '#AD0B00',
+
+    'ODT': '#1D96E2',
+    'DOC': '#1D96E2',
+    'DOCX': '#1D96E2',
+
+    'ODP': '#C65914',
+    'PPT': '#C65914',
+    'PPTX': '#C65914',
+
+    'ODS': '#4EC84E',
+    'CSV': '#4EC84E',
+    'XLS': '#4EC84E',
+    'XLSX': '#4EC84E',
 }
 
 
@@ -366,24 +388,24 @@ class AttachDialog(QDialog, Ui_Dialog):
             self.uri_name_lineEdit.setText(self.uri_name)
 
 
+PX_SIZE = 32
 DECO_PX_DICT = {}
-PX_SIZE = 24
-
-def get_px_file():
-    return DECO_PX_DICT.setdefault('file',
-            QPixmap(":/sm-icons/file.png").scaled(
-                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-
-
-def get_px_link():
-    return DECO_PX_DICT.setdefault('link',
-            QPixmap(":/sm-icons/hyperlink.png").scaled(
-                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-
-
 def get_px_note():
     return DECO_PX_DICT.setdefault('note',
             QPixmap(":/sm-icons/comment.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
+
+def get_px(filepath: str, is_link: bool):
+    iname = QMimeDatabase().mimeTypeForUrl(QUrl(filepath)).genericIconName()
+    if QIcon.hasThemeIcon(iname):
+        return DECO_PX_DICT.setdefault(iname, QIcon.fromTheme(iname).pixmap(PX_SIZE, PX_SIZE))
+    else:
+        if is_link:
+            return DECO_PX_DICT.setdefault('link', QPixmap(":/sm-icons/hyperlink.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        else:
+            return DECO_PX_DICT.setdefault('file', QPixmap(":/sm-icons/file.png").scaled(
                 PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
 
@@ -456,11 +478,10 @@ class AttachDataModel(QAbstractTableModel):
                 return v
         if role == Qt.DecorationRole:
             if column == AttachDataModel.ColumnUri:
-                if self._data[row][AttachDataModel.columnListIndexMap[
-                                    AttachDataModel.ColumnFtype]] == 'LINK':
-                    return get_px_link()
-                else:
-                    return get_px_file()
+                is_link = self._data[row][
+                        AttachDataModel.columnListIndexMap[
+                            AttachDataModel.ColumnFtype]] == 'LINK'
+                return get_px(v, is_link)
             elif column == AttachDataModel.ColumnNote:
                 return get_px_note()
         if role == Qt.EditRole:
@@ -553,7 +574,7 @@ class AttachDataDelegateModel(QStyledItemDelegate):
                 bkgd_color = FTYP_COLOR_MAP.get(ftyp, '#EEEEEC')
                 lbl.setStyleSheet(f'''
                 QLabel {{
-                    font-size: {self.default_font_size}pt;
+                    font-size: {self.default_font_size - 1}pt;
                     border: 1px solid #AEAEAE;
                     border-radius: 5px;
                     margin: 1px;
