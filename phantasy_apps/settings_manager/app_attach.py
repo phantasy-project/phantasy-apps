@@ -277,7 +277,10 @@ class AttachDialog(QDialog, Ui_Dialog):
         row, column = tl.row(), tl.column()
         new_data = m.data(tl, Qt.EditRole)
         col_name = AttachDataModel.editColumnNameMap[column]
-        name = m.data(m.index(row, AttachDataModel.ColumnName))
+        if column == AttachDataModel.ColumnName:
+            name = m._name_map[new_data]
+        else:
+            name = m.data(m.index(row, AttachDataModel.ColumnName))
         print(f"Editted {col_name} for {name} -> {new_data} @ ({row}, {column})")
         update_attach_data(self.conn, name, new_data, col_name)
 
@@ -382,6 +385,7 @@ class AttachDataModel(QAbstractTableModel):
 
     # map column int to table column name
     editColumnNameMap = {
+        ColumnName: 'name',
         ColumnFtype: 'ftyp',
         ColumnNote: 'note'
     }
@@ -409,6 +413,8 @@ class AttachDataModel(QAbstractTableModel):
             i.uri = os.path.join(data_dir, i.uri)
         # initial checkstate
         self._checkstate_list = [i.name in attached_namelist for i in self._data]
+        # new name -> old name
+        self._name_map = {}
 
     def columnCount(self, parent=None):
         return self.ColumnCount
@@ -456,6 +462,7 @@ class AttachDataModel(QAbstractTableModel):
             o_val = self._data[row][AttachDataModel.columnListIndexMap[column]]
             if value != o_val:
                 self._data[row][AttachDataModel.columnListIndexMap[column]] = value
+                self._name_map[value] = o_val
                 self.dataChanged.emit(index, index, (Qt.DisplayRole, Qt.EditRole))
                 return True
         if role == Qt.CheckStateRole and column == 0:
@@ -475,7 +482,7 @@ class AttachDataModel(QAbstractTableModel):
     def flags(self, index: QModelIndex):
         if not index.isValid():
             return Qt.NoItemFlags
-        if index.column() in (self.ColumnFtype, self.ColumnNote):
+        if index.column() in (self.ColumnName, self.ColumnFtype, self.ColumnNote):
             return Qt.ItemIsEditable | QAbstractTableModel.flags(self, index)
         return QAbstractTableModel.flags(self, index)
 

@@ -45,13 +45,13 @@ Snapshot_Attachment table
 
 CREATE TABLE IF NOT EXISTS snp_attach (
     id INTEGER PRIMARY KEY,
-    snapshot_name INTEGER,
-    attachment_name INTEGER,
-    UNIQUE (snapshot_name, attachment_name),
+    snapshot_name TEXT,
+    attachment_id INTEGER,
+    UNIQUE (snapshot_name, attachment_id),
     FOREIGN KEY (snapshot_name) REFERENCES snapshot (datetime)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
-    FOREIGN KEY (attachment_name) REFERENCES attachment (name)
+    FOREIGN KEY (attachment_id) REFERENCES attachment (id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );

@@ -83,10 +83,11 @@ def insert_attach_data(conn, attach_data: AttachmentData):
 
 def update_attach_data(conn, attach_name: str, new_data: str,
                        edit_column: str):
-    # edit_column: ftyp or note
+    # edit_column: name, ftyp, note
+    attach_id = get_attach_id(conn, attach_name)
     cursor = conn.cursor()
-    query = f""" UPDATE attachment SET {edit_column} = ? WHERE name = ? """
-    cursor.execute(query, (new_data, attach_name))
+    query = f""" UPDATE attachment SET {edit_column} = ? WHERE id = ? """
+    cursor.execute(query, (new_data, attach_id))
     conn.commit()
     cursor.close()
 
@@ -102,13 +103,12 @@ def delete_attach_data(conn, attach_name: str):
         conn.commit()
 
 
-def get_attach_data(conn, attach_data: AttachmentData):
+def get_attach_id(conn, attach_name: str):
     cursor = conn.cursor()
-    name = attach_data.name
-    r = cursor.execute(f" SELECT * FROM attachment WHERE name = '{name}' ")
-    data = r.fetchall()
+    r = cursor.execute(f" SELECT id FROM attachment WHERE name = '{attach_name}' ")
+    data = r.fetchone()
     cursor.close()
-    return data
+    return data[0]
 
 
 # snp <--> attach
@@ -117,41 +117,44 @@ def get_attachments(conn, snp_name: str):
     """
     cursor = conn.cursor()
     r = cursor.execute(f"""
-        SELECT attachment.name, attachment.uri, attachment.ftyp, attachment.created, attachment.note
-        FROM attachment JOIN snp_attach ON snp_attach.attachment_name = attachment.name
+        SELECT attachment.id, attachment.name, attachment.uri, attachment.ftyp,
+               attachment.created, attachment.note
+        FROM attachment JOIN snp_attach ON snp_attach.attachment_id = attachment.id
         WHERE snp_attach.snapshot_name = '{snp_name}';""")
     data = r.fetchall()
     cursor.close()
-    return [AttachmentData(*i) for i in data]
+    return [AttachmentData(*i[1:]) for i in data]
 
 
 def insert_snp_attach(conn, snp_name: str, attach_name: str):
     """Add attachment of *attach_name* to snapshot with *snp_name*.
     """
+    attach_id = get_attach_id(conn, attach_name)
     new_attached = False
     with conn:
         try:
-            conn.execute("""INSERT INTO snp_attach (snapshot_name, attachment_name)
-            VALUES (?, ?)""", (snp_name, attach_name))
+            conn.execute("""INSERT INTO snp_attach (snapshot_name, attachment_id)
+            VALUES (?, ?)""", (snp_name, attach_id))
         except sqlite3.IntegrityError as err:
-            print(f"Attaching '{attach_name}' to '{snp_name}'\n{err}")
+            print(f"Attaching attachment '{attach_id}' to snapshot '{snp_name}'\n{err}")
         else:
-            print(f"Attached '{attach_name}' to '{snp_name}'")
+            print(f"Attached attachment '{attach_id}' to snapshot '{snp_name}'")
             new_attached = True
     return new_attached
 
 
 def delete_snp_attach(conn, snp_name: str, attach_name: str):
-    """Delete attachment of *attach_name* from snapshot with *snp_name*.
+    """Delete attachment of *attach_str* from snapshot with *snp_name*.
     """
+    attach_id = get_attach_id(conn, attach_name)
     new_detached = False
     with conn:
         try:
             conn.execute(f"""DELETE FROM snp_attach WHERE snapshot_name = '{snp_name}'
-            AND attachment_name = '{attach_name}';""")
+            AND attachment_id = '{attach_id}';""")
         except Exception as err:
-            print(f"Detaching '{attach_name}' from '{snp_name}'\n{err}")
+            print(f"Detaching attachment '{attach_id}' from snapshot '{snp_name}'\n{err}")
         else:
-            print(f"Detached '{attach_name}' from '{snp_name}'")
+            print(f"Detached attachment '{attach_id}' from snapshot '{snp_name}'")
             new_detached = True
     return new_detached
