@@ -5,25 +5,40 @@ import os
 import sqlite3
 import shutil
 from functools import partial
-
-from PyQt5.QtWidgets import QDialog
-from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QMenu, QAction, QWidgetAction, QLabel
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-from PyQt5.QtCore import QAbstractTableModel
-from PyQt5.QtCore import QSortFilterProxyModel
-from PyQt5.QtCore import QModelIndex
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QPoint, QUrl
-from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtGui import QDesktopServices
-from phantasy_apps.settings_manager.data import AttachmentData
+from PyQt5.QtWidgets import (
+        QDialog,
+        QMessageBox, QMenu, QAction, QWidgetAction,
+        QStyledItemDelegate, QLabel, QGraphicsDropShadowEffect, QStyle,
+        QWidget, QHBoxLayout, QSizePolicy
+)
+from PyQt5.QtGui import (
+        QFontDatabase,
+        QIcon,
+        QPixmap,
+        QDesktopServices
+)
+from PyQt5.QtCore import (
+        pyqtSignal, pyqtSlot,
+        QAbstractTableModel,
+        QSortFilterProxyModel,
+        QModelIndex, Qt, QPoint, QUrl
+)
 from phantasy_ui import get_open_filename
-from phantasy_apps.settings_manager.db_utils import insert_attach_data, update_attach_data, delete_attach_data
-from phantasy_apps.settings_manager.db_utils import insert_snp_attach, delete_snp_attach
-from phantasy_apps.settings_manager.db_utils import get_attachments
-
+from phantasy_apps.settings_manager.data import AttachmentData
+from phantasy_apps.settings_manager.db_utils import (
+        insert_attach_data, update_attach_data, delete_attach_data,
+        insert_snp_attach, delete_snp_attach, get_attachments
+)
 from .ui.ui_attach import Ui_Dialog
+
+
+FTYP_COLOR_MAP = {
+    'TXT': '#5988E6',
+    'CSV': '#ED9800',
+    'JSON': '#54ED00',
+    'JPG': '#E8ED00',
+    'LINK': '#ED1700',
+}
 
 
 class AttachDialog(QDialog, Ui_Dialog):
@@ -89,6 +104,8 @@ class AttachDialog(QDialog, Ui_Dialog):
         self.sigAttachmentUpdated.connect(self.on_attachmentUpdated)
         # initial signals
         self.uri_type_cbb.currentTextChanged.emit('File')
+        #
+        self.attach_view.setItemDelegate(AttachDataDelegateModel(self.attach_view))
         # pull db
         self.search_btn.click()
 
@@ -240,7 +257,7 @@ class AttachDialog(QDialog, Ui_Dialog):
         if isinstance(m, AttachDataProxyModel):
             m = m.sourceModel()
         row = tl.row()
-        new_ftyp = m.data(tl)
+        new_ftyp = m.data(tl, Qt.EditRole)
         name = m.data(m.index(row, AttachDataModel.ColumnName))
         print(f"Editted: {name} -> {new_ftyp}")
         update_attach_data(self.conn, name, new_ftyp)
@@ -334,7 +351,7 @@ class AttachDataModel(QAbstractTableModel):
         ColumnName: "Name",
         ColumnUri: "URI",
         ColumnFtype: "Type",
-        ColumnCreated: "Created"
+        ColumnCreated: "Uploaded", # "Created"
     }
 
     def __init__(self, data: list[AttachmentData], attached_namelist: list[str],
@@ -367,10 +384,17 @@ class AttachDataModel(QAbstractTableModel):
         if not index.isValid():
             return None
         row, column = index.row(), index.column()
+        v = self._data[row][column]
         if role == Qt.DisplayRole:
-            return self._data[row][column]
+            if column == AttachDataModel.ColumnFtype:
+                return ' ' * (len(v) + 2)
+            else:
+                return v
+        if role == Qt.UserRole:
+            if column == AttachDataModel.ColumnFtype:
+                return v
         if role == Qt.EditRole:
-            return self._data[row][column]
+            return v
         if column == 0 and role == Qt.CheckStateRole:
             return Qt.Checked if self._checkstate_list[row] else Qt.Unchecked
         return None
@@ -421,3 +445,54 @@ class AttachDataProxyModel(QSortFilterProxyModel):
         index = self.sourceModel().index(src_row, AttachDataModel.ColumnName)
         check_state = self.sourceModel().data(index, Qt.CheckStateRole)
         return check_state == Qt.Checked
+
+
+
+class AttachDataDelegateModel(QStyledItemDelegate):
+
+    def __init__(self, parent=None):
+        super(self.__class__, self).__init__()
+        self.default_font_size = QFontDatabase.systemFont(
+            QFontDatabase.FixedFont).pointSize()
+
+    def sizeHint(self, option, index):
+        return QStyledItemDelegate.sizeHint(self, option, index)
+
+    def paint(self, painter, option, index):
+        if index.column() == AttachDataModel.ColumnFtype:
+            ftyp = index.model().data(index, Qt.UserRole).strip()
+            if ftyp == '':
+                QStyledItemDelegate.paint(self, painter, option, index)
+            else:
+                if option.state & QStyle.State_Selected or option.state & QStyle.State_MouseOver:
+                    QStyledItemDelegate.paint(self, painter, option, index)
+
+                w = QWidget()
+                layout = QHBoxLayout()
+                layout.setContentsMargins(4, 4, 4, 4)
+                layout.setSpacing(2)
+
+                shadow = QGraphicsDropShadowEffect()
+                shadow.setBlurRadius(10)
+                shadow.setOffset(2)
+                lbl = QLabel(ftyp)
+                lbl.setGraphicsEffect(shadow)
+                lbl.setSizePolicy(QSizePolicy.Preferred,
+                                  QSizePolicy.Preferred)
+                bkgd_color = FTYP_COLOR_MAP.get(ftyp, '#EEEEEC')
+                lbl.setStyleSheet(f'''
+                QLabel {{
+                    font-size: {self.default_font_size}pt;
+                    border: 1px solid #AEAEAE;
+                    border-radius: 5px;
+                    margin: 1px;
+                    background-color: {bkgd_color};
+                }}''')
+                layout.addWidget(lbl)
+                w.setLayout(layout)
+                w.setStyleSheet(
+                    """QWidget { background-color: transparent; }""")
+                rect = option.rect.adjusted(2, 2, -2, -2)
+                painter.drawPixmap(rect.x(), rect.y(), w.grab())
+        else:
+            QStyledItemDelegate.paint(self, painter, option, index)
