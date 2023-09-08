@@ -343,6 +343,20 @@ class AttachDialog(QDialog, Ui_Dialog):
             self.uri_name_lineEdit.setText(self.uri_name)
 
 
+DECO_PX_DICT = {}
+PX_SIZE = 24
+
+def get_px_file():
+    return DECO_PX_DICT.setdefault('file',
+            QPixmap(":/sm-icons/file.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
+def get_px_link():
+    return DECO_PX_DICT.setdefault('link',
+            QPixmap(":/sm-icons/hyperlink.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
+
 class AttachDataModel(QAbstractTableModel):
 
     ColumnName, ColumnUri, ColumnFtype, ColumnCreated, ColumnCount = range(5)
@@ -353,6 +367,7 @@ class AttachDataModel(QAbstractTableModel):
         ColumnFtype: "Type",
         ColumnCreated: "Uploaded", # "Created"
     }
+
 
     def __init__(self, data: list[AttachmentData], attached_namelist: list[str],
                  data_dir: str, parent=None):
@@ -393,6 +408,12 @@ class AttachDataModel(QAbstractTableModel):
         if role == Qt.UserRole:
             if column == AttachDataModel.ColumnFtype:
                 return v
+        if role == Qt.DecorationRole:
+            if column == AttachDataModel.ColumnUri:
+                if self._data[row][AttachDataModel.ColumnFtype] == 'LINK':
+                    return get_px_link()
+                else:
+                    return get_px_file()
         if role == Qt.EditRole:
             return v
         if column == 0 and role == Qt.CheckStateRole:
