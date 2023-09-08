@@ -100,12 +100,22 @@ class AttachDialog(QDialog, Ui_Dialog):
             return data
 
     def _post_init(self):
+        self.default_font_size = QFontDatabase.systemFont(
+            QFontDatabase.FixedFont).pointSize()
         #
         self.uri_name_lbl.setToolTip(
                 f"""Set the relative path under '{self.data_dir}' as the destination filepath.\ne.g.:'f1/f2/file.txt' uploads the source file to '{self.data_dir}/f1/f2/file.txt'.""")
         self.uri_name_lineEdit.textChanged.connect(self.on_uri_name_textChanged)
         # set title line
         self.snp_name_lbl.setText(self.snp_longname)
+        self.snp_name_lbl.setStyleSheet(f"""
+        QLabel {{
+            color: #1E88E5;
+            font-family: monospace;
+            font-size: {int(self.default_font_size * 1.2)}pt;
+            font-weight: bold;
+            border-top: 0px solid gray;
+            border-bottom: 3px solid gray;}}""")
         # context menu
         self._attach_icon = QIcon(QPixmap(":/sm-icons/attach.png"))
         self._detach_icon = QIcon(QPixmap(":/sm-icons/detach.png"))
