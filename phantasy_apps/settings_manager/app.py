@@ -3510,7 +3510,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """Attach a file to a snapshot with name defined by *name*.
         """
         dlg = AttachDialog(name, long_name, self._db_conn_pool.get(self.data_uri),
-                           self.attach_data_dir, self)
+                           self.attach_data_dir, self.attach_file_type_exec_dict, self)
         dlg.exec_()
 
     @pyqtSlot()

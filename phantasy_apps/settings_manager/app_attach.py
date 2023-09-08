@@ -4,6 +4,7 @@
 import os
 import sqlite3
 import shutil
+from subprocess import Popen
 from functools import partial
 from PyQt5.QtWidgets import (
         QDialog, QHeaderView,
@@ -70,11 +71,12 @@ class AttachDialog(QDialog, Ui_Dialog):
     sigViewUpdated = pyqtSignal()
 
     def __init__(self, snp_name: str, snp_longname: str, conn: sqlite3.Connection,
-                 data_dir: str, parent):
+                 data_dir: str, file_exec: dict, parent):
         super(self.__class__, self).__init__()
         self.parent = parent
         self.conn = conn
         self.data_dir = data_dir
+        self.file_exec = file_exec
         self.snp_name = snp_name
         self.snp_longname = snp_longname
 
@@ -244,15 +246,19 @@ class AttachDialog(QDialog, Ui_Dialog):
         """Open attachment.
         """
         row = idx.row()
-        ftype = m.data(m.index(row, AttachDataModel.ColumnFtype))
+        ftype = m.data(m.index(row, AttachDataModel.ColumnFtype), Qt.UserRole)
         uri = m.data(m.index(row, AttachDataModel.ColumnUri))
-        if ftype == 'LINK':
-            r = QMessageBox.warning(self, "Open an Attachment", "Does not support LINK, but try to open it...",
-                    QMessageBox.Ok, QMessageBox.Ok)
-            if r == QMessageBox.Ok:
-                QDesktopServices.openUrl(QUrl(uri))
+        _exec = self.file_exec.get(ftype, None)
+        if _exec is not None:
+            Popen(f"{_exec} {uri}", shell=True)
         else:
-            QDesktopServices.openUrl(QUrl(uri))
+            if ftype == 'LINK':
+                r = QMessageBox.warning(self, "Open an Attachment", "Does not support LINK, but try to open it...",
+                        QMessageBox.Ok, QMessageBox.Ok)
+                if r == QMessageBox.Ok:
+                    QDesktopServices.openUrl(QUrl(uri))
+            else:
+                QDesktopServices.openUrl(QUrl(uri))
 
     @pyqtSlot()
     def on_attach(self, idx, m):
