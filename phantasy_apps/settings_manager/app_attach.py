@@ -6,7 +6,7 @@ import sqlite3
 import shutil
 from functools import partial
 from PyQt5.QtWidgets import (
-        QDialog,
+        QDialog, QHeaderView,
         QMessageBox, QMenu, QAction, QWidgetAction,
         QStyledItemDelegate, QLabel, QGraphicsDropShadowEffect, QStyle,
         QWidget, QHBoxLayout, QSizePolicy
@@ -135,6 +135,8 @@ class AttachDialog(QDialog, Ui_Dialog):
         """
         proxy_model = AttachDataProxyModel(self.m)
         self.attach_view.setModel(proxy_model)
+        #
+        self.attach_view.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
 
     @pyqtSlot(QPoint)
     def on_request_context_menu(self, pos: QPoint):
@@ -154,15 +156,15 @@ class AttachDialog(QDialog, Ui_Dialog):
         menu = QMenu(self)
         menu.setStyleSheet("QMenu {margin: 1px;}")
         # title
-        title_w = QLabel(f"Attachment: {m.data(idx)}")
+        title_w = QLabel(f"Attachment:\n{m.data(idx)}")
         title_w.setStyleSheet("""
         QLabel {
-            background: #C4A0C0;
+            background: #C8E6C9;
             font-weight: bold;
             padding: 2px 2px 2px 2px;}""")
         title_act = QWidgetAction(self)
         title_act.setDefaultWidget(title_w)
-        # open
+        # open attachment
         open_act = QAction(self._open_icon, "Open", menu)
         open_act.triggered.connect(partial(self.on_open, idx, m))
         # attach
@@ -176,10 +178,10 @@ class AttachDialog(QDialog, Ui_Dialog):
         delete_act.triggered.connect(partial(self.on_delete, idx, m))
         #
         menu.addAction(title_act)
-        menu.addAction(open_act)
         menu.addAction(attach_act)
         menu.addAction(detach_act)
         menu.addSeparator()
+        menu.addAction(open_act)
         menu.addAction(delete_act)
         return menu
 
@@ -240,7 +242,6 @@ class AttachDialog(QDialog, Ui_Dialog):
         # current attachments
         self.current_attach_list = get_attachments(self.conn, self.snp_name)
         self.current_attach_namelist = [i.name for i in self.current_attach_list]
-
         #
         attach_list = self.exec_query()
         self.m = AttachDataModel(attach_list, self.current_attach_namelist, self.data_dir)
@@ -249,6 +250,8 @@ class AttachDialog(QDialog, Ui_Dialog):
         self.attach_view.resizeColumnsToContents()
         if not self.dataModelShown:
             self.sigDataModelShown.emit()
+        #
+        self.attach_view.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
 
     def on_attachment_dataChanged(self, tl: QModelIndex, br: QModelIndex, roles: list):
         if Qt.CheckStateRole in roles:
@@ -367,19 +370,30 @@ def get_px_note():
 
 class AttachDataModel(QAbstractTableModel):
 
-    ColumnName, ColumnUri, ColumnFtype, ColumnCreated, ColumnNote, ColumnCount = range(6)
+    ColumnName, ColumnUri, ColumnFtype, ColumnNote, ColumnCreated, ColumnCount = range(6)
 
+    # map column int to header name
     columnNameMap = {
         ColumnName: "Name",
         ColumnUri: "URI",
         ColumnFtype: "Type",
+        ColumnNote: "Note",
         ColumnCreated: "Uploaded", # "Created"
-        ColumnNote: "Note"
     }
 
+    # map column int to table column name
     editColumnNameMap = {
         ColumnFtype: 'ftyp',
         ColumnNote: 'note'
+    }
+
+    # map column int to list index in AttachmentData
+    columnListIndexMap = {
+        ColumnName: 0,
+        ColumnUri: 1,
+        ColumnFtype: 2,
+        ColumnNote: 4,
+        ColumnCreated: 3
     }
 
     def __init__(self, data: list[AttachmentData], attached_namelist: list[str],
@@ -397,9 +411,6 @@ class AttachDataModel(QAbstractTableModel):
         # initial checkstate
         self._checkstate_list = [i.name in attached_namelist for i in self._data]
 
-    def __post_init(self):
-        pass
-
     def columnCount(self, parent=None):
         return self.ColumnCount
 
@@ -412,7 +423,7 @@ class AttachDataModel(QAbstractTableModel):
         if not index.isValid():
             return None
         row, column = index.row(), index.column()
-        v = self._data[row][column]
+        v = self._data[row][AttachDataModel.columnListIndexMap[column]]
         if role == Qt.DisplayRole:
             if column == AttachDataModel.ColumnFtype:
                 return ' ' * (len(v) + 2)
@@ -423,7 +434,8 @@ class AttachDataModel(QAbstractTableModel):
                 return v
         if role == Qt.DecorationRole:
             if column == AttachDataModel.ColumnUri:
-                if self._data[row][AttachDataModel.ColumnFtype] == 'LINK':
+                if self._data[row][AttachDataModel.columnListIndexMap[
+                                    AttachDataModel.ColumnFtype]] == 'LINK':
                     return get_px_link()
                 else:
                     return get_px_file()
@@ -433,6 +445,8 @@ class AttachDataModel(QAbstractTableModel):
             return v
         if column == 0 and role == Qt.CheckStateRole:
             return Qt.Checked if self._checkstate_list[row] else Qt.Unchecked
+        if role == Qt.ToolTipRole:
+            return v
         return None
 
     def setData(self, index: QModelIndex, value, role: int = Qt.EditRole):
@@ -440,9 +454,9 @@ class AttachDataModel(QAbstractTableModel):
             return False
         row, column = index.row(), index.column()
         if role == Qt.EditRole:
-            o_val = self._data[row][column]
+            o_val = self._data[row][AttachDataModel.columnListIndexMap[column]]
             if value != o_val:
-                self._data[row][column] = value
+                self._data[row][AttachDataModel.columnListIndexMap[column]] = value
                 self.dataChanged.emit(index, index, (Qt.DisplayRole, Qt.EditRole))
                 return True
         if role == Qt.CheckStateRole and column == 0:
@@ -481,7 +495,6 @@ class AttachDataProxyModel(QSortFilterProxyModel):
         index = self.sourceModel().index(src_row, AttachDataModel.ColumnName)
         check_state = self.sourceModel().data(index, Qt.CheckStateRole)
         return check_state == Qt.Checked
-
 
 
 class AttachDataDelegateModel(QStyledItemDelegate):
