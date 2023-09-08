@@ -80,30 +80,23 @@ class Ui_Dialog(object):
             "QHeaderView {\n"
             "    font-weight: bold;\n"
             "}\n"
-            "\n"
             "QTableView {\n"
             "    font-family: monospace;\n"
             "    show-decoration-selected: 1;\n"
-            "    /*alternate-background-color: #D3D7CF;*/\n"
             "}\n"
-            "\n"
             "QTableView::item {\n"
-            "    /*color: black;*/\n"
             "    border: 1px solid #D9D9D9;\n"
             "    border-top-color: transparent;\n"
             "    border-bottom-color: transparent;\n"
             "}\n"
-            "\n"
             "QTableView::item:hover {\n"
             "    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #e7effd, stop: 1 #cbdaf1);\n"
             "    border: 1px solid #bfcde4;\n"
             "}\n"
-            "\n"
             "QTableView::item:selected {\n"
             "    border: 1px solid #567DBC;\n"
             "    background-color: #D3D7CF;\n"
             "}\n"
-            "\n"
             "QTableView::item:selected:active{\n"
             "    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #6ea1f1, stop: 1 #567dbc);\n"
             "}\n"
@@ -118,12 +111,20 @@ class Ui_Dialog(object):
         self.attach_view.horizontalHeader().setVisible(True)
         self.attach_view.horizontalHeader().setSortIndicatorShown(False)
         self.attach_view.horizontalHeader().setStretchLastSection(False)
-        self.attach_view.verticalHeader().setVisible(False)
+        self.attach_view.verticalHeader().setVisible(True)
         self.gridLayout.addWidget(self.attach_view, 5, 0, 1, 3)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setContentsMargins(0, -1, -1, -1)
         self.horizontalLayout_4.setSpacing(0)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.nitem_lbl = QtWidgets.QLabel(Dialog)
+        self.nitem_lbl.setStyleSheet("QLabel {\n"
+                                     "    color: #007BFF;\n"
+                                     "    font-family: monospace;\n"
+                                     "}")
+        self.nitem_lbl.setAlignment(QtCore.Qt.AlignCenter)
+        self.nitem_lbl.setObjectName("nitem_lbl")
+        self.horizontalLayout_4.addWidget(self.nitem_lbl)
         self.show_checked_btn = QtWidgets.QToolButton(Dialog)
         icon4 = QtGui.QIcon()
         icon4.addPixmap(QtGui.QPixmap(":/sm-icons/check-square-fill.png"),
@@ -210,6 +211,12 @@ class Ui_Dialog(object):
         self.label_5.setText(
             _translate("Dialog", "Search the inventory to attach"))
         self.search_btn.setText(_translate("Dialog", "Search"))
+        self.nitem_lbl.setToolTip(
+            _translate(
+                "Dialog",
+                "<html><head/><body><p>The total number of listed attachments after applying filters.</p></body></html>"
+            ))
+        self.nitem_lbl.setText(_translate("Dialog", "0"))
         self.show_checked_btn.setToolTip(
             _translate(
                 "Dialog",
