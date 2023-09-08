@@ -154,14 +154,27 @@ class AttachDialog(QDialog, Ui_Dialog):
     def on_uri_name_textChanged(self, s: str):
         """URI name is changed, update the tooltip, test dest path name collision.
         """
+        style_template = """
+            QLineEdit {{
+                border: 2px solid {c};
+                padding: 1 5px;
+                border-radius: 2px;
+                background-color: {b};
+            }}
+        """
+        _style0 = style_template.format(c='gray', b='white')
+        _style1 = style_template.format(c='red', b='#FFFDE7')
         destpath = os.path.join(self.data_dir, s)
         if os.path.exists(destpath):
             self.upload_btn.setDisabled(True)
             tt = "The destination path exists, rename it or delete the existing one."
+            self.uri_name_lineEdit.setStyleSheet(_style1)
         else:
             self.upload_btn.setDisabled(False)
             tt = f"Click Upload button to upload source filepath to '{destpath}'."
+            self.uri_name_lineEdit.setStyleSheet(_style0)
         self.uri_name_lineEdit.setToolTip(tt)
+
 
     @pyqtSlot()
     def on_dataModelShown(self):
