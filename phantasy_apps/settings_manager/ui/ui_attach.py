@@ -117,72 +117,32 @@ class Ui_Dialog(object):
         self.attach_view.setObjectName("attach_view")
         self.attach_view.horizontalHeader().setVisible(True)
         self.attach_view.horizontalHeader().setSortIndicatorShown(False)
-        self.attach_view.horizontalHeader().setStretchLastSection(True)
+        self.attach_view.horizontalHeader().setStretchLastSection(False)
         self.attach_view.verticalHeader().setVisible(False)
         self.gridLayout.addWidget(self.attach_view, 5, 0, 1, 3)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setSpacing(4)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.label_3 = QtWidgets.QLabel(Dialog)
-        font = QtGui.QFont()
-        font.setItalic(True)
-        self.label_3.setFont(font)
-        self.label_3.setStyleSheet("QLabel {\n"
-                                   "    color: rgb(137, 137, 137);\n"
-                                   "}")
-        self.label_3.setObjectName("label_3")
-        self.horizontalLayout.addWidget(self.label_3)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
-                                            QtWidgets.QSizePolicy.Expanding,
-                                            QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout.addItem(spacerItem1)
-        self.attach_btn = QtWidgets.QPushButton(Dialog)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/attach.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.attach_btn.setIcon(icon4)
-        self.attach_btn.setIconSize(QtCore.QSize(32, 32))
-        self.attach_btn.setObjectName("attach_btn")
-        self.horizontalLayout.addWidget(self.attach_btn)
-        self.gridLayout.addLayout(self.horizontalLayout, 6, 0, 1, 3)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setContentsMargins(0, -1, -1, -1)
         self.horizontalLayout_4.setSpacing(0)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.show_checked_btn = QtWidgets.QToolButton(Dialog)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/check-square-fill.png"),
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/sm-icons/check-square-fill.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_checked_btn.setIcon(icon5)
+        self.show_checked_btn.setIcon(icon4)
         self.show_checked_btn.setIconSize(QtCore.QSize(36, 36))
         self.show_checked_btn.setAutoRaise(True)
         self.show_checked_btn.setObjectName("show_checked_btn")
         self.horizontalLayout_4.addWidget(self.show_checked_btn)
         self.show_all_btn = QtWidgets.QToolButton(Dialog)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/sm-icons/all.png"),
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/sm-icons/all.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.show_all_btn.setIcon(icon6)
+        self.show_all_btn.setIcon(icon5)
         self.show_all_btn.setIconSize(QtCore.QSize(36, 36))
         self.show_all_btn.setAutoRaise(True)
         self.show_all_btn.setObjectName("show_all_btn")
         self.horizontalLayout_4.addWidget(self.show_all_btn)
         self.gridLayout.addLayout(self.horizontalLayout_4, 4, 2, 1, 1)
-        self.label_2 = QtWidgets.QLabel(Dialog)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout.addWidget(self.label_2, 3, 0, 1, 1)
-        self.uri_path_lineEdit = QtWidgets.QLineEdit(Dialog)
-        self.uri_path_lineEdit.setReadOnly(False)
-        self.uri_path_lineEdit.setObjectName("uri_path_lineEdit")
-        self.gridLayout.addWidget(self.uri_path_lineEdit, 2, 1, 1, 1)
-        self.upload_btn = QtWidgets.QPushButton(Dialog)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(":/sm-icons/expand.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.upload_btn.setIcon(icon7)
-        self.upload_btn.setIconSize(QtCore.QSize(32, 32))
-        self.upload_btn.setObjectName("upload_btn")
-        self.gridLayout.addWidget(self.upload_btn, 3, 2, 1, 1)
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setContentsMargins(-1, 0, -1, -1)
         self.verticalLayout.setSpacing(0)
@@ -211,6 +171,21 @@ class Ui_Dialog(object):
         self.snp_name_lbl.setObjectName("snp_name_lbl")
         self.verticalLayout.addWidget(self.snp_name_lbl)
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 3)
+        self.label_2 = QtWidgets.QLabel(Dialog)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout.addWidget(self.label_2, 3, 0, 1, 1)
+        self.uri_path_lineEdit = QtWidgets.QLineEdit(Dialog)
+        self.uri_path_lineEdit.setReadOnly(False)
+        self.uri_path_lineEdit.setObjectName("uri_path_lineEdit")
+        self.gridLayout.addWidget(self.uri_path_lineEdit, 2, 1, 1, 1)
+        self.upload_btn = QtWidgets.QPushButton(Dialog)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/sm-icons/expand.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.upload_btn.setIcon(icon6)
+        self.upload_btn.setIconSize(QtCore.QSize(32, 32))
+        self.upload_btn.setObjectName("upload_btn")
+        self.gridLayout.addWidget(self.upload_btn, 3, 2, 1, 1)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
@@ -223,7 +198,6 @@ class Ui_Dialog(object):
         Dialog.setTabOrder(self.search_btn, self.show_checked_btn)
         Dialog.setTabOrder(self.show_checked_btn, self.show_all_btn)
         Dialog.setTabOrder(self.show_all_btn, self.attach_view)
-        Dialog.setTabOrder(self.attach_view, self.attach_btn)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -236,14 +210,6 @@ class Ui_Dialog(object):
         self.label_5.setText(
             _translate("Dialog", "Search the inventory to attach"))
         self.search_btn.setText(_translate("Dialog", "Search"))
-        self.label_3.setText(
-            _translate("Dialog", "Check the attachment(s) for batch attach"))
-        self.attach_btn.setToolTip(
-            _translate(
-                "Dialog",
-                "<html><head/><body><p>Attach all checked attachments.</p></body></html>"
-            ))
-        self.attach_btn.setText(_translate("Dialog", "Batch Attach"))
         self.show_checked_btn.setToolTip(
             _translate(
                 "Dialog",
@@ -256,10 +222,10 @@ class Ui_Dialog(object):
                 "<html><head/><body><p>Click to show the attachment inventory.</p></body></html>"
             ))
         self.show_all_btn.setText(_translate("Dialog", "..."))
-        self.label_2.setText(_translate("Dialog", "Type"))
-        self.upload_btn.setText(_translate("Dialog", "Upload"))
         self.label_6.setText(_translate("Dialog", "Snapshot"))
         self.snp_name_lbl.setText(_translate("Dialog", "ABC - 123Ar45(67+)"))
+        self.label_2.setText(_translate("Dialog", "Type"))
+        self.upload_btn.setText(_translate("Dialog", "Upload"))
 
 
 from . import resources_rc
