@@ -93,7 +93,8 @@ class AttachDialog(QDialog, Ui_Dialog):
         self.ftype = ''  # file type, ext, or 'LINK' for uri_type of 'URL'
         # signals and slots
         self.dataModelShown = False
-        self.attach_btn.clicked.connect(self.on_click_attach)
+
+        #
         self.browse_btn.clicked.connect(self.on_click_browse)
         self.upload_btn.clicked.connect(self.on_click_upload)
         self.search_btn.clicked.connect(self.on_click_search)
@@ -265,22 +266,6 @@ class AttachDialog(QDialog, Ui_Dialog):
         name = m.data(m.index(row, AttachDataModel.ColumnName))
         print(f"Editted {col_name} for {name} -> {new_data} @ ({row}, {column})")
         update_attach_data(self.conn, name, new_data, col_name)
-
-    @pyqtSlot()
-    def on_click_attach(self):
-        """Attach the checked attachments.
-        """
-        attach_list = self.m.get_checked_items()
-        newly_attached_list = []
-        for i in attach_list:
-            is_new_attached = insert_snp_attach(self.conn, self.snp_name, i.name)
-            if is_new_attached:
-                newly_attached_list.append(i.name)
-        if newly_attached_list:
-            newly_attached_str = '\n'.join(newly_attached_list)
-            QMessageBox.information(self, "Attachments Updated",
-                    f"Newly Attached:\n{newly_attached_str}",
-                    QMessageBox.Ok, QMessageBox.Ok)
 
     @pyqtSlot()
     def on_click_browse(self):
