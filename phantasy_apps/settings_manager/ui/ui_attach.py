@@ -110,9 +110,15 @@ class Ui_Dialog(object):
             "\n"
             "")
         self.attach_view.setAlternatingRowColors(True)
+        self.attach_view.setSelectionMode(
+            QtWidgets.QAbstractItemView.SingleSelection)
         self.attach_view.setSelectionBehavior(
             QtWidgets.QAbstractItemView.SelectRows)
         self.attach_view.setObjectName("attach_view")
+        self.attach_view.horizontalHeader().setVisible(True)
+        self.attach_view.horizontalHeader().setSortIndicatorShown(False)
+        self.attach_view.horizontalHeader().setStretchLastSection(True)
+        self.attach_view.verticalHeader().setVisible(False)
         self.gridLayout.addWidget(self.attach_view, 5, 0, 1, 3)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setSpacing(4)
