@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS attachment (
     name TEXT NOT NULL,
     uri TEXT NOT NULL,
     ftyp TEXT NOT NULL,
+    note TEXT,
     UNIQUE (name)
 );
 

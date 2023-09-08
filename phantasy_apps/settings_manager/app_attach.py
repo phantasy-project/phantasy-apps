@@ -68,7 +68,7 @@ class AttachDialog(QDialog, Ui_Dialog):
             q_cond = f"WHERE name like '%{q_str}%'"
         try:
             with self.conn:
-                r = self.conn.execute(f"SELECT name, uri, ftyp, created FROM attachment {q_cond}")
+                r = self.conn.execute(f"SELECT name, uri, ftyp, created, note FROM attachment {q_cond}")
                 data = [AttachmentData(*i) for i in r.fetchall()]
         except Exception as err:
             print(err)
@@ -256,11 +256,12 @@ class AttachDialog(QDialog, Ui_Dialog):
         m = self.attach_view.model()
         if isinstance(m, AttachDataProxyModel):
             m = m.sourceModel()
-        row = tl.row()
-        new_ftyp = m.data(tl, Qt.EditRole)
+        row, column = tl.row(), tl.column()
+        new_data = m.data(tl, Qt.EditRole)
+        col_name = AttachDataModel.editColumnNameMap[column]
         name = m.data(m.index(row, AttachDataModel.ColumnName))
-        print(f"Editted: {name} -> {new_ftyp}")
-        update_attach_data(self.conn, name, new_ftyp)
+        print(f"Editted {col_name} for {name} -> {new_data} @ ({row}, {column})")
+        update_attach_data(self.conn, name, new_data, col_name)
 
     @pyqtSlot()
     def on_click_attach(self):
@@ -310,7 +311,7 @@ class AttachDialog(QDialog, Ui_Dialog):
             link_name = self.uri_name_lineEdit.text()
             link_url = self.uri_path_lineEdit.text()
             self.ftype = 'LINK'
-            attach_data = AttachmentData(link_name, link_url, self.ftype, None)
+            attach_data = AttachmentData(link_name, link_url, self.ftype, None, '')
         else:
             _src_filepath = self.uri_path
             _dst_filename = self.uri_name_lineEdit.text()
@@ -324,7 +325,7 @@ class AttachDialog(QDialog, Ui_Dialog):
                 QMessageBox.critical(self, "Upload Attachment", f"Failed uploading.\n{err}",
                         QMessageBox.Ok, QMessageBox.Ok)
                 return
-            attach_data = AttachmentData(_dst_filename, _dst_filename, self.ftype, None)
+            attach_data = AttachmentData(_dst_filename, _dst_filename, self.ftype, None, '')
         insert_attach_data(self.conn, attach_data)
         print(f"Uploading {self.uri_path}...done")
         self.sigAttachmentUpdated.emit()
@@ -351,23 +352,35 @@ def get_px_file():
             QPixmap(":/sm-icons/file.png").scaled(
                 PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
+
 def get_px_link():
     return DECO_PX_DICT.setdefault('link',
             QPixmap(":/sm-icons/hyperlink.png").scaled(
                 PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
 
+def get_px_note():
+    return DECO_PX_DICT.setdefault('note',
+            QPixmap(":/sm-icons/comment.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
+
 class AttachDataModel(QAbstractTableModel):
 
-    ColumnName, ColumnUri, ColumnFtype, ColumnCreated, ColumnCount = range(5)
+    ColumnName, ColumnUri, ColumnFtype, ColumnCreated, ColumnNote, ColumnCount = range(6)
 
     columnNameMap = {
         ColumnName: "Name",
         ColumnUri: "URI",
         ColumnFtype: "Type",
         ColumnCreated: "Uploaded", # "Created"
+        ColumnNote: "Note"
     }
 
+    editColumnNameMap = {
+        ColumnFtype: 'ftyp',
+        ColumnNote: 'note'
+    }
 
     def __init__(self, data: list[AttachmentData], attached_namelist: list[str],
                  data_dir: str, parent=None):
@@ -414,6 +427,8 @@ class AttachDataModel(QAbstractTableModel):
                     return get_px_link()
                 else:
                     return get_px_file()
+            elif column == AttachDataModel.ColumnNote:
+                return get_px_note()
         if role == Qt.EditRole:
             return v
         if column == 0 and role == Qt.CheckStateRole:
@@ -448,7 +463,7 @@ class AttachDataModel(QAbstractTableModel):
             return Qt.NoItemFlags
         if index.column() == self.ColumnName:
             return Qt.ItemIsUserCheckable | QAbstractTableModel.flags(self, index)
-        if index.column() == self.ColumnFtype:
+        if index.column() in (self.ColumnFtype, self.ColumnNote):
             return Qt.ItemIsEditable | QAbstractTableModel.flags(self, index)
         return QAbstractTableModel.flags(self, index)
 

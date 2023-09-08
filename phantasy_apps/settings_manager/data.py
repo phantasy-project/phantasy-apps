@@ -657,14 +657,12 @@ class SnapshotData:
         return s.getvalue()
 
 
-AttachmentData = namedtuple('AttachmentData', ['name', 'uri', 'ftyp'])
-
 class AttachmentData:
 
-    _ATTR_MAP = {'name': 0, 'uri': 1, 'ftyp': 2, 'created': 3}
+    _ATTR_MAP = {'name': 0, 'uri': 1, 'ftyp': 2, 'created': 3, 'note': 4}
 
-    def __init__(self, name, uri, ftyp, created):
-        self._data = [name, uri, ftyp, created]
+    def __init__(self, name, uri, ftyp, created, note=''):
+        self._data = [name, uri, ftyp, created, note]
         self.created = created
 
     def __getitem__(self, index):
@@ -715,5 +713,13 @@ class AttachmentData:
         else:
             self._data[3] = s
 
+    @property
+    def note(self):
+        return self._data[4]
+
+    @note.setter
+    def note(self, s):
+        self.note = s
+
     def __repr__(self):
-        return f"AttachmentData('{self.name}', '{self.uri}', '{self.ftyp}', '{self.created}')"
+        return f"AttachmentData('{self.name}', '{self.uri}', '{self.ftyp}', '{self.created}', '{self.note}')"

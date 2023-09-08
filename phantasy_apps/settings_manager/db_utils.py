@@ -72,19 +72,21 @@ def delete_data(conn, snp_data: SnapshotData):
 # attachment data
 def insert_attach_data(conn, attach_data: AttachmentData):
     cursor = conn.cursor()
-    query = ''' INSERT INTO attachment (name, uri, ftyp, created) VALUES (?, ?, ?, ?); '''
+    query = ''' INSERT INTO attachment (name, uri, ftyp, created, note) VALUES (?, ?, ?, ?, ?); '''
     try:
-        cursor.execute(query, (attach_data.name, attach_data.uri, attach_data.ftyp, attach_data.created))
+        cursor.execute(query, (attach_data.name, attach_data.uri, attach_data.ftyp, attach_data.created, attach_data.note))
     except sqlite3.Error as err:
         print(err)
     else:
         cursor.close()
     conn.commit()
 
-def update_attach_data(conn, attach_name: str, new_attach_ftyp: str):
+def update_attach_data(conn, attach_name: str, new_data: str,
+                       edit_column: str):
+    # edit_column: ftyp or note
     cursor = conn.cursor()
-    query = """ UPDATE attachment SET ftyp = ? WHERE name = ? """
-    cursor.execute(query, (new_attach_ftyp, attach_name))
+    query = f""" UPDATE attachment SET {edit_column} = ? WHERE name = ? """
+    cursor.execute(query, (new_data, attach_name))
     conn.commit()
     cursor.close()
 
@@ -115,7 +117,7 @@ def get_attachments(conn, snp_name: str):
     """
     cursor = conn.cursor()
     r = cursor.execute(f"""
-        SELECT attachment.name, attachment.uri, attachment.ftyp, attachment.created
+        SELECT attachment.name, attachment.uri, attachment.ftyp, attachment.created, attachment.note
         FROM attachment JOIN snp_attach ON snp_attach.attachment_name = attachment.name
         WHERE snp_attach.snapshot_name = '{snp_name}';""")
     data = r.fetchall()
