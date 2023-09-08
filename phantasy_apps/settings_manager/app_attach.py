@@ -45,6 +45,7 @@ class AttachDialog(QDialog, Ui_Dialog):
 
     sigDataModelShown = pyqtSignal()
     sigAttachmentUpdated = pyqtSignal()
+    sigViewUpdated = pyqtSignal()
 
     def __init__(self, snp_name: str, snp_longname: str, conn: sqlite3.Connection,
                  data_dir: str, parent):
@@ -93,7 +94,6 @@ class AttachDialog(QDialog, Ui_Dialog):
         self.ftype = ''  # file type, ext, or 'LINK' for uri_type of 'URL'
         # signals and slots
         self.dataModelShown = False
-
         #
         self.browse_btn.clicked.connect(self.on_click_browse)
         self.upload_btn.clicked.connect(self.on_click_upload)
@@ -103,6 +103,8 @@ class AttachDialog(QDialog, Ui_Dialog):
         self.uri_type_cbb.currentTextChanged.connect(self.on_uri_type_changed)
         self.sigDataModelShown.connect(self.on_dataModelShown)
         self.sigAttachmentUpdated.connect(self.on_attachmentUpdated)
+        self.sigViewUpdated.connect(self.on_viewUpdated)
+        self.sigViewUpdated.connect(self.on_post_nitem)
         # initial signals
         self.uri_type_cbb.currentTextChanged.emit('File')
         #
@@ -137,7 +139,7 @@ class AttachDialog(QDialog, Ui_Dialog):
         proxy_model = AttachDataProxyModel(self.m)
         self.attach_view.setModel(proxy_model)
         #
-        self.attach_view.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
+        self.sigViewUpdated.emit()
 
     @pyqtSlot(QPoint)
     def on_request_context_menu(self, pos: QPoint):
@@ -216,6 +218,7 @@ class AttachDialog(QDialog, Ui_Dialog):
             QMessageBox.warning(self, "Attach an Attachment",
                     f"Attachment '{name} has already been attached to snapshot '{self.snp_name}'.",
                     QMessageBox.Ok, QMessageBox.Ok)
+        self.sigViewUpdated.emit()
 
     @pyqtSlot()
     def on_detach(self, idx, m):
@@ -230,6 +233,7 @@ class AttachDialog(QDialog, Ui_Dialog):
             QMessageBox.warning(self, "Detach an Attachment",
                     f"Attachment '{name} has already been detached from '{self.snp_name}'",
                     QMessageBox.Ok, QMessageBox.Ok)
+        self.sigViewUpdated.emit()
 
     @pyqtSlot()
     def on_delete(self, idx, m):
@@ -249,12 +253,20 @@ class AttachDialog(QDialog, Ui_Dialog):
         attach_list = self.exec_query()
         self.m = AttachDataModel(attach_list, self.current_attach_namelist, self.data_dir)
         self.m.dataChanged.connect(self.on_attachment_dataChanged)
+        self.m.dataChanged.connect(self.on_post_nitem)
         self.attach_view.setModel(self.m)
         self.attach_view.resizeColumnsToContents()
         if not self.dataModelShown:
             self.sigDataModelShown.emit()
         #
-        self.attach_view.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
+        self.sigViewUpdated.emit()
+
+    def on_viewUpdated(self):
+        self.attach_view.horizontalHeader().setSectionResizeMode(
+                AttachDataModel.ColumnNote, QHeaderView.Stretch)
+
+    def on_post_nitem(self):
+        self.nitem_lbl.setText(f"{self.attach_view.model().rowCount()}")
 
     def on_attachment_dataChanged(self, tl: QModelIndex, br: QModelIndex, roles: list):
         if Qt.CheckStateRole in roles:
@@ -401,7 +413,7 @@ class AttachDataModel(QAbstractTableModel):
     def columnCount(self, parent=None):
         return self.ColumnCount
 
-    def rowCount(self, parent=QModelIndex):
+    def rowCount(self, parent: QModelIndex = QModelIndex()):
         if parent.isValid():
             return 0
         return len(self._data)
@@ -453,11 +465,12 @@ class AttachDataModel(QAbstractTableModel):
         return False
 
     def headerData(self, section: int, orientation: Qt.Orientation, role: int):
-        if orientation != Qt.Horizontal:
-            return None
-        if role != Qt.DisplayRole:
-            return None
-        return self.columnNameMap.get(section)
+        if role == Qt.DisplayRole:
+            if orientation == Qt.Horizontal:
+                return self.columnNameMap.get(section)
+            else:
+                return None
+        return None
 
     def flags(self, index: QModelIndex):
         if not index.isValid():
