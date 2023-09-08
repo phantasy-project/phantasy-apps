@@ -90,7 +90,7 @@ class AttachDialog(QDialog, Ui_Dialog):
         if q_str == '' or q_str == '*':
             q_cond = ''
         else:
-            q_cond = f"WHERE name like '%{q_str}%'"
+            q_cond = f"WHERE name like '%{q_str}%' OR uri like '%{q_str}%' OR note like '%{q_str}%'"
         try:
             with self.conn:
                 r = self.conn.execute(f"SELECT name, uri, ftyp, created, note FROM attachment {q_cond}")
