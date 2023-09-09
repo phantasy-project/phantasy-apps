@@ -126,6 +126,22 @@ def get_attachments(conn, snp_name: str):
     return [AttachmentData(*i[1:]) for i in data]
 
 
+def get_attachments_cnt(conn, snp_name: str):
+    """Return the total number of attached attachments with the given snapshot data.
+    """
+    try:
+        with conn:
+            r = conn.execute(f""" SELECT COUNT(attachment.id) FROM attachment
+                    JOIN snp_attach ON snp_attach.attachment_id = attachment.id
+                    WHERE snp_attach.snapshot_name = '{snp_name}';""")
+            n = r.fetchone()[0]
+    except Exception as err:
+        print(f"Failed get_attachments_cnt() for '{snp_name}'\n{err}")
+        n = 0
+    finally:
+        return n
+
+
 def insert_snp_attach(conn, snp_name: str, attach_name: str):
     """Add attachment of *attach_name* to snapshot with *snp_name*.
     """

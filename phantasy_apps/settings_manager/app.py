@@ -54,8 +54,7 @@ from .data import SnapshotData
 from .data import get_settings_data
 from .data import make_physics_settings
 from .data import read_data, read_excel
-from .db_utils import insert_update_data
-from .db_utils import delete_data
+from .db_utils import insert_update_data, delete_data, get_attachments_cnt
 from .ui.ui_app import Ui_MainWindow
 from .ui.ui_query_tips import Ui_Form as QueryTipsForm
 from .conf import read_app_config
@@ -1504,8 +1503,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         refpush_action.triggered.connect(partial(self.on_push_ref_settings, snpdata))
 
         # attach
-        attach_action = QAction(self._attach_icon, "Attachments", menu)
-        attach_action.triggered.connect(partial(self.on_attach_file, snpdata.name,
+        n_attach = get_attachments_cnt(self._db_conn_pool.get(self.data_uri), snpdata.name)
+        attach_action = QAction(self._attach_icon, f"Attachments ({n_attach})", menu)
+        attach_action.triggered.connect(partial(self.on_manage_attachments, snpdata.name,
                                                 snpdata.get_long_name()))
 
         #
@@ -3506,8 +3506,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._query_tips_form.show()
 
     @pyqtSlot()
-    def on_attach_file(self, name: str, long_name: str):
-        """Attach a file to a snapshot with name defined by *name*.
+    def on_manage_attachments(self, name: str, long_name: str):
+        """Open the attachments management dialog, to attach/detach a file to/from the
+        snapshot with name defined by *name*, and add/delete/update attachments.
         """
         dlg = AttachDialog(name, long_name, self._db_conn_pool.get(self.data_uri),
                            self.attach_data_dir, self.attach_file_type_exec_dict, self)
