@@ -3526,9 +3526,11 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_read_snp(self, data):
         data.extract_blob()
-        _, filename = tempfile.mkstemp('.xlsx')
-        self._save_settings(data, filename, 'xlsx')
-        QDesktopServices.openUrl(QUrl(filename))
+        fp = tempfile.NamedTemporaryFile(suffix='.xlsx')
+        self._save_settings(data, fp.name, 'xlsx')
+        opened = QDesktopServices.openUrl(QUrl(fp.name))
+        if opened:
+            delayed_exec(lambda: fp.close(), 5000)
 
     @pyqtSlot()
     def on_mviz(self, data):
