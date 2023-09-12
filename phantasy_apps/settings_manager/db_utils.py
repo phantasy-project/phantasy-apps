@@ -73,13 +73,17 @@ def delete_data(conn, snp_data: SnapshotData):
 def insert_attach_data(conn, attach_data: AttachmentData):
     cursor = conn.cursor()
     query = ''' INSERT INTO attachment (name, uri, ftyp, created, note) VALUES (?, ?, ?, ?, ?); '''
+    inserted = False
     try:
         cursor.execute(query, (attach_data.name, attach_data.uri, attach_data.ftyp, attach_data.created, attach_data.note))
     except sqlite3.Error as err:
         print(err)
     else:
         cursor.close()
-    conn.commit()
+        conn.commit()
+        inserted = True
+    finally:
+        return inserted
 
 def update_attach_data(conn, attach_name: str, new_data: str,
                        edit_column: str):

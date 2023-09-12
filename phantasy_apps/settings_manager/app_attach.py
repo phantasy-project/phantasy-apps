@@ -416,12 +416,17 @@ class AttachDialog(QDialog, Ui_Dialog):
                     os.makedirs(_dst_dirpath)
                 shutil.copy2(_src_filepath, _dst_filepath)
             except Exception as err:
-                QMessageBox.critical(self, "Upload Attachment", f"Failed uploading.\n{err}",
+                QMessageBox.critical(self, "Upload an Attachment", f"Failed uploading '{attach_data.name}'.\n{err}",
                         QMessageBox.Ok, QMessageBox.Ok)
                 return
             attach_data = AttachmentData(_dst_filename, _dst_filename, self.ftype, None, '')
-        insert_attach_data(self.conn, attach_data)
-        print(f"Uploading {self.uri_path}...done")
+        inserted = insert_attach_data(self.conn, attach_data)
+        if not inserted:
+            QMessageBox.critical(self, "Upload an Attachment",
+                    f"Failed to add the data to the database, try to change the 'Destination Filepath' input.", QMessageBox.Ok, QMessageBox.Ok)
+        else:
+            QMessageBox.information(self, "Upload an Attachment",
+                    f"Uploaded attachment '{attach_data.name}'.", QMessageBox.Ok, QMessageBox.Ok)
         self.sigAttachmentUpdated.emit()
 
     @pyqtSlot('QString')
