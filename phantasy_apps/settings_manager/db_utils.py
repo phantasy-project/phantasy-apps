@@ -85,15 +85,24 @@ def insert_attach_data(conn, attach_data: AttachmentData):
     finally:
         return inserted
 
+
 def update_attach_data(conn, attach_name: str, new_data: str,
                        edit_column: str):
     # edit_column: name, ftyp, note
     attach_id = get_attach_id(conn, attach_name)
     cursor = conn.cursor()
     query = f""" UPDATE attachment SET {edit_column} = ? WHERE id = ? """
-    cursor.execute(query, (new_data, attach_id))
-    conn.commit()
-    cursor.close()
+    updated = False
+    try:
+        cursor.execute(query, (new_data, attach_id))
+    except sqlite3.Error as err:
+        print(err)
+    else:
+        cursor.close()
+        conn.commit()
+        updated = True
+    finally:
+        return updated
 
 
 def delete_attach_data(conn, attach_name: str):

@@ -371,7 +371,12 @@ class AttachDialog(QDialog, Ui_Dialog):
         else:
             name = m.data(m.index(row, AttachDataModel.ColumnName))
         print(f"Editted {col_name} for {name} -> {new_data} @ ({row}, {column})")
-        update_attach_data(self.conn, name, new_data, col_name)
+        updated = update_attach_data(self.conn, name, new_data, col_name)
+        if not updated:
+            QMessageBox.critical(self, "Update an Attachment",
+                    f"Failed to update the attachment with '{new_data}'.",
+                    QMessageBox.Ok, QMessageBox.Ok)
+        self.sigAttachmentUpdated.emit()
 
     @pyqtSlot()
     def on_click_browse(self):
