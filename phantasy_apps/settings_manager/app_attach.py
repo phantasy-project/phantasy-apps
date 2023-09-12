@@ -86,20 +86,32 @@ class AttachDialog(QDialog, Ui_Dialog):
         self._post_init()
 
     def exec_query(self):
+        # return a tuple of list[AttachmentData], list[int] (for nsnp)
         q_str = self.search_lineEdit.text()
         if q_str == '' or q_str == '*':
             q_cond = ''
         else:
             q_cond = f"WHERE name like '%{q_str}%' OR uri like '%{q_str}%' OR note like '%{q_str}%'"
+
+        attach_list = []
+        nsnp_list = []
         try:
             with self.conn:
-                r = self.conn.execute(f"SELECT name, uri, ftyp, created, note FROM attachment {q_cond}")
-                data = [AttachmentData(*i) for i in r.fetchall()]
+                r = self.conn.execute(f"""
+        SELECT attachment.id, attachment.name, attachment.uri, attachment.ftyp,
+               attachment.created, attachment.note, COUNT(snp_attach.attachment_id)
+        FROM attachment
+        LEFT JOIN snp_attach
+        ON snp_attach.attachment_id = attachment.id
+        {q_cond}
+        GROUP BY attachment.id""")
+            for i in r.fetchall():
+                attach_list.append(AttachmentData(*i[1:-1]))
+                nsnp_list.append(i[-1])
         except Exception as err:
             print(err)
-            data = []
         finally:
-            return data
+            return attach_list, nsnp_list
 
     def _post_init(self):
         self.default_font_size = QFontDatabase.systemFont(
@@ -276,7 +288,8 @@ class AttachDialog(QDialog, Ui_Dialog):
     @pyqtSlot()
     def on_attach(self, idx, m):
         name = m.data(idx)
-        m.setData(idx, Qt.Checked, Qt.CheckStateRole)
+        m._checkstate_list[idx.row()] = True
+        m._nsnp[idx.row()] += 1
         new_attached = insert_snp_attach(self.conn, self.snp_name, name)
         if new_attached:
             QMessageBox.information(self, "Attach an Attachment",
@@ -291,7 +304,8 @@ class AttachDialog(QDialog, Ui_Dialog):
     @pyqtSlot()
     def on_detach(self, idx, m):
         name = m.data(idx)
-        m.setData(idx, Qt.Unchecked, Qt.CheckStateRole)
+        m._checkstate_list[idx.row()] = False
+        m._nsnp[idx.row()] -= 1
         new_detached = delete_snp_attach(self.conn, self.snp_name, name)
         if new_detached:
             QMessageBox.information(self, "Detach an Attachment",
@@ -318,8 +332,8 @@ class AttachDialog(QDialog, Ui_Dialog):
         self.current_attach_list = get_attachments(self.conn, self.snp_name)
         self.current_attach_namelist = [i.name for i in self.current_attach_list]
         #
-        attach_list = self.exec_query()
-        self.m = AttachDataModel(attach_list, self.current_attach_namelist, self.data_dir)
+        attach_list, nsnp_list = self.exec_query()
+        self.m = AttachDataModel(attach_list, nsnp_list, self.current_attach_namelist, self.data_dir)
         self.m.dataChanged.connect(self.on_attachment_dataChanged)
         self.m.dataChanged.connect(self.on_post_nitem)
         self.attach_view.setModel(self.m)
@@ -440,11 +454,13 @@ def get_px(filepath: str, is_link: bool):
 
 class AttachDataModel(QAbstractTableModel):
 
-    ColumnName, ColumnUri, ColumnFtype, ColumnNote, ColumnCreated, ColumnCount = range(6)
+    ColumnName, ColumnNSnp, ColumnUri, ColumnFtype, ColumnNote, ColumnCreated, \
+        ColumnCount = range(7)
 
     # map column int to header name
     columnNameMap = {
         ColumnName: "Name",
+        ColumnNSnp: "#", # total number of snapshots that attached to this attachment
         ColumnUri: "URI",
         ColumnFtype: "Type",
         ColumnNote: "Note",
@@ -463,17 +479,18 @@ class AttachDataModel(QAbstractTableModel):
         ColumnName: 0,
         ColumnUri: 1,
         ColumnFtype: 2,
+        ColumnCreated: 3,
         ColumnNote: 4,
-        ColumnCreated: 3
     }
 
-    def __init__(self, data: list[AttachmentData], attached_namelist: list[str],
+    def __init__(self, data: list[AttachmentData], nsnp: list[int], attached_namelist: list[str],
                  data_dir: str, parent=None):
         super(self.__class__, self).__init__(parent)
         # root directory for all the datafiles
         self._data_dir = data_dir
         # data: a list of AttachmentData
-        self._data = data
+        # nsnp: a list of number of snapshots attached to the attachment
+        self._data, self._nsnp = data, nsnp
         # prefix data_dir to URI
         for i in self._data:
             if i.ftyp == 'LINK':
@@ -496,29 +513,36 @@ class AttachDataModel(QAbstractTableModel):
         if not index.isValid():
             return None
         row, column = index.row(), index.column()
-        v = self._data[row][AttachDataModel.columnListIndexMap[column]]
+        if column == self.ColumnNSnp:
+            v = self._nsnp[row]
+        else:
+            v = self._data[row][self.columnListIndexMap[column]]
         if role == Qt.DisplayRole:
-            if column == AttachDataModel.ColumnFtype:
+            if column == self.ColumnFtype:
                 return ' ' * (len(v) + 2)
+            elif column == self.ColumnNSnp:
+                return ' ' * (len(str(v)) + 2)
             else:
                 return v
         if role == Qt.UserRole:
-            if column == AttachDataModel.ColumnFtype:
+            if column in (self.ColumnFtype, self.ColumnNSnp):
                 return v
         if role == Qt.DecorationRole:
-            if column == AttachDataModel.ColumnUri:
+            if column == self.ColumnUri:
                 is_link = self._data[row][
-                        AttachDataModel.columnListIndexMap[
-                            AttachDataModel.ColumnFtype]] == 'LINK'
+                        self.columnListIndexMap[self.ColumnFtype]] == 'LINK'
                 return get_px(v, is_link)
-            elif column == AttachDataModel.ColumnNote:
+            elif column == self.ColumnNote:
                 return get_px_note()
         if role == Qt.EditRole:
             return v
-        if column == AttachDataModel.ColumnName and role == Qt.CheckStateRole:
+        if column == self.ColumnName and role == Qt.CheckStateRole:
             return Qt.Checked if self._checkstate_list[row] else Qt.Unchecked
         if role == Qt.ToolTipRole:
-            return v
+            if column == self.ColumnNSnp:
+                return f"# of Snapshots attached: {v}."
+            else:
+                return v
         return None
 
     def setData(self, index: QModelIndex, value, role: int = Qt.EditRole):
@@ -526,10 +550,11 @@ class AttachDataModel(QAbstractTableModel):
             return False
         row, column = index.row(), index.column()
         if role == Qt.EditRole:
-            value = value.upper()
-            o_val = self._data[row][AttachDataModel.columnListIndexMap[column]]
+            if column == self.ColumnFtype:
+                value = value.upper()
+            o_val = self._data[row][self.columnListIndexMap[column]]
             if value != o_val:
-                self._data[row][AttachDataModel.columnListIndexMap[column]] = value
+                self._data[row][self.columnListIndexMap[column]] = value
                 self._name_map[value] = o_val
                 self.dataChanged.emit(index, index, (Qt.DisplayRole, Qt.EditRole))
                 return True
@@ -605,6 +630,46 @@ class AttachDataDelegateModel(QStyledItemDelegate):
                 lbl.setStyleSheet(f'''
                 QLabel {{
                     font-size: {self.default_font_size - 1}pt;
+                    font-family: monospace;
+                    border: 1px solid #AEAEAE;
+                    border-radius: 5px;
+                    margin: 1px;
+                    background-color: {bkgd_color};
+                }}''')
+                layout.addWidget(lbl)
+                w.setLayout(layout)
+                w.setStyleSheet(
+                    """QWidget { background-color: transparent; }""")
+                rect = option.rect.adjusted(2, 2, -2, -2)
+                painter.drawPixmap(rect.x(), rect.y(), w.grab())
+        elif index.column() == AttachDataModel.ColumnNSnp:
+            nsnp = str(index.model().data(index, Qt.UserRole))
+            if nsnp == '':
+                QStyledItemDelegate.paint(self, painter, option, index)
+            else:
+                if option.state & QStyle.State_Selected or option.state & QStyle.State_MouseOver:
+                    QStyledItemDelegate.paint(self, painter, option, index)
+
+                w = QWidget()
+                layout = QHBoxLayout()
+                layout.setContentsMargins(4, 4, 4, 4)
+                layout.setSpacing(2)
+
+                shadow = QGraphicsDropShadowEffect()
+                shadow.setBlurRadius(10)
+                shadow.setOffset(2)
+                lbl = QLabel(nsnp)
+                lbl.setGraphicsEffect(shadow)
+                lbl.setSizePolicy(QSizePolicy.Preferred,
+                                  QSizePolicy.Preferred)
+                if nsnp == '0':
+                    bkgd_color = '#F8BBD0'
+                else:
+                    bkgd_color = '#BBDEFB'
+                lbl.setStyleSheet(f'''
+                QLabel {{
+                    font-size: {self.default_font_size - 1}pt;
+                    font-family: monospace;
                     border: 1px solid #AEAEAE;
                     border-radius: 5px;
                     margin: 1px;
