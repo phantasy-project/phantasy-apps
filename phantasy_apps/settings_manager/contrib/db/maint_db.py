@@ -26,6 +26,14 @@ def process_db(input_dbpath: str, output_dbpath: str):
     df.drop(columns=['name'], inplace=True)
     con.close()
 
+    # drop duplicated rows on 'datetime'
+    print("Duplicated rows on 'datetime':")
+    print(df[df.datetime.duplicated(keep='first')].loc[:, ['id', 'datetime', 'note']])
+    drop_duplicates = input("Drop duplicated items? [Y]/N")
+    if drop_duplicates in ('N', 'n'):
+        return
+    df = df[~df.datetime.duplicated(keep='first')]
+
     parent_list = []
     n_rows = df.shape[0]
     for i, irow in df.iterrows():
@@ -41,16 +49,17 @@ def process_db(input_dbpath: str, output_dbpath: str):
     # write to output db path
     con_new = sqlite3.connect(output_dbpath)
     with con_new:
-        df.to_sql('snapshot', con_new, index=False, if_exists='replace')
-        con_new.execute("CREATE INDEX IF NOT EXISTS datetime_idx ON snapshot (datetime)")
+        df.to_sql('snapshot', con_new, index=False, if_exists='replace',
+                  dtype={'id': 'INTEGER PRIMARY KEY AUTOINCREMENT'})
+        # see init_db()
+        # con_new.execute("CREATE INDEX IF NOT EXISTS datetime_idx ON snapshot (datetime)")
     con_new.close()
 
 
 if __name__ == "__main__":
-    input_db = "/home/tong/Downloads/20230816T000001_SM.db"
-    output_db = "/home/tong/Downloads/20230816T000001_SM_new.db"
-    # input_db = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm1.db"
-    # output_db = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm1_new.db"
+    # input_db = "/home/tong/Downloads/20230816T000001_SM.db"
+    # output_db = "/home/tong/Downloads/20230816T000001_SM_new.db"
+    input_db = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm1.db"
+    output_db = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm1_new.db"
     process_db(input_db, output_db)
     init_db(output_db)
-

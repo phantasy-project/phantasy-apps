@@ -3,7 +3,7 @@ Snapshot table
 */
 
 CREATE TABLE IF NOT EXISTS snapshot (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp REAL NOT NULL,
     datetime TEXT NOT NULL,
     note TEXT,
@@ -29,7 +29,7 @@ Attachment table
 */
 
 CREATE TABLE IF NOT EXISTS attachment (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     created DATETIME DEFAULT CURRENT_TIMESTAMP,
     name TEXT NOT NULL,
     uri TEXT NOT NULL,
@@ -44,7 +44,7 @@ Snapshot_Attachment table
 */
 
 CREATE TABLE IF NOT EXISTS snp_attach (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     snapshot_name TEXT,
     attachment_id INTEGER,
     UNIQUE (snapshot_name, attachment_id),
