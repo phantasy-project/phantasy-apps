@@ -214,6 +214,7 @@ class AttachDialog(QDialog, Ui_Dialog):
         """
         proxy_model = AttachDataProxyModel(self.m)
         self.attach_view.setModel(proxy_model)
+        self.attach_view.resizeColumnsToContents()
         #
         self.sigViewUpdated.emit()
 
