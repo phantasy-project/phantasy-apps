@@ -473,12 +473,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.pref_dict['_HIDDEN_COLUMNS_IDX'] = hidden_col_idx_list
 
         # attachment support
+        self.attach_data_dir = self.pref_dict['ATTACHMENT']['DATA_DIR']
+        self.attach_after_upload = self.pref_dict['ATTACHMENT']['ATTACH_AFTER_UPLOAD']
         try:
-            self.attach_data_dir = self.pref_dict['ATTACHMENT']['DATA_DIR']
             self.attach_file_type_exec_dict = self.pref_dict['ATTACHMENT']['FILE_TYPE_EXEC']
         except:
-            self.attach_data_dir = None
-            self.attach_file_type_exec_dict = None
+            self.attach_file_type_exec_dict = {}
 
         # font
         self.default_font, self.default_font_size = self.get_default_font_config(
@@ -3511,7 +3511,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         snapshot with name defined by *name*, and add/delete/update attachments.
         """
         dlg = AttachDialog(name, long_name, self._db_conn_pool.get(self.data_uri),
-                           self.attach_data_dir, self.attach_file_type_exec_dict, self)
+                           self.attach_data_dir, self.attach_file_type_exec_dict,
+                           self.attach_after_upload, self)
         dlg.exec_()
 
     @pyqtSlot()

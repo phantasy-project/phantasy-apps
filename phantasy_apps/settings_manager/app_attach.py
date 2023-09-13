@@ -72,12 +72,13 @@ class AttachDialog(QDialog, Ui_Dialog):
     sigViewUpdated = pyqtSignal()
 
     def __init__(self, snp_name: str, snp_longname: str, conn: sqlite3.Connection,
-                 data_dir: str, file_exec: dict, parent):
+                 data_dir: str, file_exec: dict, attach_after_upload: bool, parent):
         super(self.__class__, self).__init__()
         self.parent = parent
         self.conn = conn
         self.data_dir = data_dir
         self.file_exec = file_exec
+        self.attach_after_upload = attach_after_upload
         self.snp_name = snp_name
         self.snp_longname = snp_longname
 
@@ -114,7 +115,21 @@ class AttachDialog(QDialog, Ui_Dialog):
         finally:
             return attach_list, nsnp_list
 
+    @pyqtSlot(bool)
+    def on_toggle_attach_after_upload(self, is_checked: bool):
+        self.attach_after_upload = is_checked
+        if is_checked:
+            tt = "Attach the new uploaded attachment to the snapshot."
+        else:
+            tt = "Do not attach the new uploaded attachment to the snapshot."
+        self.attach_after_upload_chkbox.setToolTip(tt)
+
     def _post_init(self):
+        # attach after upload?
+        self.attach_after_upload_chkbox.setChecked(self.attach_after_upload)
+        self.attach_after_upload_chkbox.toggled.connect(self.on_toggle_attach_after_upload)
+        self.attach_after_upload_chkbox.toggled.emit(self.attach_after_upload)
+        #
         self.default_font_size = QFontDatabase.systemFont(
             QFontDatabase.FixedFont).pointSize()
         #
@@ -471,6 +486,9 @@ class AttachDialog(QDialog, Ui_Dialog):
         else:
             QMessageBox.information(self, "Upload an Attachment",
                     f"Uploaded attachment '{attach_data.name}'.", QMessageBox.Ok, QMessageBox.Ok)
+            # attach the new attachment?
+            if self.attach_after_upload:
+                insert_snp_attach(self.conn, self.snp_name, attach_data.name)
         self.sigAttachmentUpdated.emit()
 
     @pyqtSlot('QString')
