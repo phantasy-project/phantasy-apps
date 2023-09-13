@@ -16,7 +16,8 @@ from PyQt5.QtGui import (
         QFontDatabase,
         QIcon,
         QPixmap,
-        QDesktopServices
+        QDesktopServices,
+        QGuiApplication
 )
 from PyQt5.QtCore import (
         pyqtSignal, pyqtSlot,
@@ -135,6 +136,9 @@ class AttachDialog(QDialog, Ui_Dialog):
         self._detach_icon = QIcon(QPixmap(":/sm-icons/detach.png"))
         self._delete_icon = QIcon(QPixmap(":/sm-icons/delete.png"))
         self._open_icon = QIcon(QPixmap(":/sm-icons/open.png"))
+        self._copy_icon = QIcon(QPixmap(":/sm-icons/copy_text.png"))
+        self._reveal_icon = QIcon(QPixmap(":/sm-icons/openfolder.png"))
+        #
         self.attach_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.attach_view.customContextMenuRequested.connect(self.on_request_context_menu)
         #
@@ -253,6 +257,12 @@ class AttachDialog(QDialog, Ui_Dialog):
         # detach
         detach_act = QAction(self._detach_icon, "Detach", menu)
         detach_act.triggered.connect(partial(self.on_detach, idx, m))
+        # copy filepath
+        copy_uri_act = QAction(self._copy_icon, "Copy URI", menu)
+        copy_uri_act.triggered.connect(partial(self.on_copy_uri, idx, m))
+        # reveal
+        reveal_act = QAction(self._reveal_icon, "Show in File Explorer", menu)
+        reveal_act.triggered.connect(partial(self.on_reveal_uri, idx, m))
         # delete attachment
         delete_act = QAction(self._delete_icon, "Delete", menu)
         delete_act.triggered.connect(partial(self.on_delete, idx, m))
@@ -264,8 +274,37 @@ class AttachDialog(QDialog, Ui_Dialog):
             menu.addAction(attach_act)
         menu.addSeparator()
         menu.addAction(open_act)
+        menu.addAction(reveal_act)
+        menu.addAction(copy_uri_act)
         menu.addAction(delete_act)
         return menu
+
+    @pyqtSlot()
+    def on_reveal_uri(self, idx, m):
+        """Reveal file in File Explorer.
+        """
+        # !! requires nautilus / caja !!
+        uri = m.data(m.index(idx.row(), AttachDataModel.ColumnUri))
+        try:
+            Popen(["nautilus", "-s", uri])
+        except Exception as err:
+            try:
+                Popen(["caja", "-s", uri])
+            except:
+                pass
+            else:
+                print(f"Revealed {uri} in caja.")
+                return
+            print(f"Failed revealing {uri}\n{err}")
+        else:
+            print(f"Revealed {uri} in nautilus.")
+
+    @pyqtSlot()
+    def on_copy_uri(self, idx, m):
+        """Copy the URI.
+        """
+        uri = m.data(m.index(idx.row(), AttachDataModel.ColumnUri))
+        QGuiApplication.clipboard().setText(uri)
 
     @pyqtSlot()
     def on_open(self, idx, m):
