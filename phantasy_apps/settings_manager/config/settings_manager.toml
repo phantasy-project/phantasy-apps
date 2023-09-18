@@ -9,7 +9,7 @@ WIDTH = 1920
 [DATA_SOURCE]
 DB_ENGINE = "sqlite"
 TYPE = "database"
-URI = "~/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm.db"
+URI = "~/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm1_new.db"
 
 [SETTINGS]
 FIELD_INIT_MODE = "model" # initial settings with model or live data, if live is enabled, saved set will be overridden
@@ -72,8 +72,8 @@ READONLY_DEVICE_LIST = [
 
 # if not defined, use the app distributed one.
 # relative path w.r.t. the main app config file.
-# [FIELD_OF_INTEREST]
-# FILEPATH = "fields.toml"
+[FIELD_OF_INTEREST]
+FILEPATH = "fields_va.toml"
 
 [OPI]
 SNP_AUTHOR_PV = "PHY:SM_SNP_LAST_AUTHOR"
@@ -136,10 +136,26 @@ ISRC_ALIAS = ["ISRC1", "ISRC2"]
 ISRC_NAMES = ["Artemis", "HP-ECR"]
 
 [SNAPSHOT_TEMPLATES]
+
+# LS1 FS1
 [SNAPSHOT_TEMPLATES."LINAC_Artemis"]
 DB_ENTRY = "2023-03-15T15:37:19"
 DB_TAGS = ["LINAC", "SCS1"]
 NAME = "LINAC_Artemis"
+
+# LS1 devices only
+# [SNAPSHOT_TEMPLATES."LINAC_Artemis"]
+# DB_ENTRY = "2023-08-23T09:32:39"
+# DB_TAGS = ["LINAC", "SCS1"]
+# NAME = "LINAC_Artemis"
+
+
+[SNAPSHOT_TEMPLATES."LINAC_Artemis-1"]
+DB_ENTRY = "2023-08-29T09:02:06"
+DB_TAGS = ["LINAC", "VA"]
+NAME = "LINAC_Artemis"
+
+
 
 #  [SNAPSHOT_TEMPLATES."FSEE_Artemis"]
 #    NAME = "FSEE_Artemis"
@@ -167,7 +183,12 @@ NAME = "LINAC_Artemis"
 #  ALMACT_PVFILE = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/almactpv.json"
 
 [ATTACHMENT]
-  ROOT_DIR = "/tmp/sm-attach"
+  # attach after upload?
+  ATTACH_AFTER_UPLOAD = true
+  # keep all the data files.
+  DATA_DIR = "/home/tong/Downloads/sm-attach"
   [ATTACHMENT.FILE_TYPE_EXEC]
-    csv = 'libreoffice --calc'
-    txt = 'xed'
+    SNP = 'libreoffice --calc'
+    CSV = 'libreoffice --calc'
+    TXT = 'xed'
+    JSON = 'code'
