@@ -9,7 +9,7 @@ WIDTH = 1920
 [DATA_SOURCE]
 DB_ENGINE = "sqlite"
 TYPE = "database"
-URI = '/files/shared/ap/settings_manager/sm.db'
+URI = "/files/shared/ap/settings_manager/sm.db"
 
 [SETTINGS]
 FIELD_INIT_MODE = "model" # initial settings with model or live data, if live is enabled, saved set will be overridden
@@ -92,8 +92,8 @@ ENABLED = true
 NCORE = 4 # max CPU cores to use
 
 [LATTICE]
-DEFAULT_MACHINE = 'FRIB'
-DEFAULT_SEGMENT = 'LINAC'
+DEFAULT_MACHINE = "FRIB"
+DEFAULT_SEGMENT = "LINAC"
 
 [ARCHIVER_APPLIANCE]
 [ARCHIVER_APPLIANCE.DATA_CLIENT]
@@ -166,3 +166,13 @@ TOL_PVFILE = "/files/shared/ap/HLA/.phyapps/phantasy-apps/phantasy_apps/settings
 REFST_PVFILE = "/files/shared/ap/HLA/.phyapps/phantasy-apps/phantasy_apps/settings_manager/config/refstpv.json"
 # alarm switch PVs
 ALMACT_PVFILE = "/files/shared/ap/HLA/.phyapps/phantasy-apps/phantasy_apps/settings_manager/config/almactpv.json"
+
+[ATTACHMENT]
+  # attach after upload?
+  ATTACH_AFTER_UPLOAD = true
+  # keep all the data files.
+  DATA_DIR = "/files/shared/ap/settings_manager/attachments"
+  [ATTACHMENT.FILE_TYPE_EXEC]
+    SNP = "libreoffice --calc"
+    CSV = "libreoffice --calc"
+    TXT = "gedit"
