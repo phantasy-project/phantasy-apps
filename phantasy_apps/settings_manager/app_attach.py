@@ -780,4 +780,4 @@ def _new_dir(dir_path: str, grp: str = "phyopsg"):
 
 def _copy_file(src_filepath: str, dst_filepath: str):
     shutil.copy2(src_filepath, dst_filepath)
-    os.chmod(dst_filepath, stat.S_IWUSR | stat.S_IRUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IROTH)
+    os.chmod(dst_filepath, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
