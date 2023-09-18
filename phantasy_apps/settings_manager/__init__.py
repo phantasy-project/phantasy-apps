@@ -14,7 +14,7 @@ __copyright__ = "(c) 2019-2023, Facility for Rare Isotope Beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
 __title__ = "Settings Manager: Manage Physics Configurations of Accelerator System"
-__version__ = '11.2'
+__version__ = '12.0'
 
 
 def run(cli=False):
