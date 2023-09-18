@@ -1407,7 +1407,7 @@ class CorrelationVisualizerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(float)
     def on_update_pb(self, x):
-        self.scan_pb.setValue(x * 100)
+        self.scan_pb.setValue(int(x * 100))
 
     def pb_changed(self, i):
         if i == 100:
