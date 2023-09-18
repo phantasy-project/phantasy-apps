@@ -768,9 +768,12 @@ class AttachDataDelegateModel(QStyledItemDelegate):
             QStyledItemDelegate.paint(self, painter, option, index)
 
 
-def _new_dir(dir_path: str):
+def _new_dir(dir_path: str, grp: str = "phyopsg"):
     os.makedirs(dir_path)
-    shutil.chown(dir_path, group='phyopsg')
+    try:
+        shutil.chown(dir_path, group=grp)
+    except:
+        pass
     os.chmod(dir_path, stat.S_ISGID | stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP \
         | stat.S_IWGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
 
