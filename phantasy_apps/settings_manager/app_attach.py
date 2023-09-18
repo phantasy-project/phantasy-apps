@@ -377,12 +377,16 @@ class AttachDialog(QDialog, Ui_Dialog):
         """Delete the attachment.
         """
         nsnp = m.data(m.index(idx.row(), AttachDataModel.ColumnNSnp), Qt.UserRole)
+        uri = m.data(m.index(idx.row(), AttachDataModel.ColumnUri))
         if nsnp > 0:
             r = QMessageBox.warning(self, "Delete an Attachment",
                     f"Are you sure to delete this attachment? It will be detached from all ({nsnp}) the attached snapshots.", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
             if r == QMessageBox.No:
                 return
-        delete_attach_data(self.conn, m.data(idx))
+        deleted = delete_attach_data(self.conn, m.data(idx))
+        if deleted:
+            # delete attachment
+            os.remove(uri)
         self.sigAttachmentUpdated.emit()
 
     @pyqtSlot()

@@ -107,6 +107,7 @@ def update_attach_data(conn, attach_name: str, new_data: str,
 
 def delete_attach_data(conn, attach_name: str):
     cursor = conn.cursor()
+    deleted = False
     try:
         cursor.execute(f''' DELETE FROM attachment WHERE name = '{attach_name}' ''')
     except sqlite3.Error as err:
@@ -114,6 +115,9 @@ def delete_attach_data(conn, attach_name: str):
     else:
         cursor.close()
         conn.commit()
+        deleted = True
+    finally:
+        return deleted
 
 
 def get_attach_id(conn, attach_name: str):
