@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
+import os, stat
 import sqlite3
 import shutil
 from subprocess import Popen
@@ -386,7 +386,12 @@ class AttachDialog(QDialog, Ui_Dialog):
         deleted = delete_attach_data(self.conn, m.data(idx))
         if deleted:
             # delete attachment
-            os.remove(uri)
+            try:
+                os.remove(uri)
+            except FileNotFoundError:
+                print(f"{uri} not found.")
+            else:
+                print(f"Deleted {uri}.")
         self.sigAttachmentUpdated.emit()
 
     @pyqtSlot()
@@ -478,6 +483,7 @@ class AttachDialog(QDialog, Ui_Dialog):
                 if not os.path.exists(_dst_dirpath):
                     os.makedirs(_dst_dirpath)
                 shutil.copy2(_src_filepath, _dst_filepath)
+                os.chmod(_dst_filepath, stat.S_IWUSR | stat.S_IRUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IROTH)
             except Exception as err:
                 QMessageBox.critical(self, "Upload an Attachment", f"Failed uploading '{attach_data.name}'.\n{err}",
                         QMessageBox.Ok, QMessageBox.Ok)
