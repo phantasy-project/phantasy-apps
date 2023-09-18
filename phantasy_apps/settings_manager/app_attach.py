@@ -481,9 +481,8 @@ class AttachDialog(QDialog, Ui_Dialog):
             _dst_dirpath = os.path.dirname(_dst_filepath)
             try:
                 if not os.path.exists(_dst_dirpath):
-                    os.makedirs(_dst_dirpath)
-                shutil.copy2(_src_filepath, _dst_filepath)
-                os.chmod(_dst_filepath, stat.S_IWUSR | stat.S_IRUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IROTH)
+                    _new_dir(_dst_dirpath)
+                _copy_file(_src_filepath, _dst_filepath)
             except Exception as err:
                 QMessageBox.critical(self, "Upload an Attachment", f"Failed uploading '{attach_data.name}'.\n{err}",
                         QMessageBox.Ok, QMessageBox.Ok)
@@ -767,3 +766,15 @@ class AttachDataDelegateModel(QStyledItemDelegate):
                 painter.drawPixmap(rect.x(), rect.y(), w.grab())
         else:
             QStyledItemDelegate.paint(self, painter, option, index)
+
+
+def _new_dir(dir_path: str):
+    os.makedirs(dir_path)
+    shutil.chown(dir_path, group='phyopsg')
+    os.chmod(dir_path, stat.S_ISGID | stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP \
+        | stat.S_IWGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
+
+
+def _copy_file(src_filepath: str, dst_filepath: str):
+    shutil.copy2(src_filepath, dst_filepath)
+    os.chmod(dst_filepath, stat.S_IWUSR | stat.S_IRUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IROTH)
