@@ -12,7 +12,7 @@ __authors__ = "Tong Zhang"
 __copyright__ = "(c) 2019-2023, Facility for Rare Isotope beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
-__version__ = "5.5.0"
+__version__ = "5.6.3"
 
 __doc__ = \
 """High-level physics controls applications built upon `PHANTASY`.
@@ -24,3 +24,5 @@ __doc__ = \
 
 k = "PHANTASY_CONFIG_DIR"
 os.environ.setdefault(k, "/usr/lib/phantasy-machines")
+
+from .threshold_manager import mps_take_snapshot

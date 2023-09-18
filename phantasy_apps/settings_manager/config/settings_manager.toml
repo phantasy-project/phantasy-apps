@@ -1,90 +1,173 @@
-# Configuration file for Settings Manager >= 9.0
+# Configuration file for Settings Manager development with VA
 #
-TITLE = "Configurations for Settings Manager"
+TITLE = "App Configurations for Settings Manager, passing with --config"
+
+[UI]
+HEIGHT = 1440
+WIDTH = 1920
 
 [DATA_SOURCE]
-  TYPE = 'DB' # FILE, DB
-  DB_ENGINE = 'sqlite'
-  URI = '/files/shared/ap/settings_manager/sm.db'
-
-  # TYPE = 'FILE'
-  # URI = '/files/shared/ap/settings_manager'  # where reside all snapshot files
+DB_ENGINE = "sqlite"
+TYPE = "database"
+URI = "~/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm.db"
 
 [SETTINGS]
-  T_WAIT = 0.05  # Settling time between batch settings apply, second
-  TOLERANCE = 0.10 # defalut absolute discrepancy tolerance
-  PRECISION = 3 # float number precision
-  FIELD_INIT_MODE = 'model' # initial settings with model or live data
-  INIT_SETTINGS = false     # initialize settings table or not
-  SUPPORT_CONFIG_PATH = "/files/shared/ap/settings_manager/.config/" # elements,settings,tolerance.json
-  # HIDE_COLUMNS = ['dx01', 'tolerance', 'writable']
+FIELD_INIT_MODE = "model" # initial settings with model or live data, if live is enabled, saved set will be overridden
+HIDDEN_COLUMNS = [
+  "Pos [m]",
+  "Tolerance",
+  "Writable?",
+  "SavedSet-LiveRead\n(x₀-x₁)",
+  "RefSet\n(xref)",
+  "LiveSet-RefSet\n(x₂-xref)",
+  "SavedSet-RefSet\n(x₀-xref)",
+  "Tune Alarm\nEnabled?",
+  "Read Alarm\nEnabled?",
+] 
+PRECISION = 3 # float number precision
+SKIP_NONE = true # whether skip device settings with none returned
+TOLERANCE = 0.10 # defalut absolute discrepancy tolerance
+T_WAIT = 10 # Settling time between batch settings apply, milliseconds
+# machine specific
+SCALABLE_FIELD_NAMES = ["I", "V", "AMP", "AMP1", "AMP2", "AMP3", "I_TC"] 
+STRIPPER_POS = 224.90368452 # meter, carbon stripper location
+# for those write permission allowed per ACF but intended to be readonly.
+READONLY_DEVICE_LIST = [
+  'FE_ISRC1:BEAM',
+  'FE_ISRC1:DRV_D0686',
+  'FE_ISRC1:HVP_D0679',
+  'FE_ISRC1:PSEL_D0679',
+  'FE_ISRC1:PSX_D0679',
+  'FE_ISRC1:PSB_D0679',
+  'FE_ISRC1:SOLR_D0682',
+  'FE_ISRC1:SOLR_D0685',
+  'FE_ISRC1:PSE_D0686',
+  'FE_ISRC1:DRV_D0686',
+  'FE_ISRC1:PSEL_D0698',
+  'FE_ISRC1:HVP_D0698',
+  'FE_ISRC2:BEAM',
+  'FE_SRC2:PSEL_D0651',
+  'FE_SRC2:HVP_D0652',
+  'FE_SRC2:PSB_D0659',
+  'FE_SRC2:SOLS_D0659',
+  'FE_SRC2:S_D0661',
+  'FE_SRC2:SOLS_D0662',
+  'FE_SRC2:SOLS_D0664',
+  'FE_SRC2:PSE_D0665',
+  'FE_SRC2:HVP_D0677',
+  'FE_SRC2:PSEL_D0678',
+  'FE_SRC2:PSX_N0003',
+  'FE_SRC2:PSX_N0002',
+  'FE_SRC2:PSX_N0001',
+  'FE_LEBT:BEAM',
+  'FE_LEBT:ATT_D0957-1',
+  'FE_LEBT:ATT_D0957-2',
+  'FE_LEBT:ATT_D0974-1',
+  'FE_LEBT:ATT_D0974-2',
+  'FE_LEBT:AP_D0796',
+  'FE_LEBT:AP_D0807',
+  'FE_RFQ:CAV_D1005',
+  'FS1_CSS:STRIP_D2249',
+]
+
+# if not defined, use the app distributed one.
+# relative path w.r.t. the main app config file.
+# [FIELD_OF_INTEREST]
+# FILEPATH = "fields.toml"
+
+[OPI]
+SNP_AUTHOR_PV = "PHY:SM_SNP_LAST_AUTHOR"
+SNP_ION_PV = "PHY:SM_SNP_LAST_ION"
+SNP_NAME_PV = "PHY:SM_SNP_LAST_NAME"
+SNP_NOTE_PV = "PHY:SM_SNP_LAST_NOTE"
+SNP_PUBLISHER_PV = "PHY:SM_SNP_LAST_PUBLISHER"
 
 [MACH_STATE]
-  # CONFIG_PATH = "/files/shared/ap/HLA/.phyapps/phantasy-apps/phantasy_apps/msviz/config/metadata.toml"
-  CONFIG_PATH = "/files/shared/ap/settings_manager/metadata.toml"
-  ENABLED = true
-  DAQ_RATE = 5
-  DAQ_NSHOT = 20
+CONFIG_PATH = "~/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/msviz/config/metadata_va.toml"
+DAQ_NSHOT = 20
+DAQ_RATE = 5
+ENABLED = false
 
 [DATA_REFRESH]
-  NCORE = 4 # max number of CPU cores to use
+NCORE = 4 # max CPU cores to use
 
 [LATTICE]
-  DEFAULT_MACHINE = 'FRIB'
-  DEFAULT_SEGMENT = 'LINAC'
+DEFAULT_MACHINE = "FRIB_VA"
+DEFAULT_SEGMENT = "LS1FS1"
 
 [ARCHIVER_APPLIANCE]
-  [ARCHIVER_APPLIANCE.DATA_CLIENT]
-    URL = "http://epicsarchiver1.ftc:17668"
+[ARCHIVER_APPLIANCE.DATA_CLIENT]
+URL = "http://127.0.0.1:17665"
 
-[SNAPSHOT_TEMPLATES]
-  [SNAPSHOT_TEMPLATES."LINAC_Artemis"]
-    NAME = "LINAC_Artemis"
-    DB_ENTRY = "2023-05-15T09:57:41"
-    DB_TAGS = ["LINAC", "SCS1"]
-
-  [SNAPSHOT_TEMPLATES."FSEE_Artemis"]
-    NAME = "FSEE_Artemis"
-    DB_ENTRY = "2023-05-15T10:18:02"
-    DB_TAGS = ["FSEE", "SCS1"]
-
-  [SNAPSHOT_TEMPLATES."LINAC_HP-ECR"]
-    NAME = "LINAC_HP-ECR"
-    DB_ENTRY = "2023-05-15T10:00:59"
-    DB_TAGS = ["LINAC", "SCS2"]
-
-  [SNAPSHOT_TEMPLATES."FSEE_HP-ECR"]
-    NAME = "FSEE_HP-ECR"
-    DB_ENTRY = "2023-05-15T10:17:15"
-    DB_TAGS = ["FSEE", "SCS2"]
-
+# Apps that could be launched from the context menu of the first column
+# of settings view.
+# args: ename (element name) machine (machine name), segment (segment name)
 [EXTERNAL_APPS]
-  [EXTERNAL_APPS.APP1]
-    NAME = "Viola"
-    EXEC = "python3 /files/shared/ap/OnlineViewerApp/viola.py"
-    ARGS = "--setting {ename}.json"
-    CWD = "/files/shared/ap/OnlineViewerApp/devices"
-  [EXTERNAL_APPS.APP2]
-    NAME = "Correlation Visualizer"
-    EXEC = "correlation_visualizer"
-  #   ARGS = ""
-  #   CWD = ""
+[EXTERNAL_APPS.APP1]
+ARGS = "--config {ename}.json"
+EXEC = "correlation_visualizer"
+NAME = "Correlation Visualizer"
 
 [FILTER_BUTTONS]
 [FILTER_BUTTONS.BTN1]
-FILEPATH = "/files/shared/ap/settings_manager/filters/01_scaling.flt"
+FILEPATH = "~/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/filters/01_scaling.flt"
 
 [FILTER_GROUPS]
 [FILTER_GROUPS.GRP1]
-NAME = "Filters"
 DESC = "Choose predefined filters..."
-DIRPATH = "/files/shared/ap/settings_manager/filters"
+DIRPATH = "~/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/filters"
+NAME = "Filters"
+
+# EPICS : do not use
+#[EPICS]
+#  CA_AUTO_ADDR_LIST = "NO"
+#  CA_ADDR_LIST = ["localhost", "controlgw1.nscl.msu.edu:6064", "controlgw2.nscl.msu.edu:6064"]
+
+[SNAPSHOT_TAKE]
+# predefined tag list to use when take a snapshot.
+EXCL_TAG_GROUPS = [["LINAC", "FSEE"], ["SCS1", "SCS2"]]
+TAGS = ["GOLDEN", "FSEE", "LINAC", "SCS1", "SCS2", "TEST", "VA"]
+
+[BEAM]
+# machine bound list
+MACHINE_BOUNDS = ["LINAC", "FSEE"]
+# ion source list
+ISRC_ALIAS = ["ISRC1", "ISRC2"]
+ISRC_NAMES = ["Artemis", "HP-ECR"]
+
+[SNAPSHOT_TEMPLATES]
+[SNAPSHOT_TEMPLATES."LINAC_Artemis"]
+DB_ENTRY = "2023-03-15T15:37:19"
+DB_TAGS = ["LINAC", "SCS1"]
+NAME = "LINAC_Artemis"
+
+#  [SNAPSHOT_TEMPLATES."FSEE_Artemis"]
+#    NAME = "FSEE_Artemis"
+#    DB_ENTRY = "2023-05-15T10:18:02"
+#    DB_TAGS = ["FSEE", "SCS1"]
+
+#  [SNAPSHOT_TEMPLATES."LINAC_HP-ECR"]
+#    NAME = "LINAC_HP-ECR"
+#    DB_ENTRY = "2023-05-15T10:00:59"
+#    DB_TAGS = ["LINAC", "SCS2"]
+#
+#  [SNAPSHOT_TEMPLATES."FSEE_HP-ECR"]
+#    NAME = "FSEE_HP-ECR"
+#    DB_ENTRY = "2023-05-15T10:17:15"
+#    DB_TAGS = ["FSEE", "SCS2"]
+#
 
 # other configuration data
 [DATA]
-  # tolerance PVs
-  TOL_PVFILE = "/files/shared/ap/HLA/.phyapps/phantasy-apps/phantasy_apps/settings_manager/config/tolpv.json"
-  # reference set PVs
-  REFST_PVFILE = "/files/shared/ap/HLA/.phyapps/phantasy-apps/phantasy_apps/settings_manager/config/refstpv.json"
-  # alarm switch PVs
-  ALMACT_PVFILE = "/files/shared/ap/HLA/.phyapps/phantasy-apps/phantasy_apps/settings_manager/config/almactpv.json"
+# tolerance PVs
+#  TOL_PVFILE = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/tolpv.json"
+# reference set PVs
+#  REFST_PVFILE = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/refstpv.json"
+# alarm switch PVs
+#  ALMACT_PVFILE = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/config/almactpv.json"
+
+[ATTACHMENT]
+  ROOT_DIR = "/tmp/sm-attach"
+  [ATTACHMENT.FILE_TYPE_EXEC]
+    csv = 'libreoffice --calc'
+    txt = 'xed'

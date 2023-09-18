@@ -6,67 +6,60 @@
 import os
 import shutil
 import toml
-from itertools import cycle
 from phantasy_apps.utils import find_dconf
 
-
-# user configurations
-USER_APP_CONF_DIR = "~/.phantasy"
-
-# distributed with app
-DEFAULT_APP_CONF_PATH = find_dconf("settings_manager", "sm_default.toml")
-
-# app config
-# ~/.phantasy/settings_manager.toml or
-# <app-dir>/config/settings_manager.toml
-APP_CONF_PATH = find_dconf("settings_manager", "settings_manager.toml")
-APP_CONF = toml.load(APP_CONF_PATH)
-
-# data refresher
-NPROC = APP_CONF['DATA_REFRESH']['NCORE']
-
-# machine state capture
-MS_CONF_PATH = APP_CONF['MACH_STATE']['CONFIG_PATH']
-MS_ENABLED = APP_CONF['MACH_STATE']['ENABLED']
-MS_DAQ_RATE = APP_CONF['MACH_STATE']['DAQ_RATE']
-MS_DAQ_NSHOT = APP_CONF['MACH_STATE']['DAQ_NSHOT']
-
-# data source and path
-DATA_SOURCE_MODE = APP_CONF['DATA_SOURCE']['TYPE']
-DB_ENGINE = APP_CONF['DATA_SOURCE']['DB_ENGINE']
-DATA_URI = os.path.expanduser(APP_CONF['DATA_SOURCE']['URI'])
-
-# pref
-FIELD_INIT_MODE = APP_CONF['SETTINGS']['FIELD_INIT_MODE']
-INIT_SETTINGS = APP_CONF['SETTINGS']['INIT_SETTINGS']
-T_WAIT = APP_CONF['SETTINGS']['T_WAIT']
-N_DIGIT = APP_CONF['SETTINGS']['PRECISION']
-# for elements,settings,files
-SUPPORT_CONFIG_PATH = APP_CONF['SETTINGS']['SUPPORT_CONFIG_PATH']
-
 # default machine/segment
-DEFAULT_MACHINE = APP_CONF['LATTICE']['DEFAULT_MACHINE']
-DEFAULT_SEGMENT = APP_CONF['LATTICE']['DEFAULT_SEGMENT']
-
-# others not controlled with config file
-N_SNP_MAX = cycle([50, 100, 500, 'All'])
+# (only being used in SnapshotData setter of machine/segment)
+DEFAULT_MACHINE = "FRIB"
+DEFAULT_SEGMENT = "LINAC"
 
 
-def init_user_config():
-    """Test if user app configuration file exists, if not, reset.
+def get_foi_dict(filepath: str):
+    """Return a dict of field of interest per element type.
     """
-    user_config_dir = os.path.abspath(os.path.expanduser(USER_APP_CONF_DIR))
-    user_config_path = os.path.join(user_config_dir, 'settings_manager.toml')
-    if not os.path.isfile(user_config_path):
-        reset_app_config()
-    return user_config_path
+    conf = toml.load(filepath)
+    return {k: v['fields'] for k, v in conf.items()}
+
+
+def read_app_config(config_file: str = None):
+    """Read the app configuration from *config_file*, if it is None,
+    follow the search rules defined in *find_dconf*.
+
+    Returns
+    -------
+    r : dict
+        A dict as the app configurations.
+    """
+    # all keys startwith _ will not be persistent
+    if config_file is None:
+        config_file = find_dconf("settings_manager", "settings_manager.toml")
+    print(f"Settings Manager: loading configurations from:\n'{config_file}'.")
+    # app conf
+    app_conf = toml.load(config_file)
+    app_conf["_FILEPATH"] = os.path.abspath(config_file)
+
+    # field-of-interest config, if not defined, use default one.
+    try:
+        foi_filepath = os.path.expanduser(app_conf['FIELD_OF_INTEREST']['FILEPATH'])
+        if not os.path.isabs(foi_filepath):
+            foi_filepath = os.path.abspath(
+                    os.path.join(os.path.dirname(app_conf['_FILEPATH']), foi_filepath))
+    except:
+        foi_filepath = find_dconf("settings_manager", "fields.toml")
+    finally:
+        foi_conf = get_foi_dict(foi_filepath)
+        app_conf['_FOI'] = foi_conf
+    return app_conf
 
 
 def reset_app_config():
-    """Copy default app configuration file to *target_path*.
+    """Copy default app configuration file to user's home directory (~/.phantasy)
     """
-    target_path = os.path.abspath(os.path.expanduser(USER_APP_CONF_DIR))
+    # distributed with app
+    default_app_conf_path = find_dconf("settings_manager", "settings_manager.toml")
+    target_path = os.path.abspath(os.path.expanduser("~/.phantasy"))
     if not os.path.exists(target_path):
         os.makedirs(target_path)
     fullpath = os.path.join(target_path, 'settings_manager.toml')
-    shutil.copy2(DEFAULT_APP_CONF_PATH, fullpath)
+    shutil.copy2(default_app_conf_path, fullpath)
+    return fullpath

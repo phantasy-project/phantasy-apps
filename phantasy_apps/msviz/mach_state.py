@@ -161,7 +161,7 @@ def _daq_func(pv_list, delta_t):
     # work with DAQT (daq_func)
     #
     t0 = time.time()
-    arr = [caget(i) for i in pv_list]
+    arr = caget_many(pv_list)
     t_elapsed = time.time() - t0
     t_wait = delta_t - t_elapsed
     if t_wait > 0:

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import tempfile
 from functools import partial
+import toml
 import os
 import shutil
 
@@ -16,42 +18,46 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QSpacerItem
 
-from phantasy_ui import get_open_directory
 from phantasy_ui import get_open_filename
+from phantasy_ui import get_save_filename
 from phantasy_ui import select_font
+from phantasy_ui import delayed_exec
 
 from .utils import COLUMN_NAMES
-from .utils import reset_config
 from .ui.ui_preferences import Ui_Dialog
 
-from .conf import APP_CONF, APP_CONF_PATH
-from .conf import N_SNP_MAX, NPROC, MS_CONF_PATH, MS_ENABLED
-from .conf import DATA_SOURCE_MODE, DB_ENGINE, DATA_URI
-from .conf import reset_app_config, init_user_config
+from .conf import reset_app_config
 
+
+def _read_data_in_tmp_file(data: str):
+    with tempfile.NamedTemporaryFile("w", delete=False, suffix='.toml') as f1:
+        f1.write(data)
+    QDesktopServices.openUrl(QUrl(f1.name))
+    delayed_exec(lambda: os.unlink(f1.name), 10000)
+
+_DATA_MODE_MAP = {
+    'Model/Snapshot': 'model',
+    'Live/Control': 'live'
+}
 
 class PreferencesDialog(QDialog, Ui_Dialog):
 
-    pref_changed = pyqtSignal(dict)
+    pref_changed = pyqtSignal()
     visibility_changed = pyqtSignal(int, bool)
-
-    # config, ts, ms, elem pv
-    config_changed = pyqtSignal()
 
     # font
     font_changed = pyqtSignal(QFont)
 
-    # bool
-    init_settings_changed = pyqtSignal(bool)
-
     # data uri changed
     data_uri_changed = pyqtSignal('QString')
 
-    def __init__(self, parent=None, preference_dict=None):
+    def __init__(self, preference_dict: dict, parent):
         super(self.__class__, self).__init__()
         self.parent = parent
 
-        self.pref_dict = APP_CONF if preference_dict is None else preference_dict
+        # point to original one in parent
+        # all changes reflect in parent
+        self.pref_dict = preference_dict
 
         # UI
         self.setupUi(self)
@@ -61,9 +67,6 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         self._post_init()
 
     def _post_init(self):
-        # disable tolerance setting
-        self.tol_dsbox.setEnabled(False)
-        self.tol_dsbox.setToolTip("Change tolerance from the Tolerance column, tolerance values are managed with PVs now.")
         # field init mode
         mode = self.pref_dict['SETTINGS']['FIELD_INIT_MODE']
         self.model_rbtn.setChecked(mode == 'model')
@@ -71,21 +74,26 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         for o in (self.model_rbtn, self.live_rbtn):
             o.toggled.emit(o.isChecked())
 
-        # t_wait in second
+        # t_wait in milliseconds
         t_wait = self.pref_dict['SETTINGS']['T_WAIT']
-        self.apply_delt_dsbox.setValue(t_wait)
+        self.apply_delt_sbox.setValue(t_wait)
+        self.apply_delt_sbox.valueChanged.connect(self.on_apply_delt_changed)
 
-        # init_settings bool
-        init_settings = self.pref_dict['SETTINGS']['INIT_SETTINGS']
-        self.init_settings_chkbox.setChecked(init_settings)
+        # init snapshot
+        skip_none = self.pref_dict['SETTINGS']['SKIP_NONE']
+        self.skip_none_chkbox.setChecked(skip_none)
+        self.init_snp_btn.clicked.connect(self.parent.on_init_lattice_settings)
+        self.skip_none_chkbox.toggled.connect(self.on_toggle_skip_none)
 
         # tolerance
         tol = self.pref_dict['SETTINGS']['TOLERANCE']
         self.tol_dsbox.setValue(tol)
+        self.tol_dsbox.valueChanged.connect(self.on_tol_changed)
 
         # ndigits
         ndigit = self.pref_dict['SETTINGS']['PRECISION']
         self.ndigit_sbox.setValue(ndigit)
+        self.ndigit_sbox.valueChanged.connect(self.on_ndigit_changed)
 
         # data source type
         dsrc_mode = self.pref_dict['DATA_SOURCE']['TYPE']
@@ -98,146 +106,108 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         dsrc_uri = self.pref_dict['DATA_SOURCE']['URI']
         self.set_uri(dsrc_uri, dsrc_mode)
 
-        # machstate
+        # machine state
         msconf_path = self.pref_dict['MACH_STATE']['CONFIG_PATH']
         self.msconf_path_lineEdit.setText(msconf_path)
         msconf_daq_rate = self.pref_dict['MACH_STATE']['DAQ_RATE']
         self.msconf_rate_cbb.setCurrentText(str(msconf_daq_rate))
         msconf_daq_nshot = self.pref_dict['MACH_STATE']['DAQ_NSHOT']
         self.msconf_nshot_cbb.setCurrentText(str(msconf_daq_nshot))
-        self.msconf_open_btn.clicked.connect(partial(self.on_open_filepath, msconf_path))
+        self.msconf_open_btn.clicked.connect(self.on_read_ms_config)
+        self.msconf_nshot_cbb.currentTextChanged.connect(self.on_daq_nshot_changed)
+        self.msconf_rate_cbb.currentTextChanged.connect(self.on_daq_rate_changed)
 
-        # colvis
+        # column visibility
+        hidden_col_idx_list = self.pref_dict['_HIDDEN_COLUMNS_IDX']
         tv = self.parent._tv
         layout = self.col_visibility_gbox
         for idx, name in enumerate(COLUMN_NAMES):
             btn = QPushButton(name, self)
+            btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
             btn.setCheckable(True)
-            btn.setChecked(tv.isColumnHidden(idx))
+            btn.setChecked(idx in hidden_col_idx_list)
             btn.toggled.connect(partial(self.on_toggle_visibility, idx))
             i = idx // 4
             j = idx - 4 * i
             layout.addWidget(btn, i, j)
 
-        # config path
-        config_path = self.pref_dict['SETTINGS']['SUPPORT_CONFIG_PATH']
-        self.update_config_paths(config_path)
-        self.change_config_path_btn.clicked.connect(self.on_change_confpath)
-
-        # reset support config
-        self.reset_config_btn.clicked.connect(self.on_reset_config)
-        # purge support config
-        self.purge_config_btn.clicked.connect(self.on_purge_config)
-
-        # reset app config
+        # reset app config (disable)
         self.reset_app_config_btn.clicked.connect(self.on_reset_app_config)
-        # edit app config
-        self.edit_app_config_btn.clicked.connect(self.on_edit_app_config)
+        self.reset_app_config_btn.setEnabled(False)
+
+        # read app config
+        self.view_app_config_btn.clicked.connect(self.on_read_app_config)
+        # app config path
+        self.appconf_path_lineEdit.setText(self.pref_dict['_FILEPATH'])
+
+        # export app config (with all runtime changes through Preferences dialog)
+        self.export_app_config_btn.clicked.connect(self.on_export_app_config)
 
         # font
         self.font_changed.connect(self.on_font_changed)
-        font = self.pref_dict['font']
+        font = self.pref_dict['_FONT']
         self.font_changed.emit(font)
 
     def set_uri(self, path: str, dsrc_mode: str):
         if not os.access(os.path.abspath(os.path.expanduser(path)), os.W_OK):
             return
-        if dsrc_mode == 'DB':
-            self.dbpath_lineEdit.setText(path)
-        else:
-            self.wdir_lineEdit.setText(path)
-        self.data_uri_changed.emit(path)
+        self.dbpath_lbl.setText(path)
         if self.pref_dict['DATA_SOURCE']['URI'] != path:
             self.pref_dict['DATA_SOURCE']['URI'] = path
+            self.data_uri_changed.emit(path)
 
     @pyqtSlot()
     def on_reset_app_config(self):
-        """Reset app config with package distributed one.
+        """Reset app config with the package distributed one.
         """
         r = QMessageBox.question(self, "Reset App Configuration File",
                 "Are you sure to reset app configurations?",
                 QMessageBox.Yes | QMessageBox.No)
         if r == QMessageBox.No:
             return
-        reset_app_config()
+        user_confpath = reset_app_config() # reset the config file to ~/.phantasy/settings_manager.toml
+        QMessageBox.information(self, "Reset App Config",
+                f"Reset app configurations to '{user_confpath}', modify it and restart 'Settings Manager'.\n'Settings Manager' recommends to work with configuration file with --config option.",
+                QMessageBox.Ok, QMessageBox.Ok)
 
     @pyqtSlot()
-    def on_edit_app_config(self):
+    def on_read_app_config(self):
         """Edit app configurations if possible.
         """
-        r = QMessageBox.question(self, "Edit App Configuration File",
-                "Click Yes to open and edit the app configuration file, restart app to see the changes.",
-                QMessageBox.Yes | QMessageBox.No)
-        if r == QMessageBox.No:
-            return
-        user_config_path = init_user_config()
-        QDesktopServices.openUrl(QUrl(user_config_path))
+        with open(self.pref_dict['_FILEPATH'], "r") as f0:
+            data = f0.read()
+        _read_data_in_tmp_file(data)
 
     @pyqtSlot()
-    def on_reset_config(self):
-        """Reset config data with package distributed ones.
+    def on_export_app_config(self):
+        """Export app configurations to a file.
         """
-        r = QMessageBox.question(self, "Reset Configuration Files",
-                "Are you sure to reset all the configuration files?",
-                QMessageBox.Yes | QMessageBox.No)
-        if r == QMessageBox.No:
+        filepath, ext = get_save_filename(self,
+                    type_filter='Config File (*.toml);;Other Files (*.*)',
+                    cdir=os.path.expanduser("~"))
+        if filepath is None:
             return
-
-        current_config_path = self.config_path_lineEdit.text()
-        reset_config(current_config_path)
-
-        self.config_changed.emit()
+        try:
+            with open(filepath, "w") as fp:
+                pref_dict_copy = self.pref_dict.copy()
+                [pref_dict_copy.pop(k) for k in self.pref_dict.keys() if k.startswith("_")]
+                toml.dump(pref_dict_copy, fp)
+        except Exception as err:
+            QMessageBox.critical(self, "Export App Config",
+                    f"Failed exporting app configurations to '{filepath}'!\n{str(err)}",
+                    QMessageBox.Ok, QMessageBox.Ok)
+        else:
+            QMessageBox.information(self, "Export App Config",
+                    f"Exported app configurations to '{filepath}'.",
+                    QMessageBox.Ok, QMessageBox.Ok)
 
     @pyqtSlot()
-    def on_purge_config(self):
-        """Purge config data.
-        """
-        r = QMessageBox.question(self, "Purge Configuration Files",
-                "Are you sure to clean up all the configuration files?",
-                QMessageBox.Yes | QMessageBox.No)
-        if r == QMessageBox.No:
-            return
-
-        current_config_path = self.config_path_lineEdit.text()
-        ts_path = os.path.join(current_config_path, 'tolerance.json')
-        ms_path = os.path.join(current_config_path, 'settings.json')
-        elem_path = os.path.join(current_config_path, 'elements.json')
-        for path in (ts_path, ms_path, elem_path):
-            with open(path, 'w'): pass
-
-        self.config_changed.emit()
-
-    def update_config_paths(self, root_config_path):
-        config_path = root_config_path
-        ts_confpath = os.path.join(config_path, 'tolerance.json')
-        ms_confpath = os.path.join(config_path, 'settings.json')
-        elem_confpath = os.path.join(config_path, 'elements.json')
-        self.config_path_lineEdit.setText(config_path)
-        layout = self.config_btns_hbox
-        for i in reversed(range(layout.count())):
-            w = layout.itemAt(i)
-            try:
-                w.widget().setParent(None)
-            except:
-                layout.removeItem(w)
-        for p in (ts_confpath, ms_confpath, elem_confpath):
-            btn = QPushButton(os.path.basename(p), self)
-            btn.setToolTip(p)
-            btn.clicked.connect(partial(self.on_open_filepath, p))
-            layout.addWidget(btn)
-        layout.addItem(QSpacerItem(20, 20,
-                       QSizePolicy.Expanding, QSizePolicy.Preferred))
-
-    @pyqtSlot()
-    def on_open_filepath(self, path):
-        QDesktopServices.openUrl(QUrl(path))
-
-    @pyqtSlot()
-    def on_change_confpath(self):
-        d = get_open_directory(self)
-        if not os.access(d, os.W_OK):
-            return
-        self.update_config_paths(d)
+    def on_read_ms_config(self):
+        confpath = os.path.abspath(os.path.expanduser(
+                self.pref_dict['MACH_STATE']['CONFIG_PATH']))
+        with open(confpath, "r") as f0:
+            data = f0.read()
+        _read_data_in_tmp_file(data)
 
     @pyqtSlot(bool)
     def on_toggle_visibility(self, idx, f):
@@ -245,41 +215,49 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         hide, otherwise show.
         """
         self.visibility_changed.emit(idx, f)
+        if f: # hidden
+            self.pref_dict['_HIDDEN_COLUMNS_IDX'].append(idx)
+            self.pref_dict['SETTINGS']['HIDDEN_COLUMNS'].append(COLUMN_NAMES[idx])
+        else: # shown
+            self.pref_dict['_HIDDEN_COLUMNS_IDX'].remove(idx)
+            self.pref_dict['SETTINGS']['HIDDEN_COLUMNS'].remove(COLUMN_NAMES[idx])
 
     @pyqtSlot(bool)
     def on_toggle_mode(self, f):
         if f:
-            self.mode = self.sender().text().lower()
+            self.mode = _DATA_MODE_MAP[self.sender().text()]
+            self.pref_dict['SETTINGS']['FIELD_INIT_MODE'] = self.mode
+
+    @pyqtSlot(float)
+    def on_tol_changed(self, tol: float):
+        """Tolerance is changed.
+        """
+        # change tolerance via PVs.
+        pass
+
+    @pyqtSlot(int)
+    def on_ndigit_changed(self, n: int):
+        """Float Precision is changed.
+        """
+        self.pref_dict['SETTINGS']['PRECISION'] = n
 
     @pyqtSlot()
     def on_click_ok(self):
-        self.pref_changed.emit(self.get_config())
+        self.pref_changed.emit()
         self.close()
         self.setResult(QDialog.Accepted)
 
-    def get_config(self):
-        return {
-                'SETTINGS':
-                    {'FIELD_INIT_MODE': self.mode,
-                     'T_WAIT': self.apply_delt_dsbox.value(),
-                     'INIT_SETTINGS': self.init_settings_chkbox.isChecked(),
-                     'TOLERANCE': self.tol_dsbox.value(),
-                     'PRECISION': self.ndigit_sbox.value(),
-                     },
-                'MACH_STATE':
-                    {
-                        'DAQ_RATE': int(self.msconf_rate_cbb.currentText()),
-                        'DAQ_NSHOT': int(self.msconf_nshot_cbb.currentText()),
-                    }
-                }
-
-    @pyqtSlot(bool)
-    def on_init_settings(self, f):
-        """If toggled, initialize settings view with the whole loaded
-        lattice, otherwise the user should add elements into view.
+    @pyqtSlot('QString')
+    def on_daq_nshot_changed(self, s: str):
+        """DAQ nshot is changed.
         """
-        self.init_settings = f
-        self.init_settings_changed.emit(f)
+        self.pref_dict['MACH_STATE']['DAQ_NSHOT'] = int(s)
+
+    @pyqtSlot('QString')
+    def on_daq_rate_changed(self, s: str):
+        """DAQ rate is changed.
+        """
+        self.pref_dict['MACH_STATE']['DAQ_RATE'] = int(s)
 
     @pyqtSlot()
     def on_select_font(self):
@@ -293,22 +271,13 @@ class PreferencesDialog(QDialog, Ui_Dialog):
     def on_font_changed(self, font):
         self.font = font
         self.font_sample_lbl.setText('{},{}pt'.format(font.family(),
-                                                    font.pointSize()))
+                                                      font.pointSize()))
         self.font_sample_lbl.setFont(font)
 
     @pyqtSlot('QString')
     def on_dsrc_mode_changed(self, s):
-        objs_file = (self.wdir_lbl, self.wdir_lineEdit, self.wdir_btn)
-        objs_db = (self.dbpath_lbl, self.dbpath_lineEdit, self.dbpath_btn)
-        [o.setVisible(s=='DB') for o in objs_db]
-        [o.setVisible(s!='DB') for o in objs_file]
-
-    @pyqtSlot()
-    def on_choose_wdir(self):
-        """Select working directory.
-        """
-        d = get_open_directory(self)
-        self.set_uri(d, 'FILE')
+        objs_db = (self.dbpath_title_lbl, self.dbpath_lbl, self.dbpath_btn)
+        [o.setVisible(s=='database') for o in objs_db]
 
     @pyqtSlot()
     def on_choose_dbfile(self):
@@ -317,4 +286,17 @@ class PreferencesDialog(QDialog, Ui_Dialog):
         filepath, ext = get_open_filename(self, type_filter='SQLite File (*.db);;Other Files (*.*)')
         if filepath is None:
             return
-        self.set_uri(filepath, 'DB')
+        self.set_uri(filepath, 'database')
+
+    @pyqtSlot(bool)
+    def on_toggle_skip_none(self, is_skip_none: bool):
+        """If skip the non-reachable device settings or not.
+        """
+        self.pref_dict['SETTINGS']['SKIP_NONE'] = is_skip_none
+
+    @pyqtSlot(int)
+    def on_apply_delt_changed(self, t: int):
+        """Delta t in milliseconds for settings apply.
+        """
+        self.pref_dict['SETTINGS']['T_WAIT'] = t
+

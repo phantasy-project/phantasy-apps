@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import json
-import toml
 import os
 import re
 import time
 import shutil
 import pandas as pd
+import numpy as np
 from collections import Counter
 from collections import OrderedDict
 from datetime import datetime
@@ -17,23 +17,24 @@ from functools import partial
 from numpy.testing import assert_almost_equal
 
 from PyQt5.QtCore import QObject
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QSize, QPoint
 from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtCore import QPersistentModelIndex
 from PyQt5.QtCore import QItemSelectionModel
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import QVariant
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QRect
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QBrush
+from PyQt5.QtGui import QBrush, QPainter
 from PyQt5.QtGui import QColor
 from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
+from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QGraphicsDropShadowEffect, QLabel,)
 from PyQt5.QtWidgets import QStyle
 from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtWidgets import QToolButton
@@ -45,6 +46,8 @@ from phantasy_ui.widgets import is_item_checked
 from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 from phantasy_apps.utils import find_dconf
 from .data import SnapshotData
+from phantasy_apps.msviz.mach_state import fetch_data
+
 
 AVAILABLE_IONS = ('He', 'Ne', 'Ar', 'Kr', 'Xe', 'U', 'Se', 'Ca', 'Pb',
                   'O', 'Bi', 'Zn', 'Tm', 'Pt')
@@ -63,13 +66,13 @@ COLUMN_NAMES2 = [
     f'SavedSet\n({X0})',
     f'LiveRead\n({X1})',
     f'LiveSet\n({X2})',
-    f'SavedSet-LiveRead\n{DELTA}({X0},{X1})',
+    f'SavedSet-LiveRead\n({X0}-{X1})',
 #    f'{DELTA}({X0},{X2})',
     f'LiveSet-SavedSet\n({X2}-{X0})',
     f'LiveRead-LiveSet\n({X1}-{X2})',
     'Tolerance', 'Writable?', f'LiveSet/SaveSet\n({X2}/{X0})',
-    'Live State',
-    'State',
+    'Live\nState',
+    'Saved\nState',
     f'RefSet\n({XREF})',
     f'LiveSet-RefSet\n({X2}-{XREF})',
     f'SavedSet-RefSet\n({X0}-{XREF})',
@@ -120,10 +123,6 @@ ACT_BTN_CONF = {}
 ELEMT_PX_MAP = {i: [f':/elements/elements/{i}{s}.png' for s in ('', '-off')]
                 for i in AVAILABLE_IONS}
 
-DEFAULT_TS_PATH = find_dconf("settings_manager", "tolerance.json")
-DEFAULT_MS_PATH = find_dconf("settings_manager", "settings.json")
-DEFAULT_ELEM_PATH = find_dconf("settings_manager", "elements.json")
-
 TBTN_STY_COLOR_TUPLE = ('#EEEEEC', '#F7F7F7', '#90B5F0', '#6EA1F1', '#E7EFFD', '#CBDAF1')
 TBTN_STY_COLOR_TUPLE_GOLDEN = ('#FFF7B3', '#F5E345', '#FFCD03', '#FFC503', '#FAED11', '#FAE111')
 TBTN_STY_BASE = """
@@ -171,29 +170,6 @@ QToolButton:checked {{
 }}
 """
 
-TAG_BTN_STY1 = """
-QToolButton {{
-    font-size: {fs}pt;
-    border-radius: 6px;
-    padding: 3px 3px 3px 3px;
-    color: rgb(18, 18, 18);
-    border-top: 2px solid rgb(139, 139, 139);
-    border-left: 2px solid rgb(139, 139, 139);
-    border-right: 2px solid rgb(139, 139, 139);
-    border-bottom: 2px solid rgb(139, 139, 139);
-    qproperty-icon: url("none") off, url(":/sm-icons/checkmark-blue.png") on;
-}}
-QToolButton:hover {{
-    background-color: rgb(224, 238, 255);
-}}
-QToolButton:checked {{
-    color: rgb(45, 91, 227);
-    border-top: 2px solid rgb(50, 105, 255);
-    border-left: 2px solid rgb(50, 105, 255);
-    border-right: 2px solid rgb(50, 105, 255);
-    border-bottom: 2px solid rgb(50, 105, 255);
-}}
-"""
 #
 PWR_STS_U_ROLE = Qt.UserRole + 5
 #
@@ -257,7 +233,8 @@ STS_PX_MAP = {
 "Chopper state: Running": (":/sm-icons/chp_running.png", 1),
 
 "Ion source is active": (SM_PX_ON_PATH, 1),
-"Ion source is inactive": (SM_PX_OFF_PATH, 0)
+"Ion source is inactive": (SM_PX_OFF_PATH, 0),
+"Ion source is unknown": (SM_PX_UNKNOWN_PATH, -10)
 }
 _STS_PX_CACHE = {}
 
@@ -272,61 +249,6 @@ def set_device_state_item(sts_str: str):
     item.setData(sts_str, Qt.ToolTipRole)
     item.setData(sts_u, PWR_STS_U_ROLE)
     return item
-
-
-def get_foi_dict(filepath):
-    """Return a dict of field of interest per element type.
-    """
-    conf = toml.load(filepath)
-    return {k: v['fields'] for k, v in conf.items()}
-
-DEFAULT_FOI_PATH = find_dconf("settings_manager", "fields.toml")
-DEFAULT_FOI_DICT = get_foi_dict(DEFAULT_FOI_PATH)
-
-# override write permission (for those does not have correct ACF)
-ELEM_WRITE_PERM = {
- 'FE_ISRC1:BEAM': False,
- 'FE_ISRC2:BEAM': False,
- 'FE_RFQ:CAV_D1005': False,
- 'FE_ISRC1:DRV_D0686:POS': False,
- 'FE_ISRC1:DRV_D0686': False,
- 'FS1_CSS:STRIP_D2249': False,
- 'FE_LEBT:BEAM': False,
- 'FE_LEBT:ATT_D0957-1': False,
- 'FE_LEBT:ATT_D0957-2': False,
- 'FE_LEBT:ATT_D0974-1': False,
- 'FE_LEBT:ATT_D0974-2': False,
- 'FE_LEBT:AP_D0796': False,
- 'FE_LEBT:AP_D0807': False,
-
- 'FE_ISRC1:HVP_D0679': False,
- 'FE_ISRC1:PSEL_D0679': False,
- 'FE_ISRC1:PSX_D0679': False,
- 'FE_ISRC1:PSB_D0679': False,
- 'FE_ISRC1:SOLR_D0682': False,
- 'FE_ISRC1:SOLR_D0685': False,
- 'FE_ISRC1:PSE_D0686': False,
- 'FE_ISRC1:DRV_D0686': False,
- 'FE_ISRC1:PSEL_D0698': False,
- 'FE_ISRC1:HVP_D0698': False,
-
- 'FE_SRC2:PSEL_D0651': False,
- 'FE_SRC2:HVP_D0652': False,
- 'FE_SRC2:PSB_D0659': False,
- 'FE_SRC2:SOLS_D0659': False,
- 'FE_SRC2:S_D0661': False,
- 'FE_SRC2:SOLS_D0662': False,
- 'FE_SRC2:SOLS_D0664': False,
- 'FE_SRC2:PSE_D0665': False,
- 'FE_SRC2:HVP_D0677': False,
- 'FE_SRC2:PSEL_D0678': False,
- 'FE_SRC2:PSX_N0003': False,
- 'FE_SRC2:PSX_N0002': False,
- 'FE_SRC2:PSX_N0001': False,
-}
-
-# default length for number display
-NUM_LENGTH = 9
 
 
 # Chopper state map
@@ -369,25 +291,21 @@ class SettingsModel(QStandardItemModel):
     checked_items_inc_dec_updated = pyqtSignal(int)
 
     def __init__(self, parent, flat_settings, **kws):
-        # kw: ndigit, font, auto_fmt, device_states
+        # kw: ndigit, font, device_states
         # pv_map: dict of additional pv data
         super(self.__class__, self).__init__(parent)
         self._ndigit = kws.get('ndigit', 6)
         self._font = kws.get('font', None)
-        self._auto_fmt = kws.get('auto_fmt', False)
         self._last_sts_dict = kws.get('device_states', {})
         self._pv_map = kws.get('pv_map', {})
         self.ref_st_pv_map = self._pv_map.get('refset', {})
         self.tol_pv_map = self._pv_map.get('tol', {})
         self.alm_act_pv_map = self._pv_map.get('almact', {})
 
-        if self._auto_fmt:
-            self.fmt = '{{0:{0}g}}'.format(self._ndigit)
-        else:
-            self.fmt = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, self._ndigit)
+        self.fmt = '{{0:.{}f}}'.format(self._ndigit)
 
         # for field NMR, HALL
-        self.fmt_nmr = '{{0:>{0}.{1}f}}'.format(NUM_LENGTH, 5)
+        self.fmt_nmr = '{{0:.{}f}}'.format(5)
 
         if self._font is None:
             self._font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
@@ -447,11 +365,17 @@ class SettingsModel(QStandardItemModel):
                 wa = False
             else:
                 wa = p[1] == 'True'
+
+            # if saved setpoint is nan, override wa as False -> make it not selectable and checkable.
+            if self.item(i, self.i_val0).text().strip() == 'nan':
+                wa = False
+            #
+
             # disable/enable name item.
             self.item(i, 0).setEnabled(wa)
             #
-            for j in self.ids:
-                it = self.item(i, j)
+            for k in self.ids:
+                it = self.item(i, k)
                 it.setSelectable(wa)
                 it.setData(QBrush(QColor(FG_COLOR_MAP[wa])), Qt.ForegroundRole)
             #
@@ -511,11 +435,9 @@ class SettingsModel(QStandardItemModel):
             row.append(item_tol)
 
             # writable
-            write_access = ELEM_WRITE_PERM.get(fld.ename, fld.write_access)
-            item_wa = QStandardItem(str(write_access))
+            item_wa = QStandardItem('-')
             item_wa.setEditable(False)
             row.append(item_wa)
-            # item_ename.setEnabled(write_access)
 
             # x2/x0
             item_ratio_x20 = QStandardItem('-')
@@ -567,12 +489,6 @@ class SettingsModel(QStandardItemModel):
         proxy_model = _SortProxyModel(self)
         self._tv.setModel(proxy_model)
         #
-        # hide columns: pos, dx01, tolerance, writable
-        for i in (self.i_pos, self.i_val0_rd, self.i_tol, self.i_writable,
-                  self.i_ref_st, self.i_dstref, self.i_dval0ref,
-                  self.i_read_alm, self.i_tune_alm):
-            self._tv.setColumnHidden(i, True)
-        #
         self.__post_init_ui()
 
     def __post_init_ui(self):
@@ -586,7 +502,6 @@ class SettingsModel(QStandardItemModel):
             QHeaderView {
                 qproperty-defaultAlignment: AlignHCenter AlignVCenter;
                 font-weight: bold;
-                font-size: 14pt;
             }""")
         #
         self.style_view(font=self._font)
@@ -627,10 +542,8 @@ class SettingsModel(QStandardItemModel):
 
     def fit_view(self):
         tv = self._tv
-        #tv.expandAll()
         for i in self.ids:
             tv.resizeColumnToContents(i)
-        #tv.collapseAll()
 
     @pyqtSlot()
     def on_delete_selected_items(self):
@@ -1245,6 +1158,26 @@ class _Delegate(QStyledItemDelegate):
                 option.font.setFamily(self.font_family)
         QStyledItemDelegate.initStyleOption(self, option, index)
 
+    def paint(self, painter, option, index):
+        m = index.model().m_src
+        if index.column() in (m.i_field, m.i_type):
+            option.displayAlignment = Qt.AlignHCenter | Qt.AlignVCenter
+        elif index.column() in (m.i_name,):
+            option.displayAlignment = Qt.AlignLeft | Qt.AlignVCenter
+        else:
+            option.displayAlignment = Qt.AlignRight | Qt.AlignVCenter
+
+        if index.column() in (m.i_sts, m.i_last_sts, m.i_tune_alm, m.i_read_alm):
+            px = index.data(Qt.DecorationRole)
+            if px is not None:
+                item_rect = option.rect
+                x = int(item_rect.center().x() - px.rect().width() / 2)
+                y = int(item_rect.center().y() - px.rect().height() / 2)
+                # Draw the pixmap at the calculated position
+                painter.drawPixmap(QPoint(x, y), px)
+        else:
+            QStyledItemDelegate.paint(self, painter, option, index)
+
     def sizeHint(self, option, index):
         size = QStyledItemDelegate.sizeHint(self, option, index)
         size.setHeight(int(size.height() * 1.3))
@@ -1309,9 +1242,7 @@ def pack_settings(elem_list, lat, **kws):
         Tuple of (flat_s[list], s[Settings]), element of flat_s:
         (CaElement, field_name, CaField, field_value)
     """
-    foi = kws.pop('field_of_interest', DEFAULT_FOI_DICT)
     settings = get_settings_from_element_list(elem_list,
-                                              field_of_interest=foi,
                                               **kws)
     flat_settings = convert_settings(settings, lat)
     return flat_settings, settings
@@ -1342,35 +1273,6 @@ def is_equal(a, b, decimal=6):
         return False
 
 
-def init_config_dir(confdir):
-    # initialize configuration directory
-    # return the fullpaths of root path, ts, ms, elem paths.
-    confdir = os.path.expanduser(confdir)
-    if not os.path.exists(confdir):
-        os.makedirs(confdir)
-        reset_config(confdir)
-
-    ts_confpath = os.path.join(confdir, 'tolerance.json')
-    ms_confpath = os.path.join(confdir, 'settings.json')
-    elem_confpath = os.path.join(confdir, 'elements.json')
-
-    if not os.path.exists(elem_confpath):
-        shutil.copy2(DEFAULT_ELEM_PATH, elem_confpath)
-
-    return confdir, ts_confpath, ms_confpath, elem_confpath
-
-
-def reset_config(current_config_path):
-    ts_path = os.path.join(current_config_path, 'tolerance.json')
-    ms_path = os.path.join(current_config_path, 'settings.json')
-    elem_path = os.path.join(current_config_path, 'elements.json')
-
-    for default_path, path in zip(
-            (DEFAULT_TS_PATH, DEFAULT_MS_PATH, DEFAULT_ELEM_PATH),
-            (ts_path, ms_path, elem_path)):
-        shutil.copy2(default_path, path)
-
-
 def str2float(s):
     """Convert string to float, if s is an valid expression, return
     the evaluated result, otherwise return None.
@@ -1389,11 +1291,11 @@ def str2float(s):
 def get_ratio_as_string(a, b, fmt):
     # return a/b, if b is zero, return -
     try:
-        r = fmt.format(a / b)
+        r = a / b
     except ZeroDivisionError:
-        r = 'inf'
-    finally:
-        return r
+        return fmt.format(np.inf)
+    else:
+        return fmt.format(r)
 
 
 class SnapshotDataModel(QStandardItemModel):
@@ -1407,21 +1309,30 @@ class SnapshotDataModel(QStandardItemModel):
         # [
         #  SnapshotData,
         # ]
-        self.loaded_px = QPixmap(":/sm-icons/cast_connected.png").scaled(PX_SIZE, PX_SIZE)
-        self.load_px = QPixmap(":/sm-icons/cast.png").scaled(PX_SIZE, PX_SIZE)
-        self.note_px = QPixmap(":/sm-icons/comment.png").scaled(PX_SIZE, PX_SIZE)
-        self.tags_px = QPixmap(":/sm-icons/label.png").scaled(PX_SIZE, PX_SIZE)
+        _px_size = int(PX_SIZE * 1.5)
+        self.loaded_px = QPixmap(":/sm-icons/cast_connected.png").scaled(
+                _px_size, _px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.load_px = QPixmap(":/sm-icons/cast.png").scaled(
+                _px_size, _px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.note_px = QPixmap(":/sm-icons/comment.png").scaled(
+                _px_size, _px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.tags_px = QPixmap(":/sm-icons/label.png").scaled(
+                _px_size, _px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.user_px = QPixmap(":/sm-icons/person.png").scaled(
+                _px_size, _px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.parent_on_px = QPixmap(":/sm-icons/path.png").scaled(
+                _px_size, _px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
-        self.header = self.h_ts, self.h_name, \
-                      self.h_ion, self.h_ion_number, self.h_ion_mass, self.h_ion_charge, \
+        self.header = self.h_datetime, self.h_parent, \
+                      self.h_ion_name, self.h_ion_number, self.h_ion_mass, self.h_ion_charge, \
                       self.h_load_status, self.h_user, \
                       self.h_is_golden, self.h_tags, self.h_note \
-                    = "Timestamp", "Name", \
+                    = "Datetime", "", \
                       "Ion", "Z", "A", "Q", \
                       "", "User", \
                       "", "Tags", "Note"
-        self.ids = self.i_ts, self.i_name, \
-                   self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge, \
+        self.ids = self.i_datetime, self.i_parent, \
+                   self.i_ion_name, self.i_ion_number, self.i_ion_mass, self.i_ion_charge, \
                    self.i_load_status, self.i_user, \
                    self.i_is_golden, self.i_tags, self.i_note \
                  = range(len(self.header))
@@ -1433,6 +1344,7 @@ class SnapshotDataModel(QStandardItemModel):
         self._ion_filter_cnt = Counter()
         #
         self._tag_filter_list = None
+        self._tag_filter_is_or = True
         self._tag_filter_cnt = Counter()
 
     def set_ion_filters(self, d):
@@ -1442,9 +1354,10 @@ class SnapshotDataModel(QStandardItemModel):
     def get_ion_filters(self):
         return self._ion_filter_list
 
-    def set_tag_filters(self, d):
+    def set_tag_filters(self, d, is_or: bool = True):
         self._tag_filter_cnt = Counter()
         self._tag_filter_list = [k for k, v in d.items() if v]
+        self._tag_filter_is_or = is_or
 
     def get_tag_filters(self):
         return self._tag_filter_list
@@ -1457,43 +1370,52 @@ class SnapshotDataModel(QStandardItemModel):
     def set_data(self):
         data = {}  # root-i: [snp-1, snp-2, ...]
         for i in self._snp_list:
-            data.setdefault(i.ts_as_date(), []).append(i)
+            data.setdefault(i.date, []).append(i)
         self._data = data
 
         for ts_date in sorted(data):
-            #
+
+            # date node
             ts_snp_data_list = data[ts_date]  # snp data under ts_date root
             it_root = QStandardItem(ts_date)
             it_root.setEditable(False)
 
             for snp_data in ts_snp_data_list:
-                # ts
-                it_ts = QStandardItem(snp_data.ts_as_str())
-                it_ts.setEditable(False)
-                it_ts.snp_data = snp_data
+                # datetime
+                it_datetime = QStandardItem(snp_data.datetime)
+                it_datetime.setData(
+                    f"Snapshot created at '{snp_data.datetime}' by '{snp_data.user}' for '{snp_data.ion_as_str()}'",
+                    Qt.ToolTipRole)
+                it_datetime.snp_data = snp_data
 
-                # name (invisible)
-                it_name = QStandardItem(snp_data.name)
+                # parent
+                _parent = snp_data.parent
+                it_parent = QStandardItem()
+                if _parent is None:
+                    it_parent.setData(f"Unknown originated snasphot.", Qt.ToolTipRole)
+                else:
+                    it_parent.setData(_parent, Qt.UserRole)
+                    it_parent.setData(f"Double-clicking to highlight\nOriginated snapshot: '{_parent}'", Qt.ToolTipRole)
+                    it_parent.setData(self.parent_on_px, Qt.DecorationRole)
 
                 # ion: name
-                it_ion_name = QStandardItem(snp_data.ion_name)
-                it_ion_name.setEditable(False)
+                it_ion_name = QStandardItem()
+                it_ion_name.setData(get_ion_px(snp_data.ion_name, 44), Qt.DecorationRole)
+                it_ion_name.setData(snp_data.ion_name, Qt.UserRole)
                 _z, _a, _q = snp_data.ion_number, snp_data.ion_mass, snp_data.ion_charge
-                # ion: Z (str)
-                it_ion_number = QStandardItem(_z)
-                it_ion_number.setData(int(_z), Qt.UserRole)
-                it_ion_number.setEditable(False)
-                # ion: A (str)
-                it_ion_mass = QStandardItem(_a)
-                it_ion_mass.setData(int(_a), Qt.UserRole)
-                it_ion_mass.setEditable(False)
-                # ion: Q (str)
-                it_ion_charge = QStandardItem(_q)
-                it_ion_charge.setData(int(_q), Qt.UserRole)
-                it_ion_charge.setEditable(False)
+                it_ion_name.setData(f"{snp_data.ion_name} (Z: {_z}, A: {_a}, Q: {_q})", Qt.ToolTipRole)
+                # ion: Z (int)
+                it_ion_number = QStandardItem(str(_z))
+                it_ion_number.setData(_z, Qt.UserRole)
+                # ion: A (int)
+                it_ion_mass = QStandardItem(str(_a))
+                it_ion_mass.setData(_a, Qt.UserRole)
+                # ion: Q (int)
+                it_ion_charge = QStandardItem(str(_q))
+                it_ion_charge.setData(_q, Qt.UserRole)
                 # user
                 it_user = QStandardItem(snp_data.user)
-                it_user.setEditable(False)
+                it_user.setData(self.user_px, Qt.DecorationRole)
 
                 # tags (list), editable
                 tags_as_str = snp_data.tags_as_str()
@@ -1519,11 +1441,13 @@ class SnapshotDataModel(QStandardItemModel):
                 it_load_status.setToolTip("Load snapshot by double-clicking")
 
                 row = (
-                    it_ts, it_name,
+                    it_datetime, it_parent,
                     it_ion_name, it_ion_number, it_ion_mass, it_ion_charge,
                     it_load_status,
                     it_user, it_is_golden, it_tags, it_note
                 )
+                [it.setEditable(False) for it in row]
+                [it.setEditable(True) for it in (it_note, it_tags)]
                 it_root.appendRow(row)
 
             #
@@ -1540,13 +1464,11 @@ class SnapshotDataModel(QStandardItemModel):
         s = idx1.data(Qt.DisplayRole)
         i, j = idx1.row(), idx1.column()
         pindex = idx1.parent()
-        snp_data = self.itemFromIndex(self.index(i, self.i_ts, pindex)).snp_data
+        snp_data = self.itemFromIndex(self.index(i, self.i_datetime, pindex)).snp_data
         if j == self.i_note:
             snp_data.note = s
-        elif j == self.i_name:
-            snp_data.name = s
         elif j == self.i_tags:
-            snp_data.tags = s
+            snp_data.tags = SnapshotData.str2tags(s)
             it = self.itemFromIndex(self.index(i, self.i_is_golden, pindex))
             self.set_golden_status(snp_data.is_golden(), it)
         self.dataChanged.disconnect()
@@ -1631,20 +1553,19 @@ class SnapshotDataModel(QStandardItemModel):
         v.header().setStyleSheet("""
             QHeaderView {
                 font-weight: bold;
-                font-size: 14pt;
             }""")
 
         #
         v.expandAll()
-        for i in (self.i_ts, self.i_name,
-                  self.i_ion, self.i_ion_number, self.i_ion_mass, self.i_ion_charge,
+        for i in (self.i_datetime, self.i_parent,
+                  self.i_ion_name, self.i_ion_number, self.i_ion_mass, self.i_ion_charge,
                   self.i_load_status, self.i_user, self.i_is_golden,
                   self.i_tags):
             v.resizeColumnToContents(i)
         v.collapseAll()
 
         # hide name col
-        v.setColumnHidden(self.i_name, True)
+        v.setColumnHidden(self.i_ion_number, True)
         #
         v.setSortingEnabled(True)
 
@@ -1656,7 +1577,7 @@ class SnapshotDataModel(QStandardItemModel):
             if not self.hasChildren(ridx):
                 continue
             for i in range(self.rowCount(ridx)):
-                it = self.itemFromIndex(self.index(i, self.i_name, ridx))
+                it = self.itemFromIndex(self.index(i, self.i_datetime, ridx))
                 if it.text() == data.name:
                     irow = i
                     iidx = ridx
@@ -1673,7 +1594,7 @@ class SnapshotDataModel(QStandardItemModel):
         pass
 
     def set_golden_status(self, is_golden: bool, it: QStandardItem) -> None:
-        px = QPixmap(QSize(PX_SIZE, PX_SIZE))
+        px = QPixmap(QSize(int(PX_SIZE * 1.5), int(PX_SIZE * 1.5)))
         if is_golden:
             bgc = BG_COLOR_GOLDEN_YES
             tt = TT_GOLDEN
@@ -1695,17 +1616,32 @@ class SnapshotDataModel(QStandardItemModel):
             if not self.hasChildren(ridx):
                 continue
             for i in range(self.rowCount(ridx)):
-                if self.itemFromIndex(self.index(i, self.i_name, ridx)).text() == snp_name:
+                if self.itemFromIndex(self.index(i, self.i_datetime, ridx)).text() == snp_name:
                     loaded = True
                 else:
                     loaded = False
                 idx = self.index(i, self.i_load_status, ridx)
                 self.set_loaded(idx, loaded)
                 if loaded:
-                    idx = self._v.model().mapFromSource(idx)
-                    self._v.scrollTo(idx)
-                    self._v.selectionModel().select(idx,
-                            QItemSelectionModel.Select | QItemSelectionModel.Rows)
+                    self.hlrow(idx)
+
+    def hlrow(self, idx_src):
+         idx = self._v.model().mapFromSource(idx_src)
+         self._v.scrollTo(idx)
+         self._v.selectionModel().select(idx,
+                 QItemSelectionModel.Select | QItemSelectionModel.Rows)
+
+    def locateByName(self, name: str):
+        """Return the index of entry (datetime column) based on snapshot name (datetime value).
+        """
+        for ii in range(self.rowCount()):
+            ridx = self.index(ii, 0)
+            if not self.hasChildren(ridx):
+                continue
+            for i in range(self.rowCount(ridx)):
+                if self.itemFromIndex(self.index(i, self.i_datetime, ridx)).text() == name:
+                    return self.index(i, self.i_datetime, ridx)
+        return QModelIndex()
 
     def clear_load_status(self):
         for ii in range(self.rowCount()):
@@ -1743,6 +1679,8 @@ class _DelegateSnapshot(QStyledItemDelegate):
         self.v.entered.connect(self.on_item_entered)
         self.is_item_in_edit_mode = False
         self.current_edited_item_index = QPersistentModelIndex()
+        self.font = QFontDatabase.systemFont(QFontDatabase.GeneralFont)
+        self.font_size = self.font.pointSize()
 
     def createEditor(self, parent, option, index):
         op = index.model().data(index, Qt.UserRole + 1)
@@ -1762,6 +1700,12 @@ class _DelegateSnapshot(QStyledItemDelegate):
             return QStyledItemDelegate.createEditor(self, parent, option, index)
 
     def paint(self, painter, option, index):
+        m = index.model().m_src
+        if index.column() in (m.i_ion_mass, m.i_ion_charge):
+            option.displayAlignment = Qt.AlignRight | Qt.AlignVCenter
+        else:
+            option.displayAlignment = Qt.AlignLeft | Qt.AlignVCenter
+
         op = index.model().data(index, Qt.UserRole + 1)
         if op in ACT_BTN_CONF:
             tt, text, px_path = ACT_BTN_CONF[op]
@@ -1784,7 +1728,7 @@ class _DelegateSnapshot(QStyledItemDelegate):
         m = index.model()
         src_m = m.sourceModel()
         src_idx = m.mapToSource(index)
-        data = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_ts, src_idx.parent())).snp_data
+        data = src_m.itemFromIndex(src_m.index(src_idx.row(), src_m.i_datetime, src_idx.parent())).snp_data
 
     def setEditorData(self, editor, index):
         QStyledItemDelegate.setEditorData(self, editor, index)
@@ -1799,6 +1743,21 @@ class _DelegateSnapshot(QStyledItemDelegate):
             QStyledItemDelegate.updateEditorGeometry(self, editor, option, index)
 
     def on_item_entered(self, index):
+        m_src = index.model().m_src
+        if not index.parent().isValid():
+            self.v.setCursor(Qt.ForbiddenCursor)
+        elif index.column() == m_src.i_parent:
+            if index.model().data(index, Qt.UserRole) is None:
+                self.v.setCursor(Qt.ForbiddenCursor)
+            else:
+                self.v.setCursor(Qt.PointingHandCursor)
+        elif index.column() in (m_src.i_tags, m_src.i_note):
+            self.v.setCursor(Qt.IBeamCursor)
+        elif index.column() == m_src.i_datetime:
+            self.v.setCursor(Qt.ArrowCursor)
+        else:
+            self.v.setCursor(Qt.ForbiddenCursor)
+
         op = index.model().data(index, Qt.UserRole + 1)
         if op in ACT_BTN_CONF:
             if self.is_item_in_edit_mode:
@@ -1812,6 +1771,8 @@ class _DelegateSnapshot(QStyledItemDelegate):
                 self.v.closePersistentEditor(self.current_edited_item_index)
 
     def initStyleOption(self, option, index):
+        if index.column() == index.model().m_src.i_tags:
+            option.font.setPointSize(self.font_size - 2)
         QStyledItemDelegate.initStyleOption(self, option, index)
 
     def sizeHint(self, option, index):
@@ -1855,7 +1816,7 @@ class _SnpProxyModel(QSortFilterProxyModel):
         m = self.sourceModel()
         ion_filter_list = m.get_ion_filters()
         tag_filter_list = m.get_tag_filters()
-        snp_data = m.itemFromIndex(m.index(src_row, m.i_ts, src_parent)).snp_data
+        snp_data = m.itemFromIndex(m.index(src_row, m.i_datetime, src_parent)).snp_data
         if ion_filter_list is None:
             ion_test = True
         else:
@@ -1876,14 +1837,23 @@ class _SnpProxyModel(QSortFilterProxyModel):
             else:
                 tags = snp_data.tags
             tag_test = False
+            #
+            archive_set = False
+            if 'ARCHIVE' not in tag_filter_list and 'ARCHIVE' in tags:
+                tag_test = False
+                archive_set = True
+            #
             for tag in tags:
-                if not tag_test and tag in tag_filter_list:
+                if not tag_test and tag in tag_filter_list and not archive_set:
                     tag_test = True
                 is_cnted = self._tag_hit_cache.setdefault(snp_data.name, False)
                 if not is_cnted:
                     for i in tags:
                         m._tag_filter_cnt[i] += 1 # +1 for all tags of this snp
                     self._tag_hit_cache[snp_data.name] = True
+            # for AND
+            if not self.m_src._tag_filter_is_or:
+                tag_test = set(tag_filter_list).issubset(tags)
 
         if not tag_test:
             return False
@@ -2009,8 +1979,15 @@ class EffSetLogMsgContainer(QObject):
 
 
 def get_pwr_sts(elem, fname: str):
-    """Return a tuple of (QPixmap, tooltip, u_val) and the roles for each, from a high-level
-    element and field name as the device power state.
+    """Return a tuple of (QPixmap, tooltip, u_val) and a tuple of the roles for each, from a
+    high-level element and field name as the device power state.
+
+    Parameters
+    ----------
+    elem : CaElement
+        High-level element instance.
+    fname : str
+        One field name of *elem*.
 
     Returns
     -------
@@ -2028,10 +2005,11 @@ def get_pwr_sts(elem, fname: str):
         if _fname in elem.fields:
             pwr_fld = elem.get_field(_fname)
             pwr_is_on = pwr_fld.value
-        if pwr_is_on == 1.0:
-            tt = "Cavity phase is LOCKED"
-        elif pwr_is_on == 0.0:
-            tt = "Cavity phase is UNLOCKED"
+
+            if pwr_is_on == 1.0:
+                tt = "Cavity phase is LOCKED"
+            elif pwr_is_on == 0.0:
+                tt = "Cavity phase is UNLOCKED"
     elif elem.family == "CHP":
         sts = elem.get_field('STATE')
         sts_val_int = sts.value
@@ -2188,10 +2166,8 @@ def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
         2 (output progress with descriptions).
     with_machstate : bool
         Capture machine state data if set.
-    ms_conf : dict:
-        The configuration dict for machine state data capture, either passing:
-        * The parsed dict object by `conf`.
-        * Or the arguments for fetch_mach_state CLI tool: `config_path`, `rate`, `nshot`
+    ms_conf : dict
+        The configuration dict for machine state data capture.
 
     Returns
     -------
@@ -2257,28 +2233,19 @@ def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
                                 version=ver,
                                 note=note,
                                 tags=','.join(tags),
-                                table_version=10,
                                 parent=snp_data.ts_as_str())
     # machstate
     if kws.get('with_machstate', False):
         if verbose > 0:
             _printlog("Capture machine state data...")
 
-        ms_conf = kws.get('ms_conf', {})
-        if ms_conf.get('conf', None) is None:
+        ms_conf = kws.get('ms_conf', None)
+        if ms_conf is None:
             from phantasy_apps.msviz.mach_state import DEFAULT_META_CONF_PATH
-            from phantasy_apps.msviz.mach_state import fetch_data
             from phantasy_apps.msviz.mach_state import get_meta_conf_dict
             from phantasy_apps.msviz.mach_state import merge_mach_conf
-            if ms_conf.get('config_path', None) is None:
-                config_path = DEFAULT_META_CONF_PATH
-            _conf = get_meta_conf_dict(config_path)
-            _mach_stat_conf = merge_mach_conf(_conf, ms_conf.get('rate', None),
-                                              ms_conf.get('nshot', None))
-        else:
-            # use parsed config dict
-            _mach_stat_conf = ms_conf.get('conf')
-        _ms_dset = fetch_data(_mach_stat_conf, verbose=verbose)
+            ms_conf = merge_mach_conf(get_meta_conf_dict(DEFAULT_META_CONF_PATH))
+        _ms_dset = fetch_data(ms_conf, verbose=verbose)
     else:
         # no machine state is captured
         _ms_dset = None
@@ -2293,3 +2260,22 @@ def take_snapshot(note: str, tags: list, snp_data: SnapshotData,
 def _printlog(*msg):
     ts = datetime.now().isoformat(sep='T', timespec="milliseconds")
     print(f"[{ts}] {', '.join((str(i) for i in msg))}")
+
+
+def get_ion_px(ion_name: str, px_size: int = 48):
+    px_path = ELEMT_PX_MAP.get(ion_name, (None, None))[0]
+    if px_path is None:
+        size = QSize(px_size, px_size)
+        px = QPixmap(size)
+        px.fill(QColor(255, 255, 255, 0))
+        pt = QPainter(px)
+        ft = pt.font()
+        ft.setPointSize(ft.pointSize() + 1)
+        pt.setFont(ft)
+        pt.drawText(QRect(0, 0, px_size, px_size),
+                    Qt.AlignCenter, ion_name)
+        pt.end()
+    else:
+        px = QPixmap(px_path).scaled(px_size, px_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+    return px
+
