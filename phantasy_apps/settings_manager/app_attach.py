@@ -5,6 +5,7 @@ import os, stat
 import sqlite3
 import shutil
 import tempfile
+from datetime import datetime
 from subprocess import Popen
 from functools import partial
 from PyQt5.QtWidgets import (
@@ -350,6 +351,10 @@ class AttachDialog(QDialog, Ui_Dialog):
                 _del_file(uri_bak)
             else:
                 print(f"Overwritten '{uri}' with '{filepath}'")
+                note_idx = m.index(idx.row(), m.ColumnNote)
+                note_now = m.data(note_idx, Qt.DisplayRole)
+                m.setData(note_idx,
+                        f"{note_now} [{datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}: file overwritten]")
             finally:
                 _del_file(uri_bak)
         else:
