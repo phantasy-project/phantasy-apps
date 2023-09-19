@@ -4,6 +4,7 @@
 import os, stat
 import sqlite3
 import shutil
+import tempfile
 from subprocess import Popen
 from functools import partial
 from PyQt5.QtWidgets import (
@@ -153,6 +154,7 @@ class AttachDialog(QDialog, Ui_Dialog):
         self._open_icon = QIcon(QPixmap(":/sm-icons/open.png"))
         self._copy_icon = QIcon(QPixmap(":/sm-icons/copy_text.png"))
         self._reveal_icon = QIcon(QPixmap(":/sm-icons/openfolder.png"))
+        self._replace_icon = QIcon(QPixmap(":/sm-icons/upgrade.png"))
         #
         self.attach_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.attach_view.customContextMenuRequested.connect(self.on_request_context_menu)
@@ -248,10 +250,13 @@ class AttachDialog(QDialog, Ui_Dialog):
             idx = m.mapToSource(idx)
             m = m.sourceModel()
         if idx.column() == m.ColumnName:
-            menu = self.__build_menu(idx, m)
+            menu = self.__build_menu_name(idx, m)
+            menu.exec_(self.attach_view.viewport().mapToGlobal(pos))
+        elif idx.column() == m.ColumnUri:
+            menu = self.__build_menu_uri(idx, m)
             menu.exec_(self.attach_view.viewport().mapToGlobal(pos))
 
-    def __build_menu(self, idx, m):
+    def __build_menu_name(self, idx, m):
         # only for 1st col (name).
         menu = QMenu(self)
         menu.setStyleSheet("QMenu {margin: 1px;}")
@@ -273,12 +278,6 @@ class AttachDialog(QDialog, Ui_Dialog):
         # detach
         detach_act = QAction(self._detach_icon, "Detach", menu)
         detach_act.triggered.connect(partial(self.on_detach, idx, m))
-        # copy filepath
-        copy_uri_act = QAction(self._copy_icon, "Copy URI", menu)
-        copy_uri_act.triggered.connect(partial(self.on_copy_uri, idx, m))
-        # reveal
-        reveal_act = QAction(self._reveal_icon, "Show in File Explorer", menu)
-        reveal_act.triggered.connect(partial(self.on_reveal_uri, idx, m))
         # delete attachment
         delete_act = QAction(self._delete_icon, "Delete", menu)
         delete_act.triggered.connect(partial(self.on_delete, idx, m))
@@ -290,10 +289,71 @@ class AttachDialog(QDialog, Ui_Dialog):
             menu.addAction(attach_act)
         menu.addSeparator()
         menu.addAction(open_act)
-        menu.addAction(reveal_act)
-        menu.addAction(copy_uri_act)
         menu.addAction(delete_act)
         return menu
+
+    def __build_menu_uri(self, idx, m):
+        # only for 3rd col (uri).
+        menu = QMenu(self)
+        menu.setStyleSheet("QMenu {margin: 1px;}")
+        name = m.data(m.index(idx.row(), AttachDataModel.ColumnName))
+        # title
+        title_w = QLabel(f"Attachment:\n{name}")
+        title_w.setStyleSheet("""
+        QLabel {
+            background: #C8E6C9;
+            font-weight: bold;
+            padding: 2px 2px 2px 2px;}""")
+        title_act = QWidgetAction(self)
+        title_act.setDefaultWidget(title_w)
+        # open attachment
+        open_act = QAction(self._open_icon, "Open", menu)
+        open_act.triggered.connect(partial(self.on_open, idx, m))
+        # copy filepath
+        copy_uri_act = QAction(self._copy_icon, "Copy URI", menu)
+        copy_uri_act.triggered.connect(partial(self.on_copy_uri, idx, m))
+        # reveal
+        reveal_act = QAction(self._reveal_icon, "Show in File Explorer", menu)
+        reveal_act.triggered.connect(partial(self.on_reveal_uri, idx, m))
+        # overwrite
+        overwrite_act = QAction(self._replace_icon, "Overwrite", menu)
+        overwrite_act.triggered.connect(partial(self.on_overwrite_uri, idx, m))
+        #
+        menu.addAction(title_act)
+        menu.addAction(open_act)
+        menu.addAction(copy_uri_act)
+        menu.addAction(reveal_act)
+        menu.addAction(overwrite_act)
+        return menu
+
+    @pyqtSlot()
+    def on_overwrite_uri(self, idx, m):
+        """Overwrite with a new file on this uri.
+        """
+        uri = m.data(idx)
+        filepath, ext = get_open_filename(self, type_filter='Other Files (*.*)')
+        if filepath is None:
+            return
+        r = QMessageBox.question(self, "Overwrite an Attachment",
+                f"Overwrite '{uri}' with '{filepath}'?", QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.Yes)
+        if r == QMessageBox.Yes:
+            # try delete original one and copy the new one
+            _, uri_bak = tempfile.mkstemp()
+            _copy_file(uri, uri_bak)
+            try:
+                _del_file(uri)
+                _copy_file(filepath, uri)
+            except:
+                print(f"Failed to overwrite '{uri}'")
+                _copy_file(uri_bak, uri)
+                _del_file(uri_bak)
+            else:
+                print(f"Overwritten '{uri}' with '{filepath}'")
+            finally:
+                _del_file(uri_bak)
+        else:
+            print("Skip overwriting")
 
     @pyqtSlot()
     def on_reveal_uri(self, idx, m):
@@ -379,20 +439,16 @@ class AttachDialog(QDialog, Ui_Dialog):
         """
         nsnp = m.data(m.index(idx.row(), AttachDataModel.ColumnNSnp), Qt.UserRole)
         uri = m.data(m.index(idx.row(), AttachDataModel.ColumnUri))
+        ftype = m.data(m.index(row, AttachDataModel.ColumnFtype), Qt.UserRole)
         if nsnp > 0:
             r = QMessageBox.warning(self, "Delete an Attachment",
                     f"Are you sure to delete this attachment? It will be detached from all ({nsnp}) the attached snapshots.", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
             if r == QMessageBox.No:
                 return
         deleted = delete_attach_data(self.conn, m.data(idx))
-        if deleted:
+        if deleted and ftype != 'LINK':
             # delete attachment
-            try:
-                os.remove(uri)
-            except FileNotFoundError:
-                print(f"{uri} not found.")
-            else:
-                print(f"Deleted {uri}.")
+            _del_file(uri)
         self.sigAttachmentUpdated.emit()
 
     @pyqtSlot()
@@ -785,3 +841,18 @@ def _new_dir(dir_path: str, grp: str = "phyopsg"):
 def _copy_file(src_filepath: str, dst_filepath: str):
     shutil.copy2(src_filepath, dst_filepath)
     os.chmod(dst_filepath, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+
+
+def _del_file(filepath: str):
+    """Delete a file.
+    """
+    deleted = False
+    try:
+        os.remove(filepath)
+    except:
+        print(f"Failed to delete {filepath}.")
+    else:
+        deleted = True
+        print(f"Deleted {filepath}.")
+    finally:
+        return deleted
