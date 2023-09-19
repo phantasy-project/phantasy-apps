@@ -234,6 +234,7 @@ class AttachDialog(QDialog, Ui_Dialog):
         proxy_model = AttachDataProxyModel(self.m)
         self.attach_view.setModel(proxy_model)
         self.attach_view.resizeColumnsToContents()
+        self.attach_view.resizeRowsToContents()
         #
         self.sigViewUpdated.emit()
 
@@ -408,6 +409,7 @@ class AttachDialog(QDialog, Ui_Dialog):
         self.m.dataChanged.connect(self.on_post_nitem)
         self.attach_view.setModel(self.m)
         self.attach_view.resizeColumnsToContents()
+        self.attach_view.resizeRowsToContents()
         if not self.dataModelShown:
             self.sigDataModelShown.emit()
         #
