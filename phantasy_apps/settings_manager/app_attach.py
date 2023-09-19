@@ -437,8 +437,9 @@ class AttachDialog(QDialog, Ui_Dialog):
     def on_delete(self, idx, m):
         """Delete the attachment.
         """
-        nsnp = m.data(m.index(idx.row(), AttachDataModel.ColumnNSnp), Qt.UserRole)
-        uri = m.data(m.index(idx.row(), AttachDataModel.ColumnUri))
+        row = idx.row()
+        nsnp = m.data(m.index(row, AttachDataModel.ColumnNSnp), Qt.UserRole)
+        uri = m.data(m.index(row, AttachDataModel.ColumnUri))
         ftype = m.data(m.index(row, AttachDataModel.ColumnFtype), Qt.UserRole)
         if nsnp > 0:
             r = QMessageBox.warning(self, "Delete an Attachment",
