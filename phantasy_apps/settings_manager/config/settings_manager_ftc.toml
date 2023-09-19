@@ -34,7 +34,7 @@ STRIPPER_POS = 224.90368452 # meter, carbon stripper location
 # for those write permission allowed per ACF but intended to be readonly.
 READONLY_DEVICE_LIST = [
   'FE_ISRC1:BEAM',
-  'FE_ISRC1:DRV_D0686',
+  'FE_ISRC1:RFA_D0679',
   'FE_ISRC1:HVP_D0679',
   'FE_ISRC1:PSEL_D0679',
   'FE_ISRC1:PSX_D0679',
@@ -46,6 +46,7 @@ READONLY_DEVICE_LIST = [
   'FE_ISRC1:PSEL_D0698',
   'FE_ISRC1:HVP_D0698',
   'FE_ISRC2:BEAM',
+  'FE_SRC2:RFA_D0651',
   'FE_SRC2:PSEL_D0651',
   'FE_SRC2:HVP_D0652',
   'FE_SRC2:PSB_D0659',
