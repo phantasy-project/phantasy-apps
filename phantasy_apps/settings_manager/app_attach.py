@@ -93,7 +93,7 @@ class AttachDialog(QDialog, Ui_Dialog):
         if q_str == '' or q_str == '*':
             q_cond = ''
         else:
-            q_cond = f"WHERE name like '%{q_str}%' OR uri like '%{q_str}%' OR note like '%{q_str}%'"
+            q_cond = f"WHERE name LIKE '%{q_str}%' OR uri LIKE '%{q_str}%' OR note LIKE '%{q_str}%'"
 
         attach_list = []
         nsnp_list = []
@@ -104,7 +104,7 @@ class AttachDialog(QDialog, Ui_Dialog):
                attachment.created, attachment.note, COUNT(snp_attach.attachment_id)
         FROM attachment
         LEFT JOIN snp_attach
-        ON snp_attach.attachment_id = attachment.id
+            ON snp_attach.attachment_id = attachment.id
         {q_cond}
         GROUP BY attachment.id""")
             for i in r.fetchall():
@@ -686,7 +686,9 @@ class AttachDataDelegateModel(QStyledItemDelegate):
             QFontDatabase.FixedFont).pointSize()
 
     def sizeHint(self, option, index):
-        return QStyledItemDelegate.sizeHint(self, option, index)
+        size = QStyledItemDelegate.sizeHint(self, option, index)
+        size.setHeight(42)
+        return size
 
     def paint(self, painter, option, index):
         if index.column() == AttachDataModel.ColumnFtype:
