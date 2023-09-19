@@ -108,7 +108,7 @@ class AttachDialog(QDialog, Ui_Dialog):
         LEFT JOIN snp_attach
             ON snp_attach.attachment_id = attachment.id
         {q_cond}
-        GROUP BY attachment.id""")
+        GROUP BY attachment.id ORDER BY attachment.created DESC;""")
             for i in r.fetchall():
                 attach_list.append(AttachmentData(*i[1:-1]))
                 nsnp_list.append(i[-1])
