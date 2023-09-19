@@ -10,6 +10,9 @@ fields = ['PHA', 'AMP', 'PHASE', 'AMPLITUDE',
 ]
 #          'PHA_CREST', 'PHASE_CREST', 'AMP_COEF', 'AMPLITUDE_COEF',
 
+[RFA]
+fields = ['PWR', 'PWR_RFL', 'POWER', 'POWER_REFLECTED']
+
 ["FE_LEBT:CAV_D0987"]
 fields = ['PHA1', 'AMP1', 'PHASE1', 'AMPLITUDE1',
           'PHA2', 'AMP2', 'PHASE2', 'AMPLITUDE2',

@@ -9,7 +9,7 @@ WIDTH = 1920
 [DATA_SOURCE]
 DB_ENGINE = "sqlite"
 TYPE = "database"
-URI = "/files/shared/ap/settings_manager/sm.db"
+URI = "/files/shared/ap/settings_manager/sm_new.db"
 
 [SETTINGS]
 FIELD_INIT_MODE = "model" # initial settings with model or live data, if live is enabled, saved set will be overridden
@@ -72,8 +72,8 @@ READONLY_DEVICE_LIST = [
 
 # if not defined, use the app distributed one.
 # relative path w.r.t. the main app config file.
-# [FIELD_OF_INTEREST]
-# FILEPATH = "fields.toml"
+[FIELD_OF_INTEREST]
+FILEPATH = "fields.toml"
 
 [OPI]
 SNP_AUTHOR_PV = "PHY:SM_SNP_LAST_AUTHOR"
@@ -127,7 +127,7 @@ NAME = "Filters"
 [SNAPSHOT_TAKE]
 # predefined tag list to use when take a snapshot.
 EXCL_TAG_GROUPS = [["LINAC", "FSEE"], ["SCS1", "SCS2"]]
-TAGS = ["GOLDEN", "FSEE", "LINAC", "SCS1", "SCS2", "TEST"]
+TAGS = ["GOLDEN", "FSEE", "LINAC", "SCS1", "SCS2", "TEST", "TEMPLATE"]
 
 [BEAM]
 # machine bound list
@@ -139,22 +139,22 @@ ISRC_NAMES = ["Artemis", "HP-ECR"]
 [SNAPSHOT_TEMPLATES]
 
 [SNAPSHOT_TEMPLATES."LINAC_Artemis"]
-DB_ENTRY = "2023-05-15T09:57:41"
+DB_ENTRY = "2023-09-19T14:59:35"
 DB_TAGS = ["LINAC", "SCS1"]
 NAME = "LINAC_Artemis"
 
 [SNAPSHOT_TEMPLATES."FSEE_Artemis"]
-DB_ENTRY = "2023-05-15T10:18:02"
+DB_ENTRY = "2023-09-19T14:46:34"
 DB_TAGS = ["FSEE", "SCS1"]
 NAME = "FSEE_Artemis"
 
 [SNAPSHOT_TEMPLATES."LINAC_HP-ECR"]
-DB_ENTRY = "2023-05-15T10:00:59"
+DB_ENTRY = "2023-09-19T14:58:01"
 DB_TAGS = ["LINAC", "SCS2"]
 NAME = "LINAC_HP-ECR"
 
 [SNAPSHOT_TEMPLATES."FSEE_HP-ECR"]
-DB_ENTRY = "2023-05-15T10:17:15"
+DB_ENTRY = "2023-09-19T14:52:10"
 DB_TAGS = ["FSEE", "SCS2"]
 NAME = "FSEE_HP-ECR"
 
