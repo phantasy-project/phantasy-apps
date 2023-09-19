@@ -15,6 +15,23 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(1200, 800)
+        Dialog.setStyleSheet(
+            "QCheckBox::indicator {\n"
+            "    width: 16px;\n"
+            "    height: 16px;\n"
+            "}\n"
+            "QCheckBox::indicator::unchecked {\n"
+            "    image: url(:/sm-icons/uncheck-square.png);\n"
+            "}\n"
+            "QCheckBox::indicator::checked {\n"
+            "    image: url(:/sm-icons/check-square-fill.png);\n"
+            "}\n"
+            "QAbstractItemView::indicator::unchecked {\n"
+            "    image: url(:/sm-icons/uncheck-square.png);\n"
+            "}\n"
+            "QAbstractItemView::indicator::checked {\n"
+            "    image: url(:/sm-icons/check-square-fill.png);\n"
+            "}")
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
         self.gridLayout.setContentsMargins(6, 8, 6, 6)
         self.gridLayout.setSpacing(4)
