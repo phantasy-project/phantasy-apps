@@ -61,9 +61,11 @@ def process_db(input_dbpath: str, output_dbpath: str):
 
 
 if __name__ == "__main__":
-    input_db = "/home/tong/Downloads/20230816T000001_SM.db"
-    output_db = "/home/tong/Downloads/20230816T000001_SM_new.db"
+    # input_db = "/home/tong/Downloads/20230816T000001_SM.db"
+    # output_db = "/home/tong/Downloads/20230816T000001_SM_new.db"
     # input_db = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm1.db"
     # output_db = "/home/tong/Dropbox/phantasy-project/phantasy-apps/phantasy_apps/settings_manager/testdata/settings_manager/sm1_new.db"
+    input_db = "/files/shared/ap/settings_manager/sm.db"
+    output_db = "/files/shared/ap/settings_manager/sm_new.db"
     process_db(input_db, output_db)
     init_db(output_db)
