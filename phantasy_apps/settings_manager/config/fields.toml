@@ -28,6 +28,12 @@ fields = [
     'AMP1', 'AMP2', 'AMPLITUDE1', 'AMPLITUDE2'
 ]
 
+["REA_RFQ:CAV_D1017"]
+fields = [
+    'PHA', 'PHASE',
+    'AMPL', 'AMPH', 'AMPLITUDE_LOW', 'AMPLITUDE_HIGH'
+]
+
 ["FS_F2S2:SLH_D1657"]
 fields = [
     'IN_STS', 'IN_STATUS'
