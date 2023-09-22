@@ -206,6 +206,9 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
                 self.apps_tab.tabText(i).split(' ')[0], layout[0].count()))
 
     def sizeHint(self):
+        import socket
+        if socket.gethostname().startswith("work-ftc"):
+            return QSize(1400, 980)
         return QSize(1024, 768)
 
     def post_init_ui(self):
