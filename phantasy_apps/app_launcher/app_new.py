@@ -74,9 +74,9 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         self._debug = False
 
         #
-        self._margin = 10
+        self._margin = 20
         self._spacing = 20
-        self._width = 240 
+        self._width = 240
         #
         # value: {name: AppCard}
         self._app_card_dict = {'fav': {}, 'fav1': {}, 'all': {},
