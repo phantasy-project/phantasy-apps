@@ -45,14 +45,15 @@ class Ui_MainWindow(object):
             "                                stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,\n"
             "                                stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);\n"
             "    border: 1px solid #C4C4C3;\n"
-            "    border-bottom-color: #C2C7CB; /* same as the pane color */\n"
+            "    border-bottom-color: #C2C7CB;\n"
             "    border-top-left-radius: 2px;\n"
             "    border-top-right-radius: 2px;\n"
-            "    min-width: 16ex;\n"
+            "    min-width: 10ex;\n"
             "    padding: 10px;\n"
             "}\n"
             "\n"
             "QTabBar::tab:selected, QTabBar::tab:hover {\n"
+            "    font-weight: bold;\n"
             "    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
             "                                stop: 0 #fafafa, stop: 0.4 #f4f4f4,\n"
             "                                stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);\n"
@@ -79,6 +80,8 @@ class Ui_MainWindow(object):
         self.home_page = QtWidgets.QWidget()
         self.home_page.setObjectName("home_page")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.home_page)
+        self.gridLayout_2.setContentsMargins(10, 6, 10, 10)
+        self.gridLayout_2.setVerticalSpacing(6)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.label_3 = QtWidgets.QLabel(self.home_page)
         self.label_3.setStyleSheet("QLabel {\n"
@@ -101,7 +104,7 @@ class Ui_MainWindow(object):
         self.fav_scrollArea.setObjectName("fav_scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(
-            0, 0, 1097, 520))
+            0, 0, 1107, 542))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.fav_scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_2.addWidget(self.fav_scrollArea, 2, 0, 1, 1)
@@ -112,6 +115,8 @@ class Ui_MainWindow(object):
         self.apps_page = QtWidgets.QWidget()
         self.apps_page.setObjectName("apps_page")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.apps_page)
+        self.gridLayout_3.setContentsMargins(10, 6, 10, 10)
+        self.gridLayout_3.setVerticalSpacing(6)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.label_4 = QtWidgets.QLabel(self.apps_page)
         self.label_4.setStyleSheet("QLabel {\n"
@@ -131,7 +136,7 @@ class Ui_MainWindow(object):
             "QTabBar::tab {\n"
             "  background: #EFEFEF;\n"
             "  color: green;\n"
-            "  padding: 16px;\n"
+            "  padding: 12px;\n"
             " }\n"
             "\n"
             " QTabBar::tab:selected, QTabBar::tab::hover {\n"
@@ -159,8 +164,8 @@ class Ui_MainWindow(object):
         self.all_apps_scrollArea.setWidgetResizable(True)
         self.all_apps_scrollArea.setObjectName("all_apps_scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(
-            0, 0, 100, 20))
+        self.scrollAreaWidgetContents_2.setGeometry(
+            QtCore.QRect(0, 0, 1107, 527))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.all_apps_scrollArea.setWidget(self.scrollAreaWidgetContents_2)
@@ -175,8 +180,8 @@ class Ui_MainWindow(object):
         self.fav1_scrollArea.setWidgetResizable(True)
         self.fav1_scrollArea.setObjectName("fav1_scrollArea")
         self.scrollAreaWidgetContents_3 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_3.setGeometry(QtCore.QRect(
-            0, 0, 100, 20))
+        self.scrollAreaWidgetContents_3.setGeometry(
+            QtCore.QRect(0, 0, 1107, 527))
         self.scrollAreaWidgetContents_3.setObjectName(
             "scrollAreaWidgetContents_3")
         self.fav1_scrollArea.setWidget(self.scrollAreaWidgetContents_3)
@@ -192,8 +197,8 @@ class Ui_MainWindow(object):
         self.grps_scrollArea.setWidgetResizable(True)
         self.grps_scrollArea.setObjectName("grps_scrollArea")
         self.scrollAreaWidgetContents_4 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_4.setGeometry(QtCore.QRect(
-            0, 0, 100, 20))
+        self.scrollAreaWidgetContents_4.setGeometry(
+            QtCore.QRect(0, 0, 1107, 523))
         self.scrollAreaWidgetContents_4.setObjectName(
             "scrollAreaWidgetContents_4")
         self.grps_scrollArea.setWidget(self.scrollAreaWidgetContents_4)
