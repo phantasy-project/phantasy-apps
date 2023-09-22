@@ -74,9 +74,9 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         self._debug = False
 
         #
-        self._margin = 20
-        self._spacing = 40
-        self._width = 300
+        self._margin = 10
+        self._spacing = 20
+        self._width = 240 
         #
         # value: {name: AppCard}
         self._app_card_dict = {'fav': {}, 'fav1': {}, 'all': {},
@@ -206,7 +206,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
                 self.apps_tab.tabText(i).split(' ')[0], layout[0].count()))
 
     def sizeHint(self):
-        return QSize(1780, 1200)
+        return QSize(1024, 768)
 
     def post_init_ui(self):
         # uid
@@ -376,7 +376,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
                 "    padding: 10px 10px 10px 0px;\n"
                 "    border-bottom: 1px solid gray;\n"
                 "    border-radius: 2px;\n"
-                "    font-size: 22pt;\n"
+                "    /*font-size: 22pt;\n*/"
                 "    font-weight: bold;\n"
                 "}")
             headtext_lbl.setText("Search Results: '{}' ({})".format(s, total_items))
@@ -389,7 +389,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             notfound_lbl.setStyleSheet(
                 "QLabel {\n"
                 "    padding: 10px 10px 10px 0px;\n"
-                "    font-size: 22pt;\n"
+                "    /*font-size: 22pt;\n*/"
                 "    color: gray;\n"
                 "}")
             notfound_lbl.setText("No items match your search.")
@@ -404,7 +404,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
                 "QLabel {\n"
                 "    padding: 10px 10px 10px 0px;\n"
                 "    color: darkgreen;\n"
-                "    font-size: 20pt;\n"
+                "    /*font-size: 20pt;\n*/"
                 "}")
             layout.addWidget(fav_lbl)
             fav_area = QScrollArea(w)
@@ -420,7 +420,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
                 "QLabel {\n"
                 "    padding: 10px 10px 10px 0px;\n"
                 "    color: darkgreen;\n"
-                "    font-size: 20pt;\n"
+                "    /*font-size: 20pt;\n*/"
                 "}")
             layout.addWidget(apps_lbl)
             apps_area = QScrollArea(w)
