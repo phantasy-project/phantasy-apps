@@ -4,10 +4,6 @@ import os
 import sys
 import argparse
 from phantasy_ui import QApp as QApplication
-from .app import MPSThresholdManagerWindow
-from .data import read_config
-from .tools import take_snapshot
-from .db.utils import ensure_connect_db
 
 __authors__ = "Tong Zhang"
 __copyright__ = "(c) 2023, Facility for Rare Isotope beams," \
@@ -34,6 +30,7 @@ def run(cli=False):
 
     app = QApplication(sys.argv)
     #
+    from .app import MPSThresholdManagerWindow
     w = MPSThresholdManagerWindow(version=__version__, configpath=configpath)
     w.setWindowTitle(__title__)
     w.show()
@@ -44,6 +41,10 @@ def run(cli=False):
         sys.exit(app.exec_())
 
 def take_snapshot_tool():
+    from .data import read_config
+    from .db.utils import ensure_connect_db
+    from .tools import take_snapshot
+
     parser = argparse.ArgumentParser(
                 description="Capture the diagnostics threshold data for MPS configurations.")
     parser.add_argument("--config", dest="config", help="Path of the configuration file.")
@@ -103,6 +104,10 @@ def mps_take_snapshot(dtypes: list, note: str, tags: list):
     >>> from phantasy_apps import mps_take_snapshot
     >>> take_snapshot(["ND"], "Capture MPS ND data", ["ND"])
     """
+    from .data import read_config
+    from .db.utils import ensure_connect_db
+    from .tools import take_snapshot
+
     configpath = os.path.join(os.path.dirname(__file__), "config/sample.toml")
     conf = read_config(configpath)
     conn = ensure_connect_db(conf['db_uri'])
