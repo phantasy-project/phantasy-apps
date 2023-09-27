@@ -81,7 +81,7 @@ class Ui_MainWindow(object):
         self.home_page.setObjectName("home_page")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.home_page)
         self.gridLayout_2.setContentsMargins(10, 6, 10, 10)
-        self.gridLayout_2.setVerticalSpacing(6)
+        self.gridLayout_2.setVerticalSpacing(4)
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.label_3 = QtWidgets.QLabel(self.home_page)
         self.label_3.setStyleSheet("QLabel {\n"
@@ -93,7 +93,8 @@ class Ui_MainWindow(object):
         self.greetings_lbl = QtWidgets.QLabel(self.home_page)
         self.greetings_lbl.setStyleSheet("QLabel {\n"
                                          "    padding: 10px 10px 10px 0px;\n"
-                                         "    border-bottom: 1px solid gray;\n"
+                                         "    border-top: 0px solid gray;\n"
+                                         "    border-bottom: 2px solid gray;\n"
                                          "    border-radius: 2px;\n"
                                          "    font-weight: bold;\n"
                                          "}")
@@ -104,7 +105,7 @@ class Ui_MainWindow(object):
         self.fav_scrollArea.setObjectName("fav_scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(
-            0, 0, 1107, 542))
+            0, 0, 1107, 551))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.fav_scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_2.addWidget(self.fav_scrollArea, 2, 0, 1, 1)
@@ -116,12 +117,13 @@ class Ui_MainWindow(object):
         self.apps_page.setObjectName("apps_page")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.apps_page)
         self.gridLayout_3.setContentsMargins(10, 6, 10, 10)
-        self.gridLayout_3.setVerticalSpacing(6)
+        self.gridLayout_3.setVerticalSpacing(4)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.label_4 = QtWidgets.QLabel(self.apps_page)
         self.label_4.setStyleSheet("QLabel {\n"
                                    "    padding: 10px 10px 10px 0px;\n"
-                                   "    border-bottom: 1px solid gray;\n"
+                                   "    border-top: 0px solid gray;\n"
+                                   "    border-bottom: 2px solid gray;\n"
                                    "    border-radius: 2px;\n"
                                    "    font-weight: bold;\n"
                                    "}")
@@ -165,7 +167,7 @@ class Ui_MainWindow(object):
         self.all_apps_scrollArea.setObjectName("all_apps_scrollArea")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(
-            QtCore.QRect(0, 0, 1107, 527))
+            QtCore.QRect(0, 0, 1107, 534))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.all_apps_scrollArea.setWidget(self.scrollAreaWidgetContents_2)
@@ -212,7 +214,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.main_tab, 1, 1, 1, 1)
         self.bottombar = QtWidgets.QWidget(self.centralwidget)
         self.bottombar.setStyleSheet("QWidget#bottombar {\n"
-                                     "    border-top: 1px solid gray;\n"
+                                     "    border-top: 2px solid gray;\n"
                                      "    border-radius: 2px;\n"
                                      "}")
         self.bottombar.setObjectName("bottombar")
@@ -222,14 +224,14 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setContentsMargins(-1, 0, 0, -1)
-        self.horizontalLayout_2.setSpacing(4)
+        self.horizontalLayout_2.setSpacing(2)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.about_btn = QtWidgets.QToolButton(self.bottombar)
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap(":/icons/frib.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
         self.about_btn.setIcon(icon3)
-        self.about_btn.setIconSize(QtCore.QSize(48, 48))
+        self.about_btn.setIconSize(QtCore.QSize(42, 42))
         self.about_btn.setAutoRaise(True)
         self.about_btn.setObjectName("about_btn")
         self.horizontalLayout_2.addWidget(self.about_btn)
@@ -245,11 +247,14 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.label.sizePolicy().hasHeightForWidth())
         self.label.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.label.setFont(font)
         self.label.setObjectName("label")
         self.verticalLayout_2.addWidget(self.label)
         self.label_2 = QtWidgets.QLabel(self.bottombar)
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(9)
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
         self.verticalLayout_2.addWidget(self.label_2)
@@ -262,8 +267,8 @@ class Ui_MainWindow(object):
         self.search_btn.setStyleSheet(
             "QToolButton {\n"
             "    border-image: url(\":/icons/search.svg\");\n"
-            "    width: 48px;\n"
-            "    height: 48px;\n"
+            "    width: 32px;\n"
+            "    height: 32px;\n"
             "    background-repeat: no-repeat;\n"
             "}\n"
             "QToolButton::hover {\n"
@@ -279,7 +284,7 @@ class Ui_MainWindow(object):
             "    background-repeat: no-repeat;\n"
             "}")
         self.search_btn.setText("")
-        self.search_btn.setIconSize(QtCore.QSize(48, 48))
+        self.search_btn.setIconSize(QtCore.QSize(32, 32))
         self.search_btn.setCheckable(True)
         self.search_btn.setAutoRaise(True)
         self.search_btn.setObjectName("search_btn")
@@ -293,7 +298,7 @@ class Ui_MainWindow(object):
             self.search_lineEdit.sizePolicy().hasHeightForWidth())
         self.search_lineEdit.setSizePolicy(sizePolicy)
         self.search_lineEdit.setStyleSheet("QLineEdit {\n"
-                                           "    height: 48px;\n"
+                                           "    /*height: 32px;*/\n"
                                            "    padding: 2px;\n"
                                            "    border: 1px solid gray;\n"
                                            "    border-radius: 1px;\n"
