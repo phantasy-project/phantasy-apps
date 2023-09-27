@@ -16,6 +16,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QStyleOption
 from PyQt5.QtWidgets import QStyle
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QGraphicsDropShadowEffect
 
 from subprocess import Popen
 
@@ -52,6 +53,7 @@ class AppCard(QWidget, Ui_AppForm):
         self.setHelpdoc(helpdoc)
         self.setContact(contact)
         self.setChangelog(changelog)
+
 
     def get_meta_info(self):
         return {'name': self.name(), 'groups': self.groups(),
@@ -241,6 +243,12 @@ class AppCardInfoForm(QWidget, Ui_InfoForm):
         self.config_helpdoc(helpdoc)
         self.config_contact(contact)
         self.config_changelog(changelog)
+
+        #
+        shadow = QGraphicsDropShadowEffect()
+        shadow.setBlurRadius(5)
+        shadow.setOffset(2)
+        self.desc_plainTextEdit.setGraphicsEffect(shadow)
 
     @pyqtSlot(bool)
     def on_fav_changed(self, on):
