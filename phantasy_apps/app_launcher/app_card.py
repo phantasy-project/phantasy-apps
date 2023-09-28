@@ -19,10 +19,14 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QGraphicsDropShadowEffect
 
 from subprocess import Popen
+import shutil
+
+from .utils import _new_dir
 
 from .ui.ui_app_card import Ui_AppForm
 from .ui.ui_app_info import Ui_InfoForm
 
+DEFAULT_LOG_ROOTDIR = "/tmp/app-launcher"
 
 class AppCard(QWidget, Ui_AppForm):
 
@@ -37,9 +41,12 @@ class AppCard(QWidget, Ui_AppForm):
         #
         self.setupUi(self)
 
-        # fix width
+        # fixed width
         if kws.get('width', None) is not None:
             self.setFixedWidth(kws.get('width'))
+
+        # root dir for app logs
+        self._log_rootdir = kws.get('log_rootdir', DEFAULT_LOG_ROOTDIR)
 
         self.app_btn_widget.installEventFilter(self)
         self.app_btn_widget.setToolTip(f"Click to run {name}")
@@ -53,7 +60,6 @@ class AppCard(QWidget, Ui_AppForm):
         self.setHelpdoc(helpdoc)
         self.setContact(contact)
         self.setChangelog(changelog)
-
 
     def get_meta_info(self):
         return {'name': self.name(), 'groups': self.groups(),
@@ -76,7 +82,7 @@ class AppCard(QWidget, Ui_AppForm):
         self.info_btn.toggled.connect(self.on_toggle_info)
 
     @pyqtSlot(bool)
-    def on_fav_changed(self, on):
+    def on_fav_changed(self, on: bool):
         self.fav_btn.setChecked(on)
 
     def setIcon(self, icon_path):
@@ -90,7 +96,7 @@ class AppCard(QWidget, Ui_AppForm):
         """
         return self._desc
 
-    def setDescription(self, s):
+    def setDescription(self, s: str):
         self._desc = s
 
     def version(self):
@@ -98,7 +104,7 @@ class AppCard(QWidget, Ui_AppForm):
         """
         return self._version
 
-    def setVersion(self, s):
+    def setVersion(self, s: str):
         self._version = s
         self.app_ver_lbl.setText(s)
 
@@ -107,7 +113,7 @@ class AppCard(QWidget, Ui_AppForm):
         """
         return self._helpdoc
 
-    def setHelpdoc(self, s):
+    def setHelpdoc(self, s: str):
         self._helpdoc = s
 
     def changelog(self):
@@ -115,7 +121,7 @@ class AppCard(QWidget, Ui_AppForm):
         """
         return self._changelog
 
-    def setChangelog(self, s):
+    def setChangelog(self, s: str):
         self._changelog = s
 
     def contact(self):
@@ -131,25 +137,34 @@ class AppCard(QWidget, Ui_AppForm):
         """
         return self._cmd
 
-    def setCommand(self, cmd):
+    def setCommand(self, cmd: str):
         self._cmd = cmd
         self.app_btn.clicked.connect(lambda:self.on_launch_app(False))
+        # if cmd is a single word, try to get the full path
+        if len(cmd.split()) == 1:
+            self._cmd = shutil.which(cmd)
 
     def name(self):
         """str : App name.
         """
         return self._name
 
-    def setName(self, s):
+    def setName(self, s: str):
         self._name = s
         self.app_name_lbl.setText(s)
+        # initialize the filename for log messages
+        self._log_app_dirpath = os.path.join(self._log_rootdir, s.lower().replace(" ", "_"))
+        if not os.path.exists(self._log_app_dirpath):
+            _new_dir(self._log_app_dirpath)
+        self._log_filename = s.lower().replace(" ", "_") + ".log"
+        self._log_filepath = os.path.join(self._log_app_dirpath, self._log_filename)
 
     def groups(self):
         """list : App groups.
         """
         return self._groups
 
-    def setGroups(self, groups):
+    def setGroups(self, groups: list):
         self._groups = groups
         self.app_group_lbl.setText(groups[0])
 
@@ -158,7 +173,7 @@ class AppCard(QWidget, Ui_AppForm):
         """
         return self._fav_on
 
-    def setFavorite(self, on):
+    def setFavorite(self, on: bool):
         self._fav_on = on
         self.fav_btn.setChecked(on)
 
@@ -215,11 +230,13 @@ class AppCard(QWidget, Ui_AppForm):
         self.style().drawPrimitive(QStyle.PE_Widget, opt, p, self)
 
     @pyqtSlot(bool)
-    def on_launch_app(self, console):
+    def on_launch_app(self, console: bool):
         if not console:
             cmdline = self._cmd
         else:
-            cmdline = "gnome-terminal -- " + self._cmd
+            # cmdline = "gnome-terminal -- " + self._cmd
+            cmdline = "gnome-terminal -- " + "bash -c " + '"' \
+                    + self._cmd + " 2>&1 | tee -a " + f"{self._log_filepath}" + '"'
         Popen(cmdline, shell=True)
 
 

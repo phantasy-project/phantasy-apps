@@ -3,6 +3,8 @@
 import importlib
 import os
 import toml
+import shutil
+import stat
 from collections import OrderedDict
 
 from PyQt5.QtCore import Qt
@@ -169,19 +171,22 @@ def get_app_version(pkg_path):
         return ver
 
 
-def get_app_data(path=None, filename='app_launcher.ini'):
-    """Return a dict of app data, key: name, value: AppItem
+def get_config(path=None, filename='app_launcher.ini'):
+    """Return a tuple of non-app config data and a dict of app data, key: name, value: AppItem
     """
     # app conf
     path_conf = find_dconf(path, filename)
     conf = toml.load(path_conf)
 
     title = conf.pop('title')
+    log_conf = conf.pop('LOG')
     imp_path_conf = conf.pop('CONFIG_PATH')
     app_default_conf = conf.pop('APP-DEFAULT')
     default_icon_path = app_default_conf['icon']
     default_groups = app_default_conf['groups']
     default_contact = app_default_conf['contact']
+
+    non_app_data = {'LOG': log_conf}
 
     data = OrderedDict()
     for k, v in conf.items():
@@ -197,7 +202,7 @@ def get_app_data(path=None, filename='app_launcher.ini'):
                            groups, version, helpdoc, contact, changelog)
         data.update([(app_item.name, app_item)])
 
-    return data
+    return non_app_data, data
 
 
 def config_icon_path(icon_path, conf_path):
@@ -221,6 +226,17 @@ def config_icon_path(icon_path, conf_path):
                 return ":/app-icons/app-icons/default.png"
 
 
+# copy of the one in sm/app_attach.py
+def _new_dir(dir_path: str, grp: str = "phyopsg"):
+    os.makedirs(dir_path)
+    try:
+        shutil.chown(dir_path, group=grp)
+    except:
+        pass
+    os.chmod(dir_path, stat.S_ISGID | stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP \
+        | stat.S_IWGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
+
+
 if __name__ == '__main__':
     from PyQt5.QtWidgets import QWidget, QTableView, QTextEdit, QVBoxLayout
     from PyQt5.QtWidgets import QApplication
@@ -228,7 +244,7 @@ if __name__ == '__main__':
     import sys
     from subprocess import Popen
 
-    data = get_app_data(filename='app_launcher.ini')
+    non_app_data, data = get_config(filename='app_launcher.ini')
 
 
     class MyApp(QWidget):

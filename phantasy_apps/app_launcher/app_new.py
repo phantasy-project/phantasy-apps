@@ -25,7 +25,8 @@ from phantasy_ui.widgets import FlowLayout
 
 from .ui.ui_app_cardview import Ui_MainWindow
 from .app_add import AddLauncherDialog
-from .utils import get_app_data
+from .utils import get_config
+from .utils import _new_dir
 from .app_log import LogWidget
 from .app_card import AppCard
 from .app_card import AppCardInfoForm
@@ -43,7 +44,8 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
 
         # config filepath
         config_file = kws.get('config', None)
-        self._app_data = dict(sorted(get_app_data(config_file).items()))
+        non_app_data, app_data = get_config(config_file)
+        self._app_data = dict(sorted(app_data.items()))
 
         # app version
         self._version = version
@@ -73,6 +75,9 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         # debug
         self._debug = False
 
+        # handle non-app config, e.g. log
+        self._post_conf(non_app_data)
+
         #
         self._margin = 20
         self._spacing = 20
@@ -97,6 +102,14 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
 
         #
         self.adjustSize()
+
+    def _post_conf(self, conf: dict):
+        """Handle non-app config data.
+        """
+        # initial log root directory
+        self.log_rootdir = conf['LOG']['ROOT_DIR']
+        if not os.path.exists(self.log_rootdir):
+            _new_dir(self.log_rootdir)
 
     def on_launch_app(self, index, **kws):
         # slot
@@ -187,7 +200,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             if page in ['fav', 'fav1'] and not fav_on:
                 continue
             card = AppCard(name, groups, cmd, fav_on, desc, ver, helpdoc, contact, changelog,
-                           self, width=self._width)
+                           self, width=self._width, log_rootdir=self.log_rootdir)
             card.setIcon(app_item.icon_path)
             card.infoFormChanged.connect(partial(self.on_info_form_changed, page))
             card.favChanged.connect(self.on_fav_changed)
@@ -462,7 +475,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             contact = app_item.contact
             changelog = app_item.changelog
             card = AppCard(name, groups, cmd, True, desc, ver, helpdoc, contact, changelog,
-                           self, width=self._width)
+                           self, width=self._width, log_rootdir=self.log_rootdir)
             card.setIcon(app_item.icon_path)
             card.infoFormChanged.connect(partial(self.on_info_form_changed, 'search_fav'))
             card.favChanged.connect(self.on_fav_changed)
