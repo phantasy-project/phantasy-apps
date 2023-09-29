@@ -21,6 +21,10 @@ from PyQt5.QtWidgets import QGraphicsDropShadowEffect
 from subprocess import Popen
 import os
 import shutil
+from datetime import datetime
+from getpass import getuser
+import socket
+import pwd
 
 from phantasy_ui.widgets import DataAcquisitionThread as DAQT
 
@@ -30,6 +34,18 @@ from .ui.ui_app_card import Ui_AppForm
 from .ui.ui_app_info import Ui_InfoForm
 
 DEFAULT_LOG_ROOTDIR = "/tmp/app-launcher"
+
+# user info
+_HOSTNAME = socket.gethostname()
+_USER = getuser()
+_s = pwd.getpwuid(os.getuid())
+try:
+    _u = _s[4].strip(',')
+    assert _u != ''
+except AssertionError:
+    _u = _s[0]
+finally:
+    _USER_FULLNAME = _u.title()
 
 
 for i in ('python3', 'python'):
@@ -61,6 +77,8 @@ class AppCard(QWidget, Ui_AppForm):
 
         # root dir for app logs
         self._log_rootdir = kws.get('log_rootdir', DEFAULT_LOG_ROOTDIR)
+        # start up counter log
+        self._sts_logfile = os.path.join(self._log_rootdir, ".sts-log")
 
         # Is Python program?
         self._is_python_app = app_type == "PYTHON"
@@ -252,6 +270,8 @@ class AppCard(QWidget, Ui_AppForm):
 
     @pyqtSlot(bool)
     def on_launch_app(self, realtime_logtrack: bool):
+        """Start the app up.
+        """
         if realtime_logtrack:
             if self._is_python_app:
                 # prefixing `which python3` to the cmd if not
@@ -264,8 +284,12 @@ class AppCard(QWidget, Ui_AppForm):
                     + self._cmd + " 2>&1 | tee -a " + f"{self._log_filepath}" + '"'
         else:
             cmdline = self._cmd
-        with open("/tmp/al-cmd.log", "a") as fp:
-            print(cmdline, file=fp)
+        ts = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
+        head_msg = f"[{ts}] {_USER_FULLNAME} ({_USER}) on '{_HOSTNAME}' started up '{self._name}'"
+        with open(self._sts_logfile, "a") as fp:
+            print(head_msg, file=fp)
+        with open(self._log_filepath, "a") as fp:
+            print(head_msg, file=fp)
         Popen(cmdline, shell=True)
 
 
