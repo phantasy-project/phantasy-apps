@@ -14,46 +14,17 @@ class Ui_InfoForm(object):
 
     def setupUi(self, InfoForm):
         InfoForm.setObjectName("InfoForm")
-        InfoForm.resize(1047, 340)
+        InfoForm.resize(1241, 366)
         InfoForm.setStyleSheet("QWidget#InfoForm {\n"
                                "    border: 2px solid #04B13B;\n"
+                               "}\n"
+                               "QTabWidget::pane { \n"
+                               "    border-top: 1px solid #C2C7CB;\n"
                                "}")
         self.gridLayout_2 = QtWidgets.QGridLayout(InfoForm)
-        self.gridLayout_2.setContentsMargins(2, 1, 2, 6)
+        self.gridLayout_2.setContentsMargins(1, 1, 1, 1)
+        self.gridLayout_2.setSpacing(2)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        self.desc_plainTextEdit = QtWidgets.QPlainTextEdit(InfoForm)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(3)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.desc_plainTextEdit.sizePolicy().hasHeightForWidth())
-        self.desc_plainTextEdit.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("monospace")
-        self.desc_plainTextEdit.setFont(font)
-        self.desc_plainTextEdit.setStyleSheet("QPlainTextEdit {\n"
-                                              "    font-family: monospace;\n"
-                                              "    border: none;\n"
-                                              "    margin-bottom: 6px;\n"
-                                              "    margin-right: 6px;\n"
-                                              "}")
-        self.desc_plainTextEdit.setReadOnly(True)
-        self.desc_plainTextEdit.setObjectName("desc_plainTextEdit")
-        self.gridLayout_2.addWidget(self.desc_plainTextEdit, 4, 1, 1, 1)
-        self.label_7 = QtWidgets.QLabel(InfoForm)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(3)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_7.sizePolicy().hasHeightForWidth())
-        self.label_7.setSizePolicy(sizePolicy)
-        self.label_7.setStyleSheet("QLabel {\n"
-                                   "    font-weight: bold;\n"
-                                   "}")
-        self.label_7.setObjectName("label_7")
-        self.gridLayout_2.addWidget(self.label_7, 1, 1, 1, 1)
         self.headline_widget = QtWidgets.QWidget(InfoForm)
         self.headline_widget.setStyleSheet(
             "QWidget {\n"
@@ -120,49 +91,319 @@ class Ui_InfoForm(object):
         self.close_btn.setObjectName("close_btn")
         self.horizontalLayout.addWidget(self.close_btn)
         self.gridLayout_2.addWidget(self.headline_widget, 0, 0, 1, 2)
-        self.label_3 = QtWidgets.QLabel(InfoForm)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setContentsMargins(4, 4, 4, 4)
+        self.horizontalLayout_2.setSpacing(4)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.verticalLayout = QtWidgets.QVBoxLayout()
+        self.verticalLayout.setContentsMargins(0, -1, -1, -1)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.act_tabWidget = QtWidgets.QTabWidget(InfoForm)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(1)
+                                           QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.label_3.sizePolicy().hasHeightForWidth())
-        self.label_3.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setWeight(75)
-        self.label_3.setFont(font)
-        self.label_3.setStyleSheet("QLabel {\n"
-                                   "    font-weight: bold;\n"
-                                   "    margin-left: 10px;\n"
-                                   "}")
-        self.label_3.setObjectName("label_3")
-        self.gridLayout_2.addWidget(self.label_3, 1, 0, 1, 1)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+            self.act_tabWidget.sizePolicy().hasHeightForWidth())
+        self.act_tabWidget.setSizePolicy(sizePolicy)
+        self.act_tabWidget.setStyleSheet(
+            "QTabBar::tab {\n"
+            "    border-top: 0px solid gray;\n"
+            "    border-bottom: 2px solid gray;\n"
+            "    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+            "                                stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,\n"
+            "                                stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);\n"
+            "    min-width: 10ex;\n"
+            "    padding: 10px;\n"
+            "}\n"
+            "QTabBar::tab:selected, QTabBar::tab:hover {\n"
+            "    font-weight: bold;\n"
+            "    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+            "                                stop: 0 #fafafa, stop: 0.4 #f4f4f4,\n"
+            "                                stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);\n"
+            "}\n"
+            "\n"
+            "QTabBar::tab:selected {\n"
+            "    border-color: #9B9B9B;\n"
+            "    border-bottom-color: #C2C7CB;\n"
+            "}\n"
+            "\n"
+            "QTabBar::tab:!selected {\n"
+            "    margin-top: 4px;\n"
+            "}\n"
+            "")
+        self.act_tabWidget.setObjectName("act_tabWidget")
+        self.act_tab = QtWidgets.QWidget()
+        self.act_tab.setObjectName("act_tab")
+        self.gridLayout_3 = QtWidgets.QGridLayout(self.act_tab)
+        self.gridLayout_3.setContentsMargins(4, 8, 4, 4)
+        self.gridLayout_3.setSpacing(6)
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        self.fav_btn = QtWidgets.QToolButton(self.act_tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.fav_btn.sizePolicy().hasHeightForWidth())
+        self.fav_btn.setSizePolicy(sizePolicy)
+        self.fav_btn.setStyleSheet("")
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/icons/fav-off-action.svg"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(":/icons/fav-on-action.svg"),
+                        QtGui.QIcon.Active, QtGui.QIcon.On)
+        self.fav_btn.setIcon(icon3)
+        self.fav_btn.setIconSize(QtCore.QSize(32, 32))
+        self.fav_btn.setCheckable(True)
+        self.fav_btn.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+        self.fav_btn.setAutoRaise(True)
+        self.fav_btn.setObjectName("fav_btn")
+        self.gridLayout_3.addWidget(self.fav_btn, 3, 0, 1, 1)
+        spacerItem = QtWidgets.QSpacerItem(20, 40,
+                                           QtWidgets.QSizePolicy.Minimum,
+                                           QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_3.addItem(spacerItem, 4, 0, 1, 1)
+        self.open_btn = QtWidgets.QToolButton(self.act_tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.open_btn.sizePolicy().hasHeightForWidth())
+        self.open_btn.setSizePolicy(sizePolicy)
+        self.open_btn.setStyleSheet("")
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/icons/run.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.open_btn.setIcon(icon4)
+        self.open_btn.setIconSize(QtCore.QSize(32, 32))
+        self.open_btn.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
+        self.open_btn.setAutoRaise(True)
+        self.open_btn.setObjectName("open_btn")
+        self.gridLayout_3.addWidget(self.open_btn, 0, 0, 1, 1)
+        self.open_follow_logs_btn = QtWidgets.QToolButton(self.act_tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.open_follow_logs_btn.sizePolicy().hasHeightForWidth())
+        self.open_follow_logs_btn.setSizePolicy(sizePolicy)
+        self.open_follow_logs_btn.setStyleSheet("")
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/app-icons/app-icons/console.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.open_follow_logs_btn.setIcon(icon5)
+        self.open_follow_logs_btn.setIconSize(QtCore.QSize(32, 32))
+        self.open_follow_logs_btn.setCheckable(False)
+        self.open_follow_logs_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.open_follow_logs_btn.setAutoRaise(True)
+        self.open_follow_logs_btn.setObjectName("open_follow_logs_btn")
+        self.gridLayout_3.addWidget(self.open_follow_logs_btn, 1, 0, 1, 1)
+        self.view_logs_btn = QtWidgets.QToolButton(self.act_tab)
+        self.view_logs_btn.setEnabled(False)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.view_logs_btn.sizePolicy().hasHeightForWidth())
+        self.view_logs_btn.setSizePolicy(sizePolicy)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/icons/read-log.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.view_logs_btn.setIcon(icon6)
+        self.view_logs_btn.setIconSize(QtCore.QSize(32, 32))
+        self.view_logs_btn.setCheckable(True)
+        self.view_logs_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
+        self.view_logs_btn.setAutoRaise(True)
+        self.view_logs_btn.setObjectName("view_logs_btn")
+        self.gridLayout_3.addWidget(self.view_logs_btn, 2, 0, 1, 1)
+        self.act_tabWidget.addTab(self.act_tab, "")
+        self.verticalLayout.addWidget(self.act_tabWidget)
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setContentsMargins(-1, 0, 4, -1)
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.contact_lbl = QtWidgets.QLabel(InfoForm)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.contact_lbl.sizePolicy().hasHeightForWidth())
         self.contact_lbl.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        self.contact_lbl.setFont(font)
         self.contact_lbl.setStyleSheet("QLabel {\n"
                                        "    margin-left: 0px;\n"
                                        "}")
+        self.contact_lbl.setAlignment(QtCore.Qt.AlignRight
+                                      | QtCore.Qt.AlignTrailing
+                                      | QtCore.Qt.AlignVCenter)
         self.contact_lbl.setObjectName("contact_lbl")
-        self.horizontalLayout_2.addWidget(self.contact_lbl)
+        self.horizontalLayout_4.addWidget(self.contact_lbl)
+        self.verticalLayout.addLayout(self.horizontalLayout_4)
+        self.horizontalLayout_2.addLayout(self.verticalLayout)
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setContentsMargins(0, -1, -1, -1)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.desc_tabWidget = QtWidgets.QTabWidget(InfoForm)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.desc_tabWidget.sizePolicy().hasHeightForWidth())
+        self.desc_tabWidget.setSizePolicy(sizePolicy)
+        self.desc_tabWidget.setStyleSheet(
+            "QTabWidget::tab-bar {\n"
+            "    left: 2px;\n"
+            "    /*alignment: center;*/\n"
+            "}\n"
+            "QTabBar::tab {\n"
+            "    border-top: 0px solid gray;\n"
+            "    border-bottom: 2px solid gray;\n"
+            "    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+            "                                stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,\n"
+            "                                stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);\n"
+            "    min-width: 10ex;\n"
+            "    padding: 10px;\n"
+            "}\n"
+            "QTabBar::tab:selected, QTabBar::tab:hover {\n"
+            "    font-weight: bold;\n"
+            "    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+            "                                stop: 0 #fafafa, stop: 0.4 #f4f4f4,\n"
+            "                                stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);\n"
+            "}\n"
+            "\n"
+            "QTabBar::tab:selected {\n"
+            "    border-color: #9B9B9B;\n"
+            "    border-bottom-color: #C2C7CB;\n"
+            "}\n"
+            "\n"
+            "QTabBar::tab:!selected {\n"
+            "    margin-top: 4px;\n"
+            "}\n"
+            "")
+        self.desc_tabWidget.setObjectName("desc_tabWidget")
+        self.desc_tab = QtWidgets.QWidget()
+        self.desc_tab.setObjectName("desc_tab")
+        self.gridLayout = QtWidgets.QGridLayout(self.desc_tab)
+        self.gridLayout.setContentsMargins(4, 8, 4, 4)
+        self.gridLayout.setSpacing(6)
+        self.gridLayout.setObjectName("gridLayout")
+        self.desc_plainTextEdit = QtWidgets.QPlainTextEdit(self.desc_tab)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(3)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.desc_plainTextEdit.sizePolicy().hasHeightForWidth())
+        self.desc_plainTextEdit.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("monospace")
+        self.desc_plainTextEdit.setFont(font)
+        self.desc_plainTextEdit.setStyleSheet("QPlainTextEdit {\n"
+                                              "    font-family: monospace;\n"
+                                              "    border: none;\n"
+                                              "    margin-bottom: 6px;\n"
+                                              "    margin-right: 6px;\n"
+                                              "}")
+        self.desc_plainTextEdit.setReadOnly(True)
+        self.desc_plainTextEdit.setObjectName("desc_plainTextEdit")
+        self.gridLayout.addWidget(self.desc_plainTextEdit, 0, 0, 1, 1)
+        self.desc_tabWidget.addTab(self.desc_tab, "")
+        self.log_tab = QtWidgets.QWidget()
+        self.log_tab.setObjectName("log_tab")
+        self.gridLayout_4 = QtWidgets.QGridLayout(self.log_tab)
+        self.gridLayout_4.setContentsMargins(4, 8, 4, 4)
+        self.gridLayout_4.setSpacing(6)
+        self.gridLayout_4.setObjectName("gridLayout_4")
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_5.setContentsMargins(-1, 0, 0, -1)
+        self.horizontalLayout_5.setSpacing(4)
+        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_5.addItem(spacerItem1)
+        self.clear_log_btn = QtWidgets.QPushButton(self.log_tab)
+        self.clear_log_btn.setEnabled(False)
+        self.clear_log_btn.setObjectName("clear_log_btn")
+        self.horizontalLayout_5.addWidget(self.clear_log_btn)
+        self.open_log_btn = QtWidgets.QPushButton(self.log_tab)
+        self.open_log_btn.setObjectName("open_log_btn")
+        self.horizontalLayout_5.addWidget(self.open_log_btn)
+        self.follow_log_btn = QtWidgets.QPushButton(self.log_tab)
+        self.follow_log_btn.setEnabled(False)
+        self.follow_log_btn.setCheckable(True)
+        self.follow_log_btn.setObjectName("follow_log_btn")
+        self.horizontalLayout_5.addWidget(self.follow_log_btn)
+        self.gridLayout_4.addLayout(self.horizontalLayout_5, 1, 0, 1, 2)
+        self.log_textEdit = QtWidgets.QTextEdit(self.log_tab)
+        self.log_textEdit.setReadOnly(True)
+        self.log_textEdit.setObjectName("log_textEdit")
+        self.gridLayout_4.addWidget(self.log_textEdit, 2, 0, 1, 2)
+        self.desc_tabWidget.addTab(self.log_tab, "")
+        self.verticalLayout_2.addWidget(self.desc_tabWidget)
+        self.contact_hbox = QtWidgets.QHBoxLayout()
+        self.contact_hbox.setContentsMargins(-1, 0, -1, -1)
+        self.contact_hbox.setObjectName("contact_hbox")
+        self.name_hbox = QtWidgets.QHBoxLayout()
+        self.name_hbox.setObjectName("name_hbox")
+        self.name_px_lbl = QtWidgets.QLabel(InfoForm)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.name_px_lbl.sizePolicy().hasHeightForWidth())
+        self.name_px_lbl.setSizePolicy(sizePolicy)
+        self.name_px_lbl.setObjectName("name_px_lbl")
+        self.name_hbox.addWidget(self.name_px_lbl)
         self.contact_name_lbl = QtWidgets.QLabel(InfoForm)
         self.contact_name_lbl.setStyleSheet("QLabel {\n"
                                             "    margin-left: 10px;\n"
                                             "}")
+        self.contact_name_lbl.setAlignment(QtCore.Qt.AlignCenter)
         self.contact_name_lbl.setObjectName("contact_name_lbl")
-        self.horizontalLayout_2.addWidget(self.contact_name_lbl)
+        self.name_hbox.addWidget(self.contact_name_lbl)
+        self.contact_hbox.addLayout(self.name_hbox)
+        self.phone_hbox = QtWidgets.QHBoxLayout()
+        self.phone_hbox.setObjectName("phone_hbox")
+        self.phone_px_lbl = QtWidgets.QLabel(InfoForm)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.phone_px_lbl.sizePolicy().hasHeightForWidth())
+        self.phone_px_lbl.setSizePolicy(sizePolicy)
+        self.phone_px_lbl.setObjectName("phone_px_lbl")
+        self.phone_hbox.addWidget(self.phone_px_lbl)
         self.contact_phone_lbl = QtWidgets.QLabel(InfoForm)
         self.contact_phone_lbl.setAlignment(QtCore.Qt.AlignCenter)
         self.contact_phone_lbl.setObjectName("contact_phone_lbl")
-        self.horizontalLayout_2.addWidget(self.contact_phone_lbl)
+        self.phone_hbox.addWidget(self.contact_phone_lbl)
+        self.contact_hbox.addLayout(self.phone_hbox)
+        self.email_hbox = QtWidgets.QHBoxLayout()
+        self.email_hbox.setContentsMargins(-1, 0, -1, -1)
+        self.email_hbox.setObjectName("email_hbox")
+        self.email_px_lbl = QtWidgets.QLabel(InfoForm)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.email_px_lbl.sizePolicy().hasHeightForWidth())
+        self.email_px_lbl.setSizePolicy(sizePolicy)
+        self.email_px_lbl.setObjectName("email_px_lbl")
+        self.email_hbox.addWidget(self.email_px_lbl)
         self.contact_email_lbl = QtWidgets.QLabel(InfoForm)
         self.contact_email_lbl.setStyleSheet("QLabel {\n"
                                              "    margin-right: 6px;\n"
@@ -172,102 +413,71 @@ class Ui_InfoForm(object):
                                             | QtCore.Qt.AlignVCenter)
         self.contact_email_lbl.setOpenExternalLinks(True)
         self.contact_email_lbl.setObjectName("contact_email_lbl")
-        self.horizontalLayout_2.addWidget(self.contact_email_lbl)
-        self.gridLayout_2.addLayout(self.horizontalLayout_2, 5, 1, 1, 1)
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_2.setContentsMargins(10, 6, 20, 6)
-        self.verticalLayout_2.setSpacing(6)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.open_btn = QtWidgets.QToolButton(InfoForm)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.open_btn.sizePolicy().hasHeightForWidth())
-        self.open_btn.setSizePolicy(sizePolicy)
-        self.open_btn.setStyleSheet("")
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/icons/run.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.open_btn.setIcon(icon3)
-        self.open_btn.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
-        self.open_btn.setAutoRaise(True)
-        self.open_btn.setObjectName("open_btn")
-        self.verticalLayout_2.addWidget(self.open_btn)
-        self.open_in_terminal_btn = QtWidgets.QToolButton(InfoForm)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.open_in_terminal_btn.sizePolicy().hasHeightForWidth())
-        self.open_in_terminal_btn.setSizePolicy(sizePolicy)
-        self.open_in_terminal_btn.setStyleSheet("")
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/app-icons/app-icons/console.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.open_in_terminal_btn.setIcon(icon4)
-        self.open_in_terminal_btn.setCheckable(False)
-        self.open_in_terminal_btn.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon)
-        self.open_in_terminal_btn.setAutoRaise(True)
-        self.open_in_terminal_btn.setObjectName("open_in_terminal_btn")
-        self.verticalLayout_2.addWidget(self.open_in_terminal_btn)
-        self.fav_btn = QtWidgets.QToolButton(InfoForm)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.fav_btn.sizePolicy().hasHeightForWidth())
-        self.fav_btn.setSizePolicy(sizePolicy)
-        self.fav_btn.setStyleSheet("")
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/icons/fav-off-action.svg"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon5.addPixmap(QtGui.QPixmap(":/icons/fav-on-action.svg"),
-                        QtGui.QIcon.Active, QtGui.QIcon.On)
-        self.fav_btn.setIcon(icon5)
-        self.fav_btn.setCheckable(True)
-        self.fav_btn.setToolButtonStyle(QtCore.Qt.ToolButtonTextBesideIcon)
-        self.fav_btn.setAutoRaise(True)
-        self.fav_btn.setObjectName("fav_btn")
-        self.verticalLayout_2.addWidget(self.fav_btn)
-        self.gridLayout_2.addLayout(self.verticalLayout_2, 4, 0, 1, 1)
-        self.label_3.raise_()
-        self.label_7.raise_()
-        self.headline_widget.raise_()
-        self.desc_plainTextEdit.raise_()
+        self.email_hbox.addWidget(self.contact_email_lbl)
+        self.contact_hbox.addLayout(self.email_hbox)
+        self.verticalLayout_2.addLayout(self.contact_hbox)
+        self.horizontalLayout_2.addLayout(self.verticalLayout_2)
+        self.gridLayout_2.addLayout(self.horizontalLayout_2, 1, 0, 1, 2)
 
         self.retranslateUi(InfoForm)
+        self.act_tabWidget.setCurrentIndex(0)
+        self.desc_tabWidget.setCurrentIndex(0)
         self.close_btn.clicked.connect(InfoForm.on_close)  # type: ignore
-        self.open_in_terminal_btn.clicked.connect(
-            InfoForm.on_run_app_in_terminal)  # type: ignore
         self.open_btn.clicked.connect(InfoForm.on_run_app)  # type: ignore
         self.fav_btn.toggled['bool'].connect(
             InfoForm.on_toggle_fav)  # type: ignore
+        self.open_follow_logs_btn.clicked.connect(
+            InfoForm.on_run_app_follow_logs)  # type: ignore
+        self.view_logs_btn.toggled['bool'].connect(
+            InfoForm.on_view_logs)  # type: ignore
+        self.clear_log_btn.clicked.connect(
+            InfoForm.on_clear_log)  # type: ignore
+        self.follow_log_btn.toggled['bool'].connect(
+            InfoForm.on_follow_log)  # type: ignore
+        self.open_log_btn.clicked.connect(InfoForm.on_open_log)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(InfoForm)
 
     def retranslateUi(self, InfoForm):
         _translate = QtCore.QCoreApplication.translate
         InfoForm.setWindowTitle(_translate("InfoForm", "Form"))
-        self.label_7.setText(_translate("InfoForm", "Descriptions"))
         self.app_name.setText(_translate("InfoForm", "App Name"))
         self.app_main_group.setText(
             _translate("InfoForm", "App Main Group Name"))
         self.changelog_btn.setText(_translate("InfoForm", "..."))
         self.helpdoc_btn.setText(_translate("InfoForm", "help"))
         self.close_btn.setText(_translate("InfoForm", "..."))
-        self.label_3.setText(_translate("InfoForm", "Actions"))
-        self.contact_lbl.setText(_translate("InfoForm", "Contact"))
-        self.contact_name_lbl.setText(_translate("InfoForm", "name"))
-        self.contact_phone_lbl.setText(_translate("InfoForm", "phone"))
-        self.contact_email_lbl.setText(_translate("InfoForm", "email"))
-        self.open_btn.setText(_translate("InfoForm", "Open"))
-        self.open_in_terminal_btn.setText(
-            _translate("InfoForm", "Open in Terminal"))
         self.fav_btn.setText(_translate("InfoForm", "Add to Favorites"))
+        self.open_btn.setText(_translate("InfoForm", "Open"))
+        self.open_follow_logs_btn.setText(
+            _translate("InfoForm", "Open, follow logs"))
+        self.view_logs_btn.setText(_translate("InfoForm", "View Logs"))
+        self.act_tabWidget.setTabText(self.act_tabWidget.indexOf(self.act_tab),
+                                      _translate("InfoForm", "Actions"))
+        self.contact_lbl.setText(_translate("InfoForm", "Contact"))
+        self.desc_tabWidget.setTabText(
+            self.desc_tabWidget.indexOf(self.desc_tab),
+            _translate("InfoForm", "Descriptions"))
+        self.clear_log_btn.setText(_translate("InfoForm", "Clear"))
+        self.open_log_btn.setText(_translate("InfoForm", "Open"))
+        self.follow_log_btn.setText(_translate("InfoForm", "Follow"))
+        self.log_textEdit.setHtml(
+            _translate(
+                "InfoForm",
+                "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+                "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+                "p, li { white-space: pre-wrap; }\n"
+                "</style></head><body style=\" font-family:\'Cantarell\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+                "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Under Development ...</p></body></html>"
+            ))
+        self.desc_tabWidget.setTabText(
+            self.desc_tabWidget.indexOf(self.log_tab),
+            _translate("InfoForm", "Logs"))
+        self.name_px_lbl.setText(_translate("InfoForm", "name_px"))
+        self.contact_name_lbl.setText(_translate("InfoForm", "name"))
+        self.phone_px_lbl.setText(_translate("InfoForm", "phone_px"))
+        self.contact_phone_lbl.setText(_translate("InfoForm", "phone"))
+        self.email_px_lbl.setText(_translate("InfoForm", "email_px"))
+        self.contact_email_lbl.setText(_translate("InfoForm", "email"))
 
 
 from . import resources_rc
