@@ -11,11 +11,11 @@ from PyQt5.QtCore import QSharedMemory
 from .app_new import AppLauncherWindow
 
 __authors__ = "Tong Zhang"
-__copyright__ = "(c) 2019-2021, Facility for Rare Isotope beams," \
+__copyright__ = "(c) 2019-2023, Facility for Rare Isotope beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
 __title__ = "Global Launcher for FRIB Physics Applications"
-__version__ = '4.3'
+__version__ = '5.0'
 
 
 def _run_in_dev_mode():
