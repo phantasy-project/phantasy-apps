@@ -474,8 +474,9 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             helpdoc = app_item.helpdoc
             contact = app_item.contact
             changelog = app_item.changelog
+            app_type = app_item.app_type
             card = AppCard(name, groups, cmd, True, desc, ver, helpdoc, contact, changelog,
-                           self, width=self._width, log_rootdir=self.log_rootdir)
+                           app_type, self, width=self._width, log_rootdir=self.log_rootdir)
             card.setIcon(app_item.icon_path)
             card.infoFormChanged.connect(partial(self.on_info_form_changed, 'search_fav'))
             card.favChanged.connect(self.on_fav_changed)
@@ -502,8 +503,9 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             helpdoc = app_item.helpdoc
             contact = app_item.contact
             changelog = app_item.changelog
+            app_type = app_item.app_type
             card = AppCard(name, groups, cmd, False, desc, ver, helpdoc, contact, changelog,
-                           self, width=self._width)
+                           app_type, self, width=self._width)
             card.setIcon(app_item.icon_path)
             card.infoFormChanged.connect(partial(self.on_info_form_changed, 'search_apps'))
             card.favChanged.connect(self.on_fav_changed)

@@ -112,7 +112,8 @@ class AppDataModel(QStandardItemModel):
 
 
 class AppItem(object):
-    def __init__(self, name, desc, cmd, icon_path, groups, version, helpdoc, contact, changelog):
+    def __init__(self, name: str, desc: str, cmd: str, icon_path: str, groups: list,
+                 version: str, helpdoc: str, contact: People, changelog: str, app_type: str):
         # name : app name
         # desc : app descriptiono
         # cmd : command to start up app (exec)
@@ -121,6 +122,7 @@ class AppItem(object):
         # helpdoc : path for help doc
         # contact : People to contact
         # changelog: app changelog doc
+        # app_type: app type
         super(self.__class__, self).__init__()
         self.name = name
         self.desc = desc
@@ -131,6 +133,7 @@ class AppItem(object):
         self.helpdoc = helpdoc
         self.contact = contact
         self.changelog = changelog
+        self.app_type = app_type
 
     def __contains__(self, item):
         item = item.lower()
@@ -185,6 +188,7 @@ def get_config(path=None, filename='app_launcher.ini'):
     default_icon_path = app_default_conf['icon']
     default_groups = app_default_conf['groups']
     default_contact = app_default_conf['contact']
+    default_app_type = app_default_conf['app_type']
 
     non_app_data = {'LOG': log_conf}
 
@@ -198,8 +202,9 @@ def get_config(path=None, filename='app_launcher.ini'):
         changelog = v.get('changelog', '')
         contact_list = v.get('contact', default_contact[:])
         contact = People(*contact_list)
+        app_type = v.get('app_type', default_app_type)
         app_item = AppItem(v.get('name'), v.get('desc'), v.get('exec'), icon_path,
-                           groups, version, helpdoc, contact, changelog)
+                           groups, version, helpdoc, contact, changelog, app_type)
         data.update([(app_item.name, app_item)])
 
     return non_app_data, data
