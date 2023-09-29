@@ -113,7 +113,7 @@ class AppDataModel(QStandardItemModel):
 
 class AppItem(object):
     def __init__(self, name: str, desc: str, cmd: str, icon_path: str, groups: list,
-                 version: str, helpdoc: str, contact: People, changelog: str, app_type: str):
+                 version: str, helpdoc: str, contact, changelog: str, app_type: str):
         # name : app name
         # desc : app descriptiono
         # cmd : command to start up app (exec)
