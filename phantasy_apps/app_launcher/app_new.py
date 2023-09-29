@@ -197,10 +197,11 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             helpdoc = app_item.helpdoc
             contact = app_item.contact
             changelog = app_item.changelog
+            app_type = app_item.app_type
             if page in ['fav', 'fav1'] and not fav_on:
                 continue
             card = AppCard(name, groups, cmd, fav_on, desc, ver, helpdoc, contact, changelog,
-                           self, width=self._width, log_rootdir=self.log_rootdir)
+                           app_type, self, width=self._width, log_rootdir=self.log_rootdir)
             card.setIcon(app_item.icon_path)
             card.infoFormChanged.connect(partial(self.on_info_form_changed, page))
             card.favChanged.connect(self.on_fav_changed)
