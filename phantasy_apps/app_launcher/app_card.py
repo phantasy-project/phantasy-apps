@@ -279,7 +279,7 @@ class AppCard(QWidget, Ui_AppForm):
                 if 'python' not in self._cmd:
                     self._cmd = f"{PYTHON_EXEC_PATH} -u {self._cmd}"
                 else:
-                    self._cmd = re.sub(r'python[3]*', rf'{PYTHON_EXEC_PATH} -u', self._cmd)
+                    self._cmd = re.sub(r'^python[3]*', rf'{PYTHON_EXEC_PATH} -u', self._cmd)
         if 'gnome-terminal' not in self._cmd:
             cmdline = "gnome-terminal -- " + "bash -c " + '"' \
                     + self._cmd + " 2>&1 | tee -a " + f"{self._log_filepath}" + '"'
