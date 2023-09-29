@@ -18,6 +18,7 @@ from PyQt5.QtWidgets import QStyle
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QGraphicsDropShadowEffect
 
+import re
 from subprocess import Popen
 import os
 import shutil
