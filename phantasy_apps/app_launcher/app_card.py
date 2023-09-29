@@ -22,21 +22,32 @@ from subprocess import Popen
 import os
 import shutil
 
-from .utils import _new_dir
+from .utils import _new_dir, People
 
 from .ui.ui_app_card import Ui_AppForm
 from .ui.ui_app_info import Ui_InfoForm
 
 DEFAULT_LOG_ROOTDIR = "/tmp/app-launcher"
 
+
+for i in ('python3', 'python'):
+    _py_path = shutil.which(i)
+    if _py_path is not None:
+        break
+else:
+    _py_path = "/usr/bin/python3"
+PYTHON_EXEC_PATH = _py_path
+
+
 class AppCard(QWidget, Ui_AppForm):
 
     favChanged = pyqtSignal(bool)
     infoFormChanged = pyqtSignal(dict, bool)
 
-    def __init__(self, name, groups, cmd=None, fav_on=False, desc=None,
-                 version=None, helpdoc=None, contact=None, changelog=None,
-                 parent=None, **kws):
+    def __init__(self, name: str, groups: list, cmd: str, fav_on: bool, desc: str,
+                 version: str, helpdoc: str, contact: People, changelog: str,
+                 app_type: str, parent, **kws):
+        # kws: width, log_rootdir
         super(AppCard, self).__init__(parent)
 
         #
@@ -48,6 +59,9 @@ class AppCard(QWidget, Ui_AppForm):
 
         # root dir for app logs
         self._log_rootdir = kws.get('log_rootdir', DEFAULT_LOG_ROOTDIR)
+
+        # Is Python program?
+        self._is_python_app = app_type == "PYTHON"
 
         self.app_btn_widget.installEventFilter(self)
         self.app_btn_widget.setToolTip(f"Click to run {name}")
@@ -141,9 +155,10 @@ class AppCard(QWidget, Ui_AppForm):
     def setCommand(self, cmd: str):
         self._cmd = cmd
         self.app_btn.clicked.connect(lambda:self.on_launch_app(False))
-        # if cmd is a single word, try to get the full path
-        if len(cmd.split()) == 1:
-            self._cmd = shutil.which(cmd)
+        # expand the first word of cmd to the fullpath executable
+        cmd_list = cmd.split(maxsplit=1)
+        cmd_list[0] = shutil.which(cmd_list[0])
+        self._cmd = ' '.join(cmd_list)
 
     def name(self):
         """str : App name.
@@ -231,13 +246,21 @@ class AppCard(QWidget, Ui_AppForm):
         self.style().drawPrimitive(QStyle.PE_Widget, opt, p, self)
 
     @pyqtSlot(bool)
-    def on_launch_app(self, console: bool):
-        if not console:
-            cmdline = self._cmd
-        else:
-            # cmdline = "gnome-terminal -- " + self._cmd
+    def on_launch_app(self, realtime_logtrack: bool):
+        if realtime_logtrack:
+            if self._is_python_app:
+                # prefixing `which python3` to the cmd if not
+                if 'python' not in self._cmd:
+                    self._cmd = f"{PYTHON_EXEC_PATH} -u {self._cmd}"
+                else:
+                    self._cmd = re.sub(r'python[3]*', rf'{PYTHON_EXEC_PATH} -u', self._cmd)
+        if 'gnome-terminal' not in self._cmd:
             cmdline = "gnome-terminal -- " + "bash -c " + '"' \
                     + self._cmd + " 2>&1 | tee -a " + f"{self._log_filepath}" + '"'
+        else:
+            cmdline = self._cmd
+        with open("/tmp/al-cmd.log", "a") as fp:
+            print(cmdline, file=fp)
         Popen(cmdline, shell=True)
 
 
