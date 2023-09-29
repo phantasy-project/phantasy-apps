@@ -157,7 +157,9 @@ class AppCard(QWidget, Ui_AppForm):
         self.app_btn.clicked.connect(lambda:self.on_launch_app(False))
         # expand the first word of cmd to the fullpath executable
         cmd_list = cmd.split(maxsplit=1)
-        cmd_list[0] = shutil.which(cmd_list[0])
+        _main_exec_path = shutil.which(cmd_list[0])
+        if _main_exec_path is not None:
+            cmd_list[0] = _main_exec_path
         self._cmd = ' '.join(cmd_list)
 
     def name(self):
