@@ -22,7 +22,9 @@ from subprocess import Popen
 import os
 import shutil
 
-from .utils import _new_dir, People
+from phantasy_ui.widgets import DataAcquisitionThread as DAQT
+
+from .utils import _new_dir, People, get_px
 
 from .ui.ui_app_card import Ui_AppForm
 from .ui.ui_app_info import Ui_InfoForm
@@ -81,7 +83,8 @@ class AppCard(QWidget, Ui_AppForm):
                 'fav': self.favorite(), 'desc': self.description(),
                 'helpdoc': self.helpdoc(), 'contact': self.contact(),
                 'changelog': self.changelog(),
-                'ver': self.version(),}
+                'ver': self.version(),
+                'logfilepath': self._log_filepath}
 
     @pyqtSlot()
     def on_close_info(self):
@@ -269,11 +272,12 @@ class AppCard(QWidget, Ui_AppForm):
 class AppCardInfoForm(QWidget, Ui_InfoForm):
 
     favChanged = pyqtSignal(bool)
-    runAppInTerminal = pyqtSignal(bool)
+    # run app, bool: follow logs or not
+    runApp = pyqtSignal(bool)
     sig_close = pyqtSignal()
 
-    def __init__(self, name, group, fav_on=False, desc=None, ver=None,
-                 helpdoc=None, contact=None, changelog=None,
+    def __init__(self, name: str, group: str, fav_on: bool, desc: str, ver: str,
+                 helpdoc: str, contact, changelog: str, logfilepath: str,
                  parent=None, **kws):
         super(AppCardInfoForm, self).__init__(parent)
 
@@ -281,6 +285,7 @@ class AppCardInfoForm(QWidget, Ui_InfoForm):
         self.app_name.setText(name)
         self.app_main_group.setText(group)
         self.app_version = ver
+        self.logfilepath = logfilepath
         self.desc_plainTextEdit.setPlainText(desc)
         self.on_fav_changed(fav_on)
         self.config_helpdoc(helpdoc)
@@ -293,17 +298,46 @@ class AppCardInfoForm(QWidget, Ui_InfoForm):
         shadow.setOffset(2)
         self.desc_plainTextEdit.setGraphicsEffect(shadow)
 
+        # set contact icons
+        for k in ('name', 'phone', 'email'):
+            getattr(self, f'{k}_px_lbl').setPixmap(get_px(k))
+
     @pyqtSlot(bool)
     def on_fav_changed(self, on):
         self.fav_btn.setChecked(on)
 
     @pyqtSlot()
     def on_run_app(self):
-        self.runAppInTerminal.emit(False)
+        self.runApp.emit(False)
 
     @pyqtSlot()
-    def on_run_app_in_terminal(self):
-        self.runAppInTerminal.emit(True)
+    def on_run_app_follow_logs(self):
+        self.runApp.emit(True)
+
+    @pyqtSlot(bool)
+    def on_view_logs(self, enabled: bool):
+        # if enabled, post the log messages to Log tab
+        # self.log_fp = open(self.logfilepath, "r")
+        pass
+
+    @pyqtSlot()
+    def on_clear_log(self):
+        """Clear logs.
+        """
+        self.log_textEdit.clear()
+        open(self.logfilepath, "w").close()
+
+    @pyqtSlot()
+    def on_open_log(self):
+        """Open log file in system editor.
+        """
+        QDesktopServices.openUrl(QUrl(self.logfilepath))
+
+    @pyqtSlot(bool)
+    def on_follow_log(self, follow: bool):
+        """Follow the log messages.
+        """
+        pass
 
     @pyqtSlot(bool)
     def on_toggle_fav(self, on):

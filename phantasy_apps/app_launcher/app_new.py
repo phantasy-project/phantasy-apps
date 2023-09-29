@@ -241,7 +241,7 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
         self.search_btn.toggled.emit(self.search_btn.isChecked())
 
     @pyqtSlot(dict, bool)
-    def on_info_form_changed(self, page, meta_info, show):
+    def on_info_form_changed(self, page: str, meta_info: dict, show: bool):
         name = meta_info['name']
         if name not in self._info_form_dict[page]:
             group = meta_info['groups'][0]
@@ -251,11 +251,13 @@ class AppLauncherWindow(BaseAppForm, Ui_MainWindow):
             helpdoc = meta_info['helpdoc']
             contact = meta_info['contact']
             changelog = meta_info['changelog']
-            info_form = AppCardInfoForm(name, group, fav_on, desc, ver, helpdoc, contact, changelog)
+            logfilepath = meta_info['logfilepath']
+            info_form = AppCardInfoForm(name, group, fav_on, desc, ver, helpdoc, contact,
+                                        changelog, logfilepath)
             card = self._app_card_dict[page][name]
             info_form.favChanged.connect(card.on_fav_changed)
             info_form.sig_close.connect(card.on_close_info)
-            info_form.runAppInTerminal.connect(card.on_launch_app)
+            info_form.runApp.connect(card.on_launch_app)
             card.favChanged.connect(info_form.on_fav_changed)
             self._info_form_dict[page][name] = [info_form, True, self.sender()]
 

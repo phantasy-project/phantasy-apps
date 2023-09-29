@@ -14,8 +14,16 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
+from PyQt5.QtGui import QPixmap
 
 from phantasy_apps.utils import find_dconf as _find_dconf
+
+PX_MAP = {}
+PX_SIZE = 32
+def get_px(name: str):
+    return PX_MAP.setdefault(name,
+            QPixmap(f":/icons/{name}.png").scaled(
+                PX_SIZE, PX_SIZE, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
 
 def find_dconf(path=None, filename='app_launcher.ini'):
