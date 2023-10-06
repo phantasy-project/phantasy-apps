@@ -69,7 +69,7 @@ class PlotWidget(QWidget, Ui_Form):
         # mode: auto (from evaluated Twiss params), or manual (from drawing)
         xoy = self._parent._ems_device.xoy.lower()
         self._update_xylabels(xoy)
-        self._ax1.patches = []
+        self._ax1.patches.clear()
         if mode == 'auto':
             ellipse, _, _ = draw_beam_ellipse_with_params(
                               self._r, color='w', factor=self._sf,
