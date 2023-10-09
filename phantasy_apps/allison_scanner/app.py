@@ -80,6 +80,8 @@ HV_MAP = {'ISRC1': 'FE_SCS1:BEAM:HV_BOOK',
 _USERGUIDE_FILE = os.path.join(os.path.dirname(__file__),
     'docs/AllisonScanner_UserGuide.pdf')
 
+DEFAULT_DATA_SAVE_DIR = "/files/shared/phyapps-operations/data/allison_scanner"
+
 
 class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
@@ -893,6 +895,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_open_data(self,):
         # open data.
         filepath, ext = get_open_filename(self,
+                                          cdir=DEFAULT_DATA_SAVE_DIR,
                                           type_filter="JSON Files (*.json)")
         if filepath is None:
             return
@@ -1180,7 +1183,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_save_data(self):
         if self._data_save_dlg is None:
-            self._data_save_dlg = SaveDataDialog(self)
+            self._data_save_dlg = SaveDataDialog(DEFAULT_DATA_SAVE_DIR, self)
         if self._last_loading:
             self._data_save_dlg.filepath_lineEdit.setText(self._loading_filepath)
             self._data_save_dlg.note_plainTextEdit.setPlainText(self._loading_note)

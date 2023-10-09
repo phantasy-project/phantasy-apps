@@ -18,8 +18,10 @@ TS_FMT = "%Y%m%dT%H%M%S"
 
 class SaveDataDialog(QDialog, Ui_Dialog):
 
-    def __init__(self, parent):
+    def __init__(self, cdir: str, parent):
         super(SaveDataDialog, self).__init__()
+        self.cdir = cdir
+        print(self.cdir)
         self.parent = parent
 
         # UI
@@ -34,11 +36,10 @@ class SaveDataDialog(QDialog, Ui_Dialog):
 
     @pyqtSlot()
     def on_get_filepath(self):
-        print("SaveDataDialog: Get filepath")
         cdir = os.path.abspath(
                 os.path.dirname(self.filepath_lineEdit.text()))
         filepath, ext = get_save_filename(self,
-                cdir=cdir,
+                cdir=self.cdir,
                 type_filter="JSON Files (*.json)")
         if filepath is None:
             return
@@ -49,9 +50,9 @@ class SaveDataDialog(QDialog, Ui_Dialog):
         """
         ctime = epoch2human(time.time(), fmt=TS_FMT)
         fn = "allison_scanner_data_{}.json".format(ctime)
-        dirname = os.path.dirname(self.filepath_lineEdit.text())
+        # dirname = os.path.dirname(self.filepath_lineEdit.text())
         self.filepath_lineEdit.setText(
-                os.path.abspath(os.path.join(dirname, fn)))
+                os.path.abspath(os.path.join(self.cdir, fn)))
 
     @pyqtSlot()
     def on_save_data(self):
