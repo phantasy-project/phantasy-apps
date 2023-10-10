@@ -46,11 +46,9 @@ from phantasy_ui.widgets import is_item_checked
 from phantasy_ui.widgets import BeamSpeciesDisplayWidget
 from phantasy_apps.utils import find_dconf
 from .data import SnapshotData
+from .config import ALL_SYM
 from phantasy_apps.msviz.mach_state import fetch_data
 
-
-AVAILABLE_IONS = ('He', 'Ne', 'Ar', 'Kr', 'Xe', 'U', 'Se', 'Ca', 'Pb',
-                  'O', 'Bi', 'Zn', 'Tm', 'Pt')
 
 FMT = "{0:.6g}"
 
@@ -121,7 +119,7 @@ PX_SIZE = 24
 ACT_BTN_CONF = {}
 
 ELEMT_PX_MAP = {i: [f':/elements/elements/{i}{s}.png' for s in ('', '-off')]
-                for i in AVAILABLE_IONS}
+                for i in ALL_SYM}
 
 TBTN_STY_COLOR_TUPLE = ('#EEEEEC', '#F7F7F7', '#90B5F0', '#6EA1F1', '#E7EFFD', '#CBDAF1')
 TBTN_STY_COLOR_TUPLE_GOLDEN = ('#FFF7B3', '#F5E345', '#FFCD03', '#FFC503', '#FAED11', '#FAE111')

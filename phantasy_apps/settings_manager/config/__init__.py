@@ -1,11 +1,13 @@
 import pathlib
 import json
 
+
 _CWDIR = pathlib.Path(__file__).parent
 
 with open(_CWDIR.joinpath("sym_z_map.json"), "r") as fp:
     SYM_Z_MAP = json.load(fp)
     Z_SYM_MAP = {v: k for k, v in SYM_Z_MAP.items()}
+    ALL_SYM = SYM_Z_MAP.keys()
 
 
 def z2sym(z: int) -> str:
