@@ -22,7 +22,6 @@ from subprocess import Popen
 
 from PyQt5.QtCore import (QDate, QEventLoop, QPoint, QRect, QSize, QTimer,
                           QUrl, QVariant, Qt, pyqtSignal, pyqtSlot)
-
 from PyQt5.QtGui import (QColor, QFont, QFontDatabase, QFontMetrics, QIcon,
                          QKeySequence, QPainter, QPixmap, QGuiApplication,
                          QDesktopServices, QDoubleValidator)
@@ -30,7 +29,8 @@ from PyQt5.QtWidgets import (QCompleter, QCheckBox, QDialog, QLabel,
                              QMessageBox, QMenu, QAction, QWidgetAction,
                              QToolButton, QPushButton, QSizePolicy, QShortcut,
                              QWidget, QProgressBar, QHBoxLayout, QLineEdit,
-                             QLabel, QTabWidget, QGraphicsDropShadowEffect, QTreeView)
+                             QLabel, QTabWidget, QGraphicsDropShadowEffect, QTreeView,
+                             QScrollArea)
 
 from phantasy import (build_element, CaField, Settings)
 from phantasy_ui import (BaseAppForm, delayed_exec, get_open_filename,
@@ -938,6 +938,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # almset pb
         self.alm_set_pb.setVisible(False)
 
+        # snp button filters: ion/tag filter button checked/unchecked status
+        # {btn_text (element, tag): isChecked?}
+        # the keys need some housekeeping everytime when db is refreshed
+        # - pop the keys (ion or tag) that are not existing for current database
+        self._current_tag_filter = dict()
+        self._current_ion_filter = dict()
+
         # current snp
         self._current_snpdata = None
         # originated template tuple: (name, taglist, snpdata_temp)
@@ -946,7 +953,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # template list, [(name, tag_list, snpdata),...]
         self.snp_template_list = []
 
-        # snp filters, {btn_text (elemt, tag):ischecked?} (reset in on_data_uri_changed.)
+        # snp filters, {btn_text (elemt, tag):ischecked?}
         self.snp_filters_updated.connect(self.on_snp_filters_updated)
         # URI for data source
         self.on_data_uri_changed(True, self.data_uri)
@@ -2468,16 +2475,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot('QString')
     def on_data_uri_changed(self, purge, d):
-        # reset snp dock with files in d (recursively)
         if purge:
             del self._snp_dock_list[:]
         # database
         self._db_conn = self._db_conn_pool.setdefault(d, ensure_connect_db(d))
         self.data_uri = d
-        # reset tag/ion filter dict
-        # snp filters, {btn_text (elemt, tag):ischecked?}
-        self._current_ion_filter = dict()
-        self._current_tag_filter = dict()
+
         #
         self.__read_data2frame(self._n_snp_max, d)
 
@@ -3667,7 +3670,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         container.addWidget(_btn)
         _build_actions(_btn)
 
-    def _build_tag_filters(self, area, filters):
+    def _build_tag_filters(self, area: QScrollArea, filters: set[str]):
         w = area.takeWidget()
         w.setParent(None)
         w = QWidget(self)
@@ -3678,6 +3681,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             _filters = ['NOTAG'] + sorted(list(filters))
         else:
             _filters = sorted(list(filters))
+        # only pick the keys valid for current loaded snp database
+        self._current_tag_filter = {k: v for k, v in self._current_tag_filter.items()
+                                    if k in _filters}
         for tag in _filters:
             o = QToolButton(self.snp_dock)
             o.setText(tag)
@@ -3704,13 +3710,16 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if activate_filter:
             self.apply_snp_btn_filters()
 
-    def _build_ion_filters(self, area, filters):
+    def _build_ion_filters(self, area: QScrollArea, filters: OrderedDict):
         # ion filter buttons
         w = area.takeWidget()
         w.setParent(None)
         w = QWidget(self)
         w.setContentsMargins(0, 6, 0, 0)
         layout = FlowLayout()
+        # only pick the keys valid for current loaded snp database
+        self._current_ion_filter = {k: v for k, v in self._current_ion_filter.items()
+                                    if k in filters}
         for k, v in filters.items():
             # k: ion name, v: {A: {Q...}}
             btn = QToolButton(self.snp_dock)
