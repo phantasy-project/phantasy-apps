@@ -1,4 +1,14 @@
 ========================
+Version 12.1: 2023-10-11
+========================
+
+- Added all the icon resources for all elements in the Periodic Table.
+- Honor the ion/tag checkstate when database is refreshed.
+- Updated the read-only device list for FTC deployment.
+- Added support for attachment overwritten.
+- Made attachments read-only but provided a way for overwritten.
+
+========================
 Version 12.0: 2023-09-18
 ========================
 
