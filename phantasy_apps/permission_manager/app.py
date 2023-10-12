@@ -238,6 +238,7 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
             for i, o in enumerate(self.perm_list):
                 if o.fullpath == folderpath:
                     self.perm_list.pop(i)
+                    self._clean_log(o.fullpath)
                     del o
             self.write_conf()
             self.sigPermListChanged.emit(self.perm_list)
@@ -255,6 +256,12 @@ class PermissionManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         self._layout_paths(perm_list, self.config_area, is_live=False,
                            groups=self.additional_group_list)
+
+    def _clean_log(self, dirpath: str):
+        _dir_logfile1 = self.logdirpath.joinpath(dirpath.replace("/", "_") + '_1.log')
+        _dir_logfile2 = self.logdirpath.joinpath(dirpath.replace("/", "_") + '_2.log')
+        os.remove(_dir_logfile1)
+        os.remove(_dir_logfile2)
 
     def _layout_paths(self, perm_list, area, is_live=False, groups=None):
         """List all the dirpaths with config management rules, each folderpath one line.
