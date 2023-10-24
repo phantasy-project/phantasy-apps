@@ -284,6 +284,8 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         #
         _conf_dlg.set_annote_fontsize(13)
         _conf_dlg.set_annote_bbox_alpha(0.8)
+        _conf_dlg.set_annote_angle(40.0)
+        self.annote_rotate_dsbox.setValue(40.0)
         tick_font = _conf_dlg.parent.getFigureXYticksFont()
         lbl_font = _conf_dlg.parent.getFigureXYlabelFont()
         tick_font.setPointSize(15)
