@@ -17,7 +17,7 @@ __copyright__ = "(c) 2019-2023, Facility for Rare Isotope beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
 __title__ = "Device Viewer: Visualize Device Readings and Settings"
-__version__ = '3.1'
+__version__ = '3.2'
 
 
 def run(cli=False):
