@@ -180,6 +180,10 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         # self.on_init_dataviz()
         self.reset_figure_btn.clicked.connect(self.on_init_dataviz)
 
+        # annotate errorbars?
+        self._annote_eb_checked = True
+        self.annote_eb_chkbox.toggled.connect(self.on_toggle_annote_errorbar)
+
     @pyqtSlot()
     def on_select_all_elems(self):
         try:
@@ -330,9 +334,18 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
             [i.set_visible(False) for i in o._all_annotes]
         o.update_figure()
 
+    @pyqtSlot(bool)
+    def on_toggle_annote_errorbar(self, is_checked: bool):
+        self._annote_eb_checked = is_checked
+        self.annote_fmt_cbb.currentTextChanged.emit(self.annote_fmt_cbb.currentText())
+
     @pyqtSlot('QString')
     def on_change_annote_format(self, fmt: str):
-        self.matplotlibbarWidget.update_annote_config_dict(fmt=f"${{0:{fmt}}}$")
+        if self._annote_eb_checked:
+            _annote_fmt = f"${{0:{fmt}}}\pm{{1:{fmt}}}$"
+        else:
+            _annote_fmt = f"${{0:{fmt}}}$"
+        self.matplotlibbarWidget.update_annote_config_dict(fmt=_annote_fmt)
         self.matplotlibbarWidget.on_annote_config_changed()
 
     @pyqtSlot()
