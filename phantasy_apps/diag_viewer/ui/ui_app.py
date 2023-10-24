@@ -14,7 +14,7 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(2025, 1440)
+        MainWindow.resize(2330, 1440)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/dv.png"), QtGui.QIcon.Normal,
                        QtGui.QIcon.Off)
@@ -350,6 +350,12 @@ class Ui_MainWindow(object):
         self.annote_height_chkbox = QtWidgets.QCheckBox(self.control_gbox)
         self.annote_height_chkbox.setObjectName("annote_height_chkbox")
         self.viz_hbox.addWidget(self.annote_height_chkbox)
+        self.label_8 = QtWidgets.QLabel(self.control_gbox)
+        font = QtGui.QFont()
+        font.setItalic(False)
+        self.label_8.setFont(font)
+        self.label_8.setObjectName("label_8")
+        self.viz_hbox.addWidget(self.label_8)
         self.annote_fmt_cbb = QtWidgets.QComboBox(self.control_gbox)
         self.annote_fmt_cbb.setEditable(False)
         self.annote_fmt_cbb.setObjectName("annote_fmt_cbb")
@@ -357,6 +363,28 @@ class Ui_MainWindow(object):
         self.annote_fmt_cbb.addItem("")
         self.annote_fmt_cbb.addItem("")
         self.viz_hbox.addWidget(self.annote_fmt_cbb)
+        self.annote_eb_chkbox = QtWidgets.QCheckBox(self.control_gbox)
+        font = QtGui.QFont()
+        font.setItalic(False)
+        self.annote_eb_chkbox.setFont(font)
+        self.annote_eb_chkbox.setChecked(True)
+        self.annote_eb_chkbox.setObjectName("annote_eb_chkbox")
+        self.viz_hbox.addWidget(self.annote_eb_chkbox)
+        self.label_9 = QtWidgets.QLabel(self.control_gbox)
+        self.label_9.setObjectName("label_9")
+        self.viz_hbox.addWidget(self.label_9)
+        self.annote_rotate_dsbox = QtWidgets.QDoubleSpinBox(self.control_gbox)
+        self.annote_rotate_dsbox.setDecimals(1)
+        self.annote_rotate_dsbox.setMaximum(180.0)
+        self.annote_rotate_dsbox.setSingleStep(5.0)
+        self.annote_rotate_dsbox.setProperty("value", 0.0)
+        self.annote_rotate_dsbox.setObjectName("annote_rotate_dsbox")
+        self.viz_hbox.addWidget(self.annote_rotate_dsbox)
+        self.line_6 = QtWidgets.QFrame(self.control_gbox)
+        self.line_6.setFrameShape(QtWidgets.QFrame.VLine)
+        self.line_6.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_6.setObjectName("line_6")
+        self.viz_hbox.addWidget(self.line_6)
         self.auto_lbls_chkbox = QtWidgets.QCheckBox(self.control_gbox)
         self.auto_lbls_chkbox.setChecked(True)
         self.auto_lbls_chkbox.setObjectName("auto_lbls_chkbox")
@@ -590,7 +618,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.control_gbox)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 2025, 32))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 2330, 37))
         self.menubar.setObjectName("menubar")
         self.menu_File = QtWidgets.QMenu(self.menubar)
         self.menu_File.setObjectName("menu_File")
@@ -659,6 +687,8 @@ class Ui_MainWindow(object):
             MainWindow.on_init_dataviz)  # type: ignore
         self.annote_fmt_cbb.currentTextChanged['QString'].connect(
             MainWindow.on_change_annote_format)  # type: ignore
+        self.annote_rotate_dsbox.valueChanged['double'].connect(
+            MainWindow.on_rotate_annote)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -724,6 +754,11 @@ class Ui_MainWindow(object):
         self.show_dname_rbtn.setText(_translate("MainWindow", "Device Name"))
         self.auto_rotate_chkbox.setText(_translate("MainWindow",
                                                    "Auto Rotate"))
+        self.auto_rotate_dsbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Rotate the labels for X-axis.</p></body></html>"
+            ))
         self.auto_rotate_dsbox.setSuffix(_translate("MainWindow", " deg"))
         self.annote_height_chkbox.setToolTip(
             _translate(
@@ -732,13 +767,30 @@ class Ui_MainWindow(object):
             ))
         self.annote_height_chkbox.setText(
             _translate("MainWindow", "Height Annotation"))
+        self.label_8.setText(_translate("MainWindow", "Format"))
         self.annote_fmt_cbb.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Annotation format.</p></body></html>"))
+                "<html><head/><body><p>Annotation format for the bar height.</p></body></html>"
+            ))
         self.annote_fmt_cbb.setItemText(0, _translate("MainWindow", ".3g"))
         self.annote_fmt_cbb.setItemText(1, _translate("MainWindow", ".3f"))
         self.annote_fmt_cbb.setItemText(2, _translate("MainWindow", ".3e"))
+        self.annote_eb_chkbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Annotate the errorbar (1 σ) with height.</p></body></html>"
+            ))
+        self.annote_eb_chkbox.setText(_translate("MainWindow", "with std"))
+        self.label_9.setText(_translate("MainWindow", "Rotate"))
+        self.annote_rotate_dsbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Rotate the annotation boxes.</p></body></html>"
+            ))
+        self.annote_rotate_dsbox.setSuffix(_translate("MainWindow", " deg"))
+        self.auto_lbls_chkbox.setToolTip(
+            _translate("MainWindow", "Auto adjust the xy labels."))
         self.auto_lbls_chkbox.setText(_translate("MainWindow", "Auto Labels"))
         self.label_7.setText(
             _translate(
