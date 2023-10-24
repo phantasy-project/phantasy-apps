@@ -607,6 +607,11 @@ class DeviceViewerWindow(BaseAppForm, Ui_MainWindow):
         self.matplotlibbarWidget.setFigureYlabel(ylbl)
 
     @pyqtSlot(float)
+    def on_rotate_annote(self, deg: float):
+        self.matplotlibbarWidget.update_annote_config_dict(rotation=deg)
+        self.matplotlibbarWidget.on_annote_config_changed()
+
+    @pyqtSlot(float)
     def on_rotate_xtks(self, deg):
         self.matplotlibbarWidget.setFigureXTicksAngle(deg)
         if self.show_dnum_rbtn.isChecked():
