@@ -73,6 +73,10 @@ CNT_IS_INT_STY = """
 
 PX_SIZE = 24
 
+EMS_NAME_MAP = {
+    'ISRC1': 'FE_SCS1:EMS_D0739',
+    'ISRC2': 'FE_SCS2:EMS_D0718'
+}
 ION_SOURCE_NAME_MAP = {'FE_SCS1': 'ISRC1', 'FE_SCS2': 'ISRC2'}
 HV_MAP = {'ISRC1': 'FE_SCS1:BEAM:HV_BOOK',
           'ISRC2': 'FE_SCS2:BEAM:HV_BOOK'}
@@ -471,7 +475,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         return dconf
 
     @pyqtSlot('QString')
-    def on_device_changed(self, s):
+    def on_device_changed(self, s: str):
         """Change device by selecting the name.
         """
         # switch EMS device
@@ -925,8 +929,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self.factor_dsbox.setValue(float(ellipse_sf))
             self.noise_threshold_sbox.setValue(float(noise_threshold))
 
+            # set up device name
+            self.ems_names_cbb.currentTextChanged.disconnect()
+            self.ems_names_cbb.setCurrentText(EMS_NAME_MAP[isrc_id])
+            self.ems_names_cbb.currentTextChanged.connect(self.on_device_changed)
             # set up scan ranges
+            self.ems_orientation_cbb.currentTextChanged.disconnect()
             self.ems_orientation_cbb.setCurrentText(xoy.upper())
+            self.ems_orientation_cbb.currentTextChanged.connect(self.on_update_orientation)
             pb, pe, ps = pos_scan_conf['begin'], pos_scan_conf['end'], pos_scan_conf['step']
             vb, ve, vs = volt_scan_conf['begin'], volt_scan_conf['end'], volt_scan_conf['step']
             self.pos_begin_dsbox.setValue(pb)
