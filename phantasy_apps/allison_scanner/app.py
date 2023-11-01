@@ -202,8 +202,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.retract_btn.clicked.connect(partial(self.on_retract, None))
         #
         self.reset_itlk_btn.clicked.connect(self.on_reset_interlock)
-        # uncheck adv ctrl by default
-        self.adv_ctrl_chkbox.setChecked(False)
+        # check adv ctrl by default
+        self.adv_ctrl_chkbox.setChecked(True)
         self.adv_ctrl_chkbox.toggled.emit(self.adv_ctrl_chkbox.isChecked())
 
         # orientation
