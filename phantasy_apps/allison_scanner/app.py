@@ -39,7 +39,7 @@ from .ui.ui_app import Ui_MainWindow
 from .utils import find_dconf
 from .utils import get_all_devices
 from .utils import is_integer
-from .data import reading_params
+from .data import reading_params, mask_array
 from .data import Data
 from .model import Model
 from .plot import PlotWidget
@@ -1494,13 +1494,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.sim_mode_widget = SimModeWidget(self)
         self.toolBar.addWidget(self.sim_mode_widget)
         self._sim_ioc_conf_inited = True
-
-
-def mask_array(a):
-    if np.any(np.isnan(a)):
-        return np.ma.masked_invalid(a)
-    else:
-        return a
 
 
 class DataSizeNotMatchError(Exception):

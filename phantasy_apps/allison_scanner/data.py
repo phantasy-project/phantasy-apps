@@ -59,6 +59,8 @@ class Data(object):
                     data = np.flipud(f['data']['array'])
                     self.update_pos_conf(f['position'])
                     self.update_volt_conf(f['voltage'])
+                    data[data==None] = np.nan
+                    data = mask_array(data.tolist())
                 return data
 
     def update_pos_conf(self, conf):
@@ -555,3 +557,10 @@ def reading_params(filepath, ftype='json'):
                pos_scan_conf, \
                volt_scan_conf, \
                note
+
+
+def mask_array(a):
+    if np.any(np.isnan(a)):
+        return np.ma.masked_invalid(a)
+    else:
+        return np.array(a)
