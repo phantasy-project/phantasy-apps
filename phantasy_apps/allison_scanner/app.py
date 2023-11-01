@@ -999,7 +999,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             # activate online mode to work with device online.
             self.actiononline_mode.setChecked(False)
             # post the data file path
-            self.head_info_lbl.setText(filepath)
+            self.head_info_lbl.setText(f"""
+                <p>Loaded File:</p><p><span style="color:#0055ff;">{filepath}</span></p>""")
 
     def _update_bkgd_noise(self):
         if self._data is None:
