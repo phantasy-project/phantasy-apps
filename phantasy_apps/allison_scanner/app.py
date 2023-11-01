@@ -146,6 +146,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         _spacer = QWidget()
         _spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.toolBar.insertWidget(self.actiononline_mode, _spacer)
+        # online/offline mode text/tooltip
+        self.actiononline_mode.toggled.connect(self.on_online_mode_changed)
         #
         self._user_guide_mitem = QAction("User Guide", self)
         self.menu_Help.insertAction(self.actionAbout, self._user_guide_mitem)
@@ -279,6 +281,19 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         settings_act.triggered.connect(self.show_settings_list)
         m.addAction(settings_act)
         self.default_config_btn.setMenu(m)
+
+    @pyqtSlot(bool)
+    def on_online_mode_changed(self, is_checked: bool):
+        """If the online/offline mode check tool changed checkstate.
+        """
+        if is_checked: # offline
+            tt = "Offline mode is enabled, for working with data files."
+            text = "Offline"
+        else: # online
+            tt = "Online mode is enabled, for working with devices."
+            text = "Online"
+        self.actiononline_mode.setToolTip(tt)
+        self.actiononline_mode.setIconText(text)
 
     @pyqtSlot()
     def onShowUserGuide(self):
