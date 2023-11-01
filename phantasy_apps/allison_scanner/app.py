@@ -149,6 +149,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.toolBar.insertWidget(self.actiononline_mode, _spacer)
         # label for info: offline (filepath)
         self.head_info_btn = QPushButton(self)
+        self.head_info_btn.setToolTip("Click to open the loaded file.")
         self.head_info_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.head_info_btn.clicked.connect(self.on_clicked_head_info_btn)
         self.head_info_act = self.toolBar.insertWidget(self.actiononline_mode, self.head_info_btn)
