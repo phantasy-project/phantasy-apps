@@ -14,6 +14,7 @@ from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import QEventLoop
+from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
@@ -404,6 +405,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 print("Updated {}".format('{}_step_dsbox'.format(i)))
         cnt_list = self.update_cnts()
         self.update_time_cost(cnt_list)
+
+    def sizeHint(self):
+        return QSize(1440, 1200)
 
     def update_time_cost(self, cnt_list):
         # update required time.
