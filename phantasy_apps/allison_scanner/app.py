@@ -1000,15 +1000,15 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             # activate online mode to work with device online.
             self.actiononline_mode.setChecked(False)
             # post the data file path
-            self.head_info_btn.setText(filepath)
+            self.head_info_btn.setText(os.path.basename(filepath))
+            self.head_info_btn.setProperty("fullpath", filepath)
 
     @pyqtSlot()
     def on_clicked_head_info_btn(self):
         """Open the data file.
         """
-        filepath = self.head_info_btn.text()
-        print(filepath)
-        QDesktopServices.openUrl(QUrl(filepath))
+        fullpath = self.head_info_btn.property("fullpath")
+        QDesktopServices.openUrl(QUrl(fullpath))
 
     def _update_bkgd_noise(self):
         if self._data is None:
