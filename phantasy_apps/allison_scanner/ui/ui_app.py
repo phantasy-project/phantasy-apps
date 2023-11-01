@@ -14,7 +14,7 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1920, 1440)
+        MainWindow.resize(1701, 1491)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/allison.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -1109,23 +1109,23 @@ class Ui_MainWindow(object):
             "}")
         self.data_analysis_tbox.setObjectName("data_analysis_tbox")
         self.page_beam_params = QtWidgets.QWidget()
-        self.page_beam_params.setGeometry(QtCore.QRect(0, 0, 468, 417))
+        self.page_beam_params.setGeometry(QtCore.QRect(0, 0, 412, 468))
         self.page_beam_params.setObjectName("page_beam_params")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.page_beam_params)
         self.gridLayout_5.setContentsMargins(4, 4, 4, 4)
         self.gridLayout_5.setSpacing(4)
         self.gridLayout_5.setObjectName("gridLayout_5")
-        self.beamSpeciesDisplayWidget = BeamSpeciesDisplayWidget(
-            self.page_beam_params)
-        self.beamSpeciesDisplayWidget.setObjectName("beamSpeciesDisplayWidget")
-        self.gridLayout_5.addWidget(self.beamSpeciesDisplayWidget, 0, 0, 2, 1)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 40,
+                                            QtWidgets.QSizePolicy.Minimum,
+                                            QtWidgets.QSizePolicy.Expanding)
+        self.gridLayout_5.addItem(spacerItem1, 3, 0, 1, 1)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setSpacing(4)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem1)
+        self.horizontalLayout_2.addItem(spacerItem2)
         self.auto_fill_beam_params_btn = QtWidgets.QPushButton(
             self.page_beam_params)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -1139,29 +1139,14 @@ class Ui_MainWindow(object):
             "auto_fill_beam_params_btn")
         self.horizontalLayout_2.addWidget(self.auto_fill_beam_params_btn)
         self.gridLayout_5.addLayout(self.horizontalLayout_2, 1, 1, 1, 1)
+        self.beamSpeciesDisplayWidget = BeamSpeciesDisplayWidget(
+            self.page_beam_params)
+        self.beamSpeciesDisplayWidget.setObjectName("beamSpeciesDisplayWidget")
+        self.gridLayout_5.addWidget(self.beamSpeciesDisplayWidget, 0, 0, 2, 1)
         self.gridLayout_8 = QtWidgets.QGridLayout()
+        self.gridLayout_8.setContentsMargins(-1, -1, -1, 0)
         self.gridLayout_8.setSpacing(4)
         self.gridLayout_8.setObjectName("gridLayout_8")
-        self.label_33 = QtWidgets.QLabel(self.page_beam_params)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_33.sizePolicy().hasHeightForWidth())
-        self.label_33.setSizePolicy(sizePolicy)
-        self.label_33.setObjectName("label_33")
-        self.gridLayout_8.addWidget(self.label_33, 3, 0, 1, 1)
-        self.label_34 = QtWidgets.QLabel(self.page_beam_params)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_34.sizePolicy().hasHeightForWidth())
-        self.label_34.setSizePolicy(sizePolicy)
-        self.label_34.setObjectName("label_34")
-        self.gridLayout_8.addWidget(self.label_34, 5, 0, 1, 1)
         self.label_24 = QtWidgets.QLabel(self.page_beam_params)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -1172,16 +1157,45 @@ class Ui_MainWindow(object):
         self.label_24.setSizePolicy(sizePolicy)
         self.label_24.setObjectName("label_24")
         self.gridLayout_8.addWidget(self.label_24, 6, 0, 1, 1)
-        self.label_2 = QtWidgets.QLabel(self.page_beam_params)
+        self.ion_charge_lineEdit = QtWidgets.QLineEdit(self.page_beam_params)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.ion_charge_lineEdit.setFont(font)
+        self.ion_charge_lineEdit.setObjectName("ion_charge_lineEdit")
+        self.gridLayout_8.addWidget(self.ion_charge_lineEdit, 2, 4, 1, 1)
+        self.label_31 = QtWidgets.QLabel(self.page_beam_params)
+        font = QtGui.QFont()
+        font.setFamily("Serif")
+        self.label_31.setFont(font)
+        self.label_31.setObjectName("label_31")
+        self.gridLayout_8.addWidget(self.label_31, 5, 2, 1, 1)
+        self.label_34 = QtWidgets.QLabel(self.page_beam_params)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.label_2.sizePolicy().hasHeightForWidth())
-        self.label_2.setSizePolicy(sizePolicy)
-        self.label_2.setObjectName("label_2")
-        self.gridLayout_8.addWidget(self.label_2, 1, 0, 1, 1)
+            self.label_34.sizePolicy().hasHeightForWidth())
+        self.label_34.setSizePolicy(sizePolicy)
+        self.label_34.setObjectName("label_34")
+        self.gridLayout_8.addWidget(self.label_34, 5, 0, 1, 1)
+        self.horizontalLayout_12 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_12.setContentsMargins(-1, 0, -1, -1)
+        self.horizontalLayout_12.setSpacing(4)
+        self.horizontalLayout_12.setObjectName("horizontalLayout_12")
+        self.label_38 = QtWidgets.QLabel(self.page_beam_params)
+        self.label_38.setText("")
+        self.label_38.setPixmap(QtGui.QPixmap(":/icons/to.png"))
+        self.label_38.setObjectName("label_38")
+        self.horizontalLayout_12.addWidget(self.label_38)
+        self.divergence_lineEdit = QtWidgets.QLineEdit(self.page_beam_params)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.divergence_lineEdit.setFont(font)
+        self.divergence_lineEdit.setReadOnly(True)
+        self.divergence_lineEdit.setObjectName("divergence_lineEdit")
+        self.horizontalLayout_12.addWidget(self.divergence_lineEdit)
+        self.gridLayout_8.addLayout(self.horizontalLayout_12, 8, 4, 1, 1)
         self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_8.setSpacing(4)
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
@@ -1191,72 +1205,20 @@ class Ui_MainWindow(object):
         self.voltage_lineEdit.setFont(font)
         self.voltage_lineEdit.setObjectName("voltage_lineEdit")
         self.horizontalLayout_8.addWidget(self.voltage_lineEdit)
-        self.label_36 = QtWidgets.QLabel(self.page_beam_params)
-        self.label_36.setObjectName("label_36")
-        self.horizontalLayout_8.addWidget(self.label_36)
-        self.label_38 = QtWidgets.QLabel(self.page_beam_params)
-        self.label_38.setText("")
-        self.label_38.setPixmap(QtGui.QPixmap(":/icons/to.png"))
-        self.label_38.setObjectName("label_38")
-        self.horizontalLayout_8.addWidget(self.label_38)
-        self.divergence_lineEdit = QtWidgets.QLineEdit(self.page_beam_params)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.divergence_lineEdit.setFont(font)
-        self.divergence_lineEdit.setReadOnly(True)
-        self.divergence_lineEdit.setObjectName("divergence_lineEdit")
-        self.horizontalLayout_8.addWidget(self.divergence_lineEdit)
-        self.label_37 = QtWidgets.QLabel(self.page_beam_params)
-        self.label_37.setObjectName("label_37")
-        self.horizontalLayout_8.addWidget(self.label_37)
         self.gridLayout_8.addLayout(self.horizontalLayout_8, 6, 4, 1, 1)
-        self.label_32 = QtWidgets.QLabel(self.page_beam_params)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_32.sizePolicy().hasHeightForWidth())
-        self.label_32.setSizePolicy(sizePolicy)
-        self.label_32.setObjectName("label_32")
-        self.gridLayout_8.addWidget(self.label_32, 2, 0, 1, 1)
-        self.charge_mass_ratio_lineEdit = QtWidgets.QLineEdit(
-            self.page_beam_params)
-        self.charge_mass_ratio_lineEdit.setEnabled(True)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.charge_mass_ratio_lineEdit.setFont(font)
-        self.charge_mass_ratio_lineEdit.setReadOnly(True)
-        self.charge_mass_ratio_lineEdit.setObjectName(
-            "charge_mass_ratio_lineEdit")
-        self.gridLayout_8.addWidget(self.charge_mass_ratio_lineEdit, 4, 4, 1,
-                                    1)
         self.ion_mass_lineEdit = QtWidgets.QLineEdit(self.page_beam_params)
         font = QtGui.QFont()
         font.setFamily("Monospace")
         self.ion_mass_lineEdit.setFont(font)
         self.ion_mass_lineEdit.setObjectName("ion_mass_lineEdit")
         self.gridLayout_8.addWidget(self.ion_mass_lineEdit, 3, 4, 1, 1)
-        self.horizontalLayout_13 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_13.setContentsMargins(0, -1, -1, -1)
-        self.horizontalLayout_13.setSpacing(4)
-        self.horizontalLayout_13.setObjectName("horizontalLayout_13")
-        self.ion_energy_lineEdit = QtWidgets.QLineEdit(self.page_beam_params)
+        self.ion_name_lineEdit = QtWidgets.QLineEdit(self.page_beam_params)
         font = QtGui.QFont()
         font.setFamily("Monospace")
-        self.ion_energy_lineEdit.setFont(font)
-        self.ion_energy_lineEdit.setObjectName("ion_energy_lineEdit")
-        self.horizontalLayout_13.addWidget(self.ion_energy_lineEdit)
-        self.label_35 = QtWidgets.QLabel(self.page_beam_params)
-        self.label_35.setObjectName("label_35")
-        self.horizontalLayout_13.addWidget(self.label_35)
-        self.gridLayout_8.addLayout(self.horizontalLayout_13, 5, 4, 1, 1)
-        self.ion_charge_lineEdit = QtWidgets.QLineEdit(self.page_beam_params)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.ion_charge_lineEdit.setFont(font)
-        self.ion_charge_lineEdit.setObjectName("ion_charge_lineEdit")
-        self.gridLayout_8.addWidget(self.ion_charge_lineEdit, 2, 4, 1, 1)
+        self.ion_name_lineEdit.setFont(font)
+        self.ion_name_lineEdit.setReadOnly(True)
+        self.ion_name_lineEdit.setObjectName("ion_name_lineEdit")
+        self.gridLayout_8.addWidget(self.ion_name_lineEdit, 1, 4, 1, 1)
         self.label_29 = QtWidgets.QLabel(self.page_beam_params)
         font = QtGui.QFont()
         font.setFamily("Serif")
@@ -1279,27 +1241,71 @@ class Ui_MainWindow(object):
         self.label.setSizePolicy(sizePolicy)
         self.label.setObjectName("label")
         self.gridLayout_8.addWidget(self.label, 4, 0, 1, 1)
-        self.label_31 = QtWidgets.QLabel(self.page_beam_params)
-        font = QtGui.QFont()
-        font.setFamily("Serif")
-        self.label_31.setFont(font)
-        self.label_31.setObjectName("label_31")
-        self.gridLayout_8.addWidget(self.label_31, 5, 2, 1, 1)
-        self.ion_name_lineEdit = QtWidgets.QLineEdit(self.page_beam_params)
+        self.label_32 = QtWidgets.QLabel(self.page_beam_params)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_32.sizePolicy().hasHeightForWidth())
+        self.label_32.setSizePolicy(sizePolicy)
+        self.label_32.setObjectName("label_32")
+        self.gridLayout_8.addWidget(self.label_32, 2, 0, 1, 1)
+        self.label_2 = QtWidgets.QLabel(self.page_beam_params)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_2.sizePolicy().hasHeightForWidth())
+        self.label_2.setSizePolicy(sizePolicy)
+        self.label_2.setObjectName("label_2")
+        self.gridLayout_8.addWidget(self.label_2, 1, 0, 1, 1)
+        self.charge_mass_ratio_lineEdit = QtWidgets.QLineEdit(
+            self.page_beam_params)
+        self.charge_mass_ratio_lineEdit.setEnabled(True)
         font = QtGui.QFont()
         font.setFamily("Monospace")
-        self.ion_name_lineEdit.setFont(font)
-        self.ion_name_lineEdit.setReadOnly(True)
-        self.ion_name_lineEdit.setObjectName("ion_name_lineEdit")
-        self.gridLayout_8.addWidget(self.ion_name_lineEdit, 1, 4, 1, 1)
+        self.charge_mass_ratio_lineEdit.setFont(font)
+        self.charge_mass_ratio_lineEdit.setReadOnly(True)
+        self.charge_mass_ratio_lineEdit.setObjectName(
+            "charge_mass_ratio_lineEdit")
+        self.gridLayout_8.addWidget(self.charge_mass_ratio_lineEdit, 4, 4, 1,
+                                    1)
+        self.horizontalLayout_13 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_13.setContentsMargins(0, -1, -1, -1)
+        self.horizontalLayout_13.setSpacing(4)
+        self.horizontalLayout_13.setObjectName("horizontalLayout_13")
+        self.ion_energy_lineEdit = QtWidgets.QLineEdit(self.page_beam_params)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.ion_energy_lineEdit.setFont(font)
+        self.ion_energy_lineEdit.setObjectName("ion_energy_lineEdit")
+        self.horizontalLayout_13.addWidget(self.ion_energy_lineEdit)
+        self.gridLayout_8.addLayout(self.horizontalLayout_13, 5, 4, 1, 1)
+        self.label_33 = QtWidgets.QLabel(self.page_beam_params)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_33.sizePolicy().hasHeightForWidth())
+        self.label_33.setSizePolicy(sizePolicy)
+        self.label_33.setObjectName("label_33")
+        self.gridLayout_8.addWidget(self.label_33, 3, 0, 1, 1)
+        self.label_35 = QtWidgets.QLabel(self.page_beam_params)
+        self.label_35.setObjectName("label_35")
+        self.gridLayout_8.addWidget(self.label_35, 5, 5, 1, 1)
+        self.label_36 = QtWidgets.QLabel(self.page_beam_params)
+        self.label_36.setObjectName("label_36")
+        self.gridLayout_8.addWidget(self.label_36, 6, 5, 1, 1)
+        self.label_37 = QtWidgets.QLabel(self.page_beam_params)
+        self.label_37.setObjectName("label_37")
+        self.gridLayout_8.addWidget(self.label_37, 8, 5, 1, 1)
         self.gridLayout_5.addLayout(self.gridLayout_8, 2, 0, 1, 2)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 500,
-                                            QtWidgets.QSizePolicy.Minimum,
-                                            QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_5.addItem(spacerItem2, 3, 0, 1, 2)
         self.data_analysis_tbox.addItem(self.page_beam_params, "")
         self.page_bkgd_noise = QtWidgets.QWidget()
-        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 515, 393))
+        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 515, 444))
         self.page_bkgd_noise.setObjectName("page_bkgd_noise")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.page_bkgd_noise)
         self.gridLayout_2.setContentsMargins(4, 4, 4, 4)
@@ -1381,7 +1387,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.auto_update_image_chkbox, 1, 2, 1, 1)
         self.data_analysis_tbox.addItem(self.page_bkgd_noise, "")
         self.page_noise_correction = QtWidgets.QWidget()
-        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 474, 393))
+        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 474, 444))
         self.page_noise_correction.setObjectName("page_noise_correction")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.page_noise_correction)
         self.gridLayout_7.setContentsMargins(4, 4, 4, 4)
@@ -1657,7 +1663,7 @@ class Ui_MainWindow(object):
         self.gridLayout_3.addWidget(self.v_splitter, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1920, 37))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1701, 37))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
@@ -1728,11 +1734,11 @@ class Ui_MainWindow(object):
             "actionAuto_Push_Results_to_PVs")
         self.actiononline_mode = QtWidgets.QAction(MainWindow)
         self.actiononline_mode.setCheckable(True)
-        self.actiononline_mode.setChecked(False)
+        self.actiononline_mode.setChecked(True)
         icon12 = QtGui.QIcon()
-        icon12.addPixmap(QtGui.QPixmap(":/icons/online.png"),
-                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon12.addPixmap(QtGui.QPixmap(":/icons/offline.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon12.addPixmap(QtGui.QPixmap(":/icons/online.png"),
                          QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.actiononline_mode.setIcon(icon12)
         self.actiononline_mode.setObjectName("actiononline_mode")
@@ -1858,8 +1864,7 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.charge_mass_ratio_lineEdit,
                                self.ion_energy_lineEdit)
         MainWindow.setTabOrder(self.ion_energy_lineEdit, self.voltage_lineEdit)
-        MainWindow.setTabOrder(self.voltage_lineEdit, self.divergence_lineEdit)
-        MainWindow.setTabOrder(self.divergence_lineEdit, self.raw_view_chkbox)
+        MainWindow.setTabOrder(self.voltage_lineEdit, self.raw_view_chkbox)
         MainWindow.setTabOrder(self.raw_view_chkbox, self.checkBox)
         MainWindow.setTabOrder(self.checkBox, self.set_cmap_chkbox)
         MainWindow.setTabOrder(self.set_cmap_chkbox, self.cmap_fav_cbb)
@@ -2030,26 +2035,19 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Fetch live beam species infomation."))
         self.auto_fill_beam_params_btn.setText(
             _translate("MainWindow", "Auto Fill"))
-        self.label_33.setText(
-            _translate("MainWindow",
-                       "<html><head/><body><p>Ion Mass</p></body></html>"))
+        self.label_24.setText(_translate("MainWindow", "Conversion"))
+        self.ion_charge_lineEdit.setText(_translate("MainWindow", "9"))
+        self.label_31.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>(<span style=\" font-style:italic;\">E</span><span style=\" vertical-align:sub;\">k</span>)</p></body></html>"
+            ))
         self.label_34.setText(
             _translate("MainWindow",
                        "<html><head/><body><p>Ion Energy</p></body></html>"))
-        self.label_24.setText(_translate("MainWindow", "Conversion"))
-        self.label_2.setText(_translate("MainWindow", "Ion Name"))
         self.voltage_lineEdit.setText(_translate("MainWindow", "100"))
-        self.label_36.setText(_translate("MainWindow", "V"))
-        self.label_37.setText(_translate("MainWindow", "mrad"))
-        self.label_32.setText(
-            _translate("MainWindow",
-                       "<html><head/><body><p>Ion Charge</p></body></html>"))
         self.ion_mass_lineEdit.setText(_translate("MainWindow", "39.948"))
-        self.ion_energy_lineEdit.setText(_translate("MainWindow", "12000"))
-        self.label_35.setText(
-            _translate("MainWindow",
-                       "<html><head/><body><p>eV</p></body></html>"))
-        self.ion_charge_lineEdit.setText(_translate("MainWindow", "9"))
+        self.ion_name_lineEdit.setText(_translate("MainWindow", "Ar"))
         self.label_29.setText(
             _translate(
                 "MainWindow",
@@ -2061,12 +2059,29 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>(<span style=\" font-style:italic;\">A</span>)</p></body></html>"
             ))
         self.label.setText(_translate("MainWindow", "Q/A"))
-        self.label_31.setText(
+        self.label_32.setText(
+            _translate("MainWindow",
+                       "<html><head/><body><p>Ion Charge</p></body></html>"))
+        self.label_2.setText(_translate("MainWindow", "Ion Name"))
+        self.ion_energy_lineEdit.setText(_translate("MainWindow", "12000"))
+        self.label_33.setText(
+            _translate("MainWindow",
+                       "<html><head/><body><p>Ion Mass</p></body></html>"))
+        self.label_35.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>(<span style=\" font-style:italic;\">E</span><span style=\" vertical-align:sub;\">k</span>)</p></body></html>"
+                "<html><head/><body><p><span style=\" font-weight:600;\">eV</span></p></body></html>"
             ))
-        self.ion_name_lineEdit.setText(_translate("MainWindow", "Ar"))
+        self.label_36.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p><span style=\" font-weight:600;\">V</span></p></body></html>"
+            ))
+        self.label_37.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p><span style=\" font-weight:600;\">mrad</span></p></body></html>"
+            ))
         self.data_analysis_tbox.setItemText(
             self.data_analysis_tbox.indexOf(self.page_beam_params),
             _translate("MainWindow", "Ion Species"))
@@ -2159,7 +2174,7 @@ class Ui_MainWindow(object):
         self.actiononline_mode.setText(_translate("MainWindow", "online_mode"))
         self.actiononline_mode.setIconText(_translate("MainWindow", "Online"))
         self.actiononline_mode.setToolTip(
-            _translate("MainWindow", "Online Mode or Offline Mode"))
+            _translate("MainWindow", "Check to activate online mode"))
         self.actionoffline_mode.setText(
             _translate("MainWindow", "offline_mode"))
 
