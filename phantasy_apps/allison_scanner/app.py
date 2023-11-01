@@ -986,6 +986,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             if self._auto_analysis:
                 self._auto_process()
 
+            # activate offline mode for working file only,
+            # activate online mode to work with device online.
+            self.actiononline_mode.setChecked(False)
+
     def _update_bkgd_noise(self):
         if self._data is None:
             return
