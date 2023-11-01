@@ -22,6 +22,8 @@ from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QLineEdit
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QSizePolicy
 
 from numpy import ndarray
 from numpy.testing import assert_almost_equal
@@ -140,6 +142,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._post_init()
 
     def _post_init(self):
+        # right align Online/Offline Model tool
+        _spacer = QWidget()
+        _spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.toolBar.insertWidget(self.actiononline_mode, _spacer)
+        #
         self._user_guide_mitem = QAction("User Guide", self)
         self.menu_Help.insertAction(self.actionAbout, self._user_guide_mitem)
         self._user_guide_mitem.triggered.connect(self.onShowUserGuide)
@@ -1495,8 +1502,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.volt_step_dsbox.setValue(d['volt_step'])
 
     def on_show_sim_ioc_conf(self):
-        from PyQt5.QtWidgets import QWidget
-        from PyQt5.QtWidgets import QSizePolicy
         from .sim_mode import SimModeWidget
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
