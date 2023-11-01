@@ -908,7 +908,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 bkgd_noise_nelem, bkgd_noise_nsigma, \
                 ellipse_sf, noise_threshold, \
                 xoy, pos_scan_conf, volt_scan_conf, \
-                note = reading_params(filepath)
+                note, isrc_id = reading_params(filepath)
             #
             self._last_loading = True
             self._loading_note = note

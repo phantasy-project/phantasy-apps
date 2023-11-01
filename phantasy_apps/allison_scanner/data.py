@@ -512,6 +512,7 @@ def reading_params(filepath, ftype='json'):
         bkgd_noise_nelem: str, bkgd_noise_nsigma: str,
         ellipse_sf: str, noise_threshold: str,
         orientation: str, pos_scan_conf: dict, volt_scan_conf: dict
+        note: str, ion_source_id: str 
     """
     with open(filepath, 'r') as fp:
         d = json.load(fp)
@@ -521,6 +522,7 @@ def reading_params(filepath, ftype='json'):
         charge = beam_source_conf.get('Q', 9)
         mass = beam_source_conf.get('A', 40)
         ek_conf = beam_source_conf.get('Ek', {'value': 12000, 'unit': 'kV'})
+        isrc_id = beam_source_conf.get('_id', 'ISRC1') # defaults to 'ISRC1'
         if isinstance(ek_conf, dict):
             ek = ek_conf['value']
         else: # float
@@ -556,7 +558,8 @@ def reading_params(filepath, ftype='json'):
                xoy, \
                pos_scan_conf, \
                volt_scan_conf, \
-               note
+               note, \
+               isrc_id
 
 
 def mask_array(a):
