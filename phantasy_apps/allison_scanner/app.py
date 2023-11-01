@@ -20,6 +20,7 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QLineEdit
+from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QWidget
@@ -146,7 +147,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         _spacer = QWidget()
         _spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.toolBar.insertWidget(self.actiononline_mode, _spacer)
-        # online/offline mode text/tooltip
+        # label for info: offline (filepath)
+        self.head_info_lbl = QLabel(self)
+        self.head_info_lbl.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        self.toolBar.insertWidget(self.actiononline_mode, self.head_info_lbl)
+        # online/offline mode switching
         self.actiononline_mode.toggled.connect(self.on_online_mode_changed)
         self.actiononline_mode.toggled.emit(self.actiononline_mode.isChecked())
         #
@@ -296,6 +301,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             text = "Online"
             # set the ems device ready for work.
             self.ems_names_cbb.currentTextChanged.emit(self.ems_names_cbb.currentText())
+            # clear head info
+            self.head_info_lbl.clear()
         else: # offline
             tt = "Offline mode is enabled, for working with data files."
             text = "Offline"
@@ -991,6 +998,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             # activate offline mode for working file only,
             # activate online mode to work with device online.
             self.actiononline_mode.setChecked(False)
+            # post the data file path
+            self.head_info_lbl.setText(filepath)
 
     def _update_bkgd_noise(self):
         if self._data is None:
