@@ -286,14 +286,17 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(bool)
     def on_online_mode_changed(self, is_checked: bool):
         """If the online/offline mode check tool changed checkstate.
+
+        - Checked: Online mode.
+        - Unchecked: Offline mode.
         """
-        self.ctrl_gbox.setDisabled(is_checked)
-        if is_checked: # offline
-            tt = "Offline mode is enabled, for working with data files."
-            text = "Offline"
-        else: # online
+        self.ctrl_gbox.setEnabled(is_checked)
+        if is_checked: # online
             tt = "Online mode is enabled, for working with devices."
             text = "Online"
+        else: # offline
+            tt = "Offline mode is enabled, for working with data files."
+            text = "Offline"
         self.actiononline_mode.setToolTip(tt)
         self.actiononline_mode.setIconText(text)
 
