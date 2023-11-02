@@ -521,6 +521,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_device_changed(self, s: str):
         """Change device by selecting the name.
         """
+        # reset element widget
+        self._device_widget = None
         # switch EMS device
         self._current_device_name = s
         self._current_device_elem = self._all_devices_dict[s]
