@@ -109,7 +109,7 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
         us = ("mm", "mrad", "mm", "mrad", "", "m", "m<sup>-1</sup>",
               "mm&middot;mrad", "mm&middot;mrad", "&mu;A")
 
-        s =['<h5>{0:<3s} = {1:.6f} {2}<h5>'.format(n, r.get(k), ui) for (n, k, ui) in zip(names, ks, us)]
+        s =['<h4>{0:<3s} = {1:.4f} {2}<h4>'.format(n, r.get(k), ui) for (n, k, ui) in zip(names, ks, us)]
         self.textEdit.setHtml("<html>{}</html>".format(''.join(s)))
 
     def closeEvent(self, e):
