@@ -364,6 +364,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._device.ioc_ready_changed.connect(self.on_update_ioc_ready)
             self.on_update_ioc_ready(caget(self._ready_pv))
         else:
+            # work with real device
             self._device = SimDevice(self._data_pv, self._status_pv,
                                      self._trigger_pv, self._pos_pv,
                                      self._pos_begin_pv,
@@ -373,14 +374,15 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                                      self._volt_end_pv,
                                      self._volt_step_pv,
                                      self._in_pv, self._out_pv,
-                                     self._itlk_pv, self._en_pv)
+                                     self._itlk_pv, self._en_pv,
+                                     self._bias_on_pv)
             self._device.status_in_changed.connect(self.on_update_sin)
             self._device.status_out_changed.connect(self.on_update_sout)
             self._device.itlk_changed.connect(self.on_update_itlk)
             self._device.status_enable_changed.connect(self.on_update_en)
             pvs = (self._in_pv, self._out_pv, self._itlk_pv, self._en_pv)
             cbs = (self.on_update_sin, self.on_update_sout,
-                   self.on_update_itlk, self.on_update_en)
+                   self.on_update_itlk, self.on_update_en, self.on_update_biason)
             for pv, cb in zip(pvs, cbs):
                 cb(caget(pv))
         for (ii, jj) in ((i, j) for i in ('p', 'v') for j in ('b', 'e', 's')):
@@ -500,6 +502,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._out_pv = elem.pv('STATUS_OUT{}'.format(_id))[0]
             self._itlk_pv = elem.pv('INTERLOCK{}'.format(_id))[0]
             self._en_pv = elem.pv('ENABLE_SCAN{}'.format(_id), handle='readback')[0]
+            self._bias_on_pv = elem.pv('BIAS_VOLT_ON', handle='readback')[0]
         if self._device_mode == "Simulation":
             self._ready_pv = elem.pv("READY")[0]
         self._init_device()
@@ -1379,6 +1382,17 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             tt = "Device is not at outlimit"
         self.is_outlimit_lbl.setPixmap(px)
         self.is_outlimit_lbl.setToolTip(tt)
+
+    def on_update_biason(self, s):
+        print(">>> BIAS ON: ", s)
+        if s == 1.0:
+            px = self._enable_px
+            tt = "Bias voltage is on"
+        else:
+            px = self._not_enable_px
+            tt = "Bias voltage is off"
+        self.is_bias_on_lbl.setPixmap(px)
+        self.is_bias_on_lbl.setToolTip(tt)
 
     def on_update_en(self, s):
         print(">>> ENABLED: ", s)

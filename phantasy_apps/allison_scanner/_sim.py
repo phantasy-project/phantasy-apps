@@ -12,6 +12,7 @@ class SimDevice(QObject):
     status_out_changed = pyqtSignal(float)
     itlk_changed = pyqtSignal(float)
     status_enable_changed = pyqtSignal(float)
+    bias_on_changed = pyqtSignal(float)
     ioc_ready_changed = pyqtSignal(int)
     finished = pyqtSignal()
     pb_changed = pyqtSignal(float)
@@ -25,14 +26,14 @@ class SimDevice(QObject):
                  pos_begin_pv, pos_end_pv, pos_step_pv,
                  volt_begin_pv, volt_end_pv, volt_step_pv,
                  in_pv=None, out_pv=None, itlk_pv=None, en_pv=None,
-                 ready_pv=None):
+                 bias_on_pv=None, ready_pv=None):
         super(self.__class__, self).__init__()
 
         # pv names --> PV
         self._trigger_pv = trigger_pv
 
         # live only
-        self._in_pv = self._out_pv = self._itlk_pv = self._en_pv = None
+        self._in_pv = self._out_pv = self._itlk_pv = self._en_pv = self._bias_on_pv = None
         if in_pv is not None:
             self._in_pv = epics.PV(in_pv)
             self._incid = self._in_pv.add_callback(self.on_update_in)
@@ -45,6 +46,9 @@ class SimDevice(QObject):
         if en_pv is not None:
             self._en_pv = epics.PV(en_pv)
             self._encid = self._en_pv.add_callback(self.on_update_en)
+        if bias_on_pv is not None:
+            self._bias_on_pv = epics.PV(bias_on_pv)
+            self._biasoncid = self._bias_on_pv.add_callback(self.on_update_biason)
         #
         if ready_pv is not None:
             # sim only
@@ -105,6 +109,9 @@ class SimDevice(QObject):
 
     def on_update_en(self, value, **kws):
         self.status_enable_changed.emit(value)
+
+    def on_update_biason(self, value, **kws):
+        self.bias_on_changed.emit(value)
 
     def on_update_pb(self, value, **kws):
         self.pb_changed.emit(value)
