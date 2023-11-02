@@ -30,6 +30,7 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
         self._norm_inten = False
         self.norm_chkbox.toggled.connect(self.on_norm_inten)
         delayed_exec(lambda: self.norm_chkbox.setChecked(True), 0)
+        self.resize(1200, 800)
 
     def on_norm_inten(self, f):
         self._norm_inten = f
@@ -116,3 +117,4 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
 
     def closeEvent(self, e):
         pass
+
