@@ -103,6 +103,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     size_factor_changed = pyqtSignal(float)
     finished = pyqtSignal()
     title_changed = pyqtSignal('QString')
+    # device ready to scan signal
+    sigReadyScanChanged = pyqtSignal(bool)
 
     def __init__(self, version, mode="Live"):
         super(AllisonScannerWindow, self).__init__()
@@ -144,6 +146,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._post_init()
 
     def _post_init(self):
+        # device ready to scan?
+        self.sigReadyScanChanged.connect(self.onReadyScanChanged)
         # right align Online/Offline Model tool
         _spacer = QWidget()
         _spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -288,6 +292,21 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         m.addAction(settings_act)
         self.default_config_btn.setMenu(m)
 
+    def __check_device_ready_scan(self):
+        # Check if device is ready to scan.
+        msg = ''
+        _is_ready = True
+        if self.is_enabled_lbl.toolTip() != "Device is enabled":
+            msg += "Device is not enabled. "
+            _is_ready = False
+        if self.is_itlk_lbl.toolTip() != "Device interlock is OK":
+            msg += "Device interlock is not OK. "
+            _is_ready = False
+        if self.is_bias_on_lbl.toolTip() != "Bias voltage is on":
+            msg += "Bias voltage is off. "
+            _is_ready = False
+        self.sigReadyScanChanged.emit(_is_ready)
+
     @pyqtSlot(bool)
     def on_online_mode_changed(self, is_checked: bool):
         """If the online/offline mode check tool changed checkstate.
@@ -380,6 +399,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._device.status_out_changed.connect(self.on_update_sout)
             self._device.itlk_changed.connect(self.on_update_itlk)
             self._device.status_enable_changed.connect(self.on_update_en)
+            self._device.bias_on_changed.connect(self.on_update_biason)
             pvs = (self._in_pv, self._out_pv, self._itlk_pv, self._en_pv)
             cbs = (self.on_update_sin, self.on_update_sout,
                    self.on_update_itlk, self.on_update_en, self.on_update_biason)
@@ -404,6 +424,17 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 print("Updated {}".format('{}_step_dsbox'.format(i)))
         cnt_list = self.update_cnts()
         self.update_time_cost(cnt_list)
+
+    @pyqtSlot(bool)
+    def onReadyScanChanged(self, is_ready: bool):
+        """ Device is ready to scan?
+        """
+        if is_ready:
+            self.scan_ready_info_lbl.setText("Ready to Scan")
+        else:
+            self.scan_ready_info_lbl.setText("Not Ready to Scan")
+
+        [w.setEnabled(is_ready) for w in (self.run_btn, self.abort_btn)]
 
     def sizeHint(self):
         return QSize(1440, 1200)
@@ -1393,6 +1424,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             tt = "Bias voltage is off"
         self.is_bias_on_lbl.setPixmap(px)
         self.is_bias_on_lbl.setToolTip(tt)
+        self.__check_device_ready_scan()
 
     def on_update_en(self, s):
         print(">>> ENABLED: ", s)
@@ -1404,6 +1436,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             tt = "Device is not enabled"
         self.is_enabled_lbl.setPixmap(px)
         self.is_enabled_lbl.setToolTip(tt)
+        self.__check_device_ready_scan()
 
     def on_update_itlk(self, s):
         print(">>> INTERLOCK: ", s)
@@ -1415,6 +1448,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             tt = "Device interlock is not OK"
         self.is_itlk_lbl.setPixmap(px)
         self.is_itlk_lbl.setToolTip(tt)
+        self.__check_device_ready_scan()
 
     def on_update_ioc_ready(self, i):
         print(">>> SIM IOC ready?: ", i)
