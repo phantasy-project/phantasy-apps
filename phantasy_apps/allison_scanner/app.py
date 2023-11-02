@@ -190,9 +190,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.installed_px = QPixmap(":/icons/installed.png").scaled(PX_SIZE, PX_SIZE)
         self.not_installed_px = QPixmap(":/icons/not-installed.png").scaled(PX_SIZE, PX_SIZE)
-        # lbls
-        [o.setPixmap(QPixmap(":/icons/rightarrow.png")) for o in
-                (self.slit_info_lbl, self.len_info_lbl, self.gap_info_lbl)]
         # conf
         self._dconf = self.get_device_config()
 
