@@ -103,13 +103,15 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
     def _show_results(self, r, u, ks):
         names = [f"{i}<sub>{j}</sub>" for (i, j) in
                  zip((u, u + "'", '&sigma;', '&sigma;', '&alpha;',
-                     '&beta;', '&gamma;', '&epsilon;', '&epsilon;',
-                     'Total Intensity'),
-                     (0, 0, u, u + "'", u, u, u, u, u + '<sup>n</sup>', ''))]
+                     '&beta;', '&gamma;', '&epsilon;', '&epsilon;'),
+                     (0, 0, u, u + "'", u, u, u, u, u + '<sup>n</sup>'))]
         us = ("mm", "mrad", "mm", "mrad", "", "m", "m<sup>-1</sup>",
-              "mm&middot;mrad", "mm&middot;mrad", "&mu;A")
+              "mm&middot;mrad", "mm&middot;mrad")
 
-        s =['<h4>{0:<3s} = {1:.4f} {2}<h4>'.format(n, r.get(k), ui) for (n, k, ui) in zip(names, ks, us)]
+        s =['<h4>{0:<3s} = {1:.4f} {2:>10s}</h4>'.format(n, r.get(k), ui)
+                for (n, k, ui) in zip(names, ks, us) if k != 'total_intensity']
+        s.append('<hr>')
+        s.append('<h4>Total Intensity: {0:.4f} &mu;A</h4>'.format(r.get('total_intensity')))
         self.textEdit.setHtml("<html>{}</html>".format(''.join(s)))
 
     def closeEvent(self, e):
