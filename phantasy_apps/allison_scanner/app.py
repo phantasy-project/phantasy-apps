@@ -885,7 +885,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.image_data_changed.emit(m)
 
     def on_update_p(self, v):
-        self.vpos_lineEdit.setText('{0:.3f}'.format(v))
+        self.live_pos_lineEdit.setText('{0:.3f}'.format(v))
         self._beat_on(500)
 
     @pyqtSlot()
