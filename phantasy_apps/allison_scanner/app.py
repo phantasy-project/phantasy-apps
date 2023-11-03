@@ -747,6 +747,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_run(self):
         self.sync_config()
+        self._is_finished = False
         self._abort = False
         self._run()
 
@@ -889,9 +890,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_finished(self):
-        QMessageBox.information(self, "EMS DAQ",
-                                "Data readiness is approaching...",
-                                QMessageBox.Ok)
+        if not self._is_finished:
+            self._is_finished = True
+            QMessageBox.information(self, "EMS DAQ",
+                                    "Data readiness is approaching...",
+                                    QMessageBox.Ok)
         self.on_title_with_ts(self._device._data_pv.timestamp)
         self.on_update(self._device._data_pv.value)
         # initial data
@@ -901,9 +904,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self._auto_analysis:
             self._auto_process()
         #
-        self.finished.emit()
+        # self.finished.emit()
         #
         self._elapsed_timer.stop()
+
+        # disconnect slots
+        self._device.data_changed.disconnect()
+        self._device.pos_changed.disconnect()
+        self._device.finished.disconnect()
 
     def closeEvent(self, e):
         r = QMessageBox.information(self, "Exit Application",
