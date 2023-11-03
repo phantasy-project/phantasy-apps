@@ -499,6 +499,19 @@ class Ui_MainWindow(object):
         self.label_25.setSizePolicy(sizePolicy)
         self.label_25.setObjectName("label_25")
         self.dev_sts_hbox2.addWidget(self.label_25)
+        self.label_6 = QtWidgets.QLabel(self.adv_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_6.sizePolicy().hasHeightForWidth())
+        self.label_6.setSizePolicy(sizePolicy)
+        self.label_6.setObjectName("label_6")
+        self.dev_sts_hbox2.addWidget(self.label_6)
+        self.live_pos_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
+        self.live_pos_lineEdit.setObjectName("live_pos_lineEdit")
+        self.dev_sts_hbox2.addWidget(self.live_pos_lineEdit)
         self.vpos_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -523,6 +536,9 @@ class Ui_MainWindow(object):
         self.retract_btn.setIconSize(QtCore.QSize(28, 28))
         self.retract_btn.setObjectName("retract_btn")
         self.dev_sts_hbox2.addWidget(self.retract_btn)
+        self.set_post_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
+        self.set_post_lineEdit.setObjectName("set_post_lineEdit")
+        self.dev_sts_hbox2.addWidget(self.set_post_lineEdit)
         self.dev_sts_vbox.addLayout(self.dev_sts_hbox2)
         self.scan_ready_info_full_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
         self.scan_ready_info_full_lbl.setStyleSheet(
@@ -2005,9 +2021,14 @@ class Ui_MainWindow(object):
             _translate("MainWindow",
                        "Green is Not At Out Limit, Red is At Out Limit"))
         self.label_25.setText(_translate("MainWindow", "Motor Position [mm]"))
+        self.label_6.setText(_translate("MainWindow", "Live"))
+        self.live_pos_lineEdit.setToolTip(
+            _translate("MainWindow", "Live motor position [mm]"))
         self.retract_btn.setToolTip(
             _translate("MainWindow", "Retract device to out limit"))
         self.retract_btn.setText(_translate("MainWindow", "Retract"))
+        self.set_post_lineEdit.setToolTip(
+            _translate("MainWindow", "Set new motor position [mm]."))
         self.scan_ready_info_full_lbl.setText(
             _translate("MainWindow", "Scan Ready? If not, post the reasons."))
         self.volt_steps_lbl.setToolTip(
