@@ -512,10 +512,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot('QString')
     def on_update_orientation(self, s):
-        r = QMessageBox.information(self, "Switching Measurement",
-                "Be sure do retraction and reset interlock before switching.",
-                QMessageBox.Ok)
-
+        self.statusInfoChanged.emit(
+                "Be sure do retraction and reset interlock before switching.")
         self._ems_orientation = s
         self._ems_device.xoy = s
         self._oid = oid = self._ems_device._id
