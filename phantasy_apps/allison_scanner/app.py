@@ -16,6 +16,7 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import QEventLoop
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QDesktopServices
+from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QDoubleValidator
@@ -145,7 +146,17 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._sim_ioc_conf_inited = False
         self._post_init()
 
+    def get_default_font_config(self):
+        """Initial font config.
+        """
+        default_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
+        default_font_size = default_font.pointSize()
+        return default_font, default_font_size
+
     def _post_init(self):
+        # get system font info
+        self._default_font, self._default_font_size = self.get_default_font_config()
+
         # device ready to scan?
         self.sigReadyScanChanged.connect(self.onReadyScanChanged)
         # right align Online/Offline Model tool
@@ -309,7 +320,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # post the reason why not ready to scan
         if msg != '':
             self.scan_ready_info_full_lbl.setText(
-                    f'<p><span style="color:#ff0000;">&#9888; </span>{msg}</p>')
+                f'''<p><span style="font-size:{self._default_font_size + 2}pt;">&#9888; </span>
+                    <span style="font-size:{self._default_font_size + 2}pt;color:#ff0000;">{msg}</span></p>''')
 
     @pyqtSlot(bool)
     def on_online_mode_changed(self, is_checked: bool):
@@ -435,12 +447,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """
         if is_ready:
             self.scan_ready_info_lbl.setText(
-                    '<p>&#9786;<span style="color:#00aa00;"> Ready to Scan</span></p>')
+                    '<p>&#9786; <span style="color:#00aa00;">Ready to Scan</span></p>')
             self.scan_ready_info_full_lbl.setText(
-                    '<p>&#9786;<span style="color:#00aa00;"> Ready to Scan</span></p>')
+                f'''<p><span style="font-size:{self._default_font_size + 2}pt;">&#9786; </span>
+                    <span style="font-size:{self._default_font_size + 2}pt;color:#00aa00;">Ready to Scan</span></p>''')
         else:
             self.scan_ready_info_lbl.setText(
-                    '<p>&#9888;<span style="color:#ff0000;"> Not Ready to Scan</span></p>')
+                    '<p>&#9888; <span style="color:#ff0000;">Not Ready to Scan</span></p>')
 
         [w.setEnabled(is_ready) for w in (self.run_btn, self.abort_btn)]
 
