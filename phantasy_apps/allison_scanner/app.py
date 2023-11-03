@@ -32,6 +32,7 @@ from numpy import ndarray
 from numpy.testing import assert_almost_equal
 from phantasy_ui.templates import BaseAppForm
 from phantasy_ui.widgets import ElementWidget
+from phantasy_ui import printlog
 
 from phantasy import Configuration
 from phantasy_ui import uptime
@@ -437,7 +438,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             if attr in ['{}_{}'.format(i, v) for v in ('begin', 'end')]:
                 o = getattr(self, '{}_step_dsbox'.format(i))
                 o.valueChanged.emit(o.value())
-                print("Updated {}".format('{}_step_dsbox'.format(i)))
+                printlog("Updated {}".format('{}_step_dsbox'.format(i)))
         cnt_list = self.update_cnts()
         self.update_time_cost(cnt_list)
 
@@ -691,7 +692,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         finally:
             self.on_update_device()
 
-        print("Load config from {}".format(filepath))
+        printlog("Load config from {}".format(filepath))
 
     @pyqtSlot()
     def on_saveas_config(self):
@@ -702,7 +703,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if filepath is None:
             return
         self.__save_config_to_file(filepath)
-        print("Save config as {}".format(filepath))
+        printlog("Save config as {}".format(filepath))
 
     @pyqtSlot()
     def on_save_config(self):
@@ -710,7 +711,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """
         filepath = self._dconf.config_path
         self.__save_config_to_file(filepath)
-        print("Save config to {}".format(filepath))
+        printlog("Save config to {}".format(filepath))
 
     def __save_config_to_file(self, filepath):
         try:
@@ -736,7 +737,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                                 "Reloaded configuration file from {}.".format(filepath),
                                 QMessageBox.Ok)
 
-        print("Reload config from {}".format(filepath))
+        printlog("Reload config from {}".format(filepath))
 
     @pyqtSlot()
     def on_locate_config(self):
@@ -877,7 +878,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         return self._ems_device.check_status() == 0
 
     def on_update(self, data):
-        print("Data from {} is updating...".format(self._data_pv))
+        printlog("Data from {} is updating...".format(self._data_pv))
         data = mask_array(data)
         m = data.reshape(self._ydim, self._xdim)
         m = np.flipud(m)
@@ -956,12 +957,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             ionm = float(self.ion_mass_lineEdit.text())
             ione = float(self.ion_energy_lineEdit.text())
         except ValueError:
-            print("Invalid input of Q, A, Ek...")
+            printlog("Invalid input of Q, A, Ek...")
             return
         try:
             assert hasattr(self, '_model') == True
         except AssertionError:
-            print("Model is not reaady.")
+            printlog("Model is not ready.")
             return
         self._model.ion_charge = ionc
         self._model.ion_mass = ionm
@@ -1120,13 +1121,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             try:
                 self.ydata_changed.emit(self._data.volt_grid)
             except:
-                print("volt data is not ready..")
+                printlog("volt data is not ready..")
             self.ylabel_changed.emit("$\mathrm{Voltage}\,\mathrm{[V]}$")
         else: # show pos, angle, intensity
             try:
                 self.ydata_changed.emit(self._data.xp_grid)
             except:
-                print("xp data is not ready..")
+                printlog("xp data is not ready..")
             self.ylabel_changed.emit("${}'\,\mathrm{{[mrad]}}$".format(
                                      self._ems_orientation.lower()))
 
@@ -1422,10 +1423,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 lambda:self.status_lbl.setPixmap(self._inactive_px))
 
     def on_update_sin(self, s):
-        print(">>> STATUS IN: ", s)
+        printlog(">>> STATUS IN: ", s)
 
     def on_update_sout(self, s):
-        print(">>> STATUS OUT: ", s)
+        printlog(">>> STATUS OUT: ", s)
         if s == 1.0:
             px = self._outlimit_px
             tt = "Device is at outlimit"
@@ -1436,7 +1437,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.is_outlimit_lbl.setToolTip(tt)
 
     def on_update_biason(self, s):
-        print(">>> BIAS ON: ", s)
+        printlog(">>> BIAS ON: ", s)
         if s == 1.0:
             px = self._enable_px
             tt = "Bias voltage is on"
@@ -1448,7 +1449,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.__check_device_ready_scan()
 
     def on_update_en(self, s):
-        print(">>> ENABLED: ", s)
+        printlog(">>> ENABLED: ", s)
         if s == 1.0:
             px = self._enable_px
             tt = "Device is enabled"
@@ -1460,7 +1461,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.__check_device_ready_scan()
 
     def on_update_itlk(self, s):
-        print(">>> INTERLOCK: ", s)
+        printlog(">>> INTERLOCK: ", s)
         if s == 0.0:
             px = self._itlk_px
             tt = "Device interlock is OK"
@@ -1472,7 +1473,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.__check_device_ready_scan()
 
     def on_update_ioc_ready(self, i):
-        print(">>> SIM IOC ready?: ", i)
+        printlog(">>> SIM IOC ready?: ", i)
         if i == 1:
             px = self._ioc_ready_px
             tt = "Simulation IOC is ready"
@@ -1594,7 +1595,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_delete_settings(self, ts):
         """Delete settings by timestamp *ts*.
         """
-        print("delete ", ts)
+        printlog("delete ", ts)
         for i, d in enumerate(self._scan_settings_list):
             if d['timestamp'] == ts:
                 self._scan_settings_list.pop(i)
@@ -1604,7 +1605,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_apply_settings(self, ts):
         """Apply settings by timestamp *ts*.
         """
-        print("apply ", ts)
+        printlog("apply ", ts)
         for i, d in enumerate(self._scan_settings_list):
             if d['timestamp'] == ts:
                 self.set_scan_settings(d)
