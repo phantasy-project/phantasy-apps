@@ -306,6 +306,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             msg += "Bias voltage is off. "
             _is_ready = False
         self.sigReadyScanChanged.emit(_is_ready)
+        # post the reason why not ready to scan
+        if msg != '':
+            self.scan_ready_info_full_lbl.setText(msg)
 
     @pyqtSlot(bool)
     def on_online_mode_changed(self, is_checked: bool):
@@ -431,6 +434,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """
         if is_ready:
             self.scan_ready_info_lbl.setText("Ready to Scan")
+            self.scan_ready_info_full_lbl.setText("Ready to Scan")
         else:
             self.scan_ready_info_lbl.setText("Not Ready to Scan")
 
