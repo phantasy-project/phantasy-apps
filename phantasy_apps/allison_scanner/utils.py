@@ -9,6 +9,7 @@ import numpy as np
 from numpy.testing import assert_almost_equal
 
 from phantasy import MachinePortal
+from phantasy import establish_elems
 from phantasy_apps.utils import find_dconf as _find_dconf
 
 from PyQt5.QtCore import pyqtSignal
@@ -36,6 +37,7 @@ def get_all_devices(machine="FRIB", segment="LEBT", type="EMS"):
     """
     mp = MachinePortal(machine, segment)
     elems = mp.get_elements(type=type)
+    establish_elems(elems)
     r = [(i.name, i) for i in sorted(elems, key=lambda x:x.name)]
     return OrderedDict(r)
 
