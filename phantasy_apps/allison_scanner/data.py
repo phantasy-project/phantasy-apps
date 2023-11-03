@@ -348,7 +348,8 @@ def filter_initial_background_noise(m_intensity, n_elements=2, threshold=5):
     n = n_elements
     _range = range(-n, n)
     subm = m_intensity[np.ix_(_range, _range)]
-    mmax, mmin, mavg, mstd = subm.max(), subm.min(), subm.mean(), subm.std()
+    mmax, mmin = np.nanmax(subm), np.nanmin(subm)
+    mavg, mstd = np.nanmean(subm), np.nanstd(subm)
     idx = m >= (mmax + threshold * mstd)
     return (m - mavg) * idx, subm
 
@@ -485,8 +486,8 @@ def noise_correction(intensity, noise_signal_array, threshold_sigma=2.0):
         Matrix of signal after noise correction, and noise matrix.
     """
     noise_arr = intensity[noise_signal_array == False]
-    noise_avg = noise_arr.mean()
-    noise_std = noise_arr.std()
+    noise_avg = np.nanmean(noise_arr)
+    noise_std = np.nanstd(noise_arr)
 
     shape = intensity.shape
     arr_flat = intensity.flatten()

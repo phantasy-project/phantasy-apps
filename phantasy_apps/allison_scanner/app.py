@@ -1103,8 +1103,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         ax = o.axes
         ax.clear()
         m = m.flatten()
-        avg = m.mean()
-        std = m.std()
+        avg = np.nanmean(m)
+        std = np.nanstd(m)
         ax.plot(m, color='b')
         ax.axhline(avg, ls='--', color='r')
         ax.axhline(avg + n * std, ls='--', color='m')
