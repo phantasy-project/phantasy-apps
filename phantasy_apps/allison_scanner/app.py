@@ -308,7 +308,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.sigReadyScanChanged.emit(_is_ready)
         # post the reason why not ready to scan
         if msg != '':
-            self.scan_ready_info_full_lbl.setText(msg)
+            self.scan_ready_info_full_lbl.setText(
+                    f'<p><span style="color:#ff0000;">&#9888; </span>{msg}</p>')
 
     @pyqtSlot(bool)
     def on_online_mode_changed(self, is_checked: bool):
@@ -433,10 +434,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """ Device is ready to scan?
         """
         if is_ready:
-            self.scan_ready_info_lbl.setText("Ready to Scan")
-            self.scan_ready_info_full_lbl.setText("Ready to Scan")
+            self.scan_ready_info_lbl.setText(
+                    '<p>&#9786;<span style="color:#00aa00;"> Ready to Scan</span></p>')
+            self.scan_ready_info_full_lbl.setText(
+                    '<p>&#9786;<span style="color:#00aa00;"> Ready to Scan</span></p>')
         else:
-            self.scan_ready_info_lbl.setText("Not Ready to Scan")
+            self.scan_ready_info_lbl.setText(
+                    '<p>&#9888;<span style="color:#ff0000;"> Not Ready to Scan</span></p>')
 
         [w.setEnabled(is_ready) for w in (self.run_btn, self.abort_btn)]
 
