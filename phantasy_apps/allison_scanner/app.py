@@ -403,7 +403,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._device.itlk_changed.connect(self.on_update_itlk)
             self._device.status_enable_changed.connect(self.on_update_en)
             self._device.bias_on_changed.connect(self.on_update_biason)
-            pvs = (self._in_pv, self._out_pv, self._itlk_pv, self._en_pv)
+            pvs = (self._in_pv, self._out_pv, self._itlk_pv, self._en_pv, self._bias_on_pv)
             cbs = (self.on_update_sin, self.on_update_sout,
                    self.on_update_itlk, self.on_update_en, self.on_update_biason)
             for pv, cb in zip(pvs, cbs):
