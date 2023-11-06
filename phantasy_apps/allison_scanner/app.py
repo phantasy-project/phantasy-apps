@@ -93,6 +93,9 @@ _USERGUIDE_FILE = os.path.join(os.path.dirname(__file__),
 
 DEFAULT_DATA_SAVE_DIR = "/files/shared/phyapps-operations/data/allison_scanner"
 
+# 
+POS_OUT_LIMIT_STR = "300" # 300 mm guarantees the pos reaches outlimit
+
 
 class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
@@ -212,9 +215,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.live_pos_lineEdit.setValidator(QDoubleValidator())
         self.set_pos_lineEdit.setValidator(QDoubleValidator())
 
-        self.vpos_lineEdit.returnPressed.connect(partial(
-            self.on_retract, -1))
-        self.retract_btn.clicked.connect(partial(self.on_retract, None))
+        self.set_pos_btn.clicked.connect(self.on_move_pos)
+        self.retract_btn.clicked.connect(self.on_retract)
         #
         self.reset_itlk_btn.clicked.connect(self.on_reset_interlock)
         # check adv ctrl by default
@@ -412,15 +414,19 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                                      self._volt_step_pv,
                                      self._in_pv, self._out_pv,
                                      self._itlk_pv, self._en_pv,
-                                     self._bias_on_pv)
+                                     self._bias_on_pv, self._pos_set_pv)
             self._device.status_in_changed.connect(self.on_update_sin)
             self._device.status_out_changed.connect(self.on_update_sout)
             self._device.itlk_changed.connect(self.on_update_itlk)
             self._device.status_enable_changed.connect(self.on_update_en)
             self._device.bias_on_changed.connect(self.on_update_biason)
-            pvs = (self._in_pv, self._out_pv, self._itlk_pv, self._en_pv, self._bias_on_pv)
+            self._device.pos_set_changed.connect(self.on_update_pos_set)
+            self._device.pos_changed.connect(self.on_update_p)
+            pvs = (self._in_pv, self._out_pv, self._itlk_pv, self._en_pv, self._bias_on_pv,
+                   self._pos_set_pv, self._pos_pv)
             cbs = (self.on_update_sin, self.on_update_sout,
-                   self.on_update_itlk, self.on_update_en, self.on_update_biason)
+                   self.on_update_itlk, self.on_update_en, self.on_update_biason,
+                   self.on_update_pos_set, self.on_update_p)
             for pv, cb in zip(pvs, cbs):
                 cb(caget(pv))
         for (ii, jj) in ((i, j) for i in ('p', 'v') for j in ('b', 'e', 's')):
@@ -540,6 +546,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._status_pv = elem.pv('SCAN_STATUS{}'.format(_id))[0]
         self._trigger_pv = elem.pv('START_SCAN{}'.format(_id))[0]
         self._pos_pv = elem.pv('POS{}'.format(_id), handle='readback')[0]
+        self._pos_set_pv = elem.pv('POS{}'.format(_id), handle='setpoint')[0]
 
         self._pos_begin_pv = elem.pv(self._pos_begin_fname, handle='readback')[0]
         self._pos_end_pv = elem.pv(self._pos_end_fname, handle='readback')[0]
@@ -558,9 +565,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self._device_mode == "Simulation":
             self._ready_pv = elem.pv("READY")[0]
         self._init_device()
-
-        # show current pos value.
-        self.on_retract(0)
 
     def get_device_config(self, path=None):
         """Return device config from *path*.
@@ -757,7 +761,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             return
 
         self._device.data_changed.connect(self.on_update)
-        self._device.pos_changed.connect(self.on_update_p)
         self._device.finished.connect(self.on_finished)
 
         # start moving
@@ -791,9 +794,21 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_retract(self):
-        # retract the arm by the setpoint defined by set_pos_lineEdit.
-        pos = float(self.set_pos_lineEdit.text())
-        self._ems_device.retract(pos)
+        # retract the motor to the outlimit
+        self.set_pos_lineEdit.setText(POS_OUT_LIMIT_STR)
+        self.set_pos_btn.clicked.emit()
+
+    @pyqtSlot()
+    def on_move_pos(self):
+        """Move the motor to the pos defined by set_pos_lineEdit.
+        """
+        try:
+            new_pos = float(self.set_pos_lineEdit.text())
+        except:
+            QMessageBox.warning(self, "Invalid position setpoint!", QMessageBox.Ok)
+        else:
+            print(f"Move position to {new_pos}.")
+            self._ems_device.retract(new_pos)
 
     def _validate_conflicts(self):
         # check if any conflicts with other devices.
@@ -866,8 +881,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._current_array = m
         self.image_data_changed.emit(m)
 
-    def on_update_p(self, v):
+    def on_update_p(self, v: float):
+        # update the live readback of pos
         self.live_pos_lineEdit.setText('{0:.3f}'.format(v))
+        self._beat_on(500)
+
+    def on_update_pos_set(self, v: float):
+        # update the live setpoint of pos
+        self.set_pos_lineEdit.setText('{0:.3f}'.format(v))
         self._beat_on(500)
 
     @pyqtSlot()
@@ -892,7 +913,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
         # disconnect slots
         self._device.data_changed.disconnect()
-        self._device.pos_changed.disconnect()
         self._device.finished.disconnect()
 
     def closeEvent(self, e):

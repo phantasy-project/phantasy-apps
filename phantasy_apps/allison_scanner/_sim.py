@@ -8,6 +8,7 @@ class SimDevice(QObject):
 
     data_changed = pyqtSignal(ndarray)
     pos_changed = pyqtSignal(float)
+    pos_set_changed = pyqtSignal(float)
     status_in_changed = pyqtSignal(float)
     status_out_changed = pyqtSignal(float)
     itlk_changed = pyqtSignal(float)
@@ -26,7 +27,7 @@ class SimDevice(QObject):
                  pos_begin_pv, pos_end_pv, pos_step_pv,
                  volt_begin_pv, volt_end_pv, volt_step_pv,
                  in_pv=None, out_pv=None, itlk_pv=None, en_pv=None,
-                 bias_on_pv=None, ready_pv=None):
+                 bias_on_pv=None, pos_set_pv=None, ready_pv=None):
         super(self.__class__, self).__init__()
 
         # pv names --> PV
@@ -49,6 +50,9 @@ class SimDevice(QObject):
         if bias_on_pv is not None:
             self._bias_on_pv = epics.PV(bias_on_pv)
             self._biasoncid = self._bias_on_pv.add_callback(self.on_update_biason)
+        if pos_set_pv is not None:
+            self._pos_set_pv = epics.PV(pos_set_pv)
+            self._postsetcid = self._pos_set_pv.add_callback(self.on_update_pos_set)
         #
         if ready_pv is not None:
             # sim only
@@ -93,6 +97,9 @@ class SimDevice(QObject):
 
     def on_update_p(self, value, **kws):
         self.pos_changed.emit(value)
+
+    def on_update_pos_set(self, value, **kws):
+        self.pos_set_changed.emit(value)
 
     def on_update_s(self, value, **kws):
         if value == 12:
