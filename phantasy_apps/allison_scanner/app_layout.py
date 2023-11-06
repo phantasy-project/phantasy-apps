@@ -27,6 +27,10 @@ class LayoutForm(QWidget, Ui_Form):
         self.slit_width_lineEdit.setText(str(ems.slit_width))
         self.slit_thickness_lineEdit.setText(str(ems.slit_thickness))
 
+    def _show(self):
+        self.adjustSize()
+        self.show()
+
 #    def keyPressEvent(self, e):
 #        if e.key() == Qt.Key_Escape:
 #            self.close()

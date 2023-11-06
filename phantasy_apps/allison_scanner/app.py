@@ -93,7 +93,7 @@ _USERGUIDE_FILE = os.path.join(os.path.dirname(__file__),
 
 DEFAULT_DATA_SAVE_DIR = "/files/shared/phyapps-operations/data/allison_scanner"
 
-# 
+#
 POS_OUT_LIMIT_STR = "300" # 300 mm guarantees the pos reaches outlimit
 
 
@@ -1641,8 +1641,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """
         if self._layout_form is not None:
             self._layout_form = LayoutForm(self._ems_device)
-        self._layout_form.show()
-    
+        self._layout_form._show()
+
 
 class DataSizeNotMatchError(Exception):
     def __init__(self, *args, **kws):
