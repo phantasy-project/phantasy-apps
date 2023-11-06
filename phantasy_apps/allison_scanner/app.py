@@ -35,6 +35,7 @@ from phantasy_ui.widgets import ElementWidget
 from phantasy_ui import printlog
 
 from phantasy import Configuration
+from phantasy import establish_pvs
 from phantasy_ui import uptime
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
@@ -427,6 +428,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             cbs = (self.on_update_sin, self.on_update_sout,
                    self.on_update_itlk, self.on_update_en, self.on_update_biason,
                    self.on_update_pos_set, self.on_update_p)
+            establish_pvs(pvs, verbose=True)
             for pv, cb in zip(pvs, cbs):
                 cb(caget(pv))
         for (ii, jj) in ((i, j) for i in ('p', 'v') for j in ('b', 'e', 's')):
