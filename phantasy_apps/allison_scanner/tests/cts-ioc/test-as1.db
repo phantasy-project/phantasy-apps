@@ -1,0 +1,38 @@
+# ISRC1
+record(calc, "FE_SCS1:EMS_D0739:VBS:isOn") {
+  field(CALC, A)
+  field(INPA, "FE_SCS1:EMS_D0739:VBS:setOn CPP MS")
+}
+record(ai, "FE_SCS1:EMS_D0739:VBS:setOn") {
+  field(PINI, "YES")
+  field(VAL, 1)
+}
+record(calc, "FE_SCS1:EMS_D0739:VBS:VoltageMeasure") {
+  field(CALC, A)
+  field(EGU, "V")
+  field(INPA, "FE_SCS1:EMS_D0739:VBS:VoltageSet CPP MS")
+}
+record(ai, "FE_SCS1:EMS_D0739:VBS:VoltageSet") {
+  field(PINI, "YES")
+  field(EGU, "V")
+  field(VAL, -999)
+}
+
+#record(ao, "test-ao") {
+#    field(VAL, "0")
+#}
+
+#record(ai, "test-x") {
+#    field(VAL, "100")
+#}
+
+# test out limit
+record(calcout, "_FE_SCS1:EMS_D0739:LMPOS_RSTS_DRV1") {
+    field(INPA, "FE_SCS1:EMS_D0739:DRV1.RBV CPP")
+#    field(INPA, "test-x CPP")
+    field(DOPT, "Use CALC")
+    field(CALC, "A>=150")
+    field(OOPT, "Every Time")
+    field(OUT, "FE_SCS1:EMS_D0739:LMPOS_RSTS_DRV1 PP")
+#    field(OUT, "test-ao PP")
+}
