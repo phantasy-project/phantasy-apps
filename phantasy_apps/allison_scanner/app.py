@@ -770,6 +770,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             return
 
         self._device.data_changed.connect(self.on_update)
+        self._device.status_in_changed.connect(self.on_update_sin)
+        self._device.status_out_changed.connect(self.on_update_sout)
+        self._device.itlk_changed.connect(self.on_update_itlk)
+        self._device.status_enable_changed.connect(self.on_update_en)
+        self._device.bias_on_changed.connect(self.on_update_biason)
+        self._device.pos_set_changed.connect(self.on_update_pos_set)
+        self._device.pos_changed.connect(self.on_update_p)
         self._device.finished.connect(self.on_finished)
 
         # start moving
@@ -922,6 +929,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
         # disconnect slots
         self._device.data_changed.disconnect()
+        self._device.status_in_changed.disconnect()
+        self._device.status_out_changed.disconnect()
+        self._device.itlk_changed.disconnect()
+        self._device.status_enable_changed.disconnect()
+        self._device.bias_on_changed.disconnect()
+        self._device.pos_set_changed.disconnect()
+        self._device.pos_changed.disconnect()
         self._device.finished.disconnect()
 
     def closeEvent(self, e):
