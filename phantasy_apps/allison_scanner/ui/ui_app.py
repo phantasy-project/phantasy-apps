@@ -536,9 +536,9 @@ class Ui_MainWindow(object):
         self.retract_btn.setIconSize(QtCore.QSize(28, 28))
         self.retract_btn.setObjectName("retract_btn")
         self.dev_sts_hbox2.addWidget(self.retract_btn)
-        self.set_post_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
-        self.set_post_lineEdit.setObjectName("set_post_lineEdit")
-        self.dev_sts_hbox2.addWidget(self.set_post_lineEdit)
+        self.set_pos_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
+        self.set_pos_lineEdit.setObjectName("set_pos_lineEdit")
+        self.dev_sts_hbox2.addWidget(self.set_pos_lineEdit)
         self.dev_sts_vbox.addLayout(self.dev_sts_hbox2)
         self.scan_ready_info_full_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
         self.scan_ready_info_full_lbl.setStyleSheet(
@@ -855,188 +855,6 @@ class Ui_MainWindow(object):
                                    | QtCore.Qt.AlignVCenter)
         self.label_15.setObjectName("label_15")
         self.gridLayout_4.addWidget(self.label_15, 4, 2, 1, 1)
-        self.verticalLayoutWidget = QtWidgets.QWidget(self.splitter)
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        self.drawing_vbox = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-        self.drawing_vbox.setContentsMargins(0, 0, 0, 0)
-        self.drawing_vbox.setSpacing(6)
-        self.drawing_vbox.setObjectName("drawing_vbox")
-        self.geometry_widget = QtWidgets.QWidget(self.verticalLayoutWidget)
-        self.geometry_widget.setObjectName("geometry_widget")
-        self.geometry_gbox = QtWidgets.QGridLayout(self.geometry_widget)
-        self.geometry_gbox.setContentsMargins(1, 1, -1, -1)
-        self.geometry_gbox.setSpacing(2)
-        self.geometry_gbox.setObjectName("geometry_gbox")
-        self.label_13 = QtWidgets.QLabel(self.geometry_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_13.sizePolicy().hasHeightForWidth())
-        self.label_13.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.label_13.setFont(font)
-        self.label_13.setObjectName("label_13")
-        self.geometry_gbox.addWidget(self.label_13, 0, 2, 1, 1)
-        self.label_12 = QtWidgets.QLabel(self.geometry_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_12.sizePolicy().hasHeightForWidth())
-        self.label_12.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.label_12.setFont(font)
-        self.label_12.setObjectName("label_12")
-        self.geometry_gbox.addWidget(self.label_12, 0, 4, 1, 1)
-        self.length2_lineEdit = QtWidgets.QLineEdit(self.geometry_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.length2_lineEdit.sizePolicy().hasHeightForWidth())
-        self.length2_lineEdit.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.length2_lineEdit.setFont(font)
-        self.length2_lineEdit.setReadOnly(True)
-        self.length2_lineEdit.setObjectName("length2_lineEdit")
-        self.geometry_gbox.addWidget(self.length2_lineEdit, 0, 5, 1, 1)
-        self.length_lineEdit = QtWidgets.QLineEdit(self.geometry_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.length_lineEdit.sizePolicy().hasHeightForWidth())
-        self.length_lineEdit.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.length_lineEdit.setFont(font)
-        self.length_lineEdit.setReadOnly(True)
-        self.length_lineEdit.setObjectName("length_lineEdit")
-        self.geometry_gbox.addWidget(self.length_lineEdit, 0, 1, 1, 1)
-        self.length1_lineEdit = QtWidgets.QLineEdit(self.geometry_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.length1_lineEdit.sizePolicy().hasHeightForWidth())
-        self.length1_lineEdit.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.length1_lineEdit.setFont(font)
-        self.length1_lineEdit.setReadOnly(True)
-        self.length1_lineEdit.setObjectName("length1_lineEdit")
-        self.geometry_gbox.addWidget(self.length1_lineEdit, 0, 3, 1, 1)
-        self.label_7 = QtWidgets.QLabel(self.geometry_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_7.sizePolicy().hasHeightForWidth())
-        self.label_7.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        font.setItalic(False)
-        self.label_7.setFont(font)
-        self.label_7.setObjectName("label_7")
-        self.geometry_gbox.addWidget(self.label_7, 0, 0, 1, 1)
-        self.label_4 = QtWidgets.QLabel(self.geometry_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_4.sizePolicy().hasHeightForWidth())
-        self.label_4.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.label_4.setFont(font)
-        self.label_4.setObjectName("label_4")
-        self.geometry_gbox.addWidget(self.label_4, 1, 0, 1, 1)
-        self.gap_lineEdit = QtWidgets.QLineEdit(self.geometry_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.gap_lineEdit.sizePolicy().hasHeightForWidth())
-        self.gap_lineEdit.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.gap_lineEdit.setFont(font)
-        self.gap_lineEdit.setReadOnly(True)
-        self.gap_lineEdit.setObjectName("gap_lineEdit")
-        self.geometry_gbox.addWidget(self.gap_lineEdit, 1, 1, 1, 1)
-        self.label_28 = QtWidgets.QLabel(self.geometry_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_28.sizePolicy().hasHeightForWidth())
-        self.label_28.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.label_28.setFont(font)
-        self.label_28.setObjectName("label_28")
-        self.geometry_gbox.addWidget(self.label_28, 1, 2, 1, 1)
-        self.slit_thickness_lineEdit = QtWidgets.QLineEdit(
-            self.geometry_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.slit_thickness_lineEdit.sizePolicy().hasHeightForWidth())
-        self.slit_thickness_lineEdit.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.slit_thickness_lineEdit.setFont(font)
-        self.slit_thickness_lineEdit.setReadOnly(True)
-        self.slit_thickness_lineEdit.setObjectName("slit_thickness_lineEdit")
-        self.geometry_gbox.addWidget(self.slit_thickness_lineEdit, 1, 3, 1, 1)
-        self.label_27 = QtWidgets.QLabel(self.geometry_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_27.sizePolicy().hasHeightForWidth())
-        self.label_27.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.label_27.setFont(font)
-        self.label_27.setObjectName("label_27")
-        self.geometry_gbox.addWidget(self.label_27, 1, 4, 1, 1)
-        self.slit_width_lineEdit = QtWidgets.QLineEdit(self.geometry_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.slit_width_lineEdit.sizePolicy().hasHeightForWidth())
-        self.slit_width_lineEdit.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.slit_width_lineEdit.setFont(font)
-        self.slit_width_lineEdit.setReadOnly(True)
-        self.slit_width_lineEdit.setObjectName("slit_width_lineEdit")
-        self.geometry_gbox.addWidget(self.slit_width_lineEdit, 1, 5, 1, 1)
-        self.drawing_vbox.addWidget(self.geometry_widget)
-        self.as_drawing = QtWidgets.QLabel(self.verticalLayoutWidget)
-        self.as_drawing.setText("")
-        self.as_drawing.setPixmap(QtGui.QPixmap(":/icons/as_schematic.png"))
-        self.as_drawing.setObjectName("as_drawing")
-        self.drawing_vbox.addWidget(self.as_drawing)
         self.verticalLayout_5.addWidget(self.splitter)
         self.gridLayout.addLayout(self.verticalLayout_5, 0, 0, 1, 1)
         self.h_splitter = QtWidgets.QSplitter(self.v_splitter)
@@ -1809,6 +1627,8 @@ class Ui_MainWindow(object):
         self.actionoffline_mode = QtWidgets.QAction(MainWindow)
         self.actionoffline_mode.setCheckable(True)
         self.actionoffline_mode.setObjectName("actionoffline_mode")
+        self.actionShow_Schematic = QtWidgets.QAction(MainWindow)
+        self.actionShow_Schematic.setObjectName("actionShow_Schematic")
         self.menu_Help.addAction(self.actionAbout)
         self.menu_Help.addAction(self.actionAbout_Qt)
         self.menuConfiguration.addAction(self.actionReload)
@@ -1819,6 +1639,7 @@ class Ui_MainWindow(object):
         self.menuConfiguration.addAction(self.actionLocate)
         self.menu_Device.addAction(self.actionSimulation_Mode)
         self.menu_Device.addAction(self.actionRunXY)
+        self.menu_Device.addAction(self.actionShow_Schematic)
         self.menu_Data.addAction(self.actionAuto_Analysis)
         self.menu_Data.addAction(self.actionAuto_Push_Results_to_PVs)
         self.menubar.addAction(self.menuConfiguration.menuAction())
@@ -2027,7 +1848,7 @@ class Ui_MainWindow(object):
         self.retract_btn.setToolTip(
             _translate("MainWindow", "Retract device to out limit"))
         self.retract_btn.setText(_translate("MainWindow", "Retract"))
-        self.set_post_lineEdit.setToolTip(
+        self.set_pos_lineEdit.setToolTip(
             _translate("MainWindow", "Set new motor position [mm]."))
         self.scan_ready_info_full_lbl.setText(
             _translate("MainWindow", "Scan Ready? If not, post the reasons."))
@@ -2103,101 +1924,6 @@ class Ui_MainWindow(object):
         self.pos_settling_time_dsbox.setSuffix(_translate("MainWindow", " s"))
         self.label_16.setText(_translate("MainWindow", "Voltage [Volt]"))
         self.label_15.setText(_translate("MainWindow", "Position [mm]"))
-        self.label_13.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Length [mm], (<span style=\" font-style:italic;\">l</span><span style=\" font-style:italic; vertical-align:sub;\">1</span>)</p></body></html>"
-            ))
-        self.label_13.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p><span style=\" font-style:italic;\">l</span><span style=\" vertical-align:sub;\">1</span></p></body></html>"
-            ))
-        self.label_12.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Length [mm], (<span style=\" font-style:italic;\">l</span><span style=\" font-style:italic; vertical-align:sub;\">2</span>)</p></body></html>"
-            ))
-        self.label_12.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p><span style=\" font-style:italic;\">l</span><span style=\" vertical-align:sub;\">2</span></p></body></html>"
-            ))
-        self.length2_lineEdit.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Length [mm], (<span style=\" font-style:italic;\">l</span><span style=\" font-style:italic; vertical-align:sub;\">2</span>)</p></body></html>"
-            ))
-        self.length_lineEdit.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Length [mm], (<span style=\" font-style:italic;\">l</span>)</p></body></html>"
-            ))
-        self.length1_lineEdit.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Length [mm], (<span style=\" font-style:italic;\">l</span><span style=\" font-style:italic; vertical-align:sub;\">1</span>)</p></body></html>"
-            ))
-        self.label_7.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Length [mm], (<span style=\" font-style:italic;\">l</span>)</p></body></html>"
-            ))
-        self.label_7.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p><span style=\" font-style:italic;\">l </span>[mm]</p></body></html>"
-            ))
-        self.label_4.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Gap [mm], (<span style=\" font-style:italic;\">g</span>)</p></body></html>"
-            ))
-        self.label_4.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p><span style=\" font-style:italic;\">g </span>[mm]</p></body></html>"
-            ))
-        self.gap_lineEdit.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Gap [mm], (<span style=\" font-style:italic;\">g</span>)</p></body></html>"
-            ))
-        self.label_28.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Slit thickness [mm], (<span style=\" font-style:italic;\">d</span>)</p></body></html>"
-            ))
-        self.label_28.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p><span style=\" font-style:italic;\">d</span></p></body></html>"
-            ))
-        self.slit_thickness_lineEdit.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Slit thickness [mm], (<span style=\" font-style:italic;\">d</span>)</p></body></html>"
-            ))
-        self.label_27.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Slit width [mm], (<span style=\" font-style:italic;\">s</span>)</p></body></html>"
-            ))
-        self.label_27.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p><span style=\" font-style:italic;\">s</span></p></body></html>"
-            ))
-        self.slit_width_lineEdit.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Slit width [mm], (<span style=\" font-style:italic;\">s</span>)</p></body></html>"
-            ))
-        self.as_drawing.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Lengths in mm: <span style=\" font-style:italic;\">l, l</span><span style=\" vertical-align:sub;\">1</span>, <span style=\" font-style:italic;\">l</span><span style=\" font-style:italic; vertical-align:sub;\">2</span><span style=\" font-style:italic;\">;</span></p><p>Gap in mm: <span style=\" font-style:italic;\">g</span>;</p><p>Slit thickness in mm: <span style=\" font-style:italic;\">d</span>;</p><p>Slit width in mm: <span style=\" font-style:italic;\">s</span>.</p></body></html>"
-            ))
         self.dataviz_gbox.setTitle(
             _translate("MainWindow", "Data Visualization"))
         self.matplotlibimageWidget.setFigureAspectRatio(
@@ -2364,6 +2090,8 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Check to activate online mode"))
         self.actionoffline_mode.setText(
             _translate("MainWindow", "offline_mode"))
+        self.actionShow_Schematic.setText(
+            _translate("MainWindow", "Show Schematic"))
 
 
 from mpl4qt.widgets.mplbasewidget import MatplotlibBaseWidget
