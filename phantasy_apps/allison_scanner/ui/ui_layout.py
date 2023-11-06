@@ -14,8 +14,9 @@ class Ui_Form(object):
 
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(1074, 605)
+        Form.resize(1060, 589)
         self.gridLayout = QtWidgets.QGridLayout(Form)
+        self.gridLayout.setContentsMargins(8, 8, 8, 8)
         self.gridLayout.setObjectName("gridLayout")
         self.drawing_vbox = QtWidgets.QVBoxLayout()
         self.drawing_vbox.setContentsMargins(0, 0, -1, -1)
@@ -224,6 +225,13 @@ class Ui_Form(object):
         self.label.setObjectName("label")
         self.gridLayout.addWidget(self.label, 0, 0, 1, 1)
         self.device_name_lbl = QtWidgets.QLabel(Form)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.device_name_lbl.sizePolicy().hasHeightForWidth())
+        self.device_name_lbl.setSizePolicy(sizePolicy)
         self.device_name_lbl.setStyleSheet(
             "QLabel {\n"
             "    font-weight: bold;\n"
