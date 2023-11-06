@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import Qt
 
 from .device import Device
 from .ui.ui_layout import Ui_Form
@@ -31,8 +32,8 @@ class LayoutForm(QWidget, Ui_Form):
         self.adjustSize()
         self.show()
 
-#    def keyPressEvent(self, e):
-#        if e.key() == Qt.Key_Escape:
-#            self.close()
-#        else:
-#            QDialog.keyPressEvent(self, e)
+    def keyPressEvent(self, e):
+        if e.key() == Qt.Key_Escape:
+            self.close()
+        else:
+            QWidget.keyPressEvent(self, e)
