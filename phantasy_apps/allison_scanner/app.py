@@ -52,6 +52,7 @@ from .plot import PlotWidget
 from .plot_final import PlotResults
 from .save import SaveDataDialog
 from .settings_view import SettingsView
+from .app_layout import LayoutForm
 
 CMAP_FAVLIST = ('flag', 'jet', 'nipy_spectral', 'gist_earth',
                 'viridis', 'Greys')
@@ -155,6 +156,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         return default_font, default_font_size
 
     def _post_init(self):
+        # schematic layout form
+        self._layout_form = None
+
         # get system font info
         self._default_font, self._default_font_size = self.get_default_font_config()
 
@@ -180,11 +184,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
         if self._device_mode == "Simulation" and not self._sim_ioc_conf_inited:
             self.on_show_sim_ioc_conf()
-        # disable freezed configuration controls
-        for w in (self.length_lineEdit, self.length1_lineEdit,
-                  self.length2_lineEdit, self.gap_lineEdit,
-                  self.slit_width_lineEdit, self.slit_thickness_lineEdit):
-            w.setDisabled(True)
         #
         self._live_widgets = (self.retract_btn, self.abort_btn,
                               self.auto_fill_beam_params_btn,
@@ -209,8 +208,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # conf
         self._dconf = self.get_device_config()
 
-        # vpos
-        self.vpos_lineEdit.setValidator(QDoubleValidator())
+        # motor pos
+        self.live_pos_lineEdit.setValidator(QDoubleValidator())
+        self.set_pos_lineEdit.setValidator(QDoubleValidator())
+
         self.vpos_lineEdit.returnPressed.connect(partial(
             self.on_retract, -1))
         self.retract_btn.clicked.connect(partial(self.on_retract, None))
@@ -621,12 +622,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     def __show_device_config_static(self, ems):
         # static
-        self.length_lineEdit.setText(str(ems.length))
-        self.length1_lineEdit.setText(str(ems.length1))
-        self.length2_lineEdit.setText(str(ems.length2))
-        self.gap_lineEdit.setText(str(ems.gap))
-        self.slit_width_lineEdit.setText(str(ems.slit_width))
-        self.slit_thickness_lineEdit.setText(str(ems.slit_thickness))
+        self._layout_form = LayoutForm(ems, self)
 
     def __show_device_config_dynamic(self, ems):
         # dynamic
@@ -794,24 +790,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._elapsed_timer.stop()
 
     @pyqtSlot()
-    def on_retract(self, x):
-        if x == -1:
-            x = float(self.vpos_lineEdit.text())
-        if x == 0:
-            elem = self._ems_device.elem
-            pos_fld = 'POS{}'.format(self._ems_device._id)
-            x = getattr(elem, pos_fld)
-            self.vpos_lineEdit.setText('{0:.2f}'.format(x))
-            return
-        try:
-            float(x)
-        except (ValueError, TypeError):
-            v = 200.0
-            self.vpos_lineEdit.setText('200.0')
-        else:
-            v = float(x)
-        finally:
-            self._ems_device.retract(v)
+    def on_retract(self):
+        # retract the arm by the setpoint defined by set_pos_lineEdit.
+        pos = float(self.set_pos_lineEdit.text())
+        self._ems_device.retract(pos)
 
     def _validate_conflicts(self):
         # check if any conflicts with other devices.
@@ -1420,8 +1402,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(bool)
     def on_enable_advctrl(self, f):
         self.adv_ctrl_widget.setVisible(f)
-        self.geometry_widget.setVisible(f)
-        # self.geometry_hline.setVisible(f)
 
     def _beat_on(self, dt):
         self.status_lbl.setPixmap(self._active_px)
@@ -1635,6 +1615,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.toolBar.addWidget(self.sim_mode_widget)
         self._sim_ioc_conf_inited = True
 
+    @pyqtSlot()
+    def onShowSchematic(self):
+        """Show pop-up window for the schematic layout.
+        """
+        if self._layout_form is not None:
+            self._layout_form = LayoutForm(self._ems_device)
+        self._layout_form.show()
+    
 
 class DataSizeNotMatchError(Exception):
     def __init__(self, *args, **kws):
