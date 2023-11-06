@@ -160,6 +160,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         return default_font, default_font_size
 
     def _post_init(self):
+        # vsplitter
+#        self.main_vsplitter.setSizes([100, 1000])
         # schematic layout form
         self._layout_form = None
 
@@ -469,6 +471,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     def sizeHint(self):
         return QSize(1440, 1200)
+
+    def resizeEvent(self, e):
+        # self.main_vsplitter.setSizes([100, 1000])
+        BaseAppForm.resizeEvent(self, e)
 
     def update_time_cost(self, cnt_list):
         # update required time.
