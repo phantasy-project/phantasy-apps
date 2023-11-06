@@ -1745,6 +1745,8 @@ class Ui_MainWindow(object):
             MainWindow.on_sync_data)  # type: ignore
         self.results_btn.clicked.connect(
             self.show_results_btn.click)  # type: ignore
+        self.actionShow_Schematic.triggered.connect(
+            MainWindow.onShowSchematic)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.ems_names_cbb, self.ems_detail_btn)
         MainWindow.setTabOrder(self.ems_detail_btn, self.ems_orientation_cbb)
