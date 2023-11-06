@@ -36,6 +36,7 @@ from phantasy_ui import printlog
 
 from phantasy import Configuration
 from phantasy import establish_pvs
+from phantasy_ui import delayed_exec
 from phantasy_ui import uptime
 from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
@@ -804,7 +805,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_retract(self):
         # retract the motor to the outlimit
         self.set_pos_lineEdit.setText(POS_OUT_LIMIT_STR)
-        self.set_pos_btn.clicked.emit()
+        delayed_exec(lambda: self.set_pos_btn.clicked.emit(), 1000)
 
     @pyqtSlot()
     def on_move_pos(self):
