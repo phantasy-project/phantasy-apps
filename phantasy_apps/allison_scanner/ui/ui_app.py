@@ -26,10 +26,17 @@ class Ui_MainWindow(object):
         self.gridLayout_3.setSpacing(4)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.main_vsplitter = QtWidgets.QSplitter(self.centralwidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.main_vsplitter.sizePolicy().hasHeightForWidth())
+        self.main_vsplitter.setSizePolicy(sizePolicy)
         self.main_vsplitter.setOrientation(QtCore.Qt.Vertical)
         self.main_vsplitter.setObjectName("main_vsplitter")
         self.ctrl_gbox = QtWidgets.QGroupBox(self.main_vsplitter)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(1)
@@ -1015,7 +1022,7 @@ class Ui_MainWindow(object):
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setVerticalStretch(1)
         sizePolicy.setHeightForWidth(
             self.analysis_gbox.sizePolicy().hasHeightForWidth())
         self.analysis_gbox.setSizePolicy(sizePolicy)
