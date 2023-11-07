@@ -40,7 +40,7 @@ class SimDevice(QObject):
             self._incid = self._in_pv.add_callback(self.on_update_in)
         if out_pv is not None:
             self._out_pv = epics.PV(out_pv)
-            self._outcid = self._in_pv.add_callback(self.on_update_out)
+            self._outcid = self._out_pv.add_callback(self.on_update_out)
         if itlk_pv is not None:
             self._itlk_pv = epics.PV(itlk_pv)
             self._itlkcid = self._itlk_pv.add_callback(self.on_update_itlk)
