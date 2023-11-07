@@ -12,6 +12,7 @@ from PyQt5.QtCore import pyqtSignal
 from numpy import ndarray
 
 from phantasy import Configuration
+from phantasy import pass_arg
 from phantasy_apps.wire_scanner.utils import wait as _wait
 from .utils import find_dconf
 
@@ -19,11 +20,6 @@ _LOGGER = logging.getLogger(__name__)
 
 
 TS_FMT = "%Y-%m-%d %H:%M:%S"
-
-try:
-    basestring
-except NameError:
-    basestring = str
 
 XY2ID = {'X': 1, 'Y': 2}
 
@@ -50,6 +46,19 @@ class Device(QObject):
     data_changed = pyqtSignal(ndarray)
     finished = pyqtSignal()
 
+    # pos begin
+    pb_changed = pyqtSignal(float)
+    # pos end
+    pe_changed = pyqtSignal(float)
+    # pos step
+    ps_changed = pyqtSignal(float)
+    # voltage begin
+    vb_changed = pyqtSignal(float)
+    # voltage end
+    ve_changed = pyqtSignal(float)
+    # voltage step
+    vs_changed = pyqtSignal(float)
+
     def __init__(self, elem, xoy='X', dconf=None):
         super(self.__class__, self).__init__()
         self.elem = elem
@@ -58,12 +67,12 @@ class Device(QObject):
             self.dconf = Configuration(find_dconf())
         elif isinstance(dconf, Configuration):
             self.dconf = dconf
-        elif isinstance(dconf, basestring) and os.path.isfile(dconf):
+        elif isinstance(dconf, str) and os.path.isfile(dconf):
             self.dconf = Configuration(dconf)
         else:
             _LOGGER.error("Cannot find device configuration.")
 
-        # name
+        # device name
         self.name = name = elem.name
         # orientation
         self.xoy = xoy
@@ -85,10 +94,10 @@ class Device(QObject):
         # bias volt threshold
         self.bias_volt_threshold = float(self.dconf.get(name, 'bias_volt_threshold'))
 
-        # info
+        # info, e.g. Installed or not-installed
         self.info = self.dconf.get(name, 'info')
 
-    def update_xoy_conf(self, name):
+    def update_xoy_conf(self, name: str):
         # xoy
         # default pos/volt alter ranges, [mm], [V], settling time: [sec]
         self.kxoy = kxoy = "{}.{}".format(name, self.xoy)
@@ -473,15 +482,15 @@ class Device(QObject):
     def __repr__(self):
         s = "Device configuration: [{}.{}]".format(self.name, self.xoy)
         s += "\n--- info: {}".format(self.info)
-        s += "\n--- length: {}".format(self.length)
-        s += "\n--- length-1: {}, length-2: {}".format(self.length1, self.length2)
-        s += "\n--- gap: {}".format(self.gap)
-        s += "\n--- slit width: {}".format(self.slit_width)
-        s += "\n--- slit thickness: {}".format(self.slit_thickness)
-        s += "\n--- bias voltage threshold: {}".format(self.bias_volt_threshold)
-        s += "\n--- pos start: {}, end: {}, step: {}".format(self.pos_begin, self.pos_end, self.pos_step)
-        s += "\n--- volt start: {}, end: {}, step: {}".format(self.volt_begin, self.volt_end, self.volt_step)
-        s += "\n--- settling times, pos: {}, volt: {}".format(self.pos_settling_time, self.volt_settling_time)
+        s += "\n--- length: {0:.2f} mm".format(self.length)
+        s += "\n--- length-1: {0:.2f} mm, length-2: {1:.2} mm".format(self.length1, self.length2)
+        s += "\n--- gap: {0:.2f} mm".format(self.gap)
+        s += "\n--- slit width: {0:.2f} mm".format(self.slit_width)
+        s += "\n--- slit thickness: {0:.2f} mm".format(self.slit_thickness)
+        s += "\n--- bias voltage threshold: {} V".format(self.bias_volt_threshold)
+        s += "\n--- pos [mm] start: {0:.1f}, end: {1:.1f}, step: {2:.1f}".format(self.pos_begin, self.pos_end, self.pos_step)
+        s += "\n--- volt [V] start: {0:.1f}, end: {1:.1f}, step: {2:.1f}".format(self.volt_begin, self.volt_end, self.volt_step)
+        s += "\n--- settling time [s], pos: {0:.1f}, volt: {1:.1f}".format(self.pos_settling_time, self.volt_settling_time)
         return s
 
     def save_dconf(self, filepath):
@@ -532,3 +541,32 @@ class Device(QObject):
     def dxp0(self):
         # delta_x'
         return 2 * self.slit_width / (self.length + self.length1 + self.length2)
+
+    @pass_arg('fld')
+    def onUpdatePosBegin(self, fld, **kws):
+        self.pb_changed.emit(fld.value)
+
+    @pass_arg('fld')
+    def onUpdatePosEnd(self, fld, **kws):
+        self.pe_changed.emit(fld.value)
+
+    @pass_arg('fld')
+    def onUpdatePosStep(self, fld, **kws):
+        self.ps_changed.emit(fld.value)
+
+    @pass_arg('fld')
+    def onUpdateVoltBegin(self, fld, **kws):
+        self.vb_changed.emit(fld.value)
+
+    @pass_arg('fld')
+    def onUpdateVoltEnd(self, fld, **kws):
+        self.ve_changed.emit(fld.value)
+
+    @pass_arg('fld')
+    def onUpdateVoltStep(self, fld, **kws):
+        self.vs_changed.emit(fld.value)
+
+    @pass_arg('fld')
+    def onUpdateScanStatus(self, fld, **kws):
+        if kws.get('value') == 12:
+            self.finished.emit()

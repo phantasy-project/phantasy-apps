@@ -37,6 +37,7 @@ from phantasy_ui import printlog
 
 from phantasy import Configuration
 from phantasy import establish_pvs
+from phantasy import pass_arg
 from phantasy_ui import delayed_exec
 from phantasy_ui import uptime
 from phantasy_ui import get_open_filename
@@ -87,7 +88,10 @@ EMS_NAME_MAP = {
     'ISRC1': 'FE_SCS1:EMS_D0739',
     'ISRC2': 'FE_SCS2:EMS_D0718'
 }
+
+# map from <sys>_<subsys> to ion source name/id
 ION_SOURCE_NAME_MAP = {'FE_SCS1': 'ISRC1', 'FE_SCS2': 'ISRC2'}
+
 HV_MAP = {'ISRC1': 'FE_SCS1:BEAM:HV_BOOK',
           'ISRC2': 'FE_SCS2:BEAM:HV_BOOK'}
 
@@ -432,17 +436,25 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             o.connect(partial(self.on_update_pos_volt_conf, n))
 
     @pyqtSlot(float)
-    def on_update_config(self, attr, x):
+    def on_update_config(self, attr: str, x: float):
         # update attr of ems (1), live config (2) and _dconf (3)
+        """Every time when the scan range is changed:
+        - (1) Update the attributes of EMS Device
+        - (2) Update the live scan config
+        - (3) Update the Configuration object
+        """
+        # (1), (3)
         setattr(self._ems_device, attr, x)
-        getattr(self._ems_device, 'set_{}'.format(attr))()
+        # (2)
+        getattr(self._ems_device, f'set_{attr}')()
+        # (3)
         self._dconf = self._ems_device.dconf
-        # update steps once begin/end is changed
+        # Update steps once begin/end is changed
         for i in ('pos', 'volt'):
-            if attr in ['{}_{}'.format(i, v) for v in ('begin', 'end')]:
-                o = getattr(self, '{}_step_dsbox'.format(i))
+            if attr in [f'{i}_{v}' for v in ('begin', 'end')]:
+                o = getattr(self, f'{i}_step_dsbox')
                 o.valueChanged.emit(o.value())
-                printlog("Updated {}".format('{}_step_dsbox'.format(i)))
+                printlog("Updated {}".format(f'{i}_step_dsbox'))
         cnt_list = self.update_cnts()
         self.update_time_cost(cnt_list)
 
@@ -469,8 +481,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # self.main_vsplitter.setSizes([100, 1000])
         BaseAppForm.resizeEvent(self, e)
 
-    def update_time_cost(self, cnt_list):
-        # update required time.
+    def update_time_cost(self, cnt_list: list = None):
+        # update required time cost to complete the scan.
+        # TODO: update with the generated data.
         if None in cnt_list:
             return
         cnt_pos, cnt_volt = cnt_list
@@ -478,20 +491,21 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         dt_pos = self.pos_settling_time_dsbox.value()
         dt_volt = self.volt_settling_time_dsbox.value()
         x1, x2, x3 = 0.0053, 0.028, 3.84
-        t_sec = ((dt_volt + x1)*cnt_volt + dx*x2 + x3 + dt_pos)*cnt_pos
+        t_sec = ((dt_volt + x1) * cnt_volt + dx * x2 + x3 + dt_pos) * cnt_pos
         self.time_cost_lbl.setText(uptime(t_sec))
 
     def update_cnts(self):
-        # update steps counter
+        # update steps counter, must be an integer
         cnt_list = []
         for p in ('pos', 'volt'):
-            o_b = getattr(self, '{}_begin_dsbox'.format(p))
-            o_e = getattr(self, '{}_end_dsbox'.format(p))
-            o_s = getattr(self, '{}_step_dsbox'.format(p))
+            o_b = getattr(self, f'{p}_begin_dsbox')
+            o_e = getattr(self, f'{p}_end_dsbox')
+            o_s = getattr(self, f'{p}_step_dsbox')
             x1 = o_b.value()
             x2 = o_e.value()
             dx = o_s.value()
-            o = getattr(self, '{}_steps_lbl'.format(p))
+            # cnt label
+            o = getattr(self, f'{p}_steps_lbl')
             try:
                 cnt = (x2 - x1) / dx + 1
             except ZeroDivisionError:
@@ -512,22 +526,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             cnt_list.append(cnt)
         return cnt_list
 
-    @pyqtSlot(float)
-    def on_update_bias_volt_set(self, x: float):
-        """Live setpoint of bias voltage changed.
-        """
-        self.set_biasVolt_lineEdit.setText(f'{x:.0f}')
-
-    @pyqtSlot(float)
-    def on_update_bias_volt(self, x: float):
-        """Live readback of bias voltage changed.
-        """
-        self.live_biasVolt_lineEdit.setText(f'{x:.1f}')
-        pass
-        self._ems_device.bias_volt_threshold = x
-        self._ems_device.set_bias_voltage(0.1)
-        self._dconf = self._ems_device.dconf
-
     @pyqtSlot()
     def on_set_biasVolt(self):
         """Set bias voltage with the new setpoint.
@@ -541,53 +539,73 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._ems_device.elem.BIAS_VOLT = new_volt
 
     @pyqtSlot('QString')
-    def on_update_orientation(self, s):
+    def on_update_orientation(self, s: str):
+        """Update X or Y:
+        - Update the EMS device attributes
+        - Update the connections for the device control and viz part
+        """
+        # post the message to the status bar area.
         self.statusInfoChanged.emit(
                 "Be sure do retraction and reset interlock before switching.")
+        #
         self._ems_orientation = s
         self._ems_device.xoy = s
         self._oid = oid = self._ems_device._id
+
+        # field names for pos scan range
         self._pos_begin_fname = f"START_POS{oid}"
         self._pos_end_fname = f"STOP_POS{oid}"
         self._pos_step_fname = f"STEP_POS{oid}"
+        # field names for volt scan range
         self._volt_begin_fname = f"START_VOLT{oid}"
         self._volt_end_fname = f"STOP_VOLT{oid}"
         self._volt_step_fname = f"STEP_VOLT{oid}"
-        self._data_pv = self._ems_device.elem.pv(f"DATA{oid}")[0]
+
+        # scan status
+        # self._ems_device.monitor(f"SCAN_STATUS{oid}")
+        
+        #
+        elem = self._current_device_elem
+        # motor fork (pos) in status
+        elem.monitor(f"STATUS_IN{oid}", partial(self.onUpdateStatusIn))
+        # motor fork (pos) out status
+        elem.monitor(f"STATUS_OUT{oid}", partial(self.onUpdateStatusIn))
+        # motor fork interlock status
+        elem.monitor(f"INTERLOCK{oid}", partial(self.onUpdateStatusInterlock))
+        # pos readback
+        elem.monitor(f"POS{oid}", partial(self.onUpdatePos))
+        # pos setpoint
+        elem.monitor(f"POS{oid}", partial(self.onUpdatePosSet), "setpoint")
+        # enable status
+        elem.monitor(f"ENABLE_SCAN{oid}", partial(self.onUpdateStatusEnable))
+        # bias voltage on status
+        elem.monitor(f"BIAS_VOLT_ON", partial(self.onUpdateBiasVoltOn))
+        # bias voltage readback
+        elem.monitor(f"BIAS_VOLT", partial(self.onUpdateBiasVolt))
+        # bias voltage setpoint
+        elem.monitor(f"BIAS_VOLT", partial(self.onUpdateBiasVoltSet), "setpoint")
+
+        # pos/volt scan range configs
+        for (ii, jj) in ((i, j) for i in ('p', 'v') for j in ('b', 'e', 's')):
+            n = f"{ii}{jj}"
+            sig = getattr(self._ems_device, f'{n}_changed')
+            sig.connect(partial(self.on_update_pos_volt_conf, n))
+
+
         # sync config
         self.sync_config()
-        # update xylabels
+        # update xylabels (Data Figure)
         self._update_xylabels()
-        # update result keys
+        # update result keys (Twiss Parameters)
         self._update_result_keys(s)
 
-        # pvs
-        _id = self._ems_device._id
-        elem = self._ems_device.elem
         #
         self._data_pv = elem.pv('DATA{}'.format(_id))[0]
         self._status_pv = elem.pv('SCAN_STATUS{}'.format(_id))[0]
         self._trigger_pv = elem.pv('START_SCAN{}'.format(_id))[0]
-        self._pos_pv = elem.pv('POS{}'.format(_id), handle='readback')[0]
-        self._pos_set_pv = elem.pv('POS{}'.format(_id), handle='setpoint')[0]
 
-        self._pos_begin_pv = elem.pv(self._pos_begin_fname, handle='readback')[0]
-        self._pos_end_pv = elem.pv(self._pos_end_fname, handle='readback')[0]
-        self._pos_step_pv = elem.pv(self._pos_step_fname, handle='readback')[0]
-
-        self._volt_begin_pv = elem.pv(self._volt_begin_fname, handle='readback')[0]
-        self._volt_end_pv = elem.pv(self._volt_end_fname, handle='readback')[0]
-        self._volt_step_pv = elem.pv(self._volt_step_fname, handle='readback')[0]
-
-        self._in_pv = elem.pv('STATUS_IN{}'.format(_id))[0]
-        self._out_pv = elem.pv('STATUS_OUT{}'.format(_id))[0]
-        self._itlk_pv = elem.pv('INTERLOCK{}'.format(_id))[0]
-        self._en_pv = elem.pv('ENABLE_SCAN{}'.format(_id), handle='readback')[0]
-        self._bias_on_pv = elem.pv('BIAS_VOLT_ON', handle='readback')[0]
-        self._bias_volt_pv = elem.pv('BIAS_VOLT', handle='readback')[0]
-        self._bias_volt_set_pv = elem.pv('BIAS_VOLT', handle='setpoint')[0]
         #
-        self._init_device()
+        # self._init_device()
 
     def get_device_config(self, path=None):
         """Return device config from *path*.
@@ -598,38 +616,30 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot('QString')
     def on_device_changed(self, s: str):
-        """Change device by selecting the EMS name from the combobox.
-        """
-        # reset element widget
+        # Change device by selecting the EMS name from the combobox (self.ems_names_cbb).
+        #
+        # reset the widget for element investigation
         self._device_widget = None
         # switch EMS device
         self._current_device_name = s
         self._current_device_elem = self._all_devices_dict[s]
-        # switch ion source
+        # switch ion source, set the beam info widget
         isrc_name = ION_SOURCE_NAME_MAP.get(s[:7], 'ISRC1')
         self.beamSpeciesDisplayWidget.set_ion_source(isrc_name)
-        #
+        # update the EMS device
         self.on_update_device()
         self.statusInfoChanged.emit("Selected device: {}".format(s))
         # trigger v2d
         self.on_update_model()
 
     def on_update_device(self):
-        # update ems device.
-        ems = Device(self._current_device_elem, self._ems_orientation,
-                     self._dconf)
+        # update the EMS device.
+        ems = Device(self._current_device_elem, self._ems_orientation, self._dconf)
         self._ems_device = ems
         self.ems_orientation_cbb.currentTextChanged.emit(self.ems_orientation_cbb.currentText())
-
-        if ems.info == "Installed":
-            px = self.installed_px
-            tt = "Device is ready to use"
-        else:
-            px = self.not_installed_px
-            tt = "Device is not ready to use"
-        self.info_lbl.setPixmap(px)
-        self.info_lbl.setToolTip(tt)
-
+        #
+        self.__set_device_info_label(ems.info)
+        #
         self.show_device_config()
 
         # initial/update model
@@ -643,37 +653,43 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """Show current device config, use device.sync_params() to refresh
         config with the live data.
         """
-        ems = self._ems_device
-        self.__show_device_config_static(ems)
-        self.__show_device_config_dynamic(ems)
+        self.__show_device_config_static(self._ems_device)
+        self.__show_device_config_dynamic(self._ems_device)
 
-    def __show_device_config_static(self, ems):
-        # static
+    def __show_device_config_static(self, ems: Device):
+        # static config: e.g. geometry specs.
         self._layout_form = LayoutForm(ems, self)
 
-    def __show_device_config_dynamic(self, ems):
-        # dynamic
-        for s in self._attr_names:
-            o = getattr(self, s + '_dsbox')
-            o.valueChanged.disconnect()
+    def __show_device_config_dynamic(self, ems: Device):
+        # dynamic: predefined scan range read from the config file.
+        #
+        # disconnect the scan spinboxes
+        for attr in self._attr_names:
+            dsbox = getattr(self, f'{attr}_dsbox')
+            dsbox.valueChanged.disconnect()
+
+        # predefined scan range for position
         self.pos_begin_dsbox.setValue(ems.pos_begin)
         self.pos_end_dsbox.setValue(ems.pos_end)
         self.pos_step_dsbox.setValue(ems.pos_step)
         self.pos_settling_time_dsbox.setValue(ems.pos_settling_time)
-
+        # predefined scan range for voltage
         self.volt_begin_dsbox.setValue(ems.volt_begin)
         self.volt_end_dsbox.setValue(ems.volt_end)
         self.volt_step_dsbox.setValue(ems.volt_step)
         self.volt_settling_time_dsbox.setValue(ems.volt_settling_time)
 
+        # calculate/valid the step counter for each dimension
         cnt_list = self.update_cnts()
+        # post the estimated time required to finish the scan
         self.update_time_cost(cnt_list)
 
-        for s in self._attr_names:
-            o = getattr(self, s + '_dsbox')
-            o.valueChanged.connect(partial(self.on_update_config, s))
+        # reconnect the scan spinboxes
+        for attr in self._attr_names:
+            dsbox = getattr(self, f'{attr}_dsbox')
+            dsbox.valueChanged.connect(partial(self.on_update_config, attr))
 
-        #
+        # just set the button status as synced.
         self.set_fetch_config_btn(0, 0)
 
     @pyqtSlot()
@@ -681,9 +697,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """Pull current device configuration from controls network, update
         on the UI.
         """
-        ems = self._ems_device
-        ems.sync_params()
-        self.__show_device_config_dynamic(ems)
+        self._ems_device.sync_params()
+        self.__show_device_config_dynamic(self._ems_device)
 
     @pyqtSlot()
     def on_loadfrom_config(self):
@@ -779,17 +794,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if is_valid is False:
             return
 
-        self._device.data_changed.connect(self.on_update)
-        self._device.status_in_changed.connect(self.on_update_sin)
-        self._device.status_out_changed.connect(self.on_update_sout)
-        self._device.itlk_changed.connect(self.on_update_itlk)
-        self._device.status_enable_changed.connect(self.on_update_en)
-        self._device.bias_on_changed.connect(self.on_update_biason)
-        self._device.pos_set_changed.connect(self.on_update_pos_set)
-        self._device.pos_changed.connect(self.on_update_p)
-        self._device.finished.connect(self.on_finished)
-
-        # start moving
+        # test if ready to move
         if not self.is_valid_to_move():
             QMessageBox.warning(self, "Starting Device",
                     "Device is busy.",
@@ -798,7 +803,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self._device_mode == "Live":
             self._ems_device.init_run()
         self._init_elapsed_timer()
-        self._device.start()
+        self._ems_device.data_changed.connect(self.on_update)
+        self._ems_device.move(wait=False)
         self._elapsed_timer.start(1000)
 
     def _init_elapsed_timer(self):
@@ -852,15 +858,15 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         else:
             return True
 
-    def _valid_device(self, bv=-200.0):
+    def _valid_device(self, bias_volt: float = -200.0):
         # check if device settings correct or not.
         elem = self._ems_device.elem
         # bias volt
         try:
-            assert elem.BIAS_VOLT <= bv
+            assert elem.BIAS_VOLT <= bias_volt
         except AssertionError:
             QMessageBox.warning(self, "Bias Voltage Warning",
-                "Bias Voltage is not in range of < {}.".format(bv),
+                f"Bias Voltage should be <= {bias_volt} V.",
                 QMessageBox.Ok)
             return False
 
@@ -868,27 +874,24 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         x1 = getattr(elem, self._pos_begin_fname)
         x2 = getattr(elem, self._pos_end_fname)
         dx = getattr(elem, self._pos_step_fname)
-
         try:
             assert int((x2 - x1) / dx) * dx == x2 - x1
         except AssertionError:
             QMessageBox.warning(self, "Scan Range Warning",
-                "Input scan range for position indicates non-integer total steps.",
+                "Input scan range for position indicates Non-Integer total steps.",
                 QMessageBox.Ok)
             return False
 
         y1 = getattr(elem, self._volt_begin_fname)
         y2 = getattr(elem, self._volt_end_fname)
         dy = getattr(elem, self._volt_step_fname)
-
         try:
             assert int((y2 - y1) / dy) * dy == y2 - y1
         except AssertionError:
             QMessageBox.warning(self, "Scan Range Warning",
-                "Input scan range for voltage indicates non-integer total steps.",
+                "Input scan range for voltage indicates Non-Integer total steps.",
                 QMessageBox.Ok)
             return False
-
         #
         self._xdim = int((x2 - x1) / dx) + 1
         self._ydim = int((y2 - y1) / dy) + 1
@@ -900,24 +903,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         return self._ems_device.check_status() == 0
 
     def on_update(self, data):
-        printlog("Data from {} is updating...".format(self._data_pv))
+        data_pvname = self._ems_device._data_pv.pvname
+        printlog("Data from {} is updating...".format(data_pvname))
         # data = mask_array(data)
         m = data.reshape(self._ydim, self._xdim)
         m = np.flipud(m)
         self._current_array = m
         self.image_data_changed.emit(m)
-
-    @pyqtSlot(float)
-    def on_update_p(self, v: float):
-        # update the live readback of pos
-        self.live_pos_lineEdit.setText('{0:.3f}'.format(v))
-        self._beat_on(500)
-
-    @pyqtSlot(float)
-    def on_update_pos_set(self, v: float):
-        # update the live setpoint of pos
-        self.set_pos_lineEdit.setText('{0:.3f}'.format(v))
-        self._beat_on(500)
 
     @pyqtSlot()
     def on_finished(self):
@@ -926,8 +918,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             QMessageBox.information(self, "EMS DAQ",
                                     "Data readiness is approaching...",
                                     QMessageBox.Ok)
-        self.on_title_with_ts(self._device._data_pv.timestamp)
-        self.on_update(self._device._data_pv.value)
+        self.on_title_with_ts(self._ems_device._data_pv.timestamp)
+        self.on_update(self._ems_device._data_pv.value)
         # initial data
         self.on_initial_data()
         self.on_plot_raw_data()
@@ -939,9 +931,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         #
         self._elapsed_timer.stop()
 
-        # disconnect slots
-        self._device.data_changed.disconnect()
-        self._device.finished.disconnect()
+        self._ems_device.data_changed.disconnect()
 
     def closeEvent(self, e):
         r = QMessageBox.information(self, "Exit Application",
@@ -963,7 +953,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.update_results_ui(res)
         self.results_changed.emit(res)
 
-    def on_initial_data(self)
+    def on_initial_data(self):
         self._data = Data(model=self._model, array=self._current_array)
 
     def on_plot_raw_data(self):
@@ -1177,7 +1167,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         for (i, j) in zip(o, v):
             i.setText(j)
 
-    def _initial_devices(self)
+    def _initial_devices(self):
         all_devices_dict = get_all_devices("FRIB", "EMS", "EMS")
         self._all_devices_dict = all_devices_dict
         self.ems_names_cbb.addItems(all_devices_dict)
@@ -1275,8 +1265,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self._valid_device(100) is False:
             return
         self.on_add_current_config(show=False)
-        self.on_title_with_ts(self._device._data_pv.timestamp)
-        arr = self._device._data_pv.value
+        self.on_title_with_ts(self._ems_device._data_pv.timestamp)
+        arr = self._ems_device._data_pv.value
         if arr.size == 0:
             QMessageBox.warning(self, "Fetch Measurement Data",
                     "Measurement data is empty.", QMessageBox.Ok)
@@ -1441,56 +1431,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         QTimer.singleShot(dt,
                 lambda:self.status_lbl.setPixmap(self._inactive_px))
 
-    def on_update_sin(self, s):
-        printlog(">>> STATUS IN: ", s)
-
-    def on_update_sout(self, s):
-        printlog(">>> STATUS OUT: ", s)
-        if s == 1.0:
-            px = self._outlimit_px
-            tt = "Device is at outlimit"
-        else:
-            px = self._inactive_px
-            tt = "Device is not at outlimit"
-        self.is_outlimit_lbl.setPixmap(px)
-        self.is_outlimit_lbl.setToolTip(tt)
-
-    def on_update_biason(self, s):
-        printlog(">>> BIAS ON: ", s)
-        if s == 1.0:
-            px = self._enable_px
-            tt = "Bias voltage is on"
-        else:
-            px = self._not_enable_px
-            tt = "Bias voltage is off"
-        self.is_bias_on_lbl.setPixmap(px)
-        self.is_bias_on_lbl.setToolTip(tt)
-        self.__check_device_ready_scan()
-
-    def on_update_en(self, s):
-        printlog(">>> ENABLED: ", s)
-        if s == 1.0:
-            px = self._enable_px
-            tt = "Device is enabled"
-        else:
-            px = self._not_enable_px
-            tt = "Device is not enabled"
-        self.is_enabled_lbl.setPixmap(px)
-        self.is_enabled_lbl.setToolTip(tt)
-        self.__check_device_ready_scan()
-
-    def on_update_itlk(self, s):
-        printlog(">>> INTERLOCK: ", s)
-        if s == 0.0:
-            px = self._itlk_px
-            tt = "Device interlock is OK"
-        else:
-            px = self._not_itlk_px
-            tt = "Device interlock is not OK"
-        self.is_itlk_lbl.setPixmap(px)
-        self.is_itlk_lbl.setToolTip(tt)
-        self.__check_device_ready_scan()
-
     def _update_xylabels(self):
         # update xylabels.
         xlbl = "${}\,\mathrm{{[mm]}}$".format(self._ems_orientation.lower())
@@ -1579,22 +1519,27 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(float)
     def on_update_pos_volt_conf(self, name: str, v: float):
         """Update the position/voltage scan range configurations.
+        - Do not apply live update
+        - Notify via button status if live value is changed.
         """
         w_name = '{}_dsbox'.format(POS_VOLT_NAME_MAP[name])
         w_value = getattr(self, w_name).value()
         self.set_fetch_config_btn(w_value, v)
 
     def set_fetch_config_btn(self, x: float, y: float):
-        # set fetch config btn icon
+        # set fetch config btn icon to reflect if the scan ranges match the device settings.
+        # the scan ranges might be changed by other programs, e.g. through OPI.
+        # this app does not auto keep up these values all the time, but provides this way to
+        # notify the user, who can decide to catch up by clicking the button or not.
         try:
             assert_almost_equal(x, y)
         except AssertionError:
             px = self._fetch_red_px
-            tt = "Scan ranges configuration are changed, click to fetch updates."
+            tt = "Scan range configurations are outdated, click to catch up."
             is_synced = False
         else:
             px = self._fetch_px
-            tt = "Scan ranges configuration are synchronized."
+            tt = "Scan range configurations are updated."
             is_synced = True
         finally:
             self.fetch_config_btn.setIcon(QIcon(px))
@@ -1638,15 +1583,112 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._layout_form = LayoutForm(self._ems_device)
         self._layout_form._show()
 
-    def __unique_connect(self, signal, slot, name):
-        # establish unique signal slot connection as a given unique name.
-        # connect if not yet connected, or disconnect and reconnect
-        if name not in self.__unique_conn_list:
-            signal.connect(slot)
-            self.__unique_conn_list.append(name)
+    def __set_device_info_label(self, info: str):
+        # set up device info, installed or not.
+        if info == "Installed":
+            px = self.installed_px
+            tt = "Device is ready to use"
         else:
-            signal.disconnect()
-            signal.connect(slot)
+            px = self.not_installed_px
+            tt = "Device is not ready to use"
+        self.info_lbl.setPixmap(px)
+        self.info_lbl.setToolTip(tt)
+
+    @pass_arg('fld')
+    def onUpdateStatusIn(self, fld, **kws):
+        # motor fork (pos) in status
+        s = kws.get('value')
+        printlog(">>> STATUS IN: ", s)
+
+    @pass_arg('fld')
+    def onUpdateStatusOut(self, fld, **kws):
+        # motor fork (pos) out status
+        s = kws.get('value')
+        printlog(">>> STATUS OUT: ", s)
+        if s == 1.0:
+            px = self._outlimit_px
+            tt = "Device is at outlimit"
+        else:
+            px = self._inactive_px
+            tt = "Device is not at outlimit"
+        self.is_outlimit_lbl.setPixmap(px)
+        self.is_outlimit_lbl.setToolTip(tt)
+
+    @pass_arg('fld')
+    def onUpdateStatusInterlock(self, fld, **kws):
+        # motor fork interlock status
+        s = kws.get('value')
+        printlog(">>> INTERLOCK: ", s)
+        if s == 0.0:
+            px = self._itlk_px
+            tt = "Device interlock is OK"
+        else:
+            px = self._not_itlk_px
+            tt = "Device interlock is not OK"
+        self.is_itlk_lbl.setPixmap(px)
+        self.is_itlk_lbl.setToolTip(tt)
+        self.__check_device_ready_scan()
+
+    @pass_arg('fld')
+    def onUpdateStatusEnable(self, fld, **kws):
+        # enable status
+        s = kws.get('value')
+        printlog(">>> ENABLED: ", s)
+        if s == 1.0:
+            px = self._enable_px
+            tt = "Device is enabled"
+        else:
+            px = self._not_enable_px
+            tt = "Device is not enabled"
+        self.is_enabled_lbl.setPixmap(px)
+        self.is_enabled_lbl.setToolTip(tt)
+        self.__check_device_ready_scan()
+
+    @pass_arg('fld')
+    def onUpdateBiasVoltOn(self, fld, **kws):
+        # bias voltage on status
+        s = kws.get('value')
+        printlog(">>> BIAS ON: ", s)
+        if s == 1.0:
+            px = self._enable_px
+            tt = "Bias voltage is on"
+        else:
+            px = self._not_enable_px
+            tt = "Bias voltage is off"
+        self.is_bias_on_lbl.setPixmap(px)
+        self.is_bias_on_lbl.setToolTip(tt)
+        self.__check_device_ready_scan()
+
+
+    @pass_arg('fld')
+    def onUpdateBiasVolt(self, fld, **kws):
+        # bias voltage readback
+        x = kws.get('value')
+        self.live_biasVolt_lineEdit.setText(f'{x:.1f}')
+        # pass
+        # self._ems_device.bias_volt_threshold = x
+       #  self._ems_device.set_bias_voltage(0.1)
+        # self._dconf = self._ems_device.dconf
+
+    @pass_arg('fld')
+    def onUpdateBiasVoltSet(self, fld, **kws):
+        # bias voltage setpoint
+        x = kws.get('value')
+        self.set_biasVolt_lineEdit.setText(f'{x:.0f}')
+
+    @pass_arg('fld')
+    def onUpdatePos(self, fld, **kws):
+        # motor position readback
+        v = kws.get('value')
+        self.live_pos_lineEdit.setText('{0:.3f}'.format(v))
+        self._beat_on(500)
+
+    @pass_arg('fld')
+    def onUpdatePosSet(self, fld, **kws):
+        # motor position setpoint
+        v = kws.get('value')
+        self.set_pos_lineEdit.setText('{0:.3f}'.format(v))
+
 
 
 class DataSizeNotMatchError(Exception):
