@@ -217,6 +217,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # conf
         self._dconf = self.get_device_config()
 
+        # bias voltage
+        self.live_biasVolt_lineEdit.setValidator(QDoubleValidator())
+        self.set_biasVolt_lineEdit.setValidator(QDoubleValidator())
+        self.set_biasVolt_btn.clicked.connect(self.on_set_biasVolt)
+
         # motor pos
         self.live_pos_lineEdit.setValidator(QDoubleValidator())
         self.set_pos_lineEdit.setValidator(QDoubleValidator())
@@ -262,9 +267,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         for s in self._attr_names:
             o = getattr(self, s + '_dsbox')
             o.valueChanged.connect(partial(self.on_update_config, s))
-
-        # bias volt
-        self.bias_volt_dsbox.valueChanged.connect(self.on_update_bias_volt)
 
         #
         is_sim = self._device_mode=="Simulation"
@@ -424,7 +426,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                                      self._volt_step_pv,
                                      self._in_pv, self._out_pv,
                                      self._itlk_pv, self._en_pv,
-                                     self._bias_on_pv, self._pos_set_pv)
+                                     self._bias_on_pv, self._pos_set_pv,
+                                     self._bias_volt_pv, self._bias_volt_set_pv)
             self._device.status_in_changed.connect(self.on_update_sin)
             self._device.status_out_changed.connect(self.on_update_sout)
             self._device.itlk_changed.connect(self.on_update_itlk)
@@ -432,12 +435,16 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._device.bias_on_changed.connect(self.on_update_biason)
             self._device.pos_set_changed.connect(self.on_update_pos_set)
             self._device.pos_changed.connect(self.on_update_p)
+            self._device.bias_volt_changed.connect(self.on_update_bias_volt)
+            self._device.bias_volt_set_changed.connect(self.on_update_bias_volt_set)
 
             pvs = (self._in_pv, self._out_pv, self._itlk_pv, self._en_pv, self._bias_on_pv,
-                   self._pos_set_pv, self._pos_pv)
+                   self._pos_set_pv, self._pos_pv,
+                   self._bias_volt_pv, self._bias_volt_set_pv)
             cbs = (self.on_update_sin, self.on_update_sout,
                    self.on_update_itlk, self.on_update_en, self.on_update_biason,
-                   self.on_update_pos_set, self.on_update_p)
+                   self.on_update_pos_set, self.on_update_p,
+                   self.on_update_bias_volt, self.on_update_bias_volt_set)
             establish_pvs(pvs, verbose=True)
             for pv, cb in zip(pvs, cbs):
                 cb(caget(pv))
@@ -528,10 +535,32 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         return cnt_list
 
     @pyqtSlot(float)
-    def on_update_bias_volt(self, x):
+    def on_update_bias_volt_set(self, x: float):
+        """Live setpoint of bias voltage changed.
+        """
+        self.set_biasVolt_lineEdit.setText(f'{x:.0f}')
+
+    @pyqtSlot(float)
+    def on_update_bias_volt(self, x: float):
+        """Live readback of bias voltage changed.
+        """
+        self.live_biasVolt_lineEdit.setText(f'{x:.1f}')
+        pass
         self._ems_device.bias_volt_threshold = x
         self._ems_device.set_bias_voltage(0.1)
         self._dconf = self._ems_device.dconf
+
+    @pyqtSlot()
+    def on_set_biasVolt(self):
+        """Set bias voltage with the new setpoint.
+        """
+        try:
+            new_volt = float(self.set_biasVolt_lineEdit.text())
+        except:
+            QMessageBox.warning(self, "Invalid bias voltage setpoint!", QMessageBox.Ok)
+        else:
+            print(f"Set Bias Voltage to {new_volt}.")
+            self._ems_device.elem.BIAS_VOLT = new_volt
 
     @pyqtSlot('QString')
     def on_update_orientation(self, s):
@@ -578,6 +607,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._itlk_pv = elem.pv('INTERLOCK{}'.format(_id))[0]
             self._en_pv = elem.pv('ENABLE_SCAN{}'.format(_id), handle='readback')[0]
             self._bias_on_pv = elem.pv('BIAS_VOLT_ON', handle='readback')[0]
+            self._bias_volt_pv = elem.pv('BIAS_VOLT', handle='readback')[0]
+            self._bias_volt_set_pv = elem.pv('BIAS_VOLT', handle='setpoint')[0]
         if self._device_mode == "Simulation":
             self._ready_pv = elem.pv("READY")[0]
         self._init_device()
@@ -649,7 +680,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         for s in self._attr_names:
             o = getattr(self, s + '_dsbox')
             o.valueChanged.disconnect()
-        self.bias_volt_dsbox.valueChanged.disconnect()
         self.pos_begin_dsbox.setValue(ems.pos_begin)
         self.pos_end_dsbox.setValue(ems.pos_end)
         self.pos_step_dsbox.setValue(ems.pos_step)
@@ -663,12 +693,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         cnt_list = self.update_cnts()
         self.update_time_cost(cnt_list)
 
-        # bias volt
-        self.bias_volt_dsbox.setValue(ems.bias_volt_threshold)
         for s in self._attr_names:
             o = getattr(self, s + '_dsbox')
             o.valueChanged.connect(partial(self.on_update_config, s))
-        self.bias_volt_dsbox.valueChanged.connect(self.on_update_bias_volt)
 
         #
         self.set_fetch_config_btn(0, 0)
@@ -904,11 +931,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._current_array = m
         self.image_data_changed.emit(m)
 
+    @pyqtSlot(float)
     def on_update_p(self, v: float):
         # update the live readback of pos
         self.live_pos_lineEdit.setText('{0:.3f}'.format(v))
         self._beat_on(500)
 
+    @pyqtSlot(float)
     def on_update_pos_set(self, v: float):
         # update the live setpoint of pos
         self.set_pos_lineEdit.setText('{0:.3f}'.format(v))
