@@ -9,6 +9,7 @@ from functools import partial
 from getpass import getuser
 import numpy as np
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
@@ -161,8 +162,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         return default_font, default_font_size
 
     def _post_init(self):
-        # vsplitter
-#        self.main_vsplitter.setSizes([100, 1000])
+        # unique connection list
+        self.__unique_conn_list = []
+
         # schematic layout form
         self._layout_form = None
 
@@ -394,6 +396,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             o.setColorMap(o.getColorMap())
 
     def _init_device(self):
+        # re-init device, everytime switching device or orientation
         if self._device_mode == "Simulation":
             self._device = SimDevice(self._data_pv, self._status_pv,
                                      self._trigger_pv, self._pos_pv,
@@ -426,6 +429,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._device.bias_on_changed.connect(self.on_update_biason)
             self._device.pos_set_changed.connect(self.on_update_pos_set)
             self._device.pos_changed.connect(self.on_update_p)
+
             pvs = (self._in_pv, self._out_pv, self._itlk_pv, self._en_pv, self._bias_on_pv,
                    self._pos_set_pv, self._pos_pv)
             cbs = (self.on_update_sin, self.on_update_sout,
@@ -435,8 +439,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             for pv, cb in zip(pvs, cbs):
                 cb(caget(pv))
         for (ii, jj) in ((i, j) for i in ('p', 'v') for j in ('b', 'e', 's')):
-            n = "{}{}".format(ii, jj)
-            o = getattr(self._device, '{}_changed'.format(n))
+            n = f"{ii}{jj}"
+            o = getattr(self._device, f'{n}_changed')
             o.connect(partial(self.on_update_pos_volt_conf, n))
 
     @pyqtSlot(float)
@@ -929,13 +933,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
         # disconnect slots
         self._device.data_changed.disconnect()
-        self._device.status_in_changed.disconnect()
-        self._device.status_out_changed.disconnect()
-        self._device.itlk_changed.disconnect()
-        self._device.status_enable_changed.disconnect()
-        self._device.bias_on_changed.disconnect()
-        self._device.pos_set_changed.disconnect()
-        self._device.pos_changed.disconnect()
         self._device.finished.disconnect()
 
     def closeEvent(self, e):
@@ -1598,12 +1595,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             o.valueChanged.emit(o.value())
 
     @pyqtSlot(float)
-    def on_update_pos_volt_conf(self, name, v):
+    def on_update_pos_volt_conf(self, name: str, v: float):
+        """Update the position/voltage scan range configurations.
+        """
         w_name = '{}_dsbox'.format(POS_VOLT_NAME_MAP[name])
         w_value = getattr(self, w_name).value()
         self.set_fetch_config_btn(w_value, v)
 
-    def set_fetch_config_btn(self, x, y):
+    def set_fetch_config_btn(self, x: float, y: float):
         # set fetch config btn icon
         try:
             assert_almost_equal(x, y)
@@ -1666,6 +1665,16 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._layout_form = LayoutForm(self._ems_device)
         self._layout_form._show()
 
+    def __unique_connect(self, signal, slot, name):
+        # establish unique signal slot connection as a given unique name.
+        # connect if not yet connected, or disconnect and reconnect
+        if name not in self.__unique_conn_list:
+            signal.connect(slot)
+            self.__unique_conn_list.append(name)
+        else:
+            signal.disconnect()
+            signal.connect(slot)
+
 
 class DataSizeNotMatchError(Exception):
     def __init__(self, *args, **kws):
@@ -1698,4 +1707,5 @@ def get_scan_settings_from_config(xoy, name, dconf):
                 name, xoy,
                 pos_begin, pos_end, pos_step,
                 volt_begin, volt_end, volt_step)
+
 
