@@ -315,23 +315,26 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     def __check_device_ready_scan(self):
         # Check if device is ready to scan.
-        msg = ''
+        msg = []
         _is_ready = True
         if self.is_enabled_lbl.toolTip() != "Device is enabled":
-            msg += "Device is not enabled. "
+            msg.append("Device is not Enabled.")
             _is_ready = False
         if self.is_itlk_lbl.toolTip() != "Device interlock is OK":
-            msg += "Device interlock is not OK. "
+            msg.append("Device interlock is not OK.")
             _is_ready = False
         if self.is_bias_on_lbl.toolTip() != "Bias voltage is on":
-            msg += "Bias voltage is off. "
+            msg.append("Bias voltage is OFF.")
             _is_ready = False
         self.sigReadyScanChanged.emit(_is_ready)
         # post the reason why not ready to scan
-        if msg != '':
-            self.scan_ready_info_full_lbl.setText(
-                f'''<p><span style="font-size:{self._default_font_size + 2}pt;">&#9888; </span>
-                    <span style="font-size:{self._default_font_size + 2}pt;color:#ff0000;">{msg}</span></p>''')
+        if msg:
+            msg_str = ''
+            for i in msg:
+                msg_str += \
+                    f'''<p><span style="font-size:{self._default_font_size + 2}pt;">&#9888; </span>
+                        <span style="font-size:{self._default_font_size + 2}pt;color:#ff0000;">{i}</span></p>'''
+            self.scan_ready_info_full_lbl.setText(msg_str)
 
     @pyqtSlot(bool)
     def on_online_mode_changed(self, is_checked: bool):
