@@ -151,7 +151,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.title_changed.connect(self.matplotlibimageWidget.setFigureTitle)
 
         self._device_mode = mode.capitalize()
-        self._sim_ioc_conf_inited = False
         self._post_init()
 
     def get_default_font_config(self):
@@ -191,8 +190,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.menu_Help.insertAction(self.actionAbout, self._user_guide_mitem)
         self._user_guide_mitem.triggered.connect(self.onShowUserGuide)
 
-        if self._device_mode == "Simulation" and not self._sim_ioc_conf_inited:
-            self.on_show_sim_ioc_conf()
         #
         self._live_widgets = (self.retract_btn, self.abort_btn,
                               self.auto_fill_beam_params_btn,
@@ -206,8 +203,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._not_enable_px = QPixmap(":/icons/off.png").scaled(PX_SIZE, PX_SIZE)
         self._itlk_px = QPixmap(":/icons/on.png").scaled(PX_SIZE, PX_SIZE)
         self._not_itlk_px = QPixmap(":/icons/off.png").scaled(PX_SIZE, PX_SIZE)
-        self._ioc_ready_px = QPixmap(":/icons/on.png").scaled(PX_SIZE, PX_SIZE)
-        self._ioc_not_ready_px = QPixmap(":/icons/off.png").scaled(PX_SIZE, PX_SIZE)
         #
         self._fetch_red_px = QPixmap(":/icons/fetch_red.png").scaled(PX_SIZE, PX_SIZE)
         self._fetch_px = QPixmap(":/icons/fetch.png").scaled(PX_SIZE, PX_SIZE)
@@ -269,10 +264,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             o.valueChanged.connect(partial(self.on_update_config, s))
 
         #
-        is_sim = self._device_mode=="Simulation"
-        self.actionSimulation_Mode.setChecked(is_sim)
-        self.actionSimulation_Mode.toggled.emit(is_sim)
-
         for o in self.findChildren(QLineEdit):
             o.textChanged.connect(self.highlight_text)
 
@@ -402,52 +393,39 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     def _init_device(self):
         # re-init device, everytime switching device or orientation
-        if self._device_mode == "Simulation":
-            self._device = SimDevice(self._data_pv, self._status_pv,
-                                     self._trigger_pv, self._pos_pv,
-                                     self._pos_begin_pv,
-                                     self._pos_end_pv,
-                                     self._pos_step_pv,
-                                     self._volt_begin_pv,
-                                     self._volt_end_pv,
-                                     self._volt_step_pv,
-                                     ready_pv=self._ready_pv)
-            self._device.ioc_ready_changed.connect(self.on_update_ioc_ready)
-            self.on_update_ioc_ready(caget(self._ready_pv))
-        else:
-            # work with real device
-            self._device = SimDevice(self._data_pv, self._status_pv,
-                                     self._trigger_pv, self._pos_pv,
-                                     self._pos_begin_pv,
-                                     self._pos_end_pv,
-                                     self._pos_step_pv,
-                                     self._volt_begin_pv,
-                                     self._volt_end_pv,
-                                     self._volt_step_pv,
-                                     self._in_pv, self._out_pv,
-                                     self._itlk_pv, self._en_pv,
-                                     self._bias_on_pv, self._pos_set_pv,
-                                     self._bias_volt_pv, self._bias_volt_set_pv)
-            self._device.status_in_changed.connect(self.on_update_sin)
-            self._device.status_out_changed.connect(self.on_update_sout)
-            self._device.itlk_changed.connect(self.on_update_itlk)
-            self._device.status_enable_changed.connect(self.on_update_en)
-            self._device.bias_on_changed.connect(self.on_update_biason)
-            self._device.pos_set_changed.connect(self.on_update_pos_set)
-            self._device.pos_changed.connect(self.on_update_p)
-            self._device.bias_volt_changed.connect(self.on_update_bias_volt)
-            self._device.bias_volt_set_changed.connect(self.on_update_bias_volt_set)
+        # work with real device
+        self._device = SimDevice(self._data_pv, self._status_pv,
+                                 self._trigger_pv, self._pos_pv,
+                                 self._pos_begin_pv,
+                                 self._pos_end_pv,
+                                 self._pos_step_pv,
+                                 self._volt_begin_pv,
+                                 self._volt_end_pv,
+                                 self._volt_step_pv,
+                                 self._in_pv, self._out_pv,
+                                 self._itlk_pv, self._en_pv,
+                                 self._bias_on_pv, self._pos_set_pv,
+                                 self._bias_volt_pv, self._bias_volt_set_pv)
+        self._device.status_in_changed.connect(self.on_update_sin)
+        self._device.status_out_changed.connect(self.on_update_sout)
+        self._device.itlk_changed.connect(self.on_update_itlk)
+        self._device.status_enable_changed.connect(self.on_update_en)
+        self._device.bias_on_changed.connect(self.on_update_biason)
+        self._device.pos_set_changed.connect(self.on_update_pos_set)
+        self._device.pos_changed.connect(self.on_update_p)
+        self._device.bias_volt_changed.connect(self.on_update_bias_volt)
+        self._device.bias_volt_set_changed.connect(self.on_update_bias_volt_set)
 
-            pvs = (self._in_pv, self._out_pv, self._itlk_pv, self._en_pv, self._bias_on_pv,
-                   self._pos_set_pv, self._pos_pv,
-                   self._bias_volt_pv, self._bias_volt_set_pv)
-            cbs = (self.on_update_sin, self.on_update_sout,
-                   self.on_update_itlk, self.on_update_en, self.on_update_biason,
-                   self.on_update_pos_set, self.on_update_p,
-                   self.on_update_bias_volt, self.on_update_bias_volt_set)
-            establish_pvs(pvs, verbose=True)
-            for pv, cb in zip(pvs, cbs):
-                cb(caget(pv))
+        pvs = (self._in_pv, self._out_pv, self._itlk_pv, self._en_pv, self._bias_on_pv,
+               self._pos_set_pv, self._pos_pv,
+               self._bias_volt_pv, self._bias_volt_set_pv)
+        cbs = (self.on_update_sin, self.on_update_sout,
+               self.on_update_itlk, self.on_update_en, self.on_update_biason,
+               self.on_update_pos_set, self.on_update_p,
+               self.on_update_bias_volt, self.on_update_bias_volt_set)
+        establish_pvs(pvs, verbose=True)
+        for pv, cb in zip(pvs, cbs):
+            cb(caget(pv))
         for (ii, jj) in ((i, j) for i in ('p', 'v') for j in ('b', 'e', 's')):
             n = f"{ii}{jj}"
             o = getattr(self._device, f'{n}_changed')
@@ -601,16 +579,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._volt_end_pv = elem.pv(self._volt_end_fname, handle='readback')[0]
         self._volt_step_pv = elem.pv(self._volt_step_fname, handle='readback')[0]
 
-        if self._device_mode == "Live":
-            self._in_pv = elem.pv('STATUS_IN{}'.format(_id))[0]
-            self._out_pv = elem.pv('STATUS_OUT{}'.format(_id))[0]
-            self._itlk_pv = elem.pv('INTERLOCK{}'.format(_id))[0]
-            self._en_pv = elem.pv('ENABLE_SCAN{}'.format(_id), handle='readback')[0]
-            self._bias_on_pv = elem.pv('BIAS_VOLT_ON', handle='readback')[0]
-            self._bias_volt_pv = elem.pv('BIAS_VOLT', handle='readback')[0]
-            self._bias_volt_set_pv = elem.pv('BIAS_VOLT', handle='setpoint')[0]
-        if self._device_mode == "Simulation":
-            self._ready_pv = elem.pv("READY")[0]
+        self._in_pv = elem.pv('STATUS_IN{}'.format(_id))[0]
+        self._out_pv = elem.pv('STATUS_OUT{}'.format(_id))[0]
+        self._itlk_pv = elem.pv('INTERLOCK{}'.format(_id))[0]
+        self._en_pv = elem.pv('ENABLE_SCAN{}'.format(_id), handle='readback')[0]
+        self._bias_on_pv = elem.pv('BIAS_VOLT_ON', handle='readback')[0]
+        self._bias_volt_pv = elem.pv('BIAS_VOLT', handle='readback')[0]
+        self._bias_volt_set_pv = elem.pv('BIAS_VOLT', handle='setpoint')[0]
+        #
         self._init_device()
 
     def get_device_config(self, path=None):
@@ -622,7 +598,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot('QString')
     def on_device_changed(self, s: str):
-        """Change device by selecting the name.
+        """Change device by selecting the EMS name from the combobox.
         """
         # reset element widget
         self._device_widget = None
@@ -953,7 +929,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.on_title_with_ts(self._device._data_pv.timestamp)
         self.on_update(self._device._data_pv.value)
         # initial data
-        self.on_initial_data(mode=self._device_mode)
+        self.on_initial_data()
         self.on_plot_raw_data()
         #
         if self._auto_analysis:
@@ -975,16 +951,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self.on_save_data()
         BaseAppForm.closeEvent(self, e)
 
-    @pyqtSlot(bool)
-    def on_enable_simulation_mode(self, f):
-        if f:
-            self._device_mode = "Simulation"
-        else:
-            self._device_mode = "Live"
-        for o in self._live_widgets:
-            o.setEnabled(not f)
-        self._initial_devices(self._device_mode)
-
     @pyqtSlot()
     def on_update_results(self):
         """Calculate Twiss parameters and update UI.
@@ -997,10 +963,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.update_results_ui(res)
         self.results_changed.emit(res)
 
-    def on_initial_data(self, mode="Live"):
+    def on_initial_data(self)
         self._data = Data(model=self._model, array=self._current_array)
-        if mode == "Simulation":
-            pass
 
     def on_plot_raw_data(self):
         # plot raw data, before processing.
@@ -1213,11 +1177,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         for (i, j) in zip(o, v):
             i.setText(j)
 
-    def _initial_devices(self, mode="Live"):
-        if mode == "Live":
-            all_devices_dict = get_all_devices("FRIB", "EMS", "EMS")
-        else:
-            all_devices_dict = get_all_devices("SIM", "DEVICES", "EMS")
+    def _initial_devices(self)
+        all_devices_dict = get_all_devices("FRIB", "EMS", "EMS")
         self._all_devices_dict = all_devices_dict
         self.ems_names_cbb.addItems(all_devices_dict)
         self.ems_names_cbb.currentTextChanged.connect(self.on_device_changed)
@@ -1329,7 +1290,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                     QMessageBox.Ok)
             return
         self.on_update(arr)
-        self.on_initial_data(mode=self._device_mode)
+        self.on_initial_data()
         self.on_plot_raw_data()
 
         if self._auto_analysis:
@@ -1434,7 +1395,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_auto_fill_beam_params(self, mode="Live"):
-        # mode: Live, Simulation
+        # mode: Live
         n, q, a, ek = self._get_ion_info(mode)
         ws = (self.ion_name_lineEdit,
               self.ion_charge_lineEdit,
@@ -1529,17 +1490,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.is_itlk_lbl.setPixmap(px)
         self.is_itlk_lbl.setToolTip(tt)
         self.__check_device_ready_scan()
-
-    def on_update_ioc_ready(self, i):
-        printlog(">>> SIM IOC ready?: ", i)
-        if i == 1:
-            px = self._ioc_ready_px
-            tt = "Simulation IOC is ready"
-        else:
-            px = self._ioc_not_ready_px
-            tt = "Simulation IOC is not ready"
-        self.sim_mode_widget.ready_lbl.setPixmap(px)
-        self.sim_mode_widget.ready_lbl.setToolTip(tt)
 
     def _update_xylabels(self):
         # update xylabels.
@@ -1679,15 +1629,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.volt_begin_dsbox.setValue(d['volt_begin'])
         self.volt_end_dsbox.setValue(d['volt_end'])
         self.volt_step_dsbox.setValue(d['volt_step'])
-
-    def on_show_sim_ioc_conf(self):
-        from .sim_mode import SimModeWidget
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.toolBar.addWidget(spacer)
-        self.sim_mode_widget = SimModeWidget(self)
-        self.toolBar.addWidget(self.sim_mode_widget)
-        self._sim_ioc_conf_inited = True
 
     @pyqtSlot()
     def onShowSchematic(self):
