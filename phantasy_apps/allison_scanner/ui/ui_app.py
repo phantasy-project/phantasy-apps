@@ -1687,7 +1687,6 @@ class Ui_MainWindow(object):
         self.menuConfiguration.addAction(self.actionSave_As)
         self.menuConfiguration.addSeparator()
         self.menuConfiguration.addAction(self.actionLocate)
-        self.menu_Device.addAction(self.actionSimulation_Mode)
         self.menu_Device.addAction(self.actionRunXY)
         self.menu_Device.addAction(self.actionShow_Schematic)
         self.menu_Data.addAction(self.actionAuto_Analysis)
@@ -1717,8 +1716,6 @@ class Ui_MainWindow(object):
             MainWindow.on_saveas_config)  # type: ignore
         self.actionLocate.triggered.connect(
             MainWindow.on_locate_config)  # type: ignore
-        self.actionSimulation_Mode.toggled['bool'].connect(
-            MainWindow.on_enable_simulation_mode)  # type: ignore
         self.update_results_btn.clicked.connect(
             MainWindow.on_update_results)  # type: ignore
         self.actionOpen.triggered.connect(
