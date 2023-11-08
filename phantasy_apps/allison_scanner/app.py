@@ -988,13 +988,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot('QString')
     def on_v2d(self, s):
+        print(f"on_v2d: {s}")
         try:
             v = float(s)
-        except ValueError:
-            out = ''
-        else:
             d = self._model.voltage_to_divergence(v)[1] * 1000
             out = "{0:.3f}".format(d)
+        except:
+            out = ""
         finally:
             self.divergence_lineEdit.setText(out)
 
