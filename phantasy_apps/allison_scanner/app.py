@@ -296,17 +296,17 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
         # initial EMS devices
         self._initial_devices()
-        # establish Device signals for device controls for only once
-        self._wired_device_signals = False
 
         # default config btn, menu --> history settings
         self._init_revert_config_btn()
         self._init_scan_settings()
-    
-    def _wired_device_signals(self):
+
+    def _wire_device_signals(self, ems: Device):
         # connect signals of Device for controls and viz
-        self._ems_device.status_in_changed.connect(self.onUpdateStatusIn)
-        self._ems_device.status_out_changed.connect(self.onUpdateStatusOut)
+        printlog("Wiring... STATUS_IN")
+        ems.status_in_changed.connect(self.onUpdateStatusIn)
+        printlog("Wiring... STATUS_OUT")
+        ems.status_out_changed.connect(self.onUpdateStatusOut)
 
     def _init_revert_config_btn(self):
         # main action: revert to default config
@@ -570,14 +570,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
         # scan status
         # self._ems_device.monitor(f"SCAN_STATUS{oid}")
-        
-        if not self._wired_device_signals:
-            self._wire_device_signals()
-            self._wire_device_signals = True
 
         # set up monitors for the new device and orientation
         for _name, _ems_device in self._ems_device_map.items():
+            printlog(f"Unmonitoring... {_name}")
             _ems_device.unmonitor()
+            printlog(f"Monitoring... {self._ems_device.name}")
         self._ems_device.monitor()
 
 #        #
@@ -641,11 +639,18 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     def on_update_device(self):
         # update the EMS device.
-        if self._current_device_name not in self._ems_device_map:
+        dev_name = self._current_device_name
+        if dev_name not in self._ems_device_map:
             ems = Device(self._current_device_elem, self._ems_orientation, self._dconf)
-            self._ems_device_map[self._current_device_name] = ems
+            self._ems_device_map[dev_name] = ems
         else:
-            ems = self._ems_device_map[self._current_device_name]
+            ems = self._ems_device_map[dev_name]
+        # wire signals for only once
+        _sig_wired = self._ems_device_sig_wired_map.get(dev_name, False)
+        if not _sig_wired:
+            self._wire_device_signals(ems)
+            self._ems_device_sig_wired_map[dev_name] = True
+        #
         self._ems_device = ems
         self.ems_orientation_cbb.currentTextChanged.emit(self.ems_orientation_cbb.currentText())
         #
@@ -1180,6 +1185,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def _initial_devices(self):
         # store all ems device: {name: Device, ...}
         self._ems_device_map = {}
+
+        # have signals been wired for each EMS device?
+        # establish Device signals for device controls for only once
+        self._ems_device_sig_wired_map = {}
         #
         all_devices_dict = get_all_devices("FRIB", "EMS", "EMS")
         self._all_devices_dict = all_devices_dict
@@ -1610,12 +1619,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(bool)
     def onUpdateStatusIn(self, is_in: bool):
         # motor fork (pos) in status
-        printlog(">>> {self._ems_device.name}[self._ems_orientation] STATUS IN: ", is_in)
+        printlog(f"{self._ems_device.name}[{self._ems_orientation}] STATUS IN: {is_in}")
 
     @pyqtSlot(bool)
     def onUpdateStatusOut(self, is_out: bool):
         # motor fork (pos) out status
-        printlog(">>> {self._ems_device.name}[self._ems_orientation] STATUS OUT: ", is_out)
+        printlog(f"{self._ems_device.name}[{self._ems_orientation}] STATUS OUT: {is_out}")
         if is_out:
             px = self._outlimit_px
             tt = "Device is at outlimit"
