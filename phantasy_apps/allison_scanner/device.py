@@ -13,6 +13,7 @@ from numpy import ndarray
 
 from phantasy import Configuration
 from phantasy import pass_arg
+from phantasy_ui import printlog
 from phantasy_apps.wire_scanner.utils import wait as _wait
 from .utils import find_dconf
 
@@ -480,6 +481,7 @@ class Device(QObject):
         self.set_params()
 
     def init_data_cb(self):
+        printlog(f"Initial data cb: {self.name} [{self.xoy}, {self._id}]")
         self._data_pv = self.elem.get_field(f"DATA{self._id}").readback_pv[0]
         self.elem.monitor(f"SCAN_STATUS{self._id}", self.onScanStatusUpdated,
                           name=f"SCAN_STATUS{self._id}")
@@ -495,8 +497,8 @@ class Device(QObject):
     def onScanStatusUpdated(self, fld, **kws):
         """Scan status is updated.
         """
-        value = kws.get("value")
-        if value == 12:
+        s = kws.get("char_value")
+        if s == "SCAN_DONE":
             self._reset_data_cb()
 
     @pass_arg('fld')

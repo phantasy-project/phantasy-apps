@@ -590,9 +590,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._volt_end_fname = f"STOP_VOLT{oid}"
         self._volt_step_fname = f"STEP_VOLT{oid}"
 
-        # scan status
-        # self._ems_device.monitor(f"SCAN_STATUS{oid}")
-
         # set up monitors for the new device and orientation
         for _name, _ems_device in self._ems_device_map.items():
             printlog(f"Unmonitoring... {_name}")
@@ -817,6 +814,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self._device_mode == "Live":
             self._ems_device.init_run()
         self._init_elapsed_timer()
+        printlog(f"connect data_changed {self._ems_device.name}[{self._ems_device.xoy}]")
         self._ems_device.data_changed.connect(self.on_update)
         self._ems_device.finished.connect(self.on_finished)
         self._ems_device.move(wait=False)
@@ -934,7 +932,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                                     "Data readiness is approaching...",
                                     QMessageBox.Ok)
         self.on_title_with_ts(self._ems_device._data_pv.timestamp)
-        self.on_update(self._ems_device._data_pv.value)
+        self.on_update(self._ems_device._data_pv.get())
         # initial data
         self.on_initial_data()
         self.on_plot_raw_data()
@@ -945,8 +943,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # self.finished.emit()
         #
         self._elapsed_timer.stop()
-
+        #
+        printlog(f"disconnect data_changed {self._ems_device.name}[{self._ems_device.xoy}]")
         self._ems_device.data_changed.disconnect()
+        self._ems_device.finished.disconnect()
 
     def closeEvent(self, e):
         r = QMessageBox.information(self, "Exit Application",
@@ -1103,6 +1103,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self._data is None:
             return
         try:
+            printlog("noise n_elem: ", self._bkgd_noise_nelem, "n sigma: ", self._bkgd_noise_nsigma)
             inten1, bkgd_noise = self._data.filter_initial_background_noise(
                                n_elements=self._bkgd_noise_nelem,
                                threshold=self._bkgd_noise_nsigma)
@@ -1325,6 +1326,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.plot_region_btn.clicked.emit()
         self._update_bkgd_noise()
         self.on_update_results()
+        printlog("factor_dsbox: ", self.factor_dsbox.value())
         self.factor_dsbox.valueChanged.emit(self.factor_dsbox.value())
         self.apply_noise_correction_btn.clicked.emit()
         self.on_update_results()
