@@ -130,6 +130,21 @@ class Device(QObject):
         self.volt_step = float(self.dconf.get(kxoy, 'volt_step'))
         self.volt_settling_time = float(self.dconf.get(kxoy, 'volt_settling_time'))
 
+    def get_data(self):
+        """Get live value as an array from DATA# field.
+        """
+        return self.get_data_pv().get()
+
+    def get_data_pv(self):
+        """Get the PV object of the DATA# field.
+        """
+        return self.elem.get_field(f'DATA{self._id}').readback_pv[0]
+
+    def get_data_pvname(self):
+        """Get the PV name of the DATA# field.
+        """
+        return self.get_data_pv().pvname
+
     @property
     def xoy(self):
         """str: Device is for 'X' measurement or 'Y'."""
@@ -353,53 +368,53 @@ class Device(QObject):
 
     def set_pos_begin(self):
         """Set live config with current config."""
-        setattr(self.elem, 'START_POS{}'.format(self._id), self.pos_begin)
+        setattr(self.elem, f'START_POS{self._id}', self.pos_begin)
 
     def set_pos_end(self):
-        setattr(self.elem, 'STOP_POS{}'.format(self._id), self.pos_end)
+        setattr(self.elem, f'STOP_POS{self._id}', self.pos_end)
 
     def set_pos_step(self):
-        setattr(self.elem, 'STEP_POS{}'.format(self._id), self.pos_step)
+        setattr(self.elem, f'STEP_POS{self._id}', self.pos_step)
 
     def set_volt_begin(self):
-        setattr(self.elem, 'START_VOLT{}'.format(self._id), self.volt_begin)
+        setattr(self.elem, f'START_VOLT{self._id}', self.volt_begin)
 
     def set_volt_end(self):
-        setattr(self.elem, 'STOP_VOLT{}'.format(self._id), self.volt_end)
+        setattr(self.elem, f'STOP_VOLT{self._id}', self.volt_end)
 
     def set_volt_step(self):
-        setattr(self.elem, 'STEP_VOLT{}'.format(self._id), self.volt_step)
+        setattr(self.elem, f'STEP_VOLT{self._id}', self.volt_step)
 
     def set_pos_settling_time(self):
-        setattr(self.elem, 'WAIT_POS{}'.format(self._id), self.pos_settling_time)
+        setattr(self.elem, f'WAIT_POS{self._id}', self.pos_settling_time)
 
     def set_volt_settling_time(self):
-        setattr(self.elem, 'WAIT_VOLT{}'.format(self._id), self.volt_settling_time)
+        setattr(self.elem, f'WAIT_VOLT{self._id}', self.volt_settling_time)
 
     def get_pos_begin(self):
         """Return live config from controls network."""
-        return getattr(self.elem, 'START_POS{}'.format(self._id))
+        return getattr(self.elem, f'START_POS{self._id}')
 
     def get_pos_end(self):
-        return getattr(self.elem, 'STOP_POS{}'.format(self._id))
+        return getattr(self.elem, f'STOP_POS{self._id}')
 
     def get_pos_step(self):
-        return getattr(self.elem, 'STEP_POS{}'.format(self._id))
+        return getattr(self.elem, f'STEP_POS{self._id}')
 
     def get_volt_begin(self):
-        return getattr(self.elem, 'START_VOLT{}'.format(self._id))
+        return getattr(self.elem, f'START_VOLT{self._id}')
 
     def get_volt_end(self):
-        return getattr(self.elem, 'STOP_VOLT{}'.format(self._id))
+        return getattr(self.elem, f'STOP_VOLT{self._id}')
 
     def get_volt_step(self):
-        return getattr(self.elem, 'STEP_VOLT{}'.format(self._id))
+        return getattr(self.elem, f'STEP_VOLT{self._id}')
 
     def get_pos_settling_time(self):
-        return getattr(self.elem, 'WAIT_POS{}'.format(self._id))
+        return getattr(self.elem, f'WAIT_POS{self._id}')
 
     def get_volt_settling_time(self):
-        return getattr(self.elem, 'WAIT_VOLT{}'.format(self._id))
+        return getattr(self.elem, f'WAIT_VOLT{self._id}')
 
     def sync_params(self):
         """Pull device config from controls network, update
@@ -482,7 +497,6 @@ class Device(QObject):
 
     def init_data_cb(self):
         printlog(f"Initial data cb: {self.name} [{self.xoy}, {self._id}]")
-        self._data_pv = self.elem.get_field(f"DATA{self._id}").readback_pv[0]
         self.elem.monitor(f"SCAN_STATUS{self._id}", self.onScanStatusUpdated,
                           name=f"SCAN_STATUS{self._id}")
         self.elem.monitor(f"DATA{self._id}", self.onDataUpdated,
@@ -584,7 +598,7 @@ class Device(QObject):
         self.elem.monitor(f"BIAS_VOLT_ON", self.onUpdateBiasVoltOn)
         self.elem.monitor(f"BIAS_VOLT", self.onUpdateBiasVoltRead)
         self.elem.monitor(f"BIAS_VOLT", self.onUpdateBiasVoltSet, "setpoint")
-        
+
         # pos scan range
         self.elem.monitor(f"START_POS{oid}", self.onUpdatePosBegin)
         self.elem.monitor(f"STOP_POS{oid}", self.onUpdatePosEnd)

@@ -581,24 +581,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._ems_device.xoy = s
         self._oid = oid = self._ems_device._id
 
-        # field names for pos scan range
-        self._pos_begin_fname = f"START_POS{oid}"
-        self._pos_end_fname = f"STOP_POS{oid}"
-        self._pos_step_fname = f"STEP_POS{oid}"
-        # field names for volt scan range
-        self._volt_begin_fname = f"START_VOLT{oid}"
-        self._volt_end_fname = f"STOP_VOLT{oid}"
-        self._volt_step_fname = f"STEP_VOLT{oid}"
-
         # set up monitors for the new device and orientation
         for _name, _ems_device in self._ems_device_map.items():
             printlog(f"Unmonitoring... {_name}")
             _ems_device.unmonitor()
             printlog(f"Monitoring... {self._ems_device.name}")
         self._ems_device.monitor()
-
-#        #
-#        elem = self._current_device_elem
 
         # sync config
         self.sync_config()
@@ -884,9 +872,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             return False
 
         # scan ranges
-        x1 = getattr(elem, self._pos_begin_fname)
-        x2 = getattr(elem, self._pos_end_fname)
-        dx = getattr(elem, self._pos_step_fname)
+        x1 = self._ems_device.get_pos_begin()
+        x2 = self._ems_device.get_pos_end()
+        dx = self._ems_device.get_pos_step()
         try:
             assert int((x2 - x1) / dx) * dx == x2 - x1
         except AssertionError:
@@ -895,9 +883,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 QMessageBox.Ok)
             return False
 
-        y1 = getattr(elem, self._volt_begin_fname)
-        y2 = getattr(elem, self._volt_end_fname)
-        dy = getattr(elem, self._volt_step_fname)
+        y1 = self._ems_device.get_volt_begin()
+        y2 = self._ems_device.get_volt_end()
+        dy = self._ems_device.get_volt_step()
         try:
             assert int((y2 - y1) / dy) * dy == y2 - y1
         except AssertionError:
@@ -916,7 +904,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         return self._ems_device.check_status() == 0
 
     def on_update(self, data):
-        data_pvname = self._ems_device._data_pv.pvname
+        data_pvname = self._ems_device.get_data_pvname()
         printlog("Data from {} is updating...".format(data_pvname))
         # data = mask_array(data)
         m = data.reshape(self._ydim, self._xdim)
@@ -931,8 +919,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             QMessageBox.information(self, "EMS DAQ",
                                     "Data readiness is approaching...",
                                     QMessageBox.Ok)
-        self.on_title_with_ts(self._ems_device._data_pv.timestamp)
-        self.on_update(self._ems_device._data_pv.get())
+        self.on_title_with_ts(self._ems_device.get_data_pv().timestamp)
+        self.on_update(self._ems_device.get_data())
         # initial data
         self.on_initial_data()
         self.on_plot_raw_data()
@@ -1287,8 +1275,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self._valid_device(100) is False:
             return
         self.on_add_current_config(show=False)
-        self.on_title_with_ts(self._ems_device._data_pv.timestamp)
-        arr = self._ems_device._data_pv.value
+        self.on_title_with_ts(self._ems_device.get_data_pv().timestamp)
+        arr = self._ems_device.get_data()
         if arr.size == 0:
             QMessageBox.warning(self, "Fetch Measurement Data",
                     "Measurement data is empty.", QMessageBox.Ok)
