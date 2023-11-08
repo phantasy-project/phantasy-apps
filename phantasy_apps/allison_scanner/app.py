@@ -165,9 +165,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         return default_font, default_font_size
 
     def _post_init(self):
-        # unique connection list
-        self.__unique_conn_list = []
-
         # schematic layout form
         self._layout_form = None
 
@@ -296,6 +293,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         for o in (self.ion_charge_lineEdit, self.ion_mass_lineEdit,
                   self.ion_name_lineEdit):
             o.textChanged.emit(o.text())
+
+        # initial EMS devices
+        self._initial_devices()
 
         # default config btn, menu --> history settings
         self._init_revert_config_btn()
