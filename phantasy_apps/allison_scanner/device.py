@@ -59,6 +59,11 @@ class Device(QObject):
     # voltage step
     vs_changed = pyqtSignal(float)
 
+    # motor fork pos in status
+    status_in_changed = pyqtSignal(bool)
+    # motor fork pos out status
+    status_out_changed = pyqtSignal(bool)
+
     def __init__(self, elem, xoy='X', dconf=None):
         super(self.__class__, self).__init__()
         self.elem = elem
@@ -542,6 +547,20 @@ class Device(QObject):
         # delta_x'
         return 2 * self.slit_width / (self.length + self.length1 + self.length2)
 
+    def monitor(self):
+        """Monitor field value changes.
+        """
+        oid = self._id
+        self.elem.monitor(f"STATUS_IN{oid}", self.onUpdateStatusIn)
+        self.elem.monitor(f"STATUS_OUT{oid}", self.onUpdateStatusOut)
+
+    def unmonitor(self):
+        """Stop monitor field value changes.
+        """
+        oid = self._id
+        self.elem.unmonitor(f"STATUS_IN{oid}")
+        self.elem.unmonitor(f"STATUS_OUT{oid}")
+
     @pass_arg('fld')
     def onUpdatePosBegin(self, fld, **kws):
         self.pb_changed.emit(fld.value)
@@ -567,6 +586,13 @@ class Device(QObject):
         self.vs_changed.emit(fld.value)
 
     @pass_arg('fld')
-    def onUpdateScanStatus(self, fld, **kws):
-        if kws.get('value') == 12:
-            self.finished.emit()
+    def onUpdateStatusIn(self, fld, **kws):
+        # motor fork (pos) in status
+        value = kws.get('value')
+        self.status_in_changed.emit(value==1.0)
+
+    @pass_arg('fld')
+    def onUpdateStatusOut(self, fld, **kws):
+        # motor fork (pos) out status
+        value = kws.get('value')
+        self.status_out_changed.emit(value==1.0)
