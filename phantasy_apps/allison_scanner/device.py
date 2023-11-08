@@ -561,36 +561,56 @@ class Device(QObject):
         oid = self._id
         self.elem.monitor(f"STATUS_IN{oid}", self.onUpdateStatusIn)
         self.elem.monitor(f"STATUS_OUT{oid}", self.onUpdateStatusOut)
+        # pos scan range
+        self.elem.monitor(f"START_POS{oid}", self.onUpdatePosBegin)
+        self.elem.monitor(f"STOP_POS{oid}", self.onUpdatePosEnd)
+        self.elem.monitor(f"STEP_POS{oid}", self.onUpdatePosStep)
+        # volt scan range
+        self.elem.monitor(f"START_VOLT{oid}", self.onUpdateVoltBegin)
+        self.elem.monitor(f"STOP_VOLT{oid}", self.onUpdateVoltEnd)
+        self.elem.monitor(f"STEP_VOLT{oid}", self.onUpdateVoltStep)
 
     def unmonitor(self):
         """Stop monitor field value changes for both X and Y.
         """
         [self.elem.unmonitor(f"STATUS_IN{i}") for i in (1, 2)]
         [self.elem.unmonitor(f"STATUS_OUT{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"START_POS{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"STOP_POS{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"STEP_POS{i}")  for i in (1, 2)]
+        [self.elem.unmonitor(f"START_VOLT{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"STOP_VOLT{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"STEP_VOLT{i}") for i in (1, 2)]
 
     @pass_arg('fld')
     def onUpdatePosBegin(self, fld, **kws):
-        self.pb_changed.emit(fld.value)
+        value = kws.get('value')
+        self.pb_changed.emit(value)
 
     @pass_arg('fld')
     def onUpdatePosEnd(self, fld, **kws):
-        self.pe_changed.emit(fld.value)
+        value = kws.get('value')
+        self.pe_changed.emit(value)
 
     @pass_arg('fld')
     def onUpdatePosStep(self, fld, **kws):
-        self.ps_changed.emit(fld.value)
+        value = kws.get('value')
+        self.ps_changed.emit(value)
 
     @pass_arg('fld')
     def onUpdateVoltBegin(self, fld, **kws):
-        self.vb_changed.emit(fld.value)
+        value = kws.get('value')
+        self.vb_changed.emit(value)
 
     @pass_arg('fld')
     def onUpdateVoltEnd(self, fld, **kws):
-        self.ve_changed.emit(fld.value)
+        value = kws.get('value')
+        self.ve_changed.emit(value)
 
     @pass_arg('fld')
     def onUpdateVoltStep(self, fld, **kws):
-        self.vs_changed.emit(fld.value)
+        value = kws.get('value')
+        self.vs_changed.emit(value)
 
     @pass_arg('fld')
     def onUpdateStatusIn(self, fld, **kws):

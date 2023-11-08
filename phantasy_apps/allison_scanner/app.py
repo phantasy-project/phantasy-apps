@@ -307,6 +307,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         ems.status_in_changed.connect(self.onUpdateStatusIn)
         printlog("Wiring... STATUS_OUT")
         ems.status_out_changed.connect(self.onUpdateStatusOut)
+        # pos/volt scan range configs
+        for (ii, jj) in ((i, j) for i in ('p', 'v') for j in ('b', 'e', 's')):
+            n = f"{ii}{jj}"
+            sig = getattr(ems, f'{n}_changed')
+            sig.connect(partial(self.on_update_pos_volt_conf, n))
 
     def _init_revert_config_btn(self):
         # main action: revert to default config
@@ -598,12 +603,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 #        elem.monitor(f"BIAS_VOLT", partial(self.onUpdateBiasVolt))
 #        # bias voltage setpoint
 #        elem.monitor(f"BIAS_VOLT", partial(self.onUpdateBiasVoltSet), "setpoint")
-
-        # pos/volt scan range configs
-        for (ii, jj) in ((i, j) for i in ('p', 'v') for j in ('b', 'e', 's')):
-            n = f"{ii}{jj}"
-            sig = getattr(self._ems_device, f'{n}_changed')
-            sig.connect(partial(self.on_update_pos_volt_conf, n))
 
         # sync config
         self.sync_config()
