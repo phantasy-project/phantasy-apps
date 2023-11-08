@@ -820,6 +820,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._ems_device.init_run()
         self._init_elapsed_timer()
         self._ems_device.data_changed.connect(self.on_update)
+        self._ems_device.finished.connect(self.on_finished)
         self._ems_device.move(wait=False)
         self._elapsed_timer.start(1000)
 
