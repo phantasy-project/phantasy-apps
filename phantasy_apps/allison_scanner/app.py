@@ -591,21 +591,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             sig = getattr(self._ems_device, f'{n}_changed')
             sig.connect(partial(self.on_update_pos_volt_conf, n))
 
-
         # sync config
         self.sync_config()
         # update xylabels (Data Figure)
         self._update_xylabels()
         # update result keys (Twiss Parameters)
         self._update_result_keys(s)
-
-        #
-        self._data_pv = elem.pv('DATA{}'.format(_id))[0]
-        self._status_pv = elem.pv('SCAN_STATUS{}'.format(_id))[0]
-        self._trigger_pv = elem.pv('START_SCAN{}'.format(_id))[0]
-
-        #
-        # self._init_device()
 
     def get_device_config(self, path=None):
         """Return device config from *path*.
