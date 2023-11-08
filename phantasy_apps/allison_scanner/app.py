@@ -564,26 +564,26 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # scan status
         # self._ems_device.monitor(f"SCAN_STATUS{oid}")
         
-        #
-        elem = self._current_device_elem
-        # motor fork (pos) in status
-        elem.monitor(f"STATUS_IN{oid}", partial(self.onUpdateStatusIn))
-        # motor fork (pos) out status
-        elem.monitor(f"STATUS_OUT{oid}", partial(self.onUpdateStatusIn))
-        # motor fork interlock status
-        elem.monitor(f"INTERLOCK{oid}", partial(self.onUpdateStatusInterlock))
-        # pos readback
-        elem.monitor(f"POS{oid}", partial(self.onUpdatePos))
-        # pos setpoint
-        elem.monitor(f"POS{oid}", partial(self.onUpdatePosSet), "setpoint")
-        # enable status
-        elem.monitor(f"ENABLE_SCAN{oid}", partial(self.onUpdateStatusEnable))
-        # bias voltage on status
-        elem.monitor(f"BIAS_VOLT_ON", partial(self.onUpdateBiasVoltOn))
-        # bias voltage readback
-        elem.monitor(f"BIAS_VOLT", partial(self.onUpdateBiasVolt))
-        # bias voltage setpoint
-        elem.monitor(f"BIAS_VOLT", partial(self.onUpdateBiasVoltSet), "setpoint")
+#        #
+#        elem = self._current_device_elem
+#        # motor fork (pos) in status
+#        elem.monitor(f"STATUS_IN{oid}", partial(self.onUpdateStatusIn))
+#        # motor fork (pos) out status
+#        elem.monitor(f"STATUS_OUT{oid}", partial(self.onUpdateStatusIn))
+#        # motor fork interlock status
+#        elem.monitor(f"INTERLOCK{oid}", partial(self.onUpdateStatusInterlock))
+#        # pos readback
+#        elem.monitor(f"POS{oid}", partial(self.onUpdatePos))
+#        # pos setpoint
+#        elem.monitor(f"POS{oid}", partial(self.onUpdatePosSet), "setpoint")
+#        # enable status
+#        elem.monitor(f"ENABLE_SCAN{oid}", partial(self.onUpdateStatusEnable))
+#        # bias voltage on status
+#        elem.monitor(f"BIAS_VOLT_ON", partial(self.onUpdateBiasVoltOn))
+#        # bias voltage readback
+#        elem.monitor(f"BIAS_VOLT", partial(self.onUpdateBiasVolt))
+#        # bias voltage setpoint
+#        elem.monitor(f"BIAS_VOLT", partial(self.onUpdateBiasVoltSet), "setpoint")
 
         # pos/volt scan range configs
         for (ii, jj) in ((i, j) for i in ('p', 'v') for j in ('b', 'e', 's')):
