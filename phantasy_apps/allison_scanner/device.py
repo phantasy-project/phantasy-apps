@@ -555,11 +555,10 @@ class Device(QObject):
         self.elem.monitor(f"STATUS_OUT{oid}", self.onUpdateStatusOut)
 
     def unmonitor(self):
-        """Stop monitor field value changes.
+        """Stop monitor field value changes for both X and Y.
         """
-        oid = self._id
-        self.elem.unmonitor(f"STATUS_IN{oid}")
-        self.elem.unmonitor(f"STATUS_OUT{oid}")
+        [self.elem.unmonitor(f"STATUS_IN{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"STATUS_OUT{i}") for i in (1, 2)]
 
     @pass_arg('fld')
     def onUpdatePosBegin(self, fld, **kws):
@@ -589,10 +588,12 @@ class Device(QObject):
     def onUpdateStatusIn(self, fld, **kws):
         # motor fork (pos) in status
         value = kws.get('value')
+        # print(f"{self.name}[{self.xoy}] STATUS_IN: {value} {value==1.0}")
         self.status_in_changed.emit(value==1.0)
 
     @pass_arg('fld')
     def onUpdateStatusOut(self, fld, **kws):
         # motor fork (pos) out status
         value = kws.get('value')
+        # print(f"{self.name}[{self.xoy}] STATUS_OUT: {value} {value==1.0}")
         self.status_out_changed.emit(value==1.0)
