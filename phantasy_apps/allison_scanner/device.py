@@ -441,7 +441,7 @@ class Device(QObject):
         setattr(self.elem, 'START_SCAN{}'.format(self._id), 1)
         if wait:
             _wait(self.get_status_pv(), 0, timeout)
-            self.reset_data_cb()
+            self._reset_data_cb()
             print("Move is done.")
 
     def get_status_pv(self):
@@ -466,22 +466,30 @@ class Device(QObject):
         self.set_params()
 
     def init_data_cb(self):
-        self._status_pv = self.elem.get_field('SCAN_STATUS{}'.format(self._id)).readback_pv[0]
-        self._scid = self._status_pv.add_callback(self.on_status_updated)
-        self._data_pv = self.elem.get_field('DATA{}'.format(self._id)).readback_pv[0]
-        self._data_pv.auto_monitor=True
-        self._dcid = self._data_pv.add_callback(self.on_data_updated)
+        self._data_pv = self.elem.get_field(f"DATA{self._id}").readback_pv[0]
+        self.elem.monitor(f"SCAN_STATUS{self._id}", self.onScanStatusUpdated,
+                          name=f"SCAN_STATUS{self._id}")
+        self.elem.monitor(f"DATA{self._id}", self.onDataUpdated,
+                          name=f"DATA{self._id}")
 
-    def reset_data_cb(self):
-        self._data_pv.remove_callback(self._dcid)
-        self._status_pv.remove_callback(self._scid)
+    def _reset_data_cb(self):
+        self.elem.unmonitor(f"SCAN_STATUS{self._id}", name=f"SCAN_STATUS{self._id}")
+        self.elem.unmonitor(f"DATA{self._id}", name=f"DATA{self._id}")
         self.finished.emit()
 
-    def on_status_updated(self, value, **kws):
+    @pass_arg('fld')
+    def onScanStatusUpdated(self, fld, **kws):
+        """Scan status is updated.
+        """
+        value = kws.get("value")
         if value == 12:
-            self.reset_data_cb()
+            self._reset_data_cb()
 
-    def on_data_updated(self, value, **kws):
+    @pass_arg('fld')
+    def onDataUpdated(self, fld, **kws):
+        """Array data is updated.
+        """
+        value = kws.get("value")
         self.data_changed.emit(value)
 
     def __repr__(self):
