@@ -63,6 +63,20 @@ class Device(QObject):
     status_in_changed = pyqtSignal(bool)
     # motor fork pos out status
     status_out_changed = pyqtSignal(bool)
+    # interlock ok status
+    status_itlk_ok_changed = pyqtSignal(bool)
+    # scan enabled
+    status_enabled_changed = pyqtSignal(bool)
+    # position readback
+    pos_read_changed = pyqtSignal(float)
+    # position setpoint
+    pos_set_changed = pyqtSignal(float)
+    # bias voltage on
+    bias_volt_on_changed = pyqtSignal(bool)
+    # bias voltage readback
+    bias_volt_read_changed = pyqtSignal(float)
+    # bias voltage setpoint
+    bias_volt_set_changed = pyqtSignal(float)
 
     def __init__(self, elem, xoy='X', dconf=None):
         super(self.__class__, self).__init__()
@@ -561,6 +575,14 @@ class Device(QObject):
         oid = self._id
         self.elem.monitor(f"STATUS_IN{oid}", self.onUpdateStatusIn)
         self.elem.monitor(f"STATUS_OUT{oid}", self.onUpdateStatusOut)
+        self.elem.monitor(f"INTERLOCK{oid}", self.onUpdateStatusInterlockOK)
+        self.elem.monitor(f"POS{oid}", self.onUpdatePosRead)
+        self.elem.monitor(f"POS{oid}", self.onUpdatePosSet, "setpoint")
+        self.elem.monitor(f"ENABLE_SCAN{oid}", self.onUpdateStatusEnabled)
+        self.elem.monitor(f"BIAS_VOLT_ON", self.onUpdateBiasVoltOn)
+        self.elem.monitor(f"BIAS_VOLT", self.onUpdateBiasVoltRead)
+        self.elem.monitor(f"BIAS_VOLT", self.onUpdateBiasVoltSet, "setpoint")
+        
         # pos scan range
         self.elem.monitor(f"START_POS{oid}", self.onUpdatePosBegin)
         self.elem.monitor(f"STOP_POS{oid}", self.onUpdatePosEnd)
@@ -581,6 +603,13 @@ class Device(QObject):
         [self.elem.unmonitor(f"START_VOLT{i}") for i in (1, 2)]
         [self.elem.unmonitor(f"STOP_VOLT{i}") for i in (1, 2)]
         [self.elem.unmonitor(f"STEP_VOLT{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"INTERLOCK{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"POS{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"POS{i}", handle="setpoint") for i in (1, 2)]
+        [self.elem.unmonitor(f"ENABLE_SCAN{i}") for i in (1, 2)]
+        self.elem.unmonitor("BIAS_VOLT_ON")
+        self.elem.unmonitor("BIAS_VOLT")
+        self.elem.unmonitor("BIAS_VOLT", handle="setpoint")
 
     @pass_arg('fld')
     def onUpdatePosBegin(self, fld, **kws):
@@ -625,3 +654,39 @@ class Device(QObject):
         value = kws.get('value')
         # print(f"{self.name}[{self.xoy}] STATUS_OUT: {value} {value==1.0}")
         self.status_out_changed.emit(value==1.0)
+
+    @pass_arg('fld')
+    def onUpdateStatusInterlockOK(self, fld, **kws):
+        # motor fork interlock status
+        value = kws.get('value')
+        self.status_itlk_ok_changed.emit(value==0.0)
+
+    @pass_arg('fld')
+    def onUpdatePosRead(self, fld, **kws):
+        value = kws.get('value')
+        self.pos_read_changed.emit(value)
+
+    @pass_arg('fld')
+    def onUpdatePosSet(self, fld, **kws):
+        value = kws.get('value')
+        self.pos_set_changed.emit(value)
+
+    @pass_arg('fld')
+    def onUpdateStatusEnabled(self, fld, **kws):
+        value = kws.get('value')
+        self.status_enabled_changed.emit(value==1.0)
+
+    @pass_arg('fld')
+    def onUpdateBiasVoltOn(self, fld, **kws):
+        value = kws.get('value')
+        self.bias_volt_on_changed.emit(value==1.0)
+
+    @pass_arg('fld')
+    def onUpdateBiasVoltRead(self, fld, **kws):
+        value = kws.get('value')
+        self.bias_volt_read_changed.emit(value)
+
+    @pass_arg('fld')
+    def onUpdateBiasVoltSet(self, fld, **kws):
+        value = kws.get('value')
+        self.bias_volt_set_changed.emit(value)

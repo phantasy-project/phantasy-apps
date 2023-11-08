@@ -304,9 +304,26 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def _wire_device_signals(self, ems: Device):
         # connect signals of Device for controls and viz
         printlog("Wiring... STATUS_IN")
+        # status in
         ems.status_in_changed.connect(self.onUpdateStatusIn)
         printlog("Wiring... STATUS_OUT")
+        # status out
         ems.status_out_changed.connect(self.onUpdateStatusOut)
+        # interlock ok
+        ems.status_itlk_ok_changed.connect(self.onUpdateStatusInterlockOK)
+        # pos readback
+        ems.pos_read_changed.connect(self.onUpdatePosRead)
+        # pos setpoint
+        ems.pos_set_changed.connect(self.onUpdatePosSet)
+        # enable status
+        ems.status_enabled_changed.connect(self.onUpdateStatusEnabled)
+        # bias voltage on status
+        ems.bias_volt_on_changed.connect(self.onUpdateBiasVoltOn)
+        # bias voltage readback
+        ems.bias_volt_read_changed.connect(self.onUpdateBiasVoltRead)
+        # bias voltage setpoint
+        ems.bias_volt_set_changed.connect(self.onUpdateBiasVoltSet)
+
         # pos/volt scan range configs
         for (ii, jj) in ((i, j) for i in ('p', 'v') for j in ('b', 'e', 's')):
             n = f"{ii}{jj}"
@@ -585,24 +602,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
 #        #
 #        elem = self._current_device_elem
-#        # motor fork (pos) in status
-#        elem.monitor(f"STATUS_IN{oid}", partial(self.onUpdateStatusIn))
-#        # motor fork (pos) out status
-#        elem.monitor(f"STATUS_OUT{oid}", partial(self.onUpdateStatusOut))
-#        # motor fork interlock status
-#        elem.monitor(f"INTERLOCK{oid}", partial(self.onUpdateStatusInterlock))
-#        # pos readback
-#        elem.monitor(f"POS{oid}", partial(self.onUpdatePos))
-#        # pos setpoint
-#        elem.monitor(f"POS{oid}", partial(self.onUpdatePosSet), "setpoint")
-#        # enable status
-#        elem.monitor(f"ENABLE_SCAN{oid}", partial(self.onUpdateStatusEnable))
-#        # bias voltage on status
-#        elem.monitor(f"BIAS_VOLT_ON", partial(self.onUpdateBiasVoltOn))
-#        # bias voltage readback
-#        elem.monitor(f"BIAS_VOLT", partial(self.onUpdateBiasVolt))
-#        # bias voltage setpoint
-#        elem.monitor(f"BIAS_VOLT", partial(self.onUpdateBiasVoltSet), "setpoint")
 
         # sync config
         self.sync_config()
@@ -1634,12 +1633,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.is_outlimit_lbl.setPixmap(px)
         self.is_outlimit_lbl.setToolTip(tt)
 
-    @pass_arg('fld')
-    def onUpdateStatusInterlock(self, fld, **kws):
-        # motor fork interlock status
-        s = kws.get('value')
-        printlog(">>> INTERLOCK: ", s)
-        if s == 0.0:
+    @pyqtSlot(bool)
+    def onUpdateStatusInterlockOK(self, is_ok: bool):
+        # motor fork interlock ok statusa
+        printlog(f"{self._ems_device.name}[{self._ems_orientation}] ITLK OK: {is_ok}")
+        if is_ok:
             px = self._itlk_px
             tt = "Device interlock is OK"
         else:
@@ -1649,12 +1647,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.is_itlk_lbl.setToolTip(tt)
         self.__check_device_ready_scan()
 
-    @pass_arg('fld')
-    def onUpdateStatusEnable(self, fld, **kws):
+    @pyqtSlot(bool)
+    def onUpdateStatusEnabled(self, is_enabled: bool):
         # enable status
-        s = kws.get('value')
-        printlog(">>> ENABLED: ", s)
-        if s == 1.0:
+        printlog(f"{self._ems_device.name}[{self._ems_orientation}] Enabled: {is_enabled}")
+        if is_enabled:
             px = self._enable_px
             tt = "Device is enabled"
         else:
@@ -1664,12 +1661,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.is_enabled_lbl.setToolTip(tt)
         self.__check_device_ready_scan()
 
-    @pass_arg('fld')
-    def onUpdateBiasVoltOn(self, fld, **kws):
+    @pyqtSlot(bool)
+    def onUpdateBiasVoltOn(self, is_on: bool):
         # bias voltage on status
-        s = kws.get('value')
-        printlog(">>> BIAS ON: ", s)
-        if s == 1.0:
+        printlog(f"{self._ems_device.name}[{self._ems_orientation}] BiasVolt ON: {is_on}")
+        if is_on:
             px = self._enable_px
             tt = "Bias voltage is on"
         else:
@@ -1679,35 +1675,30 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.is_bias_on_lbl.setToolTip(tt)
         self.__check_device_ready_scan()
 
-
-    @pass_arg('fld')
-    def onUpdateBiasVolt(self, fld, **kws):
+    @pyqtSlot(float)
+    def onUpdateBiasVoltRead(self, x: float):
         # bias voltage readback
-        x = kws.get('value')
         self.live_biasVolt_lineEdit.setText(f'{x:.1f}')
         # pass
         # self._ems_device.bias_volt_threshold = x
        #  self._ems_device.set_bias_voltage(0.1)
         # self._dconf = self._ems_device.dconf
 
-    @pass_arg('fld')
-    def onUpdateBiasVoltSet(self, fld, **kws):
+    @pyqtSlot(float)
+    def onUpdateBiasVoltSet(self, x: float):
         # bias voltage setpoint
-        x = kws.get('value')
         self.set_biasVolt_lineEdit.setText(f'{x:.0f}')
 
-    @pass_arg('fld')
-    def onUpdatePos(self, fld, **kws):
+    @pyqtSlot(float)
+    def onUpdatePosRead(self, x: float):
         # motor position readback
-        v = kws.get('value')
-        self.live_pos_lineEdit.setText('{0:.3f}'.format(v))
+        self.live_pos_lineEdit.setText('{0:.3f}'.format(x))
         self._beat_on(500)
 
-    @pass_arg('fld')
-    def onUpdatePosSet(self, fld, **kws):
+    @pyqtSlot(float)
+    def onUpdatePosSet(self, x: float):
         # motor position setpoint
-        v = kws.get('value')
-        self.set_pos_lineEdit.setText('{0:.3f}'.format(v))
+        self.set_pos_lineEdit.setText('{0:.3f}'.format(x))
 
 
 
