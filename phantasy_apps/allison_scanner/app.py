@@ -197,20 +197,32 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                               self.reset_itlk_btn)
         self.on_auto_fill_beam_params(self._device_mode)
         # st
-        self._active_px = QPixmap(":/icons/status-green.png").scaled(PX_SIZE, PX_SIZE)
-        self._inactive_px = QPixmap(":/icons/status-gray.png").scaled(PX_SIZE, PX_SIZE)
-        self._in_px = QPixmap(":/icons/status-orange.png").scaled(PX_SIZE, PX_SIZE)
-        self._outlimit_px = QPixmap(":/icons/status-red.png").scaled(PX_SIZE, PX_SIZE)
-        self._enable_px = QPixmap(":/icons/status-green.png").scaled(PX_SIZE, PX_SIZE)
-        self._not_enable_px = QPixmap(":/icons/status-red.png").scaled(PX_SIZE, PX_SIZE)
-        self._itlk_px = QPixmap(":/icons/status-green.png").scaled(PX_SIZE, PX_SIZE)
-        self._not_itlk_px = QPixmap(":/icons/status-red.png").scaled(PX_SIZE, PX_SIZE)
+        self._active_px = QPixmap(":/icons/status-green.png").scaled(PX_SIZE, PX_SIZE,
+                Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self._inactive_px = QPixmap(":/icons/status-gray.png").scaled(PX_SIZE, PX_SIZE,
+                Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self._in_px = QPixmap(":/icons/status-orange.png").scaled(PX_SIZE, PX_SIZE,
+                Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self._outlimit_px = QPixmap(":/icons/status-red.png").scaled(PX_SIZE, PX_SIZE,
+                Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self._enable_px = QPixmap(":/icons/status-green.png").scaled(PX_SIZE, PX_SIZE,
+                Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self._not_enable_px = QPixmap(":/icons/status-red.png").scaled(PX_SIZE, PX_SIZE,
+                Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self._itlk_px = QPixmap(":/icons/status-green.png").scaled(PX_SIZE, PX_SIZE,
+                Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self._not_itlk_px = QPixmap(":/icons/status-red.png").scaled(PX_SIZE, PX_SIZE,
+                Qt.KeepAspectRatio, Qt.SmoothTransformation)
         #
-        self._fetch_red_px = QPixmap(":/icons/fetch_red.png").scaled(PX_SIZE, PX_SIZE)
-        self._fetch_px = QPixmap(":/icons/fetch.png").scaled(PX_SIZE, PX_SIZE)
+        self._fetch_red_px = QPixmap(":/icons/fetch_red.png").scaled(PX_SIZE, PX_SIZE,
+                Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self._fetch_px = QPixmap(":/icons/fetch.png").scaled(PX_SIZE, PX_SIZE,
+                Qt.KeepAspectRatio, Qt.SmoothTransformation)
         #
-        self.installed_px = QPixmap(":/icons/installed.png").scaled(PX_SIZE, PX_SIZE)
-        self.not_installed_px = QPixmap(":/icons/not-installed.png").scaled(PX_SIZE, PX_SIZE)
+        self.installed_px = QPixmap(":/icons/installed.png").scaled(PX_SIZE, PX_SIZE,
+                Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.not_installed_px = QPixmap(":/icons/not-installed.png").scaled(PX_SIZE, PX_SIZE,
+                Qt.KeepAspectRatio, Qt.SmoothTransformation)
         # conf
         self._dconf = self.get_device_config()
 
