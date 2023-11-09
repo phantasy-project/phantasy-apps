@@ -439,7 +439,7 @@ class Device(QObject):
         self.set_volt_step()
 
     def reset_interlock(self):
-        printlog("Reset interlock-{}...".format(self._id))
+        printlog(f"Reset interlock for {self.name}")
         setattr(self.elem, 'RESET_ITLK', 1)
         #fld = self.elem.get_field('INTERLOCK{}'.format(self._id))
         #re_tries = 0
