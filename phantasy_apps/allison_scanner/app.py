@@ -1689,13 +1689,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(float)
     def onUpdatePosRead(self, x: float):
         # motor position readback
-        self.live_pos_lineEdit.setText('{0:.3f}'.format(x))
+        self.live_pos_lineEdit.setText('{0:.2f}'.format(x))
         self._beat_on(500)
 
     @pyqtSlot(float)
     def onUpdatePosSet(self, x: float):
         # motor position setpoint
-        self.set_pos_lineEdit.setText('{0:.3f}'.format(x))
+        self.set_pos_lineEdit.setText('{0:.2f}'.format(x))
 
 
 
