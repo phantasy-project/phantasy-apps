@@ -464,13 +464,13 @@ class Device(QObject):
         """Start scan."""
         if validate:  # check scan status or not
             s = self.check_status()
-            if s != 0:
+            if s != "IDLE":
                 raise RuntimeError("Device is busy, not be ready for moving.")
 
         self.init_data_cb()
         setattr(self.elem, 'START_SCAN{}'.format(self._id), 1)
         if wait:
-            _wait(self.get_status_pv(), 0, timeout)
+            _wait(self.get_status_pv(), "IDLE", timeout)
             self._reset_data_cb()
             print("Move is done.")
 
@@ -481,8 +481,9 @@ class Device(QObject):
         return ss_pv
 
     def check_status(self):
+        # Return the scan status
         pv = self.get_status_pv()
-        return pv.get()
+        return pv.get(as_string=True)
 
     def run_all_in_one(self):
         self.enable()

@@ -906,7 +906,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     def is_valid_to_move(self):
         # if ok to move or not.
-        return self._ems_device.check_status() == 0
+        return self._ems_device.check_status() == "IDLE"
 
     def on_update(self, data):
         data_pvname = self._ems_device.get_data_pvname()
