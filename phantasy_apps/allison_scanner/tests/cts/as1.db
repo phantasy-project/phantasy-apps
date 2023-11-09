@@ -108,10 +108,10 @@ record(fanout, "_FE_SCS1:EMS_D0739:RST_ITLK") {
 }
 # reset RST_CMD to 0 after fanout
 record(calcout, "_FE_SCS1:DIAG_D0739:RST_CMD_0") {
-    field(INPA, "FE_SCS1:DIAG_D0739:RST_CMD NPP") 
+    field(INPA, "FE_SCS1:DIAG_D0739:RST_CMD NPP")
     field(CALC, "A")
-    field(DOPT, "Use OCAL")
     field(OCAL, "0")
+    field(DOPT, "Use OCAL")
     field(OOPT, "When Non-zero")
     field(OUT, "FE_SCS1:DIAG_D0739:RST_CMD PP")
 }
