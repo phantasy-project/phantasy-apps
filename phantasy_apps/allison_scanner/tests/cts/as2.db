@@ -1,0 +1,58 @@
+# ISRC1
+# Bias Voltage On/Off
+record(calc, "FE_SCS2:EMS_D0718:VBS:isOn") {
+  field(CALC, A)
+  field(INPA, "FE_SCS2:EMS_D0718:VBS:setOn CPP MS")
+}
+record(ai, "FE_SCS2:EMS_D0718:VBS:setOn") {
+  field(PINI, "YES")
+  field(VAL, 1)
+}
+# Bias Voltage readback
+record(calc, "FE_SCS2:EMS_D0718:VBS:VoltageMeasure") {
+  field(CALC, A)
+  field(EGU, "V")
+  field(INPA, "FE_SCS2:EMS_D0718:VBS:VoltageSet CPP MS")
+}
+# Bias Voltage setpoint
+record(ai, "FE_SCS2:EMS_D0718:VBS:VoltageSet") {
+  field(PINI, "YES")
+  field(EGU, "V")
+  field(VAL, -999)
+}
+
+# (X) pos OUT limit
+record(calcout, "_FE_SCS2:EMS_D0718:LMPOS_RSTS_DRV1") {
+    field(INPA, "FE_SCS2:EMS_D0718:DRV1.RBV CPP")
+    field(DOPT, "Use CALC")
+    field(CALC, "A>=150")
+    field(OOPT, "Every Time")
+    field(OUT, "FE_SCS2:EMS_D0718:LMPOS_RSTS_DRV1 PP")
+}
+
+# (X) pos IN limit
+record(calcout, "_FE_SCS2:EMS_D0718:LMNEG_RSTS_DRV1") {
+    field(INPA, "FE_SCS2:EMS_D0718:DRV1.RBV CPP")
+    field(DOPT, "Use CALC")
+    field(CALC, "A<50")
+    field(OOPT, "Every Time")
+    field(OUT, "FE_SCS2:EMS_D0718:LMNEG_RSTS_DRV1 PP")
+}
+
+# (Y) pos OUT limit
+record(calcout, "_FE_SCS2:EMS_D0718:LMPOS_RSTS_DRV2") {
+    field(INPA, "FE_SCS2:EMS_D0718:DRV2.RBV CPP")
+    field(DOPT, "Use CALC")
+    field(CALC, "A>=150")
+    field(OOPT, "Every Time")
+    field(OUT, "FE_SCS2:EMS_D0718:LMPOS_RSTS_DRV2 PP")
+}
+
+# (Y) pos IN limit
+record(calcout, "_FE_SCS2:EMS_D0718:LMNEG_RSTS_DRV2") {
+    field(INPA, "FE_SCS2:EMS_D0718:DRV2.RBV CPP")
+    field(DOPT, "Use CALC")
+    field(CALC, "A<50")
+    field(OOPT, "Every Time")
+    field(OUT, "FE_SCS2:EMS_D0718:LMNEG_RSTS_DRV2 PP")
+}
