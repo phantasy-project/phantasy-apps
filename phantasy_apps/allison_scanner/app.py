@@ -378,7 +378,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 msg_str += \
                     f'''<p><span style="font-size:{self._default_font_size + 2}pt;">&#9888; </span>
                         <span style="font-size:{self._default_font_size + 2}pt;color:#ff0000;">{i}</span></p>'''
-            self.scan_ready_info_full_lbl.setText(msg_str)
+            self.scan_status_info_full_lbl.setText(msg_str)
 
     @pyqtSlot(bool)
     def on_online_mode_changed(self, is_checked: bool):
@@ -470,13 +470,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """ Device is ready to scan?
         """
         if is_ready:
-            self.scan_ready_info_lbl.setText(
+            self.scan_status_info_lbl.setText(
                     '<p>&#9786; <span style="color:#00aa00;">Ready to Scan</span></p>')
-            self.scan_ready_info_full_lbl.setText(
+            self.scan_status_info_full_lbl.setText(
                 f'''<p><span style="font-size:{self._default_font_size + 2}pt;">&#9786; </span>
                     <span style="font-size:{self._default_font_size + 2}pt;color:#00aa00;">Ready to Scan</span></p>''')
         else:
-            self.scan_ready_info_lbl.setText(
+            self.scan_status_info_lbl.setText(
                     '<p>&#9888; <span style="color:#ff0000;">Not Ready to Scan</span></p>')
 
         [w.setEnabled(is_ready) for w in (self.run_btn, self.abort_btn)]
@@ -1420,8 +1420,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """
         [w.setVisible(is_enabled) for w in (
             self.adv_ctrl_widget, self.adv_ctrl_hline,
-            self.scan_ready_info_full_lbl, self.results_btn)]
-        self.scan_ready_info_lbl.setVisible(not is_enabled)
+            self.scan_status_info_full_lbl, self.results_btn)]
+        self.scan_status_info_lbl.setVisible(not is_enabled)
 
     def _beat_on(self, dt):
         self.status_lbl.setPixmap(self._active_px)
