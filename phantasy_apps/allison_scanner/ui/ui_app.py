@@ -378,15 +378,15 @@ class Ui_MainWindow(object):
         self.label_22.setObjectName("label_22")
         self.scan_conf_gbox.addWidget(self.label_22, 1, 6, 1, 1)
         self.gridLayout_4.addLayout(self.scan_conf_gbox, 3, 0, 1, 2)
-        self.scan_ready_info_full_lbl = QtWidgets.QLabel(self.dev_ctrl_widget)
+        self.scan_status_info_full_lbl = QtWidgets.QLabel(self.dev_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.scan_ready_info_full_lbl.sizePolicy().hasHeightForWidth())
-        self.scan_ready_info_full_lbl.setSizePolicy(sizePolicy)
-        self.scan_ready_info_full_lbl.setStyleSheet(
+            self.scan_status_info_full_lbl.sizePolicy().hasHeightForWidth())
+        self.scan_status_info_full_lbl.setSizePolicy(sizePolicy)
+        self.scan_status_info_full_lbl.setStyleSheet(
             "QLabel {\n"
             "    border-top: 2px solid gray;\n"
             "    border-left: 10px solid gray;\n"
@@ -394,9 +394,10 @@ class Ui_MainWindow(object):
             "    border-bottom: 2px solid gray;\n"
             "    background-color: #FFFDE7;\n"
             "}")
-        self.scan_ready_info_full_lbl.setAlignment(QtCore.Qt.AlignCenter)
-        self.scan_ready_info_full_lbl.setObjectName("scan_ready_info_full_lbl")
-        self.gridLayout_4.addWidget(self.scan_ready_info_full_lbl, 0, 2, 4, 1)
+        self.scan_status_info_full_lbl.setAlignment(QtCore.Qt.AlignCenter)
+        self.scan_status_info_full_lbl.setObjectName(
+            "scan_status_info_full_lbl")
+        self.gridLayout_4.addWidget(self.scan_status_info_full_lbl, 0, 2, 4, 1)
         self.adv_ctrl_widget = QtWidgets.QWidget(self.dev_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Minimum)
@@ -827,19 +828,19 @@ class Ui_MainWindow(object):
         self.ems_orientation_cbb.addItem("")
         self.ems_orientation_cbb.addItem("")
         self.device_hbox.addWidget(self.ems_orientation_cbb)
-        self.scan_ready_info_lbl = QtWidgets.QLabel(self.ctrl_gbox)
+        self.scan_status_info_lbl = QtWidgets.QLabel(self.ctrl_gbox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.scan_ready_info_lbl.sizePolicy().hasHeightForWidth())
-        self.scan_ready_info_lbl.setSizePolicy(sizePolicy)
-        self.scan_ready_info_lbl.setAlignment(QtCore.Qt.AlignRight
-                                              | QtCore.Qt.AlignTrailing
-                                              | QtCore.Qt.AlignVCenter)
-        self.scan_ready_info_lbl.setObjectName("scan_ready_info_lbl")
-        self.device_hbox.addWidget(self.scan_ready_info_lbl)
+            self.scan_status_info_lbl.sizePolicy().hasHeightForWidth())
+        self.scan_status_info_lbl.setSizePolicy(sizePolicy)
+        self.scan_status_info_lbl.setAlignment(QtCore.Qt.AlignRight
+                                               | QtCore.Qt.AlignTrailing
+                                               | QtCore.Qt.AlignVCenter)
+        self.scan_status_info_lbl.setObjectName("scan_status_info_lbl")
+        self.device_hbox.addWidget(self.scan_status_info_lbl)
         self.status_lbl = QtWidgets.QLabel(self.ctrl_gbox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -1928,7 +1929,7 @@ class Ui_MainWindow(object):
             ))
         self.volt_settling_time_dsbox.setSuffix(_translate("MainWindow", " s"))
         self.label_22.setText(_translate("MainWindow", "Step"))
-        self.scan_ready_info_full_lbl.setText(
+        self.scan_status_info_full_lbl.setText(
             _translate("MainWindow", "Scan Ready? If not, post the reasons."))
         self.retract_btn.setToolTip(
             _translate(
@@ -2002,7 +2003,7 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Select measurement orientation."))
         self.ems_orientation_cbb.setItemText(0, _translate("MainWindow", "X"))
         self.ems_orientation_cbb.setItemText(1, _translate("MainWindow", "Y"))
-        self.scan_ready_info_lbl.setText(
+        self.scan_status_info_lbl.setText(
             _translate("MainWindow", "Ready to Scan?"))
         self.status_lbl.setToolTip(
             _translate("MainWindow", "Motor movement status"))
