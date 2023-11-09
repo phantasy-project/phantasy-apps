@@ -912,7 +912,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         data_pvname = self._ems_device.get_data_pvname()
         printlog("Data from {} is updating...".format(data_pvname))
         # data = mask_array(data)
-        m = data.reshape(self._ydim, self._xdim)
+        try:
+            m = data.reshape(self._ydim, self._xdim)
+        except ValueError as err:
+            printlog(f"Ignore data, since '{err}'")
+            return
         m = np.flipud(m)
         self._current_array = m
         self.image_data_changed.emit(m)
