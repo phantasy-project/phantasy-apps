@@ -197,13 +197,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                               self.reset_itlk_btn)
         self.on_auto_fill_beam_params(self._device_mode)
         # st
-        self._active_px = QPixmap(":/icons/active.png").scaled(PX_SIZE, PX_SIZE)
-        self._inactive_px = QPixmap(":/icons/inactive.png").scaled(PX_SIZE, PX_SIZE)
-        self._outlimit_px = QPixmap(":/icons/off.png").scaled(PX_SIZE, PX_SIZE)
-        self._enable_px = QPixmap(":/icons/on.png").scaled(PX_SIZE, PX_SIZE)
-        self._not_enable_px = QPixmap(":/icons/off.png").scaled(PX_SIZE, PX_SIZE)
-        self._itlk_px = QPixmap(":/icons/on.png").scaled(PX_SIZE, PX_SIZE)
-        self._not_itlk_px = QPixmap(":/icons/off.png").scaled(PX_SIZE, PX_SIZE)
+        self._active_px = QPixmap(":/icons/status-green.png").scaled(PX_SIZE, PX_SIZE)
+        self._inactive_px = QPixmap(":/icons/status-gray.png").scaled(PX_SIZE, PX_SIZE)
+        self._in_px = QPixmap(":/icons/status-orange.png").scaled(PX_SIZE, PX_SIZE)
+        self._outlimit_px = QPixmap(":/icons/status-red.png").scaled(PX_SIZE, PX_SIZE)
+        self._enable_px = QPixmap(":/icons/status-green.png").scaled(PX_SIZE, PX_SIZE)
+        self._not_enable_px = QPixmap(":/icons/status-red.png").scaled(PX_SIZE, PX_SIZE)
+        self._itlk_px = QPixmap(":/icons/status-green.png").scaled(PX_SIZE, PX_SIZE)
+        self._not_itlk_px = QPixmap(":/icons/status-red.png").scaled(PX_SIZE, PX_SIZE)
         #
         self._fetch_red_px = QPixmap(":/icons/fetch_red.png").scaled(PX_SIZE, PX_SIZE)
         self._fetch_px = QPixmap(":/icons/fetch.png").scaled(PX_SIZE, PX_SIZE)
@@ -1620,6 +1621,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def onUpdateStatusIn(self, is_in: bool):
         # motor fork (pos) in status
         printlog(f"{self._ems_device.name}[{self._ems_orientation}] STATUS IN: {is_in}")
+        if is_in:
+            px = self._in_px
+            tt = "Device is at IN"
+        else:
+            px = self._inactive_px
+            tt = "Device is not IN"
+        self.is_in_lbl.setPixmap(px)
+        self.is_in_lbl.setToolTip(tt)
 
     @pyqtSlot(bool)
     def onUpdateStatusOut(self, is_out: bool):
