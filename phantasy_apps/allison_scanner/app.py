@@ -44,7 +44,6 @@ from phantasy_ui import get_open_filename
 from phantasy_ui import get_save_filename
 from phantasy_apps.correlation_visualizer.data import JSONDataSheet
 from .device import Device
-from ._sim import SimDevice
 from .ui.ui_app import Ui_MainWindow
 from .utils import find_dconf
 from .utils import get_all_devices
@@ -442,46 +441,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             o.update_figure()
         else:
             o.setColorMap(o.getColorMap())
-
-    def _init_device(self):
-        # re-init device, everytime switching device or orientation
-        # work with real device
-        self._device = SimDevice(self._data_pv, self._status_pv,
-                                 self._trigger_pv, self._pos_pv,
-                                 self._pos_begin_pv,
-                                 self._pos_end_pv,
-                                 self._pos_step_pv,
-                                 self._volt_begin_pv,
-                                 self._volt_end_pv,
-                                 self._volt_step_pv,
-                                 self._in_pv, self._out_pv,
-                                 self._itlk_pv, self._en_pv,
-                                 self._bias_on_pv, self._pos_set_pv,
-                                 self._bias_volt_pv, self._bias_volt_set_pv)
-        self._device.status_in_changed.connect(self.on_update_sin)
-        self._device.status_out_changed.connect(self.on_update_sout)
-        self._device.itlk_changed.connect(self.on_update_itlk)
-        self._device.status_enable_changed.connect(self.on_update_en)
-        self._device.bias_on_changed.connect(self.on_update_biason)
-        self._device.pos_set_changed.connect(self.on_update_pos_set)
-        self._device.pos_changed.connect(self.on_update_p)
-        self._device.bias_volt_changed.connect(self.on_update_bias_volt)
-        self._device.bias_volt_set_changed.connect(self.on_update_bias_volt_set)
-
-        pvs = (self._in_pv, self._out_pv, self._itlk_pv, self._en_pv, self._bias_on_pv,
-               self._pos_set_pv, self._pos_pv,
-               self._bias_volt_pv, self._bias_volt_set_pv)
-        cbs = (self.on_update_sin, self.on_update_sout,
-               self.on_update_itlk, self.on_update_en, self.on_update_biason,
-               self.on_update_pos_set, self.on_update_p,
-               self.on_update_bias_volt, self.on_update_bias_volt_set)
-        establish_pvs(pvs, verbose=True)
-        for pv, cb in zip(pvs, cbs):
-            cb(caget(pv))
-        for (ii, jj) in ((i, j) for i in ('p', 'v') for j in ('b', 'e', 's')):
-            n = f"{ii}{jj}"
-            o = getattr(self._device, f'{n}_changed')
-            o.connect(partial(self.on_update_pos_volt_conf, n))
 
     @pyqtSlot(float)
     def on_update_config(self, attr: str, x: float):
