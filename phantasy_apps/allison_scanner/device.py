@@ -460,7 +460,7 @@ class Device(QObject):
     def abort(self):
         setattr(self.elem, 'ABORT_SCAN{}'.format(self._id), 1)
 
-    def move(self, timeout=600, wait=True, validate=True):
+    def move(self, timeout=600, wait=True, validate=False):
         """Start scan."""
         if validate:  # check scan status or not
             s = self.check_status()
