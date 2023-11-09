@@ -439,18 +439,19 @@ class Device(QObject):
         self.set_volt_step()
 
     def reset_interlock(self):
-        print("Reset interlock-{}...".format(self._id))
-        fld = self.elem.get_field('INTERLOCK{}'.format(self._id))
-        re_tries = 0
-        while fld.value != 0:
-            re_tries += 1
-            setattr(self.elem, 'RESET_ITLK', 1)
-            _wait(fld.readback_pv[0], 0, 5)
-            if re_tries > 3:
-                break
-                print("--- Cannot reset interlock...")
-                return
-        print("--- Reset interlock-{}: Done!".format(self._id))
+        printlog("Reset interlock-{}...".format(self._id))
+        setattr(self.elem, 'RESET_ITLK', 1)
+        #fld = self.elem.get_field('INTERLOCK{}'.format(self._id))
+        #re_tries = 0
+        #while fld.value != 0:
+        #    re_tries += 1
+        #    setattr(self.elem, 'RESET_ITLK', 1)
+        #    _wait(fld.readback_pv[0], 0, 5)
+        #    if re_tries > 3:
+        #        break
+        #        print("--- Cannot reset interlock...")
+        #        return
+        #print("--- Reset interlock-{}: Done!".format(self._id))
 
     def retract(self, pos0=200.0):
         pos_fld = self.elem.get_field('POS{}'.format(self._id))
