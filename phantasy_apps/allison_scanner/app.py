@@ -1416,9 +1416,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot(bool)
     def on_enable_advctrl(self, is_enabled: bool):
+        """Visibility control for advanced device controls.
+        """
         [w.setVisible(is_enabled) for w in (
             self.adv_ctrl_widget, self.adv_ctrl_hline,
             self.scan_ready_info_full_lbl, self.results_btn)]
+        self.scan_ready_info_lbl.setVisible(not is_enabled)
 
     def _beat_on(self, dt):
         self.status_lbl.setPixmap(self._active_px)
