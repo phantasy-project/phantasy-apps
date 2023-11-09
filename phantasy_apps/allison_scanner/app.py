@@ -226,7 +226,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.retract_btn.clicked.connect(self.on_retract)
         #
         self.reset_itlk_btn.clicked.connect(self.on_reset_interlock)
+
         # check adv ctrl by default
+        # main vertical splitter
+        self.main_vsplitter.setStretchFactor(0, 0)
+        self.main_vsplitter.setStretchFactor(1, 1)
+        self.adv_ctrl_chkbox.toggled.emit(False)
+        self.main_vsplitter.setSizes([10, 5000])
         self.adv_ctrl_chkbox.setChecked(True)
         self.adv_ctrl_chkbox.toggled.emit(self.adv_ctrl_chkbox.isChecked())
 
@@ -507,7 +513,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         return QSize(1440, 1200)
 
     def resizeEvent(self, e):
-        # self.main_vsplitter.setSizes([100, 1000])
         BaseAppForm.resizeEvent(self, e)
 
     def update_time_cost(self, cnt_list: list = None):
@@ -1434,8 +1439,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._ems_device.reset_interlock()
 
     @pyqtSlot(bool)
-    def on_enable_advctrl(self, f):
-        self.adv_ctrl_widget.setVisible(f)
+    def on_enable_advctrl(self, is_enabled: bool):
+        [w.setVisible(is_enabled) for w in (
+            self.adv_ctrl_widget, self.adv_ctrl_hline,
+            self.scan_ready_info_full_lbl, self.results_btn)]
 
     def _beat_on(self, dt):
         self.status_lbl.setPixmap(self._active_px)
