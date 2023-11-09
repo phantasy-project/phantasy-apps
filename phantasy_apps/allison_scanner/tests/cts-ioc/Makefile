@@ -1,2 +1,2 @@
 ioc:
-	softIoc -d test-as1.db
+	softIoc -d as1.db
