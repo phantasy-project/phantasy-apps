@@ -1,4 +1,4 @@
-# ISRC1
+# SCS2 EMS
 # Bias Voltage On/Off
 record(calc, "FE_SCS2:EMS_D0718:VBS:isOn") {
   field(CALC, A)
@@ -55,4 +55,70 @@ record(calcout, "_FE_SCS2:EMS_D0718:LMNEG_RSTS_DRV2") {
     field(CALC, "A<50")
     field(OOPT, "Every Time")
     field(OUT, "FE_SCS2:EMS_D0718:LMNEG_RSTS_DRV2 PP")
+}
+
+# (X) Enable/un-Enable
+record(calcout, "_FE_SCS2:EMS_D0718:ENNEG_CMD_DRV1") {
+    field(INPA, "FE_SCS2:EMS_D0718:ENNEG_CMD_DRV1 CPP")
+    field(DOPT, "Use CALC")
+    field(CALC, "A")
+    field(OOPT, "Every Time")
+    field(OUT, "FE_SCS2:EMS_D0718:ENNEG_RCMD_DRV1 PP")
+}
+# (Y) Enable/un-Enable
+record(calcout, "_FE_SCS2:EMS_D0718:ENNEG_CMD_DRV2") {
+    field(INPA, "FE_SCS2:EMS_D0718:ENNEG_CMD_DRV2 CPP")
+    field(DOPT, "Use CALC")
+    field(CALC, "A")
+    field(OOPT, "Every Time")
+    field(OUT, "FE_SCS2:EMS_D0718:ENNEG_RCMD_DRV2 PP")
+}
+
+# (X) Interlock: 1 if IN else 0
+record(calcout, "_FE_SCS2:EMS_D0718:LMPOS_LTCH_DRV1") {
+    field(INPB, "FE_SCS2:EMS_D0718:LMNEG_RSTS_DRV1 CPP")
+    field(DOPT, "Use OCAL")
+    field(CALC, "B")
+    field(OCAL, "1")
+    field(OOPT, "Transition To Non-zero")
+    field(OUT, "FE_SCS2:EMS_D0718:LMPOS_LTCH_DRV1 PP")
+}
+# (Y) Interlock: 1 if IN else 0
+record(calcout, "_FE_SCS2:EMS_D0718:LMPOS_LTCH_DRV2") {
+    field(INPB, "FE_SCS2:EMS_D0718:LMNEG_RSTS_DRV2 CPP")
+    field(DOPT, "Use OCAL")
+    field(CALC, "B")
+    field(OCAL, "1")
+    field(OOPT, "Transition To Non-zero")
+    field(OUT, "FE_SCS2:EMS_D0718:LMPOS_LTCH_DRV2 PP")
+}
+
+# Reset Interlock: Set intelock to 0 if OUT for both X and Y
+record(calcout, "_FE_SCS2:EMS_D0718:RST_CMD") {
+    field(INPA, "FE_SCS2:EMS_D0718:RST_CMD CPP")
+    field(DOPT, "Use CALC")
+    field(CALC, "A")
+    field(OOPT, "Every Time")
+    field(OUT, "_FE_SCS2:EMS_D0718:RST_ITLK PP")
+}
+record(fanout, "_FE_SCS2:EMS_D0718:RST_ITLK") {
+    field(LNK0, "_FE_SCS2:EMS_D0718:RST_ITLK_X")
+    field(LNK1, "_FE_SCS2:EMS_D0718:RST_ITLK_Y")
+}
+# when OUT, set interlock to OK (0)
+record(calcout, "_FE_SCS2:EMS_D0718:RST_ITLK_X") {
+    field(INPA, "FE_SCS2:EMS_D0718:LMPOS_RSTS_DRV1 NPP")
+    field(CALC, "A")
+    field(DOPT, "Use OCAL")
+    field(OCAL, "0")
+    field(OOPT, "When Non-zero")
+    field(OUT, "FE_SCS2:EMS_D0718:LMPOS_LTCH_DRV1 PP")
+}
+record(calcout, "_FE_SCS2:EMS_D0718:RST_ITLK_Y") {
+    field(INPA, "FE_SCS2:EMS_D0718:LMPOS_RSTS_DRV2 NPP")
+    field(CALC, "A")
+    field(DOPT, "Use OCAL")
+    field(OCAL, "0")
+    field(OOPT, "When Non-zero")
+    field(OUT, "FE_SCS2:EMS_D0718:LMPOS_LTCH_DRV2 PP")
 }
