@@ -1,1 +1,3 @@
 CTS provides all the PVs, but lacks some logic.
+
+- Start the IOC on csstudio.cts machine, where the write permission is granted.
