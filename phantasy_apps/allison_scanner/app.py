@@ -484,7 +484,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self.scan_status_info_lbl.setText(
                     '<p>&#9888; <span style="color:#ff0000;">Not Ready to Scan</span></p>')
 
-        [w.setEnabled(is_ready) for w in (self.run_btn, self.abort_btn)]
+        [w.setEnabled(is_ready) for w in (self.run_btn, )]
 
     def sizeHint(self):
         return QSize(1440, 1200)
@@ -812,7 +812,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_abort(self):
         self._ems_device.abort()
         self._abort = True
-        self._elapsed_timer.stop()
+        try:
+            self._elapsed_timer.stop()
+        except:
+            pass
 
     @pyqtSlot()
     def on_retract(self):
