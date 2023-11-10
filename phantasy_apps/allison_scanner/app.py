@@ -761,7 +761,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_run(self):
         self.sync_config()
-        self._is_finished = False
         self._abort = False
         self._run()
 
@@ -783,9 +782,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self._device_mode == "Live":
             self._ems_device.init_run()
         self._init_elapsed_timer()
-        printlog(f"connect data_changed {self._ems_device.name}[{self._ems_device.xoy}]")
         self._ems_device.data_changed.connect(self.on_update)
         self._ems_device.finished.connect(self.on_finished)
+        self.title_changed.emit("")
         self._ems_device.move(wait=False)
         self._elapsed_timer.start(1000)
 
@@ -886,7 +885,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     def on_update(self, data):
         data_pvname = self._ems_device.get_data_pvname()
-        printlog("Data from {} is updating...".format(data_pvname))
         # data = mask_array(data)
         try:
             m = data.reshape(self._ydim, self._xdim)
@@ -899,25 +897,20 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_finished(self):
-        if not self._is_finished:
-            self._is_finished = True
-            QMessageBox.information(self, "EMS DAQ",
-                                    "Data readiness is approaching...",
-                                    QMessageBox.Ok)
-        self.on_title_with_ts(self._ems_device.get_data_pv().timestamp)
+        _title = self.on_title_with_ts(self._ems_device.get_data_pv().timestamp)
         self.on_update(self._ems_device.get_data())
         # initial data
         self.on_initial_data()
         self.on_plot_raw_data()
         #
         if self._auto_analysis:
+            self.title_changed.emit(_title + "\n" + "Automatic data processing ...")
+            delayed_exec(lambda: self.title_changed.emit(_title), 2000)
             self._auto_process()
         #
         # self.finished.emit()
         #
         self._elapsed_timer.stop()
-        #
-        printlog(f"disconnect data_changed {self._ems_device.name}[{self._ems_device.xoy}]")
         self._ems_device.data_changed.disconnect()
         self._ems_device.finished.disconnect()
 
@@ -1243,39 +1236,43 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.add_attached_widget(self._plot_results_window)
 
-    def on_title_with_ts(self, ts):
+    def on_title_with_ts(self, ts: float):
         """Title with human readable timestamp of the current data.
         """
         fmtedts = datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
         title = "Data generated at {}".format(fmtedts)
         self.title_changed.emit(title)
+        return title
 
     @pyqtSlot()
     def on_sync_data(self):
+        """Pull and analyze (if auto process is enabled) the live data.
+        """
         auto_push = self._auto_push_results
         self.actionAuto_Push_Results_to_PVs.setChecked(False)
         if self._valid_device(100) is False:
             return
         self.on_add_current_config(show=False)
-        self.on_title_with_ts(self._ems_device.get_data_pv().timestamp)
         arr = self._ems_device.get_data()
-        if arr.size == 0:
-            QMessageBox.warning(self, "Fetch Measurement Data",
-                    "Measurement data is empty.", QMessageBox.Ok)
-            return
         try:
             self.check_data_size(arr)
+        except DataSizeZeroError:
+            QMessageBox.warning(self, "Fetch Last Measured Data",
+                    "Last measured data is empty.", QMessageBox.Ok)
+            return
         except DataSizeNotMatchError:
-            QMessageBox.warning(self, "Update Data",
-                    "Data size ({}) is not consistent with the scan settings ({}x{}).".format(arr.size,
-                        self._ydim, self._xdim),
+            QMessageBox.warning(self, "Fetch Last Measured Data",
+                    f"Last measured data size ({arr.size}) mismatches the current scan settings ({self._ydim}x{self._xdim}).",
                     QMessageBox.Ok)
             return
+        _title = self.on_title_with_ts(self._ems_device.get_data_pv().timestamp)
         self.on_update(arr)
         self.on_initial_data()
         self.on_plot_raw_data()
 
         if self._auto_analysis:
+            self.title_changed.emit(_title + "\n" + "Automatic data processing ...")
+            delayed_exec(lambda: self.title_changed.emit(_title), 2000)
             self._auto_process()
 
         #
@@ -1284,11 +1281,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.actionAuto_Push_Results_to_PVs.setChecked(auto_push)
 
     def check_data_size(self, data):
+        if data.size == 0:
+            raise DataSizeZeroError
         if data.size != self._xdim * self._ydim:
-            QMessageBox.warning(self, "Update Data",
-                    "Data size ({}) is not consistent with the scan settings ({}x{}).".format(data.size,
-                        self._ydim, self._xdim),
-                    QMessageBox.Ok)
             raise DataSizeNotMatchError
 
     def _auto_process(self):
@@ -1686,8 +1681,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.set_pos_lineEdit.setText('{0:.2f}'.format(x))
 
 
-
 class DataSizeNotMatchError(Exception):
+    def __init__(self, *args, **kws):
+        super(self.__class__, self).__init__(*args, **kws)
+
+
+class DataSizeZeroError(Exception):
     def __init__(self, *args, **kws):
         super(self.__class__, self).__init__(*args, **kws)
 
