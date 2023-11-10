@@ -378,30 +378,10 @@ class Ui_MainWindow(object):
         self.label_22.setObjectName("label_22")
         self.scan_conf_gbox.addWidget(self.label_22, 1, 6, 1, 1)
         self.gridLayout_4.addLayout(self.scan_conf_gbox, 3, 0, 1, 2)
-        self.scan_status_info_full_lbl = QtWidgets.QLabel(self.dev_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.scan_status_info_full_lbl.sizePolicy().hasHeightForWidth())
-        self.scan_status_info_full_lbl.setSizePolicy(sizePolicy)
-        self.scan_status_info_full_lbl.setStyleSheet(
-            "QLabel {\n"
-            "    border-top: 2px solid gray;\n"
-            "    border-left: 10px solid gray;\n"
-            "    border-right: 2px solid gray;\n"
-            "    border-bottom: 2px solid gray;\n"
-            "    background-color: #FFFDE7;\n"
-            "}")
-        self.scan_status_info_full_lbl.setAlignment(QtCore.Qt.AlignCenter)
-        self.scan_status_info_full_lbl.setObjectName(
-            "scan_status_info_full_lbl")
-        self.gridLayout_4.addWidget(self.scan_status_info_full_lbl, 0, 2, 4, 1)
         self.adv_ctrl_widget = QtWidgets.QWidget(self.dev_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(1)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.adv_ctrl_widget.sizePolicy().hasHeightForWidth())
@@ -746,6 +726,41 @@ class Ui_MainWindow(object):
         self.line_2.setObjectName("line_2")
         self.time_cost_vbox.addWidget(self.line_2)
         self.gridLayout_4.addLayout(self.time_cost_vbox, 1, 0, 1, 2)
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setContentsMargins(-1, -1, 0, -1)
+        self.verticalLayout_2.setSpacing(1)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.scan_status_info_full_lbl = QtWidgets.QLabel(self.dev_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setHeightForWidth(
+            self.scan_status_info_full_lbl.sizePolicy().hasHeightForWidth())
+        self.scan_status_info_full_lbl.setSizePolicy(sizePolicy)
+        self.scan_status_info_full_lbl.setStyleSheet(
+            "QLabel {\n"
+            "    border-top: 2px solid gray;\n"
+            "    border-left: 10px solid gray;\n"
+            "    border-right: 2px solid gray;\n"
+            "    border-bottom: 2px solid gray;\n"
+            "    background-color: #FFFDE7;\n"
+            "}")
+        self.scan_status_info_full_lbl.setAlignment(QtCore.Qt.AlignCenter)
+        self.scan_status_info_full_lbl.setObjectName(
+            "scan_status_info_full_lbl")
+        self.verticalLayout_2.addWidget(self.scan_status_info_full_lbl)
+        self.log_lbl = QtWidgets.QLabel(self.dev_ctrl_widget)
+        self.log_lbl.setStyleSheet("QLabel {\n"
+                                   "    border-top: 2px solid #2E3436;\n"
+                                   "    border-left: 10px solid #2E3436;\n"
+                                   "    border-right: 2px solid #2E3436;\n"
+                                   "    border-bottom: 2px solid #2E3436;\n"
+                                   "    background-color: #C6E1FF;\n"
+                                   "}")
+        self.log_lbl.setObjectName("log_lbl")
+        self.verticalLayout_2.addWidget(self.log_lbl)
+        self.gridLayout_4.addLayout(self.verticalLayout_2, 0, 2, 4, 1)
         self.gridLayout.addWidget(self.dev_ctrl_widget, 5, 0, 1, 1)
         self.device_hbox = QtWidgets.QHBoxLayout()
         self.device_hbox.setSpacing(4)
@@ -1279,7 +1294,7 @@ class Ui_MainWindow(object):
         self.gridLayout_5.addItem(spacerItem4, 3, 0, 1, 1)
         self.data_analysis_tbox.addItem(self.page_beam_params, "")
         self.page_bkgd_noise = QtWidgets.QWidget()
-        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 520, 398))
+        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 520, 354))
         self.page_bkgd_noise.setObjectName("page_bkgd_noise")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.page_bkgd_noise)
         self.gridLayout_2.setContentsMargins(4, 4, 4, 4)
@@ -1361,7 +1376,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.auto_update_image_chkbox, 1, 2, 1, 1)
         self.data_analysis_tbox.addItem(self.page_bkgd_noise, "")
         self.page_noise_correction = QtWidgets.QWidget()
-        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 520, 398))
+        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 520, 354))
         self.page_noise_correction.setObjectName("page_noise_correction")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.page_noise_correction)
         self.gridLayout_7.setContentsMargins(4, 4, 4, 4)
@@ -1457,7 +1472,7 @@ class Ui_MainWindow(object):
         self.twiss_gbox.setCheckable(False)
         self.twiss_gbox.setObjectName("twiss_gbox")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.twiss_gbox)
-        self.verticalLayout_3.setContentsMargins(2, 10, 2, 2)
+        self.verticalLayout_3.setContentsMargins(6, 10, 2, 2)
         self.verticalLayout_3.setSpacing(4)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.twiss_gridLayout = QtWidgets.QGridLayout()
@@ -1478,6 +1493,9 @@ class Ui_MainWindow(object):
         font.setItalic(True)
         font.setWeight(75)
         self.alpha_x_lbl.setFont(font)
+        self.alpha_x_lbl.setAlignment(QtCore.Qt.AlignLeading
+                                      | QtCore.Qt.AlignLeft
+                                      | QtCore.Qt.AlignVCenter)
         self.alpha_x_lbl.setObjectName("alpha_x_lbl")
         self.twiss_gridLayout.addWidget(self.alpha_x_lbl, 3, 0, 1, 1)
         self.x_cen_lbl = QtWidgets.QLabel(self.twiss_gbox)
@@ -1486,6 +1504,9 @@ class Ui_MainWindow(object):
         font.setItalic(True)
         font.setWeight(75)
         self.x_cen_lbl.setFont(font)
+        self.x_cen_lbl.setAlignment(QtCore.Qt.AlignLeading
+                                    | QtCore.Qt.AlignLeft
+                                    | QtCore.Qt.AlignVCenter)
         self.x_cen_lbl.setObjectName("x_cen_lbl")
         self.twiss_gridLayout.addWidget(self.x_cen_lbl, 0, 0, 1, 1)
         self.beta_x_lineEdit = QtWidgets.QLineEdit(self.twiss_gbox)
@@ -1502,49 +1523,42 @@ class Ui_MainWindow(object):
         font.setItalic(True)
         font.setWeight(75)
         self.xp_rms_lbl.setFont(font)
+        self.xp_rms_lbl.setAlignment(QtCore.Qt.AlignLeading
+                                     | QtCore.Qt.AlignLeft
+                                     | QtCore.Qt.AlignVCenter)
         self.xp_rms_lbl.setObjectName("xp_rms_lbl")
         self.twiss_gridLayout.addWidget(self.xp_rms_lbl, 1, 2, 1, 1)
-        self.emitn_x_lineEdit = QtWidgets.QLineEdit(self.twiss_gbox)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.emitn_x_lineEdit.setFont(font)
-        self.emitn_x_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
-        self.emitn_x_lineEdit.setReadOnly(True)
-        self.emitn_x_lineEdit.setObjectName("emitn_x_lineEdit")
-        self.twiss_gridLayout.addWidget(self.emitn_x_lineEdit, 2, 3, 1, 1)
         self.label_48 = QtWidgets.QLabel(self.twiss_gbox)
         self.label_48.setObjectName("label_48")
         self.twiss_gridLayout.addWidget(self.label_48, 3, 4, 1, 1)
-        self.emit_x_lineEdit = QtWidgets.QLineEdit(self.twiss_gbox)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.emit_x_lineEdit.setFont(font)
-        self.emit_x_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
-        self.emit_x_lineEdit.setReadOnly(True)
-        self.emit_x_lineEdit.setObjectName("emit_x_lineEdit")
-        self.twiss_gridLayout.addWidget(self.emit_x_lineEdit, 2, 1, 1, 1)
-        self.label_42 = QtWidgets.QLabel(self.twiss_gbox)
-        self.label_42.setObjectName("label_42")
-        self.twiss_gridLayout.addWidget(self.label_42, 1, 4, 1, 1)
-        self.emitn_x_lbl = QtWidgets.QLabel(self.twiss_gbox)
+        self.gamma_x_lbl = QtWidgets.QLabel(self.twiss_gbox)
         font = QtGui.QFont()
         font.setBold(True)
         font.setItalic(True)
         font.setWeight(75)
-        self.emitn_x_lbl.setFont(font)
-        self.emitn_x_lbl.setObjectName("emitn_x_lbl")
-        self.twiss_gridLayout.addWidget(self.emitn_x_lbl, 2, 2, 1, 1)
+        self.gamma_x_lbl.setFont(font)
+        self.gamma_x_lbl.setAlignment(QtCore.Qt.AlignLeading
+                                      | QtCore.Qt.AlignLeft
+                                      | QtCore.Qt.AlignVCenter)
+        self.gamma_x_lbl.setObjectName("gamma_x_lbl")
+        self.twiss_gridLayout.addWidget(self.gamma_x_lbl, 4, 0, 1, 1)
+        self.label_42 = QtWidgets.QLabel(self.twiss_gbox)
+        self.label_42.setObjectName("label_42")
+        self.twiss_gridLayout.addWidget(self.label_42, 1, 4, 1, 1)
+        self.label_46 = QtWidgets.QLabel(self.twiss_gbox)
+        self.label_46.setObjectName("label_46")
+        self.twiss_gridLayout.addWidget(self.label_46, 4, 2, 1, 1)
         self.xp_cen_lbl = QtWidgets.QLabel(self.twiss_gbox)
         font = QtGui.QFont()
         font.setBold(True)
         font.setItalic(True)
         font.setWeight(75)
         self.xp_cen_lbl.setFont(font)
+        self.xp_cen_lbl.setAlignment(QtCore.Qt.AlignLeading
+                                     | QtCore.Qt.AlignLeft
+                                     | QtCore.Qt.AlignVCenter)
         self.xp_cen_lbl.setObjectName("xp_cen_lbl")
         self.twiss_gridLayout.addWidget(self.xp_cen_lbl, 1, 0, 1, 1)
-        self.label_47 = QtWidgets.QLabel(self.twiss_gbox)
-        self.label_47.setObjectName("label_47")
-        self.twiss_gridLayout.addWidget(self.label_47, 2, 4, 1, 1)
         self.x_rms_lineEdit = QtWidgets.QLineEdit(self.twiss_gbox)
         font = QtGui.QFont()
         font.setFamily("Monospace")
@@ -1559,6 +1573,9 @@ class Ui_MainWindow(object):
         font.setItalic(True)
         font.setWeight(75)
         self.x_rms_lbl.setFont(font)
+        self.x_rms_lbl.setAlignment(QtCore.Qt.AlignLeading
+                                    | QtCore.Qt.AlignLeft
+                                    | QtCore.Qt.AlignVCenter)
         self.x_rms_lbl.setObjectName("x_rms_lbl")
         self.twiss_gridLayout.addWidget(self.x_rms_lbl, 0, 2, 1, 1)
         self.alpha_x_lineEdit = QtWidgets.QLineEdit(self.twiss_gbox)
@@ -1580,38 +1597,17 @@ class Ui_MainWindow(object):
         self.label_41 = QtWidgets.QLabel(self.twiss_gbox)
         self.label_41.setObjectName("label_41")
         self.twiss_gridLayout.addWidget(self.label_41, 0, 4, 1, 1)
-        self.emit_x_lbl = QtWidgets.QLabel(self.twiss_gbox)
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setItalic(True)
-        font.setWeight(75)
-        self.emit_x_lbl.setFont(font)
-        self.emit_x_lbl.setObjectName("emit_x_lbl")
-        self.twiss_gridLayout.addWidget(self.emit_x_lbl, 2, 0, 1, 1)
         self.beta_x_lbl = QtWidgets.QLabel(self.twiss_gbox)
         font = QtGui.QFont()
         font.setBold(True)
         font.setItalic(True)
         font.setWeight(75)
         self.beta_x_lbl.setFont(font)
+        self.beta_x_lbl.setAlignment(QtCore.Qt.AlignLeading
+                                     | QtCore.Qt.AlignLeft
+                                     | QtCore.Qt.AlignVCenter)
         self.beta_x_lbl.setObjectName("beta_x_lbl")
         self.twiss_gridLayout.addWidget(self.beta_x_lbl, 3, 2, 1, 1)
-        self.x_cen_lineEdit = QtWidgets.QLineEdit(self.twiss_gbox)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.x_cen_lineEdit.setFont(font)
-        self.x_cen_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
-        self.x_cen_lineEdit.setReadOnly(True)
-        self.x_cen_lineEdit.setObjectName("x_cen_lineEdit")
-        self.twiss_gridLayout.addWidget(self.x_cen_lineEdit, 0, 1, 1, 1)
-        self.gamma_x_lbl = QtWidgets.QLabel(self.twiss_gbox)
-        font = QtGui.QFont()
-        font.setBold(True)
-        font.setItalic(True)
-        font.setWeight(75)
-        self.gamma_x_lbl.setFont(font)
-        self.gamma_x_lbl.setObjectName("gamma_x_lbl")
-        self.twiss_gridLayout.addWidget(self.gamma_x_lbl, 4, 0, 1, 1)
         self.gamma_x_lineEdit = QtWidgets.QLineEdit(self.twiss_gbox)
         font = QtGui.QFont()
         font.setFamily("Monospace")
@@ -1620,9 +1616,58 @@ class Ui_MainWindow(object):
         self.gamma_x_lineEdit.setReadOnly(True)
         self.gamma_x_lineEdit.setObjectName("gamma_x_lineEdit")
         self.twiss_gridLayout.addWidget(self.gamma_x_lineEdit, 4, 1, 1, 1)
-        self.label_46 = QtWidgets.QLabel(self.twiss_gbox)
-        self.label_46.setObjectName("label_46")
-        self.twiss_gridLayout.addWidget(self.label_46, 4, 2, 1, 1)
+        self.emit_x_lbl = QtWidgets.QLabel(self.twiss_gbox)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setItalic(True)
+        font.setWeight(75)
+        self.emit_x_lbl.setFont(font)
+        self.emit_x_lbl.setAlignment(QtCore.Qt.AlignLeading
+                                     | QtCore.Qt.AlignLeft
+                                     | QtCore.Qt.AlignVCenter)
+        self.emit_x_lbl.setObjectName("emit_x_lbl")
+        self.twiss_gridLayout.addWidget(self.emit_x_lbl, 5, 0, 1, 1)
+        self.x_cen_lineEdit = QtWidgets.QLineEdit(self.twiss_gbox)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.x_cen_lineEdit.setFont(font)
+        self.x_cen_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
+        self.x_cen_lineEdit.setReadOnly(True)
+        self.x_cen_lineEdit.setObjectName("x_cen_lineEdit")
+        self.twiss_gridLayout.addWidget(self.x_cen_lineEdit, 0, 1, 1, 1)
+        self.emitn_x_lbl = QtWidgets.QLabel(self.twiss_gbox)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setItalic(True)
+        font.setWeight(75)
+        self.emitn_x_lbl.setFont(font)
+        self.emitn_x_lbl.setAlignment(QtCore.Qt.AlignLeading
+                                      | QtCore.Qt.AlignLeft
+                                      | QtCore.Qt.AlignVCenter)
+        self.emitn_x_lbl.setObjectName("emitn_x_lbl")
+        self.twiss_gridLayout.addWidget(self.emitn_x_lbl, 6, 0, 1, 1)
+        self.emit_x_lineEdit = QtWidgets.QLineEdit(self.twiss_gbox)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.emit_x_lineEdit.setFont(font)
+        self.emit_x_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
+        self.emit_x_lineEdit.setReadOnly(True)
+        self.emit_x_lineEdit.setObjectName("emit_x_lineEdit")
+        self.twiss_gridLayout.addWidget(self.emit_x_lineEdit, 5, 1, 1, 2)
+        self.emitn_x_lineEdit = QtWidgets.QLineEdit(self.twiss_gbox)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.emitn_x_lineEdit.setFont(font)
+        self.emitn_x_lineEdit.setAlignment(QtCore.Qt.AlignCenter)
+        self.emitn_x_lineEdit.setReadOnly(True)
+        self.emitn_x_lineEdit.setObjectName("emitn_x_lineEdit")
+        self.twiss_gridLayout.addWidget(self.emitn_x_lineEdit, 6, 1, 1, 2)
+        self.label_47 = QtWidgets.QLabel(self.twiss_gbox)
+        self.label_47.setObjectName("label_47")
+        self.twiss_gridLayout.addWidget(self.label_47, 5, 3, 1, 2)
+        self.label_9 = QtWidgets.QLabel(self.twiss_gbox)
+        self.label_9.setObjectName("label_9")
+        self.twiss_gridLayout.addWidget(self.label_9, 6, 3, 1, 2)
         self.verticalLayout_3.addLayout(self.twiss_gridLayout)
         self.horizontalLayout_11 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_11.setSpacing(4)
@@ -1836,9 +1881,7 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.x_cen_lineEdit, self.x_rms_lineEdit)
         MainWindow.setTabOrder(self.x_rms_lineEdit, self.xp_cen_lineEdit)
         MainWindow.setTabOrder(self.xp_cen_lineEdit, self.xp_rms_lineEdit)
-        MainWindow.setTabOrder(self.xp_rms_lineEdit, self.emit_x_lineEdit)
-        MainWindow.setTabOrder(self.emit_x_lineEdit, self.emitn_x_lineEdit)
-        MainWindow.setTabOrder(self.emitn_x_lineEdit, self.update_results_btn)
+        MainWindow.setTabOrder(self.xp_rms_lineEdit, self.update_results_btn)
         MainWindow.setTabOrder(self.update_results_btn, self.show_results_btn)
         MainWindow.setTabOrder(self.show_results_btn,
                                self.bkgd_noise_nelem_sbox)
@@ -1929,8 +1972,6 @@ class Ui_MainWindow(object):
             ))
         self.volt_settling_time_dsbox.setSuffix(_translate("MainWindow", " s"))
         self.label_22.setText(_translate("MainWindow", "Step"))
-        self.scan_status_info_full_lbl.setText(
-            _translate("MainWindow", "Scan Ready? If not, post the reasons."))
         self.retract_btn.setToolTip(
             _translate(
                 "MainWindow",
@@ -1994,6 +2035,9 @@ class Ui_MainWindow(object):
         self.fetch_config_btn.setToolTip(
             _translate("MainWindow", "Click me when I\'m RED."))
         self.fetch_config_btn.setText(_translate("MainWindow", "..."))
+        self.scan_status_info_full_lbl.setText(
+            _translate("MainWindow", "Scan Ready? If not, post the reasons."))
+        self.log_lbl.setText(_translate("MainWindow", "TextLabel"))
         self.label_53.setText(_translate("MainWindow", "Selected EMS Device"))
         self.ems_names_cbb.setToolTip(
             _translate("MainWindow", "Select Allison scanner device."))
@@ -2139,31 +2183,36 @@ class Ui_MainWindow(object):
                 "MainWindow",
                 "<html><head/><body><p><span style=\" font-weight:600;\">m</span></p></body></html>"
             ))
+        self.gamma_x_lbl.setText(_translate("MainWindow", "gamma"))
         self.label_42.setText(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p><span style=\" font-weight:600;\">mrad</span></p></body></html>"
             ))
-        self.emitn_x_lbl.setText(_translate("MainWindow", "emit_n"))
-        self.xp_cen_lbl.setText(_translate("MainWindow", "xp_cen"))
-        self.label_47.setText(
+        self.label_46.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p><span style=\" font-weight:600;\">mm·mrad</span></p></body></html>"
+                "<html><head/><body><p><span style=\" font-weight:600;\">m</span><span style=\" font-weight:600; vertical-align:super;\">-1</span></p></body></html>"
             ))
+        self.xp_cen_lbl.setText(_translate("MainWindow", "xp_cen"))
         self.x_rms_lbl.setText(_translate("MainWindow", "x_rms"))
         self.label_41.setText(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p><span style=\" font-weight:600;\">mm</span></p></body></html>"
             ))
-        self.emit_x_lbl.setText(_translate("MainWindow", "emit"))
         self.beta_x_lbl.setText(_translate("MainWindow", "beta"))
-        self.gamma_x_lbl.setText(_translate("MainWindow", "gamma"))
-        self.label_46.setText(
+        self.emit_x_lbl.setText(_translate("MainWindow", "emit"))
+        self.emitn_x_lbl.setText(_translate("MainWindow", "emit_n"))
+        self.label_47.setText(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p><span style=\" font-weight:600;\">m</span><span style=\" font-weight:600; vertical-align:super;\">-1</span></p></body></html>"
+                "<html><head/><body><p><span style=\" font-weight:600;\">mm·mrad</span></p></body></html>"
+            ))
+        self.label_9.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p><span style=\" font-weight:600;\">mm·mrad</span></p></body></html>"
             ))
         self.update_results_btn.setToolTip(
             _translate("MainWindow", "Update calculations."))
