@@ -1,0 +1,19 @@
+# Debian 11
+pyepics>=3.4,<=3.5
+click==7.1.2
+pandas==1.1.5
+requests==2.25.1
+toml==0.10.1
+xlrd==1.2.0
+yapf==0.30.0
+psutil==5.8.0
+tzlocal==2.1
+pyarchappl==0.10.4
+scipy==1.6.0
+lmfit==1.0.1
+matplotlib==3.3.4
+numpy==1.19.5
+pyqt5==5.15.2
+flame-code
+flame-utils
+cothread
