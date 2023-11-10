@@ -361,6 +361,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # Check if device is ready to scan.
         msg = []
         _is_ready = True
+        if self._ems_device.elem.BIAS_VOLT > self._ems_device.bias_volt_threshold:
+            msg.append(f"Bias voltage > {self._ems_device.bias_volt_threshold}.")
+            _is_ready = False
         if self.is_enabled_lbl.toolTip() != "Device is enabled":
             msg.append("Device is not Enabled.")
             _is_ready = False
@@ -541,7 +544,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         try:
             new_volt = float(self.set_biasVolt_lineEdit.text())
         except:
-            QMessageBox.warning(self, "Invalid bias voltage setpoint!", QMessageBox.Ok)
+            QMessageBox.warning(self, "Set Bias Voltage", "Invalid bias voltage setpoint!", QMessageBox.Ok)
         else:
             print(f"Set Bias Voltage to {new_volt}.")
             self._ems_device.elem.BIAS_VOLT = new_volt
@@ -681,6 +684,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._ems_device.sync_params()
         self.post_log("Set scan configurations...")
         self.__show_device_config_dynamic(self._ems_device)
+        self.clear_log()
 
     @pyqtSlot()
     def on_loadfrom_config(self):
@@ -770,25 +774,28 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self._current_device_name[:7] == "FE_SCS1":
             if not self._validate_conflicts():
                 return
-
-        is_valid = self._valid_device()
-        if is_valid is False:
+        
+        if not self._validate_device():
             return
 
         # test if ready to move
-        if not self.is_valid_to_move():
+        if not self.is_ready_to_move():
             QMessageBox.warning(self, "Starting Device",
                     "Device is busy.",
                     QMessageBox.Ok)
             return
-        if self._device_mode == "Live":
-            self._ems_device.init_run()
+        self._pos_at_begin = False # test if motor is at begin
+        self._ems_device.init_run()
         self._init_elapsed_timer()
         self._ems_device.data_changed.connect(self.on_update)
         self._ems_device.finished.connect(self.on_finished)
         self.title_changed.emit("")
+        self.post_log("Start the scan...")
         self._ems_device.move(wait=False)
+        self.post_log("Wating for data...")
         self._elapsed_timer.start(1000)
+        # reset
+        self._pos_at_begin = False
 
     def _init_elapsed_timer(self):
         # initialize elapsed timer.
@@ -842,19 +849,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         finally:
             self.post_log(msg)
             return is_ready
-
-    def _valid_device(self, bias_volt: float = -200.0):
-        # check if device settings correct or not.
-        elem = self._ems_device.elem
-        # bias volt
-        try:
-            assert elem.BIAS_VOLT <= bias_volt
-        except AssertionError:
-            QMessageBox.warning(self, "Bias Voltage Warning",
-                f"Bias Voltage should be <= {bias_volt} V.",
-                QMessageBox.Ok)
-            return False
-
+    
+    def _validate_device(self):
+        """Validate device scan range.
+        """
         # scan ranges
         x1 = self._ems_device.get_pos_begin()
         x2 = self._ems_device.get_pos_end()
@@ -866,7 +864,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 "Input scan range for position indicates Non-Integer total steps.",
                 QMessageBox.Ok)
             return False
-
+        #
         y1 = self._ems_device.get_volt_begin()
         y2 = self._ems_device.get_volt_end()
         dy = self._ems_device.get_volt_step()
@@ -883,11 +881,16 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
         return True
 
-    def is_valid_to_move(self):
+    def is_ready_to_move(self):
         # if ok to move or not.
         return self._ems_device.check_status() == "IDLE"
 
     def on_update(self, data):
+        if not self._pos_at_begin:
+            if np.abs(self._ems_device.get_live_pos() - self._ems_device.get_pos_begin()) > 0.05:
+                return
+            self._pos_at_begin = True
+        self.post_log("Receiving data...")
         data_pvname = self._ems_device.get_data_pvname()
         # data = mask_array(data)
         try:
@@ -903,6 +906,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_finished(self):
         _title = self.on_title_with_ts(self._ems_device.get_data_pv().timestamp)
         self.on_update(self._ems_device.get_data())
+        self.post_log("Scan is done.")
         # initial data
         self.on_initial_data()
         self.on_plot_raw_data()
@@ -917,6 +921,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._elapsed_timer.stop()
         self._ems_device.data_changed.disconnect()
         self._ems_device.finished.disconnect()
+        self.clear_log()
 
     def closeEvent(self, e):
         r = QMessageBox.information(self, "Exit Application",
@@ -1254,7 +1259,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """
         auto_push = self._auto_push_results
         self.actionAuto_Push_Results_to_PVs.setChecked(False)
-        if self._valid_device(100) is False:
+        if self._validate_device() is False:
             return
         self.on_add_current_config(show=False)
         arr = self._ems_device.get_data()
@@ -1291,15 +1296,16 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             raise DataSizeNotMatchError
 
     def _auto_process(self):
+        self.post_log("Processing data...")
         self.auto_update_image_chkbox.setChecked(True)
         self.plot_region_btn.clicked.emit()
         self._update_bkgd_noise()
         self.on_update_results()
-        printlog("factor_dsbox: ", self.factor_dsbox.value())
         self.factor_dsbox.valueChanged.emit(self.factor_dsbox.value())
         self.apply_noise_correction_btn.clicked.emit()
         self.on_update_results()
         self.show_results_btn.clicked.emit()
+        self.clear_log()
 
     @pyqtSlot(bool)
     def on_enable_auto_analysis(self, f):
@@ -1663,6 +1669,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def onUpdateBiasVoltRead(self, x: float):
         # bias voltage readback
         self.live_biasVolt_lineEdit.setText(f'{x:.1f}')
+        self.__check_device_ready_scan()
         # pass
         # self._ems_device.bias_volt_threshold = x
        #  self._ems_device.set_bias_voltage(0.1)
@@ -1685,9 +1692,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.set_pos_lineEdit.setText('{0:.2f}'.format(x))
     
     def post_log(self, msg: str):
-        """Post *msg* to log_lbl.
-        """
+        self.log_lbl.setVisible(True)
         self.log_lbl.setText(msg)
+
+    def clear_log(self):
+        self.log_lbl.setVisible(False)
+        self.log_lbl.setText("")
 
 
 class DataSizeNotMatchError(Exception):

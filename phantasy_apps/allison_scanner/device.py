@@ -10,6 +10,7 @@ import os
 from PyQt5.QtCore import QObject
 from PyQt5.QtCore import pyqtSignal
 from numpy import ndarray
+from numpy.testing import assert_almost_equal
 
 from phantasy import Configuration
 from phantasy import pass_arg
@@ -129,6 +130,11 @@ class Device(QObject):
         self.volt_end = float(self.dconf.get(kxoy, 'volt_end'))
         self.volt_step = float(self.dconf.get(kxoy, 'volt_step'))
         self.volt_settling_time = float(self.dconf.get(kxoy, 'volt_settling_time'))
+
+    def get_live_pos(self):
+        """Get live readback of position.
+        """
+        return getattr(self.elem, f"POS{self._id}")
 
     def get_data(self):
         """Get live value as an array from DATA# field.
@@ -426,9 +432,6 @@ class Device(QObject):
             v = getattr(self, 'get_{}'.format(s))()
             setattr(self, s, v)
             _LOGGER.info("Sync '{}' with '{}'.".format(s, v))
-        # bias volt
-        self.bias_volt_threshold = v = self.elem.BIAS_VOLT
-        _LOGGER.info("Sync BIAS_VOLT with {}".format(v))
 
     def set_params(self):
         self.set_pos_begin()
