@@ -387,6 +387,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         - Checked: Online mode.
         - Unchecked: Offline mode.
         """
+        self._online_mode = is_checked
+        #
         self.ctrl_gbox.setEnabled(is_checked)
         # show/hide head info filepath
         self.head_info_act.setVisible(not is_checked)
@@ -565,8 +567,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             printlog(f"Monitoring... {self._ems_device.name}")
         self._ems_device.monitor()
 
-        # sync config
-        self.sync_config()
+        if self._online_mode:
+            # sync config
+            self.sync_config()
         # update xylabels (Data Figure)
         self._update_xylabels()
         # update result keys (Twiss Parameters)
@@ -588,9 +591,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # switch EMS device
         self._current_device_name = s
         self._current_device_elem = self._all_devices_dict[s]
-        # switch ion source, set the beam info widget
-        isrc_name = ION_SOURCE_NAME_MAP.get(s[:7], 'ISRC1')
-        self.beamSpeciesDisplayWidget.set_ion_source(isrc_name)
+        if self._online_mode:
+            # switch ion source, set the beam info widget
+            isrc_name = ION_SOURCE_NAME_MAP.get(s[:7], 'ISRC1')
+            self.beamSpeciesDisplayWidget.set_ion_source(isrc_name)
         # update the EMS device
         self.on_update_device()
         self.statusInfoChanged.emit("Selected device: {}".format(s))
@@ -999,6 +1003,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if filepath is None:
             return
 
+        # activate offline mode for working file only,
+        # activate online mode to work with device online.
+        self.actiononline_mode.setChecked(False)
+
         self.on_add_current_config(show=False)
         try:
             # UI config
@@ -1024,14 +1032,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self.factor_dsbox.setValue(float(ellipse_sf))
             self.noise_threshold_sbox.setValue(float(noise_threshold))
 
-            # set up device name
-            self.ems_names_cbb.currentTextChanged.disconnect()
+            # set up device name and orientation
             self.ems_names_cbb.setCurrentText(EMS_NAME_MAP[isrc_id])
-            self.ems_names_cbb.currentTextChanged.connect(self.on_device_changed)
-            # set up scan ranges
-            self.ems_orientation_cbb.currentTextChanged.disconnect()
             self.ems_orientation_cbb.setCurrentText(xoy.upper())
-            self.ems_orientation_cbb.currentTextChanged.connect(self.on_update_orientation)
+            # post the read scan ranges read
             pb, pe, ps = pos_scan_conf['begin'], pos_scan_conf['end'], pos_scan_conf['step']
             vb, ve, vs = volt_scan_conf['begin'], volt_scan_conf['end'], volt_scan_conf['step']
             self.pos_begin_dsbox.setValue(pb)
@@ -1054,9 +1058,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             if self._auto_analysis:
                 self._auto_process()
 
-            # activate offline mode for working file only,
-            # activate online mode to work with device online.
-            self.actiononline_mode.setChecked(False)
             # post the data file path
             self.head_info_btn.setText(os.path.basename(filepath))
             self.head_info_btn.setProperty("fullpath", filepath)
