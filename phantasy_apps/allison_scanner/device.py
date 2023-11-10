@@ -6,6 +6,7 @@
 
 import logging
 import os
+import numpy as np
 
 from PyQt5.QtCore import QObject
 from PyQt5.QtCore import pyqtSignal
@@ -714,3 +715,13 @@ class Device(QObject):
     def onUpdateBiasVoltSet(self, fld, **kws):
         value = kws.get('value')
         self.bias_volt_set_changed.emit(value)
+
+    def is_pos_at_begin(self):
+        """Test if motor is at the begin position.
+        """
+        print(f"Reached begin test: {self.name} [{self.xoy}]")
+        live_pos = self.get_live_pos() 
+        begin_pos = self.get_pos_begin()
+        if np.abs(live_pos - begin_pos) < 0.05:
+            return True
+        return False

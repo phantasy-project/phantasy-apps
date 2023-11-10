@@ -785,7 +785,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                     "Device is busy.",
                     QMessageBox.Ok)
             return
-        self._pos_at_begin = False # test if motor is at begin
+        self._pos_reached_begin = False # test if motor is at begin
         self._ems_device.init_run()
         self._init_elapsed_timer()
         self._ems_device.data_changed.connect(self.on_update)
@@ -796,7 +796,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.post_log("Wating for data...")
         self._elapsed_timer.start(1000)
         # reset
-        self._pos_at_begin = False
+        self._pos_reached_begin = False
 
     def _init_elapsed_timer(self):
         # initialize elapsed timer.
@@ -890,10 +890,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         return self._ems_device.check_status() == "IDLE"
 
     def on_update(self, data):
-        if not self._pos_at_begin:
-            if np.abs(self._ems_device.get_live_pos() - self._ems_device.get_pos_begin()) > 0.05:
+        if not self._pos_reached_begin:
+            if not self._ems_device.is_pos_at_begin():
                 return
-            self._pos_at_begin = True
+            self._pos_reached_begin = True
         self.post_log("Receiving data...")
         data_pvname = self._ems_device.get_data_pvname()
         # data = mask_array(data)
@@ -1279,6 +1279,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                     QMessageBox.Ok)
             return
         _title = self.on_title_with_ts(self._ems_device.get_data_pv().timestamp)
+        # sync data only, bypass pos at begin check.
+        self._pos_reached_begin = True
+        #
         self.on_update(arr)
         self.on_initial_data()
         self.on_plot_raw_data()
@@ -1292,6 +1295,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._last_loading = False
         #
         self.actionAuto_Push_Results_to_PVs.setChecked(auto_push)
+        # reset
+        self._pos_reached_begin = True
 
     def check_data_size(self, data):
         if data.size == 0:
