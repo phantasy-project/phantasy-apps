@@ -14,7 +14,7 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1668, 1488)
+        MainWindow.resize(1664, 1482)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/allison.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -406,7 +406,7 @@ class Ui_MainWindow(object):
         self.retract_btn.setSizePolicy(sizePolicy)
         self.retract_btn.setIconSize(QtCore.QSize(28, 28))
         self.retract_btn.setObjectName("retract_btn")
-        self.dev_ctrl_gbox.addWidget(self.retract_btn, 1, 9, 1, 1)
+        self.dev_ctrl_gbox.addWidget(self.retract_btn, 1, 7, 1, 1)
         self.set_biasVolt_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(":/icons/apply.png"), QtGui.QIcon.Normal,
@@ -414,7 +414,7 @@ class Ui_MainWindow(object):
         self.set_biasVolt_btn.setIcon(icon1)
         self.set_biasVolt_btn.setIconSize(QtCore.QSize(32, 32))
         self.set_biasVolt_btn.setObjectName("set_biasVolt_btn")
-        self.dev_ctrl_gbox.addWidget(self.set_biasVolt_btn, 0, 8, 1, 1)
+        self.dev_ctrl_gbox.addWidget(self.set_biasVolt_btn, 0, 6, 1, 1)
         self.label_4 = QtWidgets.QLabel(self.adv_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -424,7 +424,7 @@ class Ui_MainWindow(object):
             self.label_4.sizePolicy().hasHeightForWidth())
         self.label_4.setSizePolicy(sizePolicy)
         self.label_4.setObjectName("label_4")
-        self.dev_ctrl_gbox.addWidget(self.label_4, 1, 6, 1, 1)
+        self.dev_ctrl_gbox.addWidget(self.label_4, 1, 4, 1, 1)
         self.is_itlk_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -437,10 +437,15 @@ class Ui_MainWindow(object):
         self.is_itlk_lbl.setPixmap(
             QtGui.QPixmap(":/icons/status-pixholder.png"))
         self.is_itlk_lbl.setObjectName("is_itlk_lbl")
-        self.dev_ctrl_gbox.addWidget(self.is_itlk_lbl, 2, 6, 1, 1)
-        self.toolButton_2 = QtWidgets.QToolButton(self.adv_ctrl_widget)
-        self.toolButton_2.setObjectName("toolButton_2")
-        self.dev_ctrl_gbox.addWidget(self.toolButton_2, 2, 3, 1, 1)
+        self.dev_ctrl_gbox.addWidget(self.is_itlk_lbl, 2, 4, 1, 1)
+        self.enable_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
+        self.enable_btn.setObjectName("enable_btn")
+        self.dev_ctrl_gbox.addWidget(self.enable_btn, 2, 2, 1, 1)
+        self.is_in_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
+        self.is_in_lbl.setText("")
+        self.is_in_lbl.setPixmap(QtGui.QPixmap(":/icons/status-pixholder.png"))
+        self.is_in_lbl.setObjectName("is_in_lbl")
+        self.dev_ctrl_gbox.addWidget(self.is_in_lbl, 1, 1, 1, 1)
         self.label_25 = QtWidgets.QLabel(self.adv_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -454,15 +459,10 @@ class Ui_MainWindow(object):
                                    | QtCore.Qt.AlignVCenter)
         self.label_25.setObjectName("label_25")
         self.dev_ctrl_gbox.addWidget(self.label_25, 1, 0, 1, 1)
-        self.is_in_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
-        self.is_in_lbl.setText("")
-        self.is_in_lbl.setPixmap(QtGui.QPixmap(":/icons/status-pixholder.png"))
-        self.is_in_lbl.setObjectName("is_in_lbl")
-        self.dev_ctrl_gbox.addWidget(self.is_in_lbl, 1, 1, 1, 1)
         self.live_biasVolt_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
         self.live_biasVolt_lineEdit.setReadOnly(True)
         self.live_biasVolt_lineEdit.setObjectName("live_biasVolt_lineEdit")
-        self.dev_ctrl_gbox.addWidget(self.live_biasVolt_lineEdit, 0, 5, 1, 1)
+        self.dev_ctrl_gbox.addWidget(self.live_biasVolt_lineEdit, 0, 3, 1, 1)
         self.label_6 = QtWidgets.QLabel(self.adv_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -472,10 +472,10 @@ class Ui_MainWindow(object):
             self.label_6.sizePolicy().hasHeightForWidth())
         self.label_6.setSizePolicy(sizePolicy)
         self.label_6.setObjectName("label_6")
-        self.dev_ctrl_gbox.addWidget(self.label_6, 1, 3, 1, 1)
+        self.dev_ctrl_gbox.addWidget(self.label_6, 1, 2, 1, 1)
         self.reset_itlk_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
         self.reset_itlk_btn.setObjectName("reset_itlk_btn")
-        self.dev_ctrl_gbox.addWidget(self.reset_itlk_btn, 2, 7, 1, 1)
+        self.dev_ctrl_gbox.addWidget(self.reset_itlk_btn, 2, 5, 1, 1)
         self.label_7 = QtWidgets.QLabel(self.adv_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -498,7 +498,7 @@ class Ui_MainWindow(object):
             self.label_26.sizePolicy().hasHeightForWidth())
         self.label_26.setSizePolicy(sizePolicy)
         self.label_26.setObjectName("label_26")
-        self.dev_ctrl_gbox.addWidget(self.label_26, 0, 6, 1, 1)
+        self.dev_ctrl_gbox.addWidget(self.label_26, 0, 4, 1, 1)
         self.set_pos_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -508,13 +508,26 @@ class Ui_MainWindow(object):
             self.set_pos_lineEdit.sizePolicy().hasHeightForWidth())
         self.set_pos_lineEdit.setSizePolicy(sizePolicy)
         self.set_pos_lineEdit.setObjectName("set_pos_lineEdit")
-        self.dev_ctrl_gbox.addWidget(self.set_pos_lineEdit, 1, 7, 1, 1)
+        self.dev_ctrl_gbox.addWidget(self.set_pos_lineEdit, 1, 5, 1, 1)
+        self.is_enabled_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.is_enabled_lbl.sizePolicy().hasHeightForWidth())
+        self.is_enabled_lbl.setSizePolicy(sizePolicy)
+        self.is_enabled_lbl.setText("")
+        self.is_enabled_lbl.setPixmap(
+            QtGui.QPixmap(":/icons/status-pixholder.png"))
+        self.is_enabled_lbl.setObjectName("is_enabled_lbl")
+        self.dev_ctrl_gbox.addWidget(self.is_enabled_lbl, 2, 1, 1, 1)
         self.set_pos_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
         self.set_pos_btn.setIcon(icon1)
         self.set_pos_btn.setIconSize(QtCore.QSize(32, 32))
         self.set_pos_btn.setAutoRaise(False)
         self.set_pos_btn.setObjectName("set_pos_btn")
-        self.dev_ctrl_gbox.addWidget(self.set_pos_btn, 1, 8, 1, 1)
+        self.dev_ctrl_gbox.addWidget(self.set_pos_btn, 1, 6, 1, 1)
         self.live_pos_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -525,7 +538,7 @@ class Ui_MainWindow(object):
         self.live_pos_lineEdit.setSizePolicy(sizePolicy)
         self.live_pos_lineEdit.setReadOnly(True)
         self.live_pos_lineEdit.setObjectName("live_pos_lineEdit")
-        self.dev_ctrl_gbox.addWidget(self.live_pos_lineEdit, 1, 5, 1, 1)
+        self.dev_ctrl_gbox.addWidget(self.live_pos_lineEdit, 1, 3, 1, 1)
         self.is_outlimit_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -538,7 +551,7 @@ class Ui_MainWindow(object):
         self.is_outlimit_lbl.setPixmap(
             QtGui.QPixmap(":/icons/status-pixholder.png"))
         self.is_outlimit_lbl.setObjectName("is_outlimit_lbl")
-        self.dev_ctrl_gbox.addWidget(self.is_outlimit_lbl, 1, 10, 1, 1)
+        self.dev_ctrl_gbox.addWidget(self.is_outlimit_lbl, 1, 8, 1, 1)
         self.is_bias_on_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -567,10 +580,10 @@ class Ui_MainWindow(object):
         self.dev_ctrl_gbox.addWidget(self.label_44, 2, 0, 1, 1)
         self.label_8 = QtWidgets.QLabel(self.adv_ctrl_widget)
         self.label_8.setObjectName("label_8")
-        self.dev_ctrl_gbox.addWidget(self.label_8, 0, 3, 1, 1)
+        self.dev_ctrl_gbox.addWidget(self.label_8, 0, 2, 1, 1)
         self.set_biasVolt_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
         self.set_biasVolt_lineEdit.setObjectName("set_biasVolt_lineEdit")
-        self.dev_ctrl_gbox.addWidget(self.set_biasVolt_lineEdit, 0, 7, 1, 1)
+        self.dev_ctrl_gbox.addWidget(self.set_biasVolt_lineEdit, 0, 5, 1, 1)
         self.label_51 = QtWidgets.QLabel(self.adv_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -583,20 +596,7 @@ class Ui_MainWindow(object):
                                    | QtCore.Qt.AlignTrailing
                                    | QtCore.Qt.AlignVCenter)
         self.label_51.setObjectName("label_51")
-        self.dev_ctrl_gbox.addWidget(self.label_51, 2, 5, 1, 1)
-        self.is_enabled_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.is_enabled_lbl.sizePolicy().hasHeightForWidth())
-        self.is_enabled_lbl.setSizePolicy(sizePolicy)
-        self.is_enabled_lbl.setText("")
-        self.is_enabled_lbl.setPixmap(
-            QtGui.QPixmap(":/icons/status-pixholder.png"))
-        self.is_enabled_lbl.setObjectName("is_enabled_lbl")
-        self.dev_ctrl_gbox.addWidget(self.is_enabled_lbl, 2, 1, 1, 1)
+        self.dev_ctrl_gbox.addWidget(self.label_51, 2, 3, 1, 1)
         self.dev_sts_vbox.addLayout(self.dev_ctrl_gbox)
         self.gridLayout_4.addWidget(self.adv_ctrl_widget, 0, 0, 1, 2)
         self.time_cost_vbox = QtWidgets.QVBoxLayout()
@@ -731,7 +731,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setSpacing(1)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.scan_status_info_full_lbl = QtWidgets.QLabel(self.dev_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(1)
@@ -751,6 +751,13 @@ class Ui_MainWindow(object):
             "scan_status_info_full_lbl")
         self.verticalLayout_2.addWidget(self.scan_status_info_full_lbl)
         self.log_lbl = QtWidgets.QLabel(self.dev_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.log_lbl.sizePolicy().hasHeightForWidth())
+        self.log_lbl.setSizePolicy(sizePolicy)
         self.log_lbl.setStyleSheet("QLabel {\n"
                                    "    border-top: 2px solid #2E3436;\n"
                                    "    border-left: 10px solid #2E3436;\n"
@@ -960,7 +967,7 @@ class Ui_MainWindow(object):
         self.adv_ctrl_hline.setFrameShape(QtWidgets.QFrame.HLine)
         self.adv_ctrl_hline.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.adv_ctrl_hline.setObjectName("adv_ctrl_hline")
-        self.gridLayout.addWidget(self.adv_ctrl_hline, 2, 0, 1, 1)
+        self.gridLayout.addWidget(self.adv_ctrl_hline, 1, 0, 1, 1)
         self.gridLayout_3.addWidget(self.ctrl_gbox, 0, 0, 1, 1)
         self.data_hsplitter = QtWidgets.QSplitter(self.main_vsplitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
@@ -1098,7 +1105,7 @@ class Ui_MainWindow(object):
             "}")
         self.data_analysis_tbox.setObjectName("data_analysis_tbox")
         self.page_beam_params = QtWidgets.QWidget()
-        self.page_beam_params.setGeometry(QtCore.QRect(0, 0, 496, 432))
+        self.page_beam_params.setGeometry(QtCore.QRect(0, 0, 495, 432))
         self.page_beam_params.setObjectName("page_beam_params")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.page_beam_params)
         self.gridLayout_5.setContentsMargins(4, 4, 4, 4)
@@ -1294,7 +1301,7 @@ class Ui_MainWindow(object):
         self.gridLayout_5.addItem(spacerItem4, 3, 0, 1, 1)
         self.data_analysis_tbox.addItem(self.page_beam_params, "")
         self.page_bkgd_noise = QtWidgets.QWidget()
-        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 520, 354))
+        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 519, 348))
         self.page_bkgd_noise.setObjectName("page_bkgd_noise")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.page_bkgd_noise)
         self.gridLayout_2.setContentsMargins(4, 4, 4, 4)
@@ -1376,7 +1383,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.auto_update_image_chkbox, 1, 2, 1, 1)
         self.data_analysis_tbox.addItem(self.page_bkgd_noise, "")
         self.page_noise_correction = QtWidgets.QWidget()
-        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 520, 354))
+        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 519, 348))
         self.page_noise_correction.setObjectName("page_noise_correction")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.page_noise_correction)
         self.gridLayout_7.setContentsMargins(4, 4, 4, 4)
@@ -1687,7 +1694,7 @@ class Ui_MainWindow(object):
         self.gridLayout_6.addWidget(self.main_vsplitter, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1668, 37))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1664, 37))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
@@ -1988,11 +1995,11 @@ class Ui_MainWindow(object):
         self.is_itlk_lbl.setToolTip(
             _translate("MainWindow",
                        "Green is Interlock OK, Red is Interlock Not OK"))
-        self.toolButton_2.setToolTip(
+        self.enable_btn.setToolTip(
             _translate("MainWindow", "Click to try to enable the device."))
-        self.toolButton_2.setText(_translate("MainWindow", "Enable"))
-        self.label_25.setText(_translate("MainWindow", "Motor Pos [mm]"))
+        self.enable_btn.setText(_translate("MainWindow", "Enable"))
         self.is_in_lbl.setToolTip(_translate("MainWindow", "Yellow is In"))
+        self.label_25.setText(_translate("MainWindow", "Motor Pos [mm]"))
         self.label_6.setText(_translate("MainWindow", "Live Read"))
         self.reset_itlk_btn.setToolTip(
             _translate("MainWindow", "Click try to reset interlock."))
@@ -2002,6 +2009,8 @@ class Ui_MainWindow(object):
         self.label_26.setText(_translate("MainWindow", "Live Set"))
         self.set_pos_lineEdit.setToolTip(
             _translate("MainWindow", "New motor position, click Go to move."))
+        self.is_enabled_lbl.setToolTip(
+            _translate("MainWindow", "Green is Enabled, Red is Not-Enabled"))
         self.set_pos_btn.setToolTip(
             _translate("MainWindow", "Move the position to the new set."))
         self.set_pos_btn.setText(_translate("MainWindow", "Go"))
@@ -2014,8 +2023,6 @@ class Ui_MainWindow(object):
         self.label_44.setText(_translate("MainWindow", "Device Status"))
         self.label_8.setText(_translate("MainWindow", "Live Read"))
         self.label_51.setText(_translate("MainWindow", "Interlock "))
-        self.is_enabled_lbl.setToolTip(
-            _translate("MainWindow", "Green is Enabled, Red is Not-Enabled"))
         self.label_43.setText(_translate("MainWindow", "Estimated Time Cost"))
         self.time_cost_lbl.setToolTip(
             _translate("MainWindow", "Estimated time required in HH:MM:SS."))
@@ -2036,8 +2043,9 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "Click me when I\'m RED."))
         self.fetch_config_btn.setText(_translate("MainWindow", "..."))
         self.scan_status_info_full_lbl.setText(
-            _translate("MainWindow", "Scan Ready? If not, post the reasons."))
-        self.log_lbl.setText(_translate("MainWindow", "TextLabel"))
+            _translate("MainWindow", "Device Interlock is not OK"))
+        self.log_lbl.setText(
+            _translate("MainWindow", "Waiting for the data..."))
         self.label_53.setText(_translate("MainWindow", "Selected EMS Device"))
         self.ems_names_cbb.setToolTip(
             _translate("MainWindow", "Select Allison scanner device."))
