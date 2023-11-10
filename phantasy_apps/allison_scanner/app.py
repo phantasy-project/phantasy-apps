@@ -322,10 +322,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     def _wire_device_signals(self, ems: Device):
         # connect signals of Device for controls and viz
-        printlog("Wiring... STATUS_IN")
         # status in
         ems.status_in_changed.connect(self.onUpdateStatusIn)
-        printlog("Wiring... STATUS_OUT")
         # status out
         ems.status_out_changed.connect(self.onUpdateStatusOut)
         # interlock ok
@@ -775,7 +773,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self._current_device_name[:7] == "FE_SCS1":
             if not self._validate_conflicts():
                 return
-        
+
         if not self._validate_device():
             return
 
@@ -853,7 +851,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         finally:
             self.post_log(msg)
             return is_ready
-    
+
     def _validate_device(self):
         """Validate device scan range.
         """
@@ -1079,7 +1077,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self._data is None:
             return
         try:
-            printlog("noise n_elem: ", self._bkgd_noise_nelem, "n sigma: ", self._bkgd_noise_nsigma)
             inten1, bkgd_noise = self._data.filter_initial_background_noise(
                                n_elements=self._bkgd_noise_nelem,
                                threshold=self._bkgd_noise_nsigma)
@@ -1705,7 +1702,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def onUpdatePosSet(self, x: float):
         # motor position setpoint
         self.set_pos_lineEdit.setText('{0:.2f}'.format(x))
-    
+
     def post_log(self, msg: str):
         self.log_lbl.setVisible(True)
         self.log_lbl.setText(msg)
