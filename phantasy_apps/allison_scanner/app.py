@@ -237,6 +237,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.set_pos_btn.clicked.connect(self.on_move_pos)
         self.retract_btn.clicked.connect(self.on_retract)
         #
+        self.enable_btn.clicked.connect(self.on_enable)
         self.reset_itlk_btn.clicked.connect(self.on_reset_interlock)
 
         # check adv ctrl by default
@@ -1422,6 +1423,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_reset_interlock(self):
         self._ems_device.reset_interlock()
+
+    @pyqtSlot()
+    def on_enable(self):
+        """Enable the device.
+        """
+        self._ems_device.enable_device()
 
     @pyqtSlot(bool)
     def on_enable_advctrl(self, is_enabled: bool):

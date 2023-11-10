@@ -441,6 +441,9 @@ class Device(QObject):
         self.set_volt_end()
         self.set_volt_step()
 
+    def enable_device(self):
+        setattr(self.elem, f"ENABLE_SCAN{self._id}", 1)
+
     def reset_interlock(self):
         printlog(f"Reset interlock for {self.name}")
         setattr(self.elem, 'RESET_ITLK', 1)
@@ -490,14 +493,14 @@ class Device(QObject):
         return pv.get(as_string=True)
 
     def run_all_in_one(self):
-        self.enable()
+        # self.enable()
         self.set_params()
         self.move()
         print("Run-All-in-One is done.")
 
     def init_run(self):
         self.init_bias_voltage()
-        self.enable()
+        # self.enable()
         self.set_params()
 
     def init_data_cb(self):
