@@ -677,7 +677,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """Pull current device configuration from controls network, update
         on the UI.
         """
+        self.post_log("Read live scan configurations...")
         self._ems_device.sync_params()
+        self.post_log("Set scan configurations...")
         self.__show_device_config_dynamic(self._ems_device)
 
     @pyqtSlot()
@@ -825,19 +827,21 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     def _validate_conflicts(self):
         # check if any conflicts with other devices.
-        if self._device_mode != 'Live':
-            return True
         try:
+            self.post_log("Checking any device conflicts...")
             assert caget('FE_SCS1:FC_D0739:LMPOS_LTCH_DRV') == 0
         except AssertionError:
-            r = QMessageBox.warning(self, "Device Confilictions",
-                    "Detect confliction with Faraday Cup (D0738), before pulling it out, try to reset interlock?",
+            r = QMessageBox.warning(self, "Device Confilicts",
+                    "Faraday Cup (D0738) should be pulled out.",
                     QMessageBox.Yes | QMessageBox.Cancel)
-            if r == QMessageBox.Yes:
-                caput('FE_SCS1:FC_D0739:RST_CMD', 1)
-            return False
+            msg = "<span style='color:#ff0000'>Device conflicts... Not OK</span>"
+            is_ready = False
         else:
-            return True
+            msg = "<span style='color:#00aa00'>Device conflicts... OK</span>"
+            is_ready = True
+        finally:
+            self.post_log(msg)
+            return is_ready
 
     def _valid_device(self, bias_volt: float = -200.0):
         # check if device settings correct or not.
@@ -1679,6 +1683,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def onUpdatePosSet(self, x: float):
         # motor position setpoint
         self.set_pos_lineEdit.setText('{0:.2f}'.format(x))
+    
+    def post_log(self, msg: str):
+        """Post *msg* to log_lbl.
+        """
+        self.log_lbl.setText(msg)
 
 
 class DataSizeNotMatchError(Exception):
