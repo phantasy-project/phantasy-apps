@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtGui import QDesktopServices
+from PyQt5.QtWidgets import QWidget
 
 from .ui.ui_headinfo import Ui_Form
-
 
 # map from <sys>_<subsys> to ion source name
 ION_SOURCE_PHY_NAME_MAP = {'FE_SCS1': 'Artemis', 'FE_SCS2': 'HP-ECR'}
@@ -25,6 +26,9 @@ class HeadinfoForm(QWidget, Ui_Form):
         self._post_init()
 
     def _post_init(self):
+        # current open data filepath
+        self._data_filepath = None
+        #
         bw = 1
         self.device_name_lbl.setStyleSheet(f"""
             QLabel {{
@@ -51,6 +55,7 @@ class HeadinfoForm(QWidget, Ui_Form):
                 font-family: monospace;
                 font-size: {self._fs + 1}pt;
             }}""")
+        self.readfile_btn.clicked.connect(self.onReadDatafile)
 
     def _show(self):
         self.adjustSize()
@@ -75,3 +80,20 @@ class HeadinfoForm(QWidget, Ui_Form):
         """
         # show read file button if online mode is False
         self.readfile_btn.setVisible(not is_checked)
+
+    @pyqtSlot('QString')
+    def onDataFilepathChanged(self, filepath: str):
+        """Current opened data filepath is changed (offline mode).
+        """
+        self._data_filepath = filepath
+        self.readfile_btn.setToolTip(
+            "Click to open and read the data from \n'{}'.".format(filepath))
+
+    @pyqtSlot()
+    def onReadDatafile(self):
+        """Read the opened data file (offline mode only).
+        """
+        if self._data_filepath is None:
+            return
+        QDesktopServices.openUrl(QUrl(self._data_filepath))
+

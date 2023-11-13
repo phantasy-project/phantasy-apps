@@ -124,6 +124,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     sigDeviceChanged = pyqtSignal('QString')
     # online mode change
     sigOnlineModeChanged = pyqtSignal(bool)
+    # data filepath for offline mode
+    sigDataFilepathChanged = pyqtSignal('QString')
 
     def __init__(self, version, mode="Live"):
         super(AllisonScannerWindow, self).__init__()
@@ -177,7 +179,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # +-------------------------------+
         # | EMS  Device Name | On/Offline |
         # +-----------+------+------------+
-        # | ISRC Name |  X/Y | [filename] |
+        # | ISRC Name |  X/Y | [readfile] |
         # +-----------+------+------------+
         """
         self._headinfo_widget = HeadinfoForm(self, self._default_font_size)
@@ -185,6 +187,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.sigDeviceChanged.connect(self._headinfo_widget.onDeviceChanged)
         self.sigOrientationChanged.connect(self._headinfo_widget.onOrientationChanged)
         self.sigOnlineModeChanged.connect(self._headinfo_widget.onOnlineModeChanged)
+        self.sigDataFilepathChanged.connect(self._headinfo_widget.onDataFilepathChanged)
 
     def _post_init(self):
         # schematic layout form
@@ -203,12 +206,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # headline info widget.
         self._set_headline_info()
 
-        # label for info: offline (filepath)
-        self.head_info_btn = QPushButton(self)
-        self.head_info_btn.setToolTip("Click to open the loaded file.")
-        self.head_info_btn.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        self.head_info_btn.clicked.connect(self.on_clicked_head_info_btn)
-        self.head_info_act = self.toolBar.insertWidget(self.actiononline_mode, self.head_info_btn)
         # online/offline mode switching
         self.actiononline_mode.toggled.connect(self.on_online_mode_changed)
         self.actiononline_mode.toggled.emit(self.actiononline_mode.isChecked())
@@ -420,12 +417,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._online_mode = is_checked
         #
         self.ctrl_gbox.setEnabled(is_checked)
-        # show/hide head info filepath
-        self.head_info_act.setVisible(not is_checked)
         if is_checked: # online
             tt = "Online mode is enabled, for working with devices."
             text = "Online"
-            # set the ems device ready for work.
+            # set the EMS device ready for work.
             self.ems_names_cbb.currentTextChanged.emit(self.ems_names_cbb.currentText())
             self.auto_fill_beam_params_btn.clicked.emit()
         else: # offline
@@ -1030,8 +1025,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self.divergence_lineEdit.setText(out)
 
     @pyqtSlot()
-    def on_open_data(self,):
-        # open data.
+    def on_open_data(self):
+        # Open data from a JSON data file.
         filepath, ext = get_open_filename(self,
                                           cdir=DEFAULT_DATA_SAVE_DIR,
                                           type_filter="JSON Files (*.json)")
@@ -1041,7 +1036,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # activate offline mode for working file only,
         # activate online mode to work with device online.
         self.actiononline_mode.setChecked(False)
-
+        #
         self.on_add_current_config(show=False)
         try:
             # UI config
@@ -1094,15 +1089,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 self._auto_process()
 
             # post the data file path
-            self.head_info_btn.setText(os.path.basename(filepath))
-            self.head_info_btn.setProperty("fullpath", filepath)
-
-    @pyqtSlot()
-    def on_clicked_head_info_btn(self):
-        """Open the data file.
-        """
-        fullpath = self.head_info_btn.property("fullpath")
-        QDesktopServices.openUrl(QUrl(fullpath))
+            self.sigDataFilepathChanged.emit(filepath)
 
     def _update_bkgd_noise(self):
         if self._data is None:
