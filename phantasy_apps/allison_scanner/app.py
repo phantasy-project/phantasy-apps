@@ -154,6 +154,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
         # UI
         self.setupUi(self)
+        self.postInitUi()
 
         self.image_data_changed.connect(self.matplotlibimageWidget.update_image)
         self.xdata_changed.connect(self.matplotlibimageWidget.setXData)
