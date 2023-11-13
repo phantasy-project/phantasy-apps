@@ -42,6 +42,7 @@ class HeadinfoForm(QWidget, Ui_Form):
             }}""")
         self.isrc_name_lbl.setStyleSheet(f"""
             QLabel {{
+                color: #17A2B8;
                 font-family: monospace;
                 font-size: {self._fs + 1}pt;
             }}""")
@@ -67,7 +68,13 @@ class HeadinfoForm(QWidget, Ui_Form):
     def onOrientationChanged(self, xoy: str):
         """Orientation (X or Y) of EMS is changed.
         """
-        self.xoy_name_lbl.setText(_XOY_MAP[xoy])
+        if xoy == "X":
+            color = "#007BFF" # blue
+        else:
+            color = "#DC3545" # red
+        xoy_name = _XOY_MAP[xoy]
+        self.xoy_name_lbl.setText(
+            f"<span style='color:{color};'>{xoy_name}</span>")
 
     @pyqtSlot(bool)
     def onOnlineModeChanged(self, is_checked: bool):
