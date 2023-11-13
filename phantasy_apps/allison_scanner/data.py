@@ -348,7 +348,7 @@ def filter_initial_background_noise(m_intensity: np.ndarray, n_elements: int = 2
     _, cdim = m.shape
     n = n_elements
     if isinstance(m, np.ma.MaskedArray):
-        # _col_idx: the max column index which is not masked.
+        # the max column index which is not masked.
         _col_idx = np.argmax(m.mask, axis=1).min() - cdim
         _range_c = list(range(_col_idx - n, _col_idx)) + list(range(n))
     else:
@@ -358,6 +358,7 @@ def filter_initial_background_noise(m_intensity: np.ndarray, n_elements: int = 2
     mmax, mmin = np.nanmax(subm), np.nanmin(subm)
     mavg, mstd = np.nanmean(subm), np.nanstd(subm)
     idx = m >= (mmax + threshold * mstd)
+    # print("Filter Noise: ", _range_r, _range_c, subm, mmax, mmin, mavg, mstd)
     return (m - mavg) * idx, subm
 
 

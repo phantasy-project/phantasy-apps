@@ -920,7 +920,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._pos_reached_begin = True
         self.post_log("Receiving data...")
         data_pvname = self._ems_device.get_data_pvname()
-        # data = mask_array(data)
+        data = mask_array(data)
         try:
             m = data.reshape(self._ydim, self._xdim)
         except ValueError as err:
@@ -1101,7 +1101,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         except (IndexError, ValueError):
             pass
         else:
-            # inten1 = mask_array(inten1)
+            inten1 = mask_array(inten1)
             self.plot_noise(self.bkgd_noise_plot, bkgd_noise,
                                  self._bkgd_noise_nsigma)
             if self._auto_bkgd_noise_filter:
@@ -1121,7 +1121,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._intensity_clean_bkgd = self._update_bkgd_noise()
 
     def plot_noise(self, o, m, n):
-        # m = mask_array(m)
+        m = mask_array(m)
         ax = o.axes
         ax.clear()
         m = m.flatten()
