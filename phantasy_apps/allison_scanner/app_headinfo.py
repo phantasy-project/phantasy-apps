@@ -10,9 +10,11 @@ from .ui.ui_headinfo import Ui_Form
 
 # map from <sys>_<subsys> to ion source name
 ION_SOURCE_PHY_NAME_MAP = {'FE_SCS1': 'Artemis', 'FE_SCS2': 'HP-ECR'}
+ION_SOURCE_ID_NAME_MAP = {v: k for k, v in ION_SOURCE_PHY_NAME_MAP.items()}
 
 # map x or y to horizontal or vertical
 _XOY_MAP = {'X': 'Horizontal', 'Y': 'Vertical'}
+_XOY_MAP_r = {v: k for k, v in _XOY_MAP.items()}
 
 
 class HeadinfoForm(QWidget, Ui_Form):
@@ -99,3 +101,13 @@ class HeadinfoForm(QWidget, Ui_Form):
             return
         QDesktopServices.openUrl(QUrl(self._data_filepath))
 
+    def getIonSourceId(self):
+        """Return the ion source id name.
+        ISRC1, ISRC2, ...
+        """
+        return ION_SOURCE_ID_NAME_MAP[self.isrc_name_lbl.text()]
+
+    def getOrientation(self):
+        """Return X or Y as the orientation.
+        """
+        return _XOY_MAP_r[self.xoy_name_lbl.text()]

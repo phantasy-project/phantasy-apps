@@ -1346,7 +1346,15 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._last_loading = False
         self._data_save_dlg.exec_()
 
-    def _save_data_to_file(self, filepath, ftype='json', **kws):
+    def _save_results_as_image(self, filepath):
+        """Save results as a image file.
+        """
+        if not hasattr(self, '_plot_results_window'):
+            self.show_results_btn.clicked.emit()
+            delayed_exec(lambda: self._plot_results_window.grab().save(filepath), 2000)
+        self._plot_results_window.grab().save(filepath)
+
+    def _save_data_to_file(self, filepath, **kws):
         ems = self._ems_device
         xoy = ems.xoy.lower()
         pos_begin = ems.pos_begin
