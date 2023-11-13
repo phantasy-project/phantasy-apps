@@ -56,6 +56,7 @@ from .plot_final import PlotResults
 from .save import SaveDataDialog
 from .settings_view import SettingsView
 from .app_layout import LayoutForm
+from .app_headinfo import HeadinfoForm
 
 CMAP_FAVLIST = ('flag', 'jet', 'nipy_spectral', 'gist_earth',
                 'viridis', 'Greys')
@@ -88,7 +89,7 @@ EMS_NAME_MAP = {
     'ISRC2': 'FE_SCS2:EMS_D0718'
 }
 
-# map from <sys>_<subsys> to ion source name/id
+# map from <sys>_<subsys> to ion source id
 ION_SOURCE_NAME_MAP = {'FE_SCS1': 'ISRC1', 'FE_SCS2': 'ISRC2'}
 
 HV_MAP = {'ISRC1': 'FE_SCS1:BEAM:HV_BOOK',
@@ -117,6 +118,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     title_changed = pyqtSignal('QString')
     # device ready to scan signal
     sigReadyScanChanged = pyqtSignal(bool)
+    # orientation changed
+    sigOrientationChanged = pyqtSignal('QString')
+    # ems device changed
+    sigDeviceChanged = pyqtSignal('QString')
+    # online mode change
+    sigOnlineModeChanged = pyqtSignal(bool)
 
     def __init__(self, version, mode="Live"):
         super(AllisonScannerWindow, self).__init__()
@@ -163,6 +170,22 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         default_font_size = default_font.pointSize()
         return default_font, default_font_size
 
+    def _set_headline_info(self):
+        """Create widget for headline info.
+
+        # online/offline headline info
+        # +-------------------------------+
+        # | EMS  Device Name | On/Offline |
+        # +-----------+------+------------+
+        # | ISRC Name |  X/Y | [filename] |
+        # +-----------+------+------------+
+        """
+        self._headinfo_widget = HeadinfoForm(self, self._default_font_size)
+        self.toolBar.insertWidget(self.actiononline_mode, self._headinfo_widget)
+        self.sigDeviceChanged.connect(self._headinfo_widget.onDeviceChanged)
+        self.sigOrientationChanged.connect(self._headinfo_widget.onOrientationChanged)
+        self.sigOnlineModeChanged.connect(self._headinfo_widget.onOnlineModeChanged)
+
     def _post_init(self):
         # schematic layout form
         self._layout_form = None
@@ -176,6 +199,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         _spacer = QWidget()
         _spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.toolBar.insertWidget(self.actiononline_mode, _spacer)
+
+        # headline info widget.
+        self._set_headline_info()
+
         # label for info: offline (filepath)
         self.head_info_btn = QPushButton(self)
         self.head_info_btn.setToolTip("Click to open the loaded file.")
@@ -389,6 +416,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         - Checked: Online mode.
         - Unchecked: Offline mode.
         """
+        self.sigOnlineModeChanged.emit(is_checked)
         self._online_mode = is_checked
         #
         self.ctrl_gbox.setEnabled(is_checked)
@@ -558,6 +586,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.statusInfoChanged.emit(
                 "Be sure do retraction and reset interlock before switching.")
         #
+        self.sigOrientationChanged.emit(s)
+        #
         self._ems_orientation = s
         self._ems_device.xoy = s
         self._oid = oid = self._ems_device._id
@@ -589,6 +619,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # Change device by selecting the EMS name from the combobox (self.ems_names_cbb).
         #
         # reset the widget for element investigation
+        self.sigDeviceChanged.emit(s)
         self._device_widget = None
         # switch EMS device
         self._current_device_name = s
