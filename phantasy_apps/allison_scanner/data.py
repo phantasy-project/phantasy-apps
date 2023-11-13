@@ -147,8 +147,8 @@ class Data(object):
         return calculate_beam_parameters(x, xp, intensity,
                                          self.model.bg, self.xoy)
 
-    def filter_initial_background_noise(self, intensity=None,
-                                        n_elements=2, threshold=5):
+    def filter_initial_background_noise(self, intensity: np.ndarray = None,
+                                        n_elements: int = 2, threshold: int = 5):
         intensity = self.intensity.copy() if intensity is None else intensity.copy()
         return filter_initial_background_noise(
             intensity, n_elements, threshold)
@@ -322,7 +322,7 @@ class Data(object):
         return noise_correction(intensity, noise_signal_array, **kws)
 
 
-def filter_initial_background_noise(m_intensity, n_elements=2, threshold=5):
+def filter_initial_background_noise(m_intensity: np.ndarray, n_elements: int = 2, threshold: int = 5):
     """Estimate initial background noise based on sampling regions from
     the four corners by selecting *n* x *n* squares, respectively, apply
     the noise substraction from the input intensity matrix, return the
@@ -345,9 +345,16 @@ def filter_initial_background_noise(m_intensity, n_elements=2, threshold=5):
         matrix.
     """
     m = m_intensity
+    _, cdim = m.shape
     n = n_elements
-    _range = range(-n, n)
-    subm = m_intensity[np.ix_(_range, _range)]
+    if isinstance(m, np.ma.MaskedArray):
+        # _col_idx: the max column index which is not masked.
+        _col_idx = np.argmax(m.mask, axis=1).min() - cdim
+        _range_c = list(range(_col_idx - n, _col_idx)) + list(range(n))
+    else:
+        _range_c = range(-n, n)
+    _range_r = range(-n, n)
+    subm = m_intensity[np.ix_(_range_r, _range_c)]
     mmax, mmin = np.nanmax(subm), np.nanmin(subm)
     mavg, mstd = np.nanmean(subm), np.nanstd(subm)
     idx = m >= (mmax + threshold * mstd)
