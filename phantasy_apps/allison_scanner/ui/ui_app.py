@@ -404,7 +404,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.retract_btn.sizePolicy().hasHeightForWidth())
         self.retract_btn.setSizePolicy(sizePolicy)
-        self.retract_btn.setIconSize(QtCore.QSize(28, 28))
+        self.retract_btn.setIconSize(QtCore.QSize(24, 24))
         self.retract_btn.setObjectName("retract_btn")
         self.dev_ctrl_gbox.addWidget(self.retract_btn, 1, 7, 1, 1)
         self.set_biasVolt_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
@@ -412,7 +412,7 @@ class Ui_MainWindow(object):
         icon1.addPixmap(QtGui.QPixmap(":/icons/apply.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
         self.set_biasVolt_btn.setIcon(icon1)
-        self.set_biasVolt_btn.setIconSize(QtCore.QSize(32, 32))
+        self.set_biasVolt_btn.setIconSize(QtCore.QSize(24, 24))
         self.set_biasVolt_btn.setObjectName("set_biasVolt_btn")
         self.dev_ctrl_gbox.addWidget(self.set_biasVolt_btn, 0, 6, 1, 1)
         self.label_4 = QtWidgets.QLabel(self.adv_ctrl_widget)
@@ -439,6 +439,7 @@ class Ui_MainWindow(object):
         self.is_itlk_lbl.setObjectName("is_itlk_lbl")
         self.dev_ctrl_gbox.addWidget(self.is_itlk_lbl, 2, 4, 1, 1)
         self.enable_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
+        self.enable_btn.setIconSize(QtCore.QSize(24, 24))
         self.enable_btn.setObjectName("enable_btn")
         self.dev_ctrl_gbox.addWidget(self.enable_btn, 2, 2, 1, 1)
         self.is_in_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
@@ -474,6 +475,7 @@ class Ui_MainWindow(object):
         self.label_6.setObjectName("label_6")
         self.dev_ctrl_gbox.addWidget(self.label_6, 1, 2, 1, 1)
         self.reset_itlk_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
+        self.reset_itlk_btn.setIconSize(QtCore.QSize(24, 24))
         self.reset_itlk_btn.setObjectName("reset_itlk_btn")
         self.dev_ctrl_gbox.addWidget(self.reset_itlk_btn, 2, 5, 1, 1)
         self.label_7 = QtWidgets.QLabel(self.adv_ctrl_widget)
@@ -524,7 +526,7 @@ class Ui_MainWindow(object):
         self.dev_ctrl_gbox.addWidget(self.is_enabled_lbl, 2, 1, 1, 1)
         self.set_pos_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
         self.set_pos_btn.setIcon(icon1)
-        self.set_pos_btn.setIconSize(QtCore.QSize(32, 32))
+        self.set_pos_btn.setIconSize(QtCore.QSize(24, 24))
         self.set_pos_btn.setAutoRaise(False)
         self.set_pos_btn.setObjectName("set_pos_btn")
         self.dev_ctrl_gbox.addWidget(self.set_pos_btn, 1, 6, 1, 1)
@@ -738,6 +740,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.scan_status_info_full_lbl.sizePolicy().hasHeightForWidth())
         self.scan_status_info_full_lbl.setSizePolicy(sizePolicy)
+        self.scan_status_info_full_lbl.setMinimumSize(QtCore.QSize(280, 0))
         self.scan_status_info_full_lbl.setStyleSheet(
             "QLabel {\n"
             "    border-top: 2px solid gray;\n"
