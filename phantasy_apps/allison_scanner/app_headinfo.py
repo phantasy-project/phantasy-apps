@@ -29,29 +29,24 @@ class HeadinfoForm(QWidget, Ui_Form):
         # current open data filepath
         self._data_filepath = None
         #
-        bw = 1
+        self.mainFrame.setStyleSheet("""
+            QFrame#mainFrame {
+                border: 1px solid gray;
+        }""")
         self.device_name_lbl.setStyleSheet(f"""
             QLabel {{
-                border-top: {bw}px solid gray;
-                border-left: {bw + 2}px solid gray;
-                border-right: {bw}px solid gray;
-                border-bottom: {bw}px solid gray;
+                border-top: 0px solid gray;
+                border-bottom: 1px solid gray;
                 font-family: monospace;
                 font-size: {self._fs + 2}pt;
             }}""")
         self.isrc_name_lbl.setStyleSheet(f"""
             QLabel {{
-                border-top: 0px solid gray;
-                border-left: {bw + 2}px solid gray;
-                border-bottom: {bw}px solid gray;
                 font-family: monospace;
                 font-size: {self._fs + 1}pt;
             }}""")
         self.xoy_name_lbl.setStyleSheet(f"""
             QLabel {{
-                border-top: 0px solid gray;
-                border-right: {bw}px solid gray;
-                border-bottom: {bw}px solid gray;
                 font-family: monospace;
                 font-size: {self._fs + 1}pt;
             }}""")
