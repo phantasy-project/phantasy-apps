@@ -1,6 +1,8 @@
 ## Set up the development environment in CTS network
 
-The working machine is `csstudio`, from where, the PV write permission is granted.
+The working machine is `csstudio` (Debian 11), from where, the PV write permission is granted.
+
+Debian 12: work-cts-r4300-01
 
 ### Support IOC
 CTS provides all the PVs, but lacks some logic.
