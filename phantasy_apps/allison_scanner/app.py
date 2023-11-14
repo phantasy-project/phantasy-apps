@@ -1468,7 +1468,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         [w.setVisible(is_enabled) for w in (
             self.adv_ctrl_widget, self.adv_ctrl_hline,
             self.scan_status_info_full_lbl)]
-        self.scan_status_info_lbl.setVisible(not is_enabled)
+        [w.setVisible(not is_enabled) for w in (
+            self.scan_status_info_lbl, self.status_lbl)]
 
     def _beat_on(self, dt):
         self.status_lbl.setPixmap(self._active_px)
