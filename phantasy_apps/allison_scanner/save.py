@@ -31,8 +31,14 @@ class SaveDataDialog(QDialog, Ui_Dialog):
         self._post_init()
 
     def _post_init(self):
-        self.dirpath_lineEdit.setText(self.cdir)
         self.auto_fill_filepath()
+
+    @pyqtSlot()
+    def on_locate_dir(self):
+        """Reveal the root data directory in File Exeplorer.
+        """
+        pass
+
 
     def auto_fill_filepath(self):
         """Auto fill filepath with timestamp.
@@ -49,6 +55,7 @@ class SaveDataDialog(QDialog, Ui_Dialog):
         data_fn = f"{ctime}_{xoy}"
         self.filepath_lineEdit.setText(f"{data_fn}.json")
         _parent_dirpath = os.path.abspath(os.path.join(self.cdir, f"{self.subdir}"))
+        self.dirpath_lineEdit.setText(_parent_dirpath)
         self.filepath_lineEdit.setToolTip(os.path.join(_parent_dirpath, data_fn, ".json"))
         #
         if not os.path.exists(_parent_dirpath):
@@ -56,7 +63,6 @@ class SaveDataDialog(QDialog, Ui_Dialog):
 
     @pyqtSlot()
     def on_save_data(self):
-        print("SaveDataDialog: Save Data")
         note = self.note_plainTextEdit.toPlainText()
         self._save_data(note=note)
         if self.save_image_chkbox.isChecked():
@@ -67,7 +73,11 @@ class SaveDataDialog(QDialog, Ui_Dialog):
         _filepath = self.filepath_lineEdit.text()
         filepath = os.path.abspath(os.path.join(self.cdir, self.subdir, _filepath))
         png_filepath = filepath.rsplit(".", 1)[0] + ".png"
-        print(f"Save image to {png_filepath}")
+        if os.path.exists(png_filepath):
+            r = QMessageBox.warning(self, "Save Image", f"Overwriting the existing '{png_filepath}'?",
+                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            if r == QMessageBox.No:
+                return
         self.parent._save_results_as_image(png_filepath)
 
     def _save_data(self, **kws):
@@ -75,6 +85,12 @@ class SaveDataDialog(QDialog, Ui_Dialog):
         try:
             _filepath = self.filepath_lineEdit.text()
             filepath = os.path.abspath(os.path.join(self.cdir, self.subdir, _filepath))
+            if os.path.exists(filepath):
+                r = QMessageBox.warning(self, "Save Data", f"Overwriting the existing '{filepath}'?" \
+                                        + "\n" + "Clicking the 'Auto' button to update the filename.",
+                        QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+                if r == QMessageBox.No:
+                    return
             self.parent._save_data_to_file(filepath, **kws)
         except:
             QMessageBox.warning(self, "Save Data",
