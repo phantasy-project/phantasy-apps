@@ -10,11 +10,10 @@ from .ui.ui_headinfo import Ui_Form
 
 # map from <sys>_<subsys> to ion source name
 ION_SOURCE_PHY_NAME_MAP = {'FE_SCS1': 'Artemis', 'FE_SCS2': 'HP-ECR'}
-ION_SOURCE_ID_NAME_MAP = {v: k for k, v in ION_SOURCE_PHY_NAME_MAP.items()}
+ION_SOURCE_ID_NAME_MAP = {'FE_SCS1': 'ISRC1', 'FE_SCS2': 'ISRC2'}
 
 # map x or y to horizontal or vertical
 _XOY_MAP = {'X': 'Horizontal', 'Y': 'Vertical'}
-_XOY_MAP_r = {v: k for k, v in _XOY_MAP.items()}
 
 
 class HeadinfoForm(QWidget, Ui_Form):
@@ -63,20 +62,24 @@ class HeadinfoForm(QWidget, Ui_Form):
     def onDeviceChanged(self, name: str):
         """EMS device name is changed.
         """
+        self._device_name = name
         self.device_name_lbl.setText(name)
-        self.isrc_name_lbl.setText(ION_SOURCE_PHY_NAME_MAP[name[0:7]])
+        self._isrc_name = ION_SOURCE_PHY_NAME_MAP[name[0:7]]
+        self._isrc_id = ION_SOURCE_ID_NAME_MAP[name[0:7]]
+        self.isrc_name_lbl.setText(self._isrc_name)
 
     @pyqtSlot('QString')
     def onOrientationChanged(self, xoy: str):
         """Orientation (X or Y) of EMS is changed.
         """
+        self._xoy = xoy
+        self._xoy_name = _XOY_MAP[xoy]
         if xoy == "X":
             color = "#007BFF" # blue
         else:
             color = "#DC3545" # red
-        xoy_name = _XOY_MAP[xoy]
         self.xoy_name_lbl.setText(
-            f"<span style='color:{color};'>{xoy_name}</span>")
+            f"<span style='color:{color};'>{self._xoy_name}</span>")
 
     @pyqtSlot(bool)
     def onOnlineModeChanged(self, is_checked: bool):
@@ -105,9 +108,9 @@ class HeadinfoForm(QWidget, Ui_Form):
         """Return the ion source id name.
         ISRC1, ISRC2, ...
         """
-        return ION_SOURCE_ID_NAME_MAP[self.isrc_name_lbl.text()]
+        return self._isrc_id
 
     def getOrientation(self):
         """Return X or Y as the orientation.
         """
-        return _XOY_MAP_r[self.xoy_name_lbl.text()]
+        return self._xoy

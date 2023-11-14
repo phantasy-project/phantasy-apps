@@ -31,6 +31,7 @@ class SaveDataDialog(QDialog, Ui_Dialog):
         self._post_init()
 
     def _post_init(self):
+        self.dirpath_lineEdit.setText(self.cdir)
         self.auto_fill_filepath()
 
     def auto_fill_filepath(self):
@@ -58,14 +59,15 @@ class SaveDataDialog(QDialog, Ui_Dialog):
         print("SaveDataDialog: Save Data")
         note = self.note_plainTextEdit.toPlainText()
         self._save_data(note=note)
-        if self.save_image_chekbox.isChecked():
+        if self.save_image_chkbox.isChecked():
             self._save_image()
 
     def _save_image(self):
         # save image.
         _filepath = self.filepath_lineEdit.text()
         filepath = os.path.abspath(os.path.join(self.cdir, self.subdir, _filepath))
-        png_filepath = os.path.join(filepath.rsplit(".", 1)[0], ".png")
+        png_filepath = filepath.rsplit(".", 1)[0] + ".png"
+        print(f"Save image to {png_filepath}")
         self.parent._save_results_as_image(png_filepath)
 
     def _save_data(self, **kws):
