@@ -327,7 +327,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
         # fav cmap cbb/chkbox
         self.cmap_fav_cbb.addItems(CMAP_FAVLIST)
-        self.set_cmap_chkbox.toggled.connect(self.set_fav_cmap)
+        self.cmap_fav_cbb.currentTextChanged.connect(self.on_update_fav_cmap)
 
         # detail info
         self.ems_detail_btn.clicked.connect(self.on_show_ems)
@@ -457,18 +457,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.add_attached_widget(self._slw)
 
-    @pyqtSlot(bool)
-    def set_fav_cmap(self, set):
-        """Set favored cmap if checked, or fallback with current one.
+    @pyqtSlot('QString')
+    def on_update_fav_cmap(self, s: str):
+        """Update the image color map.
         """
-        o = self.matplotlibimageWidget
-        self._cmap_now = o.getColorMap()
-        if set:
-            cmap = self.cmap_fav_cbb.currentText()
-            o.im.set_cmap(cmap)
-            o.update_figure()
-        else:
-            o.setColorMap(o.getColorMap())
+        self.matplotlibimageWidget.setColorMap(s)
 
     @pyqtSlot(float)
     def on_update_config(self, attr: str, x: float):
