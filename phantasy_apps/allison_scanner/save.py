@@ -5,6 +5,8 @@ import os
 import time
 
 from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import QUrl
+from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
 
@@ -37,8 +39,8 @@ class SaveDataDialog(QDialog, Ui_Dialog):
     def on_locate_dir(self):
         """Reveal the root data directory in File Exeplorer.
         """
-        pass
-
+        dirpath = self.dirpath_lineEdit.text()
+        QDesktopServices.openUrl(QUrl(dirpath))
 
     def auto_fill_filepath(self):
         """Auto fill filepath with timestamp.
