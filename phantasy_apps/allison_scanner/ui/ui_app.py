@@ -875,7 +875,8 @@ class Ui_MainWindow(object):
             self.status_lbl.sizePolicy().hasHeightForWidth())
         self.status_lbl.setSizePolicy(sizePolicy)
         self.status_lbl.setText("")
-        self.status_lbl.setPixmap(QtGui.QPixmap(":/icons/inactive.png"))
+        self.status_lbl.setPixmap(
+            QtGui.QPixmap(":/icons/status-pixholder.png"))
         self.status_lbl.setObjectName("status_lbl")
         self.device_hbox.addWidget(self.status_lbl)
         self.adv_ctrl_chkbox = QtWidgets.QCheckBox(self.ctrl_gbox)
@@ -1026,20 +1027,9 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_9.addItem(spacerItem2)
-        self.checkBox = QtWidgets.QCheckBox(self.dataviz_gbox)
-        self.checkBox.setChecked(True)
-        self.checkBox.setObjectName("checkBox")
-        self.horizontalLayout_9.addWidget(self.checkBox)
-        self.set_cmap_chkbox = QtWidgets.QCheckBox(self.dataviz_gbox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.set_cmap_chkbox.sizePolicy().hasHeightForWidth())
-        self.set_cmap_chkbox.setSizePolicy(sizePolicy)
-        self.set_cmap_chkbox.setObjectName("set_cmap_chkbox")
-        self.horizontalLayout_9.addWidget(self.set_cmap_chkbox)
+        self.label_10 = QtWidgets.QLabel(self.dataviz_gbox)
+        self.label_10.setObjectName("label_10")
+        self.horizontalLayout_9.addWidget(self.label_10)
         self.cmap_fav_cbb = QtWidgets.QComboBox(self.dataviz_gbox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -1050,6 +1040,10 @@ class Ui_MainWindow(object):
         self.cmap_fav_cbb.setSizePolicy(sizePolicy)
         self.cmap_fav_cbb.setObjectName("cmap_fav_cbb")
         self.horizontalLayout_9.addWidget(self.cmap_fav_cbb)
+        self.checkBox = QtWidgets.QCheckBox(self.dataviz_gbox)
+        self.checkBox.setChecked(True)
+        self.checkBox.setObjectName("checkBox")
+        self.horizontalLayout_9.addWidget(self.checkBox)
         self.verticalLayout_4.addLayout(self.horizontalLayout_9)
         self.analysis_gbox = QtWidgets.QGroupBox(self.data_hsplitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -1287,7 +1281,7 @@ class Ui_MainWindow(object):
         self.gridLayout_5.addItem(spacerItem4, 3, 0, 1, 1)
         self.data_analysis_tbox.addItem(self.page_beam_params, "")
         self.page_bkgd_noise = QtWidgets.QWidget()
-        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 515, 356))
+        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 515, 348))
         self.page_bkgd_noise.setObjectName("page_bkgd_noise")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.page_bkgd_noise)
         self.gridLayout_2.setContentsMargins(4, 4, 4, 4)
@@ -1369,7 +1363,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.auto_update_image_chkbox, 1, 2, 1, 1)
         self.data_analysis_tbox.addItem(self.page_bkgd_noise, "")
         self.page_noise_correction = QtWidgets.QWidget()
-        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 474, 356))
+        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 474, 348))
         self.page_noise_correction.setObjectName("page_noise_correction")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.page_noise_correction)
         self.gridLayout_7.setContentsMargins(4, 4, 4, 4)
@@ -1465,8 +1459,8 @@ class Ui_MainWindow(object):
         self.twiss_gbox.setCheckable(False)
         self.twiss_gbox.setObjectName("twiss_gbox")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.twiss_gbox)
-        self.verticalLayout_3.setContentsMargins(6, 10, 2, 4)
-        self.verticalLayout_3.setSpacing(4)
+        self.verticalLayout_3.setContentsMargins(6, 10, 6, 6)
+        self.verticalLayout_3.setSpacing(8)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.twiss_gridLayout = QtWidgets.QGridLayout()
         self.twiss_gridLayout.setContentsMargins(0, -1, -1, -1)
@@ -1761,6 +1755,7 @@ class Ui_MainWindow(object):
         self.actionSaveData.setIcon(icon14)
         self.actionSaveData.setObjectName("actionSaveData")
         self.actionRunXY = QtWidgets.QAction(MainWindow)
+        self.actionRunXY.setEnabled(False)
         self.actionRunXY.setObjectName("actionRunXY")
         self.actionAuto_Push_Results_to_PVs = QtWidgets.QAction(MainWindow)
         self.actionAuto_Push_Results_to_PVs.setCheckable(True)
@@ -1884,16 +1879,13 @@ class Ui_MainWindow(object):
                                self.ion_energy_lineEdit)
         MainWindow.setTabOrder(self.ion_energy_lineEdit, self.voltage_lineEdit)
         MainWindow.setTabOrder(self.voltage_lineEdit, self.raw_view_chkbox)
-        MainWindow.setTabOrder(self.raw_view_chkbox, self.checkBox)
-        MainWindow.setTabOrder(self.checkBox, self.set_cmap_chkbox)
-        MainWindow.setTabOrder(self.set_cmap_chkbox, self.cmap_fav_cbb)
+        MainWindow.setTabOrder(self.raw_view_chkbox, self.cmap_fav_cbb)
         MainWindow.setTabOrder(self.cmap_fav_cbb, self.x_cen_lineEdit)
         MainWindow.setTabOrder(self.x_cen_lineEdit, self.x_rms_lineEdit)
         MainWindow.setTabOrder(self.x_rms_lineEdit, self.xp_cen_lineEdit)
         MainWindow.setTabOrder(self.xp_cen_lineEdit, self.xp_rms_lineEdit)
         MainWindow.setTabOrder(self.xp_rms_lineEdit, self.update_results_btn)
-        MainWindow.setTabOrder(self.update_results_btn, self.show_results_btn)
-        MainWindow.setTabOrder(self.show_results_btn,
+        MainWindow.setTabOrder(self.update_results_btn,
                                self.bkgd_noise_nelem_sbox)
         MainWindow.setTabOrder(self.bkgd_noise_nelem_sbox,
                                self.bkgd_noise_threshold_sbox)
@@ -2005,7 +1997,7 @@ class Ui_MainWindow(object):
         self.label_25.setText(_translate("MainWindow", "Motor Pos [mm]"))
         self.label_6.setText(_translate("MainWindow", "Live Read"))
         self.reset_itlk_btn.setToolTip(
-            _translate("MainWindow", "Click try to reset interlock."))
+            _translate("MainWindow", "Click to try to reset interlock."))
         self.reset_itlk_btn.setText(_translate("MainWindow",
                                                "Reset Interlock"))
         self.label_7.setText(_translate("MainWindow", "Bias Voltage [V]"))
@@ -2089,18 +2081,13 @@ class Ui_MainWindow(object):
         self.matplotlibimageWidget.setColorMap(_translate("MainWindow", "jet"))
         self.raw_view_chkbox.setText(
             _translate("MainWindow", "Show Y-Axis as Voltage"))
-        self.checkBox.setText(_translate("MainWindow", "Show Colorbar"))
-        self.set_cmap_chkbox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>More options: Right-clicking on the image -&gt; Config -&gt; Image.</p></body></html>"
-            ))
-        self.set_cmap_chkbox.setText(_translate("MainWindow", "Colormap"))
+        self.label_10.setText(_translate("MainWindow", "Color Map"))
         self.cmap_fav_cbb.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>More options: Right-clicking on the image -&gt; Config -&gt; Image.</p></body></html>"
             ))
+        self.checkBox.setText(_translate("MainWindow", "Colorbar"))
         self.analysis_gbox.setTitle(_translate("MainWindow", "Data Analysis"))
         self.label_24.setText(_translate("MainWindow", "Conversion"))
         self.ion_charge_lineEdit.setText(_translate("MainWindow", "9"))
