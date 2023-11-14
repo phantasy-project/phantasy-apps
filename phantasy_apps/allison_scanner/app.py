@@ -1385,7 +1385,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         n, q, a, ek = self._get_ion_info("as-is") # grab ion info as-is.
         ds.update({
             "Beam Source": {
-                '_id': self.beamSpeciesDisplayWidget.get_ion_source(),
+                '_id': self._headinfo_widget.getIonSourceId(),
                 'Ion Name': n,
                 'Q': q,
                 'A': a,
