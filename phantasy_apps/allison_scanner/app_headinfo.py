@@ -39,7 +39,7 @@ class HeadinfoForm(QWidget, Ui_Form):
                 border-top: 0px solid gray;
                 border-bottom: 1px solid gray;
                 font-family: monospace;
-                font-size: {self._fs + 2}pt;
+                font-size: {self._fs + 3}pt;
             }}""")
         self.isrc_name_lbl.setStyleSheet(f"""
             QLabel {{
