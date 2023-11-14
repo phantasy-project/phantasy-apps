@@ -719,9 +719,14 @@ class Device(QObject):
     def is_pos_at_begin(self):
         """Test if motor is at the begin position.
         """
-        print(f"Reached begin test: {self.name} [{self.xoy}]")
         live_pos = self.get_live_pos() 
         begin_pos = self.get_pos_begin()
         if np.abs(live_pos - begin_pos) < 0.05:
+            print(f"Reached begin test: {self.name} [{self.xoy}]")
             return True
         return False
+    
+    def get_pos_velocity(self):
+        """Return the motor moving velosity in mm/second.
+        """
+        return getattr(self.elem, f"VELO{self._id}")
