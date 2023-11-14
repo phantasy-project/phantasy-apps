@@ -138,6 +138,8 @@ class Ui_Dialog(object):
         self.save_btn.clicked.connect(Dialog.on_save_data)  # type: ignore
         self.pushButton.clicked.connect(
             Dialog.auto_fill_filepath)  # type: ignore
+        self.locate_dirpath_btn.clicked.connect(
+            Dialog.on_locate_dir)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
@@ -149,13 +151,16 @@ class Ui_Dialog(object):
         self.note_plainTextEdit.setToolTip(
             _translate("Dialog", "Input additional note for saved data file."))
         self.locate_dirpath_btn.setText(_translate("Dialog", "Locate"))
-        self.label_3.setText(_translate("Dialog", "Root Directory"))
+        self.label_3.setText(_translate("Dialog", "Directory"))
         self.label.setText(_translate("Dialog", "Filepath"))
         self.pushButton.setToolTip(
             _translate("Dialog", "Generate filename by timestamp."))
         self.pushButton.setText(_translate("Dialog", "Auto"))
         self.label_2.setText(
             _translate("Dialog", "Save the data and image to the files."))
+        self.save_image_chkbox.setToolTip(
+            _translate("Dialog",
+                       "Save the screenshot of the finalized results."))
         self.save_image_chkbox.setText(_translate("Dialog", "Image"))
 
 
