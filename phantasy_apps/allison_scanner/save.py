@@ -89,7 +89,7 @@ class SaveDataDialog(QDialog, Ui_Dialog):
             filepath = os.path.abspath(os.path.join(self.cdir, self.subdir, _filepath))
             if os.path.exists(filepath):
                 r = QMessageBox.warning(self, "Save Data", f"Overwriting the existing '{filepath}'?" \
-                                        + "\n" + "Clicking the 'Auto' button to update the filename.",
+                                        + "\n" + "Hint: clicking the 'Auto' button to update the filename.",
                         QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
                 if r == QMessageBox.No:
                     return
@@ -102,5 +102,4 @@ class SaveDataDialog(QDialog, Ui_Dialog):
             QMessageBox.information(self, "Save Data",
                     "Saved data to {}.".format(filepath),
                     QMessageBox.Ok)
-        finally:
             self.close()
