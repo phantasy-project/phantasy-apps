@@ -948,23 +948,6 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
         self.cmd_vbox.addItem(spacerItem1)
-        self.results_btn = QtWidgets.QToolButton(self.ctrl_gbox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.results_btn.sizePolicy().hasHeightForWidth())
-        self.results_btn.setSizePolicy(sizePolicy)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(":/icons/report.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.results_btn.setIcon(icon9)
-        self.results_btn.setIconSize(QtCore.QSize(48, 48))
-        self.results_btn.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
-        self.results_btn.setAutoRaise(False)
-        self.results_btn.setObjectName("results_btn")
-        self.cmd_vbox.addWidget(self.results_btn)
         self.gridLayout.addLayout(self.cmd_vbox, 0, 1, 6, 1)
         self.adv_ctrl_hline = QtWidgets.QFrame(self.ctrl_gbox)
         self.adv_ctrl_hline.setFrameShape(QtWidgets.QFrame.HLine)
@@ -1482,7 +1465,7 @@ class Ui_MainWindow(object):
         self.twiss_gbox.setCheckable(False)
         self.twiss_gbox.setObjectName("twiss_gbox")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.twiss_gbox)
-        self.verticalLayout_3.setContentsMargins(6, 10, 2, 2)
+        self.verticalLayout_3.setContentsMargins(6, 10, 2, 4)
         self.verticalLayout_3.setSpacing(4)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.twiss_gridLayout = QtWidgets.QGridLayout()
@@ -1683,6 +1666,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_11.setSpacing(4)
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
         self.update_results_btn = QtWidgets.QToolButton(self.twiss_gbox)
+        self.update_results_btn.setIcon(icon2)
+        self.update_results_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
         self.update_results_btn.setObjectName("update_results_btn")
         self.horizontalLayout_11.addWidget(self.update_results_btn)
         spacerItem5 = QtWidgets.QSpacerItem(40, 20,
@@ -1690,6 +1676,19 @@ class Ui_MainWindow(object):
                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_11.addItem(spacerItem5)
         self.show_results_btn = QtWidgets.QToolButton(self.twiss_gbox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.show_results_btn.sizePolicy().hasHeightForWidth())
+        self.show_results_btn.setSizePolicy(sizePolicy)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/icons/report.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.show_results_btn.setIcon(icon9)
+        self.show_results_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextBesideIcon)
         self.show_results_btn.setObjectName("show_results_btn")
         self.horizontalLayout_11.addWidget(self.show_results_btn)
         self.verticalLayout_3.addLayout(self.horizontalLayout_11)
@@ -1864,8 +1863,6 @@ class Ui_MainWindow(object):
             MainWindow.sync_config)  # type: ignore
         self.run_btn.clicked.connect(MainWindow.on_run)  # type: ignore
         self.abort_btn.clicked.connect(MainWindow.on_abort)  # type: ignore
-        self.results_btn.clicked.connect(
-            self.show_results_btn.click)  # type: ignore
         self.toolButton.clicked.connect(
             MainWindow.on_add_current_config)  # type: ignore
         self.fetch_data_btn.clicked.connect(
@@ -2085,12 +2082,6 @@ class Ui_MainWindow(object):
                 "<html><head/><body><p>Fetch and analyze the data produced by last run.</p></body></html>"
             ))
         self.fetch_data_btn.setText(_translate("MainWindow", "Data"))
-        self.results_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Show the report for analyzed results.</p></body></html>"
-            ))
-        self.results_btn.setText(_translate("MainWindow", "Report"))
         self.dataviz_gbox.setTitle(
             _translate("MainWindow", "Data Visualization"))
         self.matplotlibimageWidget.setFigureAspectRatio(
