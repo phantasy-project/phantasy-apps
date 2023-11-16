@@ -587,6 +587,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             _ems_device.unmonitor()
             printlog(f"Monitoring... {self._ems_device.name}")
         self._ems_device.monitor()
+        # publish data
+        self._ems_device._post_monitor()
 
         if self._online_mode:
             # sync config
