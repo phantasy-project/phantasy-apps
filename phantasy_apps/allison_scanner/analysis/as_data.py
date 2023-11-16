@@ -160,10 +160,10 @@ class ASData(object):
                 self.row_noise_data.append([0, 0, 0, 0, 0])
             else:
 
-                row_noise_min = np.amin(row_noise)
-                row_noise_max = np.amax(row_noise)
-                row_noise_avg = np.mean(row_noise)
-                row_noise_sd = np.std(row_noise)
+                row_noise_min = np.nanmin(row_noise)
+                row_noise_max = np.nanmax(row_noise)
+                row_noise_avg = np.nanmean(row_noise)
+                row_noise_sd = np.nanstd(row_noise)
 
                 self.row_noise_data.append([len(row_noise), row_noise_max, row_noise_avg, row_noise_min, row_noise_sd])
 
@@ -360,10 +360,10 @@ class ASData(object):
         if counter != len(raw_data):
             raise Exception('Not all columns are read')
 
-        self.noise_max = np.amax(self.region_out)
-        self.noise_avg = np.mean(self.region_out)
-        self.noise_min = np.amin(self.region_out)
-        self.noise_sd = np.std(self.region_out)
+        self.noise_max = np.nanmax(self.region_out)
+        self.noise_avg = np.nanmean(self.region_out)
+        self.noise_min = np.nanmin(self.region_out)
+        self.noise_sd = np.nanstd(self.region_out)
 
         return np.array(region_in)[:,2]
 
@@ -375,10 +375,10 @@ class ASData(object):
         noise = np.append(noise, I_grid[-2:, 0:2])
         noise = np.append(noise, I_grid[-2:, -2:])
 
-        noise_min = np.amin(noise)
-        noise_max = np.amax(noise)
-        noise_avg = np.mean(noise)
-        noise_sd = np.std(noise)
+        noise_min = np.nanmin(noise)
+        noise_max = np.nanmax(noise)
+        noise_avg = np.nanmean(noise)
+        noise_sd = np.nanstd(noise)
 
         true_false_grid = I_grid >= noise_max + how_many_sigma*noise_sd
 
@@ -446,10 +446,10 @@ class ASData(object):
         if counter != len(raw_data):
             raise Exception('Not all columns are read')
 
-        self.noise_max = np.amax(region_out)
-        self.noise_avg = np.mean(region_out)
-        self.noise_min = np.amin(region_out)
-        self.noise_sd = np.std(region_out)
+        self.noise_max = np.nanmax(region_out)
+        self.noise_avg = np.nanmean(region_out)
+        self.noise_min = np.nanmin(region_out)
+        self.noise_sd = np.nanstd(region_out)
 
         return np.array(region_in)[:,2]
 

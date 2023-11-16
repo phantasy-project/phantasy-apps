@@ -6,12 +6,16 @@
 
 import logging
 import os
+import numpy as np
 
 from PyQt5.QtCore import QObject
 from PyQt5.QtCore import pyqtSignal
 from numpy import ndarray
+from numpy.testing import assert_almost_equal
 
 from phantasy import Configuration
+from phantasy import pass_arg
+from phantasy_ui import printlog
 from phantasy_apps.wire_scanner.utils import wait as _wait
 from .utils import find_dconf
 
@@ -19,11 +23,6 @@ _LOGGER = logging.getLogger(__name__)
 
 
 TS_FMT = "%Y-%m-%d %H:%M:%S"
-
-try:
-    basestring
-except NameError:
-    basestring = str
 
 XY2ID = {'X': 1, 'Y': 2}
 
@@ -50,6 +49,38 @@ class Device(QObject):
     data_changed = pyqtSignal(ndarray)
     finished = pyqtSignal()
 
+    # pos begin
+    pb_changed = pyqtSignal(float)
+    # pos end
+    pe_changed = pyqtSignal(float)
+    # pos step
+    ps_changed = pyqtSignal(float)
+    # voltage begin
+    vb_changed = pyqtSignal(float)
+    # voltage end
+    ve_changed = pyqtSignal(float)
+    # voltage step
+    vs_changed = pyqtSignal(float)
+
+    # motor fork pos in status
+    status_in_changed = pyqtSignal(bool)
+    # motor fork pos out status
+    status_out_changed = pyqtSignal(bool)
+    # interlock ok status
+    status_itlk_ok_changed = pyqtSignal(bool)
+    # scan enabled
+    status_enabled_changed = pyqtSignal(bool)
+    # position readback
+    pos_read_changed = pyqtSignal(float)
+    # position setpoint
+    pos_set_changed = pyqtSignal(float)
+    # bias voltage on
+    bias_volt_on_changed = pyqtSignal(bool)
+    # bias voltage readback
+    bias_volt_read_changed = pyqtSignal(float)
+    # bias voltage setpoint
+    bias_volt_set_changed = pyqtSignal(float)
+
     def __init__(self, elem, xoy='X', dconf=None):
         super(self.__class__, self).__init__()
         self.elem = elem
@@ -58,12 +89,12 @@ class Device(QObject):
             self.dconf = Configuration(find_dconf())
         elif isinstance(dconf, Configuration):
             self.dconf = dconf
-        elif isinstance(dconf, basestring) and os.path.isfile(dconf):
+        elif isinstance(dconf, str) and os.path.isfile(dconf):
             self.dconf = Configuration(dconf)
         else:
             _LOGGER.error("Cannot find device configuration.")
 
-        # name
+        # device name
         self.name = name = elem.name
         # orientation
         self.xoy = xoy
@@ -85,10 +116,10 @@ class Device(QObject):
         # bias volt threshold
         self.bias_volt_threshold = float(self.dconf.get(name, 'bias_volt_threshold'))
 
-        # info
+        # info, e.g. Installed or not-installed
         self.info = self.dconf.get(name, 'info')
 
-    def update_xoy_conf(self, name):
+    def update_xoy_conf(self, name: str):
         # xoy
         # default pos/volt alter ranges, [mm], [V], settling time: [sec]
         self.kxoy = kxoy = "{}.{}".format(name, self.xoy)
@@ -100,6 +131,26 @@ class Device(QObject):
         self.volt_end = float(self.dconf.get(kxoy, 'volt_end'))
         self.volt_step = float(self.dconf.get(kxoy, 'volt_step'))
         self.volt_settling_time = float(self.dconf.get(kxoy, 'volt_settling_time'))
+
+    def get_live_pos(self):
+        """Get live readback of position.
+        """
+        return getattr(self.elem, f"POS{self._id}")
+
+    def get_data(self):
+        """Get live value as an array from DATA# field.
+        """
+        return self.get_data_pv().get()
+
+    def get_data_pv(self):
+        """Get the PV object of the DATA# field.
+        """
+        return self.elem.get_field(f'DATA{self._id}').readback_pv[0]
+
+    def get_data_pvname(self):
+        """Get the PV name of the DATA# field.
+        """
+        return self.get_data_pv().pvname
 
     @property
     def xoy(self):
@@ -324,53 +375,53 @@ class Device(QObject):
 
     def set_pos_begin(self):
         """Set live config with current config."""
-        setattr(self.elem, 'START_POS{}'.format(self._id), self.pos_begin)
+        setattr(self.elem, f'START_POS{self._id}', self.pos_begin)
 
     def set_pos_end(self):
-        setattr(self.elem, 'STOP_POS{}'.format(self._id), self.pos_end)
+        setattr(self.elem, f'STOP_POS{self._id}', self.pos_end)
 
     def set_pos_step(self):
-        setattr(self.elem, 'STEP_POS{}'.format(self._id), self.pos_step)
+        setattr(self.elem, f'STEP_POS{self._id}', self.pos_step)
 
     def set_volt_begin(self):
-        setattr(self.elem, 'START_VOLT{}'.format(self._id), self.volt_begin)
+        setattr(self.elem, f'START_VOLT{self._id}', self.volt_begin)
 
     def set_volt_end(self):
-        setattr(self.elem, 'STOP_VOLT{}'.format(self._id), self.volt_end)
+        setattr(self.elem, f'STOP_VOLT{self._id}', self.volt_end)
 
     def set_volt_step(self):
-        setattr(self.elem, 'STEP_VOLT{}'.format(self._id), self.volt_step)
+        setattr(self.elem, f'STEP_VOLT{self._id}', self.volt_step)
 
     def set_pos_settling_time(self):
-        setattr(self.elem, 'WAIT_POS{}'.format(self._id), self.pos_settling_time)
+        setattr(self.elem, f'WAIT_POS{self._id}', self.pos_settling_time)
 
     def set_volt_settling_time(self):
-        setattr(self.elem, 'WAIT_VOLT{}'.format(self._id), self.volt_settling_time)
+        setattr(self.elem, f'WAIT_VOLT{self._id}', self.volt_settling_time)
 
     def get_pos_begin(self):
         """Return live config from controls network."""
-        return getattr(self.elem, 'START_POS{}'.format(self._id))
+        return getattr(self.elem, f'START_POS{self._id}')
 
     def get_pos_end(self):
-        return getattr(self.elem, 'STOP_POS{}'.format(self._id))
+        return getattr(self.elem, f'STOP_POS{self._id}')
 
     def get_pos_step(self):
-        return getattr(self.elem, 'STEP_POS{}'.format(self._id))
+        return getattr(self.elem, f'STEP_POS{self._id}')
 
     def get_volt_begin(self):
-        return getattr(self.elem, 'START_VOLT{}'.format(self._id))
+        return getattr(self.elem, f'START_VOLT{self._id}')
 
     def get_volt_end(self):
-        return getattr(self.elem, 'STOP_VOLT{}'.format(self._id))
+        return getattr(self.elem, f'STOP_VOLT{self._id}')
 
     def get_volt_step(self):
-        return getattr(self.elem, 'STEP_VOLT{}'.format(self._id))
+        return getattr(self.elem, f'STEP_VOLT{self._id}')
 
     def get_pos_settling_time(self):
-        return getattr(self.elem, 'WAIT_POS{}'.format(self._id))
+        return getattr(self.elem, f'WAIT_POS{self._id}')
 
     def get_volt_settling_time(self):
-        return getattr(self.elem, 'WAIT_VOLT{}'.format(self._id))
+        return getattr(self.elem, f'WAIT_VOLT{self._id}')
 
     def sync_params(self):
         """Pull device config from controls network, update
@@ -382,9 +433,6 @@ class Device(QObject):
             v = getattr(self, 'get_{}'.format(s))()
             setattr(self, s, v)
             _LOGGER.info("Sync '{}' with '{}'.".format(s, v))
-        # bias volt
-        self.bias_volt_threshold = v = self.elem.BIAS_VOLT
-        _LOGGER.info("Sync BIAS_VOLT with {}".format(v))
 
     def set_params(self):
         self.set_pos_begin()
@@ -394,19 +442,23 @@ class Device(QObject):
         self.set_volt_end()
         self.set_volt_step()
 
+    def enable_device(self):
+        setattr(self.elem, f"ENABLE_SCAN{self._id}", 1)
+
     def reset_interlock(self):
-        print("Reset interlock-{}...".format(self._id))
-        fld = self.elem.get_field('INTERLOCK{}'.format(self._id))
-        re_tries = 0
-        while fld.value != 0:
-            re_tries += 1
-            setattr(self.elem, 'RESET_ITLK', 1)
-            _wait(fld.readback_pv[0], 0, 5)
-            if re_tries > 3:
-                break
-                print("--- Cannot reset interlock...")
-                return
-        print("--- Reset interlock-{}: Done!".format(self._id))
+        printlog(f"Reset interlock for {self.name}")
+        setattr(self.elem, 'RESET_ITLK', 1)
+        #fld = self.elem.get_field('INTERLOCK{}'.format(self._id))
+        #re_tries = 0
+        #while fld.value != 0:
+        #    re_tries += 1
+        #    setattr(self.elem, 'RESET_ITLK', 1)
+        #    _wait(fld.readback_pv[0], 0, 5)
+        #    if re_tries > 3:
+        #        break
+        #        print("--- Cannot reset interlock...")
+        #        return
+        #print("--- Reset interlock-{}: Done!".format(self._id))
 
     def retract(self, pos0=200.0):
         pos_fld = self.elem.get_field('POS{}'.format(self._id))
@@ -416,18 +468,18 @@ class Device(QObject):
     def abort(self):
         setattr(self.elem, 'ABORT_SCAN{}'.format(self._id), 1)
 
-    def move(self, timeout=600, wait=True, validate=True):
+    def move(self, timeout=600, wait=True, validate=False):
         """Start scan."""
         if validate:  # check scan status or not
             s = self.check_status()
-            if s != 0:
+            if s != "IDLE":
                 raise RuntimeError("Device is busy, not be ready for moving.")
 
         self.init_data_cb()
         setattr(self.elem, 'START_SCAN{}'.format(self._id), 1)
         if wait:
-            _wait(self.get_status_pv(), 0, timeout)
-            self.reset_data_cb()
+            _wait(self.get_status_pv(), "IDLE", timeout)
+            self._reset_data_cb()
             print("Move is done.")
 
     def get_status_pv(self):
@@ -437,51 +489,60 @@ class Device(QObject):
         return ss_pv
 
     def check_status(self):
+        # Return the scan status
         pv = self.get_status_pv()
-        return pv.get()
+        return pv.get(as_string=True)
 
     def run_all_in_one(self):
-        self.enable()
+        # self.enable()
         self.set_params()
         self.move()
         print("Run-All-in-One is done.")
 
     def init_run(self):
         self.init_bias_voltage()
-        self.enable()
+        # self.enable()
         self.set_params()
 
     def init_data_cb(self):
-        self._status_pv = self.elem.get_field('SCAN_STATUS{}'.format(self._id)).readback_pv[0]
-        self._scid = self._status_pv.add_callback(self.on_status_updated)
-        self._data_pv = self.elem.get_field('DATA{}'.format(self._id)).readback_pv[0]
-        self._data_pv.auto_monitor=True
-        self._dcid = self._data_pv.add_callback(self.on_data_updated)
+        printlog(f"Initial data cb: {self.name} [{self.xoy}, {self._id}]")
+        self.elem.monitor(f"SCAN_STATUS{self._id}", self.onScanStatusUpdated,
+                          name=f"SCAN_STATUS{self._id}")
+        self.elem.monitor(f"DATA{self._id}", self.onDataUpdated,
+                          name=f"DATA{self._id}")
 
-    def reset_data_cb(self):
-        self._data_pv.remove_callback(self._dcid)
-        self._status_pv.remove_callback(self._scid)
+    def _reset_data_cb(self):
+        self.elem.unmonitor(f"SCAN_STATUS{self._id}", name=f"SCAN_STATUS{self._id}")
+        self.elem.unmonitor(f"DATA{self._id}", name=f"DATA{self._id}")
         self.finished.emit()
 
-    def on_status_updated(self, value, **kws):
-        if value == 12:
-            self.reset_data_cb()
+    @pass_arg('fld')
+    def onScanStatusUpdated(self, fld, **kws):
+        """Scan status is updated.
+        """
+        s = kws.get("char_value")
+        if s == "SCAN_DONE":
+            self._reset_data_cb()
 
-    def on_data_updated(self, value, **kws):
+    @pass_arg('fld')
+    def onDataUpdated(self, fld, **kws):
+        """Array data is updated.
+        """
+        value = kws.get("value")
         self.data_changed.emit(value)
 
     def __repr__(self):
         s = "Device configuration: [{}.{}]".format(self.name, self.xoy)
         s += "\n--- info: {}".format(self.info)
-        s += "\n--- length: {}".format(self.length)
-        s += "\n--- length-1: {}, length-2: {}".format(self.length1, self.length2)
-        s += "\n--- gap: {}".format(self.gap)
-        s += "\n--- slit width: {}".format(self.slit_width)
-        s += "\n--- slit thickness: {}".format(self.slit_thickness)
-        s += "\n--- bias voltage threshold: {}".format(self.bias_volt_threshold)
-        s += "\n--- pos start: {}, end: {}, step: {}".format(self.pos_begin, self.pos_end, self.pos_step)
-        s += "\n--- volt start: {}, end: {}, step: {}".format(self.volt_begin, self.volt_end, self.volt_step)
-        s += "\n--- settling times, pos: {}, volt: {}".format(self.pos_settling_time, self.volt_settling_time)
+        s += "\n--- length: {0:.2f} mm".format(self.length)
+        s += "\n--- length-1: {0:.2f} mm, length-2: {1:.2} mm".format(self.length1, self.length2)
+        s += "\n--- gap: {0:.2f} mm".format(self.gap)
+        s += "\n--- slit width: {0:.2f} mm".format(self.slit_width)
+        s += "\n--- slit thickness: {0:.2f} mm".format(self.slit_thickness)
+        s += "\n--- bias voltage threshold: {} V".format(self.bias_volt_threshold)
+        s += "\n--- pos [mm] start: {0:.1f}, end: {1:.1f}, step: {2:.1f}".format(self.pos_begin, self.pos_end, self.pos_step)
+        s += "\n--- volt [V] start: {0:.1f}, end: {1:.1f}, step: {2:.1f}".format(self.volt_begin, self.volt_end, self.volt_step)
+        s += "\n--- settling time [s], pos: {0:.1f}, volt: {1:.1f}".format(self.pos_settling_time, self.volt_settling_time)
         return s
 
     def save_dconf(self, filepath):
@@ -532,3 +593,151 @@ class Device(QObject):
     def dxp0(self):
         # delta_x'
         return 2 * self.slit_width / (self.length + self.length1 + self.length2)
+
+    def monitor(self):
+        """Monitor field value changes.
+        """
+        oid = self._id
+        self.elem.monitor(f"STATUS_IN{oid}", self.onUpdateStatusIn)
+        self.elem.monitor(f"STATUS_OUT{oid}", self.onUpdateStatusOut)
+        self.elem.monitor(f"INTERLOCK{oid}", self.onUpdateStatusInterlockOK)
+        self.elem.monitor(f"POS{oid}", self.onUpdatePosRead)
+        self.elem.monitor(f"POS{oid}", self.onUpdatePosSet, "setpoint")
+        self.elem.monitor(f"ENABLE_SCAN{oid}", self.onUpdateStatusEnabled)
+        self.elem.monitor(f"BIAS_VOLT_ON", self.onUpdateBiasVoltOn)
+        self.elem.monitor(f"BIAS_VOLT", self.onUpdateBiasVoltRead)
+        self.elem.monitor(f"BIAS_VOLT", self.onUpdateBiasVoltSet, "setpoint")
+
+        # pos scan range
+        self.elem.monitor(f"START_POS{oid}", self.onUpdatePosBegin)
+        self.elem.monitor(f"STOP_POS{oid}", self.onUpdatePosEnd)
+        self.elem.monitor(f"STEP_POS{oid}", self.onUpdatePosStep)
+        # volt scan range
+        self.elem.monitor(f"START_VOLT{oid}", self.onUpdateVoltBegin)
+        self.elem.monitor(f"STOP_VOLT{oid}", self.onUpdateVoltEnd)
+        self.elem.monitor(f"STEP_VOLT{oid}", self.onUpdateVoltStep)
+
+    def unmonitor(self):
+        """Stop monitor field value changes for both X and Y.
+        """
+        [self.elem.unmonitor(f"STATUS_IN{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"STATUS_OUT{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"START_POS{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"STOP_POS{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"STEP_POS{i}")  for i in (1, 2)]
+        [self.elem.unmonitor(f"START_VOLT{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"STOP_VOLT{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"STEP_VOLT{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"INTERLOCK{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"POS{i}") for i in (1, 2)]
+        [self.elem.unmonitor(f"POS{i}", handle="setpoint") for i in (1, 2)]
+        [self.elem.unmonitor(f"ENABLE_SCAN{i}") for i in (1, 2)]
+        self.elem.unmonitor("BIAS_VOLT_ON")
+        self.elem.unmonitor("BIAS_VOLT")
+        self.elem.unmonitor("BIAS_VOLT", handle="setpoint")
+
+    @pass_arg('fld')
+    def onUpdatePosBegin(self, fld, **kws):
+        value = kws.get('value')
+        self.pb_changed.emit(value)
+
+    @pass_arg('fld')
+    def onUpdatePosEnd(self, fld, **kws):
+        value = kws.get('value')
+        self.pe_changed.emit(value)
+
+    @pass_arg('fld')
+    def onUpdatePosStep(self, fld, **kws):
+        value = kws.get('value')
+        self.ps_changed.emit(value)
+
+    @pass_arg('fld')
+    def onUpdateVoltBegin(self, fld, **kws):
+        value = kws.get('value')
+        self.vb_changed.emit(value)
+
+    @pass_arg('fld')
+    def onUpdateVoltEnd(self, fld, **kws):
+        value = kws.get('value')
+        self.ve_changed.emit(value)
+
+    @pass_arg('fld')
+    def onUpdateVoltStep(self, fld, **kws):
+        value = kws.get('value')
+        self.vs_changed.emit(value)
+
+    @pass_arg('fld')
+    def onUpdateStatusIn(self, fld, **kws):
+        # motor fork (pos) in status
+        value = kws.get('value')
+        # print(f"{self.name}[{self.xoy}] STATUS_IN: {value} {value==1.0}")
+        self.status_in_changed.emit(value==1.0)
+
+    @pass_arg('fld')
+    def onUpdateStatusOut(self, fld, **kws):
+        # motor fork (pos) out status
+        value = kws.get('value')
+        # print(f"{self.name}[{self.xoy}] STATUS_OUT: {value} {value==1.0}")
+        self.status_out_changed.emit(value==1.0)
+
+    @pass_arg('fld')
+    def onUpdateStatusInterlockOK(self, fld, **kws):
+        # motor fork interlock status
+        value = kws.get('value')
+        self.status_itlk_ok_changed.emit(value==0.0)
+
+    @pass_arg('fld')
+    def onUpdatePosRead(self, fld, **kws):
+        value = kws.get('value')
+        self.pos_read_changed.emit(value)
+
+    @pass_arg('fld')
+    def onUpdatePosSet(self, fld, **kws):
+        value = kws.get('value')
+        self.pos_set_changed.emit(value)
+
+    @pass_arg('fld')
+    def onUpdateStatusEnabled(self, fld, **kws):
+        value = kws.get('value')
+        self.status_enabled_changed.emit(value==1.0)
+
+    @pass_arg('fld')
+    def onUpdateBiasVoltOn(self, fld, **kws):
+        value = kws.get('value')
+        self.bias_volt_on_changed.emit(value==1.0)
+
+    @pass_arg('fld')
+    def onUpdateBiasVoltRead(self, fld, **kws):
+        value = kws.get('value')
+        self.bias_volt_read_changed.emit(value)
+
+    @pass_arg('fld')
+    def onUpdateBiasVoltSet(self, fld, **kws):
+        value = kws.get('value')
+        self.bias_volt_set_changed.emit(value)
+
+    def is_pos_at_begin(self):
+        """Test if motor is at the begin position.
+        """
+        live_pos = self.get_live_pos() 
+        begin_pos = self.get_pos_begin()
+        if np.abs(live_pos - begin_pos) < 0.05:
+            print(f"Reached begin test: {self.name} [{self.xoy}]")
+            return True
+        return False
+    
+    def get_pos_velocity(self):
+        """Return the motor moving velosity in mm/second.
+        """
+        return getattr(self.elem, f"VELO{self._id}")
+    
+    def append_timelog(self, t_elapsed: float):
+        """Push the information of "voltage steps,actual position steps,total time elapsed"
+        to TPARAM{i} field to trigger the IOC record the full information for run time cost.
+
+        - the data will be used for future studies, e.g. fit a mode for time cost estimation.
+        """
+        n_volt = int(np.abs(self.get_volt_end() - self.get_volt_begin()) / self.get_volt_step()) + 1
+        n_pos_act = int(np.abs(self.get_live_pos() - self.get_pos_begin()) / self.get_pos_step()) + 1
+        s = f"{n_volt},{n_pos_act},{t_elapsed:.1f}"
+        setattr(self.elem, f"TPARAM{self._id}", s)

@@ -59,6 +59,8 @@ class Data(object):
                     data = np.flipud(f['data']['array'])
                     self.update_pos_conf(f['position'])
                     self.update_volt_conf(f['voltage'])
+                    data[data==None] = np.nan
+                    data = mask_array(data.tolist())
                 return data
 
     def update_pos_conf(self, conf):
@@ -145,8 +147,8 @@ class Data(object):
         return calculate_beam_parameters(x, xp, intensity,
                                          self.model.bg, self.xoy)
 
-    def filter_initial_background_noise(self, intensity=None,
-                                        n_elements=2, threshold=5):
+    def filter_initial_background_noise(self, intensity: np.ndarray = None,
+                                        n_elements: int = 2, threshold: int = 5):
         intensity = self.intensity.copy() if intensity is None else intensity.copy()
         return filter_initial_background_noise(
             intensity, n_elements, threshold)
@@ -320,7 +322,7 @@ class Data(object):
         return noise_correction(intensity, noise_signal_array, **kws)
 
 
-def filter_initial_background_noise(m_intensity, n_elements=2, threshold=5):
+def filter_initial_background_noise(m_intensity: np.ndarray, n_elements: int = 2, threshold: int = 5):
     """Estimate initial background noise based on sampling regions from
     the four corners by selecting *n* x *n* squares, respectively, apply
     the noise substraction from the input intensity matrix, return the
@@ -343,11 +345,20 @@ def filter_initial_background_noise(m_intensity, n_elements=2, threshold=5):
         matrix.
     """
     m = m_intensity
+    _, cdim = m.shape
     n = n_elements
-    _range = range(-n, n)
-    subm = m_intensity[np.ix_(_range, _range)]
-    mmax, mmin, mavg, mstd = subm.max(), subm.min(), subm.mean(), subm.std()
+    if isinstance(m, np.ma.MaskedArray):
+        # the max column index which is not masked.
+        _col_idx = np.argmax(m.mask, axis=1).min() - cdim
+        _range_c = list(range(_col_idx - n, _col_idx)) + list(range(n))
+    else:
+        _range_c = range(-n, n)
+    _range_r = range(-n, n)
+    subm = m_intensity[np.ix_(_range_r, _range_c)]
+    mmax, mmin = np.nanmax(subm), np.nanmin(subm)
+    mavg, mstd = np.nanmean(subm), np.nanstd(subm)
     idx = m >= (mmax + threshold * mstd)
+    # print("Filter Noise: ", _range_r, _range_c, subm, mmax, mmin, mavg, mstd)
     return (m - mavg) * idx, subm
 
 
@@ -483,8 +494,8 @@ def noise_correction(intensity, noise_signal_array, threshold_sigma=2.0):
         Matrix of signal after noise correction, and noise matrix.
     """
     noise_arr = intensity[noise_signal_array == False]
-    noise_avg = noise_arr.mean()
-    noise_std = noise_arr.std()
+    noise_avg = np.nanmean(noise_arr)
+    noise_std = np.nanstd(noise_arr)
 
     shape = intensity.shape
     arr_flat = intensity.flatten()
@@ -510,6 +521,7 @@ def reading_params(filepath, ftype='json'):
         bkgd_noise_nelem: str, bkgd_noise_nsigma: str,
         ellipse_sf: str, noise_threshold: str,
         orientation: str, pos_scan_conf: dict, volt_scan_conf: dict
+        note: str, ion_source_id: str 
     """
     with open(filepath, 'r') as fp:
         d = json.load(fp)
@@ -519,6 +531,7 @@ def reading_params(filepath, ftype='json'):
         charge = beam_source_conf.get('Q', 9)
         mass = beam_source_conf.get('A', 40)
         ek_conf = beam_source_conf.get('Ek', {'value': 12000, 'unit': 'kV'})
+        isrc_id = beam_source_conf.get('_id', 'ISRC1') # defaults to 'ISRC1'
         if isinstance(ek_conf, dict):
             ek = ek_conf['value']
         else: # float
@@ -554,4 +567,12 @@ def reading_params(filepath, ftype='json'):
                xoy, \
                pos_scan_conf, \
                volt_scan_conf, \
-               note
+               note, \
+               isrc_id
+
+
+def mask_array(a):
+    if np.any(np.isnan(a)):
+        return np.ma.masked_invalid(a)
+    else:
+        return np.array(a)

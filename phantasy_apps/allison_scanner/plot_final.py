@@ -30,6 +30,7 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
         self._norm_inten = False
         self.norm_chkbox.toggled.connect(self.on_norm_inten)
         delayed_exec(lambda: self.norm_chkbox.setChecked(True), 0)
+        self.resize(1200, 800)
 
     def on_norm_inten(self, f):
         self._norm_inten = f
@@ -103,14 +104,17 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
     def _show_results(self, r, u, ks):
         names = [f"{i}<sub>{j}</sub>" for (i, j) in
                  zip((u, u + "'", '&sigma;', '&sigma;', '&alpha;',
-                     '&beta;', '&gamma;', '&epsilon;', '&epsilon;',
-                     'Total Intensity'),
-                     (0, 0, u, u + "'", u, u, u, u, u + '<sup>n</sup>', ''))]
+                     '&beta;', '&gamma;', '&epsilon;', '&epsilon;'),
+                     (0, 0, u, u + "'", u, u, u, u, u + '<sup>n</sup>'))]
         us = ("mm", "mrad", "mm", "mrad", "", "m", "m<sup>-1</sup>",
-              "mm&middot;mrad", "mm&middot;mrad", "&mu;A")
+              "mm&middot;mrad", "mm&middot;mrad")
 
-        s =['<h5>{0:<3s} = {1:.6f} {2}<h5>'.format(n, r.get(k), ui) for (n, k, ui) in zip(names, ks, us)]
+        s =['<h4>{0:<3s} = {1:.4f} {2:>10s}</h4>'.format(n, r.get(k), ui)
+                for (n, k, ui) in zip(names, ks, us) if k != 'total_intensity']
+        s.append('<hr>')
+        s.append('<h4>Total Intensity: {0:.4f} &mu;A</h4>'.format(r.get('total_intensity')))
         self.textEdit.setHtml("<html>{}</html>".format(''.join(s)))
 
     def closeEvent(self, e):
         pass
+
