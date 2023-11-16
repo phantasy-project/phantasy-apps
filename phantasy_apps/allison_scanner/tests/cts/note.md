@@ -37,4 +37,3 @@ export EPICS_BASE=/usr/lib/epics
 export PYTHONPATH=$HOME/mpl4qt:$HOME/unicorn:$HOME/phantasy:$HOME/phantasy-apps:$HOME/phantasy-ui:$PYTHONPATH
 export PHANTASY_CONFIG_DIR=$HOME/phantasy-machines
 export LD_LIBRARY_PATH=$HOME/libs:$LD_LIBRARY_PATH
-
