@@ -421,8 +421,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if is_checked: # online
             tt = "Online mode is enabled, for working with devices."
             text = "Online"
-            #
-            self._data = None
             # set the EMS device ready for work.
             self.ems_names_cbb.currentTextChanged.emit(self.ems_names_cbb.currentText())
             self.auto_fill_beam_params_btn.clicked.emit()
@@ -960,13 +958,15 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_update_results(self):
         """Calculate Twiss parameters and update UI.
         """
-        if self._data is None:
-            return
-        inten = self.matplotlibimageWidget.get_data()
-        res = self._data.calculate_beam_parameters(inten)
-        self._results = res
-        self.update_results_ui(res)
-        self.results_changed.emit(res)
+        try:
+            inten = self.matplotlibimageWidget.get_data()
+            res = self._data.calculate_beam_parameters(inten)
+        except:
+            pass
+        else:
+            self._results = res
+            self.update_results_ui(res)
+            self.results_changed.emit(res)
 
     def on_initial_data(self):
         self._data = Data(model=self._model, array=self._current_array)
@@ -1257,11 +1257,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                                                 self._auto_push_results,
                                                 self._last_loading, self)
         self._plot_results_window.results = self._results
-        self._plot_results_window.plot_data()
-        self._plot_results_window.show()
-        self._plot_results_window.setWindowTitle("Finalize Twiss Parameters")
-        #
-        self.add_attached_widget(self._plot_results_window)
+        try:
+            self._plot_results_window.plot_data()
+            self._plot_results_window.show()
+            self._plot_results_window.setWindowTitle("Finalize Twiss Parameters")
+            #
+            self.add_attached_widget(self._plot_results_window)
+        except:
+            pass
 
     def on_title_with_ts(self, ts: float):
         """Title with human readable timestamp of the current data.
