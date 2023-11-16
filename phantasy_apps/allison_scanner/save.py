@@ -45,16 +45,19 @@ class SaveDataDialog(QDialog, Ui_Dialog):
     def auto_fill_filepath(self):
         """Auto fill filepath with timestamp.
 
-        fullpath: <root-dirpath>/ISRC1/20231113T161310_X.[json|png]
+        fullpath: <root-dirpath>/ISRC1/20231113T161310_36Ar_X.[json|png]
         """
         # ISRC{i} as the subdirectory
         isrc_id = self.parent._headinfo_widget.getIonSourceId()
         self.subdir = isrc_id
         # X or Y as the suffix
         xoy = self.parent._headinfo_widget.getOrientation()
+        # ion name and mass
+        ion_name = self.parent.ion_name_lineEdit.text()
+        ion_mass = int(self.parent.ion_mass_lineEdit.text())
         #
         ctime = epoch2human(time.time(), fmt=TS_FMT)
-        data_fn = f"{ctime}_{xoy}"
+        data_fn = f"{ctime}_{ion_mass}{ion_name}_{xoy}"
         self.filepath_lineEdit.setText(f"{data_fn}.json")
         _parent_dirpath = os.path.abspath(os.path.join(self.cdir, f"{self.subdir}"))
         self.dirpath_lineEdit.setText(_parent_dirpath)
