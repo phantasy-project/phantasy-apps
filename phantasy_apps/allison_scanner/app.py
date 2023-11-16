@@ -421,6 +421,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if is_checked: # online
             tt = "Online mode is enabled, for working with devices."
             text = "Online"
+            #
+            self._data = None
             # set the EMS device ready for work.
             self.ems_names_cbb.currentTextChanged.emit(self.ems_names_cbb.currentText())
             self.auto_fill_beam_params_btn.clicked.emit()
