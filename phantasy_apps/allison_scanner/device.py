@@ -730,3 +730,14 @@ class Device(QObject):
         """Return the motor moving velosity in mm/second.
         """
         return getattr(self.elem, f"VELO{self._id}")
+    
+    def append_timelog(self, t_elapsed: float):
+        """Push the information of "voltage steps,actual position steps,total time elapsed"
+        to TPARAM{i} field to trigger the IOC record the full information for run time cost.
+
+        - the data will be used for future studies, e.g. fit a mode for time cost estimation.
+        """
+        n_volt = int(np.abs(self.get_volt_end() - self.get_volt_begin()) / self.get_volt_step()) + 1
+        n_pos_act = int(np.abs(self.get_live_pos() - self.get_pos_begin()) / self.get_pos_step()) + 1
+        s = f"{n_volt},{n_pos_act},{t_elapsed:.1f}"
+        setattr(self.elem, f"TPARAM{self._id}", s)

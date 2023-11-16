@@ -929,6 +929,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         _title = self.on_title_with_ts(self._ems_device.get_data_pv().timestamp)
         self.on_update(self._ems_device.get_data())
         self.post_log("Scan is done.")
+        self._elapsed_timer.stop()
+        self._ems_device.append_timelog(self._time_elapsed)
         # initial data
         self.on_initial_data()
         self.on_plot_raw_data()
@@ -940,7 +942,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         #
         # self.finished.emit()
         #
-        self._elapsed_timer.stop()
         self._ems_device.data_changed.disconnect()
         self._ems_device.finished.disconnect()
         self.clear_log()
