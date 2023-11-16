@@ -1519,9 +1519,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """
         is_synced = self.fetch_config_btn.property('is_synced')
         if not is_synced:
-            QMessageBox.warning(self, "Add Current Settings",
-                    "Device settings is not consistent between GUI and IOC.",
-                    QMessageBox.Ok)
+            self.statusInfoChanged.emit(
+                     "Device settings is not consistent between GUI and IOC.")
+            # QMessageBox.warning(self, "Add Current Settings",
+            #         "Device settings is not consistent between GUI and IOC.",
+            #         QMessageBox.Ok)
             return
         self._scan_settings_list.append(self.build_current_scan_settings())
         if show:
