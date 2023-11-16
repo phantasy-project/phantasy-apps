@@ -500,7 +500,7 @@ class Device(QObject):
         print("Run-All-in-One is done.")
 
     def init_run(self):
-        self.init_bias_voltage()
+        # self.init_bias_voltage()
         # self.enable()
         self.set_params()
 
