@@ -12,7 +12,7 @@ pyarchappl==0.10.4
 scipy==1.6.0
 lmfit==1.0.1
 matplotlib==3.3.4
-numpy==1.19.5
+numpy==1.22.0
 pyqt5==5.15.2
 flame-code
 flame-utils
