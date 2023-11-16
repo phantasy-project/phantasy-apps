@@ -513,12 +513,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # TODO: update with the generated data.
         if None in cnt_list:
             return
-        cnt_pos, cnt_volt = cnt_list
-        dx = self.pos_step_dsbox.value()
+        n_pos, n_volt = cnt_list
+        pos_step = self.pos_step_dsbox.value()
         dt_pos = self.pos_settling_time_dsbox.value()
         dt_volt = self.volt_settling_time_dsbox.value()
-        x1, x2, x3 = 0.0053, 0.028, 3.84
-        t_sec = ((dt_volt + x1) * cnt_volt + dx * x2 + x3 + dt_pos) * cnt_pos
+        a, b, c = 0.0053, 0.028, 3.84 # only good for EMS1
+        t_sec = ((dt_volt + a) * n_volt + pos_step * b + c + dt_pos) * n_pos
         self.time_cost_lbl.setText(uptime(t_sec))
 
     def update_cnts(self):
@@ -811,7 +811,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.title_changed.emit("")
         self.post_log("Start the scan...")
         self._ems_device.move(wait=False)
-        self.post_log("Wating for data...")
+        self.post_log("Waiting for data...")
         self._elapsed_timer.start(1000)
         # reset
         self._pos_reached_begin = False
