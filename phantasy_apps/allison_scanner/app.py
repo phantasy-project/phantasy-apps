@@ -127,11 +127,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     # data filepath for offline mode
     sigDataFilepathChanged = pyqtSignal('QString')
 
-    def __init__(self, version, mode="Live"):
+    def __init__(self, version: str, last_updated: str):
         super(AllisonScannerWindow, self).__init__()
 
         # app version
         self._version = version
+        # last updated date
+        self._last_updated = last_updated
 
         # window title/version
         self.setWindowTitle("Allison Scanner")
@@ -143,14 +145,15 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # about info
         self.app_about_info = """
             <html>
-            <h4>About Allison Scanner</h4>
-            <p>This app is created for the operation of allison-scanner
-            devices, including the DAQ and post data analysis,
-            current version is {}.
+            <h4>Allison Scanner App</h4>
+            <p style="font-family:monospace;">Released on {}, version {}.</p>
+            <p>This app is developed for the operation of Allison Scanner
+            devices for transverse emittance measurement, including the device control,
+            DAQ and post data analysis.
             </p>
-            <p>Copyright (C) 2019-2020 Facility for Rare Isotope Beams and other contributors.</p>
+            <p>Copyright (C) 2019-2023 Facility for Rare Isotope Beams and other contributors.</p>
             </html>
-        """.format(self._version)
+        """.format(self._last_updated, self._version)
 
         # UI
         self.setupUi(self)
@@ -163,7 +166,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.ylabel_changed.connect(self.matplotlibimageWidget.setFigureYlabel)
         self.title_changed.connect(self.matplotlibimageWidget.setFigureTitle)
 
-        self._device_mode = mode.capitalize()
         self._post_init()
 
     def get_default_font_config(self):
@@ -219,7 +221,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._live_widgets = (self.retract_btn, self.abort_btn,
                               self.auto_fill_beam_params_btn,
                               self.reset_itlk_btn)
-        self.on_auto_fill_beam_params(self._device_mode)
+        self.on_auto_fill_beam_params()
         # st
         self._active_px = QPixmap(":/icons/status-green.png").scaled(PX_SIZE, PX_SIZE,
                 Qt.KeepAspectRatio, Qt.SmoothTransformation)
