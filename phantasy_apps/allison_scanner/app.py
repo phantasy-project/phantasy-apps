@@ -349,7 +349,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
         # Re-emit the selected EMS device
         delayed_exec(lambda: self.ems_names_cbb.currentTextChanged.emit(
-                                self.ems_names_cbb.currentText()), 2000)
+                     self.ems_names_cbb.currentText()), 2000)
 
     def _wire_device_signals(self, ems: Device):
         # connect signals of Device for controls and viz
@@ -1681,6 +1681,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if is_ok:
             px = self._itlk_px
             tt = "Device interlock is OK"
+            # enable device if not
+            if self.is_enabled_lbl.toolTip() == "Device is not enabled":
+                self.on_enable()
         else:
             px = self._not_itlk_px
             tt = "Device interlock is not OK"
