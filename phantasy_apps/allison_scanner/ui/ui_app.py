@@ -1301,7 +1301,7 @@ class Ui_MainWindow(object):
         self.gridLayout_5.addItem(spacerItem4, 3, 0, 1, 1)
         self.data_analysis_tbox.addItem(self.page_beam_params, "")
         self.page_bkgd_noise = QtWidgets.QWidget()
-        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 515, 348))
+        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 515, 104))
         self.page_bkgd_noise.setObjectName("page_bkgd_noise")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.page_bkgd_noise)
         self.gridLayout_2.setContentsMargins(4, 4, 4, 4)
@@ -1383,7 +1383,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.auto_update_image_chkbox, 1, 2, 1, 1)
         self.data_analysis_tbox.addItem(self.page_bkgd_noise, "")
         self.page_noise_correction = QtWidgets.QWidget()
-        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 474, 348))
+        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 474, 104))
         self.page_noise_correction.setObjectName("page_noise_correction")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.page_noise_correction)
         self.gridLayout_7.setContentsMargins(4, 4, 4, 4)
@@ -1885,7 +1885,40 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.ems_names_cbb, self.ems_detail_btn)
         MainWindow.setTabOrder(self.ems_detail_btn, self.ems_orientation_cbb)
         MainWindow.setTabOrder(self.ems_orientation_cbb, self.adv_ctrl_chkbox)
-        MainWindow.setTabOrder(self.adv_ctrl_chkbox, self.ion_name_lineEdit)
+        MainWindow.setTabOrder(self.adv_ctrl_chkbox, self.run_btn)
+        MainWindow.setTabOrder(self.run_btn, self.abort_btn)
+        MainWindow.setTabOrder(self.abort_btn, self.fetch_data_btn)
+        MainWindow.setTabOrder(self.fetch_data_btn,
+                               self.live_biasVolt_lineEdit)
+        MainWindow.setTabOrder(self.live_biasVolt_lineEdit,
+                               self.set_biasVolt_lineEdit)
+        MainWindow.setTabOrder(self.set_biasVolt_lineEdit,
+                               self.set_biasVolt_btn)
+        MainWindow.setTabOrder(self.set_biasVolt_btn, self.live_pos_lineEdit)
+        MainWindow.setTabOrder(self.live_pos_lineEdit, self.set_pos_lineEdit)
+        MainWindow.setTabOrder(self.set_pos_lineEdit, self.set_pos_btn)
+        MainWindow.setTabOrder(self.set_pos_btn, self.retract_btn)
+        MainWindow.setTabOrder(self.retract_btn, self.enable_btn)
+        MainWindow.setTabOrder(self.enable_btn, self.reset_itlk_btn)
+        MainWindow.setTabOrder(self.reset_itlk_btn, self.toolButton_2)
+        MainWindow.setTabOrder(self.toolButton_2, self.default_config_btn)
+        MainWindow.setTabOrder(self.default_config_btn, self.toolButton)
+        MainWindow.setTabOrder(self.toolButton, self.fetch_config_btn)
+        MainWindow.setTabOrder(self.fetch_config_btn, self.pos_begin_dsbox)
+        MainWindow.setTabOrder(self.pos_begin_dsbox, self.pos_end_dsbox)
+        MainWindow.setTabOrder(self.pos_end_dsbox, self.pos_step_dsbox)
+        MainWindow.setTabOrder(self.pos_step_dsbox,
+                               self.pos_settling_time_dsbox)
+        MainWindow.setTabOrder(self.pos_settling_time_dsbox,
+                               self.volt_begin_dsbox)
+        MainWindow.setTabOrder(self.volt_begin_dsbox, self.volt_end_dsbox)
+        MainWindow.setTabOrder(self.volt_end_dsbox, self.volt_step_dsbox)
+        MainWindow.setTabOrder(self.volt_step_dsbox,
+                               self.volt_settling_time_dsbox)
+        MainWindow.setTabOrder(self.volt_settling_time_dsbox,
+                               self.auto_fill_beam_params_btn)
+        MainWindow.setTabOrder(self.auto_fill_beam_params_btn,
+                               self.ion_name_lineEdit)
         MainWindow.setTabOrder(self.ion_name_lineEdit,
                                self.ion_charge_lineEdit)
         MainWindow.setTabOrder(self.ion_charge_lineEdit,
@@ -1895,25 +1928,32 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.charge_mass_ratio_lineEdit,
                                self.ion_energy_lineEdit)
         MainWindow.setTabOrder(self.ion_energy_lineEdit, self.voltage_lineEdit)
-        MainWindow.setTabOrder(self.voltage_lineEdit, self.raw_view_chkbox)
-        MainWindow.setTabOrder(self.raw_view_chkbox, self.cmap_fav_cbb)
-        MainWindow.setTabOrder(self.cmap_fav_cbb, self.x_cen_lineEdit)
+        MainWindow.setTabOrder(self.voltage_lineEdit, self.divergence_lineEdit)
+        MainWindow.setTabOrder(self.divergence_lineEdit, self.x_cen_lineEdit)
         MainWindow.setTabOrder(self.x_cen_lineEdit, self.x_rms_lineEdit)
         MainWindow.setTabOrder(self.x_rms_lineEdit, self.xp_cen_lineEdit)
         MainWindow.setTabOrder(self.xp_cen_lineEdit, self.xp_rms_lineEdit)
-        MainWindow.setTabOrder(self.xp_rms_lineEdit, self.update_results_btn)
-        MainWindow.setTabOrder(self.update_results_btn,
-                               self.bkgd_noise_nelem_sbox)
+        MainWindow.setTabOrder(self.xp_rms_lineEdit, self.alpha_x_lineEdit)
+        MainWindow.setTabOrder(self.alpha_x_lineEdit, self.beta_x_lineEdit)
+        MainWindow.setTabOrder(self.beta_x_lineEdit, self.gamma_x_lineEdit)
+        MainWindow.setTabOrder(self.gamma_x_lineEdit, self.emit_x_lineEdit)
+        MainWindow.setTabOrder(self.emit_x_lineEdit, self.emitn_x_lineEdit)
+        MainWindow.setTabOrder(self.emitn_x_lineEdit, self.update_results_btn)
+        MainWindow.setTabOrder(self.update_results_btn, self.show_results_btn)
+        MainWindow.setTabOrder(self.show_results_btn, self.raw_view_chkbox)
+        MainWindow.setTabOrder(self.raw_view_chkbox, self.cmap_fav_cbb)
+        MainWindow.setTabOrder(self.cmap_fav_cbb, self.checkBox)
+        MainWindow.setTabOrder(self.checkBox, self.apply_noise_correction_btn)
+        MainWindow.setTabOrder(self.apply_noise_correction_btn,
+                               self.noise_threshold_sbox)
+        MainWindow.setTabOrder(self.noise_threshold_sbox, self.factor_dsbox)
+        MainWindow.setTabOrder(self.factor_dsbox, self.bkgd_noise_nelem_sbox)
         MainWindow.setTabOrder(self.bkgd_noise_nelem_sbox,
                                self.bkgd_noise_threshold_sbox)
         MainWindow.setTabOrder(self.bkgd_noise_threshold_sbox,
                                self.auto_update_image_chkbox)
         MainWindow.setTabOrder(self.auto_update_image_chkbox,
-                               self.factor_dsbox)
-        MainWindow.setTabOrder(self.factor_dsbox, self.plot_region_btn)
-        MainWindow.setTabOrder(self.plot_region_btn, self.noise_threshold_sbox)
-        MainWindow.setTabOrder(self.noise_threshold_sbox,
-                               self.apply_noise_correction_btn)
+                               self.plot_region_btn)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
