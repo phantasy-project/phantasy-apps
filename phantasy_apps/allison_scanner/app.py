@@ -345,6 +345,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._init_revert_config_btn()
         self._init_scan_settings()
 
+        # Re-emit the selected EMS device
+        delayed_exec(lambda: self.ems_names_cbb.currentTextChanged.emit(
+                                self.ems_names_cbb.currentText()), 2000)
+
     def _wire_device_signals(self, ems: Device):
         # connect signals of Device for controls and viz
         # status in
