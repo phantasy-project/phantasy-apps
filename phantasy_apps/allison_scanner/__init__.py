@@ -28,7 +28,7 @@ def run(cli=False):
     w = AllisonScannerWindow(version=__version__, last_updated=__last_updated__)
     w.show()
     w.setWindowTitle(__title__)
-    w.resize(1440, 1200)
+    w.resize(1920, 1440)
     if cli:
         app.exec_()
     else:
