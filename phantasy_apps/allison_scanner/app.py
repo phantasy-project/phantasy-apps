@@ -1351,7 +1351,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         auto_push = self._auto_push_results
         self.actionAuto_Push_Results_to_PVs.setChecked(False)
         if self._validate_device() is False:
-            return
+            self._xdim = int(self.pos_steps_lbl.property("cnt"))
+            self._ydim = int(self.volt_steps_lbl.property("cnt"))
+            printlog(f"Sync data: range validation False, but continue processing... ({self._xdim}, {self._ydim})")
+
         self.on_add_current_config(show=False)
         arr = self._ems_device.get_data()
         try:
