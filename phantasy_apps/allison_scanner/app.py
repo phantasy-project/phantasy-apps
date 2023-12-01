@@ -289,6 +289,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.enable_btn.clicked.connect(self.on_enable)
         self.reset_itlk_btn.clicked.connect(self.on_reset_interlock)
+        self.bypass_itlk_chkbox.toggled.connect(self.on_bypass_interlock)
 
         # check adv ctrl by default
         # main vertical splitter
@@ -420,9 +421,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self.is_enabled_lbl.toolTip() != "Device is enabled":
             msg.append("Device is not Enabled.")
             _is_ready = False
-        if self.is_itlk_lbl.toolTip() != "Device interlock is OK":
-            msg.append("Device interlock is not OK.")
-            _is_ready = False
+        if not self.bypass_itlk_chkbox.isChecked():
+            if self.is_itlk_lbl.toolTip() != "Device interlock is OK":
+                msg.append("Device interlock is not OK.")
+                _is_ready = False
         if self.is_bias_on_lbl.toolTip() != "Bias voltage is on":
             msg.append("Bias voltage is OFF.")
             _is_ready = False
@@ -1505,6 +1507,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             ek = float(self.ion_energy_lineEdit.text())
             # n, q, a, kv = 'Ar', 9, 40, 53.333
         return (n, q, a, ek)
+
+    @pyqtSlot(bool)
+    def on_bypass_interlock(self, is_checked: bool):
+        """Bypass interlock check or not for scan readiness.
+        """
+        self.__check_device_ready_scan()
 
     @pyqtSlot()
     def on_reset_interlock(self):
