@@ -59,8 +59,12 @@ class Data(object):
                     data = np.flipud(f['data']['array'])
                     self.update_pos_conf(f['position'])
                     self.update_volt_conf(f['voltage'])
+                    print(f['voltage'])
                     data[data==None] = np.nan
                     data = mask_array(data.tolist())
+                    #
+                    self.x_grid, self.xp_grid, self.volt_grid, self.weight_grid = \
+                        self.initial_data_grid()
                 return data
 
     def update_pos_conf(self, conf):
@@ -69,8 +73,10 @@ class Data(object):
         self._pos_end = conf['end']
         self._pos_step = conf['step']
         n = (self._pos_end - self._pos_begin) / self._pos_step
-        assert is_integer(n) == True
+        print(f"Pos config: from {self._pos_begin} to {self._pos_end} by {self._pos_step} {n}")
+        # assert is_integer(n) == True
         self._pos_dim = int(n) + 1
+        print(f"Pos config: from {self._pos_begin} to {self._pos_end} by {self._pos_step} # {self._pos_dim}")
 
     def update_volt_conf(self, conf):
         # update voltage config.
@@ -78,8 +84,10 @@ class Data(object):
         self._volt_end = conf['end']
         self._volt_step = conf['step']
         n = (self._volt_end - self._volt_begin) / self._volt_step
-        assert is_integer(n) == True
+        print(f"Volt config: from {self._volt_begin} to {self._volt_end} by {self._volt_step} {n}")
+        # assert is_integer(n) == True
         self._volt_dim =  int(n) + 1
+        print(f"Volt config: from {self._volt_begin} to {self._volt_end} by {self._volt_step} # {self._volt_dim}")
 
     def initial_data_grid(self):
         """Initial data grid.
@@ -143,6 +151,7 @@ class Data(object):
         xp = self.xp_grid if xp is None else xp
         intensity = self.intensity.copy() if intensity is None else intensity.copy()
         if kws.get('weight_correction', True):
+            # print(intensity.shape, self.weight_grid.shape, self.grid_to_res_ratio)
             intensity *= 1. / self.weight_grid * self.grid_to_res_ratio
         return calculate_beam_parameters(x, xp, intensity,
                                          self.model.bg, self.xoy)
