@@ -375,6 +375,33 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         delayed_exec(lambda: self.ems_names_cbb.currentTextChanged.emit(
                      self.ems_names_cbb.currentText()), 2000)
 
+        # set scan ranges from figure
+        self.range_from_fig_btn.clicked.connect(self.on_set_range_from_figure)
+
+    @pyqtSlot()
+    def on_set_range_from_figure(self):
+        """Set scan ranges with the X Y limits shown in figure.
+        """
+        try:
+            assert self.raw_view_chkbox.isChecked()
+        except AssertionError:
+            QMessageBox.warning(self, "Refine Scan Ranges",
+                                "Please enable 'Show Y-Axis as Voltage' option, then use Zoom/Pan tools or the mouse wheel button to make the area you'd like to refine the scan.",
+                                QMessageBox.Ok)
+            return
+        x1, x2 = self.matplotlibimageWidget.get_xlim()
+        y1, y2 = self.matplotlibimageWidget.get_ylim()
+        x1_i, x2_i, y1_i, y2_i = int(x1), int(x2), int(y1), int(y2)
+        print(f"Area range from figure: ({x1_i}, {x2_i}), ({y1_i}, {y2_i})")
+        pos_step_size = self._ems_device.refine_pos_step_size
+        volt_step_size = self._ems_device.refine_volt_step_size
+        self.pos_begin_dsbox.setValue(x1_i)
+        self.pos_end_dsbox.setValue(x2_i)
+        self.pos_step_dsbox.setValue(pos_step_size)
+        self.volt_begin_dsbox.setValue(y1_i)
+        self.volt_end_dsbox.setValue(y2_i)
+        self.volt_step_dsbox.setValue(volt_step_size)
+
     def _wire_device_signals(self, ems: Device):
         # connect signals of Device for controls and viz
         # status in
@@ -1176,8 +1203,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         o.update_figure()
 
     @pyqtSlot(bool)
-    def on_enable_raw_view(self, f):
-        if f: # show pos, volt, intensity
+    def on_enable_raw_view(self, enabled: bool):
+        if enabled: # show pos, volt, intensity
             try:
                 self.ydata_changed.emit(self._data.volt_grid)
             except:
