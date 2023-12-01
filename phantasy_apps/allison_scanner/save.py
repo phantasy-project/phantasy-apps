@@ -33,7 +33,10 @@ class SaveDataDialog(QDialog, Ui_Dialog):
         self._post_init()
 
     def _post_init(self):
-        self.auto_fill_filepath()
+        try:
+            self.auto_fill_filepath()
+        except Exception as err:
+            QMessageBox.critical(self, "Save Data", f"Failed: {err}", QMessageBox.Ok)
 
     @pyqtSlot()
     def on_locate_dir(self):
@@ -98,7 +101,7 @@ class SaveDataDialog(QDialog, Ui_Dialog):
                     return
             self.parent._save_data_to_file(filepath, **kws)
         except:
-            QMessageBox.warning(self, "Save Data",
+            QMessageBox.critical(self, "Save Data",
                     "Failed to save data to {}.".format(filepath),
                     QMessageBox.Ok)
         else:

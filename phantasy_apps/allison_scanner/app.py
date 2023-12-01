@@ -965,11 +965,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._is_abort = False
 
     def closeEvent(self, e):
-        r = QMessageBox.information(self, "Exit Application",
-                "Do you want to save the data?",
-                QMessageBox.Yes | QMessageBox.No)
-        if r == QMessageBox.Yes:
-            self.on_save_data()
         BaseAppForm.closeEvent(self, e)
 
     @pyqtSlot()
