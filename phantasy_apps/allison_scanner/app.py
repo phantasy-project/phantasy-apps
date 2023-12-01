@@ -794,6 +794,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_run(self):
         self.sync_config()
+        self._is_abort = False
+        self._auto_saved = False
         self._abort = False
         self._run()
 
@@ -838,6 +840,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_abort(self):
         self._ems_device.abort()
+        self._is_abort = True
         self._abort = True
         try:
             self._elapsed_timer.stop()
@@ -953,6 +956,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._ems_device.data_changed.disconnect()
         self._ems_device.finished.disconnect()
         self.clear_log()
+
+        # auto save the data, _auto_saved initialized in on_run() only.
+        if not self._auto_saved:
+            self.auto_save(self._is_abort)
+            self._auto_saved = True
+            # reset is_abort flag
+            self._is_abort = False
 
     def closeEvent(self, e):
         r = QMessageBox.information(self, "Exit Application",
@@ -1344,6 +1354,18 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot(bool)
     def on_enable_auto_analysis(self, f):
         self._auto_analysis = f
+
+    def auto_save(self, is_abort: bool):
+        """Auto save the data to files after auto process is done.
+        """
+        note_text = f"Auto-saved at {datetime.now().strftime('%Y-%m-%d %H:%M:%S %Z')}"
+        if is_abort:
+            note_text += "(scan aborted)"
+        if self._data_save_dlg is None:
+            self._data_save_dlg = SaveDataDialog(DEFAULT_DATA_SAVE_DIR, self)
+        self._data_save_dlg.note_plainTextEdit.setPlainText(note_text)
+        self._data_save_dlg.auto_fill_filepath()
+        self._data_save_dlg.save_btn.click()
 
     @pyqtSlot()
     def on_save_data(self):

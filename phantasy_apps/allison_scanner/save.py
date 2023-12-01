@@ -103,6 +103,6 @@ class SaveDataDialog(QDialog, Ui_Dialog):
                     QMessageBox.Ok)
         else:
             QMessageBox.information(self, "Save Data",
-                    "Saved data to {}.".format(filepath),
+                    f"Saved data to {filepath}.",
                     QMessageBox.Ok)
             self.close()
