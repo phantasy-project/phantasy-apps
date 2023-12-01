@@ -99,10 +99,34 @@ _USERGUIDE_FILE = os.path.join(os.path.dirname(__file__),
     'docs/AllisonScanner_UserGuide.pdf')
 
 DEFAULT_DATA_SAVE_DIR = "/files/shared/phyapps-operations/data/allison_scanner"
+# DEFAULT_DATA_SAVE_DIR = "/user/zhangt/allison_scanner"
 
 #
 POS_OUT_LIMIT_STR = "300" # 300 mm guarantees the pos reaches outlimit
 
+PARAM_UNIT_MAP = {
+    "x_cen": "mm",
+    "xp_cen": "mrad",
+    "x_rms": "mm",
+    "x_xp": "mm.mrad",
+    "xp_rms": "mrad",
+    "emit_x": "mm.mrad",
+    "emitn_x": "mm.mrad",
+    "alpha_x": "1",
+    "beta_x": "m",
+    "gamma_x": "1/m",
+    "y_cen": "mm",
+    "yp_cen": "mrad",
+    "y_rms": "mm",
+    "y_yp": "mm.mrad",
+    "yp_rms": "mrad",
+    "emit_y": "mm.mrad",
+    "emitn_y": "mm.mrad",
+    "alpha_y": "1",
+    "beta_y": "m",
+    "gamma_y": "1/m",
+    "total_intensity": "uA"
+}
 
 class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
@@ -1435,7 +1459,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         })
         # results
         if self._results is not None:
-            ds.update({'results': {k: '{0:.6g}'.format(v) for k,v in self._results.items()}})
+            ds.update({'results': {
+                k: {'value': '{0:.6g}'.format(v), 'unit': PARAM_UNIT_MAP[k]} for k, v in self._results.items()}
+            })
         ds.update({'info':
                     {'user': getuser(),
                      'app': self.getAppTitle(),
