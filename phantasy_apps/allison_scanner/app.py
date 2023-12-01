@@ -544,7 +544,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             if attr in [f'{i}_{v}' for v in ('begin', 'end')]:
                 o = getattr(self, f'{i}_step_dsbox')
                 o.valueChanged.emit(o.value())
-                printlog("Updated {}".format(f'{i}_step_dsbox'))
+                printlog(f"Updated {i}_step_dsbox: {o.value()}")
         cnt_list = self.update_cnts()
         self.update_time_cost(cnt_list)
 
@@ -1031,7 +1031,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         try:
             inten = self.matplotlibimageWidget.get_data()
             res = self._data.calculate_beam_parameters(inten)
-        except:
+        except Exception as err:
+            printlog(f"Update results Error: {err}")
             pass
         else:
             self._results = res
@@ -1105,6 +1106,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.actiononline_mode.setChecked(False)
         #
         self.on_add_current_config(show=False)
+
         try:
             # UI config
             # ion species and model
