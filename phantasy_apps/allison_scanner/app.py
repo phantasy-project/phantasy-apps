@@ -1413,7 +1413,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 'Ion Name': n,
                 'Q': q,
                 'A': a,
-                'Ek': {'value': ek, 'unit': 'eV'}}})
+                'Ek': {'value': ek, 'unit': 'eV'},
+                'volt2angle': {
+                    'value': self._model.voltage_to_divergence(1000)[1] * 1000,
+                    'unit': 'mrad/kV'}
+            }
+        })
         # data-processing params
         bkgd_noise_nelem = '{0:d}'.format(self.bkgd_noise_nelem_sbox.value())
         bkgd_noise_nsigma = '{0:d}'.format(self.bkgd_noise_threshold_sbox.value())
