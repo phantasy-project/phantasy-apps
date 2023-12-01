@@ -635,6 +635,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._update_xylabels()
         # update result keys (Twiss Parameters)
         self._update_result_keys(s)
+        # uncheck interlock bypass
+        self.bypass_itlk_chkbox.setChecked(False)
 
     def get_device_config(self, path=None):
         """Return device config from *path*.
@@ -662,6 +664,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.statusInfoChanged.emit("Selected device: {}".format(s))
         # trigger v2d
         self.on_update_model()
+        # uncheck interlock bypass
+        self.bypass_itlk_chkbox.setChecked(False)
 
     def on_update_device(self):
         # update the EMS device.
