@@ -580,6 +580,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 else:
                     o.setStyleSheet(CNT_IS_INT_STY)
                 o.setToolTip(tt)
+                o.setProperty("cnt_is_int", cnt_is_int)
+                o.setProperty("cnt", cnt)
             cnt_list.append(cnt)
         return cnt_list
 
@@ -911,30 +913,24 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """Validate device scan range.
         """
         # scan ranges
-        x1 = self._ems_device.get_pos_begin()
-        x2 = self._ems_device.get_pos_end()
-        dx = self._ems_device.get_pos_step()
         try:
-            assert int((x2 - x1) / dx) * dx == x2 - x1
+            assert self.pos_steps_lbl.property("cnt_is_int") == True
         except AssertionError:
             QMessageBox.warning(self, "Scan Range Warning",
-                "Input scan range for position indicates Non-Integer total steps.",
+                "The total steps for position scan must be an integer!\nPlease adjust the step size, until the step indicator turns to GREEN.",
                 QMessageBox.Ok)
             return False
         #
-        y1 = self._ems_device.get_volt_begin()
-        y2 = self._ems_device.get_volt_end()
-        dy = self._ems_device.get_volt_step()
         try:
-            assert int((y2 - y1) / dy) * dy == y2 - y1
+            assert self.volt_steps_lbl.property("cnt_is_int") == True
         except AssertionError:
             QMessageBox.warning(self, "Scan Range Warning",
-                "Input scan range for voltage indicates Non-Integer total steps.",
+                "The total steps for voltage scan must be an integer!\nPlease adjust the step size, until the step indicator turns to GREEN.",
                 QMessageBox.Ok)
             return False
         #
-        self._xdim = int((x2 - x1) / dx) + 1
-        self._ydim = int((y2 - y1) / dy) + 1
+        self._xdim = int(self.pos_steps_lbl.property("cnt"))
+        self._ydim = int(self.volt_steps_lbl.property("cnt"))
 
         return True
 

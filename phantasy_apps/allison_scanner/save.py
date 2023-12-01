@@ -100,9 +100,9 @@ class SaveDataDialog(QDialog, Ui_Dialog):
                 if r == QMessageBox.No:
                     return
             self.parent._save_data_to_file(filepath, **kws)
-        except:
+        except Exception as err:
             QMessageBox.critical(self, "Save Data",
-                    "Failed to save data to {}.".format(filepath),
+                    f"Failed to save data to {filepath}.\n{err}",
                     QMessageBox.Ok)
         else:
             QMessageBox.information(self, "Save Data",
