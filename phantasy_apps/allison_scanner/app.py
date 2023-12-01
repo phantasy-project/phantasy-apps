@@ -99,7 +99,6 @@ _USERGUIDE_FILE = os.path.join(os.path.dirname(__file__),
     'docs/AllisonScanner_UserGuide.pdf')
 
 DEFAULT_DATA_SAVE_DIR = "/files/shared/phyapps-operations/data/allison_scanner"
-# DEFAULT_DATA_SAVE_DIR = "/user/zhangt/allison_scanner"
 
 #
 POS_OUT_LIMIT_STR = "300" # 300 mm guarantees the pos reaches outlimit
@@ -427,6 +426,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self.is_bias_on_lbl.toolTip() != "Bias voltage is on":
             msg.append("Bias voltage is OFF.")
             _is_ready = False
+        if not self.pos_steps_lbl.property("cnt_is_int"):
+            msg.append("Position steps Non-Integer")
+        if not self.volt_steps_lbl.property("cnt_is_int"):
+            msg.append("Voltage steps Non-Integer")
         self.sigReadyScanChanged.emit(_is_ready)
         # post the reason why not ready to scan
         if msg:
@@ -582,6 +585,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 o.setToolTip(tt)
                 o.setProperty("cnt_is_int", cnt_is_int)
                 o.setProperty("cnt", cnt)
+                self.__check_device_ready_scan()
             cnt_list.append(cnt)
         return cnt_list
 
