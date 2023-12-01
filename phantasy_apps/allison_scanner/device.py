@@ -119,6 +119,10 @@ class Device(QObject):
         # info, e.g. Installed or not-installed
         self.info = self.dconf.get(name, 'info')
 
+        # refine scan step sizes
+        self.refine_pos_step_size = float(self.dconf.get(name, 'refine_pos_step_size'))
+        self.refine_volt_step_size = float(self.dconf.get(name, 'refine_volt_step_size'))
+
     def update_xoy_conf(self, name: str):
         # xoy
         # default pos/volt alter ranges, [mm], [V], settling time: [sec]
