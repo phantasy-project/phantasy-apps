@@ -108,3 +108,7 @@ class PlotWidget(QWidget, Ui_Form):
         for o in (self._o1, self._o2):
             o.setFigureXlabel(xlbl)
             o.setFigureYlabel(ylbl)
+
+    def showEvent(self, e):
+        self.move(self._parent.geometry().translated(5, 0).topRight())
+        super().showEvent(e)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from PyQt5.QtCore import QPoint
 from PyQt5.QtWidgets import QMessageBox
 
 from phantasy_ui import BaseAppForm
@@ -139,3 +140,6 @@ class PlotResults(BaseAppForm, Ui_MainWindow):
     def closeEvent(self, e):
         pass
 
+    def showEvent(self, e):
+        self.move(self._parent.geometry().translated(5, 0).bottomRight() - QPoint(0, self.geometry().height()))
+        super().showEvent(e)
