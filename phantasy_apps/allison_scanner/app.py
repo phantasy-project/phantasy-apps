@@ -688,7 +688,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # switch EMS device
         self._current_device_name = s
         self._current_device_elem = self._all_devices_dict[s]
-        
+
         # switch ion source, set the beam info widget
         isrc_name = ION_SOURCE_NAME_MAP.get(s[:7], 'ISRC1')
         self.beamSpeciesDisplayWidget.set_ion_source(isrc_name)
@@ -825,6 +825,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """Save configuration.
         """
         filepath = self._dconf.config_path
+        r = QMessageBox.question(self, "Update Configurations",
+                "Are you sure to update the configurations (e.g. current scan range as default)?",
+                QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if r == QMessageBox.No:
+            return
         self.__save_config_to_file(filepath)
         printlog("Save config to {}".format(filepath))
 
