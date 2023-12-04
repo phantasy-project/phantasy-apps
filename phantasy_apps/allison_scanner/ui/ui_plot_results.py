@@ -88,7 +88,7 @@ class Ui_MainWindow(object):
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(1)
+        sizePolicy.setVerticalStretch(2)
         sizePolicy.setHeightForWidth(
             self.results_gbox.sizePolicy().hasHeightForWidth())
         self.results_gbox.setSizePolicy(sizePolicy)
@@ -119,24 +119,24 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.push_to_pv_btn)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
         self.gridLayout_2.addWidget(self.results_gbox, 1, 0, 1, 1)
-        self.groupBox = QtWidgets.QGroupBox(self.param_gbox)
+        self.beam_gbox = QtWidgets.QGroupBox(self.param_gbox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setVerticalStretch(1)
         sizePolicy.setHeightForWidth(
-            self.groupBox.sizePolicy().hasHeightForWidth())
-        self.groupBox.setSizePolicy(sizePolicy)
-        self.groupBox.setObjectName("groupBox")
-        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.groupBox)
+            self.beam_gbox.sizePolicy().hasHeightForWidth())
+        self.beam_gbox.setSizePolicy(sizePolicy)
+        self.beam_gbox.setObjectName("beam_gbox")
+        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.beam_gbox)
         self.verticalLayout_3.setContentsMargins(4, 4, 4, 4)
         self.verticalLayout_3.setSpacing(4)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.beam_textEdit = QtWidgets.QTextEdit(self.groupBox)
+        self.beam_textEdit = QtWidgets.QTextEdit(self.beam_gbox)
         self.beam_textEdit.setReadOnly(True)
         self.beam_textEdit.setObjectName("beam_textEdit")
         self.verticalLayout_3.addWidget(self.beam_textEdit)
-        self.gridLayout_2.addWidget(self.groupBox, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.beam_gbox, 0, 0, 1, 1)
         self.gridLayout_3.addWidget(self.splitter, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -161,7 +161,7 @@ class Ui_MainWindow(object):
         self.results_gbox.setTitle(_translate("MainWindow", "Results"))
         self.label_2.setText(_translate("MainWindow", "To PVs"))
         self.push_to_pv_btn.setText(_translate("MainWindow", "Publish"))
-        self.groupBox.setTitle(_translate("MainWindow", "Beam Info"))
+        self.beam_gbox.setTitle(_translate("MainWindow", "Beam Info"))
 
 
 from mpl4qt.widgets.mplimagewidget import MatplotlibImageWidget
