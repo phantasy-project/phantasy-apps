@@ -486,11 +486,17 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             # set the EMS device ready for work.
             self.ems_names_cbb.currentTextChanged.emit(self.ems_names_cbb.currentText())
             self.auto_fill_beam_params_btn.clicked.emit()
+            # re-connect ion info autofill
+            self.beamSpeciesDisplayWidget.display_changed.connect(
+                self.auto_fill_beam_params_btn.click)
         else: # offline
             tt = "Offline mode is enabled, for working with data files."
             text = "Offline"
+            # stop autofill ion info
+            self.beamSpeciesDisplayWidget.display_changed.disconnect()
         self.actiononline_mode.setToolTip(tt)
         self.actiononline_mode.setIconText(text)
+
 
     @pyqtSlot()
     def onShowUserGuide(self):
@@ -682,10 +688,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # switch EMS device
         self._current_device_name = s
         self._current_device_elem = self._all_devices_dict[s]
-        if self._online_mode:
-            # switch ion source, set the beam info widget
-            isrc_name = ION_SOURCE_NAME_MAP.get(s[:7], 'ISRC1')
-            self.beamSpeciesDisplayWidget.set_ion_source(isrc_name)
+        
+        # switch ion source, set the beam info widget
+        isrc_name = ION_SOURCE_NAME_MAP.get(s[:7], 'ISRC1')
+        self.beamSpeciesDisplayWidget.set_ion_source(isrc_name)
+
         # update the EMS device
         self.on_update_device()
         self.statusInfoChanged.emit("Selected device: {}".format(s))
@@ -1095,7 +1102,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_open_data(self):
         # Open data from a JSON data file.
-        filepath, ext = get_open_filename(self,
+        filepath, _ = get_open_filename(self,
                                           cdir=DEFAULT_DATA_SAVE_DIR,
                                           type_filter="JSON Files (*.json)")
         if filepath is None:
@@ -1119,6 +1126,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._last_loading = True
             self._loading_note = note
             self._loading_filepath = filepath
+
             #
             self.ion_name_lineEdit.setText(ion_name)
             self.ion_charge_lineEdit.setText(ion_charge)
@@ -1145,7 +1153,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self.volt_step_dsbox.setValue(vs)
 
             # data
-            data = self._data = Data(self._model, file=filepath)
+            self._data = Data(self._model, file=filepath)
         except KeyError:
             QMessageBox.warning(self, "Open Data", "Failed to open data.",
                     QMessageBox.Ok)
