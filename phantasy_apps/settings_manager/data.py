@@ -542,17 +542,8 @@ class SnapshotData:
         self._df_info.loc["attribute"]["date"] = \
             datetime.fromtimestamp(ts).strftime("%Y-%m-%d %A")
 
-#    def __str__(self):
-#        # str(self.data)
-#        sio = io.StringIO()
-#        sio.write("\t".join(CSV_HEADER))
-#        sio.write("\n")
-#        for ename, fname, ftype, spos, sp, rd, old_sp, tol, writable in self.data:
-#            sio.write(
-#                f"{ename}\t{fname}\t{ftype}\t{spos}\t{sp}\t{rd}\t{old_sp}\t{tol}\t{writable}\n")
-#        text = sio.getvalue()
-#        sio.close()
-#        return text
+    def __repr__(self):
+        return f'SnapshotData: [{self.ts_as_str()}] {self.ion_as_str()} - {self.note}'
 
     def __write_to_excel(self, filepath, **kws):
         # xlsx
