@@ -103,6 +103,29 @@ DEFAULT_DATA_SAVE_DIR = "/files/shared/phyapps-operations/data/allison_scanner"
 #
 POS_OUT_LIMIT_STR = "300" # 300 mm guarantees the pos reaches outlimit
 
+PARAM_UNIT_MAP = {
+    "x_cen": "mm",
+    "xp_cen": "mrad",
+    "x_rms": "mm",
+    "x_xp": "mm.mrad",
+    "xp_rms": "mrad",
+    "emit_x": "mm.mrad",
+    "emitn_x": "mm.mrad",
+    "alpha_x": "1",
+    "beta_x": "m",
+    "gamma_x": "1/m",
+    "y_cen": "mm",
+    "yp_cen": "mrad",
+    "y_rms": "mm",
+    "y_yp": "mm.mrad",
+    "yp_rms": "mrad",
+    "emit_y": "mm.mrad",
+    "emitn_y": "mm.mrad",
+    "alpha_y": "1",
+    "beta_y": "m",
+    "gamma_y": "1/m",
+    "total_intensity": "uA"
+}
 
 class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
@@ -127,11 +150,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     # data filepath for offline mode
     sigDataFilepathChanged = pyqtSignal('QString')
 
-    def __init__(self, version, mode="Live"):
+    def __init__(self, version: str, last_updated: str):
         super(AllisonScannerWindow, self).__init__()
 
         # app version
         self._version = version
+        # last updated date
+        self._last_updated = last_updated
 
         # window title/version
         self.setWindowTitle("Allison Scanner")
@@ -143,14 +168,15 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # about info
         self.app_about_info = """
             <html>
-            <h4>About Allison Scanner</h4>
-            <p>This app is created for the operation of allison-scanner
-            devices, including the DAQ and post data analysis,
-            current version is {}.
+            <h4>Allison Scanner App</h4>
+            <p style="font-family:monospace;">Released on {}, version {}.</p>
+            <p>This app is developed for the operation of Allison Scanner
+            devices for transverse emittance measurement, including the device control,
+            DAQ and post data analysis.
             </p>
-            <p>Copyright (C) 2019-2020 Facility for Rare Isotope Beams and other contributors.</p>
+            <p>Copyright (C) 2019-2023 Facility for Rare Isotope Beams and other contributors.</p>
             </html>
-        """.format(self._version)
+        """.format(self._last_updated, self._version)
 
         # UI
         self.setupUi(self)
@@ -163,7 +189,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.ylabel_changed.connect(self.matplotlibimageWidget.setFigureYlabel)
         self.title_changed.connect(self.matplotlibimageWidget.setFigureTitle)
 
-        self._device_mode = mode.capitalize()
         self._post_init()
 
     def get_default_font_config(self):
@@ -219,7 +244,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._live_widgets = (self.retract_btn, self.abort_btn,
                               self.auto_fill_beam_params_btn,
                               self.reset_itlk_btn)
-        self.on_auto_fill_beam_params(self._device_mode)
+        self.on_auto_fill_beam_params()
         # st
         self._active_px = QPixmap(":/icons/status-green.png").scaled(PX_SIZE, PX_SIZE,
                 Qt.KeepAspectRatio, Qt.SmoothTransformation)
@@ -264,6 +289,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         #
         self.enable_btn.clicked.connect(self.on_enable)
         self.reset_itlk_btn.clicked.connect(self.on_reset_interlock)
+        self.bypass_itlk_chkbox.toggled.connect(self.on_bypass_interlock)
 
         # check adv ctrl by default
         # main vertical splitter
@@ -345,6 +371,37 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._init_revert_config_btn()
         self._init_scan_settings()
 
+        # Re-emit the selected EMS device
+        delayed_exec(lambda: self.ems_names_cbb.currentTextChanged.emit(
+                     self.ems_names_cbb.currentText()), 2000)
+
+        # set scan ranges from figure
+        self.range_from_fig_btn.clicked.connect(self.on_set_range_from_figure)
+
+    @pyqtSlot()
+    def on_set_range_from_figure(self):
+        """Set scan ranges with the X Y limits shown in figure.
+        """
+        try:
+            assert self.raw_view_chkbox.isChecked()
+        except AssertionError:
+            QMessageBox.warning(self, "Refine Scan Ranges",
+                                "Please enable 'Show Y-Axis as Voltage' option, then use Zoom/Pan tools or the mouse wheel button to make the area you'd like to refine the scan.",
+                                QMessageBox.Ok)
+            return
+        x1, x2 = self.matplotlibimageWidget.get_xlim()
+        y1, y2 = self.matplotlibimageWidget.get_ylim()
+        x1_i, x2_i, y1_i, y2_i = int(x1), int(x2), int(y1), int(y2)
+        print(f"Area range from figure: ({x1_i}, {x2_i}), ({y1_i}, {y2_i})")
+        pos_step_size = self._ems_device.refine_pos_step_size
+        volt_step_size = self._ems_device.refine_volt_step_size
+        self.pos_begin_dsbox.setValue(x1_i)
+        self.pos_end_dsbox.setValue(x2_i)
+        self.pos_step_dsbox.setValue(pos_step_size)
+        self.volt_begin_dsbox.setValue(y1_i)
+        self.volt_end_dsbox.setValue(y2_i)
+        self.volt_step_dsbox.setValue(volt_step_size)
+
     def _wire_device_signals(self, ems: Device):
         # connect signals of Device for controls and viz
         # status in
@@ -391,12 +448,17 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if self.is_enabled_lbl.toolTip() != "Device is enabled":
             msg.append("Device is not Enabled.")
             _is_ready = False
-        if self.is_itlk_lbl.toolTip() != "Device interlock is OK":
-            msg.append("Device interlock is not OK.")
-            _is_ready = False
+        if not self.bypass_itlk_chkbox.isChecked():
+            if self.is_itlk_lbl.toolTip() != "Device interlock is OK":
+                msg.append("Device interlock is not OK.")
+                _is_ready = False
         if self.is_bias_on_lbl.toolTip() != "Bias voltage is on":
             msg.append("Bias voltage is OFF.")
             _is_ready = False
+        if not self.pos_steps_lbl.property("cnt_is_int"):
+            msg.append("Position steps Non-Integer")
+        if not self.volt_steps_lbl.property("cnt_is_int"):
+            msg.append("Voltage steps Non-Integer")
         self.sigReadyScanChanged.emit(_is_ready)
         # post the reason why not ready to scan
         if msg:
@@ -424,11 +486,17 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             # set the EMS device ready for work.
             self.ems_names_cbb.currentTextChanged.emit(self.ems_names_cbb.currentText())
             self.auto_fill_beam_params_btn.clicked.emit()
+            # re-connect ion info autofill
+            self.beamSpeciesDisplayWidget.display_changed.connect(
+                self.auto_fill_beam_params_btn.click)
         else: # offline
             tt = "Offline mode is enabled, for working with data files."
             text = "Offline"
+            # stop autofill ion info
+            self.beamSpeciesDisplayWidget.display_changed.disconnect()
         self.actiononline_mode.setToolTip(tt)
         self.actiononline_mode.setIconText(text)
+
 
     @pyqtSlot()
     def onShowUserGuide(self):
@@ -482,7 +550,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             if attr in [f'{i}_{v}' for v in ('begin', 'end')]:
                 o = getattr(self, f'{i}_step_dsbox')
                 o.valueChanged.emit(o.value())
-                printlog("Updated {}".format(f'{i}_step_dsbox'))
+                printlog(f"Updated {i}_step_dsbox: {o.value()}")
         cnt_list = self.update_cnts()
         self.update_time_cost(cnt_list)
 
@@ -550,6 +618,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 else:
                     o.setStyleSheet(CNT_IS_INT_STY)
                 o.setToolTip(tt)
+                o.setProperty("cnt_is_int", cnt_is_int)
+                o.setProperty("cnt", cnt)
+                self.__check_device_ready_scan()
             cnt_list.append(cnt)
         return cnt_list
 
@@ -587,6 +658,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             _ems_device.unmonitor()
             printlog(f"Monitoring... {self._ems_device.name}")
         self._ems_device.monitor()
+        # publish data
+        self._ems_device._post_monitor()
 
         if self._online_mode:
             # sync config
@@ -595,6 +668,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._update_xylabels()
         # update result keys (Twiss Parameters)
         self._update_result_keys(s)
+        # uncheck interlock bypass
+        self.bypass_itlk_chkbox.setChecked(False)
 
     def get_device_config(self, path=None):
         """Return device config from *path*.
@@ -613,15 +688,18 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # switch EMS device
         self._current_device_name = s
         self._current_device_elem = self._all_devices_dict[s]
-        if self._online_mode:
-            # switch ion source, set the beam info widget
-            isrc_name = ION_SOURCE_NAME_MAP.get(s[:7], 'ISRC1')
-            self.beamSpeciesDisplayWidget.set_ion_source(isrc_name)
+
+        # switch ion source, set the beam info widget
+        isrc_name = ION_SOURCE_NAME_MAP.get(s[:7], 'ISRC1')
+        self.beamSpeciesDisplayWidget.set_ion_source(isrc_name)
+
         # update the EMS device
         self.on_update_device()
         self.statusInfoChanged.emit("Selected device: {}".format(s))
         # trigger v2d
         self.on_update_model()
+        # uncheck interlock bypass
+        self.bypass_itlk_chkbox.setChecked(False)
 
     def on_update_device(self):
         # update the EMS device.
@@ -747,6 +825,11 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """Save configuration.
         """
         filepath = self._dconf.config_path
+        r = QMessageBox.question(self, "Update Configurations",
+                "Are you sure to update the configurations (e.g. current scan range as default)?",
+                QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if r == QMessageBox.No:
+            return
         self.__save_config_to_file(filepath)
         printlog("Save config to {}".format(filepath))
 
@@ -786,6 +869,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_run(self):
         self.sync_config()
+        self._is_abort = False
+        self._auto_saved = False
         self._abort = False
         self._run()
 
@@ -830,6 +915,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_abort(self):
         self._ems_device.abort()
+        self._is_abort = True
         self._abort = True
         try:
             self._elapsed_timer.stop()
@@ -876,30 +962,24 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """Validate device scan range.
         """
         # scan ranges
-        x1 = self._ems_device.get_pos_begin()
-        x2 = self._ems_device.get_pos_end()
-        dx = self._ems_device.get_pos_step()
         try:
-            assert int((x2 - x1) / dx) * dx == x2 - x1
+            assert self.pos_steps_lbl.property("cnt_is_int") == True
         except AssertionError:
             QMessageBox.warning(self, "Scan Range Warning",
-                "Input scan range for position indicates Non-Integer total steps.",
+                "The total steps for position scan must be an integer!\nPlease adjust the step size, until the step indicator turns to GREEN.",
                 QMessageBox.Ok)
             return False
         #
-        y1 = self._ems_device.get_volt_begin()
-        y2 = self._ems_device.get_volt_end()
-        dy = self._ems_device.get_volt_step()
         try:
-            assert int((y2 - y1) / dy) * dy == y2 - y1
+            assert self.volt_steps_lbl.property("cnt_is_int") == True
         except AssertionError:
             QMessageBox.warning(self, "Scan Range Warning",
-                "Input scan range for voltage indicates Non-Integer total steps.",
+                "The total steps for voltage scan must be an integer!\nPlease adjust the step size, until the step indicator turns to GREEN.",
                 QMessageBox.Ok)
             return False
         #
-        self._xdim = int((x2 - x1) / dx) + 1
-        self._ydim = int((y2 - y1) / dy) + 1
+        self._xdim = int(self.pos_steps_lbl.property("cnt"))
+        self._ydim = int(self.volt_steps_lbl.property("cnt"))
 
         return True
 
@@ -946,12 +1026,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._ems_device.finished.disconnect()
         self.clear_log()
 
+        # auto save the data, _auto_saved initialized in on_run() only.
+        if not self._auto_saved:
+            self.auto_save(self._is_abort)
+            self._auto_saved = True
+            # reset is_abort flag
+            self._is_abort = False
+
     def closeEvent(self, e):
-        r = QMessageBox.information(self, "Exit Application",
-                "Do you want to save the data?",
-                QMessageBox.Yes | QMessageBox.No)
-        if r == QMessageBox.Yes:
-            self.on_save_data()
         BaseAppForm.closeEvent(self, e)
 
     @pyqtSlot()
@@ -961,7 +1043,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         try:
             inten = self.matplotlibimageWidget.get_data()
             res = self._data.calculate_beam_parameters(inten)
-        except:
+        except Exception as err:
+            printlog(f"Update results Error: {err}")
             pass
         else:
             self._results = res
@@ -1024,7 +1107,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_open_data(self):
         # Open data from a JSON data file.
-        filepath, ext = get_open_filename(self,
+        filepath, _ = get_open_filename(self,
                                           cdir=DEFAULT_DATA_SAVE_DIR,
                                           type_filter="JSON Files (*.json)")
         if filepath is None:
@@ -1035,6 +1118,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.actiononline_mode.setChecked(False)
         #
         self.on_add_current_config(show=False)
+
         try:
             # UI config
             # ion species and model
@@ -1047,6 +1131,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self._last_loading = True
             self._loading_note = note
             self._loading_filepath = filepath
+
             #
             self.ion_name_lineEdit.setText(ion_name)
             self.ion_charge_lineEdit.setText(ion_charge)
@@ -1073,7 +1158,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             self.volt_step_dsbox.setValue(vs)
 
             # data
-            data = self._data = Data(self._model, file=filepath)
+            self._data = Data(self._model, file=filepath)
         except KeyError:
             QMessageBox.warning(self, "Open Data", "Failed to open data.",
                     QMessageBox.Ok)
@@ -1133,8 +1218,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         o.update_figure()
 
     @pyqtSlot(bool)
-    def on_enable_raw_view(self, f):
-        if f: # show pos, volt, intensity
+    def on_enable_raw_view(self, enabled: bool):
+        if enabled: # show pos, volt, intensity
             try:
                 self.ydata_changed.emit(self._data.volt_grid)
             except:
@@ -1281,7 +1366,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         auto_push = self._auto_push_results
         self.actionAuto_Push_Results_to_PVs.setChecked(False)
         if self._validate_device() is False:
-            return
+            self._xdim = int(self.pos_steps_lbl.property("cnt"))
+            self._ydim = int(self.volt_steps_lbl.property("cnt"))
+            printlog(f"Sync data: range validation False, but continue processing... ({self._xdim}, {self._ydim})")
+
         self.on_add_current_config(show=False)
         arr = self._ems_device.get_data()
         try:
@@ -1337,6 +1425,18 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def on_enable_auto_analysis(self, f):
         self._auto_analysis = f
 
+    def auto_save(self, is_abort: bool):
+        """Auto save the data to files after auto process is done.
+        """
+        note_text = f"Auto-saved at {datetime.now().strftime('%Y-%m-%d %H:%M:%S %Z')}"
+        if is_abort:
+            note_text += "(scan aborted)"
+        if self._data_save_dlg is None:
+            self._data_save_dlg = SaveDataDialog(DEFAULT_DATA_SAVE_DIR, self)
+        self._data_save_dlg.note_plainTextEdit.setPlainText(note_text)
+        self._data_save_dlg.auto_fill_filepath()
+        self._data_save_dlg.save_btn.click()
+
     @pyqtSlot()
     def on_save_data(self):
         if self._data_save_dlg is None:
@@ -1388,7 +1488,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                 'Ion Name': n,
                 'Q': q,
                 'A': a,
-                'Ek': {'value': ek, 'unit': 'eV'}}})
+                'Ek': {'value': ek, 'unit': 'eV'},
+                'volt2angle': {
+                    'value': self._model.voltage_to_divergence(1000)[1] * 1000,
+                    'unit': 'mrad/kV'}
+            }
+        })
         # data-processing params
         bkgd_noise_nelem = '{0:d}'.format(self.bkgd_noise_nelem_sbox.value())
         bkgd_noise_nsigma = '{0:d}'.format(self.bkgd_noise_threshold_sbox.value())
@@ -1405,7 +1510,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         })
         # results
         if self._results is not None:
-            ds.update({'results': {k: '{0:.6g}'.format(v) for k,v in self._results.items()}})
+            ds.update({'results': {
+                k: {'value': '{0:.6g}'.format(v), 'unit': PARAM_UNIT_MAP[k]} for k, v in self._results.items()}
+            })
         ds.update({'info':
                     {'user': getuser(),
                      'app': self.getAppTitle(),
@@ -1449,6 +1556,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             ek = float(self.ion_energy_lineEdit.text())
             # n, q, a, kv = 'Ar', 9, 40, 53.333
         return (n, q, a, ek)
+
+    @pyqtSlot(bool)
+    def on_bypass_interlock(self, is_checked: bool):
+        """Bypass interlock check or not for scan readiness.
+        """
+        self.__check_device_ready_scan()
 
     @pyqtSlot()
     def on_reset_interlock(self):
@@ -1673,6 +1786,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         if is_ok:
             px = self._itlk_px
             tt = "Device interlock is OK"
+            # enable device if not
+            if self.is_enabled_lbl.toolTip() == "Device is not enabled":
+                self.on_enable()
         else:
             px = self._not_itlk_px
             tt = "Device interlock is not OK"

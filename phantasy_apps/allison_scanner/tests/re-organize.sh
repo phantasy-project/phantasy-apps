@@ -7,6 +7,7 @@
 # recursively search allison*.json files.
 ORIG_DIR=${1:-/files/shared/ap/beam_study}
 
+ORIG_DIR="/files/shared/phyapps-operations/data/allison_scanner/.tmp"
 # new place for renamed .json files.
 NEW_DIR="/files/shared/phyapps-operations/data/allison_scanner"
 
@@ -17,10 +18,14 @@ _process() {
   # get the ion source id string
   [[ -z $(grep '_id' ${orig_filepath}) ]] && _isrc_id="ISRC1" || \
     _isrc_id=$(grep '_id' ${orig_filepath} | awk -F':' '{print $NF}' | cut -c3-7)
+  # get ion name
+  ion_name=$(grep "Ion Name" ${orig_filepath} | awk -F':' '{print $2}' | awk -F'"' '{print $2}')
+  # get ion mass (A)
+  ion_mass=$(grep '"A"' ${orig_filepath} | awk -F':' '{print $2}' | awk '{print $1}' | awk -F',' '{print $1}')
   # X or Y?
   xoy=$(grep 'xoy' ${orig_filepath} | awk -F':' '{print $2}' | cut -c3 | tr 'a-z' 'A-Z')
   # new filepath
-  new_filepath="${NEW_DIR}/${_isrc_id}/${orig_ts}_${xoy}.json"
+  new_filepath="${NEW_DIR}/${_isrc_id}/${orig_ts}_${ion_mass}${ion_name}_${xoy}.json"
   suffix_i=1
   while [ -e ${new_filepath} ]; do
     new_filepath=${new_filepath%%.*}.${suffix_i}.json

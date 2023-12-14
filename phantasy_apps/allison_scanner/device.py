@@ -119,6 +119,10 @@ class Device(QObject):
         # info, e.g. Installed or not-installed
         self.info = self.dconf.get(name, 'info')
 
+        # refine scan step sizes
+        self.refine_pos_step_size = float(self.dconf.get(name, 'refine_pos_step_size'))
+        self.refine_volt_step_size = float(self.dconf.get(name, 'refine_volt_step_size'))
+
     def update_xoy_conf(self, name: str):
         # xoy
         # default pos/volt alter ranges, [mm], [V], settling time: [sec]
@@ -500,7 +504,7 @@ class Device(QObject):
         print("Run-All-in-One is done.")
 
     def init_run(self):
-        self.init_bias_voltage()
+        # self.init_bias_voltage()
         # self.enable()
         self.set_params()
 
@@ -594,6 +598,26 @@ class Device(QObject):
         # delta_x'
         return 2 * self.slit_width / (self.length + self.length1 + self.length2)
 
+    def _post_monitor(self):
+        """Force refresh the data.
+        """
+        oid = self._id
+        self.status_in_changed.emit(getattr(self.elem, f"STATUS_IN{oid}")==1.0)
+        self.status_out_changed.emit(getattr(self.elem, f"STATUS_OUT{oid}")==1.0)
+        self.status_itlk_ok_changed.emit(getattr(self.elem, f"INTERLOCK{oid}")==0.0)
+        self.pos_read_changed.emit(getattr(self.elem, f"POS{oid}"))
+        self.pos_set_changed.emit(self.elem.current_setting(f"POS{oid}"))
+        self.status_enabled_changed.emit(getattr(self.elem, f"ENABLE_SCAN{oid}")==1.0)
+        self.bias_volt_on_changed.emit(getattr(self.elem, "BIAS_VOLT_ON")==1.0)
+        self.bias_volt_read_changed.emit(getattr(self.elem, "BIAS_VOLT"))
+        self.bias_volt_set_changed.emit(self.elem.current_setting("BIAS_VOLT"))
+        self.pb_changed.emit(self.get_pos_begin())
+        self.pe_changed.emit(self.get_pos_end())
+        self.ps_changed.emit(self.get_pos_step())
+        self.vb_changed.emit(self.get_volt_begin())
+        self.ve_changed.emit(self.get_volt_end())
+        self.vs_changed.emit(self.get_volt_step())
+
     def monitor(self):
         """Monitor field value changes.
         """
@@ -604,9 +628,9 @@ class Device(QObject):
         self.elem.monitor(f"POS{oid}", self.onUpdatePosRead)
         self.elem.monitor(f"POS{oid}", self.onUpdatePosSet, "setpoint")
         self.elem.monitor(f"ENABLE_SCAN{oid}", self.onUpdateStatusEnabled)
-        self.elem.monitor(f"BIAS_VOLT_ON", self.onUpdateBiasVoltOn)
-        self.elem.monitor(f"BIAS_VOLT", self.onUpdateBiasVoltRead)
-        self.elem.monitor(f"BIAS_VOLT", self.onUpdateBiasVoltSet, "setpoint")
+        self.elem.monitor("BIAS_VOLT_ON", self.onUpdateBiasVoltOn)
+        self.elem.monitor("BIAS_VOLT", self.onUpdateBiasVoltRead)
+        self.elem.monitor("BIAS_VOLT", self.onUpdateBiasVoltSet, "setpoint")
 
         # pos scan range
         self.elem.monitor(f"START_POS{oid}", self.onUpdatePosBegin)

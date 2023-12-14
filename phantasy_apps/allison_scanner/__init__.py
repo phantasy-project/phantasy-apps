@@ -13,25 +13,22 @@ from .model import Model
 from .utils import point_in_ellipse
 
 __authors__ = "Tong Zhang"
-__copyright__ = "(c) 2019-2020, Facility for Rare Isotope beams," \
+__copyright__ = "(c) 2019-2023, Facility for Rare Isotope beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
 __title__ = "Allison Scanner: Measure Transverse Emittance and Twiss Parameters"
-__version__ = '3.6'
+__version__ = '4.1'
+__last_updated__ = "2023-12-04"
 
 
 def run(cli=False):
     args = sys.argv
     set_mplstyle(args)
-    if '--mode' in args:
-        mode = args[args.index('--mode') + 1]
-    else:
-        mode = "Live"
     app = QApplication(args)
-    w = AllisonScannerWindow(version=__version__, mode=mode)
+    w = AllisonScannerWindow(version=__version__, last_updated=__last_updated__)
     w.show()
     w.setWindowTitle(__title__)
-    w.resize(1440, 1200)
+    w.resize(1920, 1440)
     if cli:
         app.exec_()
     else:

@@ -20,7 +20,7 @@ class LayoutForm(QWidget, Ui_Form):
         self._post_init(ems)
 
     def _post_init(self, ems):
-        self.device_name_lbl.setText(ems.name)
+        self.device_name_lbl.setText(f"""<h1 style=" margin-top:18px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"><span style=" font-size:xx-large; color:#0055ff;">{ems.name}</span></h1>""")
         self.length_lineEdit.setText(str(ems.length))
         self.length1_lineEdit.setText(str(ems.length1))
         self.length2_lineEdit.setText(str(ems.length2))

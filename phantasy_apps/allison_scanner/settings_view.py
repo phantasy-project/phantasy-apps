@@ -24,14 +24,14 @@ class SettingsView(QDialog, Ui_Dialog):
         model.view_size.connect(self.on_resize)
         model.set_model()
 
-    def on_resize(self, w, h):
+    def on_resize(self, w: int, h: int):
         rect = self.geometry()
         w0, h0 = rect.width(), rect.height()
         if h0 < h:
             h = h0
         else:
             h += 150
-        self.resize(w * 1.05, h * 1.05)
+        self.resize(int(w * 1.05), int(h * 1.05))
 
     def keyPressEvent(self, e):
         if e.key() == Qt.Key_Escape:
