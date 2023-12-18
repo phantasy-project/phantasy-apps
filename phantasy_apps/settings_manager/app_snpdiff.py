@@ -1,17 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
 import pandas as pd
+import tempfile
 
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QAbstractTableModel
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QStandardPaths
 from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtGui import QGuiApplication
+from PyQt5.QtCore import QDateTime
+from PyQt5.QtCore import QUrl
+
+from phantasy_ui import delayed_exec
 
 from .utils import get_ion_px
 from .data import SnapshotData
@@ -20,6 +29,13 @@ from .ui.ui_snpdiff import Ui_Form
 
 X0 = 'x\N{SUBSCRIPT ZERO}'
 Y0 = 'y\N{SUBSCRIPT ZERO}'
+
+PIC_PATHS = QStandardPaths.standardLocations(QStandardPaths.PicturesLocation)
+HOME_PATHS = QStandardPaths.standardLocations(QStandardPaths.HomeLocation)
+if not PIC_PATHS or not os.path.exists(PIC_PATHS[0]):
+    PIC_PATH = HOME_PATHS[0]
+else:
+    PIC_PATH = PIC_PATHS[0]
 
 
 class SnapshotDiffWidget(QWidget, Ui_Form):
@@ -61,9 +77,36 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
     def applyFilter(self):
         self.show_opt_rgrp.idToggled.emit(self.show_opt_rgrp.checkedId(), True)
 
+    @pyqtSlot()
+    def onExit(self):
+        self.close()
+
+    @pyqtSlot()
+    def onTakeScreenshot(self):
+        pix = self.grab()
+        filepath = os.path.join(PIC_PATH,
+                f"SM_diff_{QDateTime().currentDateTime().toString('yyyyMMddHHmmss')}.png")
+        QGuiApplication.clipboard().setImage(pix.toImage())
+        pix.save(filepath)
+
+    @pyqtSlot()
+    def onReadCSV(self):
+        if self.snpdiffView.model() is None:
+            return
+        df = self.m.df
+        fp = tempfile.NamedTemporaryFile(suffix='.csv')
+        self.m.df.to_csv(fp.name, index=False)
+        opened = QDesktopServices.openUrl(QUrl(fp.name))
+        if opened:
+            delayed_exec(lambda: fp.close(), 5000)
+
     def _post_init(self):
         #
         self.splitter.setSizes([1, 10000])
+        #
+        self.read_csv_btn.clicked.connect(self.onReadCSV)
+        self.screenshot_btn.clicked.connect(self.onTakeScreenshot)
+        self.exit_btn.clicked.connect(self.onExit)
         #
         self.absdiff_lineEdit.setValidator(QDoubleValidator(0.0, 9999, 4))
         self.absdiff_lineEdit.returnPressed.connect(self.applyFilter)
