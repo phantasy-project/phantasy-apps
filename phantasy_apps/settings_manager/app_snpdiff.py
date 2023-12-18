@@ -11,6 +11,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QAbstractTableModel
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap, QIcon
 
 from .utils import get_ion_px
 from .data import SnapshotData
@@ -34,6 +35,7 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
 
         self.setupUi(self)
         self.setWindowTitle("Snapshot DiffView")
+        self.setWindowIcon(QIcon(QPixmap(":/sm-icons/diff.png")))
 
         self._post_init()
 
