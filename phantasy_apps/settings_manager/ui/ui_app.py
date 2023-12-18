@@ -1490,7 +1490,7 @@ class Ui_MainWindow(object):
         self.tag_filter_area.setObjectName("tag_filter_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(
-            0, 0, 1333, 117))
+            0, 0, 1490, 117))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.tag_filter_area.setWidget(self.scrollAreaWidgetContents)
         self.gridLayout_2.addWidget(self.tag_filter_area, 0, 0, 1, 6)
@@ -1556,7 +1556,7 @@ class Ui_MainWindow(object):
         self.ion_filter_area.setObjectName("ion_filter_area")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(
-            QtCore.QRect(0, 0, 663, 121))
+            QtCore.QRect(0, 0, 506, 121))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.ion_filter_area.setWidget(self.scrollAreaWidgetContents_2)
@@ -1995,6 +1995,12 @@ class Ui_MainWindow(object):
         self.actionImport.setObjectName("actionImport")
         self.actionUser_Guide = QtWidgets.QAction(MainWindow)
         self.actionUser_Guide.setObjectName("actionUser_Guide")
+        self.actionSnapshot_Diff = QtWidgets.QAction(MainWindow)
+        icon51 = QtGui.QIcon()
+        icon51.addPixmap(QtGui.QPixmap(":/sm-icons/diff.png"),
+                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionSnapshot_Diff.setIcon(icon51)
+        self.actionSnapshot_Diff.setObjectName("actionSnapshot_Diff")
         self.menu_File.addAction(self.actionE_xit)
         self.menu_Help.addAction(self.actionContents)
         self.menu_Help.addSeparator()
@@ -2018,6 +2024,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionImport)
         self.toolBar.addAction(self.actionTake_Snapshot)
         self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionSnapshot_Diff)
 
         self.retranslateUi(MainWindow)
         self.actionAbout_Qt.triggered.connect(
@@ -2668,6 +2675,10 @@ class Ui_MainWindow(object):
         self.actionImport.setToolTip(
             _translate("MainWindow", "Import Snapshots from Files."))
         self.actionUser_Guide.setText(_translate("MainWindow", "User Guide"))
+        self.actionSnapshot_Diff.setText(_translate("MainWindow", "Diff"))
+        self.actionSnapshot_Diff.setToolTip(
+            _translate("MainWindow",
+                       "Show the difference between two snapshots."))
 
 
 from phantasy_ui.widgets import DockWidget
