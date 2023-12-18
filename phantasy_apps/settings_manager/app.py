@@ -3232,6 +3232,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         if self._snp_diff_window is None:
             self._snp_diff_window = SnapshotDiffWidget(self)
+        if len(self._snp_diff_dq) != 2:
+            return
         self._snp_diff_window.show()
         self._snp_diff_window.snapshotsChanged.emit()
 
