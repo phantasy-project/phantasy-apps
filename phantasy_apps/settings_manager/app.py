@@ -14,6 +14,7 @@ import toml
 from typing import Literal
 from itertools import cycle
 from collections import OrderedDict
+from collections import deque
 from datetime import datetime
 from epics import caget, caput, ca, get_pv
 from functools import partial
@@ -50,6 +51,7 @@ from .app_import import ImportSNPDialog
 from .app_pref import PreferencesDialog
 from .app_bpmviz import BPMVizWidget
 from .app_postsnp import PostSnapshotDialog
+from .app_snpdiff import SnapshotDiffWidget
 from .data import SnapshotData
 from .data import get_settings_data
 from .data import make_physics_settings
@@ -744,6 +746,9 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._fixnames_dlg = None
         self._date_range_dlg = None
         self._db_mgmt_dlg = None
+        self._snp_diff_window = None
+        # two snapshots for diff
+        self._snp_diff_dq = deque([], 2)
 
         self._mp = None
         self._last_machine_name = None
@@ -813,6 +818,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._load_icon = QIcon(QPixmap(":/sm-icons/cast.png"))
         self._recommand_icon = QIcon(QPixmap(":/sm-icons/recommend.png"))
         self._attach_icon = QIcon(QPixmap(":/sm-icons/attachment.png"))
+        self._diff_icon = QIcon(QPixmap(":/sm-icons/diff.png"))
         # enabled/disabled alarms
         self._alm_enabled_px = QPixmap(":/sm-icons/alarm_on_green.png").scaled(
             PX_SIZE, PX_SIZE)
@@ -961,6 +967,8 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # take snapshot tool
         self.actionTake_Snapshot.triggered.connect(
             lambda: self.take_snapshot())
+        # snapshot diff tool
+        self.actionSnapshot_Diff.triggered.connect(self.on_diff_snp)
 
         # originated snapshot template is changed
         self.sigOrigTemplateChanged.connect(self.onOrigTemplateChanged)
@@ -1515,9 +1523,14 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         attach_action.triggered.connect(partial(self.on_manage_attachments, snpdata.name,
                                                 snpdata.get_long_name()))
 
+        # add to diff
+        add_diff_action = QAction(self._diff_icon, f"To diff", menu)
+        add_diff_action.triggered.connect(partial(self.on_add_diff, snpdata))
+
         #
         menu.addAction(load_action)
         menu.addAction(refpush_action)
+        menu.addAction(add_diff_action)
         menu.addSeparator()
         menu.addAction(copy_action)
         menu.addAction(dcopy_action)
@@ -1531,6 +1544,13 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
             menu.addAction(del_admin_action)
         menu.addAction(attach_action)
         return menu
+
+    @pyqtSlot()
+    def on_add_diff(self, data: SnapshotData):
+        """Add selected snapshot to snpdiff.
+        """
+        self._snp_diff_dq.append(data)
+        self.on_diff_snp()
 
     @pyqtSlot()
     def on_set_tol_val(self, src_m, fld, src_idx, pv):
@@ -3205,6 +3225,15 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def sizeHint(self):
         return QSize(1920, 1440)
+
+    @pyqtSlot()
+    def on_diff_snp(self):
+        """Show the difference between two snapshots.
+        """
+        if self._snp_diff_window is None:
+            self._snp_diff_window = SnapshotDiffWidget(self)
+        self._snp_diff_window.show()
+        self._snp_diff_window.snapshotsChanged.emit()
 
     @pyqtSlot(list)
     def on_delete_items(self, fobj_list):
