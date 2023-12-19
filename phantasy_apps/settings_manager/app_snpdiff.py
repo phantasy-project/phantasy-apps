@@ -4,6 +4,7 @@
 import os
 import pandas as pd
 import tempfile
+from functools import partial
 
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QMessageBox
@@ -147,6 +148,8 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
         self.screenshot_btn.clicked.connect(self.onTakeScreenshot)
         self.exit_btn.clicked.connect(self.onExit)
         self.swap_btn.clicked.connect(self.onSwapSnapshots)
+        self.snp_one_jump_btn.clicked.connect(partial(self.onLocateSnapshot, "Left"))
+        self.snp_two_jump_btn.clicked.connect(partial(self.onLocateSnapshot, "Right"))
         #
         self.absdiff_lineEdit.setValidator(QDoubleValidator(0.0, 9999, 4))
         self.absdiff_lineEdit.returnPressed.connect(self.applyFilter)
@@ -172,6 +175,19 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
 
         #
         self.snpdiffView.setItemDelegate(DiffDataDelegateModel(self.snpdiffView))
+
+    @pyqtSlot()
+    def onLocateSnapshot(self, lr: str):
+        """Locate the snapshot in the main database.
+        """
+        if lr == "Left":
+            snp_name = self.snp_dq[0].name
+        else:
+            snp_name = self.snp_dq[1].name
+        m = self.parent.snp_treeView.model()
+        idx = m.sourceModel().locateByName(snp_name)
+        if idx.isValid():
+            m.sourceModel().hlrow(idx)
 
     @pyqtSlot()
     def onSwapSnapshots(self):
