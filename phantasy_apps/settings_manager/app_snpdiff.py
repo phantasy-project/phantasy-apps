@@ -147,6 +147,7 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
             o.setStyleSheet(f"""QLabel {{
                 font-family: monospace;
                 font-size: {self.default_font_size}pt;
+                border: 1px solid gray;
             }}""")
 
         #
