@@ -118,6 +118,28 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
         #
         self.default_font_size = QFontDatabase.systemFont(
             QFontDatabase.FixedFont).pointSize()
+
+        # set label stylesheets
+        for o in (self.snp_one_title_lbl, self.snp_two_title_lbl):
+            o.setStyleSheet(f"""QLabel {{
+                font-family: monospace;
+                font-size: {self.default_font_size - 2}pt;
+                color: #888A85;
+            }}""")
+        for o in (self.tag_one_title_lbl, self.tag_two_title_lbl,
+                  self.beam_one_title_lbl, self.beam_two_title_lbl,
+                  self.note_one_title_lbl, self.note_two_title_lbl):
+            o.setStyleSheet(f"""QLabel {{
+                font-family: monospace;
+                font-size: {self.default_font_size - 3}pt;
+                color: #888A85;
+            }}""")
+        for o in (self.snp_one_isrc_name_lbl, self.snp_two_isrc_name_lbl):
+            o.setStyleSheet(f"""QLabel {{
+                font-family: monospace;
+                font-size: {self.default_font_size}pt;
+            }}""")
+
         #
         self.splitter.setSizes([1, 10000])
         #
