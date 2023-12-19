@@ -21,6 +21,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QAbstractTableModel
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QStandardPaths
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtGui import QGuiApplication
@@ -88,6 +89,13 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
 
     def applyFilter(self):
         self.show_opt_rgrp.idToggled.emit(self.show_opt_rgrp.checkedId(), True)
+
+    def showEvent(self, e):
+        self.move(self.parent.geometry().translated(10, 0).topRight())
+        super().showEvent(e)
+
+    def sizeHint(self):
+        return QSize(1200, 1440)
 
     @pyqtSlot()
     def onExit(self):
