@@ -46,7 +46,7 @@ else:
 
 
 TAG_COLOR_MAP = {
-    'GOLDEN': '#FFDF03'        
+    'GOLDEN': '#FFDF03'
 }
 
 class SnapshotDiffWidget(QWidget, Ui_Form):
@@ -124,6 +124,7 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
         self.read_csv_btn.clicked.connect(self.onReadCSV)
         self.screenshot_btn.clicked.connect(self.onTakeScreenshot)
         self.exit_btn.clicked.connect(self.onExit)
+        self.swap_btn.clicked.connect(self.onSwapSnapshots)
         #
         self.absdiff_lineEdit.setValidator(QDoubleValidator(0.0, 9999, 4))
         self.absdiff_lineEdit.returnPressed.connect(self.applyFilter)
@@ -148,6 +149,13 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
 
         #
         self.snpdiffView.setItemDelegate(DiffDataDelegateModel(self.snpdiffView))
+
+    @pyqtSlot()
+    def onSwapSnapshots(self):
+        """Swap snapshot 1 and 2.
+        """
+        self.snp_dq.reverse()
+        self.snapshotsChanged.emit()
 
     @pyqtSlot(int, bool)
     def onShowOptChanged(self, btn_id: int, checked: bool):
