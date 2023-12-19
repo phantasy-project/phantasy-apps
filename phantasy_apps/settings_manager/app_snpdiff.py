@@ -128,6 +128,7 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
         #
         self.absdiff_lineEdit.setValidator(QDoubleValidator(0.0, 9999, 4))
         self.absdiff_lineEdit.returnPressed.connect(self.applyFilter)
+        self.reldiff_sbox.valueChanged.connect(self.applyFilter)
         #
         self.snapshotsChanged.connect(self.onRefreshDiff)
         self.snapshotLeftChanged.connect(self.onSnapshotLeftChanged)
@@ -168,12 +169,12 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
         df0 = snp_diff(self.snp_dq[0], self.snp_dq[1])
         if btn_id == 0: # show items beyond diff range
             if is_reldiff:
-                df = df0[(df0["dx"]/df0["Setpoint_1"] < -v_diff) | (df0["dx"]/df0["Setpoint_1"] > v_diff)]
+                df = df0[(df0["dx/x2"]/100 < -v_diff) | (df0["dx/x2"]/100 > v_diff)]
             else:
                 df = df0[(df0["dx"] < -v_diff) | (df0["dx"] > v_diff)]
         else: # show items within diff range
             if is_reldiff:
-                df = df0[(df0["dx"]/df0["Setpoint_1"] >= -v_diff) & (df0["dx"]/df0["Setpoint_1"] <= v_diff)]
+                df = df0[(df0["dx/x2"]/100 >= -v_diff) & (df0["dx/x2"]/100 <= v_diff)]
             else:
                 df = df0[(df0["dx"] >= -v_diff) & (df0["dx"] <= v_diff)]
         self.m.updateData(df)
@@ -251,15 +252,16 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
 
 class DiffDataModel(QAbstractTableModel):
     ColumnName, ColumnField, ColumnSetpoint_1, ColumnSetpoint_2, ColumnSetpoint_d12, \
-            ColumnSetpoint_r12, ColumnCount = range(7)
+            ColumnSetpoint_r12, ColumnSetpoint_d12r, ColumnCount = range(8)
 
     columnNameMap = {
         ColumnName: "Device\nName",
         ColumnField: "Field\nName",
-        ColumnSetpoint_1: f"SavedSet1\n({X0})",
-        ColumnSetpoint_2: f"SavedSet2\n({Y0})",
-        ColumnSetpoint_d12: f"SavedSet1-SavedSet2\n({X0}-{Y0})",
-        ColumnSetpoint_r12: f"SavedSet1/SavedSet2\n({X0}/{Y0})",
+        ColumnSetpoint_1: f"SavedSet1\n{X0}",
+        ColumnSetpoint_2: f"SavedSet2\n{Y0}",
+        ColumnSetpoint_d12: f"SavedSet1-SavedSet2\n{X0}-{Y0}",
+        ColumnSetpoint_r12: f"SavedSet1/SavedSet2\n{X0}/{Y0}",
+        ColumnSetpoint_d12r: f"SavedSet1/SavedSet2-1\n({X0}-{Y0})/{Y0}",
     }
 
     def __init__(self, data: pd.DataFrame, parent=None):
@@ -280,6 +282,8 @@ class DiffDataModel(QAbstractTableModel):
         if role == Qt.DisplayRole:
             if column == self.ColumnName or column == self.ColumnField:
                 return self.df.iloc[row, column]
+            elif column == self.ColumnSetpoint_d12r:
+                return f"{self.df.iloc[row, column]:.6g}%"
             else:
                 return f"{self.df.iloc[row, column]:.6g}"
 
@@ -345,4 +349,5 @@ def snp_diff(snp1: SnapshotData, snp2: SnapshotData):
     df12 = pd.merge(df1, df2, on=['Name', 'Field'], how='outer', suffixes=("_1", "_2"))
     df12['dx'] = df12['Setpoint_1'] - df12['Setpoint_2']
     df12['x1/x2'] = df12['Setpoint_1'] / df12['Setpoint_2']
+    df12['dx/x2'] = df12['dx'] / df12['Setpoint_2'] * 100 # percentage
     return df12
