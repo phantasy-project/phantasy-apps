@@ -350,7 +350,7 @@ class DiffDataDelegateModel(QStyledItemDelegate):
 
     def sizeHint(self, option, index):
         size = QStyledItemDelegate.sizeHint(self, option, index)
-        size.setHeight(int(size.height() * 1.1))
+        size.setHeight(int(size.height() * 1.2))
         return size
 
     def paint(self, painter, option, index):
