@@ -340,6 +340,8 @@ class DiffDataModel(QAbstractTableModel):
         if role == Qt.DisplayRole:
             if column == self.ColumnName or column == self.ColumnField:
                 return self.df.iloc[row, column]
+            elif column == self.ColumnSetpoint_r12:
+                return f"{self.df.iloc[row, column]:.3g}"
             elif column == self.ColumnSetpoint_d12r:
                 return f"{self.df.iloc[row, column]:.2f}%"
             else:
