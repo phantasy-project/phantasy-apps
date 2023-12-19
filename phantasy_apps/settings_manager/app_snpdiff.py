@@ -245,7 +245,7 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
         """
         self.snp_one_name_lbl.setText(f"{data.name} - {data.ion_as_str()}")
         self.snp_one_note_plainTextEdit.setPlainText(data.note)
-        self.snp_one_pix.setPixmap(get_ion_px(data.ion_name, 96))
+        self.__place_ion_px(self.snp_one_pix, get_ion_px(data.ion_name, 96))
         self.snp_one_isrc_name_lbl.setText(get_isrc_name(data))
         self.__place_tags(self.snp_one_tag_area, data.tags)
 
@@ -255,9 +255,16 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
         """
         self.snp_two_name_lbl.setText(f"{data.name} - {data.ion_as_str()}")
         self.snp_two_note_plainTextEdit.setPlainText(data.note)
-        self.snp_two_pix.setPixmap(get_ion_px(data.ion_name, 96))
+        self.__place_ion_px(self.snp_two_pix, get_ion_px(data.ion_name, 96))
         self.snp_two_isrc_name_lbl.setText(get_isrc_name(data))
         self.__place_tags(self.snp_two_tag_area, data.tags)
+
+    def __place_ion_px(self, label: QLabel, px: QPixmap):
+        shadow = QGraphicsDropShadowEffect()
+        shadow.setBlurRadius(10)
+        shadow.setOffset(2)
+        label.setPixmap(px)
+        label.setGraphicsEffect(shadow)
 
     def __place_tags(self, area: QScrollArea, tags: list):
         w = area.takeWidget()
