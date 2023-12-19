@@ -1,4 +1,14 @@
 ========================
+Version 12.2: 2023-12-19
+========================
+
+- Features comparing two snapshot: for the Setpoint column
+  - A new context menu item "To Diff" added to the Snapshot right-clicking
+  - Compare the two most added snapshots through "To Diff"
+  - Post snapshot info in the snapshot diff window
+  - Filters for diff view
+
+========================
 Version 12.1: 2023-10-11
 ========================
 
