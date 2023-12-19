@@ -194,7 +194,7 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
         """
         self.snp_one_name_lbl.setText(f"{data.name} - {data.ion_as_str()}")
         self.snp_one_note_plainTextEdit.setPlainText(data.note)
-        self.snp_one_pix.setPixmap(get_ion_px(data.ion_name, 128))
+        self.snp_one_pix.setPixmap(get_ion_px(data.ion_name, 96))
         self.snp_one_isrc_name_lbl.setText(get_isrc_name(data))
         self.__place_tags(self.snp_one_tag_area, data.tags)
 
@@ -204,7 +204,7 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
         """
         self.snp_two_name_lbl.setText(f"{data.name} - {data.ion_as_str()}")
         self.snp_two_note_plainTextEdit.setPlainText(data.note)
-        self.snp_two_pix.setPixmap(get_ion_px(data.ion_name, 128))
+        self.snp_two_pix.setPixmap(get_ion_px(data.ion_name, 96))
         self.snp_two_isrc_name_lbl.setText(get_isrc_name(data))
         self.__place_tags(self.snp_two_tag_area, data.tags)
 
@@ -283,9 +283,9 @@ class DiffDataModel(QAbstractTableModel):
             if column == self.ColumnName or column == self.ColumnField:
                 return self.df.iloc[row, column]
             elif column == self.ColumnSetpoint_d12r:
-                return f"{self.df.iloc[row, column]:.6g}%"
+                return f"{self.df.iloc[row, column]:.2f}%"
             else:
-                return f"{self.df.iloc[row, column]:.6g}"
+                return f"{self.df.iloc[row, column]:.4f}"
 
         return None
 
