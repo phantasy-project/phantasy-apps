@@ -6,6 +6,7 @@ import pandas as pd
 import tempfile
 
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QStyledItemDelegate
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtGui import QDesktopServices
@@ -88,6 +89,9 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
                 f"SM_diff_{QDateTime().currentDateTime().toString('yyyyMMddHHmmss')}.png")
         QGuiApplication.clipboard().setImage(pix.toImage())
         pix.save(filepath)
+        QMessageBox.information(self, "Capture a Screenshot",
+                f"""<html><p>A new screenshot is saved as <a href="{filepath}"><span style="text-decoration: underline;color:#0000FF;">{filepath}</span></a></p><p>Also paste-ready to anywhere.</p></html>""",
+                QMessageBox.Ok)
 
     @pyqtSlot()
     def onReadCSV(self):
