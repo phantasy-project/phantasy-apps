@@ -7,8 +7,13 @@ import tempfile
 
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QScrollArea
 from PyQt5.QtWidgets import QStyledItemDelegate
+from PyQt5.QtWidgets import QGraphicsDropShadowEffect
+from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtGui import QFontDatabase
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtCore import pyqtSlot
@@ -22,6 +27,7 @@ from PyQt5.QtCore import QDateTime
 from PyQt5.QtCore import QUrl
 
 from phantasy_ui import delayed_exec
+from phantasy_ui.widgets import FlowLayout
 
 from .utils import get_ion_px
 from .data import SnapshotData
@@ -38,6 +44,10 @@ if not PIC_PATHS or not os.path.exists(PIC_PATHS[0]):
 else:
     PIC_PATH = PIC_PATHS[0]
 
+
+TAG_COLOR_MAP = {
+    'GOLDEN': '#FFDF03'        
+}
 
 class SnapshotDiffWidget(QWidget, Ui_Form):
 
@@ -106,6 +116,9 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
 
     def _post_init(self):
         #
+        self.default_font_size = QFontDatabase.systemFont(
+            QFontDatabase.FixedFont).pointSize()
+        #
         self.splitter.setSizes([1, 10000])
         #
         self.read_csv_btn.clicked.connect(self.onReadCSV)
@@ -172,8 +185,9 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
         """
         self.snp_one_name_lbl.setText(f"{data.name} - {data.ion_as_str()}")
         self.snp_one_note_plainTextEdit.setPlainText(data.note)
-        self.snp_one_pix.setPixmap(get_ion_px(data.ion_name, 64))
+        self.snp_one_pix.setPixmap(get_ion_px(data.ion_name, 128))
         self.snp_one_isrc_name_lbl.setText(get_isrc_name(data))
+        self.__place_tags(self.snp_one_tag_area, data.tags)
 
     @pyqtSlot(SnapshotData)
     def onSnapshotRightChanged(self, data: SnapshotData):
@@ -181,8 +195,39 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
         """
         self.snp_two_name_lbl.setText(f"{data.name} - {data.ion_as_str()}")
         self.snp_two_note_plainTextEdit.setPlainText(data.note)
-        self.snp_two_pix.setPixmap(get_ion_px(data.ion_name, 64))
+        self.snp_two_pix.setPixmap(get_ion_px(data.ion_name, 128))
         self.snp_two_isrc_name_lbl.setText(get_isrc_name(data))
+        self.__place_tags(self.snp_two_tag_area, data.tags)
+
+    def __place_tags(self, area: QScrollArea, tags: list):
+        w = area.takeWidget()
+        w.setParent(None)
+        w = QWidget(self)
+        w.setContentsMargins(6, 6, 6, 6)
+        layout = FlowLayout()
+        for tag in tags:
+            shadow = QGraphicsDropShadowEffect()
+            shadow.setBlurRadius(10)
+            shadow.setOffset(2)
+            lbl = QLabel(tag)
+            lbl.setGraphicsEffect(shadow)
+            lbl.setSizePolicy(QSizePolicy.Preferred,
+                              QSizePolicy.Preferred)
+            bkgd_color = TAG_COLOR_MAP.get(tag, '#EEEEEC')
+            lbl.setStyleSheet(f'''
+            QLabel {{
+                font-size: {self.default_font_size - 1}pt;
+                font-family: monospace;
+                border: 1px solid #AEAEAE;
+                border-radius: 5px;
+                margin: 1px;
+                background-color: {bkgd_color};
+            }}''')
+            layout.addWidget(lbl)
+        w.setLayout(layout)
+        w.setStyleSheet(
+            """QWidget { background-color: transparent; }""")
+        area.setWidget(w)
 
     def get_diff_range(self):
         """Return the range of discrenpancy level.
