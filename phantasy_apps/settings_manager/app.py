@@ -1524,13 +1524,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                                 snpdata.get_long_name()))
 
         # add to diff
-        add_diff_action = QAction(self._diff_icon, f"To diff", menu)
+        add_diff_action = QAction(self._diff_icon, f"To Diff", menu)
         add_diff_action.triggered.connect(partial(self.on_add_diff, snpdata))
 
         #
         menu.addAction(load_action)
         menu.addAction(refpush_action)
-        menu.addAction(add_diff_action)
         menu.addSeparator()
         menu.addAction(copy_action)
         menu.addAction(dcopy_action)
@@ -1543,6 +1542,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         if getuser() in ('zhangt', 'tong'):  # Admin
             menu.addAction(del_admin_action)
         menu.addAction(attach_action)
+        menu.addAction(add_diff_action)
         return menu
 
     @pyqtSlot()
