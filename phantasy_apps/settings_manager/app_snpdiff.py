@@ -118,7 +118,8 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
             return
         df = self.m.df
         fp = tempfile.NamedTemporaryFile(suffix='.csv')
-        self.m.df.to_csv(fp.name, index=False)
+        self.m.df.to_csv(fp.name, index=False,
+                header=['Name', 'Field', 'Setpoint (x0)', 'Setpoint (y0)', 'x0-y0', 'x0/y0', '(x0-y0)/y0[%]'])
         opened = QDesktopServices.openUrl(QUrl(fp.name))
         if opened:
             delayed_exec(lambda: fp.close(), 5000)
