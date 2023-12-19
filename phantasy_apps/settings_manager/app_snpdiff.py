@@ -84,6 +84,9 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
         self.snpdiffView.setModel(self.m)
         self.snpdiffView.resizeColumnsToContents()
         self.snpdiffView.resizeRowsToContents()
+        # not precise
+        w = self.snpdiffView.horizontalHeader().length() + self.snpdiffView.verticalHeader().width()
+        self.resize(w + 50, self.parent.height())
         # trigger filter
         self.applyFilter()
 
