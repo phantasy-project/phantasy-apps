@@ -889,6 +889,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                     QMessageBox.Ok)
             return
         self._pos_reached_begin = False # test if motor is at begin
+        # reset image data array
+        self._current_array = np.ones([self._ydim, self._xdim]) * np.nan
+        #
         self._ems_device.init_run()
         self._init_elapsed_timer()
         self._ems_device.data_changed.connect(self.on_update)

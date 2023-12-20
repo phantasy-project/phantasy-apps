@@ -16,6 +16,7 @@ from numpy.testing import assert_almost_equal
 from phantasy import Configuration
 from phantasy import pass_arg
 from phantasy_ui import printlog
+from phantasy_ui import delayed_exec
 from phantasy_apps.wire_scanner.utils import wait as _wait
 from .utils import find_dconf
 
@@ -480,7 +481,10 @@ class Device(QObject):
                 raise RuntimeError("Device is busy, not be ready for moving.")
 
         self.init_data_cb()
-        setattr(self.elem, 'START_SCAN{}'.format(self._id), 1)
+        delayed_exec(
+            lambda: setattr(self.elem, 'START_SCAN{}'.format(self._id), 1),
+            1000
+        )
         if wait:
             _wait(self.get_status_pv(), "IDLE", timeout)
             self._reset_data_cb()
