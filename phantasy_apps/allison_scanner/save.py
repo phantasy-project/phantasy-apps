@@ -111,6 +111,10 @@ class SaveDataDialog(QDialog, Ui_Dialog):
             mbox = QMessageBox(QMessageBox.Information, "Save Data",
                     f"Saved data to {filepath}.",
                     QMessageBox.Ok, self)
+            open_btn = mbox.addButton("Open", QMessageBox.ActionRole)
             mbox.move(self.parent.geometry().center() - QPoint(int(self.geometry().width() / 2), 0))
             mbox.exec_()
+            if mbox.clickedButton() == open_btn:
+                QDesktopServices.openUrl(QUrl(filepath))
+                mbox.close()
             self.close()
