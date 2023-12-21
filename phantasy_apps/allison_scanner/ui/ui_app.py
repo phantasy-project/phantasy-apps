@@ -686,6 +686,9 @@ class Ui_MainWindow(object):
         self.stop_move_btn.setIcon(icon3)
         self.stop_move_btn.setObjectName("stop_move_btn")
         self.dev_ctrl_gbox.addWidget(self.stop_move_btn, 1, 9, 1, 1)
+        self.test_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
+        self.test_btn.setObjectName("test_btn")
+        self.dev_ctrl_gbox.addWidget(self.test_btn, 2, 10, 1, 1)
         self.dev_sts_vbox.addLayout(self.dev_ctrl_gbox)
         self.gridLayout_4.addWidget(self.adv_ctrl_widget, 0, 0, 1, 2)
         self.time_cost_vbox = QtWidgets.QVBoxLayout()
@@ -2165,6 +2168,7 @@ class Ui_MainWindow(object):
         self.stop_move_btn.setToolTip(
             _translate("MainWindow", "Stop motor moving."))
         self.stop_move_btn.setText(_translate("MainWindow", "..."))
+        self.test_btn.setText(_translate("MainWindow", "!TEST!"))
         self.toolButton_2.setToolTip(
             _translate("MainWindow", "As of now, only good for SCS1 EMS."))
         self.toolButton_2.setText(_translate("MainWindow", "..."))
