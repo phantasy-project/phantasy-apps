@@ -84,29 +84,33 @@ class Ui_MainWindow(object):
         self.scan_conf_gbox.setHorizontalSpacing(4)
         self.scan_conf_gbox.setVerticalSpacing(2)
         self.scan_conf_gbox.setObjectName("scan_conf_gbox")
-        self.label_23 = QtWidgets.QLabel(self.dev_ctrl_widget)
+        self.label_22 = QtWidgets.QLabel(self.dev_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.label_23.sizePolicy().hasHeightForWidth())
-        self.label_23.setSizePolicy(sizePolicy)
+            self.label_22.sizePolicy().hasHeightForWidth())
+        self.label_22.setSizePolicy(sizePolicy)
+        self.label_22.setObjectName("label_22")
+        self.scan_conf_gbox.addWidget(self.label_22, 2, 12, 1, 1)
+        self.label_15 = QtWidgets.QLabel(self.dev_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_15.sizePolicy().hasHeightForWidth())
+        self.label_15.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
-        font.setFamily("Serif")
-        self.label_23.setFont(font)
-        self.label_23.setObjectName("label_23")
-        self.scan_conf_gbox.addWidget(self.label_23, 1, 8, 1, 1)
-        self.label_20 = QtWidgets.QLabel(self.dev_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_20.sizePolicy().hasHeightForWidth())
-        self.label_20.setSizePolicy(sizePolicy)
-        self.label_20.setObjectName("label_20")
-        self.scan_conf_gbox.addWidget(self.label_20, 1, 2, 1, 1)
+        font.setFamily("Cantarell")
+        self.label_15.setFont(font)
+        self.label_15.setStyleSheet("")
+        self.label_15.setAlignment(QtCore.Qt.AlignRight
+                                   | QtCore.Qt.AlignTrailing
+                                   | QtCore.Qt.AlignVCenter)
+        self.label_15.setObjectName("label_15")
+        self.scan_conf_gbox.addWidget(self.label_15, 0, 0, 1, 1)
         self.label_16 = QtWidgets.QLabel(self.dev_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -123,45 +127,7 @@ class Ui_MainWindow(object):
                                    | QtCore.Qt.AlignTrailing
                                    | QtCore.Qt.AlignVCenter)
         self.label_16.setObjectName("label_16")
-        self.scan_conf_gbox.addWidget(self.label_16, 1, 0, 1, 1)
-        self.volt_settling_time_dsbox = QtWidgets.QDoubleSpinBox(
-            self.dev_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.volt_settling_time_dsbox.sizePolicy().hasHeightForWidth())
-        self.volt_settling_time_dsbox.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.volt_settling_time_dsbox.setFont(font)
-        self.volt_settling_time_dsbox.setStyleSheet("QDoubleSpinBox {\n"
-                                                    "    padding-left: 5px;\n"
-                                                    "}")
-        self.volt_settling_time_dsbox.setDecimals(2)
-        self.volt_settling_time_dsbox.setSingleStep(0.01)
-        self.volt_settling_time_dsbox.setObjectName("volt_settling_time_dsbox")
-        self.scan_conf_gbox.addWidget(self.volt_settling_time_dsbox, 1, 9, 1,
-                                      1)
-        self.volt_begin_dsbox = QtWidgets.QDoubleSpinBox(self.dev_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.volt_begin_dsbox.sizePolicy().hasHeightForWidth())
-        self.volt_begin_dsbox.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.volt_begin_dsbox.setFont(font)
-        self.volt_begin_dsbox.setStyleSheet("QDoubleSpinBox {\n"
-                                            "    padding-left: 5px;\n"
-                                            "}")
-        self.volt_begin_dsbox.setMinimum(-9999.0)
-        self.volt_begin_dsbox.setMaximum(9999.0)
-        self.volt_begin_dsbox.setObjectName("volt_begin_dsbox")
-        self.scan_conf_gbox.addWidget(self.volt_begin_dsbox, 1, 3, 1, 1)
+        self.scan_conf_gbox.addWidget(self.label_16, 2, 0, 1, 1)
         self.label_5 = QtWidgets.QLabel(self.dev_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -174,7 +140,96 @@ class Ui_MainWindow(object):
         font.setFamily("Serif")
         self.label_5.setFont(font)
         self.label_5.setObjectName("label_5")
-        self.scan_conf_gbox.addWidget(self.label_5, 0, 8, 1, 1)
+        self.scan_conf_gbox.addWidget(self.label_5, 0, 15, 1, 1)
+        self.live_volt_step_lineEdit = QtWidgets.QLineEdit(
+            self.dev_ctrl_widget)
+        self.live_volt_step_lineEdit.setReadOnly(True)
+        self.live_volt_step_lineEdit.setObjectName("live_volt_step_lineEdit")
+        self.scan_conf_gbox.addWidget(self.live_volt_step_lineEdit, 2, 14, 1,
+                                      1)
+        self.pos_steps_lbl = QtWidgets.QLabel(self.dev_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.pos_steps_lbl.sizePolicy().hasHeightForWidth())
+        self.pos_steps_lbl.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.pos_steps_lbl.setFont(font)
+        self.pos_steps_lbl.setObjectName("pos_steps_lbl")
+        self.scan_conf_gbox.addWidget(self.pos_steps_lbl, 0, 5, 1, 1)
+        self.volt_steps_lbl = QtWidgets.QLabel(self.dev_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.volt_steps_lbl.sizePolicy().hasHeightForWidth())
+        self.volt_steps_lbl.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.volt_steps_lbl.setFont(font)
+        self.volt_steps_lbl.setObjectName("volt_steps_lbl")
+        self.scan_conf_gbox.addWidget(self.volt_steps_lbl, 2, 5, 1, 1)
+        self.label_23 = QtWidgets.QLabel(self.dev_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_23.sizePolicy().hasHeightForWidth())
+        self.label_23.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Serif")
+        self.label_23.setFont(font)
+        self.label_23.setObjectName("label_23")
+        self.scan_conf_gbox.addWidget(self.label_23, 2, 15, 1, 1)
+        self.label_19 = QtWidgets.QLabel(self.dev_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_19.sizePolicy().hasHeightForWidth())
+        self.label_19.setSizePolicy(sizePolicy)
+        self.label_19.setObjectName("label_19")
+        self.scan_conf_gbox.addWidget(self.label_19, 0, 12, 1, 1)
+        self.live_volt_end_lineEdit = QtWidgets.QLineEdit(self.dev_ctrl_widget)
+        self.live_volt_end_lineEdit.setReadOnly(True)
+        self.live_volt_end_lineEdit.setObjectName("live_volt_end_lineEdit")
+        self.scan_conf_gbox.addWidget(self.live_volt_end_lineEdit, 2, 11, 1, 1)
+        self.label_18 = QtWidgets.QLabel(self.dev_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_18.sizePolicy().hasHeightForWidth())
+        self.label_18.setSizePolicy(sizePolicy)
+        self.label_18.setObjectName("label_18")
+        self.scan_conf_gbox.addWidget(self.label_18, 0, 9, 1, 1)
+        self.pos_settling_time_dsbox = QtWidgets.QDoubleSpinBox(
+            self.dev_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.pos_settling_time_dsbox.sizePolicy().hasHeightForWidth())
+        self.pos_settling_time_dsbox.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.pos_settling_time_dsbox.setFont(font)
+        self.pos_settling_time_dsbox.setStyleSheet("QDoubleSpinBox {\n"
+                                                   "    padding-left: 5px;\n"
+                                                   "}")
+        self.pos_settling_time_dsbox.setDecimals(2)
+        self.pos_settling_time_dsbox.setSingleStep(0.01)
+        self.pos_settling_time_dsbox.setObjectName("pos_settling_time_dsbox")
+        self.scan_conf_gbox.addWidget(self.pos_settling_time_dsbox, 0, 16, 1,
+                                      1)
         self.volt_step_dsbox = QtWidgets.QDoubleSpinBox(self.dev_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -192,7 +247,68 @@ class Ui_MainWindow(object):
         self.volt_step_dsbox.setMinimum(-9999.0)
         self.volt_step_dsbox.setMaximum(9999.0)
         self.volt_step_dsbox.setObjectName("volt_step_dsbox")
-        self.scan_conf_gbox.addWidget(self.volt_step_dsbox, 1, 7, 1, 1)
+        self.scan_conf_gbox.addWidget(self.volt_step_dsbox, 2, 13, 1, 1)
+        self.live_pos_begin_lineEdit = QtWidgets.QLineEdit(
+            self.dev_ctrl_widget)
+        self.live_pos_begin_lineEdit.setReadOnly(True)
+        self.live_pos_begin_lineEdit.setObjectName("live_pos_begin_lineEdit")
+        self.scan_conf_gbox.addWidget(self.live_pos_begin_lineEdit, 0, 8, 1, 1)
+        self.label_20 = QtWidgets.QLabel(self.dev_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_20.sizePolicy().hasHeightForWidth())
+        self.label_20.setSizePolicy(sizePolicy)
+        self.label_20.setObjectName("label_20")
+        self.scan_conf_gbox.addWidget(self.label_20, 2, 6, 1, 1)
+        self.volt_end_dsbox = QtWidgets.QDoubleSpinBox(self.dev_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.volt_end_dsbox.sizePolicy().hasHeightForWidth())
+        self.volt_end_dsbox.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.volt_end_dsbox.setFont(font)
+        self.volt_end_dsbox.setStyleSheet("QDoubleSpinBox {\n"
+                                          "    padding-left: 5px;\n"
+                                          "}")
+        self.volt_end_dsbox.setMinimum(-9999.0)
+        self.volt_end_dsbox.setMaximum(9999.0)
+        self.volt_end_dsbox.setObjectName("volt_end_dsbox")
+        self.scan_conf_gbox.addWidget(self.volt_end_dsbox, 2, 10, 1, 1)
+        self.label_21 = QtWidgets.QLabel(self.dev_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_21.sizePolicy().hasHeightForWidth())
+        self.label_21.setSizePolicy(sizePolicy)
+        self.label_21.setObjectName("label_21")
+        self.scan_conf_gbox.addWidget(self.label_21, 2, 9, 1, 1)
+        self.pos_end_dsbox = QtWidgets.QDoubleSpinBox(self.dev_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.pos_end_dsbox.sizePolicy().hasHeightForWidth())
+        self.pos_end_dsbox.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("Monospace")
+        self.pos_end_dsbox.setFont(font)
+        self.pos_end_dsbox.setStyleSheet("QDoubleSpinBox {\n"
+                                         "    padding-left: 5px;\n"
+                                         "}")
+        self.pos_end_dsbox.setMinimum(-9999.0)
+        self.pos_end_dsbox.setMaximum(9999.0)
+        self.pos_end_dsbox.setObjectName("pos_end_dsbox")
+        self.scan_conf_gbox.addWidget(self.pos_end_dsbox, 0, 10, 1, 1)
         self.pos_step_dsbox = QtWidgets.QDoubleSpinBox(self.dev_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -212,45 +328,45 @@ class Ui_MainWindow(object):
         self.pos_step_dsbox.setMaximum(9999.0)
         self.pos_step_dsbox.setSingleStep(0.1)
         self.pos_step_dsbox.setObjectName("pos_step_dsbox")
-        self.scan_conf_gbox.addWidget(self.pos_step_dsbox, 0, 7, 1, 1)
-        self.volt_end_dsbox = QtWidgets.QDoubleSpinBox(self.dev_ctrl_widget)
+        self.scan_conf_gbox.addWidget(self.pos_step_dsbox, 0, 13, 1, 1)
+        self.range_from_fig_btn = QtWidgets.QToolButton(self.dev_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.range_from_fig_btn.sizePolicy().hasHeightForWidth())
+        self.range_from_fig_btn.setSizePolicy(sizePolicy)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/icons/refine-range.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.range_from_fig_btn.setIcon(icon1)
+        self.range_from_fig_btn.setIconSize(QtCore.QSize(80, 80))
+        self.range_from_fig_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonIconOnly)
+        self.range_from_fig_btn.setAutoRaise(False)
+        self.range_from_fig_btn.setObjectName("range_from_fig_btn")
+        self.scan_conf_gbox.addWidget(self.range_from_fig_btn, 0, 18, 3, 1)
+        self.volt_settling_time_dsbox = QtWidgets.QDoubleSpinBox(
+            self.dev_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.volt_end_dsbox.sizePolicy().hasHeightForWidth())
-        self.volt_end_dsbox.setSizePolicy(sizePolicy)
+            self.volt_settling_time_dsbox.sizePolicy().hasHeightForWidth())
+        self.volt_settling_time_dsbox.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setFamily("Monospace")
-        self.volt_end_dsbox.setFont(font)
-        self.volt_end_dsbox.setStyleSheet("QDoubleSpinBox {\n"
-                                          "    padding-left: 5px;\n"
-                                          "}")
-        self.volt_end_dsbox.setMinimum(-9999.0)
-        self.volt_end_dsbox.setMaximum(9999.0)
-        self.volt_end_dsbox.setObjectName("volt_end_dsbox")
-        self.scan_conf_gbox.addWidget(self.volt_end_dsbox, 1, 5, 1, 1)
-        self.label_19 = QtWidgets.QLabel(self.dev_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_19.sizePolicy().hasHeightForWidth())
-        self.label_19.setSizePolicy(sizePolicy)
-        self.label_19.setObjectName("label_19")
-        self.scan_conf_gbox.addWidget(self.label_19, 0, 6, 1, 1)
-        self.label_18 = QtWidgets.QLabel(self.dev_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_18.sizePolicy().hasHeightForWidth())
-        self.label_18.setSizePolicy(sizePolicy)
-        self.label_18.setObjectName("label_18")
-        self.scan_conf_gbox.addWidget(self.label_18, 0, 4, 1, 1)
+        self.volt_settling_time_dsbox.setFont(font)
+        self.volt_settling_time_dsbox.setStyleSheet("QDoubleSpinBox {\n"
+                                                    "    padding-left: 5px;\n"
+                                                    "}")
+        self.volt_settling_time_dsbox.setDecimals(2)
+        self.volt_settling_time_dsbox.setSingleStep(0.01)
+        self.volt_settling_time_dsbox.setObjectName("volt_settling_time_dsbox")
+        self.scan_conf_gbox.addWidget(self.volt_settling_time_dsbox, 2, 16, 1,
+                                      1)
         self.pos_begin_dsbox = QtWidgets.QDoubleSpinBox(self.dev_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -270,20 +386,7 @@ class Ui_MainWindow(object):
         self.pos_begin_dsbox.setMinimum(-9999.0)
         self.pos_begin_dsbox.setMaximum(9999.0)
         self.pos_begin_dsbox.setObjectName("pos_begin_dsbox")
-        self.scan_conf_gbox.addWidget(self.pos_begin_dsbox, 0, 3, 1, 1)
-        self.volt_steps_lbl = QtWidgets.QLabel(self.dev_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.volt_steps_lbl.sizePolicy().hasHeightForWidth())
-        self.volt_steps_lbl.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.volt_steps_lbl.setFont(font)
-        self.volt_steps_lbl.setObjectName("volt_steps_lbl")
-        self.scan_conf_gbox.addWidget(self.volt_steps_lbl, 1, 1, 1, 1)
+        self.scan_conf_gbox.addWidget(self.pos_begin_dsbox, 0, 7, 1, 1)
         self.label_17 = QtWidgets.QLabel(self.dev_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -293,112 +396,39 @@ class Ui_MainWindow(object):
             self.label_17.sizePolicy().hasHeightForWidth())
         self.label_17.setSizePolicy(sizePolicy)
         self.label_17.setObjectName("label_17")
-        self.scan_conf_gbox.addWidget(self.label_17, 0, 2, 1, 1)
-        self.label_22 = QtWidgets.QLabel(self.dev_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_22.sizePolicy().hasHeightForWidth())
-        self.label_22.setSizePolicy(sizePolicy)
-        self.label_22.setObjectName("label_22")
-        self.scan_conf_gbox.addWidget(self.label_22, 1, 6, 1, 1)
-        self.pos_steps_lbl = QtWidgets.QLabel(self.dev_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.pos_steps_lbl.sizePolicy().hasHeightForWidth())
-        self.pos_steps_lbl.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.pos_steps_lbl.setFont(font)
-        self.pos_steps_lbl.setObjectName("pos_steps_lbl")
-        self.scan_conf_gbox.addWidget(self.pos_steps_lbl, 0, 1, 1, 1)
-        self.label_21 = QtWidgets.QLabel(self.dev_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_21.sizePolicy().hasHeightForWidth())
-        self.label_21.setSizePolicy(sizePolicy)
-        self.label_21.setObjectName("label_21")
-        self.scan_conf_gbox.addWidget(self.label_21, 1, 4, 1, 1)
-        self.pos_end_dsbox = QtWidgets.QDoubleSpinBox(self.dev_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.pos_end_dsbox.sizePolicy().hasHeightForWidth())
-        self.pos_end_dsbox.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Monospace")
-        self.pos_end_dsbox.setFont(font)
-        self.pos_end_dsbox.setStyleSheet("QDoubleSpinBox {\n"
-                                         "    padding-left: 5px;\n"
-                                         "}")
-        self.pos_end_dsbox.setMinimum(-9999.0)
-        self.pos_end_dsbox.setMaximum(9999.0)
-        self.pos_end_dsbox.setObjectName("pos_end_dsbox")
-        self.scan_conf_gbox.addWidget(self.pos_end_dsbox, 0, 5, 1, 1)
-        self.label_15 = QtWidgets.QLabel(self.dev_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_15.sizePolicy().hasHeightForWidth())
-        self.label_15.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Cantarell")
-        self.label_15.setFont(font)
-        self.label_15.setStyleSheet("")
-        self.label_15.setAlignment(QtCore.Qt.AlignRight
-                                   | QtCore.Qt.AlignTrailing
-                                   | QtCore.Qt.AlignVCenter)
-        self.label_15.setObjectName("label_15")
-        self.scan_conf_gbox.addWidget(self.label_15, 0, 0, 1, 1)
-        self.pos_settling_time_dsbox = QtWidgets.QDoubleSpinBox(
+        self.scan_conf_gbox.addWidget(self.label_17, 0, 6, 1, 1)
+        self.live_volt_begin_lineEdit = QtWidgets.QLineEdit(
             self.dev_ctrl_widget)
+        self.live_volt_begin_lineEdit.setReadOnly(True)
+        self.live_volt_begin_lineEdit.setObjectName("live_volt_begin_lineEdit")
+        self.scan_conf_gbox.addWidget(self.live_volt_begin_lineEdit, 2, 8, 1,
+                                      1)
+        self.live_pos_step_lineEdit = QtWidgets.QLineEdit(self.dev_ctrl_widget)
+        self.live_pos_step_lineEdit.setReadOnly(True)
+        self.live_pos_step_lineEdit.setObjectName("live_pos_step_lineEdit")
+        self.scan_conf_gbox.addWidget(self.live_pos_step_lineEdit, 0, 14, 1, 1)
+        self.volt_begin_dsbox = QtWidgets.QDoubleSpinBox(self.dev_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.pos_settling_time_dsbox.sizePolicy().hasHeightForWidth())
-        self.pos_settling_time_dsbox.setSizePolicy(sizePolicy)
+            self.volt_begin_dsbox.sizePolicy().hasHeightForWidth())
+        self.volt_begin_dsbox.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setFamily("Monospace")
-        self.pos_settling_time_dsbox.setFont(font)
-        self.pos_settling_time_dsbox.setStyleSheet("QDoubleSpinBox {\n"
-                                                   "    padding-left: 5px;\n"
-                                                   "}")
-        self.pos_settling_time_dsbox.setDecimals(2)
-        self.pos_settling_time_dsbox.setSingleStep(0.01)
-        self.pos_settling_time_dsbox.setObjectName("pos_settling_time_dsbox")
-        self.scan_conf_gbox.addWidget(self.pos_settling_time_dsbox, 0, 9, 1, 1)
-        self.range_from_fig_btn = QtWidgets.QToolButton(self.dev_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.range_from_fig_btn.sizePolicy().hasHeightForWidth())
-        self.range_from_fig_btn.setSizePolicy(sizePolicy)
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/icons/refine-range.png"),
-                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.range_from_fig_btn.setIcon(icon1)
-        self.range_from_fig_btn.setIconSize(QtCore.QSize(80, 80))
-        self.range_from_fig_btn.setToolButtonStyle(
-            QtCore.Qt.ToolButtonIconOnly)
-        self.range_from_fig_btn.setAutoRaise(False)
-        self.range_from_fig_btn.setObjectName("range_from_fig_btn")
-        self.scan_conf_gbox.addWidget(self.range_from_fig_btn, 0, 10, 2, 1)
+        self.volt_begin_dsbox.setFont(font)
+        self.volt_begin_dsbox.setStyleSheet("QDoubleSpinBox {\n"
+                                            "    padding-left: 5px;\n"
+                                            "}")
+        self.volt_begin_dsbox.setMinimum(-9999.0)
+        self.volt_begin_dsbox.setMaximum(9999.0)
+        self.volt_begin_dsbox.setObjectName("volt_begin_dsbox")
+        self.scan_conf_gbox.addWidget(self.volt_begin_dsbox, 2, 7, 1, 1)
+        self.live_pos_end_lineEdit = QtWidgets.QLineEdit(self.dev_ctrl_widget)
+        self.live_pos_end_lineEdit.setReadOnly(True)
+        self.live_pos_end_lineEdit.setObjectName("live_pos_end_lineEdit")
+        self.scan_conf_gbox.addWidget(self.live_pos_end_lineEdit, 0, 11, 1, 1)
         self.gridLayout_4.addLayout(self.scan_conf_gbox, 3, 0, 1, 2)
         self.adv_ctrl_widget = QtWidgets.QWidget(self.dev_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
@@ -419,26 +449,33 @@ class Ui_MainWindow(object):
         self.dev_ctrl_gbox.setHorizontalSpacing(4)
         self.dev_ctrl_gbox.setVerticalSpacing(2)
         self.dev_ctrl_gbox.setObjectName("dev_ctrl_gbox")
-        self.label_7 = QtWidgets.QLabel(self.adv_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+        self.label_4 = QtWidgets.QLabel(self.adv_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.label_7.sizePolicy().hasHeightForWidth())
-        self.label_7.setSizePolicy(sizePolicy)
-        self.label_7.setStyleSheet("")
-        self.label_7.setAlignment(QtCore.Qt.AlignRight
-                                  | QtCore.Qt.AlignTrailing
-                                  | QtCore.Qt.AlignVCenter)
-        self.label_7.setObjectName("label_7")
-        self.dev_ctrl_gbox.addWidget(self.label_7, 0, 0, 1, 1)
-        self.label_8 = QtWidgets.QLabel(self.adv_ctrl_widget)
-        self.label_8.setObjectName("label_8")
-        self.dev_ctrl_gbox.addWidget(self.label_8, 0, 2, 1, 1)
-        self.set_biasVolt_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
-        self.set_biasVolt_lineEdit.setObjectName("set_biasVolt_lineEdit")
-        self.dev_ctrl_gbox.addWidget(self.set_biasVolt_lineEdit, 0, 6, 1, 1)
+            self.label_4.sizePolicy().hasHeightForWidth())
+        self.label_4.setSizePolicy(sizePolicy)
+        self.label_4.setObjectName("label_4")
+        self.dev_ctrl_gbox.addWidget(self.label_4, 1, 5, 1, 1)
+        self.is_enabled_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.is_enabled_lbl.sizePolicy().hasHeightForWidth())
+        self.is_enabled_lbl.setSizePolicy(sizePolicy)
+        self.is_enabled_lbl.setText("")
+        self.is_enabled_lbl.setPixmap(
+            QtGui.QPixmap(":/icons/status-pixholder.png"))
+        self.is_enabled_lbl.setObjectName("is_enabled_lbl")
+        self.dev_ctrl_gbox.addWidget(self.is_enabled_lbl, 2, 1, 1, 1)
+        self.enable_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
+        self.enable_btn.setIconSize(QtCore.QSize(24, 24))
+        self.enable_btn.setObjectName("enable_btn")
+        self.dev_ctrl_gbox.addWidget(self.enable_btn, 2, 2, 1, 1)
         self.is_outlimit_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -451,136 +488,7 @@ class Ui_MainWindow(object):
         self.is_outlimit_lbl.setPixmap(
             QtGui.QPixmap(":/icons/status-pixholder.png"))
         self.is_outlimit_lbl.setObjectName("is_outlimit_lbl")
-        self.dev_ctrl_gbox.addWidget(self.is_outlimit_lbl, 1, 10, 1, 1)
-        self.label_44 = QtWidgets.QLabel(self.adv_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_44.sizePolicy().hasHeightForWidth())
-        self.label_44.setSizePolicy(sizePolicy)
-        self.label_44.setStyleSheet("")
-        self.label_44.setAlignment(QtCore.Qt.AlignRight
-                                   | QtCore.Qt.AlignTrailing
-                                   | QtCore.Qt.AlignVCenter)
-        self.label_44.setObjectName("label_44")
-        self.dev_ctrl_gbox.addWidget(self.label_44, 2, 0, 1, 1)
-        self.is_in_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
-        self.is_in_lbl.setText("")
-        self.is_in_lbl.setPixmap(QtGui.QPixmap(":/icons/status-pixholder.png"))
-        self.is_in_lbl.setObjectName("is_in_lbl")
-        self.dev_ctrl_gbox.addWidget(self.is_in_lbl, 1, 1, 1, 1)
-        self.live_pos_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.live_pos_lineEdit.sizePolicy().hasHeightForWidth())
-        self.live_pos_lineEdit.setSizePolicy(sizePolicy)
-        self.live_pos_lineEdit.setReadOnly(True)
-        self.live_pos_lineEdit.setObjectName("live_pos_lineEdit")
-        self.dev_ctrl_gbox.addWidget(self.live_pos_lineEdit, 1, 4, 1, 1)
-        self.set_pos_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/icons/apply.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.set_pos_btn.setIcon(icon2)
-        self.set_pos_btn.setIconSize(QtCore.QSize(24, 24))
-        self.set_pos_btn.setAutoRaise(False)
-        self.set_pos_btn.setObjectName("set_pos_btn")
-        self.dev_ctrl_gbox.addWidget(self.set_pos_btn, 1, 8, 1, 1)
-        self.retract_btn = QtWidgets.QPushButton(self.adv_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.retract_btn.sizePolicy().hasHeightForWidth())
-        self.retract_btn.setSizePolicy(sizePolicy)
-        self.retract_btn.setIconSize(QtCore.QSize(24, 24))
-        self.retract_btn.setObjectName("retract_btn")
-        self.dev_ctrl_gbox.addWidget(self.retract_btn, 1, 9, 1, 1)
-        self.label_26 = QtWidgets.QLabel(self.adv_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_26.sizePolicy().hasHeightForWidth())
-        self.label_26.setSizePolicy(sizePolicy)
-        self.label_26.setObjectName("label_26")
-        self.dev_ctrl_gbox.addWidget(self.label_26, 0, 5, 1, 1)
-        self.set_biasVolt_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
-        self.set_biasVolt_btn.setIcon(icon2)
-        self.set_biasVolt_btn.setIconSize(QtCore.QSize(24, 24))
-        self.set_biasVolt_btn.setObjectName("set_biasVolt_btn")
-        self.dev_ctrl_gbox.addWidget(self.set_biasVolt_btn, 0, 8, 1, 1)
-        self.enable_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
-        self.enable_btn.setIconSize(QtCore.QSize(24, 24))
-        self.enable_btn.setObjectName("enable_btn")
-        self.dev_ctrl_gbox.addWidget(self.enable_btn, 2, 2, 1, 1)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setContentsMargins(0, -1, -1, -1)
-        self.horizontalLayout.setSpacing(10)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.reset_itlk_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
-        self.reset_itlk_btn.setIconSize(QtCore.QSize(24, 24))
-        self.reset_itlk_btn.setObjectName("reset_itlk_btn")
-        self.horizontalLayout.addWidget(self.reset_itlk_btn)
-        self.bypass_itlk_chkbox = QtWidgets.QCheckBox(self.adv_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.bypass_itlk_chkbox.sizePolicy().hasHeightForWidth())
-        self.bypass_itlk_chkbox.setSizePolicy(sizePolicy)
-        self.bypass_itlk_chkbox.setObjectName("bypass_itlk_chkbox")
-        self.horizontalLayout.addWidget(self.bypass_itlk_chkbox)
-        self.dev_ctrl_gbox.addLayout(self.horizontalLayout, 2, 6, 1, 2)
-        self.live_biasVolt_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
-        self.live_biasVolt_lineEdit.setReadOnly(True)
-        self.live_biasVolt_lineEdit.setObjectName("live_biasVolt_lineEdit")
-        self.dev_ctrl_gbox.addWidget(self.live_biasVolt_lineEdit, 0, 4, 1, 1)
-        self.label_25 = QtWidgets.QLabel(self.adv_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_25.sizePolicy().hasHeightForWidth())
-        self.label_25.setSizePolicy(sizePolicy)
-        self.label_25.setStyleSheet("")
-        self.label_25.setAlignment(QtCore.Qt.AlignRight
-                                   | QtCore.Qt.AlignTrailing
-                                   | QtCore.Qt.AlignVCenter)
-        self.label_25.setObjectName("label_25")
-        self.dev_ctrl_gbox.addWidget(self.label_25, 1, 0, 1, 1)
-        self.label_4 = QtWidgets.QLabel(self.adv_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.label_4.sizePolicy().hasHeightForWidth())
-        self.label_4.setSizePolicy(sizePolicy)
-        self.label_4.setObjectName("label_4")
-        self.dev_ctrl_gbox.addWidget(self.label_4, 1, 5, 1, 1)
-        self.is_itlk_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.is_itlk_lbl.sizePolicy().hasHeightForWidth())
-        self.is_itlk_lbl.setSizePolicy(sizePolicy)
-        self.is_itlk_lbl.setText("")
-        self.is_itlk_lbl.setPixmap(
-            QtGui.QPixmap(":/icons/status-pixholder.png"))
-        self.is_itlk_lbl.setObjectName("is_itlk_lbl")
-        self.dev_ctrl_gbox.addWidget(self.is_itlk_lbl, 2, 5, 1, 1)
+        self.dev_ctrl_gbox.addWidget(self.is_outlimit_lbl, 1, 11, 1, 1)
         self.label_6 = QtWidgets.QLabel(self.adv_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -601,19 +509,120 @@ class Ui_MainWindow(object):
         self.set_pos_lineEdit.setSizePolicy(sizePolicy)
         self.set_pos_lineEdit.setObjectName("set_pos_lineEdit")
         self.dev_ctrl_gbox.addWidget(self.set_pos_lineEdit, 1, 6, 1, 1)
-        self.is_enabled_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
+        self.set_pos_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(":/icons/apply.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.set_pos_btn.setIcon(icon2)
+        self.set_pos_btn.setIconSize(QtCore.QSize(24, 24))
+        self.set_pos_btn.setAutoRaise(False)
+        self.set_pos_btn.setObjectName("set_pos_btn")
+        self.dev_ctrl_gbox.addWidget(self.set_pos_btn, 1, 8, 1, 1)
+        self.set_biasVolt_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
+        self.set_biasVolt_btn.setIcon(icon2)
+        self.set_biasVolt_btn.setIconSize(QtCore.QSize(24, 24))
+        self.set_biasVolt_btn.setObjectName("set_biasVolt_btn")
+        self.dev_ctrl_gbox.addWidget(self.set_biasVolt_btn, 0, 8, 1, 1)
+        self.label_26 = QtWidgets.QLabel(self.adv_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.is_enabled_lbl.sizePolicy().hasHeightForWidth())
-        self.is_enabled_lbl.setSizePolicy(sizePolicy)
-        self.is_enabled_lbl.setText("")
-        self.is_enabled_lbl.setPixmap(
+            self.label_26.sizePolicy().hasHeightForWidth())
+        self.label_26.setSizePolicy(sizePolicy)
+        self.label_26.setObjectName("label_26")
+        self.dev_ctrl_gbox.addWidget(self.label_26, 0, 5, 1, 1)
+        self.is_in_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
+        self.is_in_lbl.setText("")
+        self.is_in_lbl.setPixmap(QtGui.QPixmap(":/icons/status-pixholder.png"))
+        self.is_in_lbl.setObjectName("is_in_lbl")
+        self.dev_ctrl_gbox.addWidget(self.is_in_lbl, 1, 1, 1, 1)
+        self.label_25 = QtWidgets.QLabel(self.adv_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_25.sizePolicy().hasHeightForWidth())
+        self.label_25.setSizePolicy(sizePolicy)
+        self.label_25.setStyleSheet("")
+        self.label_25.setAlignment(QtCore.Qt.AlignRight
+                                   | QtCore.Qt.AlignTrailing
+                                   | QtCore.Qt.AlignVCenter)
+        self.label_25.setObjectName("label_25")
+        self.dev_ctrl_gbox.addWidget(self.label_25, 1, 0, 1, 1)
+        self.label_44 = QtWidgets.QLabel(self.adv_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_44.sizePolicy().hasHeightForWidth())
+        self.label_44.setSizePolicy(sizePolicy)
+        self.label_44.setStyleSheet("")
+        self.label_44.setAlignment(QtCore.Qt.AlignRight
+                                   | QtCore.Qt.AlignTrailing
+                                   | QtCore.Qt.AlignVCenter)
+        self.label_44.setObjectName("label_44")
+        self.dev_ctrl_gbox.addWidget(self.label_44, 2, 0, 1, 1)
+        self.live_pos_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.live_pos_lineEdit.sizePolicy().hasHeightForWidth())
+        self.live_pos_lineEdit.setSizePolicy(sizePolicy)
+        self.live_pos_lineEdit.setReadOnly(True)
+        self.live_pos_lineEdit.setObjectName("live_pos_lineEdit")
+        self.dev_ctrl_gbox.addWidget(self.live_pos_lineEdit, 1, 4, 1, 1)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setContentsMargins(0, -1, -1, -1)
+        self.horizontalLayout.setSpacing(10)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.reset_itlk_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
+        self.reset_itlk_btn.setIconSize(QtCore.QSize(24, 24))
+        self.reset_itlk_btn.setObjectName("reset_itlk_btn")
+        self.horizontalLayout.addWidget(self.reset_itlk_btn)
+        self.bypass_itlk_chkbox = QtWidgets.QCheckBox(self.adv_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.bypass_itlk_chkbox.sizePolicy().hasHeightForWidth())
+        self.bypass_itlk_chkbox.setSizePolicy(sizePolicy)
+        self.bypass_itlk_chkbox.setObjectName("bypass_itlk_chkbox")
+        self.horizontalLayout.addWidget(self.bypass_itlk_chkbox)
+        self.dev_ctrl_gbox.addLayout(self.horizontalLayout, 2, 6, 1, 2)
+        self.set_biasVolt_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
+        self.set_biasVolt_lineEdit.setObjectName("set_biasVolt_lineEdit")
+        self.dev_ctrl_gbox.addWidget(self.set_biasVolt_lineEdit, 0, 6, 1, 1)
+        self.is_itlk_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.is_itlk_lbl.sizePolicy().hasHeightForWidth())
+        self.is_itlk_lbl.setSizePolicy(sizePolicy)
+        self.is_itlk_lbl.setText("")
+        self.is_itlk_lbl.setPixmap(
             QtGui.QPixmap(":/icons/status-pixholder.png"))
-        self.is_enabled_lbl.setObjectName("is_enabled_lbl")
-        self.dev_ctrl_gbox.addWidget(self.is_enabled_lbl, 2, 1, 1, 1)
+        self.is_itlk_lbl.setObjectName("is_itlk_lbl")
+        self.dev_ctrl_gbox.addWidget(self.is_itlk_lbl, 2, 5, 1, 1)
+        self.retract_btn = QtWidgets.QPushButton(self.adv_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.retract_btn.sizePolicy().hasHeightForWidth())
+        self.retract_btn.setSizePolicy(sizePolicy)
+        self.retract_btn.setIconSize(QtCore.QSize(24, 24))
+        self.retract_btn.setObjectName("retract_btn")
+        self.dev_ctrl_gbox.addWidget(self.retract_btn, 1, 10, 1, 1)
         self.is_bias_on_lbl = QtWidgets.QLabel(self.adv_ctrl_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Preferred)
@@ -627,6 +636,10 @@ class Ui_MainWindow(object):
             QtGui.QPixmap(":/icons/status-pixholder.png"))
         self.is_bias_on_lbl.setObjectName("is_bias_on_lbl")
         self.dev_ctrl_gbox.addWidget(self.is_bias_on_lbl, 0, 1, 1, 1)
+        self.live_biasVolt_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
+        self.live_biasVolt_lineEdit.setReadOnly(True)
+        self.live_biasVolt_lineEdit.setObjectName("live_biasVolt_lineEdit")
+        self.dev_ctrl_gbox.addWidget(self.live_biasVolt_lineEdit, 0, 4, 1, 1)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setContentsMargins(0, -1, -1, -1)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
@@ -649,6 +662,30 @@ class Ui_MainWindow(object):
         self.label_51.setObjectName("label_51")
         self.horizontalLayout_3.addWidget(self.label_51)
         self.dev_ctrl_gbox.addLayout(self.horizontalLayout_3, 2, 4, 1, 1)
+        self.label_7 = QtWidgets.QLabel(self.adv_ctrl_widget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.label_7.sizePolicy().hasHeightForWidth())
+        self.label_7.setSizePolicy(sizePolicy)
+        self.label_7.setStyleSheet("")
+        self.label_7.setAlignment(QtCore.Qt.AlignRight
+                                  | QtCore.Qt.AlignTrailing
+                                  | QtCore.Qt.AlignVCenter)
+        self.label_7.setObjectName("label_7")
+        self.dev_ctrl_gbox.addWidget(self.label_7, 0, 0, 1, 1)
+        self.label_8 = QtWidgets.QLabel(self.adv_ctrl_widget)
+        self.label_8.setObjectName("label_8")
+        self.dev_ctrl_gbox.addWidget(self.label_8, 0, 2, 1, 1)
+        self.stop_move_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.stop_move_btn.setIcon(icon3)
+        self.stop_move_btn.setObjectName("stop_move_btn")
+        self.dev_ctrl_gbox.addWidget(self.stop_move_btn, 1, 9, 1, 1)
         self.dev_sts_vbox.addLayout(self.dev_ctrl_gbox)
         self.gridLayout_4.addWidget(self.adv_ctrl_widget, 0, 0, 1, 2)
         self.time_cost_vbox = QtWidgets.QVBoxLayout()
@@ -668,10 +705,10 @@ class Ui_MainWindow(object):
         self.toolButton_2.setStyleSheet("QToolButton {\n"
                                         "    border: 1px solid gray;\n"
                                         "}")
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.toolButton_2.setIcon(icon3)
+        self.toolButton_2.setIcon(icon4)
         self.toolButton_2.setAutoRaise(True)
         self.toolButton_2.setObjectName("toolButton_2")
         self.time_hbox.addWidget(self.toolButton_2)
@@ -748,10 +785,10 @@ class Ui_MainWindow(object):
         self.line_5.setObjectName("line_5")
         self.time_hbox.addWidget(self.line_5)
         self.default_config_btn = QtWidgets.QToolButton(self.dev_ctrl_widget)
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/icons/reset.png"), QtGui.QIcon.Normal,
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/icons/reset.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.default_config_btn.setIcon(icon4)
+        self.default_config_btn.setIcon(icon5)
         self.default_config_btn.setIconSize(QtCore.QSize(24, 24))
         self.default_config_btn.setPopupMode(
             QtWidgets.QToolButton.MenuButtonPopup)
@@ -760,10 +797,10 @@ class Ui_MainWindow(object):
         self.default_config_btn.setObjectName("default_config_btn")
         self.time_hbox.addWidget(self.default_config_btn)
         self.toolButton = QtWidgets.QToolButton(self.dev_ctrl_widget)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/icons/add.png"), QtGui.QIcon.Normal,
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/icons/add.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.toolButton.setIcon(icon5)
+        self.toolButton.setIcon(icon6)
         self.toolButton.setIconSize(QtCore.QSize(24, 24))
         self.toolButton.setAutoRaise(True)
         self.toolButton.setObjectName("toolButton")
@@ -773,10 +810,10 @@ class Ui_MainWindow(object):
                                            QtWidgets.QSizePolicy.Minimum)
         self.time_hbox.addItem(spacerItem)
         self.fetch_config_btn = QtWidgets.QToolButton(self.dev_ctrl_widget)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/icons/fetch.png"), QtGui.QIcon.Normal,
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(":/icons/fetch.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.fetch_config_btn.setIcon(icon6)
+        self.fetch_config_btn.setIcon(icon7)
         self.fetch_config_btn.setIconSize(QtCore.QSize(24, 24))
         self.fetch_config_btn.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
         self.fetch_config_btn.setAutoRaise(True)
@@ -883,10 +920,10 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.ems_detail_btn.sizePolicy().hasHeightForWidth())
         self.ems_detail_btn.setSizePolicy(sizePolicy)
-        icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap(":/icons/view-details.png"),
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(":/icons/view-details.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.ems_detail_btn.setIcon(icon7)
+        self.ems_detail_btn.setIcon(icon8)
         self.ems_detail_btn.setIconSize(QtCore.QSize(28, 28))
         self.ems_detail_btn.setAutoRaise(True)
         self.ems_detail_btn.setObjectName("ems_detail_btn")
@@ -964,12 +1001,12 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.run_btn.sizePolicy().hasHeightForWidth())
         self.run_btn.setSizePolicy(sizePolicy)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap(":/icons/run.png"), QtGui.QIcon.Normal,
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(":/icons/run.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.run_btn.setIcon(icon8)
+        self.run_btn.setIcon(icon9)
         self.run_btn.setIconSize(QtCore.QSize(48, 48))
-        self.run_btn.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+        self.run_btn.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.run_btn.setAutoRaise(False)
         self.run_btn.setObjectName("run_btn")
         self.cmd_vbox.addWidget(self.run_btn)
@@ -981,12 +1018,9 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.abort_btn.sizePolicy().hasHeightForWidth())
         self.abort_btn.setSizePolicy(sizePolicy)
-        icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.abort_btn.setIcon(icon9)
+        self.abort_btn.setIcon(icon3)
         self.abort_btn.setIconSize(QtCore.QSize(48, 48))
-        self.abort_btn.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+        self.abort_btn.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.abort_btn.setAutoRaise(False)
         self.abort_btn.setObjectName("abort_btn")
         self.cmd_vbox.addWidget(self.abort_btn)
@@ -1003,7 +1037,8 @@ class Ui_MainWindow(object):
                          QtGui.QIcon.Off)
         self.fetch_data_btn.setIcon(icon10)
         self.fetch_data_btn.setIconSize(QtCore.QSize(48, 48))
-        self.fetch_data_btn.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+        self.fetch_data_btn.setToolButtonStyle(
+            QtCore.Qt.ToolButtonTextUnderIcon)
         self.fetch_data_btn.setAutoRaise(False)
         self.fetch_data_btn.setObjectName("fetch_data_btn")
         self.cmd_vbox.addWidget(self.fetch_data_btn)
@@ -1343,7 +1378,7 @@ class Ui_MainWindow(object):
         self.gridLayout_5.addItem(spacerItem4, 3, 0, 1, 1)
         self.data_analysis_tbox.addItem(self.page_beam_params, "")
         self.page_bkgd_noise = QtWidgets.QWidget()
-        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 515, 357))
+        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 515, 355))
         self.page_bkgd_noise.setObjectName("page_bkgd_noise")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.page_bkgd_noise)
         self.gridLayout_2.setContentsMargins(4, 4, 4, 4)
@@ -1425,7 +1460,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.auto_update_image_chkbox, 1, 2, 1, 1)
         self.data_analysis_tbox.addItem(self.page_bkgd_noise, "")
         self.page_noise_correction = QtWidgets.QWidget()
-        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 474, 357))
+        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 474, 355))
         self.page_noise_correction.setObjectName("page_noise_correction")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.page_noise_correction)
         self.gridLayout_7.setContentsMargins(4, 4, 4, 4)
@@ -1722,7 +1757,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_11.setSpacing(4)
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
         self.update_results_btn = QtWidgets.QToolButton(self.twiss_gbox)
-        self.update_results_btn.setIcon(icon4)
+        self.update_results_btn.setIcon(icon5)
         self.update_results_btn.setToolButtonStyle(
             QtCore.Qt.ToolButtonTextBesideIcon)
         self.update_results_btn.setObjectName("update_results_btn")
@@ -1776,7 +1811,7 @@ class Ui_MainWindow(object):
         self.actionE_xit.setIcon(icon12)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionAbout = QtWidgets.QAction(MainWindow)
-        self.actionAbout.setIcon(icon3)
+        self.actionAbout.setIcon(icon4)
         self.actionAbout.setObjectName("actionAbout")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         icon13 = QtGui.QIcon()
@@ -2000,111 +2035,110 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.ctrl_gbox.setTitle(_translate("MainWindow", "Device"))
-        self.label_23.setText(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p><span style=\" font-style:italic;\">T</span><span style=\" font-style:italic; vertical-align:sub;\">settling</span></p></body></html>"
-            ))
-        self.label_20.setText(_translate("MainWindow", "Begin"))
+        self.label_22.setText(_translate("MainWindow", "Step"))
+        self.label_15.setText(_translate("MainWindow", "Position [mm]"))
         self.label_16.setText(_translate("MainWindow", "Voltage [Volt]"))
-        self.volt_settling_time_dsbox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Settling time in seconds for sweeping each voltage.</p></body></html>"
-            ))
-        self.volt_settling_time_dsbox.setSuffix(_translate("MainWindow", " s"))
-        self.volt_begin_dsbox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Begin value for the voltage scan.</p></body></html>"
-            ))
         self.label_5.setText(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p><span style=\" font-style:italic;\">T</span><span style=\" font-style:italic; vertical-align:sub;\">settling</span></p></body></html>"
             ))
-        self.volt_step_dsbox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Step value for the voltage scan.</p></body></html>"
-            ))
-        self.pos_step_dsbox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Step value for the position scan.</p></body></html>"
-            ))
-        self.volt_end_dsbox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>End value for the voltage scan.</p></body></html>"
-            ))
-        self.label_19.setText(_translate("MainWindow", "Step"))
-        self.label_18.setText(_translate("MainWindow", "End"))
-        self.pos_begin_dsbox.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Begin value for the position scan.</p></body></html>"
-            ))
-        self.volt_steps_lbl.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>The total number of steps must be an integer.</p></body></html>"
-            ))
-        self.volt_steps_lbl.setText(_translate("MainWindow", "[#]"))
-        self.label_17.setText(_translate("MainWindow", "Begin"))
-        self.label_22.setText(_translate("MainWindow", "Step"))
         self.pos_steps_lbl.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>The total number of steps must be an integer.</p></body></html>"
             ))
         self.pos_steps_lbl.setText(_translate("MainWindow", "[#]"))
-        self.label_21.setText(_translate("MainWindow", "End"))
-        self.pos_end_dsbox.setToolTip(
+        self.volt_steps_lbl.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>End value for the position scan.</p></body></html>"
+                "<html><head/><body><p>The total number of steps must be an integer.</p></body></html>"
             ))
-        self.label_15.setText(_translate("MainWindow", "Position [mm]"))
+        self.volt_steps_lbl.setText(_translate("MainWindow", "[#]"))
+        self.label_23.setText(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p><span style=\" font-style:italic;\">T</span><span style=\" font-style:italic; vertical-align:sub;\">settling</span></p></body></html>"
+            ))
+        self.label_19.setText(_translate("MainWindow", "Step"))
+        self.label_18.setText(_translate("MainWindow", "End"))
         self.pos_settling_time_dsbox.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Settling time in seconds for moving each step.</p></body></html>"
             ))
         self.pos_settling_time_dsbox.setSuffix(_translate("MainWindow", " s"))
+        self.volt_step_dsbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Step value for the voltage scan.</p></body></html>"
+            ))
+        self.label_20.setText(_translate("MainWindow", "Begin"))
+        self.volt_end_dsbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>End value for the voltage scan.</p></body></html>"
+            ))
+        self.label_21.setText(_translate("MainWindow", "End"))
+        self.pos_end_dsbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>End value for the position scan.</p></body></html>"
+            ))
+        self.pos_step_dsbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Step value for the position scan.</p></body></html>"
+            ))
         self.range_from_fig_btn.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Use current figure X and Y limits as the scan ranges.</p><p>Use Zoom/Pan tools or the mouse wheel to adjust the view of the image.</p></body></html>"
             ))
         self.range_from_fig_btn.setText(_translate("MainWindow", "Refine"))
-        self.label_7.setText(_translate("MainWindow", "Bias Voltage [V]"))
-        self.label_8.setText(_translate("MainWindow", "Live Read"))
+        self.volt_settling_time_dsbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Settling time in seconds for sweeping each voltage.</p></body></html>"
+            ))
+        self.volt_settling_time_dsbox.setSuffix(_translate("MainWindow", " s"))
+        self.pos_begin_dsbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Begin value for the position scan.</p></body></html>"
+            ))
+        self.label_17.setText(_translate("MainWindow", "Begin"))
+        self.volt_begin_dsbox.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Begin value for the voltage scan.</p></body></html>"
+            ))
+        self.label_4.setText(_translate("MainWindow", "Live Set"))
+        self.is_enabled_lbl.setToolTip(
+            _translate("MainWindow", "Green is Enabled, Red is Not-Enabled"))
+        self.enable_btn.setToolTip(
+            _translate("MainWindow", "Click to try to enable the device."))
+        self.enable_btn.setText(_translate("MainWindow", "Enable"))
         self.is_outlimit_lbl.setToolTip(
             _translate("MainWindow", "Red is At Out Limit"))
-        self.label_44.setText(_translate("MainWindow", "Device Status"))
-        self.is_in_lbl.setToolTip(_translate("MainWindow", "Yellow is In"))
-        self.live_pos_lineEdit.setToolTip(
-            _translate("MainWindow", "Live motor position readback."))
+        self.label_6.setText(_translate("MainWindow", "Live Read"))
+        self.set_pos_lineEdit.setToolTip(
+            _translate("MainWindow", "New motor position, click Go to move."))
         self.set_pos_btn.setToolTip(
             _translate("MainWindow", "Move the position to the new set."))
         self.set_pos_btn.setText(_translate("MainWindow", "Go"))
-        self.retract_btn.setToolTip(
-            _translate(
-                "MainWindow",
-                "<html><head/><body><p>Move position to 300 mm, should be to the out limit.</p></body></html>"
-            ))
-        self.retract_btn.setText(_translate("MainWindow", "Retract"))
-        self.label_26.setText(_translate("MainWindow", "Live Set"))
         self.set_biasVolt_btn.setToolTip(
             _translate(
                 "MainWindow",
                 "<html><head/><body><p>Set the bias voltage to the new set.</p></body></html>"
             ))
         self.set_biasVolt_btn.setText(_translate("MainWindow", "Set"))
-        self.enable_btn.setToolTip(
-            _translate("MainWindow", "Click to try to enable the device."))
-        self.enable_btn.setText(_translate("MainWindow", "Enable"))
+        self.label_26.setText(_translate("MainWindow", "Live Set"))
+        self.is_in_lbl.setToolTip(_translate("MainWindow", "Yellow is In"))
+        self.label_25.setText(_translate("MainWindow", "Motor Pos [mm]"))
+        self.label_44.setText(_translate("MainWindow", "Device Status"))
+        self.live_pos_lineEdit.setToolTip(
+            _translate("MainWindow", "Live motor position readback."))
         self.reset_itlk_btn.setToolTip(
             _translate("MainWindow", "Click to try to reset interlock."))
         self.reset_itlk_btn.setText(_translate("MainWindow", "Reset"))
@@ -2114,19 +2148,23 @@ class Ui_MainWindow(object):
                 "Check to bypass interlock check for scan readiness validation."
             ))
         self.bypass_itlk_chkbox.setText(_translate("MainWindow", "Bypass"))
-        self.label_25.setText(_translate("MainWindow", "Motor Pos [mm]"))
-        self.label_4.setText(_translate("MainWindow", "Live Set"))
         self.is_itlk_lbl.setToolTip(
             _translate("MainWindow",
                        "Green is Interlock OK, Red is Interlock Not OK"))
-        self.label_6.setText(_translate("MainWindow", "Live Read"))
-        self.set_pos_lineEdit.setToolTip(
-            _translate("MainWindow", "New motor position, click Go to move."))
-        self.is_enabled_lbl.setToolTip(
-            _translate("MainWindow", "Green is Enabled, Red is Not-Enabled"))
+        self.retract_btn.setToolTip(
+            _translate(
+                "MainWindow",
+                "<html><head/><body><p>Move position to 300 mm, should be to the out limit.</p></body></html>"
+            ))
+        self.retract_btn.setText(_translate("MainWindow", "Retract"))
         self.is_bias_on_lbl.setToolTip(
             _translate("MainWindow", "Green is On, Red is Off"))
         self.label_51.setText(_translate("MainWindow", "Interlock "))
+        self.label_7.setText(_translate("MainWindow", "Bias Voltage [V]"))
+        self.label_8.setText(_translate("MainWindow", "Live Read"))
+        self.stop_move_btn.setToolTip(
+            _translate("MainWindow", "Stop motor moving."))
+        self.stop_move_btn.setText(_translate("MainWindow", "..."))
         self.toolButton_2.setToolTip(
             _translate("MainWindow", "As of now, only good for SCS1 EMS."))
         self.toolButton_2.setText(_translate("MainWindow", "..."))
@@ -2172,7 +2210,7 @@ class Ui_MainWindow(object):
         self.run_btn.setToolTip(
             _translate(
                 "MainWindow",
-                "<html><head/><body><p>Start the run: scan position and voltage demensions.</p></body></html>"
+                "<html><head/><body><p>Start the run: scan position and voltage dimensions.</p></body></html>"
             ))
         self.run_btn.setText(_translate("MainWindow", "Run"))
         self.abort_btn.setToolTip(
