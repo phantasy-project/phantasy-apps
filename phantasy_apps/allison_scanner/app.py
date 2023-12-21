@@ -460,6 +460,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             msg.append("Position steps Non-Integer")
         if not self.volt_steps_lbl.property("cnt_is_int"):
             msg.append("Voltage steps Non-Integer")
+        # live read and set are not consistent?
+        _name_map = {'pos': 'Position', 'volt': 'Voltage'}
+        for attr in ('pos', 'volt'):
+            for s in ('begin', 'end', 'step'):
+                w_st = getattr(self, f"{attr}_{s}_dsbox")
+                w_rd = getattr(self, f"live_{attr}_{s}_lineEdit")
+                if f"{w_st.value():.2f}" != w_rd.text():
+                    msg.append(f"{_name_map[attr]} {s} set not match!")
         self.sigReadyScanChanged.emit(_is_ready)
         # post the reason why not ready to scan
         if msg:
@@ -869,7 +877,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_run(self):
-        self.sync_config()
+        # self.sync_config()
         self._is_abort = False
         self._auto_saved = False
         self._abort = False
@@ -1696,6 +1704,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # post the live value to another set of spinbox widgets.
         getattr(self, f'live_{w_name}'.replace('dsbox', 'lineEdit')).setText(f'{v:.2f}')
         self.set_fetch_config_btn(w_value, v)
+        self.__check_device_ready_scan()
 
     def set_fetch_config_btn(self, x: float, y: float):
         # set fetch config btn icon to reflect if the scan ranges match the device settings.
