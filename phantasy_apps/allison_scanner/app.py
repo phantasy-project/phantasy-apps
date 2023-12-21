@@ -285,6 +285,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.set_pos_lineEdit.setValidator(QDoubleValidator())
 
         self.set_pos_btn.clicked.connect(self.on_move_pos)
+        self.stop_move_btn.clicked.connect(self.on_stop_move_pos)
         self.retract_btn.clicked.connect(self.on_retract)
         #
         self.enable_btn.clicked.connect(self.on_enable)
@@ -930,6 +931,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # retract the motor to the outlimit
         self.set_pos_lineEdit.setText(POS_OUT_LIMIT_STR)
         delayed_exec(lambda: self.set_pos_btn.clicked.emit(), 1000)
+
+    @pyqtSlot()
+    def on_stop_move_pos(self):
+        """Stop the pos fork from moving. Abort scan triggers it as well.
+        """
+        self._ems_device.stop_motor()
 
     @pyqtSlot()
     def on_move_pos(self):
