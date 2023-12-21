@@ -380,12 +380,15 @@ class Device(QObject):
 
     def set_pos_begin(self):
         """Set live config with current config."""
+        print(f"set_pos_begin({self.pos_begin})")
         setattr(self.elem, f'START_POS{self._id}', self.pos_begin)
 
     def set_pos_end(self):
+        print(f"set_pos_end({self.pos_end})")
         setattr(self.elem, f'STOP_POS{self._id}', self.pos_end)
 
     def set_pos_step(self):
+        print(f"set_pos_step({self.pos_step})")
         setattr(self.elem, f'STEP_POS{self._id}', self.pos_step)
 
     def set_volt_begin(self):
@@ -446,6 +449,9 @@ class Device(QObject):
         self.set_volt_begin()
         self.set_volt_end()
         self.set_volt_step()
+        printlog("Set_params: ")
+        printlog(f"  pos: {self.get_pos_begin()}, {self.get_pos_step()}, {self.get_pos_end()}")
+        printlog(f"  volt: {self.get_volt_begin()}, {self.get_volt_step()}, {self.get_volt_end()}")
 
     def enable_device(self):
         setattr(self.elem, f"ENABLE_SCAN{self._id}", 1)
@@ -471,7 +477,8 @@ class Device(QObject):
         return pos_fld
 
     def abort(self):
-        setattr(self.elem, 'ABORT_SCAN{}'.format(self._id), 1)
+        setattr(self.elem, f'ABORT_SCAN{self._id}', 1)
+        self.stop_motor()
 
     def move(self, timeout=600, wait=True, validate=False):
         """Start scan."""
@@ -754,6 +761,12 @@ class Device(QObject):
             return True
         return False
     
+    def stop_motor(self):
+        """Stop motor from moving.
+        """
+        printlog("Stop motor moving...")
+        setattr(self.elem, f"POS{self._id}_STOP", 1)
+        
     def get_pos_velocity(self):
         """Return the motor moving velosity in mm/second.
         """
