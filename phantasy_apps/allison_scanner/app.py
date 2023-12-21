@@ -1343,8 +1343,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             _, noise_arr = self._data.noise_correction(self._noise_signal_arr,
                 threshold_sigma=x)
         except:
-            QMessageBox.warning(self, "", "Noise estimation is not ready.",
-                    QMessageBox.Ok)
+            self.statusInfoChanged.emit("Noise estimation is not ready.")
+            # QMessageBox.warning(self, "", "Noise estimation is not ready.",
+            #         QMessageBox.Ok)
             return
         else:
             self.plot_noise(self.noise_plot, noise_arr, x)
