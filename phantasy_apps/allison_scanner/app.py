@@ -58,7 +58,7 @@ from .settings_view import SettingsView
 from .app_layout import LayoutForm
 from .app_headinfo import HeadinfoForm
 
-CMAP_FAVLIST = ('flag', 'jet', 'nipy_spectral', 'gist_earth',
+CMAP_FAVLIST = ('jet', 'flag', 'nipy_spectral', 'gist_earth',
                 'viridis', 'Greys')
 
 POS_VOLT_NAME_MAP = {'pb': 'pos_begin', 'pe': 'pos_end', 'ps': 'pos_step',
