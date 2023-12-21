@@ -215,7 +215,15 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.sigOnlineModeChanged.connect(self._headinfo_widget.onOnlineModeChanged)
         self.sigDataFilepathChanged.connect(self._headinfo_widget.onDataFilepathChanged)
 
+    def onTest(self):
+        # test only
+        data_pv = self._ems_device.elem.get_field(f"DATA{self._ems_device.oid}").readback_pv[0]
+        printlog(data_pv.pvname, data_pv.callbacks, data_pv.auto_monitor)
+
     def _post_init(self):
+        # test button test only
+        self.test_btn.clicked.connect(self.onTest)
+
         # schematic layout form
         self._layout_form = None
 
