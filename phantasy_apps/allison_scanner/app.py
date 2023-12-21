@@ -1693,6 +1693,8 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """
         w_name = '{}_dsbox'.format(POS_VOLT_NAME_MAP[name])
         w_value = getattr(self, w_name).value()
+        # post the live value to another set of spinbox widgets.
+        getattr(self, f'live_{w_name}'.replace('dsbox', 'lineEdit')).setText(f'{v:.2f}')
         self.set_fetch_config_btn(w_value, v)
 
     def set_fetch_config_btn(self, x: float, y: float):
