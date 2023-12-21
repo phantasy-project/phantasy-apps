@@ -217,7 +217,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     def onTest(self):
         # test only
-        data_pv = self._ems_device.elem.get_field(f"DATA{self._ems_device.oid}").readback_pv[0]
+        data_pv = self._ems_device.get_data_pv()
         printlog(data_pv.pvname, data_pv.callbacks, data_pv.auto_monitor)
 
     def _post_init(self):
