@@ -11,11 +11,11 @@ import numpy as np
 from PyQt5.QtCore import QObject
 from PyQt5.QtCore import pyqtSignal
 from numpy import ndarray
-from numpy.testing import assert_almost_equal
 
 from phantasy import Configuration
 from phantasy import pass_arg
 from phantasy_ui import printlog
+from phantasy_ui import delayed_exec
 from phantasy_apps.wire_scanner.utils import wait as _wait
 from .utils import find_dconf
 
@@ -379,12 +379,15 @@ class Device(QObject):
 
     def set_pos_begin(self):
         """Set live config with current config."""
+        print(f"set_pos_begin({self.pos_begin})")
         setattr(self.elem, f'START_POS{self._id}', self.pos_begin)
 
     def set_pos_end(self):
+        print(f"set_pos_end({self.pos_end})")
         setattr(self.elem, f'STOP_POS{self._id}', self.pos_end)
 
     def set_pos_step(self):
+        print(f"set_pos_step({self.pos_step})")
         setattr(self.elem, f'STEP_POS{self._id}', self.pos_step)
 
     def set_volt_begin(self):
@@ -445,6 +448,9 @@ class Device(QObject):
         self.set_volt_begin()
         self.set_volt_end()
         self.set_volt_step()
+        printlog("Set_params: ")
+        printlog(f"  pos: {self.get_pos_begin()}, {self.get_pos_step()}, {self.get_pos_end()}")
+        printlog(f"  volt: {self.get_volt_begin()}, {self.get_volt_step()}, {self.get_volt_end()}")
 
     def enable_device(self):
         setattr(self.elem, f"ENABLE_SCAN{self._id}", 1)
@@ -470,7 +476,8 @@ class Device(QObject):
         return pos_fld
 
     def abort(self):
-        setattr(self.elem, 'ABORT_SCAN{}'.format(self._id), 1)
+        setattr(self.elem, f'ABORT_SCAN{self._id}', 1)
+        self.stop_motor()
 
     def move(self, timeout=600, wait=True, validate=False):
         """Start scan."""
@@ -480,7 +487,10 @@ class Device(QObject):
                 raise RuntimeError("Device is busy, not be ready for moving.")
 
         self.init_data_cb()
-        setattr(self.elem, 'START_SCAN{}'.format(self._id), 1)
+        delayed_exec(
+            lambda: setattr(self.elem, 'START_SCAN{}'.format(self._id), 1),
+            10
+        )
         if wait:
             _wait(self.get_status_pv(), "IDLE", timeout)
             self._reset_data_cb()
@@ -740,16 +750,12 @@ class Device(QObject):
         value = kws.get('value')
         self.bias_volt_set_changed.emit(value)
 
-    def is_pos_at_begin(self):
-        """Test if motor is at the begin position.
+    def stop_motor(self):
+        """Stop motor from moving.
         """
-        live_pos = self.get_live_pos() 
-        begin_pos = self.get_pos_begin()
-        if np.abs(live_pos - begin_pos) < 0.05:
-            print(f"Reached begin test: {self.name} [{self.xoy}]")
-            return True
-        return False
-    
+        printlog("Stop motor moving...")
+        setattr(self.elem, f"POS{self._id}_STOP", 1)
+        
     def get_pos_velocity(self):
         """Return the motor moving velosity in mm/second.
         """
