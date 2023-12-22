@@ -751,16 +751,6 @@ class Device(QObject):
         value = kws.get('value')
         self.bias_volt_set_changed.emit(value)
 
-    def is_pos_at_begin(self):
-        """Test if motor is at the begin position.
-        """
-        live_pos = self.get_live_pos() 
-        begin_pos = self.get_pos_begin()
-        if np.abs(live_pos - begin_pos) < 0.05:
-            print(f"Reached begin test: {self.name} [{self.xoy}]")
-            return True
-        return False
-    
     def stop_motor(self):
         """Stop motor from moving.
         """

@@ -218,7 +218,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def onTest(self):
         # test only
         data_pv = self._ems_device.get_data_pv()
-        printlog(data_pv.pvname, data_pv.callbacks, data_pv.auto_monitor)
+        printlog(data_pv.pvname, data_pv.callbacks, data_pv.auto_monitor, data_pv.value, data_pv.get())
 
     def _post_init(self):
         # test button test only
@@ -905,7 +905,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                     "Device is busy.",
                     QMessageBox.Ok)
             return
-        self._pos_reached_begin = False # test if motor is at begin
         # reset image data array
         self._current_array = np.ones([self._ydim, self._xdim]) * np.nan
         #
@@ -918,8 +917,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._ems_device.move(wait=False)
         self.post_log("Waiting for data...")
         self._elapsed_timer.start(1000)
-        # reset
-        self._pos_reached_begin = False
 
     def _init_elapsed_timer(self):
         # initialize elapsed timer.
@@ -1014,10 +1011,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         return self._ems_device.check_status() == "IDLE"
 
     def on_update(self, data):
-        if not self._pos_reached_begin:
-            if not self._ems_device.is_pos_at_begin():
-                return
-            self._pos_reached_begin = True
         self.post_log("Receiving data...")
         data_pvname = self._ems_device.get_data_pvname()
         data = mask_array(data)
@@ -1411,8 +1404,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                     QMessageBox.Ok)
             return
         _title = self.on_title_with_ts(self._ems_device.get_data_pv().timestamp)
-        # sync data only, bypass pos at begin check.
-        self._pos_reached_begin = True
         #
         self.on_update(arr)
         self.on_initial_data()
@@ -1427,8 +1418,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._last_loading = False
         #
         self.actionAuto_Push_Results_to_PVs.setChecked(auto_push)
-        # reset
-        self._pos_reached_begin = True
 
     def check_data_size(self, data):
         if data.size == 0:
