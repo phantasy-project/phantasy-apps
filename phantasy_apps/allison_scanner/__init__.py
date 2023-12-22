@@ -17,8 +17,8 @@ __copyright__ = "(c) 2019-2023, Facility for Rare Isotope beams," \
                 " Michigan State University"
 __contact__ = "Tong Zhang <zhangt@frib.msu.edu>"
 __title__ = "Allison Scanner: Measure Transverse Emittance and Twiss Parameters"
-__version__ = '4.1'
-__last_updated__ = "2023-12-04"
+__version__ = '4.2'
+__last_updated__ = "2023-12-22"
 
 
 def run(cli=False):
