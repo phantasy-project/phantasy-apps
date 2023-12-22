@@ -220,6 +220,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
     def _post_init(self):
         # test button test only
         self.test_btn.clicked.connect(self.onTest)
+        self.test_btn.setVisible(False)
         # hide config track widgets
         self.conf_track_widget.setVisible(False)
 
