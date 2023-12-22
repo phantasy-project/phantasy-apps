@@ -23,7 +23,6 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QLineEdit
-from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QWidget
@@ -36,8 +35,6 @@ from phantasy_ui.widgets import ElementWidget
 from phantasy_ui import printlog
 
 from phantasy import Configuration
-from phantasy import establish_pvs
-from phantasy import pass_arg
 from phantasy_ui import delayed_exec
 from phantasy_ui import uptime
 from phantasy_ui import get_open_filename

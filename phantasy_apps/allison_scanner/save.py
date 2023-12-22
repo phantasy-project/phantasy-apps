@@ -12,7 +12,6 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
 
 from phantasy import epoch2human
-from phantasy_ui import get_save_filename
 
 from .ui.ui_save import Ui_Dialog
 

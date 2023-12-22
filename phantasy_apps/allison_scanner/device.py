@@ -11,7 +11,6 @@ import numpy as np
 from PyQt5.QtCore import QObject
 from PyQt5.QtCore import pyqtSignal
 from numpy import ndarray
-from numpy.testing import assert_almost_equal
 
 from phantasy import Configuration
 from phantasy import pass_arg
