@@ -298,6 +298,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.enable_btn.clicked.connect(self.on_enable)
         self.reset_itlk_btn.clicked.connect(self.on_reset_interlock)
         self.bypass_itlk_chkbox.toggled.connect(self.on_bypass_interlock)
+        self.bypass_itlk_hint_btn.clicked.connect(self.on_show_bypass_interlock_hint)
 
         # check adv ctrl by default
         # main vertical splitter
@@ -1594,6 +1595,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             ek = float(self.ion_energy_lineEdit.text())
             # n, q, a, kv = 'Ar', 9, 40, 53.333
         return (n, q, a, ek)
+
+    @pyqtSlot()
+    def on_show_bypass_interlock_hint(self):
+        """Show the hint for bypass interlock checkbox.
+        """
+        msg = """<html><head/><body><p><span style=" font-weight:600;">Bypass Interlock</span></p><p>- Check it to bypass interlock checking if &quot;<span style=" color:#ff0000;">Device Interlock is not OK</span>&quot; is the only reason that Run is prohibited.</p><p>- Only activate it when working with the same orientation, e.g. for multiple runs without switching the orientation or device.</p><p>- Why? Because interlock only could be reset to OK after the fork is retracted to the out limit position, which takes time; for working with the same fork, this routine is not required, so Bypass option is added.</p><p>- Checked Bypass will be reset to unchecked status if either the device or orientation is switched to other.</p></body></html>"""
+        QMessageBox.information(self, "Allison Scanner - Bypass Interlock", msg,
+                                QMessageBox.Ok, QMessageBox.Ok)
 
     @pyqtSlot(bool)
     def on_bypass_interlock(self, is_checked: bool):
