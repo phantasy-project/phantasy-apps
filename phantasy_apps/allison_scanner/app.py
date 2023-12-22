@@ -1168,12 +1168,35 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             # post the read scan ranges read
             pb, pe, ps = pos_scan_conf['begin'], pos_scan_conf['end'], pos_scan_conf['step']
             vb, ve, vs = volt_scan_conf['begin'], volt_scan_conf['end'], volt_scan_conf['step']
-            self.pos_begin_dsbox.setValue(pb)
-            self.pos_end_dsbox.setValue(pe)
-            self.pos_step_dsbox.setValue(ps)
-            self.volt_begin_dsbox.setValue(vb)
-            self.volt_end_dsbox.setValue(ve)
-            self.volt_step_dsbox.setValue(vs)
+            # self.pos_begin_dsbox.setValue(pb)
+            # self.pos_end_dsbox.setValue(pe)
+            # self.pos_step_dsbox.setValue(ps)
+            # self.volt_begin_dsbox.setValue(vb)
+            # self.volt_end_dsbox.setValue(ve)
+            # self.volt_step_dsbox.setValue(vs)
+
+            ems = self._ems_device
+            ems.pos_begin, ems.pos_end, ems.pos_step = pb, pe, ps
+            ems.volt_begin, ems.volt_end, ems.volt_step = vb, ve, vs
+            
+            # disconnect the scan spinboxes
+            for attr in self._attr_names:
+                dsbox = getattr(self, f'{attr}_dsbox')
+                dsbox.valueChanged.disconnect()
+
+            # post the read scan range for position
+            self.pos_begin_dsbox.setValue(ems.pos_begin)
+            self.pos_end_dsbox.setValue(ems.pos_end)
+            self.pos_step_dsbox.setValue(ems.pos_step)
+            # post the read scan range for voltage
+            self.volt_begin_dsbox.setValue(ems.volt_begin)
+            self.volt_end_dsbox.setValue(ems.volt_end)
+            self.volt_step_dsbox.setValue(ems.volt_step)
+
+            # reconnect the scan spinboxes
+            for attr in self._attr_names:
+                dsbox = getattr(self, f'{attr}_dsbox')
+                dsbox.valueChanged.connect(partial(self.on_update_config, attr))
 
             # data
             self._data = Data(self._model, file=filepath)
