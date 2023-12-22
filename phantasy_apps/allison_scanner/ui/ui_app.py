@@ -341,7 +341,7 @@ class Ui_MainWindow(object):
         icon1.addPixmap(QtGui.QPixmap(":/icons/refine-range.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.range_from_fig_btn.setIcon(icon1)
-        self.range_from_fig_btn.setIconSize(QtCore.QSize(80, 80))
+        self.range_from_fig_btn.setIconSize(QtCore.QSize(64, 64))
         self.range_from_fig_btn.setToolButtonStyle(
             QtCore.Qt.ToolButtonIconOnly)
         self.range_from_fig_btn.setAutoRaise(False)
@@ -595,6 +595,19 @@ class Ui_MainWindow(object):
         self.bypass_itlk_chkbox.setSizePolicy(sizePolicy)
         self.bypass_itlk_chkbox.setObjectName("bypass_itlk_chkbox")
         self.horizontalLayout.addWidget(self.bypass_itlk_chkbox)
+        self.bypass_itlk_hint_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.bypass_itlk_hint_btn.setIcon(icon3)
+        self.bypass_itlk_hint_btn.setIconSize(QtCore.QSize(24, 24))
+        self.bypass_itlk_hint_btn.setAutoRaise(True)
+        self.bypass_itlk_hint_btn.setObjectName("bypass_itlk_hint_btn")
+        self.horizontalLayout.addWidget(self.bypass_itlk_hint_btn)
+        spacerItem = QtWidgets.QSpacerItem(40, 20,
+                                           QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout.addItem(spacerItem)
         self.dev_ctrl_gbox.addLayout(self.horizontalLayout, 2, 6, 1, 2)
         self.set_biasVolt_lineEdit = QtWidgets.QLineEdit(self.adv_ctrl_widget)
         self.set_biasVolt_lineEdit.setObjectName("set_biasVolt_lineEdit")
@@ -680,10 +693,11 @@ class Ui_MainWindow(object):
         self.label_8.setObjectName("label_8")
         self.dev_ctrl_gbox.addWidget(self.label_8, 0, 2, 1, 1)
         self.stop_move_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(":/icons/stop.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.stop_move_btn.setIcon(icon3)
+        self.stop_move_btn.setIcon(icon4)
+        self.stop_move_btn.setIconSize(QtCore.QSize(24, 24))
         self.stop_move_btn.setObjectName("stop_move_btn")
         self.dev_ctrl_gbox.addWidget(self.stop_move_btn, 1, 9, 1, 1)
         self.test_btn = QtWidgets.QToolButton(self.adv_ctrl_widget)
@@ -708,10 +722,7 @@ class Ui_MainWindow(object):
         self.toolButton_2.setStyleSheet("QToolButton {\n"
                                         "    border: 1px solid gray;\n"
                                         "}")
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(":/icons/info.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.toolButton_2.setIcon(icon4)
+        self.toolButton_2.setIcon(icon3)
         self.toolButton_2.setAutoRaise(True)
         self.toolButton_2.setObjectName("toolButton_2")
         self.time_hbox.addWidget(self.toolButton_2)
@@ -775,7 +786,13 @@ class Ui_MainWindow(object):
                                             "}")
         self.time_elapsed_lbl.setObjectName("time_elapsed_lbl")
         self.time_hbox.addWidget(self.time_elapsed_lbl)
-        self.line_5 = QtWidgets.QFrame(self.dev_ctrl_widget)
+        self.conf_track_widget = QtWidgets.QWidget(self.dev_ctrl_widget)
+        self.conf_track_widget.setObjectName("conf_track_widget")
+        self.conf_track_hbox = QtWidgets.QHBoxLayout(self.conf_track_widget)
+        self.conf_track_hbox.setContentsMargins(1, -1, 1, -1)
+        self.conf_track_hbox.setSpacing(4)
+        self.conf_track_hbox.setObjectName("conf_track_hbox")
+        self.line_5 = QtWidgets.QFrame(self.conf_track_widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -786,33 +803,33 @@ class Ui_MainWindow(object):
         self.line_5.setFrameShape(QtWidgets.QFrame.VLine)
         self.line_5.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_5.setObjectName("line_5")
-        self.time_hbox.addWidget(self.line_5)
-        self.default_config_btn = QtWidgets.QToolButton(self.dev_ctrl_widget)
+        self.conf_track_hbox.addWidget(self.line_5)
+        self.toolButton = QtWidgets.QToolButton(self.conf_track_widget)
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/icons/reset.png"), QtGui.QIcon.Normal,
+        icon5.addPixmap(QtGui.QPixmap(":/icons/add.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
-        self.default_config_btn.setIcon(icon5)
+        self.toolButton.setIcon(icon5)
+        self.toolButton.setIconSize(QtCore.QSize(24, 24))
+        self.toolButton.setAutoRaise(True)
+        self.toolButton.setObjectName("toolButton")
+        self.conf_track_hbox.addWidget(self.toolButton)
+        self.default_config_btn = QtWidgets.QToolButton(self.conf_track_widget)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(":/icons/reset.png"), QtGui.QIcon.Normal,
+                        QtGui.QIcon.Off)
+        self.default_config_btn.setIcon(icon6)
         self.default_config_btn.setIconSize(QtCore.QSize(24, 24))
         self.default_config_btn.setPopupMode(
             QtWidgets.QToolButton.MenuButtonPopup)
         self.default_config_btn.setAutoRaise(True)
         self.default_config_btn.setArrowType(QtCore.Qt.NoArrow)
         self.default_config_btn.setObjectName("default_config_btn")
-        self.time_hbox.addWidget(self.default_config_btn)
-        self.toolButton = QtWidgets.QToolButton(self.dev_ctrl_widget)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap(":/icons/add.png"), QtGui.QIcon.Normal,
-                        QtGui.QIcon.Off)
-        self.toolButton.setIcon(icon6)
-        self.toolButton.setIconSize(QtCore.QSize(24, 24))
-        self.toolButton.setAutoRaise(True)
-        self.toolButton.setObjectName("toolButton")
-        self.time_hbox.addWidget(self.toolButton)
-        spacerItem = QtWidgets.QSpacerItem(40, 20,
-                                           QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Minimum)
-        self.time_hbox.addItem(spacerItem)
-        self.fetch_config_btn = QtWidgets.QToolButton(self.dev_ctrl_widget)
+        self.conf_track_hbox.addWidget(self.default_config_btn)
+        spacerItem1 = QtWidgets.QSpacerItem(40, 20,
+                                            QtWidgets.QSizePolicy.Expanding,
+                                            QtWidgets.QSizePolicy.Minimum)
+        self.conf_track_hbox.addItem(spacerItem1)
+        self.fetch_config_btn = QtWidgets.QToolButton(self.conf_track_widget)
         icon7 = QtGui.QIcon()
         icon7.addPixmap(QtGui.QPixmap(":/icons/fetch.png"), QtGui.QIcon.Normal,
                         QtGui.QIcon.Off)
@@ -821,7 +838,8 @@ class Ui_MainWindow(object):
         self.fetch_config_btn.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
         self.fetch_config_btn.setAutoRaise(True)
         self.fetch_config_btn.setObjectName("fetch_config_btn")
-        self.time_hbox.addWidget(self.fetch_config_btn)
+        self.conf_track_hbox.addWidget(self.fetch_config_btn)
+        self.time_hbox.addWidget(self.conf_track_widget)
         self.time_cost_vbox.addLayout(self.time_hbox)
         self.line_2 = QtWidgets.QFrame(self.dev_ctrl_widget)
         self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
@@ -1021,7 +1039,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(
             self.abort_btn.sizePolicy().hasHeightForWidth())
         self.abort_btn.setSizePolicy(sizePolicy)
-        self.abort_btn.setIcon(icon3)
+        self.abort_btn.setIcon(icon4)
         self.abort_btn.setIconSize(QtCore.QSize(48, 48))
         self.abort_btn.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.abort_btn.setAutoRaise(False)
@@ -1045,10 +1063,10 @@ class Ui_MainWindow(object):
         self.fetch_data_btn.setAutoRaise(False)
         self.fetch_data_btn.setObjectName("fetch_data_btn")
         self.cmd_vbox.addWidget(self.fetch_data_btn)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 20,
+        spacerItem2 = QtWidgets.QSpacerItem(20, 20,
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
-        self.cmd_vbox.addItem(spacerItem1)
+        self.cmd_vbox.addItem(spacerItem2)
         self.gridLayout.addLayout(self.cmd_vbox, 0, 1, 6, 1)
         self.adv_ctrl_hline = QtWidgets.QFrame(self.ctrl_gbox)
         self.adv_ctrl_hline.setFrameShape(QtWidgets.QFrame.HLine)
@@ -1123,10 +1141,10 @@ class Ui_MainWindow(object):
         self.raw_view_chkbox = QtWidgets.QCheckBox(self.dataviz_gbox)
         self.raw_view_chkbox.setObjectName("raw_view_chkbox")
         self.horizontalLayout_9.addWidget(self.raw_view_chkbox)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_9.addItem(spacerItem2)
+        self.horizontalLayout_9.addItem(spacerItem3)
         self.label_10 = QtWidgets.QLabel(self.dataviz_gbox)
         self.label_10.setObjectName("label_10")
         self.horizontalLayout_9.addWidget(self.label_10)
@@ -1354,10 +1372,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setSpacing(4)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem3)
+        self.horizontalLayout_2.addItem(spacerItem4)
         self.auto_fill_beam_params_btn = QtWidgets.QPushButton(
             self.page_beam_params)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
@@ -1375,10 +1393,10 @@ class Ui_MainWindow(object):
             self.page_beam_params)
         self.beamSpeciesDisplayWidget.setObjectName("beamSpeciesDisplayWidget")
         self.gridLayout_5.addWidget(self.beamSpeciesDisplayWidget, 0, 0, 2, 1)
-        spacerItem4 = QtWidgets.QSpacerItem(20, 40,
+        spacerItem5 = QtWidgets.QSpacerItem(20, 40,
                                             QtWidgets.QSizePolicy.Minimum,
                                             QtWidgets.QSizePolicy.Expanding)
-        self.gridLayout_5.addItem(spacerItem4, 3, 0, 1, 1)
+        self.gridLayout_5.addItem(spacerItem5, 3, 0, 1, 1)
         self.data_analysis_tbox.addItem(self.page_beam_params, "")
         self.page_bkgd_noise = QtWidgets.QWidget()
         self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 515, 355))
@@ -1760,15 +1778,15 @@ class Ui_MainWindow(object):
         self.horizontalLayout_11.setSpacing(4)
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
         self.update_results_btn = QtWidgets.QToolButton(self.twiss_gbox)
-        self.update_results_btn.setIcon(icon5)
+        self.update_results_btn.setIcon(icon6)
         self.update_results_btn.setToolButtonStyle(
             QtCore.Qt.ToolButtonTextBesideIcon)
         self.update_results_btn.setObjectName("update_results_btn")
         self.horizontalLayout_11.addWidget(self.update_results_btn)
-        spacerItem5 = QtWidgets.QSpacerItem(40, 20,
+        spacerItem6 = QtWidgets.QSpacerItem(40, 20,
                                             QtWidgets.QSizePolicy.Expanding,
                                             QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_11.addItem(spacerItem5)
+        self.horizontalLayout_11.addItem(spacerItem6)
         self.show_results_btn = QtWidgets.QToolButton(self.twiss_gbox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -1814,7 +1832,7 @@ class Ui_MainWindow(object):
         self.actionE_xit.setIcon(icon12)
         self.actionE_xit.setObjectName("actionE_xit")
         self.actionAbout = QtWidgets.QAction(MainWindow)
-        self.actionAbout.setIcon(icon4)
+        self.actionAbout.setIcon(icon3)
         self.actionAbout.setObjectName("actionAbout")
         self.actionAbout_Qt = QtWidgets.QAction(MainWindow)
         icon13 = QtGui.QIcon()
@@ -1949,14 +1967,8 @@ class Ui_MainWindow(object):
             MainWindow.on_auto_push_results)  # type: ignore
         self.actionShow_Schematic.triggered.connect(
             MainWindow.onShowSchematic)  # type: ignore
-        self.default_config_btn.clicked.connect(
-            MainWindow.on_load_default_config)  # type: ignore
-        self.fetch_config_btn.clicked.connect(
-            MainWindow.sync_config)  # type: ignore
         self.run_btn.clicked.connect(MainWindow.on_run)  # type: ignore
         self.abort_btn.clicked.connect(MainWindow.on_abort)  # type: ignore
-        self.toolButton.clicked.connect(
-            MainWindow.on_add_current_config)  # type: ignore
         self.fetch_data_btn.clicked.connect(
             MainWindow.on_sync_data)  # type: ignore
         self.adv_ctrl_chkbox.toggled['bool'].connect(
@@ -1980,10 +1992,7 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.set_pos_btn, self.retract_btn)
         MainWindow.setTabOrder(self.retract_btn, self.enable_btn)
         MainWindow.setTabOrder(self.enable_btn, self.toolButton_2)
-        MainWindow.setTabOrder(self.toolButton_2, self.default_config_btn)
-        MainWindow.setTabOrder(self.default_config_btn, self.toolButton)
-        MainWindow.setTabOrder(self.toolButton, self.fetch_config_btn)
-        MainWindow.setTabOrder(self.fetch_config_btn, self.pos_begin_dsbox)
+        MainWindow.setTabOrder(self.toolButton_2, self.pos_begin_dsbox)
         MainWindow.setTabOrder(self.pos_begin_dsbox, self.pos_end_dsbox)
         MainWindow.setTabOrder(self.pos_end_dsbox, self.pos_step_dsbox)
         MainWindow.setTabOrder(self.pos_step_dsbox,
@@ -2151,6 +2160,7 @@ class Ui_MainWindow(object):
                 "Check to bypass interlock check for scan readiness validation."
             ))
         self.bypass_itlk_chkbox.setText(_translate("MainWindow", "Bypass"))
+        self.bypass_itlk_hint_btn.setText(_translate("MainWindow", "..."))
         self.is_itlk_lbl.setToolTip(
             _translate("MainWindow",
                        "Green is Interlock OK, Red is Interlock Not OK"))
@@ -2182,12 +2192,12 @@ class Ui_MainWindow(object):
         self.time_elapsed_lbl.setToolTip(
             _translate("MainWindow", "Elapsed time in HH:MM:SS."))
         self.time_elapsed_lbl.setText(_translate("MainWindow", "00:00:00"))
-        self.default_config_btn.setToolTip(
-            _translate("MainWindow", "Revert device settings."))
-        self.default_config_btn.setText(_translate("MainWindow", "..."))
         self.toolButton.setToolTip(
             _translate("MainWindow", "Remember current device settings."))
         self.toolButton.setText(_translate("MainWindow", "..."))
+        self.default_config_btn.setToolTip(
+            _translate("MainWindow", "Revert device settings."))
+        self.default_config_btn.setText(_translate("MainWindow", "..."))
         self.fetch_config_btn.setToolTip(
             _translate("MainWindow", "Click me when I\'m RED."))
         self.fetch_config_btn.setText(_translate("MainWindow", "..."))
