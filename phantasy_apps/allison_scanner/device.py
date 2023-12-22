@@ -490,7 +490,7 @@ class Device(QObject):
         self.init_data_cb()
         delayed_exec(
             lambda: setattr(self.elem, 'START_SCAN{}'.format(self._id), 1),
-            1000
+            10
         )
         if wait:
             _wait(self.get_status_pv(), "IDLE", timeout)
