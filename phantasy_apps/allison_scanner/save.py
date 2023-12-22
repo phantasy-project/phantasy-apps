@@ -6,12 +6,12 @@ import time
 
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QPoint
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtWidgets import QMessageBox
 
 from phantasy import epoch2human
-from phantasy_ui import get_save_filename
 
 from .ui.ui_save import Ui_Dialog
 
@@ -101,11 +101,19 @@ class SaveDataDialog(QDialog, Ui_Dialog):
                     return
             self.parent._save_data_to_file(filepath, **kws)
         except Exception as err:
-            QMessageBox.critical(self, "Save Data",
+            mbox = QMessageBox(QMessageBox.Critical, "Save Data", 
                     f"Failed to save data to {filepath}.\n{err}",
-                    QMessageBox.Ok)
+                    QMessageBox.Ok, self)
+            mbox.move(self.parent.geometry().center() - QPoint(int(self.geometry().width() / 2), 0))
+            mbox.exec_()
         else:
-            QMessageBox.information(self, "Save Data",
+            mbox = QMessageBox(QMessageBox.Information, "Save Data",
                     f"Saved data to {filepath}.",
-                    QMessageBox.Ok)
+                    QMessageBox.Ok, self)
+            open_btn = mbox.addButton("Open", QMessageBox.ActionRole)
+            mbox.move(self.parent.geometry().center() - QPoint(int(self.geometry().width() / 2), 0))
+            mbox.exec_()
+            if mbox.clickedButton() == open_btn:
+                QDesktopServices.openUrl(QUrl(filepath))
+                mbox.close()
             self.close()

@@ -23,7 +23,6 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QLineEdit
-from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QWidget
@@ -36,8 +35,6 @@ from phantasy_ui.widgets import ElementWidget
 from phantasy_ui import printlog
 
 from phantasy import Configuration
-from phantasy import establish_pvs
-from phantasy import pass_arg
 from phantasy_ui import delayed_exec
 from phantasy_ui import uptime
 from phantasy_ui import get_open_filename
@@ -58,7 +55,7 @@ from .settings_view import SettingsView
 from .app_layout import LayoutForm
 from .app_headinfo import HeadinfoForm
 
-CMAP_FAVLIST = ('flag', 'jet', 'nipy_spectral', 'gist_earth',
+CMAP_FAVLIST = ('jet', 'flag', 'nipy_spectral', 'gist_earth',
                 'viridis', 'Greys')
 
 POS_VOLT_NAME_MAP = {'pb': 'pos_begin', 'pe': 'pos_end', 'ps': 'pos_step',
@@ -215,7 +212,18 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.sigOnlineModeChanged.connect(self._headinfo_widget.onOnlineModeChanged)
         self.sigDataFilepathChanged.connect(self._headinfo_widget.onDataFilepathChanged)
 
+    def onTest(self):
+        # test only
+        data_pv = self._ems_device.get_data_pv()
+        printlog(data_pv.pvname, data_pv.callbacks, data_pv.auto_monitor, data_pv.value, data_pv.get())
+
     def _post_init(self):
+        # test button test only
+        self.test_btn.clicked.connect(self.onTest)
+        self.test_btn.setVisible(False)
+        # hide config track widgets
+        self.conf_track_widget.setVisible(False)
+
         # schematic layout form
         self._layout_form = None
 
@@ -285,11 +293,13 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self.set_pos_lineEdit.setValidator(QDoubleValidator())
 
         self.set_pos_btn.clicked.connect(self.on_move_pos)
+        self.stop_move_btn.clicked.connect(self.on_stop_move_pos)
         self.retract_btn.clicked.connect(self.on_retract)
         #
         self.enable_btn.clicked.connect(self.on_enable)
         self.reset_itlk_btn.clicked.connect(self.on_reset_interlock)
         self.bypass_itlk_chkbox.toggled.connect(self.on_bypass_interlock)
+        self.bypass_itlk_hint_btn.clicked.connect(self.on_show_bypass_interlock_hint)
 
         # check adv ctrl by default
         # main vertical splitter
@@ -459,6 +469,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             msg.append("Position steps Non-Integer")
         if not self.volt_steps_lbl.property("cnt_is_int"):
             msg.append("Voltage steps Non-Integer")
+        # live read and set are not consistent?
+        _name_map = {'pos': 'Position', 'volt': 'Voltage'}
+        for attr in ('pos', 'volt'):
+            for s in ('begin', 'end', 'step'):
+                w_st = getattr(self, f"{attr}_{s}_dsbox")
+                w_rd = getattr(self, f"live_{attr}_{s}_lineEdit")
+                if f"{w_st.value():.2f}" != w_rd.text():
+                    msg.append(f"{_name_map[attr]} {s} set not match!")
         self.sigReadyScanChanged.emit(_is_ready)
         # post the reason why not ready to scan
         if msg:
@@ -868,7 +886,7 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
 
     @pyqtSlot()
     def on_run(self):
-        self.sync_config()
+        # self.sync_config()
         self._is_abort = False
         self._auto_saved = False
         self._abort = False
@@ -888,7 +906,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                     "Device is busy.",
                     QMessageBox.Ok)
             return
-        self._pos_reached_begin = False # test if motor is at begin
+        # reset image data array
+        self._current_array = np.ones([self._ydim, self._xdim]) * np.nan
+        #
         self._ems_device.init_run()
         self._init_elapsed_timer()
         self._ems_device.data_changed.connect(self.on_update)
@@ -898,8 +918,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._ems_device.move(wait=False)
         self.post_log("Waiting for data...")
         self._elapsed_timer.start(1000)
-        # reset
-        self._pos_reached_begin = False
 
     def _init_elapsed_timer(self):
         # initialize elapsed timer.
@@ -927,6 +945,12 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         # retract the motor to the outlimit
         self.set_pos_lineEdit.setText(POS_OUT_LIMIT_STR)
         delayed_exec(lambda: self.set_pos_btn.clicked.emit(), 1000)
+
+    @pyqtSlot()
+    def on_stop_move_pos(self):
+        """Stop the pos fork from moving. Abort scan triggers it as well.
+        """
+        self._ems_device.stop_motor()
 
     @pyqtSlot()
     def on_move_pos(self):
@@ -988,10 +1012,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         return self._ems_device.check_status() == "IDLE"
 
     def on_update(self, data):
-        if not self._pos_reached_begin:
-            if not self._ems_device.is_pos_at_begin():
-                return
-            self._pos_reached_begin = True
         self.post_log("Receiving data...")
         data_pvname = self._ems_device.get_data_pvname()
         data = mask_array(data)
@@ -1150,12 +1170,35 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             # post the read scan ranges read
             pb, pe, ps = pos_scan_conf['begin'], pos_scan_conf['end'], pos_scan_conf['step']
             vb, ve, vs = volt_scan_conf['begin'], volt_scan_conf['end'], volt_scan_conf['step']
-            self.pos_begin_dsbox.setValue(pb)
-            self.pos_end_dsbox.setValue(pe)
-            self.pos_step_dsbox.setValue(ps)
-            self.volt_begin_dsbox.setValue(vb)
-            self.volt_end_dsbox.setValue(ve)
-            self.volt_step_dsbox.setValue(vs)
+            # self.pos_begin_dsbox.setValue(pb)
+            # self.pos_end_dsbox.setValue(pe)
+            # self.pos_step_dsbox.setValue(ps)
+            # self.volt_begin_dsbox.setValue(vb)
+            # self.volt_end_dsbox.setValue(ve)
+            # self.volt_step_dsbox.setValue(vs)
+
+            ems = self._ems_device
+            ems.pos_begin, ems.pos_end, ems.pos_step = pb, pe, ps
+            ems.volt_begin, ems.volt_end, ems.volt_step = vb, ve, vs
+            
+            # disconnect the scan spinboxes
+            for attr in self._attr_names:
+                dsbox = getattr(self, f'{attr}_dsbox')
+                dsbox.valueChanged.disconnect()
+
+            # post the read scan range for position
+            self.pos_begin_dsbox.setValue(ems.pos_begin)
+            self.pos_end_dsbox.setValue(ems.pos_end)
+            self.pos_step_dsbox.setValue(ems.pos_step)
+            # post the read scan range for voltage
+            self.volt_begin_dsbox.setValue(ems.volt_begin)
+            self.volt_end_dsbox.setValue(ems.volt_end)
+            self.volt_step_dsbox.setValue(ems.volt_step)
+
+            # reconnect the scan spinboxes
+            for attr in self._attr_names:
+                dsbox = getattr(self, f'{attr}_dsbox')
+                dsbox.valueChanged.connect(partial(self.on_update_config, attr))
 
             # data
             self._data = Data(self._model, file=filepath)
@@ -1317,8 +1360,9 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             _, noise_arr = self._data.noise_correction(self._noise_signal_arr,
                 threshold_sigma=x)
         except:
-            QMessageBox.warning(self, "", "Noise estimation is not ready.",
-                    QMessageBox.Ok)
+            self.statusInfoChanged.emit("Noise estimation is not ready.")
+            # QMessageBox.warning(self, "", "Noise estimation is not ready.",
+            #         QMessageBox.Ok)
             return
         else:
             self.plot_noise(self.noise_plot, noise_arr, x)
@@ -1384,8 +1428,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
                     QMessageBox.Ok)
             return
         _title = self.on_title_with_ts(self._ems_device.get_data_pv().timestamp)
-        # sync data only, bypass pos at begin check.
-        self._pos_reached_begin = True
         #
         self.on_update(arr)
         self.on_initial_data()
@@ -1400,8 +1442,6 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         self._last_loading = False
         #
         self.actionAuto_Push_Results_to_PVs.setChecked(auto_push)
-        # reset
-        self._pos_reached_begin = True
 
     def check_data_size(self, data):
         if data.size == 0:
@@ -1557,6 +1597,14 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
             # n, q, a, kv = 'Ar', 9, 40, 53.333
         return (n, q, a, ek)
 
+    @pyqtSlot()
+    def on_show_bypass_interlock_hint(self):
+        """Show the hint for bypass interlock checkbox.
+        """
+        msg = """<html><head/><body><p><span style=" font-weight:600;">Bypass Interlock</span></p><p>- Check it to bypass interlock checking if &quot;<span style=" color:#ff0000;">Device Interlock is not OK</span>&quot; is the only reason that Run is prohibited.</p><p>- Only activate it when working with the same orientation, e.g. for multiple runs without switching the orientation or device.</p><p>- Why? Because interlock only could be reset to OK after the fork is retracted to the out limit position, which takes time; for working with the same fork, this routine is not required, so Bypass option is added.</p><p>- Checked Bypass will be reset to unchecked status if either the device or orientation is switched to other.</p></body></html>"""
+        QMessageBox.information(self, "Allison Scanner - Bypass Interlock", msg,
+                                QMessageBox.Ok, QMessageBox.Ok)
+
     @pyqtSlot(bool)
     def on_bypass_interlock(self, is_checked: bool):
         """Bypass interlock check or not for scan readiness.
@@ -1683,7 +1731,10 @@ class AllisonScannerWindow(BaseAppForm, Ui_MainWindow):
         """
         w_name = '{}_dsbox'.format(POS_VOLT_NAME_MAP[name])
         w_value = getattr(self, w_name).value()
+        # post the live value to another set of spinbox widgets.
+        getattr(self, f'live_{w_name}'.replace('dsbox', 'lineEdit')).setText(f'{v:.2f}')
         self.set_fetch_config_btn(w_value, v)
+        self.__check_device_ready_scan()
 
     def set_fetch_config_btn(self, x: float, y: float):
         # set fetch config btn icon to reflect if the scan ranges match the device settings.

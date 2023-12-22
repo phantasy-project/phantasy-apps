@@ -73,10 +73,10 @@ class Data(object):
         self._pos_end = conf['end']
         self._pos_step = conf['step']
         n = (self._pos_end - self._pos_begin) / self._pos_step
-        print(f"Pos config: from {self._pos_begin} to {self._pos_end} by {self._pos_step} {n}")
+        # print(f"Pos config: from {self._pos_begin} to {self._pos_end} by {self._pos_step} {n}")
         # assert is_integer(n) == True
         self._pos_dim = int(n) + 1
-        print(f"Pos config: from {self._pos_begin} to {self._pos_end} by {self._pos_step} # {self._pos_dim}")
+        # print(f"Pos config: from {self._pos_begin} to {self._pos_end} by {self._pos_step} # {self._pos_dim}")
 
     def update_volt_conf(self, conf):
         # update voltage config.
@@ -84,10 +84,10 @@ class Data(object):
         self._volt_end = conf['end']
         self._volt_step = conf['step']
         n = (self._volt_end - self._volt_begin) / self._volt_step
-        print(f"Volt config: from {self._volt_begin} to {self._volt_end} by {self._volt_step} {n}")
+        # print(f"Volt config: from {self._volt_begin} to {self._volt_end} by {self._volt_step} {n}")
         # assert is_integer(n) == True
         self._volt_dim =  int(n) + 1
-        print(f"Volt config: from {self._volt_begin} to {self._volt_end} by {self._volt_step} # {self._volt_dim}")
+        # print(f"Volt config: from {self._volt_begin} to {self._volt_end} by {self._volt_step} # {self._volt_dim}")
 
     def initial_data_grid(self):
         """Initial data grid.

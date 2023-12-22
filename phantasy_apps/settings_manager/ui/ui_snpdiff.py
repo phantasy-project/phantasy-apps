@@ -14,7 +14,7 @@ class Ui_Form(object):
 
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(1204, 1578)
+        Form.resize(1237, 1311)
         self.gridLayout = QtWidgets.QGridLayout(Form)
         self.gridLayout.setContentsMargins(6, 6, 6, 6)
         self.gridLayout.setSpacing(6)
@@ -48,72 +48,6 @@ class Ui_Form(object):
         self.snp_one_gbox.setContentsMargins(-1, 0, -1, -1)
         self.snp_one_gbox.setSpacing(5)
         self.snp_one_gbox.setObjectName("snp_one_gbox")
-        self.note_one_vbox = QtWidgets.QVBoxLayout()
-        self.note_one_vbox.setContentsMargins(-1, 0, -1, -1)
-        self.note_one_vbox.setSpacing(0)
-        self.note_one_vbox.setObjectName("note_one_vbox")
-        self.note_one_title_lbl = QtWidgets.QLabel(self.frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.note_one_title_lbl.sizePolicy().hasHeightForWidth())
-        self.note_one_title_lbl.setSizePolicy(sizePolicy)
-        self.note_one_title_lbl.setStyleSheet("QLabel {\n"
-                                              "    font-family: monospace;\n"
-                                              "    font-size: 8pt;\n"
-                                              "    color: #888A85;\n"
-                                              "}")
-        self.note_one_title_lbl.setObjectName("note_one_title_lbl")
-        self.note_one_vbox.addWidget(self.note_one_title_lbl)
-        self.snp_one_note_plainTextEdit = QtWidgets.QPlainTextEdit(self.frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.snp_one_note_plainTextEdit.sizePolicy().hasHeightForWidth())
-        self.snp_one_note_plainTextEdit.setSizePolicy(sizePolicy)
-        self.snp_one_note_plainTextEdit.setReadOnly(True)
-        self.snp_one_note_plainTextEdit.setObjectName(
-            "snp_one_note_plainTextEdit")
-        self.note_one_vbox.addWidget(self.snp_one_note_plainTextEdit)
-        self.snp_one_gbox.addLayout(self.note_one_vbox, 4, 0, 1, 2)
-        self.snp_one_title_lbl = QtWidgets.QLabel(self.frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.snp_one_title_lbl.sizePolicy().hasHeightForWidth())
-        self.snp_one_title_lbl.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("monospace")
-        font.setPointSize(9)
-        self.snp_one_title_lbl.setFont(font)
-        self.snp_one_title_lbl.setStyleSheet("QLabel {\n"
-                                             "    font-family: monospace;\n"
-                                             "    font-size: 9pt;\n"
-                                             "    color: #888A85;\n"
-                                             "}")
-        self.snp_one_title_lbl.setObjectName("snp_one_title_lbl")
-        self.snp_one_gbox.addWidget(self.snp_one_title_lbl, 0, 0, 1, 2)
-        self.snp_one_name_lbl = QtWidgets.QLabel(self.frame)
-        self.snp_one_name_lbl.setStyleSheet("QLabel {\n"
-                                            "    font-family: monospace;\n"
-                                            "}")
-        self.snp_one_name_lbl.setObjectName("snp_one_name_lbl")
-        self.snp_one_gbox.addWidget(self.snp_one_name_lbl, 3, 0, 1, 1)
-        self.snp_one_jump_btn = QtWidgets.QToolButton(self.frame)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/sm-icons/jump.png"),
-                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.snp_one_jump_btn.setIcon(icon)
-        self.snp_one_jump_btn.setIconSize(QtCore.QSize(32, 32))
-        self.snp_one_jump_btn.setAutoRaise(True)
-        self.snp_one_jump_btn.setObjectName("snp_one_jump_btn")
-        self.snp_one_gbox.addWidget(self.snp_one_jump_btn, 3, 1, 1, 1)
         self.snp_one_hbox = QtWidgets.QHBoxLayout()
         self.snp_one_hbox.setContentsMargins(-1, 0, 0, -1)
         self.snp_one_hbox.setSpacing(5)
@@ -185,7 +119,73 @@ class Ui_Form(object):
         self.snp_one_isrc_name_lbl.setObjectName("snp_one_isrc_name_lbl")
         self.ion_one_vbox.addWidget(self.snp_one_isrc_name_lbl)
         self.snp_one_hbox.addLayout(self.ion_one_vbox)
-        self.snp_one_gbox.addLayout(self.snp_one_hbox, 1, 0, 1, 2)
+        self.snp_one_gbox.addLayout(self.snp_one_hbox, 2, 0, 1, 2)
+        self.note_one_vbox = QtWidgets.QVBoxLayout()
+        self.note_one_vbox.setContentsMargins(-1, 0, -1, -1)
+        self.note_one_vbox.setSpacing(0)
+        self.note_one_vbox.setObjectName("note_one_vbox")
+        self.note_one_title_lbl = QtWidgets.QLabel(self.frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.note_one_title_lbl.sizePolicy().hasHeightForWidth())
+        self.note_one_title_lbl.setSizePolicy(sizePolicy)
+        self.note_one_title_lbl.setStyleSheet("QLabel {\n"
+                                              "    font-family: monospace;\n"
+                                              "    font-size: 8pt;\n"
+                                              "    color: #888A85;\n"
+                                              "}")
+        self.note_one_title_lbl.setObjectName("note_one_title_lbl")
+        self.note_one_vbox.addWidget(self.note_one_title_lbl)
+        self.snp_one_note_plainTextEdit = QtWidgets.QPlainTextEdit(self.frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.snp_one_note_plainTextEdit.sizePolicy().hasHeightForWidth())
+        self.snp_one_note_plainTextEdit.setSizePolicy(sizePolicy)
+        self.snp_one_note_plainTextEdit.setReadOnly(True)
+        self.snp_one_note_plainTextEdit.setObjectName(
+            "snp_one_note_plainTextEdit")
+        self.note_one_vbox.addWidget(self.snp_one_note_plainTextEdit)
+        self.snp_one_gbox.addLayout(self.note_one_vbox, 5, 0, 1, 2)
+        self.snp_one_title_lbl = QtWidgets.QLabel(self.frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.snp_one_title_lbl.sizePolicy().hasHeightForWidth())
+        self.snp_one_title_lbl.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setFamily("monospace")
+        font.setPointSize(9)
+        self.snp_one_title_lbl.setFont(font)
+        self.snp_one_title_lbl.setStyleSheet("QLabel {\n"
+                                             "    font-family: monospace;\n"
+                                             "    font-size: 9pt;\n"
+                                             "    color: #888A85;\n"
+                                             "}")
+        self.snp_one_title_lbl.setObjectName("snp_one_title_lbl")
+        self.snp_one_gbox.addWidget(self.snp_one_title_lbl, 0, 0, 1, 2)
+        self.snp_one_name_lbl = QtWidgets.QLabel(self.frame)
+        self.snp_one_name_lbl.setStyleSheet("QLabel {\n"
+                                            "    font-family: monospace;\n"
+                                            "}")
+        self.snp_one_name_lbl.setObjectName("snp_one_name_lbl")
+        self.snp_one_gbox.addWidget(self.snp_one_name_lbl, 1, 0, 1, 1)
+        self.snp_one_jump_btn = QtWidgets.QToolButton(self.frame)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/sm-icons/jump.png"),
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.snp_one_jump_btn.setIcon(icon)
+        self.snp_one_jump_btn.setIconSize(QtCore.QSize(32, 32))
+        self.snp_one_jump_btn.setAutoRaise(True)
+        self.snp_one_jump_btn.setObjectName("snp_one_jump_btn")
+        self.snp_one_gbox.addWidget(self.snp_one_jump_btn, 1, 1, 1, 1)
         self.horizontalLayout_4.addLayout(self.snp_one_gbox)
         spacerItem = QtWidgets.QSpacerItem(40, 20,
                                            QtWidgets.QSizePolicy.Expanding,
@@ -196,7 +196,8 @@ class Ui_Form(object):
         icon1.addPixmap(QtGui.QPixmap(":/sm-icons/swap_horiz.png"),
                         QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.swap_btn.setIcon(icon1)
-        self.swap_btn.setIconSize(QtCore.QSize(36, 36))
+        self.swap_btn.setIconSize(QtCore.QSize(64, 64))
+        self.swap_btn.setAutoRaise(True)
         self.swap_btn.setObjectName("swap_btn")
         self.horizontalLayout_4.addWidget(self.swap_btn)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20,
@@ -207,50 +208,6 @@ class Ui_Form(object):
         self.snp_two_gbox.setContentsMargins(-1, 0, 0, -1)
         self.snp_two_gbox.setSpacing(5)
         self.snp_two_gbox.setObjectName("snp_two_gbox")
-        self.snp_two_name_lbl = QtWidgets.QLabel(self.frame)
-        self.snp_two_name_lbl.setStyleSheet("QLabel {\n"
-                                            "    font-family: monospace;\n"
-                                            "}")
-        self.snp_two_name_lbl.setObjectName("snp_two_name_lbl")
-        self.snp_two_gbox.addWidget(self.snp_two_name_lbl, 2, 0, 1, 2)
-        self.snp_two_jump_btn = QtWidgets.QToolButton(self.frame)
-        self.snp_two_jump_btn.setIcon(icon)
-        self.snp_two_jump_btn.setIconSize(QtCore.QSize(32, 32))
-        self.snp_two_jump_btn.setAutoRaise(True)
-        self.snp_two_jump_btn.setObjectName("snp_two_jump_btn")
-        self.snp_two_gbox.addWidget(self.snp_two_jump_btn, 2, 2, 1, 1)
-        self.note_two_vbox = QtWidgets.QVBoxLayout()
-        self.note_two_vbox.setContentsMargins(-1, 0, -1, -1)
-        self.note_two_vbox.setSpacing(0)
-        self.note_two_vbox.setObjectName("note_two_vbox")
-        self.note_two_title_lbl = QtWidgets.QLabel(self.frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
-                                           QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.note_two_title_lbl.sizePolicy().hasHeightForWidth())
-        self.note_two_title_lbl.setSizePolicy(sizePolicy)
-        self.note_two_title_lbl.setStyleSheet("QLabel {\n"
-                                              "    font-family: monospace;\n"
-                                              "    font-size: 8pt;\n"
-                                              "    color: #888A85;\n"
-                                              "}")
-        self.note_two_title_lbl.setObjectName("note_two_title_lbl")
-        self.note_two_vbox.addWidget(self.note_two_title_lbl)
-        self.snp_two_note_plainTextEdit = QtWidgets.QPlainTextEdit(self.frame)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
-                                           QtWidgets.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(1)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.snp_two_note_plainTextEdit.sizePolicy().hasHeightForWidth())
-        self.snp_two_note_plainTextEdit.setSizePolicy(sizePolicy)
-        self.snp_two_note_plainTextEdit.setReadOnly(True)
-        self.snp_two_note_plainTextEdit.setObjectName(
-            "snp_two_note_plainTextEdit")
-        self.note_two_vbox.addWidget(self.snp_two_note_plainTextEdit)
-        self.snp_two_gbox.addLayout(self.note_two_vbox, 3, 0, 1, 3)
         self.snp_two_hbox = QtWidgets.QHBoxLayout()
         self.snp_two_hbox.setContentsMargins(-1, 0, 0, -1)
         self.snp_two_hbox.setSpacing(5)
@@ -286,7 +243,7 @@ class Ui_Form(object):
         self.snp_two_tag_area.setObjectName("snp_two_tag_area")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
         self.scrollAreaWidgetContents_2.setGeometry(
-            QtCore.QRect(0, 0, 453, 143))
+            QtCore.QRect(0, 0, 458, 143))
         self.scrollAreaWidgetContents_2.setObjectName(
             "scrollAreaWidgetContents_2")
         self.snp_two_tag_area.setWidget(self.scrollAreaWidgetContents_2)
@@ -321,7 +278,7 @@ class Ui_Form(object):
         self.snp_two_isrc_name_lbl.setObjectName("snp_two_isrc_name_lbl")
         self.ion_two_vbox.addWidget(self.snp_two_isrc_name_lbl)
         self.snp_two_hbox.addLayout(self.ion_two_vbox)
-        self.snp_two_gbox.addLayout(self.snp_two_hbox, 1, 0, 1, 3)
+        self.snp_two_gbox.addLayout(self.snp_two_hbox, 2, 0, 1, 3)
         self.snp_two_title_lbl = QtWidgets.QLabel(self.frame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -341,6 +298,50 @@ class Ui_Form(object):
                                              "}")
         self.snp_two_title_lbl.setObjectName("snp_two_title_lbl")
         self.snp_two_gbox.addWidget(self.snp_two_title_lbl, 0, 0, 1, 3)
+        self.note_two_vbox = QtWidgets.QVBoxLayout()
+        self.note_two_vbox.setContentsMargins(-1, 0, -1, -1)
+        self.note_two_vbox.setSpacing(0)
+        self.note_two_vbox.setObjectName("note_two_vbox")
+        self.note_two_title_lbl = QtWidgets.QLabel(self.frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred,
+                                           QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.note_two_title_lbl.sizePolicy().hasHeightForWidth())
+        self.note_two_title_lbl.setSizePolicy(sizePolicy)
+        self.note_two_title_lbl.setStyleSheet("QLabel {\n"
+                                              "    font-family: monospace;\n"
+                                              "    font-size: 8pt;\n"
+                                              "    color: #888A85;\n"
+                                              "}")
+        self.note_two_title_lbl.setObjectName("note_two_title_lbl")
+        self.note_two_vbox.addWidget(self.note_two_title_lbl)
+        self.snp_two_note_plainTextEdit = QtWidgets.QPlainTextEdit(self.frame)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
+                                           QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(1)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(
+            self.snp_two_note_plainTextEdit.sizePolicy().hasHeightForWidth())
+        self.snp_two_note_plainTextEdit.setSizePolicy(sizePolicy)
+        self.snp_two_note_plainTextEdit.setReadOnly(True)
+        self.snp_two_note_plainTextEdit.setObjectName(
+            "snp_two_note_plainTextEdit")
+        self.note_two_vbox.addWidget(self.snp_two_note_plainTextEdit)
+        self.snp_two_gbox.addLayout(self.note_two_vbox, 4, 0, 1, 3)
+        self.snp_two_name_lbl = QtWidgets.QLabel(self.frame)
+        self.snp_two_name_lbl.setStyleSheet("QLabel {\n"
+                                            "    font-family: monospace;\n"
+                                            "}")
+        self.snp_two_name_lbl.setObjectName("snp_two_name_lbl")
+        self.snp_two_gbox.addWidget(self.snp_two_name_lbl, 1, 0, 1, 1)
+        self.snp_two_jump_btn = QtWidgets.QToolButton(self.frame)
+        self.snp_two_jump_btn.setIcon(icon)
+        self.snp_two_jump_btn.setIconSize(QtCore.QSize(32, 32))
+        self.snp_two_jump_btn.setAutoRaise(True)
+        self.snp_two_jump_btn.setObjectName("snp_two_jump_btn")
+        self.snp_two_gbox.addWidget(self.snp_two_jump_btn, 1, 1, 1, 1)
         self.horizontalLayout_4.addLayout(self.snp_two_gbox)
         self.snpdiffView = QtWidgets.QTableView(self.splitter)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding,
@@ -475,7 +476,18 @@ class Ui_Form(object):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
         self.title_lbl.setText(
-            _translate("Form", "<h2>Compare Two Snapshots</h2>"))
+            _translate(
+                "Form",
+                "<html><head/><body><h2 style=\" margin-top:16px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:x-large; font-weight:600;\">Settings Manager: Compare Two Snapshots</span></h2></body></html>"
+            ))
+        self.tag_one_title_lbl.setText(_translate("Form", "Tags"))
+        self.beam_one_title_lbl.setText(_translate("Form", "Beam"))
+        self.snp_one_pix.setText(_translate("Form", "Kr"))
+        self.snp_one_isrc_name_lbl.setToolTip(
+            _translate(
+                "Form",
+                "<html><head/><body><p>Ion source in use</p></body></html>"))
+        self.snp_one_isrc_name_lbl.setText(_translate("Form", "isrc"))
         self.note_one_title_lbl.setText(_translate("Form", "Note"))
         self.snp_one_title_lbl.setText(_translate("Form", "Snapshot 1"))
         self.snp_one_name_lbl.setText(
@@ -486,24 +498,12 @@ class Ui_Form(object):
                 "<html><head/><body><p>Locate in the main database.</p></body></html>"
             ))
         self.snp_one_jump_btn.setText(_translate("Form", "..."))
-        self.tag_one_title_lbl.setText(_translate("Form", "Tags"))
-        self.beam_one_title_lbl.setText(_translate("Form", "Beam"))
-        self.snp_one_pix.setText(_translate("Form", "Kr"))
-        self.snp_one_isrc_name_lbl.setToolTip(
-            _translate(
-                "Form",
-                "<html><head/><body><p>Ion source in use</p></body></html>"))
-        self.snp_one_isrc_name_lbl.setText(_translate("Form", "isrc"))
         self.swap_btn.setToolTip(
             _translate(
                 "Form",
                 "<html><head/><body><p>Swap: Snapshot 1 to 2, 2 to 1.</p></body></html>"
             ))
         self.swap_btn.setText(_translate("Form", "..."))
-        self.snp_two_name_lbl.setText(
-            _translate("Form", "2023-12-13T01:49:41 - 86Kr36(19+)"))
-        self.snp_two_jump_btn.setText(_translate("Form", "..."))
-        self.note_two_title_lbl.setText(_translate("Form", "Note"))
         self.tag_two_title_lbl.setText(_translate("Form", "Tags"))
         self.beam_two_title_lbl.setText(_translate("Form", "Beam"))
         self.snp_two_pix.setText(_translate("Form", "Kr"))
@@ -513,6 +513,10 @@ class Ui_Form(object):
                 "<html><head/><body><p>Ion source in use</p></body></html>"))
         self.snp_two_isrc_name_lbl.setText(_translate("Form", "isrc"))
         self.snp_two_title_lbl.setText(_translate("Form", "Snapshot 2"))
+        self.note_two_title_lbl.setText(_translate("Form", "Note"))
+        self.snp_two_name_lbl.setText(
+            _translate("Form", "2023-12-13T01:49:41 - 86Kr36(19+)"))
+        self.snp_two_jump_btn.setText(_translate("Form", "..."))
         self.diff_gbox.setTitle(_translate("Form", "Discrenpancy Level"))
         self.absdiff_lineEdit.setText(_translate("Form", "0"))
         self.label_3.setText(

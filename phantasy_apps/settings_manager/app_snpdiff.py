@@ -21,6 +21,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import QAbstractTableModel
 from PyQt5.QtCore import QModelIndex
 from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QSize
 from PyQt5.QtCore import QStandardPaths
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtGui import QGuiApplication
@@ -83,11 +84,21 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
         self.snpdiffView.setModel(self.m)
         self.snpdiffView.resizeColumnsToContents()
         self.snpdiffView.resizeRowsToContents()
+        # not precise
+        w = self.snpdiffView.horizontalHeader().length() + self.snpdiffView.verticalHeader().width()
+        self.resize(w + 50, self.parent.height())
         # trigger filter
         self.applyFilter()
 
     def applyFilter(self):
         self.show_opt_rgrp.idToggled.emit(self.show_opt_rgrp.checkedId(), True)
+
+    def showEvent(self, e):
+        self.move(self.parent.geometry().translated(10, 0).topRight())
+        super().showEvent(e)
+
+    def sizeHint(self):
+        return QSize(1200, 1440)
 
     @pyqtSlot()
     def onExit(self):
@@ -110,7 +121,8 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
             return
         df = self.m.df
         fp = tempfile.NamedTemporaryFile(suffix='.csv')
-        self.m.df.to_csv(fp.name, index=False)
+        self.m.df.to_csv(fp.name, index=False,
+                header=['Name', 'Field', 'Setpoint (x0)', 'Setpoint (y0)', 'x0-y0', 'x0/y0', '(x0-y0)/y0[%]'])
         opened = QDesktopServices.openUrl(QUrl(fp.name))
         if opened:
             delayed_exec(lambda: fp.close(), 5000)
@@ -139,6 +151,7 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
             o.setStyleSheet(f"""QLabel {{
                 font-family: monospace;
                 font-size: {self.default_font_size}pt;
+                border: 1px solid gray;
             }}""")
 
         #
@@ -232,7 +245,7 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
         """
         self.snp_one_name_lbl.setText(f"{data.name} - {data.ion_as_str()}")
         self.snp_one_note_plainTextEdit.setPlainText(data.note)
-        self.snp_one_pix.setPixmap(get_ion_px(data.ion_name, 96))
+        self.__place_ion_px(self.snp_one_pix, get_ion_px(data.ion_name, 96))
         self.snp_one_isrc_name_lbl.setText(get_isrc_name(data))
         self.__place_tags(self.snp_one_tag_area, data.tags)
 
@@ -242,9 +255,16 @@ class SnapshotDiffWidget(QWidget, Ui_Form):
         """
         self.snp_two_name_lbl.setText(f"{data.name} - {data.ion_as_str()}")
         self.snp_two_note_plainTextEdit.setPlainText(data.note)
-        self.snp_two_pix.setPixmap(get_ion_px(data.ion_name, 96))
+        self.__place_ion_px(self.snp_two_pix, get_ion_px(data.ion_name, 96))
         self.snp_two_isrc_name_lbl.setText(get_isrc_name(data))
         self.__place_tags(self.snp_two_tag_area, data.tags)
+
+    def __place_ion_px(self, label: QLabel, px: QPixmap):
+        shadow = QGraphicsDropShadowEffect()
+        shadow.setBlurRadius(10)
+        shadow.setOffset(2)
+        label.setPixmap(px)
+        label.setGraphicsEffect(shadow)
 
     def __place_tags(self, area: QScrollArea, tags: list):
         w = area.takeWidget()
@@ -320,6 +340,8 @@ class DiffDataModel(QAbstractTableModel):
         if role == Qt.DisplayRole:
             if column == self.ColumnName or column == self.ColumnField:
                 return self.df.iloc[row, column]
+            elif column == self.ColumnSetpoint_r12:
+                return f"{self.df.iloc[row, column]:.3g}"
             elif column == self.ColumnSetpoint_d12r:
                 return f"{self.df.iloc[row, column]:.2f}%"
             else:
