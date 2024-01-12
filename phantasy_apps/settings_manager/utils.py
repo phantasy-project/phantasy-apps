@@ -1,17 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import json
-import os
 import re
 import time
-import shutil
 import pandas as pd
 import numpy as np
 from collections import Counter
 from collections import OrderedDict
 from datetime import datetime
-from epics import get_pv
 from fnmatch import translate
 from functools import partial
 from numpy.testing import assert_almost_equal
@@ -22,7 +18,6 @@ from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtCore import QPersistentModelIndex
 from PyQt5.QtCore import QItemSelectionModel
 from PyQt5.QtCore import QModelIndex
-from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import QVariant
 from PyQt5.QtCore import Qt, QRect
 from PyQt5.QtCore import pyqtSignal
@@ -34,17 +29,12 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtGui import QStandardItem
 from PyQt5.QtGui import QStandardItemModel
-from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QGraphicsDropShadowEffect, QLabel,)
 from PyQt5.QtWidgets import QStyle
 from PyQt5.QtWidgets import QStyledItemDelegate
-from PyQt5.QtWidgets import QToolButton
 from PyQt5.QtWidgets import QPushButton
-from PyQt5.QtWidgets import QSizePolicy
-from PyQt5.QtWidgets import QProgressBar
 from phantasy import get_settings_from_element_list
 from phantasy_ui.widgets import is_item_checked
 from phantasy_ui.widgets import BeamSpeciesDisplayWidget
-from phantasy_apps.utils import find_dconf
 from .data import SnapshotData
 from .config import ALL_SYM
 from phantasy_apps.msviz.mach_state import fetch_data
@@ -433,7 +423,9 @@ class SettingsModel(QStandardItemModel):
             row.append(item_tol)
 
             # writable
-            item_wa = QStandardItem('-')
+            item_wa = QStandardItem('False')
+            # by default: disable the item row --> non-checkable, until the data is refreshed
+            item_ename.setEnabled(False)
             item_wa.setEditable(False)
             row.append(item_wa)
 
