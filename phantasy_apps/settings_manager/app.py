@@ -444,7 +444,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # readonly device list
         self.elem_write_perm_dict = {k: False for k in self.pref_dict["SETTINGS"]["READONLY_DEVICE_LIST"]}
 
-
         self.fmt = '{{0:.{}f}}'.format(self.ndigit)
         # for field NMR, HALL probe
         self.fmt_nmr = '{{0:.{}f}}'.format(5)
@@ -987,6 +986,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         # enable take snapshot tool
         self.snp_loaded.connect(
             lambda: self.actionTake_Snapshot.setEnabled(True))
+        # enable selection btns
+        self.snp_loaded.connect(
+            lambda: self.disable_widgets(False))
+        # enable data refresher timer
+        self.snp_loaded.connect(
+            lambda: self._data_refresh_timer.start(REFRESH_INTERVAL_MAP["Normal"]))
         #
         self.snp_saved.connect(self.on_snp_saved)
 
@@ -2164,9 +2169,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
 
     def closeEvent(self, e):
         self._data_refresh_timer.stop()
+        self._abort_one_updater()
+        BaseAppForm.closeEvent(self, e)
+
+    def _abort_one_updater(self):
         if self.one_updater is not None and not self.one_updater.isFinished():
             self.one_updater.abort()
-        BaseAppForm.closeEvent(self, e)
 
     def clean_up(self):
         try:
@@ -3157,6 +3165,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
     @pyqtSlot()
     def on_single_update(self):
         """Update values, indicators for one time."""
+        # `single_update_btn` is clicked
         if self._tv.model() is None:
             return
         m0 = self._tv.model()
@@ -3173,7 +3182,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                                 nproc=2)
         self.one_updater.meta_signal1.connect(
             partial(self.on_update_display, m))
-        #        self.one_updater.daqStarted.connect(lambda:printlog("Refreshing data..."))
+        # self.one_updater.daqStarted.connect(lambda: printlog("Data refreshing ..."))
         self.one_updater.daqStarted.connect(
             lambda: self.refresh_beat_lbl.setVisible(True))
         self.one_updater.daqStarted.connect(lambda: m.blockSignals(True))
@@ -3182,7 +3191,7 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self.one_updater.daqFinished.connect(lambda: m.blockSignals(False))
         self.one_updater.daqFinished.connect(m._finish_update)
         self.one_updater.daqFinished.connect(self.last_refreshed)
-        #        self.one_updater.daqFinished.connect(lambda:printlog("Refreshing data...done!"))
+        # self.one_updater.daqFinished.connect(lambda: printlog("Data refreshing ... done"))
         self.one_updater.start()
 
     def on_data_refresh_done(self):
@@ -3198,18 +3207,12 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         #     datetime.fromtimestamp(time.time()).strftime(TS_FMT))
         # self.log_textEdit.append(msg)
 
-    def set_widgets_status_for_updating(self, status, is_single=True):
-        """Set widgets status for updating.
+    def disable_widgets(self, disabled: bool):
+        """Disable/Enable the widgets before and after loading a snapshot
         """
-        w1 = [
-            self.update_rate_cbb, self.apply_btn, self.select_all_btn,
-            self.deselect_all_btn, self.invert_selection_btn,
-            self.single_update_btn
-        ]
-        if is_single:
-            w1.append(self.update_ctrl_btn)
-            w1.append(self.snp_dock)
-        [i.setDisabled(status == 'START') for i in w1]
+        [o.setDisabled(disabled) for o in (
+            self.snp_treeView, self.select_all_btn, self.deselect_all_btn,
+            self.invert_selection_btn)]
 
     def set_widgets_status_for_applying(self, status):
         """Set widgets status for applying.
@@ -3990,13 +3993,20 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
                 setattr(data, k, v)
         data.write(filename, ftype)
 
-    def on_load_settings(self, data):
+    def on_load_settings(self, data: SnapshotData):
         # data: SnapshotData
         # settings(data.data): DataFrame
         # self.turn_off_updater_if_necessary()
 
         # disable take snapshot tool
         self.actionTake_Snapshot.setEnabled(False)
+        # disable selection buttons (All, None, Invert)
+        self.disable_widgets(True)
+        # abort one data updater
+        self._abort_one_updater()
+        # stop the data refresh timer
+        self._data_refresh_timer.stop()
+
         #
         if self._lat is None or self._last_machine_name != data.machine or \
                 self._last_lattice_name != data.segment:
