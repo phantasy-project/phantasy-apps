@@ -730,7 +730,7 @@ class _SortProxyModel(QSortFilterProxyModel):
                     else:
                         raise SyntaxError
                 elif isinstance(t, (float, int)):
-                        val_test = is_equal(var, t, ndigit)
+                        val_test = is_equal(var, t, self.m_src._ndigit)
                 else:
                     raise SyntaxError
             except (SyntaxError, NameError):
