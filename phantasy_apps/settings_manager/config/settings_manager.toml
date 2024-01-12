@@ -33,6 +33,8 @@ SCALABLE_FIELD_NAMES = ["I", "V", "AMP", "AMP1", "AMP2", "AMP3", "I_TC"]
 STRIPPER_POS = 224.90368452 # meter, carbon stripper location
 # for those write permission allowed per ACF but intended to be readonly.
 READONLY_DEVICE_LIST = [
+  'LS1_CA01:CAV1_D1127',
+
   'FE_ISRC1:BEAM',
   'FE_ISRC1:DRV_D0686',
   'FE_ISRC1:HVP_D0679',
