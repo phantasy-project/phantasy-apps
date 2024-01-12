@@ -433,7 +433,9 @@ class SettingsModel(QStandardItemModel):
             row.append(item_tol)
 
             # writable
-            item_wa = QStandardItem('-')
+            item_wa = QStandardItem('False')
+            # by default: disable the item row --> non-checkable, until the data is refreshed
+            item_ename.setEnabled(False)
             item_wa.setEditable(False)
             row.append(item_wa)
 
