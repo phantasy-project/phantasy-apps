@@ -28,13 +28,12 @@ from PyQt5.QtGui import (QColor, QFont, QFontDatabase, QFontMetrics, QIcon,
                          QDesktopServices, QDoubleValidator)
 from PyQt5.QtWidgets import (QCompleter, QCheckBox, QDialog, QLabel,
                              QMessageBox, QMenu, QAction, QWidgetAction,
-                             QToolButton, QPushButton, QSizePolicy, QShortcut,
+                             QToolButton, QSizePolicy, QShortcut,
                              QWidget, QProgressBar, QHBoxLayout, QLineEdit,
                              QLabel, QTabWidget, QGraphicsDropShadowEffect, QTreeView,
                              QScrollArea)
 
-from phantasy import (build_element, CaField, Settings)
-from phantasy_ui import (BaseAppForm, delayed_exec, get_open_filename,
+from phantasy_ui import (BaseAppForm, delayed_exec,
                          get_save_filename, printlog, milli_sleep)
 from phantasy_ui.widgets import (is_item_checked, BeamSpeciesDisplayWidget,
                                  DataAcquisitionThread as DAQT,
@@ -60,10 +59,7 @@ from .db_utils import insert_update_data, delete_data, get_attachments_cnt
 from .ui.ui_app import Ui_MainWindow
 from .ui.ui_query_tips import Ui_Form as QueryTipsForm
 from .conf import read_app_config
-from .utils import FMT
 from .utils import ELEMT_PX_MAP
-from .utils import TBTN_STY_REGULAR
-from .utils import TBTN_STY_GOLDEN
 from .utils import SettingsModel
 from .utils import pack_settings
 from .utils import COLUMN_NAMES
@@ -628,7 +624,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         """
         printlog("Loading settings...")
         self.__flat_settings = flat_settings
-        self.__settings = settings
         self.__on_show_settings()
 
     def __on_show_settings(self):
@@ -756,7 +751,6 @@ class SettingsManagerWindow(BaseAppForm, Ui_MainWindow):
         self._elem_list = []  # element list for SettingsModel
         self._last_sts_dict = {}  # last device state dict
 
-        self.__settings = Settings()
         self.__flat_settings = None
 
         self._eval_scaling_factor = False  # not eval sf (hit enter)
