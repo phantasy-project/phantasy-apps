@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
+import stat
 import shutil
 from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QMessageBox
 
 from .ui.ui_headinfo import Ui_Form
 
@@ -120,6 +122,10 @@ class HeadinfoForm(QWidget, Ui_Form):
         _copy_file(json_file, user_dstdir)
         if os.path.isfile(png_file):
             _copy_file(png_file, user_dstdir)        
+        QMessageBox.information(self, "Save Files",
+                                "Saved the following files to {}\n:{}".format(
+                                    user_dstdir, '\n'.join([json_file, png_file])),
+                                QMessageBox.Ok, QMessageBox.Ok)
 
     def getIonSourceId(self):
         """Return the ion source id name.
@@ -132,6 +138,6 @@ class HeadinfoForm(QWidget, Ui_Form):
         """
         return self._xoy
 
-def _copy_file(src_filepath: str, dst_filepath: str):                                              
-    shutil.copy2(src_filepath, dst_filepath)                                                       
-    os.chmod(dst_filepath, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH) 
+def _copy_file(src_filepath: str, dst_filepath: str):
+    shutil.copy2(src_filepath, dst_filepath)
+    os.chmod(dst_filepath, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
