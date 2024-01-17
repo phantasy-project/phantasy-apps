@@ -92,6 +92,7 @@ class HeadinfoForm(QWidget, Ui_Form):
         """
         # show read file button if online mode is False
         self.readfile_btn.setVisible(not is_checked)
+        self.saveto_btn.setVisible(not is_checked)
 
     @pyqtSlot('QString')
     def onDataFilepathChanged(self, filepath: str):
