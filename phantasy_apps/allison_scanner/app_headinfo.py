@@ -58,6 +58,7 @@ class HeadinfoForm(QWidget, Ui_Form):
             }}""")
         self.readfile_btn.clicked.connect(self.onReadDatafile)
         self.saveto_btn.clicked.connect(self.onSaveTo)
+        self.saveto_btn.setToolTip("Click to save out the opened data file and image (if any) to a new location.")
 
     def _show(self):
         self.adjustSize()
