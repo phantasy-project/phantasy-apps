@@ -14,7 +14,7 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1664, 1482)
+        MainWindow.resize(1926, 1479)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/allison.png"),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -1203,7 +1203,7 @@ class Ui_MainWindow(object):
             "}")
         self.data_analysis_tbox.setObjectName("data_analysis_tbox")
         self.page_beam_params = QtWidgets.QWidget()
-        self.page_beam_params.setGeometry(QtCore.QRect(0, 0, 414, 432))
+        self.page_beam_params.setGeometry(QtCore.QRect(0, 0, 467, 456))
         self.page_beam_params.setObjectName("page_beam_params")
         self.gridLayout_5 = QtWidgets.QGridLayout(self.page_beam_params)
         self.gridLayout_5.setContentsMargins(4, 4, 4, 4)
@@ -1399,7 +1399,7 @@ class Ui_MainWindow(object):
         self.gridLayout_5.addItem(spacerItem5, 3, 0, 1, 1)
         self.data_analysis_tbox.addItem(self.page_beam_params, "")
         self.page_bkgd_noise = QtWidgets.QWidget()
-        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 515, 355))
+        self.page_bkgd_noise.setGeometry(QtCore.QRect(0, 0, 571, 227))
         self.page_bkgd_noise.setObjectName("page_bkgd_noise")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.page_bkgd_noise)
         self.gridLayout_2.setContentsMargins(4, 4, 4, 4)
@@ -1481,7 +1481,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.auto_update_image_chkbox, 1, 2, 1, 1)
         self.data_analysis_tbox.addItem(self.page_bkgd_noise, "")
         self.page_noise_correction = QtWidgets.QWidget()
-        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 474, 355))
+        self.page_noise_correction.setGeometry(QtCore.QRect(0, 0, 522, 227))
         self.page_noise_correction.setObjectName("page_noise_correction")
         self.gridLayout_7 = QtWidgets.QGridLayout(self.page_noise_correction)
         self.gridLayout_7.setContentsMargins(4, 4, 4, 4)
@@ -1808,7 +1808,7 @@ class Ui_MainWindow(object):
         self.gridLayout_6.addWidget(self.main_vsplitter, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1664, 37))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1926, 41))
         self.menubar.setObjectName("menubar")
         self.menu_Help = QtWidgets.QMenu(self.menubar)
         self.menu_Help.setObjectName("menu_Help")
@@ -1892,6 +1892,10 @@ class Ui_MainWindow(object):
         self.actionoffline_mode.setObjectName("actionoffline_mode")
         self.actionShow_Schematic = QtWidgets.QAction(MainWindow)
         self.actionShow_Schematic.setObjectName("actionShow_Schematic")
+        self.actionSave_As_2 = QtWidgets.QAction(MainWindow)
+        self.actionSave_As_2.setObjectName("actionSave_As_2")
+        self.actionDataSaveAs = QtWidgets.QAction(MainWindow)
+        self.actionDataSaveAs.setObjectName("actionDataSaveAs")
         self.menu_Help.addAction(self.actionAbout)
         self.menu_Help.addAction(self.actionAbout_Qt)
         self.menuConfiguration.addAction(self.actionReload)
@@ -1902,6 +1906,7 @@ class Ui_MainWindow(object):
         self.menuConfiguration.addAction(self.actionLocate)
         self.menu_Device.addAction(self.actionRunXY)
         self.menu_Device.addAction(self.actionShow_Schematic)
+        self.menu_Data.addAction(self.actionDataSaveAs)
         self.menu_Data.addAction(self.actionAuto_Analysis)
         self.menu_Data.addAction(self.actionAuto_Push_Results_to_PVs)
         self.menubar.addAction(self.menu_File.menuAction())
@@ -1973,6 +1978,8 @@ class Ui_MainWindow(object):
             MainWindow.on_sync_data)  # type: ignore
         self.adv_ctrl_chkbox.toggled['bool'].connect(
             MainWindow.on_enable_advctrl)  # type: ignore
+        self.actionDataSaveAs.triggered.connect(
+            MainWindow.onDataSaveAs)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.ems_names_cbb, self.ems_detail_btn)
         MainWindow.setTabOrder(self.ems_detail_btn, self.ems_orientation_cbb)
@@ -2418,6 +2425,8 @@ class Ui_MainWindow(object):
             _translate("MainWindow", "offline_mode"))
         self.actionShow_Schematic.setText(
             _translate("MainWindow", "Show Schematic"))
+        self.actionSave_As_2.setText(_translate("MainWindow", "Save As"))
+        self.actionDataSaveAs.setText(_translate("MainWindow", "Save As"))
 
 
 from mpl4qt.widgets.mplbasewidget import MatplotlibBaseWidget
