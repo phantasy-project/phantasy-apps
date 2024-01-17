@@ -14,7 +14,7 @@ class Ui_Form(object):
 
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(257, 73)
+        Form.resize(324, 82)
         Form.setStyleSheet("")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(Form)
         self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -80,6 +80,20 @@ class Ui_Form(object):
                                        | QtCore.Qt.AlignVCenter)
         self.xoy_name_lbl.setObjectName("xoy_name_lbl")
         self.horizontalLayout.addWidget(self.xoy_name_lbl)
+        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
+        self.verticalLayout_2.setContentsMargins(-1, -1, 0, -1)
+        self.verticalLayout_2.setSpacing(0)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.saveto_btn = QtWidgets.QToolButton(self.mainFrame)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(":/icons/save.png"), QtGui.QIcon.Normal,
+                       QtGui.QIcon.Off)
+        self.saveto_btn.setIcon(icon)
+        self.saveto_btn.setAutoRaise(True)
+        self.saveto_btn.setObjectName("saveto_btn")
+        self.verticalLayout_2.addWidget(self.saveto_btn)
         self.readfile_btn = QtWidgets.QToolButton(self.mainFrame)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed,
                                            QtWidgets.QSizePolicy.Fixed)
@@ -88,15 +102,14 @@ class Ui_Form(object):
         sizePolicy.setHeightForWidth(
             self.readfile_btn.sizePolicy().hasHeightForWidth())
         self.readfile_btn.setSizePolicy(sizePolicy)
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/icons/readfile.png"),
-                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.readfile_btn.setIcon(icon)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(":/icons/readfile.png"),
+                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.readfile_btn.setIcon(icon1)
         self.readfile_btn.setAutoRaise(True)
         self.readfile_btn.setObjectName("readfile_btn")
-        self.horizontalLayout.addWidget(self.readfile_btn)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
+        self.verticalLayout_2.addWidget(self.readfile_btn)
+        self.gridLayout.addLayout(self.verticalLayout_2, 0, 1, 1, 1)
         self.horizontalLayout_2.addWidget(self.mainFrame)
 
         self.retranslateUi(Form)
@@ -108,6 +121,7 @@ class Ui_Form(object):
         self.device_name_lbl.setText(_translate("Form", "FE_SCS1:EMS_D0739"))
         self.isrc_name_lbl.setText(_translate("Form", "Artemis"))
         self.xoy_name_lbl.setText(_translate("Form", "Horizontal"))
+        self.saveto_btn.setText(_translate("Form", "..."))
         self.readfile_btn.setText(_translate("Form", "Read"))
 
 
