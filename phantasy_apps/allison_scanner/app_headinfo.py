@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+import os
+import stat
+import shutil
 from PyQt5.QtCore import QUrl
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QMessageBox
 
 from .ui.ui_headinfo import Ui_Form
 
@@ -53,6 +57,8 @@ class HeadinfoForm(QWidget, Ui_Form):
                 font-size: {self._fs + 1}pt;
             }}""")
         self.readfile_btn.clicked.connect(self.onReadDatafile)
+        self.saveto_btn.clicked.connect(self.onSaveTo)
+        self.saveto_btn.setToolTip("Click to save out the opened data file and image (if any) to a new location.")
 
     def _show(self):
         self.adjustSize()
@@ -87,6 +93,7 @@ class HeadinfoForm(QWidget, Ui_Form):
         """
         # show read file button if online mode is False
         self.readfile_btn.setVisible(not is_checked)
+        self.saveto_btn.setVisible(not is_checked)
 
     @pyqtSlot('QString')
     def onDataFilepathChanged(self, filepath: str):
@@ -104,6 +111,40 @@ class HeadinfoForm(QWidget, Ui_Form):
             return
         QDesktopServices.openUrl(QUrl(self._data_filepath))
 
+    @pyqtSlot()
+    def onSaveTo(self):
+        """Save the data file/image to user-defined location.
+        """
+        if self._data_filepath is None:
+            return
+        user_dstdir = QFileDialog.getExistingDirectory(self, "Choose the directory",
+                                                    os.path.expanduser("~"), QFileDialog.ShowDirsOnly)
+        json_filepath = self._data_filepath
+        png_filepath = json_filepath.replace("json", "png")
+        json_filename = os.path.basename(json_filepath)
+        png_filename = os.path.basename(png_filepath)
+        dst_jsonpath = os.path.join(user_dstdir, json_filename)
+        dst_pngpath = os.path.join(user_dstdir, png_filename)
+        if os.path.dirname(json_filepath) == os.path.dirname(dst_jsonpath):
+            QMessageBox.warning(self, "Save Files", "Must choose a different directory than the original location!", QMessageBox.Ok, QMessageBox.Ok)
+            return
+
+        msg = f"Saved the below list of files to '{user_dstdir}':\n"
+        try:
+            _copy_file(json_filepath, dst_jsonpath)
+        except Exception as err:
+            QMessageBox.warning(self, "Save Files", str(err), QMessageBox.Ok, QMessageBox.Ok)
+        else:
+            msg += "{}\n".format(json_filepath) 
+        try:
+            _copy_file(png_filepath, dst_pngpath)
+        except Exception as err:
+            QMessageBox.warning(self, "Save Files", str(err), QMessageBox.Ok, QMessageBox.Ok)
+        else:
+            msg += "{}\n".format(png_filepath) 
+        QMessageBox.information(self, "Save Files", msg,
+                                QMessageBox.Ok, QMessageBox.Ok)
+
     def getIonSourceId(self):
         """Return the ion source id name.
         ISRC1, ISRC2, ...
@@ -114,3 +155,7 @@ class HeadinfoForm(QWidget, Ui_Form):
         """Return X or Y as the orientation.
         """
         return self._xoy
+
+def _copy_file(src_filepath: str, dst_filepath: str):
+    shutil.copy2(src_filepath, dst_filepath, )
+    # os.chmod(dst_filepath, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
